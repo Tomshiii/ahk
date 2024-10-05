@@ -1,4 +1,4 @@
-# <> Release 2.14.x - 
+# <> Release 2.14.12 - Bugfix & QoL
 
 ## Functions
 - Updated AE `focusColour` variable for versions using the `Spectrum UI` to return functionality to functions that rely on it

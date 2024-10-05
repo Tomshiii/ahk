@@ -52,19 +52,20 @@ __backupPremFolders(ahkDir, pcDir, title) {
 }
 ;//* Layouts
 layoutsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Layouts\"
-layoutsBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Layouts"
+layoutsBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\Layouts" : A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Layouts"
 __backupPremFolders(layoutsBackup, layoutsBeginningDir, "Select Premiere Layouts to Backup")
 
 ;//* Settings
 settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\v" ptf.PremYearVer "\"
-settingsBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\"
-FileCopy(settingsBeginningDir "\Adobe Premiere Pro Prefs", settingsBackup "\Adobe Premiere Pro Prefs", 1)
+settingsBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\" : A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\"
+isBetaPrefs := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? "Adobe Premiere Pro (Beta) Prefs" : "Adobe Premiere Pro Prefs"
+FileCopy(settingsBeginningDir "\" isBetaPrefs, settingsBackup "\" isBetaPrefs, 1)
 FileCopy(settingsBeginningDir "\Effect Presets and Custom Items.prfpset", settingsBackup "\Effect Presets and Custom Items.prfpset", 1)
 FileCopy(settingsBeginningDir "\LayoutsWorkspaceConfig.xml", settingsBackup "\LayoutsWorkspaceConfig.xml", 1)
 
 ;//* Win
 winBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Win\v" ptf.PremYearVer
-winBeginningDir := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Win"
+winBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\Win" :  A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Win"
 FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*", 1)
 ; __backupPremFolders(winBackup, winBeginningDir)
 
@@ -72,7 +73,7 @@ FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*", 1)
 
 aeVerNum := StrReplace(ptf.aeIMGver, "v", "")
 aeVerNumTrim := InStr(aeVerNum, ".",,, 2) ? SubStr(aeVerNum, 1, InStr(aeVerNum, ".",,, 2)-1) : aeVerNum
-aeDir := A_AppData "\Adobe\After Effects\" aeVerNumTrim
+aeDir := (UserSettings.aeIsBeta = true || UserSettings.aeIsBeta = "true") ? A_AppData "\Adobe\After Effects (Beta)\" aeVerNumTrim : A_AppData "\Adobe\After Effects\" aeVerNumTrim
 ahkAEDir := "E:\Github\ahk\Backups\Adobe Backups\After Effects"
 ;//* aeks
 ahkAEKBD := ahkAEDir "\aeks\Custom.txt"

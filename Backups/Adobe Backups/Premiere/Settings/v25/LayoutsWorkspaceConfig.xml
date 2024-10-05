@@ -36,7 +36,7 @@
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_7.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_4.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_5.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_8.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_7.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace5.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace3.xml</ustring>
@@ -77,10 +77,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>120</int>
-<int type='signed' size='32'>3</int>
-<int type='signed' size='32'>1156</int>
-<int type='signed' size='32'>721</int>
+<int type='signed' size='32'>-8</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>3354</int>
+<int type='signed' size='32'>1420</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -96,8 +96,8 @@
 <string>20230907T102041.005141</string>
 <string>20240924T024025.794124</string>
 <string>20230907T081332.087008</string>
-<string>20240705T024639.007379</string>
-<string>20240925T082007.802121</string>
+<string>20240614T130037.032107</string>
+<string>20241003T135824.674159</string>
 <string>20180212T044008</string>
 <string>20240218T012504.337564</string>
 <string>20200630T070242</string>
@@ -106,7 +106,7 @@
 <string>20240208T083321.058903</string>
 <string>20200310T074047</string>
 <string>20230825T045232.988439</string>
-<string>20240208T083308.613588</string>
+<string>20240925T234638.060487</string>
 <string>20240830T153248.318585</string>
 <string>20180303T074059</string>
 <string>20180303T074126</string>

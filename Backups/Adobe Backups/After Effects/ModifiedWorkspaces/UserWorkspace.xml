@@ -114,7 +114,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.68950438</float>
+<float>0.68828297</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -128,7 +128,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.1706091</float>
+<float>0.095505618</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -260,7 +260,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.78324419</float>
+<float>0.78326249</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -274,7 +274,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.050068274</float>
+<float>0.15191987</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -339,7 +339,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.85433638</float>
+<float>0.85039371</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -487,7 +487,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.51585627</float>
+<float>0.50963598</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -501,7 +501,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.83196723</float>
+<float>0.83613443</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -515,7 +515,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.31527093</float>
+<float>0.3115578</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -770,7 +770,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>1</int>
+<int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -950,7 +950,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;2&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -1167,9 +1167,9 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
+<int type='signed' size='32'>120</int>
 <int type='signed' size='32'>0</int>
-<int type='signed' size='32'>3374</int>
+<int type='signed' size='32'>1156</int>
 <int type='signed' size='32'>1440</int>
 </array>
 </prop.pair>
