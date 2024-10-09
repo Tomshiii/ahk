@@ -61,6 +61,10 @@ __doBackup(backupFolder) {
         try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\videos\*.*", false)
     }
 
+    loop files rootDir "\videos\footage\*", 'F' {
+        try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\videos\*.*", false)
+    }
+
     loop files rootDir "\audio\*", 'F' {
         try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\*.*", false)
     }
