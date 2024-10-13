@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/09/25
- * @version 1.7.37
+ * @date 2024/10/13
+ * @version 1.7.39
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,6 +22,7 @@
 #Include <Classes\Mip>
 #Include <Classes\reset>
 #Include <Classes\errorLog>
+#Include <Classes\cmd>
 #Include <Functions\getScriptRelease>
 #Include <Functions\getHTML>
 #Include <Functions\isReload>
@@ -414,44 +415,62 @@ class Startup {
      * @param {String} [checkOutdated="choco outdated"] the command for the user's respective package manager to check if any packages are outdated
      * @param {String} [noUpdatesString="has determined 0 package(s) are outdated"] the string the cmdline usually gives the user in the event that no updates are available
      * @param {String} [nonChocoUpdateCommand=""] an alternative command given to the commandline to update all installed packages as the update code in this function is specific to chocolatey
+     * @param {Array/String} [ignore] an array of strings with the names of any packages you wish to ignore. ie; `["vcredist"]`
      */
-    updatePackages(packageManager := "choco", checkOutdated := "choco outdated", noUpdatesString := "has determined 0 package(s) are outdated", nonChocoUpdateCommand := "") {
+    updatePackages(packageManager := "choco", checkOutdated := "choco outdated", noUpdatesString := "has determined 0 package(s) are outdated", nonChocoUpdateCommand := "", ignore := []) {
         if this.isReload != false || this.UserSettings.package_update_check = false ;checks if script was reloaded
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
-        if InStr(cmd.result(packageManager), Format("'{1}' is not recognized as an internal or external command", packageManager))
+        try checkCMD := cmd.result(packageManager)
+        catch
+            return
+        if InStr(checkCMD, Format("'{1}' is not recognized as an internal or external command", packageManager))
             return
         outDated := cmd.result(checkOutdated)
         if InStr(outDated, noUpdatesString, 1, 1, 1)
             return
         if MsgBox("Some packages the user has installed through " packageManager " appear to be outdated.`nWould you like to update them now?", "Update Packages", "4 32 4096") = "No"
             return
-        if packageManager = "choco" {
-            omitString := "Output is package name | current version | available version | pinned?"
-            newResponse := SubStr(outDated, InStr(outDated, omitString, 1, 1, 1)+StrLen(omitString)+2)
-            splt := StrSplit(newResponse, ["`n", "`r"])
+        switch packageManager {
+            case "choco":
+                omitString := "Output is package name | current version | available version | pinned?"
+                newResponse := SubStr(outDated, InStr(outDated, omitString, 1, 1, 1)+StrLen(omitString)+2)
+                splt := StrSplit(newResponse, ["`n", "`r"])
 
-            arr := []
-            for k, v in splt {
-                if !InStr(v, "|")
-                    continue
-                determinePackage := StrSplit(v, ["|"])
-                arr.Push(determinePackage[1])
-            }
-            command := ""
-            for i, v in arr {
-                concat := " && "
-                if i = arr.Length
-                    concat := ""
-                command := command "choco upgrade " v " --yes" concat
-            }
-            if StrLen(command) < 8191
-                cmd.run(true, false, false, command)
-            else
-                cmd.run(true, false, false, "choco upgrade all --yes")
+                arr := []
+                for k, v in splt {
+                    if !InStr(v, "|")
+                        continue
+                    isIgnore := false
+                    for k2, v2 in ignore {
+                        if InStr(v, v2) {
+                            isIgnore := true
+                            break
+                        }
+                    }
+                    if isIgnore = true {
+                        isIgnore := false
+                        continue
+                    }
+                    determinePackage := StrSplit(v, ["|"])
+                    arr.Push(determinePackage[1])
+                }
+                command := ""
+                for i, v in arr {
+                    concat := " && "
+                    if i = arr.Length
+                        concat := ""
+                    command := command "choco upgrade " v " --yes" concat
+                }
+                if StrLen(command) < 8191
+                    cmd.run(true, false, false, command)
+                else
+                    cmd.run(true, false, false, "choco upgrade all --yes")
+            default:
+                if nonChocoUpdateCommand = ""
+                    return
+                cmd.run(true, false, false, nonChocoUpdateCommand)
         }
-        else if nonChocoUpdateCommand != ""
-            cmd.run(true, false, false, nonChocoUpdateCommand)
     }
 
     /**

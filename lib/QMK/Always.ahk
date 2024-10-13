@@ -56,7 +56,7 @@ Space::
 		GroupActivate("phoneStuffDisc", "r")
 		GroupActivate("phoneStuffDisc", "r")
 		WinMove(discord.slackX, discord.slackY, discord.slackWidth, discord.slackHeight, WinGetTitle("A") A_Space "ahk_exe " WinGetProcessName("A"))
-		switchTo.Disc(true, {x: discord.slackX, y: 869, width: discord.slackWidth, height: discord.slackHeight})
+		switchTo.Disc(true, {x: discord.slackX, y: 869, width: discord.slackWidth, height: discord.slackHeight+150})
 		return
 	}
 	if WinExist(discord.winTitle) {
