@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard or interact with highlighted text
  * @author tomshi
- * @date 2024/09/27
- * @version 1.0.7
+ * @date 2024/10/13
+ * @version 1.0.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -86,7 +86,9 @@ class clip {
         store := this.clear()
         if !this.copyWait(store.storedClip)
             return
-        Run(Format("{1} {2}" , browser, url A_Clipboard))
+        newClip := StrReplace(A_Clipboard, "&", "%26")
+        newClip := StrReplace(A_Clipboard, A_Space, "+")
+        Run(Format('{1} {2}' , browser, url newClip))
         this.returnClip(store.storedClip)
         if !browser
             return
