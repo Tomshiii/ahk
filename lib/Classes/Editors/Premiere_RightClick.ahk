@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.5
  * @author tomshi, taranVH
- * @date 2024/08/16
- * @version 2.3.5
+ * @date 2024/10/13
+ * @version 2.3.6
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -325,6 +325,8 @@ class rbuttonPrem {
 			case VerCompare(version, prem.spectrumUI_Version) >= 0: this.__setTimelineCol("Spectrum", theme)
 			case VerCompare(version, prem.spectrumUI_Version) < 0:  this.__setTimelineCol("oldUI", theme)
 		}
+
+		WinEvent.Exist((*) => prem.dismissWarning(), "DroverLord - Overlay Window")
 
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()

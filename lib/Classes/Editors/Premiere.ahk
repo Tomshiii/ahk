@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/09/30
- * @version 2.1.23
+ * @date 2024/10/13
+ * @version 2.1.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -25,6 +25,7 @@
 #Include <Classes\WM>
 #Include <Classes\cmd>
 #Include <Classes\Editors\Premiere_UIA>
+#Include <GUIs\tomshiBasic>
 #Include <Other\UIA\UIA>
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
@@ -2094,6 +2095,23 @@ class Prem {
 		sleep 200
 		this.__checkTimelineFocus()
 	}
+
+    /**
+     * Premiere loves to spit stupid warning boxes at you, especially if it has even the smallest issue trying to playback audio. This function will detect that window and automatically click the x button to close the window. This is especially necessary when using other functions of mine like those in `Premiere_RightClick.ahk` as the error window messes with the active window and may confuse those scripts
+     */
+    static dismissWarning() {
+        if !WinExist("DroverLord - Overlay Window")
+            return
+
+        block.On()
+        coord.s()
+        origMouse := obj.MousePos()
+        drover    := obj.WinPos("DroverLord - Overlay Window")
+        MouseMove((drover.x + drover.width)-15, drover.y+15, 1)
+        SendInput("{Click}")
+        MouseMove(origMouse.x, origMouse.y, 1)
+        block.Off()
+    }
 
     ;//! *** ===============================================
 
