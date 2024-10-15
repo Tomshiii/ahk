@@ -49,6 +49,9 @@ cmd.run(,,, "npm i", remotePath "\host")
 
 ;// then copy files from install
 BackupLocation := A_WorkingDir "\Backups\Adobe Backups\Premiere\PremiereRemote"
+if !DirExist(remotePath "\typings")
+    DirCreate(remotePath "\typings")
+FileCopy(BackupLocation "\typings\PremierePro.14.0.d.ts", remotePath "\typings\*.*", true)
 if !DirExist(remotePath "\host\src")
     DirCreate(remotePath "\host\src")
 loop files BackupLocation "\*.tsx", "F" {

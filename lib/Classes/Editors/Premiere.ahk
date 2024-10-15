@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/10/13
- * @version 2.1.24
+ * @date 2024/10/15
+ * @version 2.1.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2110,6 +2110,82 @@ class Prem {
         MouseMove((drover.x + drover.width)-15, drover.y+15, 1)
         SendInput("{Click}")
         MouseMove(origMouse.x, origMouse.y, 1)
+        block.Off()
+    }
+
+    /**
+     * A function to quickly drag the audio or video track from the source monitor to the timeline. This is often easier than dealing with insert/override quirkiness.
+     * @param {String} [audOrVid="audio"] determine whether you wish to drag the audio or video track. This parameter must be either `"audio"` or `"video"`
+     * @param {String} [sendOnFailure=A_ThisHotkey] define what hotkey you want this function to send in the event that the main premiere window isn't the active window. This function will correctly handle any single key activation hotkey - if your activation is more (ie `Ctrl & F19`) you will need to instead define this parameter as `"^{F19}" etc
+     * @param {String} [specificFile=false] if set the function will only activate if the desired file is open within the source monitor
+     */
+    static dragSourceMon(audOrVid := "audio", sendOnFailure := A_ThisHotkey, specificFile := false) {
+        if audOrVid != "audio" && audOrVid != "video" {
+            ;// throw
+            errorLog(PropertyError("Incorrect value in Parameter #1", -1),,, true)
+            return
+        }
+        key := keys.allWait("second")
+        if key.HasProp("first") {
+            if key.first = "Shift" {
+                errorLog(ValueError("``Shift`` cannot be the first activation hotkey.", -1),,, true)
+                return
+            }
+        }
+        ;// avoid attempting to fire unless main window is active
+        getTitle := WinGet.PremName()
+        if WinGetTitle("A") != getTitle.winTitle {
+            if !InStr(A_ThisHotkey, "&")
+                try SendInput("{" Format("sc{:X}", GetKeySC(A_ThisHotkey)) "}")
+            /* else
+                try SendInput(sendOnFailure) */
+            return
+        }
+
+        block.On()
+        coord.s()
+        origMouse := obj.MousePos()
+        if specificFile != false && specificFile != "" {
+            getName := this.__remoteFunc("sourceMonName", true)
+            if getName != specificFile {
+                __exit() {
+                    errorLog(TargetError("The requested file: " specificFile "`nisn't open in the Source Monitor", -1),, true)
+                    block.Off()
+                    Exit()
+                }
+                if specificFile = "Bars and Tone - Rec 709" {
+                    this.__remoteFunc("setBarsAndTone", false)
+                    sleep 50
+                    recheck := this.__remoteFunc("sourceMonName", true)
+                    if recheck != specificFile
+                        __exit()
+                }
+                else
+                    __exit()
+            }
+        }
+
+        premUIA   := premUIA_Values()
+        if !sourceMonNN := this.__uiaCtrlPos(premUIA.sourceMon,,, false) {
+            block.Off()
+            return
+        }
+        prefixTitle := "sourceMon_"
+        if !ImageSearch(&sourceX, &sourceY, sourceMonNN.x, sourceMonNN.y+(sourceMonNN.height*0.7), sourceMonNN.x+sourceMonNN.width, sourceMonNN.y+sourceMonNN.height,  "*2 " ptf.Premiere prefixTitle audOrVid ".png") {
+            errorLog(TargetError("Image: ``" prefixTitle audOrVid ".png`` not found. Source monitor may not contain a file.", -1),, true)
+            block.Off()
+            return
+        }
+        MouseClickDrag("Left", sourceX+4, sourceY+3, origMouse.x, origMouse.y, 1)
+        block.Off()
+    }
+
+    static flattenAndColour(colour, disableTrack := false) {
+        keys.allWait()
+        block.On()
+        this.__checkTimelineFocus()
+        doDisable := (disableTrack = true) ? ksa.enableDisable : ""
+        delaySI(100, doDisable, ksa.flattenMulti, colour)
         block.Off()
     }
 

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/07/22
- * @version 2.0.9
+ * @date 2024/10/15
+ * @version 2.0.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -24,6 +24,7 @@ timeline              - The timeline panel
 effectsControl        - The effects control panel
 tools                 - The tools panel
 programMonitor        - The Program monitor panel
+sourceMonitor         - The Source monitor panel
 effectsPanel          - The Effects panel
 */
 
@@ -67,6 +68,7 @@ Class premUIA_Values {
         "effectsControl",   ksa.effectControls,
         "effectsPanel",     ksa.effectsWindow,
         "programMon",       ksa.programMonitor,
+        "sourceMon",        ksa.sourceMonitor,
         "timeline",         ksa.timelineWindow,
         "tools",            ksa.toolsWindow,
         "project",          ksa.projectsWindow

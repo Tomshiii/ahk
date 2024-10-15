@@ -2,8 +2,8 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2023/06/30
- * @version 1.0.3.1
+ * @date 2024/10/15
+ * @version 1.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -101,7 +101,7 @@ class keys {
     /**
      * This function is designed to remove the hassle that can sometimes occur by using `KeyWait`. If a function is launched via something like a streamdeck `A_ThisHotkey` will be blank, if you design a function to only be activated with one button but then another user tries to launch it from two an error will be thrown. This function will automatically determine what's required and stop errors occuring
      * @param {String} which determines which hotkey should be waited for in the event that the user tries to activate with two hotkeys
-     * @returns {Object} this function can return the two hotkeys as an object the same way that `getHotkeys()` would
+     * @returns {Object} this function will attempt to return the two hotkeys as an object the same way that `getHotkeys()` would
      * ```
      * RAlt & p::
      * {
@@ -128,7 +128,7 @@ class keys {
             errorLog(ValueError("Incorrect Value in Parameter #1", -1, which),,, 1)
         }
         if ((A_ThisHotkey != "" && !InStr(A_ThisHotkey, "&")) &&
-            (StrLen(A_ThisHotkey) != 2 || (!this.modifiers.Has(SubStr(A_ThisHotkey, 1, 1)) && !this.modifiers.Has(SubStr(A_ThisHotkey, 2, 1))))
+            (StrLen(A_ThisHotkey) != 2 && (!this.modifiers.Has(SubStr(A_ThisHotkey, 1, 1)) && !this.modifiers.Has(SubStr(A_ThisHotkey, 2, 1))))
         )
             KeyWait(A_ThisHotkey)
         else if A_ThisHotkey != ""
@@ -138,10 +138,28 @@ class keys {
                     case "first":  KeyWait(keys.first)
                     case "second": KeyWait(keys.second)
                     default:
-                        KeyWait(keys.second)
-                        KeyWait(keys.first)
+                        if keys != false {
+                            KeyWait(keys.second)
+                            KeyWait(keys.first)
+                            return {first: keys.first, second: keys.second}
+                        }
+                        ;// when the activation hotkey is multiple modifiers (ie. ^!f::)
+                        for k, v in this.modifiers {
+                            key := ""
+                            switch k {
+                                case "!":    key := "Alt"
+                                case "^":    key := "Ctrl"
+                                case "+":    key := "Shift"
+                                case "#":    key := "LWin"
+                                case "<^>!": key := "AltGr"
+                                default: key := k
+                            }
+                            try keyState := (GetKeyState(key, "P")) ? true : false
+                            if InStr(A_ThisHotkey, k) && keyState = true
+                                KeyWait(key)
+                        }
+                        return false
                 }
-                return {first: keys.first, second: keys.second}
             }
     }
 

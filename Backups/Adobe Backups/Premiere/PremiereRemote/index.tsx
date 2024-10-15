@@ -36,6 +36,30 @@ export const host = {
     app.project.openSequence(ID);
   },
 
+  sourceMonName: function() {
+    const varr = app.sourceMonitor.getProjectItem();
+    return varr.name;
+  },
+
+  setBarsAndTone: function() {
+    for (let i = 0; i < app.project.rootItem.children.numItems; i++) {
+      if(app.project.rootItem.children[i].name == "_Assets" && (app.project.rootItem.children[i].type == 2)) {
+        const folder = app.project.rootItem.children[i]
+        for (let i = 0; i < folder.children.numItems; i++) {
+          if(folder.children[i].name == "Other" && (folder.children[i].type == 2)){
+            const folder2 = folder.children[i]
+            for (let i = 0; i < folder2.children.numItems; i++) {
+              if(folder2.children[i].name == "Bars and Tone - Rec 709"){
+                app.sourceMonitor.openProjectItem(folder2.children[i]);
+                return;
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
   /**
    * @swagger
    * /deselectAll:
