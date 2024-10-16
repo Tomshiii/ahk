@@ -486,6 +486,7 @@ settingsGUI()
         switch program {
             case "Premiere":
                 short := "prem"
+                static premIsBeta := unset
                 shortcutName := "Adobe Premiere Pro.exe"
                 shortcutNameBeta := "Adobe Premiere Pro (Beta).exe"
                 adobeFullName := "Adobe Premiere Pro"
@@ -500,6 +501,7 @@ settingsGUI()
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\" shortcutName
             case "AE":
                 short := "ae"
+                static aeIsBeta := unset
                 shortcutName := "AfterFX.exe"
                 shortcutNameBeta := "AfterFX (Beta).exe"
                 adobeFullName := "Adobe After Effects"
@@ -514,6 +516,7 @@ settingsGUI()
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\Support Files\" shortcutName
             case "Photoshop":
                 short := "ps"
+                static psIsBeta := unset
                 shortcutName := "ahk_exe Photoshop.exe"
                 shortcutNameBeta := "ahk_exe Photoshop.exe (Beta).exe"
                 adobeFullName := "Photoshop"
@@ -539,7 +542,7 @@ settingsGUI()
         __generateDropYear(genProg, &year, ctrlX)
         adobeGui.AddText("xs y+10", "Version: ")
         __generateDropVer(genProg, &ver, ctrlX)
-        adobeGui.AddCheckbox("x+10 y+-20 vIsBeta Checked" UserSettings.__convertToBool(short "IsBeta", "Adjust"), "Is Beta Version?").OnEvent("Click", (guiCtrl, *) => (UserSettings.%short%IsBeta := UserSettings.__convertToStr(guiCtrl.value), __generateShortcut()))
+        adobeGui.AddCheckbox("x+10 y+-20 vIsBeta Checked" (%short%IsBeta ?? UserSettings.__convertToBool(short "IsBeta", "Adjust")), "Is Beta Version?").OnEvent("Click", (guiCtrl, *) => (%short%IsBeta := guiCtrl.value, UserSettings.%short%IsBeta := UserSettings.__convertToStr(guiCtrl.value), __generateShortcut()))
         if program = "Premiere" {
             adobeGui.AddText("xs y+10 Section", "Focus Timeline Icon: ")
             timelineCheckbox := adobeGui.AddCheckbox("xs+135 ys+1 Checked" UserSettings.prem_Focus_Icon)

@@ -23,7 +23,8 @@ class adobeVers {
     }
     PS := {
         24: psVers.v24,
-        25: psVers.v25
+        25: psVers.v25,
+        26: psVers.v26
     }
 
     static maps := [this().Premiere, this().AE, this().PS]

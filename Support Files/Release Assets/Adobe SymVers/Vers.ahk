@@ -18,7 +18,7 @@ class premVers {
         ; "v24.4",    "v24.3",      ;// some UI changes occur here so this version has its own folder
         "v24.4.1",  "v24.4",
         "v24.5",    "v24.4",
-        "v24.6",    "v24.4",        "v24.6.1", "v24.4",
+        "v24.6",    "v24.4",        "v24.6.1", "v24.4", "v24.6.4", "v24.4"
     )
     static v25 := Map(
         ; "v25.0",     "v25.0" ;// UI refresh should happen here
@@ -46,7 +46,7 @@ class aeVers {
         "v24.3",    "v22.6",
         "v24.4",    "v22.6",        "v24.4.1", "v22.6",
         "v24.5",    "v22.6",
-        "v24.6",    "v24.5",        "v24.6.1", "v24.4", "v24.6.2", "v24.4",
+        "v24.6",    "v24.5",        "v24.6.1", "v24.4", "v24.6.2", "v24.4", "v24.6.3", "24.4"
     )
     static v25 := Map(
         ; "v25.0",     "v25.0" ;// UI refresh should happen here
@@ -73,5 +73,8 @@ class psVers {
         "v25.10",   "v24.3",
         "v25.11",   "v24.3",
         "v25.12",   "v24.3",
+    )
+    static v26 := Map(
+        "v26.0",    "v24.3"
     )
 }
