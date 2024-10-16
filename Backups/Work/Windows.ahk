@@ -75,5 +75,7 @@ SC03A & XButton2::
 ;moveYhotkey;
 SC03A & XButton1::move.XorY()
 
+SC03A & MButton::prem.dismissWarning()
+
 ;SubUnderHotkey;
 +NumpadSub::_

@@ -105,9 +105,9 @@ Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "
 ;nextpremkeyframeHotkey;
 Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second") ;goes to the next keyframe towards the right
 
-F19::prem.dragSourceMon("video", "{F19}")
-F20::prem.dragSourceMon(, "{F20}", "Bars and Tone - Rec 709")
-F14 & F20::prem.dragSourceMon(, "")
+F20::prem.dragSourceMon("video", "{F20}")
+F19::prem.dragSourceMon(, "{F19}", "Bars and Tone - Rec 709")
+F14 & F19::prem.dragSourceMon(, "")
 
 ;previouseditHotkey;
 F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint) ;goes to the next edit point towards the left
