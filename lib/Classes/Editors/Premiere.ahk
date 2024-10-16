@@ -6,7 +6,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2024/10/16
- * @version 2.1.26
+ * @version 2.1.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -266,7 +266,6 @@ class Prem {
                 errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
                 return false
             }
-            errorLog(Error(parse["result"]))
             return parse["result"]
         }
     }
@@ -2100,12 +2099,12 @@ class Prem {
      * Premiere loves to spit stupid warning boxes at you, especially if it has even the smallest issue trying to playback audio. This function will detect that window and automatically click the x button to close the window. This is especially necessary when using other functions of mine like those in `Premiere_RightClick.ahk` as the error window messes with the active window and may confuse those scripts
      */
     static dismissWarning() {
-        if !WinExist("DroverLord - Overlay Window") ||
-            GetKeyState("LButton", "P") ;// can't drag panels unless we check
+        if (!WinExist("DroverLord - Overlay Window") ||
+            GetKeyState("LButton", "P")) ;// can't drag panels unless we check
             return
 
         block.On()
-        coord.s()
+        coord.client()
         origMouse := obj.MousePos()
         drover    := obj.WinPos("DroverLord - Overlay Window")
         MouseMove((drover.x + drover.width)-15, drover.y+15, 1)

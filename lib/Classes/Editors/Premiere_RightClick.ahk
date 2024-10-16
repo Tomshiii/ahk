@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.5
  * @author tomshi, taranVH
- * @date 2024/10/13
- * @version 2.3.6
+ * @date 2024/10/16
+ * @version 2.3.7
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -326,8 +326,6 @@ class rbuttonPrem {
 			case VerCompare(version, prem.spectrumUI_Version) < 0:  this.__setTimelineCol("oldUI", theme)
 		}
 
-		WinEvent.Exist((*) => prem.dismissWarning(), "DroverLord - Overlay Window")
-
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
 		try {
@@ -336,8 +334,9 @@ class rbuttonPrem {
 				return
 			}
 		}
-		WinEvent.NotActive((*) => Exit(), gettitle.winTitle)
 
+		try WinEvent.Exist((*) => prem.dismissWarning(), "DroverLord - Overlay Window")
+		try WinEvent.NotActive((*) => Exit(), gettitle.winTitle)
 		InstallMouseHook(1)
 		prem.RClickIsActive := true
 
@@ -466,6 +465,7 @@ class rbuttonPrem {
 	}
 
 	__Delete() {
+		try WinEvent.Stop()
 		this.__exit()
 	}
 }

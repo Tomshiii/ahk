@@ -12,6 +12,7 @@
 - Added `dismissWarning()`
 - Added `dragSourceMon()`
 - Added `flattenAndColour()`
+- Fixed `__remoteFunc()` spamming logs on success
 
 ## PremiereRemote
 - Added `sourceMonName()`

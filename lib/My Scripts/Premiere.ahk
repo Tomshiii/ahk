@@ -93,7 +93,7 @@ $+1::
 $+2::
 $+3::prem.zoomPreviewWindow(A_ThisHotkey)
 
-^!f::prem.flattenAndColour(ksa.labelIris, true)
+^!f::prem.flattenAndColour(ksa.labelIris, false)
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
