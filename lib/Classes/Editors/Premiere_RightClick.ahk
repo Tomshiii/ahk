@@ -336,7 +336,7 @@ class rbuttonPrem {
 		}
 
 		try WinEvent.Exist((*) => prem.dismissWarning(), "DroverLord - Overlay Window")
-		try WinEvent.NotActive((*) => Exit(), gettitle.winTitle)
+		try WinEvent.NotActive((*) => (checkstuck(), Exit()), gettitle.winTitle)
 		InstallMouseHook(1)
 		prem.RClickIsActive := true
 
