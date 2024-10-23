@@ -261,5 +261,6 @@
 
     ],
     "markdown.preview.scrollPreviewWithEditor": false,
-    "scm.showHistoryGraph": false
+    "scm.showHistoryGraph": false,
+    "git.enableCommitSigning": true
 }

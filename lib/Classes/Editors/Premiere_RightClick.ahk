@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.5
  * @author tomshi, taranVH
- * @date 2024/10/16
- * @version 2.3.7
+ * @date 2024/10/23
+ * @version 2.3.8
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -123,6 +123,8 @@ class rbuttonPrem {
 	colour  := ""
 	colour2 := ""
 
+	sendHotkey := "{" A_ThisHotkey "}"
+
 	premUIA := false
 	origSeq := ""
 	remote  := true
@@ -148,7 +150,7 @@ class rbuttonPrem {
 	__checkColour(colour) {
 		loop { ;// this loop is checking to see if `colour` is one of the predetermined colours
 			if A_Index > this.timelineCol.Length {
-				SendInput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
+				SendInput(this.sendHotkey) ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
 				return false
 			}
 			if colour = this.timelineCol[A_Index] || colour = prem.playhead
@@ -169,7 +171,7 @@ class rbuttonPrem {
 			colour != this.timelineCol[11] && colour != this.timelineCol[12] &&
 			colour != this.timelineCol[13] && colour != this.timelineCol[14]
 		) {
-			SendInput("{Rbutton}")
+			SendInput(this.sendHotkey)
 			return false
 		}
 		return true
@@ -313,12 +315,16 @@ class rbuttonPrem {
 	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like `RButton` as that removes the ability for the keys native function to operate
 	 * @param {String} [theme="darkest"] the desired theme the user uses and wishes to use for the required colour values
 	 * @param {String} [version=unset] the currently selected version of premiere within `settingsGUI()`. This parameter can usually be filled in using `prem.currentSetVer`
+	 * @param {String} [sendOnFailure=unset] what you wish for the script to send in the event that it needs to fallback. What you set for this parameter will be sent to `SendInput()`. If left unset, sends `"{" A_ThisHotkey "}"`
 	 */
-	movePlayhead(allChecks := true, theme := "darkest", version := unset) {
+	movePlayhead(allChecks := true, theme := "darkest", version := unset, sendOnFailure := unset) {
 		if !IsSet(version) {
 			;// throw
 			errorLog(UnsetError("User has not set Paramater #2"),,, true)
 		}
+
+		if IsSet(sendOnFailure)
+			this.sendHotkey := sendOnFailure
 
 		;// setting which UI values to use
 		switch {
@@ -330,7 +336,7 @@ class rbuttonPrem {
 		getTitle := WinGet.PremName()
 		try {
 			if WinGetTitle("A") != gettitle.winTitle {
-				SendInput("{Rbutton}")
+				SendInput(this.sendHotkey)
 				return
 			}
 		}
@@ -354,14 +360,14 @@ class rbuttonPrem {
 
 		;// checks to see whether the timeline position has been located
 		if !prem.__checkTimeline() {
-			SendInput("{Rbutton}")
+			SendInput(this.sendHotkey)
 			this.__exit()
 		}
 
 		;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
 		;// only continues if the cursor is within the timeline
 		if !prem.__checkCoords(origMouse) {
-			SendInput("{Rbutton}")
+			SendInput(this.sendHotkey)
 			this.__exit()
 		}
 
