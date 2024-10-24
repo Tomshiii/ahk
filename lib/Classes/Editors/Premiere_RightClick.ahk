@@ -309,11 +309,11 @@ class rbuttonPrem {
 	}
 
 	/**
-	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when `RButton` is pressed.
-	 * This function has built in checks for `LButton` & `XButton2` - check the wiki for more details.
-	 * This function should work as intended on both the old UI and the new Spectrum UI assuming you use the default darkest themeing for both UI versions. Other themes will require the user to add additional colour values to `timelineColours {`
-	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like `RButton` as that removes the ability for the keys native function to operate
-	 * @param {String} [theme="darkest"] the desired theme the user uses and wishes to use for the required colour values
+	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton1</kbd>).
+	 * This function has built in checks for <kbd>LButton</kbd> & <kbd>XButton2</kbd> during activation - check the wiki for more details.
+	 * This function should work as intended on both the old UI and the Spectrum UI assuming you use the default darkest themeing for both UI versions. Other themes will require the user to add additional colour values to `timelineColours {`
+	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like <kbd>RButton</kbd> as that removes the ability for the keys native function to operate
+	 * @param {String} [theme="darkest"] the desired theme the user uses and wishes to use for the required colour values. Currently only "darkest" has mapped values
 	 * @param {String} [version=unset] the currently selected version of premiere within `settingsGUI()`. This parameter can usually be filled in using `prem.currentSetVer`
 	 * @param {String} [sendOnFailure=unset] what you wish for the script to send in the event that it needs to fallback. What you set for this parameter will be sent to `SendInput()`. If left unset, sends `"{" A_ThisHotkey "}"`
 	 */

@@ -60,6 +60,22 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;=============================================================================================================================================
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 
+;spaceDelayHotkey;
+Space::
+{
+	switch getTitle := WinGetTitle("A") {
+		case "Modify Clip", "Audio Gain":
+			SendInput("{Enter}")
+			return
+		case "Save Project": return
+	}
+	prem.delayPlayback()
+}
+
+;premrippleTrimHotkey;
+q::
+w::prem.rippleTrim()
+
 ;premselecttoolHotkey;
 ; SC03A & v::prem.selectionTool() ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it
 
