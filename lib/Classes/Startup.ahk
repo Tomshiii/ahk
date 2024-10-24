@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/10/13
- * @version 1.7.39
+ * @date 2024/10/24
+ * @version 1.7.40
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -640,12 +640,16 @@ class Startup {
      * This function will set the current prem/ae version based off the current .exe version (only if UserSettings.adobeExeOverride is set to `true`).
      * This function will attempt to also set the correct `Year` variable but may not work as expected under certain circumstances (including if the user has multiple year versions of Premiere installed).
      * It is best to double check that it is set correctly within `settingsGUI()`
+     * @param {Boolean} [showVers=true] whether or not to show the user their currently set versions in the top right of the screen
      */
-    adobeVerOverride() {
+    adobeVerOverride(showVers := true) {
         if !this.UserSettings.adobeExeOverride
             return
-        if this.isReload != false
+        if this.isReload != false {
+            if showVers = true
+                try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro: " this.UserSettings.premVer "`nAfter Effects: " this.UserSettings.aeVer,,,, "POS=TR DUR=5")
             return
+        }
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
 
         premNotFound := false, aeNotFound   := false
@@ -697,6 +701,8 @@ class Startup {
                 this.UserSettings.ae_year   := SubStr(A_YYYY, 1, 2) setAEYear
             }
         }
+        if showVers = true
+            try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro: " this.UserSettings.premVer "`nAfter Effects: " this.UserSettings.aeVer,,,, "POS=TR DUR=5")
         if operatePrem = true || operateAE = true {
             this.UserSettings.__delAll()
             this.UserSettings := ""

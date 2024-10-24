@@ -3,6 +3,7 @@
 #Include <Classes\Move>
 #Include <Classes\winget>
 #Include <Classes\switchTo>
+#Include <Classes\clipStorage>
 #Include <Functions\jumpChar>
 #Include <Functions\refreshWin>
 #Include <Functions\isDoubleClick>
@@ -79,3 +80,18 @@ SC03A & MButton::prem.dismissWarning()
 
 ;SubUnderHotkey;
 +NumpadSub::_
+
+^#`::clipStorage.clearAll()
+LWin & Escape::clipStorage.open()
+
+#1::
+#2::
+#3::
+#4::
+#5::clipStorage.send()
+
+^#1::
+^#2::
+^#3::
+^#4::
+^#5::clipStorage.store()

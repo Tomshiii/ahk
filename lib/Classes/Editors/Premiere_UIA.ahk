@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/10/15
- * @version 2.0.10
+ * @date 2024/10/24
+ * @version 2.0.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -155,6 +155,8 @@ Class premUIA_Values {
         if !DirExist(A_Temp "\tomshi")
             DirCreate(A_Temp "\tomshi")
         tempPath := A_Temp "\tomshi\json_values.ini"
+        if FileExist(tempPath)
+            FileDelete(tempPath)
         FileAppend(JSON.stringify(currentVers), tempPath)
         try FileMove(tempPath, this.valueINI, true)
     }

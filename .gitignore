@@ -17,6 +17,9 @@ lib/Other/UIA/UIATreeInspector.ahk
 # adobe shortcut files
 Support Files/shortcuts/*.lnk
 
+# clipboard storage file
+Support Files/Clipboard Storage/clipStorage.ini
+
 # adobe symlinks
 Support Files/ImageSearch/AE/v23.*
 Support Files/ImageSearch/AE/v24.[0-9]*

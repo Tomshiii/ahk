@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/10/16
- * @version 2.1.27
+ * @date 2024/10/24
+ * @version 2.1.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2142,6 +2142,11 @@ class Prem {
             return
         }
 
+        if !this.__checkPremRemoteDir("sourceMonName") || !this.__checkPremRemoteFunc("sourceMonName") {
+            ;// throw
+            errorLog(MethodError("Some PremiereRemote functions are missing.", -1),,, true)
+            return
+        }
         block.On()
         coord.client()
         origMouse := obj.MousePos()

@@ -2,14 +2,19 @@
 > [!Important]
 > If the user has previously used `PremiereRemote` with my scripts this version will require them to copy `..\Backups\Adobe Backups\Premiere\PremiereRemote\typings\PremierePro.14.0.d.ts` -> `A_AppData "\Adobe\CEP\extensions\PremiereRemote\typings\` or they may run into issues with missing functions. Installing `PremiereRemote` from this release onwards will not require anything extra from the user however.
 
+> [!Caution]
+> If the user uses `UIA` with `Premiere` functions, a new `KSA` value for `Source Monitor` is required to be set.
+
 ## Functions
 - Fixed `startup.updatePackages()` throwing if a package manager isn't installed
 - Fixed `clip.search()` now working when highlighting multiple words
 - Fixed `settingsGUI()` not properly visually tracking if the user changes the `Is Beta Version?` checkbox
-- Fixed `rbuttonPrem.movePlayhead()` always sending `RButton` on fallback even if that wasn't the activation key
+- Fixed `rbuttonPrem.movePlayhead()` always sending <kbd>RButton</kbd> on fallback even if it wasn't the activation key
     - Now accepts parameter `sendOnFailure` to determine what keys to send on fallback
+- Added `clipStorage {` - a class of functions designed to store/send strings
 - `keys.allWait()` will now properly handle when the activation hotkey is multiple modifiers (ie <kbd>^!f::</kbd>)
 - `getHotkeys()` will now return `false` in the event that two individual hotkeys cannot be determined
+- `startup.adobeVerOverride()` will now accepts parameter `showVers` which if set to `true` will show the user the currently selected adobe versions on each script load
 
 `prem {`
 - Added `dismissWarning()`
