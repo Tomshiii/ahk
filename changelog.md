@@ -14,7 +14,8 @@
 - Added `clipStorage {` - a class of functions designed to store/send strings
 - `keys.allWait()` will now properly handle when the activation hotkey is multiple modifiers (ie <kbd>^!f::</kbd>)
 - `getHotkeys()` will now return `false` in the event that two individual hotkeys cannot be determined
-- `startup.adobeVerOverride()` will now accepts parameter `showVers` which if set to `true` will show the user the currently selected adobe versions on each script load
+- `startup.adobeVerOverride()` now accepts parameter `showVers` which if set to `true` will show the user the currently selected adobe versions on each script load
+- `switchTo.Premiere()` & `switchTo.Photoshop()` now accept parameter `switchBetween` to determine whether you wish for the function to cycle between the main/beta versions of the program if they are both open
 
 `prem {`
 - Added `dismissWarning()`

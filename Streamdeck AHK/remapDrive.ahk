@@ -8,7 +8,7 @@
 ;// shows accurate information
 
 ;// manually remapping my nas is annoying so here's a script to do it for me
-localIp := "\\192.168.20.x\y"
+localIp := "\\192.168.4.x\y"
 
 /**
  * A GUI designed to quickly and easily reassign mapped network locations.

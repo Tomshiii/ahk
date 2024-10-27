@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/10/24
- * @version 1.7.40
+ * @date 2024/10/26
+ * @version 1.7.41
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -647,7 +647,7 @@ class Startup {
             return
         if this.isReload != false {
             if showVers = true
-                try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro: " this.UserSettings.premVer "`nAfter Effects: " this.UserSettings.aeVer,,,, "POS=TR DUR=5")
+                try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro: " this.UserSettings.premVer "`nAfter Effects: " this.UserSettings.aeVer "`nPhotoshop: " this.UserSettings.psVer,,,, "POS=TR DUR=5")
             return
         }
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
@@ -702,7 +702,7 @@ class Startup {
             }
         }
         if showVers = true
-            try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro: " this.UserSettings.premVer "`nAfter Effects: " this.UserSettings.aeVer,,,, "POS=TR DUR=5")
+            try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro: " this.UserSettings.premVer "`nAfter Effects: " this.UserSettings.aeVer "`nPhotoshop: " this.UserSettings.psVer,,,, "POS=TR DUR=5")
         if operatePrem = true || operateAE = true {
             this.UserSettings.__delAll()
             this.UserSettings := ""

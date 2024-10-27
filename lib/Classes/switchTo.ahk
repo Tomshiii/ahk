@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/09/25
- * @version 1.3.11
+ * @date 2024/10/24
+ * @version 1.3.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -203,9 +203,10 @@ class switchTo {
      * This switchTo function will quickly switch to & cycle between windows of the specified program.
      * This function will run Premiere using the Premiere version defined within `settingsGUI()`
      * This function requires a shortcut file to be properly generated within `settingsGUI()` (This can be achieved by adjusting the year or by checking then unchecking the beta checkbox)
-     * @param {Boolean} openCC determine whether this function will check for the existence of `Creative Cloud` and open it before proceeding
+     * @param {Boolean} [openCC=true] determine whether this function will check for the existence of `Creative Cloud` and open it before proceeding
+     * @param {Boolean} [switchBetween=true] determine whether the function will switch between the beta/main versions of premiere if they are both open
      */
-    static Premiere(openCC := true)
+    static Premiere(openCC := true, switchBeteen := false)
     {
         if openCC = true {
             if !this().__checkCC() {
@@ -213,7 +214,7 @@ class switchTo {
                 return
             }
         }
-        this().__adobeSwitch(prem.class, prem.path, "Adobe Premiere Pro", "prem")
+        this().__adobeSwitch(prem.class, prem.path, "Adobe Premiere Pro", "prem", switchBeteen)
     }
 
     /**
@@ -451,13 +452,24 @@ class switchTo {
     }
 
     /**
-     * A function to cut repeat code. Handles swapping too/running desired adobe program as well as generating shortcut if one does not exist
+     * A function to cut repeat code. Handles swapping to/running desired adobe program as well as generating a shortcut if one does not exist
      * @param {String} adobeClass the class value usually determined using window spy. Can use the values at the top of the respective program's class within this repo (ie. prem.class/ps.class)
      * @param {String} path the path to the shortcut that this function will attempt to run. Can use the values at the top of the respective program's class within this repo (ie. prem.path/ps.path)
      * @param {String} which the string that will be passed to `generateAdobeShortcut(, x, )`.
      * @param {String} year short name used within `settings.ini` to determine which program you are targeting (ie. prem/ae/ps)
     */
-    __adobeSwitch(adobeClass, path, which, year) {
+    __adobeSwitch(adobeClass, path, which, year, switchBetween := false) {
+        if switchBetween = true {
+            if WinExist("ahk_exe " which ".exe") && WinExist("ahk_exe " which " (Beta).exe") {
+                GroupAdd("adobeBoth", "ahk_exe " which ".exe")
+                GroupAdd("adobeBoth", "ahk_exe " which " (Beta).exe")
+                if WinActive("ahk_group adobeBoth")
+                    GroupActivate("adobeBoth", "r")
+                else if WinExist("ahk_group adobeBoth")
+                    WinActivate("ahk_group adobeBoth")
+                return
+            }
+        }
         if WinExist(adobeClass) {
             WinActivate(adobeClass)
             return
@@ -482,8 +494,9 @@ class switchTo {
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
+     * @param {Boolean} [switchBetween=true] determine whether the function will switch between the beta/main versions of ps if they are both open
      */
-    static Photoshop() => this().__adobeSwitch(PS.class, PS.path, "Photoshop", "ps")
+    static Photoshop(switchBetween := false) => this().__adobeSwitch(PS.class, PS.path, "Photoshop", "ps")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one.
