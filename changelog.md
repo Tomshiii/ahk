@@ -16,6 +16,9 @@
 - `getHotkeys()` will now return `false` in the event that two individual hotkeys cannot be determined
 - `startup.adobeVerOverride()` now accepts parameter `showVers` which if set to `true` will show the user the currently selected adobe versions on each script load
 - `switchTo.Premiere()` & `switchTo.Photoshop()` now accept parameter `switchBetween` to determine whether you wish for the function to cycle between the main/beta versions of the program if they are both open
+- `ffmpeg.__getChannels()` => `ffmpeg.__getAudioStream()`
+    - Will now return the entire Map instead of just the `channels` property
+    - Now accepts parameter `stream` to manually choose which stream of the file to check
 
 `prem {`
 - Added `dismissWarning()`

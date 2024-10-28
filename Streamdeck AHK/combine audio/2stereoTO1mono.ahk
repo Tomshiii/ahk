@@ -12,8 +12,6 @@
 ;//! ONE OF OUR LAV FILES ENDS IN '_D' WHICH DENOTES THE DIFFERENCE
 ;//! THIS CODE WILL NOT WORK UNLESS THAT CONDITION IS MET
 
-;//* This script will only check the first file in the directory to determine if all files are mono/stereo
-;//* the final ffmpeg command is different depending on which it is so make sure not to mix different files into this process
 
 defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
 if !selectedFile := FileSelect("D 3", defaultDir, "Select directory that contains the LAV files you wish to combine.")
@@ -47,17 +45,17 @@ if filepaths.Length < 1 {
 }
 
 command := ""
-for v in filepaths {
-    if !channels := ffmpegInstance.__getChannels(filepaths[1]) {
+for i, v in filepaths {
+    if !channels := ffmpegInstance.__getAudioStream(filepaths[i]) {
         ;// throw
         errorLog(UnsetError("Unable to determine channels for file.", -1), "File may be corrupted or not contain any audio streams",, 1)
     }
 
-    switch channels {
+    switch channels["channels"] {
         ;// if mono
-        case "1": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]join=inputs=2:channel_layout=stereo[a]" -map "[a]" "{3}"'
+        case "1": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]join=inputs=2:channel_layout=stereo[a]" -map "[a]" -c:a {4} "{3}"'
         ;// if stereo
-        case "2": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0+c1|c1<c2+c3[a]" -map "[a]" "{3}"'
+        case "2": baseCommand := 'ffmpeg -i "{1}" -i "{2}" -filter_complex "[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0+c1|c1<c2+c3[a]" -map "[a]" -c:a {4} "{3}"'
         default:
             ;// throw
             errorLog(UnsetError("An undefined amount of channels was found in the audio file.", -1),,, 1)
@@ -66,7 +64,7 @@ for v in filepaths {
     }
     fileObj   := obj.SplitPath(v)
     append    := (A_Index != filepaths.Length) ? "&&" A_space : ""
-    currentOp := Format(baseCommand, v, fileObj.dir "\" fileObj.NameNoExt "_D." fileObj.ext, fileObj.dir "\" fileObj.NameNoExt "_combined." fileObj.ext)
+    currentOp := Format(baseCommand, v, fileObj.dir "\" fileObj.NameNoExt "_D." fileObj.ext, fileObj.dir "\" fileObj.NameNoExt "_combined." fileObj.ext, channels["codec_name"])
     if (!InStr(command, "|||") && StrLen(command . currentOp A_Space append) >= 8191) ||
         (StrLen(Format('{1}{2} {3}', SubStr(command, InStr(command, "|||",,, -1)), currentOp, append)) >= 8191) {
             command := Format('{1} ||| {2} {3}', command, currentOp, append)

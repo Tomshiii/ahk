@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/06/20
- * @version 1.0.24
+ * @date 2024/10/28
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -169,18 +169,19 @@ class ffmpeg {
     }
 
     /**
-     * This function will return the amount of `channels` present within the passed in file
+     * This function will return a map containing all file properties for the given stream of a file
      * @param {String} filepath the path of the file you wish to determine the channels for
-     * @returns {Integer} On success returns `Integer` of how many channels are present within the passed in file. On failure returns `false`
+     * @param {Integer} [stream=1] which stream you wish to return the properties for
+     * @returns {Map} On success returns a map containing all file properties for the first `stream`
      */
-    __getChannels(filepath) {
+    __getAudioStream(filepath, stream := 1) {
         command := Format('ffprobe -v quiet -show_streams -show_format -print_format json "{1}"', filepath)
         try probecmd := cmd.result(command)
         catch
             return false
         try {
             mp := JSON.parse(probecmd)
-            return mp["streams"][1]["channels"]
+            return mp["streams"][stream]
         } catch
             return false
     }
