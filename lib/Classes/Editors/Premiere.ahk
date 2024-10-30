@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/10/24
- * @version 2.1.28
+ * @date 2024/10/30
+ * @version 2.1.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1357,26 +1357,31 @@ class Prem {
         return true
     }
 
-    /** This function once bound to `~Numpad1-9::` allows the user to quickly adjust the gain of a selected track by simply pressing `NumpadSub/NumpadAdd` then their desired value. It will wait for 2 keys to be pressed so that a double digit number can be inputed. If only a single digit is required, press any other key (ie. enter). If no second input is pressed, the function will continue after `2s` */
-    static numpadGain() {
-        if this.timelineVals = false {
-            this.__checkTimeline()
-            return
-        }
-		title := WinGet.Title(, false)
-		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 ||
-            (A_PriorKey != "NumpadSub" && A_PriorKey != "NumpadAdd") {
-			; SendInput("{" A_ThisHotkey "}") ;// because we preface the hotkey with `~` we no longer need this
-			return
-		}
-        priorKey := (A_PriorKey = "NumpadSub") ? "-" : ""
-		firstKey := SubStr(A_ThisHotkey, -1, 1), secondKey := ""
-        ih := InputHook("L2 T2", "{NumpadEnter}", "{" A_ThisHotkey "}")
+    /**
+     * This function once bound to <kbd>NumpadMult::</kbd>/<kbd>NumpadAdd::</kbd> allows the user to quickly adjust the gain of a selected track by simply pressing <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd> then their desired value followed by <kbd>NumpadEnter</kbd>. Alternatively, if the user presses <kbd>NumpadMult</kbd> after pressing the activation hotkey, the audio `level` will be changed to the desired value instead (however the user needs `PremiereRemote` installed for this feature to work)
+     * @param {String} [which=A_ThisHotkey] whether the user wishes to add or subtract the desired value. If the user is using either <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd> or <kbd>-</kbd>/<kbd>+</kbd> as the activation hotkey this value can be left blank, otherwise the user should set it as either <kbd>-</kbd>/<kbd>+</kbd>
+     */
+    static numpadGain(which := A_ThisHotkey) {
+        if which = "NumpadSub" || which = "NumpadAdd"
+            which := (which = "NumpadSub") ? "-" : ""
+
+        ih := InputHook("L3 T4", "{NumpadEnter}")
         ih.Start()
         ih.Wait()
-        if IsDigit(ih.Input)
-            secondKey := ih.Input
-		prem.gain(priorKey firstKey secondKey)
+
+        sendGain := ih.Input
+        sendAsLevel := false
+        if star := InStr(sendGain, "*") || mult := InStr(sendGain, "NumpadMult") {
+            sendGain := (star != false) ? StrReplace(sendGain, "*", "") : StrReplace(sendGain, "NumpadMult", "")
+            sendAsLevel := true
+        }
+        if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels")
+            prem.gain(which sendGain)
+        else {
+            if sendGain > 15
+                sendGain := 15
+            this.__remoteFunc("changeAudioLevels",, "level=" String(which sendGain))
+        }
     }
 
     /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */

@@ -77,17 +77,8 @@ F12::prem.thumbScroll()
 F5::prem.reset()
 
 ;premnumpadGainHotkey;
-~Numpad1::
-~Numpad2::
-~Numpad3::
-~Numpad4::
-~Numpad5::
-~Numpad6::
-~Numpad7::
-~Numpad8::
-~Numpad9::prem.numpadGain()
-
-NumpadMult::Tab
+NumpadSub::
+NumpadAdd::prem.numpadGain()
 
 $+1::
 $+2::
