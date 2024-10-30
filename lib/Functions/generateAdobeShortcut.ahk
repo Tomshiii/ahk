@@ -1,11 +1,15 @@
+; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\errorLog>
+#Include <Other\Notify>
+; }
 
 /**
  * This function will attempt to generate a shortcut of either Premiere or After Effects to the users `..\Support Files\shortcuts\` folder
  * @param {Object} userSettingsObj the object containing the user's instance of `UserPrefs()`. Often seen as `UserSettings := UserPrefs()`
  * @param {String} adobeName the full name of the desired program. Either `Adobe Premiere Pro`, `Adobe After Effects` or `Photoshop`
  * @param {Integer} adobeYear the year value you wish to determine the logic for.
+ * @returns {Boolean} returns `false` if the desired file directory does not exist else `true`
  */
 generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
     if Type(userSettingsObj) != "UserPref" {
@@ -38,5 +42,13 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
     }
     ;// where the shortcut will be generated+name
     shortcutLocation := ptf.SupportFiles "\shortcuts\" ahkEXE ".lnk"
+    if !FileExist(exeLocation)
+        return false
     try FileCreateShortcut(exeLocation, shortcutLocation)
+    catch {
+        Notify.Show("Unknown Error Occured", "An error occurred trying to generate the file shortcut", 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+        errorLog(Error("An error occurred trying to generate the file shortcut", -1))
+        return false
+    }
+    return true
 }

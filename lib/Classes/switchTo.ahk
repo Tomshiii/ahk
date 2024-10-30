@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/10/24
- * @version 1.3.12
+ * @date 2024/10/31
+ * @version 1.3.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -234,13 +234,18 @@ class switchTo {
             } catch {
                 try {
                     UserSettings := UserPref()
-                    generateAdobeShortcut(UserSettings, "Adobe After Effects", UserSettings.ae_year)
+                    if !generateAdobeShortcut(UserSettings, "Adobe After Effects", UserSettings.ae_year) {
+                        UserSettings.__delAll()
+                        UserSettings := ""
+                        throw
+                    }
                     UserSettings.__delAll()
                     UserSettings := ""
                     sleep 50
                     Run(AE.path)
                 } catch {
-                    errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
+                    Notify.Show("File Doesn't Exist", "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\```nEnsure the proper version has been selected within settingsGUI()", 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                    errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``")
                     return
                 }
             }
@@ -479,13 +484,18 @@ class switchTo {
         } catch {
             try {
                 UserSettings := UserPref()
-                generateAdobeShortcut(UserSettings, which, UserSettings.%year%_year)
+                if !generateAdobeShortcut(UserSettings, which, UserSettings.%year%_year) {
+                    UserSettings.__delAll()
+                    UserSettings := ""
+                    throw
+                }
                 UserSettings.__delAll()
                 UserSettings := ""
                 sleep 50
                 Run(path)
             } catch {
-                errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``", 3)
+                Notify.Show("File Doesn't Exist", "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\```nEnsure the proper version has been selected within settingsGUI()", 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\```nEnsure the proper version has been selected.")
                 return
             }
         }
