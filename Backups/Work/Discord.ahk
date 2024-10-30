@@ -2,7 +2,7 @@
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
  * @date 2024/03/03
- * @version 1.4.9.3
+ * @version 1.4.9.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -39,12 +39,12 @@ class discord {
 
     ;// position you keep it
     static x := -1080
-    static y := 34
+    static y := 10
     static width  := 1080
     static height := 1600
 
     static slackX := -1068
-    static slackY := 16
+    static slackY := 10
     static slackWidth  := 1058
     static slackHeight := 840
 

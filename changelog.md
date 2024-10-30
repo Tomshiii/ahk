@@ -32,7 +32,12 @@
 - Added `setBarsAndTone()`
 
 ## Other Changes
+- Added `resetTimecode.ahk`
 - `Premiere_UIA.ahk` will now additionally check for the `Source Monitor`
 - `pcTimerShutdown.ahk` can now optionally schedule a `Sleep` instead
 > [!Note]
 > This feature is only available if the user downloads `PSTools` from Microsoft and places the contents of that package in their `A_WinDir \System32\` folder. This is a limitation of windows as there is no clean way to schedule a sleep without this tool.
+
+`KSA`
+- Added `sourceMonitor`
+- Added `modifyStartTime`
