@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/10/24
- * @version 2.0.11
+ * @date 2024/10/30
+ * @version 2.0.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -126,6 +126,11 @@ Class premUIA_Values {
                     Click(, x, y)
                     sleep 150
                 }
+            } catch{
+                block.off()
+                errorLog(Error("UIA Values could not be determined. Please try again later"))
+                Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250')
+                return
             }
         }
 
@@ -136,15 +141,22 @@ Class premUIA_Values {
             }
         }
 
-        tool.Cust("Retriving Premiere UIA Coordinates`nInputs will be temporarily disabled", 3.0,,, 9)
+        attemptNotify := Notify.Show(, "Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled", 'iconi',,, "POS=BR DUR=3 MALI=CENTER IW=25 TC=black MC=black BC=DCCC75 show=Fade@250 hide=Fade@250")
+        tool.Cust("Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled", 3.0,,, 9)
         for currentPanel, currHotkey in this.windowHotkeys {
             SendInput(currHotkey)
             sleep 50
-            currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+            try currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+            catch {
+                block.Off()
+                errorLog(Error("UIA Values could not be determined. Please try again later"))
+                Notify.Destroy(attemptNotify['hwnd'])
+                Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250')
+                return
+            }
             currentVers.%currentPremVer%.%currentPanel% := currentEl
         }
         block.Off()
-
         this.allVals := currentVers
         this.__setClassVal()
         ; tool.Cust("This process may have no effect until all scripts are reloaded!", 3.0)
@@ -159,5 +171,9 @@ Class premUIA_Values {
             FileDelete(tempPath)
         FileAppend(JSON.stringify(currentVers), tempPath)
         try FileMove(tempPath, this.valueINI, true)
+    }
+
+    __Delete() {
+        block.Off()
     }
 }

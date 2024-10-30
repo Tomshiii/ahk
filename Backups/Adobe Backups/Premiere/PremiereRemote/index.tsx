@@ -42,6 +42,10 @@ export const host = {
   },
 
   setBarsAndTone: function() {
+    // it should be noted this function very specifically looks for the bars and tone in the specific folder structure that I keep it in, which is;
+    // [_Assets]
+    //   [Other]
+    //     .Bars and Tone - Rec 709
     for (let i = 0; i < app.project.rootItem.children.numItems; i++) {
       if(app.project.rootItem.children[i].name == "_Assets" && (app.project.rootItem.children[i].type == 2)) {
         const folder = app.project.rootItem.children[i]

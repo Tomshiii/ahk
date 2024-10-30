@@ -18,7 +18,8 @@ class premVers {
     ;// VER         || IMAGE VER     ||  SUBSEQUENT MINOR VERS
     static v25 := Map(
         ; "v25.0",     "v25.0"
-        "v25.1",     "v25.0"
+        "v25.1",     "v25.0",
+        "v25.2",     "v25.0"
     )
 }
 
