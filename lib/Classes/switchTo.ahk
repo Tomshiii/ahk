@@ -2,7 +2,7 @@
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
  * @date 2024/10/31
- * @version 1.3.13
+ * @version 1.3.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -506,7 +506,7 @@ class switchTo {
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one
      * @param {Boolean} [switchBetween=true] determine whether the function will switch between the beta/main versions of ps if they are both open
      */
-    static Photoshop(switchBetween := false) => this().__adobeSwitch(PS.class, PS.path, "Photoshop", "ps")
+    static Photoshop(switchBetween := false) => this().__adobeSwitch(PS.class, PS.path, "Adobe Photoshop", "ps")
 
     /**
      * This switchTo function will quickly switch to & cycle between windows of the specified program. If there isn't an open window of the desired program, this function will open one.

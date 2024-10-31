@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2024/08/20
- * @version 2.3.1
+ * @date 2024/10/31
+ * @version 2.3.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -519,7 +519,7 @@ settingsGUI()
                 static psIsBeta := unset
                 shortcutName := "ahk_exe Photoshop.exe"
                 shortcutNameBeta := "ahk_exe Photoshop.exe (Beta).exe"
-                adobeFullName := "Photoshop"
+                adobeFullName := "Adobe Photoshop"
                 title := program " Settings"
                 yearIniName := "ps_year"
                 iniInitYear := UserSettings.ps_year

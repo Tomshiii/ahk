@@ -49,7 +49,12 @@ class aeVers {
 ;// ===========================================================================================================================================
 
 class psVers {
-    static v24 := Map("v24.0.1", "v24.3", "v24.1", "v24.3", "v24.1.1", "v24.3", "v24.2", "v24.3", "v24.2.1", "v24.3", "v24.4.1", "v24.3", "v24.5", "v24.3", "v24.6", "v24.3", "v24.7", "v24.3", "v24.7.1", "v24.3", "v24.7.2", "v24.3", "v24.7.3", "v24.3")
+    ;// to keep the version list short I'll periodically reduce the amount of versions it creates.
+    ;// uncomment them if you use a version in here
+    ;// however, a note: the `deleteAdobeSyms.ahk` script will now similarly no longer delete these symlink folders
+    ;// so if you've alread installed my repo before, you'll need to manually delete them
+
+    /* static v24 := Map("v24.0.1", "v24.3", "v24.1", "v24.3", "v24.1.1", "v24.3", "v24.2", "v24.3", "v24.2.1", "v24.3", "v24.4.1", "v24.3", "v24.5", "v24.3", "v24.6", "v24.3", "v24.7", "v24.3", "v24.7.1", "v24.3", "v24.7.2", "v24.3", "v24.7.3", "v24.3") */
     static v25 := Map(
         "v25.0", "v24.3", "v25.1", "v24.3", "v25.2", "v24.3", "v25.3", "v24.3", "v25.3.1", "v24.3", "v25.4", "v24.3", "v25.5", "v24.3", "v25.5.1", "v24.3", "v25.6", "v24.3", "v25.7", "v24.3", "v25.8", "v24.3", "v25.9", "v24.3", "v25.9.1", "v24.3", "v25.10", "v24.3", "v25.11", "v24.3", "v25.12", "v24.3",
     )

@@ -5,7 +5,7 @@
 ; }
 
 /**
- * This function will attempt to generate a shortcut of either Premiere or After Effects to the users `..\Support Files\shortcuts\` folder
+ * This function will attempt to generate a shortcut of either `Adobe Premiere Pro`, `Adobe After Effects` or `Adobe Photoshop` to the users `..\Support Files\shortcuts\` folder
  * @param {Object} userSettingsObj the object containing the user's instance of `UserPrefs()`. Often seen as `UserSettings := UserPrefs()`
  * @param {String} adobeName the full name of the desired program. Either `Adobe Premiere Pro`, `Adobe After Effects` or `Photoshop`
  * @param {Integer} adobeYear the year value you wish to determine the logic for.
@@ -31,7 +31,7 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
             ;// the location of the exe we're generating a shortcut for
             exeLocation := (userSettingsObj.%shortName%IsBeta = false || userSettingsObj.%shortName%IsBeta = "false") ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" aeFolder ahkEXE
                                                                        : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" aeFolder ahkEXEBeta
-        case "Photoshop":
+        case "Adobe Photoshop":
             ;// determining some variables
             ahkEXE     := adobeName ".exe"
             ahkEXEBeta := adobeName " (Beta).exe"

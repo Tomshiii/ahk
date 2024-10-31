@@ -22,7 +22,12 @@ class adobeVers {
         25: aeVers.v25
     }
     PS := {
-        24: psVers.v24,
+        ;// to keep the version list short I'll periodically reduce the amount of versions it creates.
+        ;// uncomment them if you use a version in here
+        ;// however, a note: the `deleteAdobeSyms.ahk` script will now similarly no longer delete these symlink folders
+        ;// so if you've alread installed my repo before, you'll need to manually delete them
+
+        ; 24: psVers.v24,
         25: psVers.v25,
         26: psVers.v26
     }
@@ -58,8 +63,8 @@ class adobeVers {
             if psCheck {
                 psYear := SubStr(A_LoopFileName, -2)
                 ps.Set(Integer(psYear), 1)
-                if !ps.Has(Integer(psYear)-1)
-                    ps.Set(Integer(psYear)-1, 1)
+                /* if !ps.Has(Integer(psYear)-1)
+                    ps.Set(Integer(psYear)-1, 1) */
                 if !ps.Has(Integer(psYear)+1)
                     ps.Set(Integer(psYear)+1, 1)
             }
