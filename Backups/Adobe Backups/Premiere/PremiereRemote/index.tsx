@@ -90,7 +90,19 @@ export const host = {
   },
 
   setZoomOfCurrentClip: function(zoomLevel: string, xPos: string, yPos: string, anchorX: string, anchorY: string) {
-    Utils.setZoomOfCurrentClip(parseFloat(zoomLevel), parseFloat(xPos), parseFloat(yPos), parseFloat(anchorX), parseFloat(anchorY))
+    Utils.setZoomOfCurrentClip(parseFloat(zoomLevel), parseFloat(xPos), parseFloat(yPos), parseFloat(anchorX), parseFloat(anchorY));
+  },
+
+  getProxyToggle: function() {
+    return app.getEnableProxies();
+  },
+
+  setProxies: function(toggle: string) {
+    app.setEnableProxies(parseInt(toggle));
+  },
+
+  setZeroPoint: function(tick: string) {
+    app.project.activeSequence.setZeroPoint(tick)
   }
 };
 

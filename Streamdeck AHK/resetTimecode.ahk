@@ -10,6 +10,11 @@
 if !WinActive(prem.winTitle)
     return
 
+if prem.__checkPremRemoteDir("setZeroPoint") {
+    prem.__remoteFunc("setZeroPoint",, "tick=0")
+    return
+}
+
 startValue := "0"
 
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")

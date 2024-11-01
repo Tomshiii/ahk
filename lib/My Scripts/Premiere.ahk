@@ -49,22 +49,11 @@ Enter::
 
 Escape::prem.escFxMenu()
 
-;linkActivateHotkey;
-~^l::SendInput(KSA.selectAtPlayhead)
-
 ;prem^DeleteHotkey;
 ; Ctrl & BackSpace::prem.wordBackspace()
 
 ;premselecttoolHotkey;
 SC03A & v::prem.selectionTool()
-
-;premprojectHotkey;
-RAlt & p::prem.openEditingDir(ptf.EditingStuff)
-
-;12forwardHotkey;
-PgDn::prem.moveKeyframes("right", 12)
-;12backHotkey;
-PgUp::prem.moveKeyframes("left", 12)
 
 ;premrippleTrimHotkey;
 q::

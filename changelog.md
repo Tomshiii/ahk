@@ -1,24 +1,26 @@
 # <> Release 2.15 - 
 > [!Important]
-> If the user has previously used `PremiereRemote` with my scripts this version will require them to copy `..\Backups\Adobe Backups\Premiere\PremiereRemote\typings\PremierePro.14.0.d.ts` -> `A_AppData "\Adobe\CEP\extensions\PremiereRemote\typings\` or they may run into issues with missing functions. Installing `PremiereRemote` from this release onwards will not require anything extra from the user however.
+> If the user has previously used `PremiereRemote` with my scripts this version will require them to copy all relevent files in `..\Backups\Adobe Backups\Premiere\PremiereRemote\` and replace the corresponding files in `A_AppData "\Adobe\CEP\extensions\PremiereRemote\` or alternatively run `...\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk`.  
+> Installing `PremiereRemote` from this release onwards will not require anything extra from the user however.
 
 > [!Caution]
 > If the user uses `UIA` with `Premiere` functions, a new `KSA` value for `Source Monitor` is required to be set.
 
 ## Functions
-- Fixed `startup.updatePackages()` throwing if a package manager isn't installed
 - Fixed `clip.search()` now working when highlighting multiple words
-- Fixed `settingsGUI()` not properly visually tracking if the user changes the `Is Beta Version?` checkbox
-- Fixed `rbuttonPrem.movePlayhead()` always sending <kbd>RButton</kbd> on fallback even if it wasn't the activation key
+- Fixed `settingsGUI()` not properly visually tracking if the user changed the `Is Beta Version?` checkbox
     - Now accepts parameter `sendOnFailure` to determine what keys to send on fallback
 - Added `clipStorage {` - a class of functions designed to store/send strings
 - `keys.allWait()` will now properly handle when the activation hotkey is multiple modifiers (ie <kbd>^!f::</kbd>)
 - `getHotkeys()` will now return `false` in the event that two individual hotkeys cannot be determined
-- `startup.adobeVerOverride()` now accepts parameter `showVers` which if set to `true` will show the user the currently selected adobe versions on each script load
 - `ffmpeg.__getChannels()` => `ffmpeg.__getAudioStream()`
     - Will now return the entire Map instead of just the `channels` property
     - Now accepts parameter `stream` to manually choose which stream of the file to check
 - `generateAdobeShortcut()` will now return `false` if the intended file directory does not exist. This is to stop the function generating dead shortcuts if the user has the wrong version selected
+
+`startup {`
+- Fixed `updatePackages()` throwing if a package manager isn't installed
+- `adobeVerOverride()` now accepts parameter `showVers` which if set to `true` will show the user the currently selected adobe versions on each script load
 
 `switchTo {`
 - `Premiere()` & `Photoshop()` now accept parameter `switchBetween` to determine whether you wish for the function to cycle between the main/beta versions of the program if they are both open
@@ -31,6 +33,14 @@
 - Fixed `__remoteFunc()` spamming logs on success
 - `numpad.gain()` now needs to be activated with <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd>
     - Can now alternatively adjust a clip's `level` by pressing <kbd>NumpadMult</kbd> after hotkey activation
+    > [!Important]
+    > The user will need to follow the instructions at the top of this changelog to make use of this new feature as it requires adjusted functions
+
+`rbuttonPrem {`  
+- `movePlayhead()`
+    - Fixed function always sending <kbd>RButton</kbd> on fallback even if it wasn't the activation key
+    - Uses new function `dismissWarning()` to automatically close any warning windows that appear to stop the function from highlighting the incorrect panel and sending inputs to the wrong place  
+    *(This was mostly to deal with a bug in the then current beta build of Premiere that would spam you with audio IO error windows constantly)*
 
 ## PremiereRemote
 - Added `sourceMonName()`

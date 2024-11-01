@@ -29,7 +29,7 @@ start := Startup()
 start.generate()
 SD_Opt().checkCount()
 ; start.updateChecker()
-start.updatePackages()
+start.updatePackages(,,,, ["vcredist"])
 start.trayMen()
 start.oldLogs()
 start.adobeTemp()
@@ -75,6 +75,8 @@ Space::
 ;premrippleTrimHotkey;
 q::
 w::prem.rippleTrim()
+
+Escape::prem.escFxMenu()
 
 ;premselecttoolHotkey;
 ; SC03A & v::prem.selectionTool() ;getting back to the selection tool while you're editing text will usually just input a v press instead so this script warps to the selection tool on your hotbar and presses it

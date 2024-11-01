@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/10/30
- * @version 2.1.29
+ * @date 2024/11/02
+ * @version 2.1.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1958,8 +1958,16 @@ class Prem {
         else
             this.__checkTimelineFocus()
         sleep 50
-        if proxSrch := obj.imgSrchMulti({x1: progMonNN.x, y1: progMonNN.y/2, x2: progMonNN.x+progMonNN.width, y2: progMonNN.y+progMonNN.height+50},, &proxX, &proxY, ptf.Premiere "\proxy_on.png", ptf.Premiere "\proxy_on2.png") {
-            __clickProx(proxX, proxY)
+        usePremRemote := false
+        if !this.__checkPremRemoteDir('getProxyToggle') || !this.__checkPremRemoteFunc('setProxies') {
+            if proxSrch := obj.imgSrchMulti({x1: progMonNN.x, y1: progMonNN.y/2, x2: progMonNN.x+progMonNN.width, y2: progMonNN.y+progMonNN.height+50},, &proxX, &proxY, ptf.Premiere "\proxy_on.png", ptf.Premiere "\proxy_on2.png") {
+                __clickProx(proxX, proxY)
+            }
+        } else {
+            usePremRemote := true
+            getState := this.__remoteFunc("getProxyToggle", true)
+            if getState = true || getState = "1"
+                this.__remoteFunc("setProxies",, "toggle=0")
         }
         SendEvent(ksa.premExportFrame)
         if !WinWait(scrshtTitle,, 3) {
@@ -1972,11 +1980,15 @@ class Prem {
                 block.Off()
                 return
             }
-            if !proxSrch {
-                block.Off()
-                return
+            if !usePremRemote {
+                if !proxSrch {
+                    block.Off()
+                    return
+                }
+                __clickProx(proxX, proxY)
             }
-            __clickProx(proxX, proxY)
+            else
+                this.__remoteFunc("setProxies",, "toggle=1")
             block.Off()
             return
         }
@@ -1986,11 +1998,16 @@ class Prem {
             return
         }
         sleep 50
-        if !proxSrch {
-            block.Off()
-            return
+        if !usePremRemote {
+            if !proxSrch {
+                block.Off()
+                return
+            }
+            __clickProx(proxX, proxY)
         }
-        __clickProx(proxX, proxY)
+        else
+            this.__remoteFunc("setProxies",, "toggle=1")
+        block.Off()
     }
 
     /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
