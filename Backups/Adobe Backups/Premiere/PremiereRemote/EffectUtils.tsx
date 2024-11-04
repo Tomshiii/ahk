@@ -12,8 +12,11 @@ export class EffectUtils {
 
     static changeKeyframeLevel(clip: TrackItem, levelInDb: number) {
       const levelInfo = clip.components[0].properties[1];
-      if (!levelInfo.isTimeVarying()) {
+      const isTimeVarying = levelInfo.isTimeVarying();
+      if (isTimeVarying == 0) {
         levelInfo.setTimeVarying(true);
+        clip.setSelected(false, true);
+        clip.setSelected(true, true);
       }
 
       const currSeq = app.project.activeSequence
@@ -22,18 +25,25 @@ export class EffectUtils {
       const clipStart = clip.start.seconds;
       const clipPos = clipInPoint+(playheadTime-clipStart);
 
-      // doing the math like the original `changeAudioLevel` function runs into some rather annoying logical issues
-      // if you want to "remove" or "add" a value from a keyframe... which nearby keyframe do you pick?
-      // going strictly off the playhead position would get annoying if you're inbetween two other keyframes etc
-      // makes more sense to just SET the value to the input number instead of adjust it by the desired amount
-      // but if for some reason I ever want to try it again - `.getValue()` is for non keyframed values you'd need
-      // `.getValueAt-`
-
-      // const level = 20 * Math.log(parseFloat(levelInfo.getValue())) * Math.LOG10E + 15;
-      const newLevel = levelInDb;
+      // check if a keyframe already exists at the playhead
+      var checkVal = levelInfo.getValueAtKey(clipPos)
+      if(checkVal == 0 || checkVal == null) {
+        // if it doesn't, get the current value at the playhead
+        // we use getValueAtTime here so that in the even that the playhead
+        // is inbetween two keyframes, it will automatically grab the interpolated value
+        const checkTimeVal = levelInfo.getValueAtTime(clipPos);
+        if(checkTimeVal !== 0 && checkTimeVal !== null) {
+          // then we add a keyframe and set it to the previously checked value
+          // we do this because for whatever reason, simply adding a keyframe
+          // will result in a messed up value. I was seeing like -800+ or -infinity
+          levelInfo.addKey(clipPos);
+          levelInfo.setValueAtKey(clipPos, checkTimeVal, true); // this line specifically technically isn't needed but good as a safety
+          checkVal = checkTimeVal
+        }
+      }
+      const level = 20 * Math.log(parseFloat(checkVal)) * Math.LOG10E + 15;
+      const newLevel = level + levelInDb;
       const encodedLevel = Math.min(Math.pow(10, (newLevel - 15)/20), 1.0);
-
-      levelInfo.addKey(clipPos);
       levelInfo.setValueAtKey(clipPos, encodedLevel, true);
     }
 

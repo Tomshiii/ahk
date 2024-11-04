@@ -66,8 +66,8 @@ F12::prem.thumbScroll()
 F5::prem.reset()
 
 ;premnumpadGainHotkey;
-~NumpadSub::
-~NumpadAdd::prem.numpadGain()
+NumpadSub::
+NumpadAdd::prem.numpadGain()
 
 $+1::
 $+2::

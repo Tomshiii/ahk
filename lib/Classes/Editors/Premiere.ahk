@@ -6,7 +6,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2024/11/04
- * @version 2.1.32
+ * @version 2.1.33
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1360,8 +1360,9 @@ class Prem {
     /**
      * This function once bound to <kbd>NumpadMult::</kbd>/<kbd>NumpadAdd::</kbd> allows the user to quickly adjust the gain of a selected track by simply pressing <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd> then their desired value followed by <kbd>NumpadEnter</kbd>. Alternatively, if the user presses <kbd>NumpadMult</kbd> after pressing the activation hotkey, the audio `level` will be changed to the desired value instead (however the user needs `PremiereRemote` installed for this feature to work)
      * @param {String} [which=A_ThisHotkey] whether the user wishes to add or subtract the desired value. If the user is using either <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd> or <kbd>-</kbd>/<kbd>+</kbd> as the activation hotkey this value can be left blank, otherwise the user should set it as either <kbd>-</kbd>/<kbd>+</kbd>
+     * @param {String} [sendOnFail="{" A_ThisHotkey "}"] what the function will send to `SendInput` in the event that the timeline isn't the active panel
      */
-    static numpadGain(which := A_ThisHotkey) {
+    static numpadGain(which := A_ThisHotkey, sendOnFail := "{" A_ThisHotkey "}") {
         which := LTrim(which, "~")
         which := (which = "NumpadSub") ? "-" : ""
 
@@ -1371,7 +1372,7 @@ class Prem {
         }
 		title := WinGet.Title(, false)
 		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 {
-			; SendInput("{" A_ThisHotkey "}") ;// because we preface the hotkey with `~` we no longer need this
+			SendInput(sendOnFail)
 			return
 		}
 
