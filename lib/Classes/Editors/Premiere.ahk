@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/11/02
- * @version 2.1.30
+ * @date 2024/11/04
+ * @version 2.1.32
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1362,8 +1362,18 @@ class Prem {
      * @param {String} [which=A_ThisHotkey] whether the user wishes to add or subtract the desired value. If the user is using either <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd> or <kbd>-</kbd>/<kbd>+</kbd> as the activation hotkey this value can be left blank, otherwise the user should set it as either <kbd>-</kbd>/<kbd>+</kbd>
      */
     static numpadGain(which := A_ThisHotkey) {
-        if which = "NumpadSub" || which = "NumpadAdd"
-            which := (which = "NumpadSub") ? "-" : ""
+        which := LTrim(which, "~")
+        which := (which = "NumpadSub") ? "-" : ""
+
+        if this.timelineVals = false {
+            this.__checkTimeline()
+            return
+        }
+		title := WinGet.Title(, false)
+		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 {
+			; SendInput("{" A_ThisHotkey "}") ;// because we preface the hotkey with `~` we no longer need this
+			return
+		}
 
         ih := InputHook("L3 T4", "{NumpadEnter}")
         ih.Start()
@@ -1375,6 +1385,12 @@ class Prem {
             sendGain := (star != false) ? StrReplace(sendGain, "*", "") : StrReplace(sendGain, "NumpadMult", "")
             sendAsLevel := true
         }
+
+        ;// if the user missclicks something other than a number
+        if !IsNumber(sendGain)
+            return
+
+        ;// otherwise we proceed
         if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels")
             prem.gain(which sendGain)
         else {

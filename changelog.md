@@ -1,7 +1,6 @@
 # <> Release 2.15 - 
 > [!Important]
-> If the user has previously used `PremiereRemote` with my scripts this version will require them to copy all relevent files in `..\Backups\Adobe Backups\Premiere\PremiereRemote\` and replace the corresponding files in `A_AppData "\Adobe\CEP\extensions\PremiereRemote\` or alternatively run `...\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk`.  
-> Installing `PremiereRemote` from this release onwards will not require anything extra from the user however.
+> If the user has previously used `PremiereRemote` with my scripts this version will require them to copy all relevent files in `..\Backups\Adobe Backups\Premiere\PremiereRemote\` and replace the corresponding files in `A_AppData "\Adobe\CEP\extensions\PremiereRemote\` or alternatively run `...\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk`.
 
 > [!Caution]
 > If the user uses `UIA` with `Premiere` functions, a new `KSA` value for `Source Monitor` is required to be set.
@@ -32,9 +31,10 @@
 - Added `flattenAndColour()`
 - Fixed `__remoteFunc()` spamming logs on success
 - `numpad.gain()` now needs to be activated with <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd>
-    - Can now alternatively adjust a clip's `level` by pressing <kbd>NumpadMult</kbd> after hotkey activation
-    > [!Important]
-    > The user will need to follow the instructions at the top of this changelog to make use of this new feature as it requires adjusted functions
+    - Can now alternatively adjust a clip's `level` by pressing <kbd>NumpadMult</kbd> after hotkey activation  
+    
+> [!Important]
+> The user will need to follow the instructions at the top of this changelog to make use of this new feature as it requires adjusted functions.
 
 `rbuttonPrem {`  
 - `movePlayhead()`
