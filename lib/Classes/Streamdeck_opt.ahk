@@ -1,8 +1,8 @@
 /************************************************************************
  * @description handle options.ini file
  * @author tomshi
- * @date 2024/06/26
- * @version 1.1.0
+ * @date 2024/11/04
+ * @version 1.1.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\ptf>
@@ -31,6 +31,8 @@ class SD_Opt {
         "sfxFolder", "E:\_Editing stuff\sfx",         "vfxFolder", "E:\_Editing stuff\videos",
         "editingMusic", "E:\_Editing stuff\Music",    "commsFolder", "E:\comms",
         "editingRoot", "E:\_Editing stuff",
+        "backupFolder", "H:\Shared drives\The Boys\Assets\Editor Assets\_Backups\_Project Backups\Tom",
+        "backupFolderWork", "N:\_Backups\_Project Backups\Tom"
     )
     defaultsSett := Map(
         ;// [settings]
