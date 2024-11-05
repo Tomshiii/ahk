@@ -24,6 +24,7 @@
 `switchTo {`
 - `Premiere()` & `Photoshop()` now accept parameter `switchBetween` to determine whether you wish for the function to cycle between the main/beta versions of the program if they are both open
 - `__adobeSwitch()` & `AE()` will now alert the user using `Notify {` if there is an error attempting to run the desired shortcut
+- `adobeProject()` will now better handle activating the correct window when multiple windows with the same name exist
 
 `prem {`
 - Added `dismissWarning()`
@@ -49,6 +50,7 @@
 
 ## Other Changes
 - Added `resetTimecode.ahk`
+- Added `revealInExplorer.ahk`
 - `pcTimerShutdown.ahk` can now optionally schedule a `Sleep` instead
 > [!Note]
 > This feature is only available if the user downloads `PSTools` from Microsoft and places the contents of that package in their `A_WinDir \System32\` folder. This is a limitation of windows as there is no clean way to schedule a sleep without this tool.
@@ -60,3 +62,4 @@
 `KSA`
 - Added `sourceMonitor`
 - Added `modifyStartTime`
+- Added `revealExplorer`
