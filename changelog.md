@@ -19,7 +19,7 @@
 
 `startup {`
 - Fixed `updatePackages()` throwing if a package manager isn't installed
-- `adobeVerOverride()` now accepts parameter `showVers` which if set to `true` will show the user the currently selected adobe versions on each script load
+- `adobeVerOverride()` will now show the user the currently selected Adobe versions. This functionality can be toggled in `settingsGUI()`
 
 `switchTo {`
 - `Premiere()` & `Photoshop()` now accept parameter `switchBetween` to determine whether you wish for the function to cycle between the main/beta versions of the program if they are both open

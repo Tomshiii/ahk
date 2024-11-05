@@ -71,6 +71,13 @@
       "false": "`getTimeline()` will always set new UIA values on first use"
     }
   },
+  "show_adobe_vers_startup": {
+    "title": "Show Adobe Versions at Startup",
+    "tooltip": {
+      "true": "Currently selected Adobe versions will be shown to the user during script startup",
+      "false": "Currently selected Adobe versions will not be shown to the user during script startup"
+    }
+  },
 
   "________newSection": " autosave",
 
