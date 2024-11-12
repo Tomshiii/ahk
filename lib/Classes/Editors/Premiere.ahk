@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/11/04
- * @version 2.1.33
+ * @date 2024/11/12
+ * @version 2.1.34
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1030,6 +1030,7 @@ class Prem {
      */
     static wheelEditPoint(window, direction, keyswait := "all")
     {
+        SendInput(KSA.shuttleStop)
         switch window {
             ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a nulticam nest for whatever reason. Doing it this way however, is unfortunately slower.
             ;// if you do not use the multiview window simply replace the below line with `this.__checkTimelineFocus()`

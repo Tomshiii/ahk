@@ -31,6 +31,7 @@
 - Added `dragSourceMon()`
 - Added `flattenAndColour()`
 - Fixed `__remoteFunc()` spamming logs on success
+- `wheelEditPoint()` now sends `ksa.shuttleStop` before proceeding with the rest of the function
 - `numpad.gain()` now needs to be activated with <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd>
     - Can now alternatively adjust a clip's `level` by pressing <kbd>NumpadMult</kbd> after hotkey activation  
     
