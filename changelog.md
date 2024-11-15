@@ -6,9 +6,8 @@
 > If the user uses `UIA` with `Premiere` functions, a new `KSA` value for `Source Monitor` is required to be set.
 
 ## Functions
-- Fixed `clip.search()` now working when highlighting multiple words
-- Fixed `settingsGUI()` not properly visually tracking if the user changed the `Is Beta Version?` checkbox
-    - Now accepts parameter `sendOnFailure` to determine what keys to send on fallback
+- Fixed `clip.search()` not working when highlighting multiple words
+- Fixed `settingsGUI()` not visually tracking if the user interacted with the `Is Beta Version?` checkbox
 - Added `clipStorage {` - a class of functions designed to store/send strings
 - `keys.allWait()` will now properly handle when the activation hotkey is multiple modifiers (ie <kbd>^!f::</kbd>)
 - `getHotkeys()` will now return `false` in the event that two individual hotkeys cannot be determined
@@ -32,15 +31,17 @@
 - Added `flattenAndColour()`
 - Fixed `__remoteFunc()` spamming logs on success
 - `wheelEditPoint()` now sends `ksa.shuttleStop` before proceeding with the rest of the function
+- `swapChannels()` now accepts parameter `adjustGain` & `changeLabel`
 - `numpad.gain()` now needs to be activated with <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd>
     - Can now alternatively adjust a clip's `level` by pressing <kbd>NumpadMult</kbd> after hotkey activation  
     
 > [!Important]
-> The user will need to follow the instructions at the top of this changelog to make use of this new feature as it requires adjusted functions.
+> The user will need to follow the instructions at the top of this changelog to make use of this new feature as it requires adjusted `PremiereRemote` functions.
 
 `rbuttonPrem {`  
 - `movePlayhead()`
     - Fixed function always sending <kbd>RButton</kbd> on fallback even if it wasn't the activation key
+        - Now accepts parameter `sendOnFailure` to determine what keys to send on fallback
     - Uses new function `dismissWarning()` to automatically close any warning windows that appear to stop the function from highlighting the incorrect panel and sending inputs to the wrong place  
     *(This was mostly to deal with a bug in the then current beta build of Premiere that would spam you with audio IO error windows constantly)*
 

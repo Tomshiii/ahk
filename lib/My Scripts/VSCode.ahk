@@ -21,3 +21,5 @@ $^c::VSCode.copy()
 ^b::delaySI(15, KSA.hideSideBar, KSA.hideActivityBar)
 ;vscodeAsterixHotkey;
 ; *::discord.surround("*")
+
+!`::SendText('"``n"')

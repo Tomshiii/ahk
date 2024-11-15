@@ -9,7 +9,7 @@ Shift & Tab::
 $Tab::
 {
 	if WinActive("Modify Clip " prem.winTitle) {
-		prem.swapChannels(1)
+		prem.swapChannels(1, 16, ksa.labelPurple)
 		return
 	}
 	if !isDoubleClick()

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a function designed to parse through AE and Premiere Pro keyboard shortcut files to automatically assign KSA.ini values
  * @author tomshi
- * @date 2024/02/29
- * @version 1.0.2
+ * @date 2024/11/05
+ * @version 1.0.3
  ***********************************************************************/
 
 #Warn VarUnset, StdOut
@@ -65,7 +65,7 @@ class adobeKSA extends tomshiBasic {
     }
 
     __isFKey(key) {
-        if StrLen(key) <= 3 && SubStr(key, 1, 1) = "F"
+        if StrLen(key) <= 3 && SubStr(key, 1, 1) == "F"
             return "{" key "}"
         return key
     }

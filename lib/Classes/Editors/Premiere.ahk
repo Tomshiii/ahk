@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/11/12
- * @version 2.1.34
+ * @date 2024/11/15
+ * @version 2.1.35
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -42,7 +42,9 @@ class Prem {
         UserSettings := ""
 
         switch {
+            ;// spectrum ui
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
+            ;// old ui
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:  this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55
         }
     }
@@ -1425,7 +1427,7 @@ class Prem {
 	}
 
     /**
-     * ### This function contains `KSA` values that need to be set correctly
+     * ### This function contains `KSA` values that need to be set correctly, Most notibly `DragKeywait` needs to be set to the same key you use to ACTIVATE the function.
      * Press a button *(ideally a mouse button)*, this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
 
      * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensures the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
@@ -2047,8 +2049,11 @@ class Prem {
      * This function is mostly designed for my own workflow and isn't really built out with an incredible amount of logic.
      *
      * This function was originally designed to swap the L/R channel on a single track stereo file but may also function on a dual track stereo file where you're expecting both the L & R channels to use the same media source channel. attempting to use this script on anything else will either produce unintended results or will simply not function at all
+     * @param {Integer} [mouseSpeed=2] what speed the mouse should move to interact with the Modify Clip window
+     * @param {Number} [adjustGain=false] determine whether to adjust gain after modifying the channels. It should be noted once again that this function is specifically designed for my workflow - if it swaps to the R channel it will increase gain by this parameter, if it swaps to the left it wil take away this parameter
+     * @param {String} [changeLabel?] leave unset if you do not wish to change the label colour of the selected clip(s), otherwise provide the hotkey required to change to the desired colour
      */
-    static swapChannels(mouseSpeed := 2) {
+    static swapChannels(mouseSpeed := 2, adjustGain := false, changeLabel?) {
         block.On()
         clipWinTitle := "Modify Clip"
         coord.s()
@@ -2095,7 +2100,7 @@ class Prem {
             errorLog(TargetError("Couldn't find unchecked channel.", -1),, 1)
             return
         }
-        which := (left = 1) ? "L_unchecked.png" : "R_unchecked.png"
+        which := (left != 0) ? "L_unchecked.png" : "R_unchecked.png"
         Click(Format("{} {}", coords.x+10, coords.y+30))
         if chan != 0 {
             Click(Format("{} {}", coords.x+10, coords.y+this.secondChannel))
@@ -2109,6 +2114,21 @@ class Prem {
         MouseMove(okX, okY, 1)
         SendInput("{Click}")
         MouseMove(origCoords.x, origCoords.y, 2)
+
+        if WinExist(clipWinTitle)
+            WinWaitClose(clipWinTitle)
+        sleep 50
+
+        if adjustGain != false && IsNumber(adjustGain) {
+            addOrSub := (left != 0) ? "-" : ""
+            this.gain(addOrSub adjustGain)
+        }
+        if !IsSet(changeLabel) {
+            block.Off()
+            return
+        }
+        ; sleep 100
+        SendInput(changeLabel)
         block.Off()
     }
 
