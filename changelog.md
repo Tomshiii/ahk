@@ -1,4 +1,6 @@
-# <> Release 2.15 - 
+# <> Release 2.15.0 - Features & Stability
+This release brings along with it a few breaking changes, mostly centered around `PremiereRemote`. Be sure to read the instructions down below if you've been using my repo previously to ensure you do not run into any roadblocks.
+
 > [!Important]
 > If the user has previously used `PremiereRemote` with my scripts this version will require them to copy all relevent files in `..\Backups\Adobe Backups\Premiere\PremiereRemote\` and replace the corresponding files in `A_AppData "\Adobe\CEP\extensions\PremiereRemote\` or alternatively run `...\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk`.
 
@@ -32,18 +34,19 @@
 - Fixed `__remoteFunc()` spamming logs on success
 - `wheelEditPoint()` now sends `ksa.shuttleStop` before proceeding with the rest of the function
 - `swapChannels()` now accepts parameter `adjustGain` & `changeLabel`
-- `numpad.gain()` now needs to be activated with <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd>
+    - Should now better handle when a clip has two channels that are set to opposite pans
+- `numpadGain()` now needs to be activated with <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd>
     - Can now alternatively adjust a clip's `level` by pressing <kbd>NumpadMult</kbd> after hotkey activation  
     
 > [!Important]
-> The user will need to follow the instructions at the top of this changelog to make use of this new feature as it requires adjusted `PremiereRemote` functions.
+> To take advantage of this new `numpadGain()` feature; the user will need to follow the instructions at the top of this changelog as it requires adjusted `PremiereRemote` functions.
 
 `rbuttonPrem {`  
 - `movePlayhead()`
     - Fixed function always sending <kbd>RButton</kbd> on fallback even if it wasn't the activation key
         - Now accepts parameter `sendOnFailure` to determine what keys to send on fallback
     - Uses new function `dismissWarning()` to automatically close any warning windows that appear to stop the function from highlighting the incorrect panel and sending inputs to the wrong place  
-    *(This was mostly to deal with a bug in the then current beta build of Premiere that would spam you with audio IO error windows constantly)*
+    *(This was mostly to deal with a bug in the then current beta build of Premiere that would spam you with audio IO error windows constantly. This does not seem to be an issue anymore in the current beta builds but as it isn't the first time it's popped up I'm sure it'll come back at some point)*
 
 ## PremiereRemote
 - Added `sourceMonName()`

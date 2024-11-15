@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/11/15
- * @version 2.1.35
+ * @date 2024/11/16
+ * @version 2.1.36
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2086,24 +2086,31 @@ class Prem {
             }
         }
         left  := obj.imgSrchMulti({x1: x, y1: y - 50, x2: x + 200, y2: y + 50},, &checkX, &checkY, ptf.Premiere "L_unchecked.png", ptf.Premiere "L_unchecked2.png") ? coords := {x: checkX, y: checkY} : false
-        right := obj.imgSrchMulti({x1: x, y1: y - 50, x2: x + 200, y2: y + 50},, &checkX, &checkY, ptf.Premiere "R_unchecked.png", ptf.Premiere "R_unchecked2.png") ? coords := {x: checkX, y: checkY} : false
+        right := obj.imgSrchMulti({x1: x+50, y1: y - 50, x2: x + 200, y2: y + 50},, &checkX, &checkY, ptf.Premiere "R_unchecked.png", ptf.Premiere "R_unchecked2.png") ? coords := {x: checkX, y: checkY} : false
 
         ;// if the file isn't dual channel it might not have two checkboxes and thus `coords` won't be set
-        if !IsSet(coords) || !coords {
+        if (!IsSet(coords) || !coords) || (!left && !right) {
             MouseMove(x, y)
             block.Off()
-            tool.Cust("Checkbox not found")
-            return
-        }
-        if !left && !right {
-            block.Off()
-            errorLog(TargetError("Couldn't find unchecked channel.", -1),, 1)
+            errorLog(TargetError("Couldn't find unchecked channel.", -1),, true)
             return
         }
         which := (left != 0) ? "L_unchecked.png" : "R_unchecked.png"
         Click(Format("{} {}", coords.x+10, coords.y+30))
         if chan != 0 {
-            Click(Format("{} {}", coords.x+10, coords.y+this.secondChannel))
+            ;// this block is to correct when L is one channel and R is another
+            ;// both should end up the same channel
+            if ImageSearch(&rX, &rY, x, y, x+60, y+60, ptf.Premiere "channel_R.png") {
+                secLeft := (IsSet(left)) ? obj.imgSrch(ptf.Premiere "channel_unchecked.png", {x1: rX, y1: ry, x2: rX + 200, y2: ry+15}) : false
+                secRight := (IsSet(right)) ? obj.imgSrch(ptf.Premiere "channel_unchecked.png", {x1: rX+50, y1: ry, x2: rX + 200, y2: ry+15}) : false
+                if !secLeft && !secRight {
+                    block.Off()
+                    errorLog(TargetError("Couldn't find unchecked channel.", -1),, 1)
+                    return
+                }
+                if which = "R_unchecked.png" && secRight != false || which = "L_unchecked.png" && secLeft != false
+                    Click(Format("{} {}", coords.x+10, coords.y+this.secondChannel))
+            }
         }
 
         if !ImageSearch(&okX, &okY, clipWin.x, (clipWin.y + clipWin.height) - 150, clipWin.x + clipWin.width, clipWin.y + clipWin.height, "*2 " ptf.Premiere "channels_ok.png") {
