@@ -33,25 +33,9 @@
 <key>FilePaths</key>
 <array>
 <array.type><ustring/></array.type>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_7.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_4.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_8.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_7.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace5.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace3.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace12.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace2.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace1.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace6.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_6.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_9.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace11.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace4.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_3.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_4.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_7.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
 </array>
 </prop.pair>
 <prop.pair>
@@ -77,10 +61,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>0</int>
-<int type='signed' size='32'>3354</int>
-<int type='signed' size='32'>1420</int>
+<int type='signed' size='32'>70</int>
+<int type='signed' size='32'>10</int>
+<int type='signed' size='32'>3430</int>
+<int type='signed' size='32'>1430</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -93,50 +77,18 @@
 <key>ModifiedTimes</key>
 <array>
 <array.type><string/></array.type>
-<string>20230907T102041.005141</string>
-<string>20240924T024025.794124</string>
-<string>20230907T081332.087008</string>
-<string>20240614T130037.032107</string>
-<string>20241003T135824.674159</string>
-<string>20180212T044008</string>
-<string>20240218T012504.337564</string>
-<string>20200630T070242</string>
-<string>20200502T033313</string>
-<string>20200630T070233</string>
-<string>20240208T083321.058903</string>
-<string>20200310T074047</string>
-<string>20230825T045232.988439</string>
-<string>20240925T234638.060487</string>
-<string>20240830T153248.318585</string>
-<string>20180303T074059</string>
-<string>20180303T074126</string>
-<string>20201210T091312</string>
-<string>20240226T011611.733951</string>
+<string>20241115T061651.915907</string>
+<string>20241021T111036.922421</string>
+<string>20241101T055915.635087</string>
 </array>
 </prop.pair>
 <prop.pair>
 <key>UserNames</key>
 <array>
 <array.type><ustring/></array.type>
-<ustring>2023_work</ustring>
 <ustring>2023_work - multicam</ustring>
-<ustring>tomWork</ustring>
-<ustring>2023_work</ustring>
-<ustring>2023_work - multicam</ustring>
-<ustring>$$$/Premiere/FrontEnd/AllPanels=All Panels</ustring>
-<ustring>$$$/Premiere/FrontEnd/Assembly=Assembly</ustring>
-<ustring>$$$/Premiere/FrontEnd/Audio=Audio</ustring>
-<ustring>$$$/Premiere/FrontEnd/Color=Color</ustring>
-<ustring>Dual Monitors</ustring>
-<ustring>$$$/Premiere/FrontEnd/Editing=Editing</ustring>
-<ustring>$$$/Premiere/FrontEnd/Effects=Effects</ustring>
-<ustring>Graphics</ustring>
+<ustring>2023_work - multicam2</ustring>
 <ustring>$$$/Premiere/FrontEnd/Learning=Learning</ustring>
-<ustring>$$$/Premiere/FrontEnd/Production=Production</ustring>
-<ustring>Strim</ustring>
-<ustring>Titles</ustring>
-<ustring>testing</ustring>
-<ustring>tomWork</ustring>
 </array>
 </prop.pair>
 <prop.pair>
@@ -147,22 +99,6 @@
 <key>WorkspaceTypes</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>0</int>
-<int type='signed' size='32'>0</int>
-<int type='signed' size='32'>0</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
-<int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>

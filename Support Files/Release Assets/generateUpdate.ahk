@@ -36,8 +36,8 @@ UserSettings := UserPref()
 RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\backupPremRemote.ahk"))
 
 ;//* KotET
-DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
-DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
+try DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
+try DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
 
 ;//* labels
 FileCopy(A_MyDocuments "\Adobe\Common\Assets\Label Color Presets\Mine.prlabelpreset", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Labels\Mine.prlabelpreset", 1)
@@ -300,7 +300,15 @@ FileDelete(A_WorkingDir "\release\" yes.value ".ahk")
 FileAppend(replaceYes, A_WorkingDir "\release\" yes.value ".ahk")
 
 ;// opening & using the compiler
-Run(ptf.ProgFi "\AutoHotkey\Ahk2Exe.exe")
+if !FileExist(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe") {
+    if MsgBox("Ahk2exe is not installed.`nWould you like to install it?",, "YesNo") = "No"
+        return
+    RunWait(ptf.ProgFi "\AutoHotkey\UX\install-ahk2exe.ahk")
+    if !WinWait("Ahk2Exe for AutoHotkey",, 10)
+        return
+}
+if !WinExist("Ahk2Exe for AutoHotkey")
+    Run(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe")
 WinWait("Ahk2Exe for AutoHotkey")
 ;// open script
 if !WinActive("Ahk2Exe for AutoHotkey") {

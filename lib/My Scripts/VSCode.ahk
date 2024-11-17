@@ -22,4 +22,4 @@ $^c::VSCode.copy()
 ;vscodeAsterixHotkey;
 ; *::discord.surround("*")
 
-!`::SendText('"``n"')
+!`::SendText('``n')
