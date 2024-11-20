@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/11/05
- * @version 1.7.42
+ * @date 2024/11/20
+ * @version 1.7.43
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -429,10 +429,9 @@ class Startup {
         outDated := cmd.result(checkOutdated)
         if InStr(outDated, noUpdatesString, 1, 1, 1)
             return
-        if MsgBox("Some packages the user has installed through " packageManager " appear to be outdated.`nWould you like to update them now?", "Update Packages", "4 32 4096") = "No"
-            return
         switch packageManager {
             case "choco":
+                packages_count := RegExReplace(SubStr(outDated, InStr(outDated, "has determined ",,, 1)), "[^0-9]")
                 omitString := "Output is package name | current version | available version | pinned?"
                 newResponse := SubStr(outDated, InStr(outDated, omitString, 1, 1, 1)+StrLen(omitString)+2)
                 splt := StrSplit(newResponse, ["`n", "`r"])
@@ -445,6 +444,7 @@ class Startup {
                     for k2, v2 in ignore {
                         if InStr(v, v2) {
                             isIgnore := true
+                            packages_count -= 1
                             break
                         }
                     }
@@ -455,6 +455,19 @@ class Startup {
                     determinePackage := StrSplit(v, ["|"])
                     arr.Push(determinePackage[1])
                 }
+
+                ;// determine if only `ignored` package updates exist
+                switch {
+                    case (packages_count < 0):
+                        ;// throw
+                        errorLog(IndexError("Something went wrong!", -1),,, true)
+                        return
+                    case (packages_count = 0 || packages_count = "0"): return
+                }
+
+                if MsgBox("Some packages the user has installed through " packageManager " appear to be outdated.`nWould you like to update them now?", "Update Packages", "4 32 4096") = "No"
+                    return
+
                 command := ""
                 for i, v in arr {
                     concat := " && "
@@ -468,6 +481,8 @@ class Startup {
                     cmd.run(true, false, false, "choco upgrade all --yes")
             default:
                 if nonChocoUpdateCommand = ""
+                    return
+                if MsgBox("Some packages the user has installed through " packageManager " appear to be outdated.`nWould you like to update them now?", "Update Packages", "4 32 4096") = "No"
                     return
                 cmd.run(true, false, false, nonChocoUpdateCommand)
         }
@@ -642,11 +657,17 @@ class Startup {
      * It is best to double check that it is set correctly within `settingsGUI()`
      */
     adobeVerOverride() {
+        __notifyVers() {
+            notify_premBeta := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? " (Beta)" : ""
+            notify_aeBeta := (this.UserSettings.aeIsBeta = true || this.UserSettings.aeIsBeta = "true") ? " (Beta)" : ""
+            notify_psBeta := (this.UserSettings.psIsBeta = true || this.UserSettings.psIsBeta = "true") ? " (Beta)" : ""
+            try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer "`nPhotoshop" notify_psBeta ": " this.UserSettings.psVer,,,, "POS=TR DUR=5")
+        }
         if !this.UserSettings.adobeExeOverride
             return
         if this.isReload != false {
             if this.UserSettings.show_adobe_vers_startup = true
-                try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro: " this.UserSettings.premVer "`nAfter Effects: " this.UserSettings.aeVer "`nPhotoshop: " this.UserSettings.psVer,,,, "POS=TR DUR=5")
+                __notifyVers()
             return
         }
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
@@ -703,7 +724,7 @@ class Startup {
             }
         }
         if this.UserSettings.show_adobe_vers_startup = true
-            try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro: " this.UserSettings.premVer "`nAfter Effects: " this.UserSettings.aeVer "`nPhotoshop: " this.UserSettings.psVer,,,, "POS=TR DUR=5")
+            __notifyVers()
         if operatePrem = true || operateAE = true {
             this.UserSettings.__delAll()
             this.UserSettings := ""
