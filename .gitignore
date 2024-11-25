@@ -13,6 +13,7 @@ Backups/RODECaster/shows/mine/pads
 lib/Other/UIA/Examples
 lib/Other/UIA/.gitignore
 lib/Other/UIA/UIATreeInspector.ahk
+lib/Other/Notify/Settings.json
 
 # adobe shortcut files
 Support Files/shortcuts/*.lnk

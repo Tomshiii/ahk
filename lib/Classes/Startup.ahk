@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/11/20
- * @version 1.7.43
+ * @date 2024/11/25
+ * @version 1.7.44
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,7 +33,7 @@
 #Include <Other\SystemThemeAwareToolTip>
 #Include <Other\FileGetExtendedProp>
 #Include <Other\print>
-#Include <Other\Notify>
+#Include <Other\Notify\Notify>
 ; }
 
 class Startup {
@@ -661,7 +661,7 @@ class Startup {
             notify_premBeta := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? " (Beta)" : ""
             notify_aeBeta := (this.UserSettings.aeIsBeta = true || this.UserSettings.aeIsBeta = "true") ? " (Beta)" : ""
             notify_psBeta := (this.UserSettings.psIsBeta = true || this.UserSettings.psIsBeta = "true") ? " (Beta)" : ""
-            try Notify.Show("Currently Set Adobe Versions", "Adobe Versions:`nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer "`nPhotoshop" notify_psBeta ": " this.UserSettings.psVer,,,, "POS=TR DUR=5")
+            try Notify.Show('Currently Set Adobe Versions',"Adobe Versions:`nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer "`nPhotoshop" notify_psBeta ": " this.UserSettings.psVer, 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=5 pos=TR bdr=0xD50000')
         }
         if !this.UserSettings.adobeExeOverride
             return
@@ -762,6 +762,7 @@ class Startup {
         __addAndIncrement("") ;adds a divider bar
         __addAndIncrement("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
         __addAndIncrement("Close All Scripts", (*) => reset.ex_exit())
+        __addAndIncrement("Notify Creator", (*) => Run(ptf.rootDir "\lib\Other\Notify\Notify Creator.ahk"))
         __addAndIncrement("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
         __addAndIncrement("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
         __addAndIncrement("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false).__setNewVal() : MsgBox("Premiere needs to be open for this option to function correctly!"))
@@ -883,7 +884,7 @@ class Startup {
                     if localVersion.script !== latestVer.script
                         {
                             Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                            Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated", 'iconi',,, 'POS=BR TC=black MC=black BC=75AEDC DUR=4 show=Fade@250 hide=Fade@250')
+                            Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated", 'iconi',,, 'POS=BR dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
                         }
                     continue
                 }
@@ -892,7 +893,7 @@ class Startup {
             if VerCompare(latestVer.version, localVersion.version) > 0
                 {
                     Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-                    Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version, 'iconi',,, 'POS=BR TC=black MC=black BC=75AEDC DUR=4 show=Fade@250 hide=Fade@250')
+                    Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version, 'iconi',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
                     continue
                 }
         }

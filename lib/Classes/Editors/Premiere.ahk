@@ -5,8 +5,8 @@
  * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/11/16
- * @version 2.1.36
+ * @date 2024/11/25
+ * @version 2.1.37
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -30,7 +30,7 @@
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
 #Include <Functions\detect>
-#Include <Other\Notify>
+#Include <Other\Notify\Notify>
 ; }
 
 class Prem {

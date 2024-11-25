@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/11/05
- * @version 1.3.15
+ * @date 2024/11/25
+ * @version 1.3.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -10,17 +10,16 @@
 #Include <Classes\ptf>
 #Include <Classes\tool>
 #Include <GUIs\musicGUI>
-;programs
+#Include <Classes\keys>
+#Include <Classes\winget>
+#Include <Classes\errorLog>
+#Include <Other\Notify\Notify>
 #Include <Classes\Apps\VSCode>
 #Include <Classes\Apps\Discord>
 #Include <Classes\Apps\Slack>
 #Include <Classes\Editors\After Effects>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\Editors\Photoshop>
-#Include <Classes\keys>
-#Include <Classes\winget>
-#Include <Classes\errorLog>
-;funcs
 #Include <Functions\getHotkeys>
 #Include <Functions\generateAdobeShortcut>
 ; }
@@ -244,7 +243,7 @@ class switchTo {
                     sleep 50
                     Run(AE.path)
                 } catch {
-                    Notify.Show("File Doesn't Exist", "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\```nEnsure the proper version has been selected within settingsGUI()", 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                    Notify.Show('File Doesn`'t Exist', 'Program may not be installed or shortcut hasn`'t been generated correctly in;`n `..\Support Files\shortcuts\``nEnsure the proper version has been selected within settingsGUI()', 'C:\Windows\System32\imageres.dll|icon244', 'soundx',, 'dur=5 bdr=0xC72424')
                     errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``")
                     return
                 }
@@ -501,7 +500,7 @@ class switchTo {
                 sleep 50
                 Run(path)
             } catch {
-                Notify.Show("File Doesn't Exist", "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\```nEnsure the proper version has been selected within settingsGUI()", 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                Notify.Show('File Doesn`'t Exist', 'Program may not be installed or shortcut hasn`'t been generated correctly in;`n `..\Support Files\shortcuts\``nEnsure the proper version has been selected within settingsGUI()', 'C:\Windows\System32\imageres.dll|icon244', 'soundx',, 'dur=5 bdr=0xC72424')
                 errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\```nEnsure the proper version has been selected.")
                 return
             }

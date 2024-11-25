@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.5
  * @author tomshi, taranVH
- * @date 2024/10/23
- * @version 2.3.8
+ * @date 2024/11/25
+ * @version 2.3.9
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -21,7 +21,7 @@
 #Include <Classes\obj>
 #Include <Classes\winGet>
 #Include <Other\WinEvent>
-#Include <Other\Notify>
+#Include <Other\Notify\Notify>
 #Include <Functions\checkStuck>
 #Include <GUIs\Premiere Timeline GUI>
 ; }
@@ -411,14 +411,14 @@ class rbuttonPrem {
 			if !prem.__checkPremRemoteDir("getActiveSequence") || !prem.__checkPremRemoteFunc("focusSequence") {
 				useRemote := false
 				this.remote := false
-				Notify.Show('Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.`nrbuttonPrem().movePlayhead() will no longer attempt to use it until a script reload.', 'iconx',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+				Notify.Show('Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.`nrbuttonPrem().movePlayhead() will no longer attempt to use it until a script reload.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
 				this.__exit()
 			}
 			if this.remote = true
 				this.origSeq := prem.__remoteFunc("getActiveSequence", true)
 			if this.origSeq = false {
 				useRemote := false
-				Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'iconx',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
+				Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
 				this.__exit()
 			}
 		}

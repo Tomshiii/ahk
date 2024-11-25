@@ -1,13 +1,13 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\errorLog>
-#Include <Other\Notify>
+#Include <Other\Notify\Notify>
 ; }
 
 /**
  * This function will attempt to generate a shortcut of either `Adobe Premiere Pro`, `Adobe After Effects` or `Adobe Photoshop` to the users `..\Support Files\shortcuts\` folder
  * @param {Object} userSettingsObj the object containing the user's instance of `UserPrefs()`. Often seen as `UserSettings := UserPrefs()`
- * @param {String} adobeName the full name of the desired program. Either `Adobe Premiere Pro`, `Adobe After Effects` or `Photoshop`
+ * @param {String} adobeName the full name of the desired program. Either `Adobe Premiere Pro`, `Adobe After Effects` or `Adobe Photoshop`
  * @param {Integer} adobeYear the year value you wish to determine the logic for.
  * @returns {Boolean} returns `false` if the desired file directory does not exist else `true`
  */
@@ -16,7 +16,7 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
         ;// throw
         errorLog(ValueError("Incorrect Value type passed in Parameter #1`nNeeds to be UserPref", -1),,, 1)
     }
-    if adobeName != "Adobe Premiere Pro" && adobeName != "Adobe After Effects" && adobeName != "Photoshop" {
+    if adobeName != "Adobe Premiere Pro" && adobeName != "Adobe After Effects" && adobeName != "Adobe Photoshop" {
         ;// throw
         errorLog(ValueError("Incorrect Value set in Parameter #2", -1, adobeName),,, 1)
     }
@@ -33,12 +33,13 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
                                                                        : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" aeFolder ahkEXEBeta
         case "Adobe Photoshop":
             ;// determining some variables
-            ahkEXE     := adobeName ".exe"
-            ahkEXEBeta := adobeName " (Beta).exe"
+            ahkEXE     := InStr(adobeName, "Adobe ",, 1, 1) ? SubStr(adobeName, InStr(adobeName, A_Space,, 1, 1)+1) ".exe"        : adobeName ".exe"
+            ahkEXEBeta := InStr(adobeName, "Adobe ",, 1, 1) ? SubStr(adobeName, InStr(adobeName, A_Space,, 1, 1)+1) " (Beta).exe" : adobeName "(Beta).exe"
             shortName  := "ps"
             ;// the location of the exe we're generating a shortcut for
-            exeLocation := (userSettingsObj.%shortName%IsBeta = false || userSettingsObj.%shortName%IsBeta = "false") ? A_ProgramFiles "\Adobe\Adobe " adobeName A_Space adobeYear "\" ahkEXE
-                                                                       : A_ProgramFiles "\Adobe\Adobe " adobeName A_Space "(Beta)\" ahkEXEBeta
+            exeLocation := (userSettingsObj.%shortName%IsBeta = false || userSettingsObj.%shortName%IsBeta = "false") ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" ahkEXE
+                                                                       : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" ahkEXEBeta
+        default: return
     }
     ;// where the shortcut will be generated+name
     shortcutLocation := ptf.SupportFiles "\shortcuts\" ahkEXE ".lnk"

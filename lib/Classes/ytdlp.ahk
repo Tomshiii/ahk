@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2024/09/05
- * @version 1.0.13
+ * @date 2024/11/25
+ * @version 1.0.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,7 +13,7 @@
 #Include <Classes\obj>
 #Include <Classes\errorLog>
 #Include <Classes\Streamdeck_opt>
-#Include <Other\Notify>
+#Include <Other\Notify\Notify>
 #Include <Functions\getHTMLTitle>
 ; }
 
@@ -174,7 +174,7 @@ class ytdlp {
         }
 
         ;// checking if filename already exists
-        mNotifyGUI_Prog := Notify.Show('ytdlp', 'Determining name of output file...', 'iconi', 'Windows Balloon',, 'TC=black MC=black BC=75AEDC POS=BR show=fade@250 hide=fade@250 DUR=6')
+        mNotifyGUI_Prog := Notify.Show(, 'Determining name of the output file...', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=6 maxW=400 bdr=0x75AEDC')
         SDopt := SD_Opt()
         outputFileName := Format(this.defaultFilename, SDopt.filenameLengthLimit)
         nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}"', outputFileName, this.URL))

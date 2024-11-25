@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2024/10/31
- * @version 2.3.2
+ * @date 2024/11/25
+ * @version 2.3.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -14,6 +14,7 @@
 #Include <Classes\obj>
 #Include <Classes\WM>
 #Include <Classes\reset>
+#Include <Other\Notify\Notify>
 #Include <Functions\refreshWin>
 #Include <Functions\detect>
 #Include <Functions\checkInternet>
@@ -401,7 +402,7 @@ settingsGUI()
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         ToolTip("")
         ; tool.Tray({text: "Settings changes are being saved", title: "settingsGUI()", options: 20}, 2000)
-        Notify.Show("settingsGUI()", "Settings changes are being saved", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 Hide=Fade@250")
+        Notify.Show("settingsGUI()", "Settings changes are being saved", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 Hide=Fade@250")
         UserSettings.__delAll() ;// close the settings instance
         ToolTip("")
         if IsSet(butt) && butt = "hard"
@@ -521,7 +522,7 @@ settingsGUI()
             case "Photoshop":
                 short := "ps"
                 static psIsBeta := unset
-                shortcutName := "ahk_exe Photoshop.exe"
+                shortcutName := "Photoshop.exe"
                 shortcutNameBeta := "ahk_exe Photoshop.exe (Beta).exe"
                 adobeFullName := "Adobe Photoshop"
                 title := program " Settings"

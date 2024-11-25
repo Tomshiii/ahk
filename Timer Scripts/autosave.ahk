@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/09/16
- * @version 2.1.30
+ * @date 2024/11/25
+ * @version 2.1.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -21,7 +21,7 @@
 #Include <Functions\trayShortcut>
 #Include <Functions\checkStuck>
 #Include <Functions\detect>
-#Include <Other\Notify>
+#Include <Other\Notify\Notify>
 #Include <Other\WinEvent>
 ; }
 
@@ -298,7 +298,7 @@ class adobeAutoSave extends count {
         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
         if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
             return
-        Notify.Show(, 'If you were playing back anything, this function should resume it', 'iconi',,, 'POS=BR TC=black MC=black BC=75AEDC DUR=4 show=Fade@250 hide=Fade@250')
+        Notify.Show(, 'If you were playing back anything, this function should attempt to resume it', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
         ; tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
         this.userPlayback := true
     }
@@ -424,7 +424,7 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.premWindow.saveCheck {
-            Notify.Show(, 'Premiere save not required, cancelling...', 'iconi',,, 'POS=BR TC=black MC=black BC=75AEDC DUR=2 show=Fade@250 hide=Fade@250')
+            Notify.Show(, 'Premiere save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             ; tool.Cust("Premiere save not required, cancelling")
             return
         }
@@ -452,7 +452,7 @@ class adobeAutoSave extends count {
         if (this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe") && this.restartPlayback = true
             this.__checkPremPlayback()
 
-        Notify.Show(, 'A save attempt is being made. Inputs may be temporarily blocked', 'iconi',,, 'POS=BR TC=black MC=black BC=DCCC75 DUR=4 show=Fade@250 hide=Fade@250')
+        Notify.Show(, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
         ; tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
 
         ;// attempts to save using `PremiereRemote`
@@ -540,7 +540,7 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.aeWindow.saveCheck {
-            Notify.Show(, 'AE save not required, cancelling...', 'iconi',,, 'POS=BR TC=black MC=black BC=75AEDC DUR=2 show=Fade@250 hide=Fade@250')
+            Notify.Show(, 'AE save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             ; tool.Cust("AE save not required, cancelling")
             return
         }

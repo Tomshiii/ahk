@@ -20,7 +20,11 @@
 `MouseHook.ahk`               => : https://discord.com/channels/115993023636176902/1207794506095923350/1207794506095923350
 
 `XMCQCX`  
-`Notify.ahk` => : https://github.com/XMCQCX/Notify_Class/tree/main
+`Notify.ahk`         => : https://github.com/XMCQCX/NotifyClass-NotifyCreator/tree/main
+`Notify Creator.ahk` => : https://github.com/XMCQCX/NotifyClass-NotifyCreator/tree/main
+    `included libs`
+        `Color.ahk`         => : https://www.autohotkey.com/boards/viewtopic.php?f=83&t=132433
+        `Color Picker.ahk`  => : https://www.autohotkey.com/boards/viewtopic.php?f=83&t=132295
 
 `GroggyOtter`
 `definition_updater.v2.ahk` => : https://github.com/GroggyOtter/ahkv2_definition_rewrite/tree/main

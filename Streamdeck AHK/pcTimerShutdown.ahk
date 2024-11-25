@@ -3,7 +3,7 @@
 ; { \\ #Includes
 #Include <GUIs\tomshiBasic>
 #Include <Classes\cmd>
-#Include <Other\Notify>
+#Include <Other\Notify\Notify>
 ; }
 
 ;// For `sleep` to be an available option the user needs to download PSTools; https://learn.microsoft.com/en-us/sysinternals/downloads/psshutdown
@@ -34,7 +34,7 @@ class shutdownGUI extends tomshiBasic {
         switch this["sleepCheck"].value {
             case 1:
                 cmd.run(1,, 1, Format('psshutdown64 -d -v 0 -t {}', timer))
-                Notify.Show("Scheduled Sleep", "This computer will sleep in " timer "s", A_WinDir '\system32\shell32.dll|Icon28',,, "POS=BR DUR=3")
+                Notify.Show('Scheduled Sleep', "This computer will sleep in " timer "s", 'C:\Windows\System32\shell32.dll|icon28',,, 'dur=3 show=Fade@250 hide=Fade@250 pad=,,,,20 bdr=0xC72424')
             default: cmd.run(,,, "shutdown -s -t " timer)
         }
     }
@@ -44,7 +44,7 @@ class shutdownGUI extends tomshiBasic {
                 cancel := cmd.result("psshutdown64 -a", 1)
                 if !InStr(cancel, "Shutdown of local system aborted.")
                     return
-                Notify.Show("Scheduled Sleep Aborted", "The scheduled sleep has been cancelled.", A_WinDir '\system32\shell32.dll|Icon28',,, "POS=BR DUR=3")
+                Notify.Show("Scheduled Sleep Aborted", "The scheduled sleep has been cancelled.", 'C:\Windows\System32\shell32.dll|icon28',,, 'dur=3 show=Fade@250 hide=Fade@250 pad=,,,,20 bdr=0xC72424')
             default: cmd.run(,,, "shutdown -a")
         }
     }

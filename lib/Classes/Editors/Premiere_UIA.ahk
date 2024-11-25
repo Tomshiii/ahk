@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/10/30
- * @version 2.0.12
+ * @date 2024/11/25
+ * @version 2.0.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,7 +14,7 @@
 #Include <Functions\checkStuck>
 #Include <Other\UIA\UIA>
 #Include <Other\JSON>
-#Include <Other\Notify>
+#Include <Other\Notify\Notify>
 ; }
 
 ;// [Table of Contents]
@@ -129,7 +129,7 @@ Class premUIA_Values {
             } catch{
                 block.off()
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
-                Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250')
+                Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                 return
             }
         }
@@ -141,7 +141,7 @@ Class premUIA_Values {
             }
         }
 
-        attemptNotify := Notify.Show(, "Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled", 'iconi',,, "POS=BR DUR=3 MALI=CENTER IW=25 TC=black MC=black BC=DCCC75 show=Fade@250 hide=Fade@250")
+        attemptNotify := Notify.Show(, 'Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=3 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
         tool.Cust("Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled", 3.0,,, 9)
         for currentPanel, currHotkey in this.windowHotkeys {
             SendInput(currHotkey)
@@ -151,7 +151,7 @@ Class premUIA_Values {
                 block.Off()
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
                 Notify.Destroy(attemptNotify['hwnd'])
-                Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250')
+                Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                 return
             }
             currentVers.%currentPremVer%.%currentPanel% := currentEl
@@ -160,7 +160,7 @@ Class premUIA_Values {
         this.allVals := currentVers
         this.__setClassVal()
         ; tool.Cust("This process may have no effect until all scripts are reloaded!", 3.0)
-        Notify.Show(, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250')
+        Notify.Show(, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
         if JSON.stringify(currentVers) == originalVers
             return
 

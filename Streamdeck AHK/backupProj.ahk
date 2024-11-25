@@ -3,7 +3,7 @@
 #Include <Classes\Streamdeck_opt>
 #Include <Classes\obj>
 #Include <Classes\Editors\Premiere>
-#Include <Other\Notify>
+#Include <Other\Notify\Notify>
 ;
 if WinExist(prem.winTitle) {
     try {
@@ -20,7 +20,7 @@ if !projectFolder := FileSelect("D 3", defaultDir, "Select Folder Containing Pro
     return
 sd := SD_Opt()
 if !DirExist(sd.backupFolder) {
-    Notify.Show('', 'You can set your backup location in;`n..\Support Files\Streamdeck Files\options.ini', 'iconi', 'Windows Balloon',, 'TC=black MC=black BC=75AEDC POS=BR show=fade@250 hide=fade@250 DUR=6')
+    Notify.Show(, 'You can set your backup location in;`n..\Support Files\Streamdeck Files\options.ini', 'C:\Windows\System32\imageres.dll|icon77', 'Windows Balloon',, 'dur=6 show=Fade@250 hide=Fade@250 bdr=0xC72424')
     if !backupFolder := FileSelect("D 3", defaultDir, "Select Location you wish to Backup to")
         return
 }

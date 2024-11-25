@@ -60,6 +60,7 @@ class psVers {
     )
     ;// VER         || IMAGE VER     ||  SUBSEQUENT MINOR VERS
     static v26 := Map(
-        "v26.0",    "v24.3"
+        "v26.0",    "v24.3",
+        "v26.1",    "v24.3"
     )
 }
