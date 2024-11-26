@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/11/25
- * @version 1.7.44
+ * @date 2024/11/26
+ * @version 1.7.45
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -826,8 +826,8 @@ class Startup {
             scriptPos: ptf.lib "\Other"
         }
         Notify := {
-            name: "Notify",                          url: "https://raw.githubusercontent.com/XMCQCX/Notify_Class/main/Notify.ahk",
-            scriptPos: ptf.lib "\Other"
+            name: "Notify",                          url: "https://raw.githubusercontent.com/XMCQCX/NotifyClass-NotifyCreator/refs/heads/main/Notify.ahk",
+            scriptPos: ptf.lib "\Other\Notify"
         }
 
         objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify]
