@@ -11,3 +11,4 @@
 
 ## Other Changes
 - Updated use of `notify {` across scripts to make them more consistent
+- `Always Check UIA` will now default to true during new installs
