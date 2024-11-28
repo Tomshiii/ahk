@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/11/05
- * @version 1.2.19
+ * @date 2024/11/28
+ * @version 1.2.20
  ***********************************************************************/
 
 class UserPref {
@@ -36,7 +36,7 @@ class UserPref {
         "autosave_always_save", "true", "autosave_restart_playback", "false",
         "checklist_hotkeys", "true", "checklist_tooltip", "true", "checklist_wait", "false",
         "prem_Focus_Icon", "false", "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
-        "Always Check UIA", "false", "Set UIA Limit Daily", "disabled",
+        "Always Check UIA", "true", "Set UIA Limit Daily", "disabled",
 
         ;// [Adjust]
         "adobe_GB", 45, "adobe_FS", 2,
