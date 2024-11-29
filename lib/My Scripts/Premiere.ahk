@@ -55,6 +55,13 @@ Escape::prem.escFxMenu()
 ;premselecttoolHotkey;
 SC03A & v::prem.selectionTool()
 
+LAlt & SC03A::prem.layerSizeAdjust()
+
+LCtrl & 1::prem.toggleLayerButtons("mute")
+LCtrl & 2::prem.toggleLayerButtons("solo")
+LCtrl & 3::prem.toggleLayerButtons("lock")
+LCtrl & 4::prem.toggleLayerButtons("target")
+
 ;premrippleTrimHotkey;
 q::
 w::prem.rippleTrim()
@@ -73,7 +80,7 @@ $+1::
 $+2::
 $+3::prem.zoomPreviewWindow(A_ThisHotkey)
 
-^!f::prem.flattenAndColour(ksa.labelIris, false)
+^!f::prem.flattenAndColour(ksa.labelIris)
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

@@ -2,11 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 code is maintained for the version of Premiere listed below
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
- * See the version number listed below for the version of Premiere I am currently using
  * @premVer 25.0
  * @author tomshi
- * @date 2024/11/25
- * @version 2.1.37
+ * @date 2024/11/29
+ * @version 2.1.38
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -43,9 +42,15 @@ class Prem {
 
         switch {
             ;// spectrum ui
-            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
+            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
+                ;// set timeline and playhead colours
+                this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
+                ;// set layer button offsets (these get added onto `timelineRawX`)
+                this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.layerEmpty := 0x1D1D1D, this.layerDivider := 0x303030
             ;// old ui
-			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:  this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55
+			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
+                ;// set timeline and playhead colours
+                this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55
         }
     }
 
@@ -106,6 +111,17 @@ class Prem {
 
     ;// swapChannels()
     static secondChannel := 0
+
+    ;// 387
+    static layerSource := 16
+    static layerLock   := 48
+    static layerTarget := 71
+    static layerSync   := 96
+    static layerMute   := 119
+    static layerSolo   := 142
+    static layerEmpty   := 0x1D1D1D
+    static layerDivider := 0x303030
+    static toggleWaiting := false
 
     class ClientInfo {
         ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
@@ -2252,13 +2268,98 @@ class Prem {
         block.Off()
     }
 
-    static flattenAndColour(colour, disableTrack := false) {
+    /**
+     * A function to flatten a multicam clip, optionally disable/enable it, then recolour it to a specific label colour.
+     * @param {String} colour the hotkey required to set the colour of your choosing. Can be a `KSA` value
+     */
+    static flattenAndColour(colour) {
         keys.allWait()
         block.On()
         this.__checkTimelineFocus()
-        doDisable := (disableTrack = true) ? ksa.enableDisable : ""
-        delaySI(100, doDisable, ksa.flattenMulti, colour)
+        delaySI(100, ksa.flattenMulti, colour)
         block.Off()
+    }
+
+    /**
+     * A function designed to allow you to quickly adjust the size of the layer the cursor is within. <kbd>LAlt</kbd> **MUST** be one of the activation hotkeys and is required to be held down for the duration of this function.
+     */
+    static layerSizeAdjust() {
+        storeHotkey := A_ThisHotkey
+        ;// avoid attempting to fire unless main window is active
+        getTitle := WinGet.PremName()
+        if WinGetTitle("A") != getTitle.winTitle
+            return
+        if !prem.timelineFocusStatus()
+            return
+
+        if !activationKey := getHotkeys()
+            return
+
+        block.On()
+        coord.client()
+        origMouseCords := obj.MousePos()
+        MouseMove(this.timelineRawX+10, origMouseCords.y, 2)
+        KeyWait("LAlt", "L")
+        MouseMove(origMouseCords.x, origMouseCords.y)
+        checkStuck(["LAlt", "CapsLock"])
+        if InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")
+            SetCapsLockState('AlwaysOff')
+        block.Off()
+    }
+
+    /**
+     * A function to quickly toggle the state of various layer settings for the layer the cursor is within. This funtion uses offset values of the `timelineRawX` value and as such the use of `PremiereUIA` is required.
+     * @param {String} [which="target"] defines the button you wish to toggle. Accepted options are; `source`, `target`, `sync`, `mute`, `solo`, `lock`
+     */
+    static toggleLayerButtons(which := "target") {
+        allowedParams := Mip("source", true, "target", true, "sync", true,
+            "mute", true, "solo", true, "lock", true)
+        if !allowedParams.Has(which) {
+            ;// throw
+            errorLog(MethodError("Incorrect Value in Parameter #1", -1, which),,, true)
+            return
+        }
+        if (which = "target" || which = "source") && this.toggleWaiting = true
+            return
+        ;// avoid attempting to fire unless main window is active
+        getTitle := WinGet.PremName()
+        if WinGetTitle("A") != getTitle.winTitle
+            return
+        if !prem.timelineFocusStatus()
+            return
+        block.On()
+        coord.client()
+        origMouseCords := obj.MousePos()
+        dividerCheck := PixelGetColor(this.timelineRawX+this.layer%which%, origMouseCords.y)
+        if dividerCheck = this.layerDivider {
+            Notify.Show(, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+            block.Off()
+            return
+        }
+        MouseMove(this.timelineRawX+this.layer%which%, origMouseCords.y, 1)
+        if which = "solo" {
+            ;// check to see if the user is hovering over a video track by determining if the colour under the cursor isn't getting highlighted
+            ;// we have to do this otherwise if the user spams the solo button, the function will double click the layer and expand it
+            checkCol := PixelGetColor(this.timelineRawX+this.layer%which%, origMouseCords.y)
+            if checkCol = this.layerEmpty {
+                MouseMove(origMouseCords.x, origMouseCords.y, 1)
+                block.Off()
+                return
+            }
+        }
+        SendInput("{Click}")
+        MouseMove(origMouseCords.x, origMouseCords.y, 1)
+        if !(which = "target" || which = "source") {
+            block.Off()
+            return
+        }
+        ;// if the user is attempting to change the source/target track we need to delay them
+        ;// because premiere will refuse to change the toggle unless the user has stopped trying to change it
+        ;// for around 400ms
+        ;// the user may still encounter this behaviour if they toggle a different layer button, then immediately attempt
+        ;// to toggle the source/target.
+        this.toggleWaiting := true
+        SetTimer((*) => (block.Off(), this.toggleWaiting := false), -400)
     }
 
     ;//! *** ===============================================
