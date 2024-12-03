@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 24.5
  * @author tomshi, taranVH
- * @date 2024/11/25
- * @version 2.3.9
+ * @date 2024/12/03
+ * @version 2.3.10
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -369,6 +369,15 @@ class rbuttonPrem {
 		if !prem.__checkCoords(origMouse) {
 			SendInput(this.sendHotkey)
 			this.__exit()
+		}
+
+		;// if the timeline isn't the focused window we send escape just in case - this is useful to stop
+		;// a bunch of letters being spammed while typing
+		;// unfortunately we can't use UIA to check if the program monitor is the focused window
+		;// because setting UIA vals this early can cause a tonne of lag during playback
+		if !prem.timelineFocusStatus() {
+			SendInput("{Escape}")
+			sleep 16
 		}
 
 		if allChecks = true {

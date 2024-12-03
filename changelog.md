@@ -2,6 +2,7 @@
 
 ## Functions
 - Fixed `generateAdobeShortcut()` not properly generating `Photoshop` shortcuts
+- `rbuttonPrem().movePlayhead()` will no longer input a bunch of characters if the user is typing when activated
 
 `prem {`
 - Added `layerSizeAdjust()`
