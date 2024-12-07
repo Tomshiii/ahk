@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/10/28
- * @version 1.1.0
+ * @date 2024/12/04
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -95,8 +95,11 @@ class ffmpeg {
      * @param {Object} obj the splitpath object that contains the path of the file being worked on
      */
     __runDir(obj) {
+        checkPath := (SubStr(obj.dir, -1, 1) != "\") ? obj.dir "\" : ""
         if WinExist(obj.dir)
             WinActivate(obj.dir)
+        else if WinExist(checkPath)
+            WinActivate(checkPath)
         else
             Run(obj.dir)
     }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/11/25
- * @version 1.3.16
+ * @date 2024/12/04
+ * @version 1.3.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -406,13 +406,19 @@ class switchTo {
             ;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
             if WinExist(getFolderName " ahk_class CabinetWClass",, "Adobe" "Editing Checklist", "Adobe") {
                 list := WinGetList(getFolderName " ahk_class CabinetWClass",, "Adobe" "Editing Checklist", "Adobe")
+                hide := []
                 for v in list {
                     checkPath := WinGet.ExplorerPath(v)
                     checkPath := (SubStr(checkPath, -1, 1) != "\") ? checkPath "\" : ""
                     if checkPath == newPath {
                         WinActivate(v)
+                        for hwnd in hide {
+                            WinMoveBottom(hwnd)
+                        }
                         return true
                     }
+                    else
+                        hide.Push(v)
                 }
             }
             ;// run the path
