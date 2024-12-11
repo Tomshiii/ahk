@@ -3,8 +3,8 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2024/11/17
- * @version v2.15.0
+ * @date 2024/12/12
+ * @version v2.15.1
  * @ahk_ver 2.0.18
  ***********************************************************************/
 

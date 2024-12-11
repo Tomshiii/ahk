@@ -1,4 +1,4 @@
-# <> Release 2.15.x - 
+# <> Release 2.15.1 - Bugfix & Improvements
 
 ## Functions
 - Fixed `generateAdobeShortcut()` not properly generating `Photoshop` shortcuts
@@ -18,4 +18,4 @@
 ## Other Changes
 - Updated use of `notify {` across scripts to make them more consistent
 - Updated some `After Effects` ImageSearch images for `v25.1` & `v25.2`
-- `Always Check UIA` will now default to true during new installs
+- `Always Check UIA` will now default to `true` during new installs
