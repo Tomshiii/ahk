@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.11
+;\\v2.34.12
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -129,6 +129,7 @@ start.updateAHK()                         ;checks for a newer version of ahk and
 start.monitorAlert()                      ;checks the users monitor work area for any changes
 start.checkShortcuts()                    ;attempts to create shortcuts if they haven't already been generated
 start.__Delete()
+errorLog({})                              ;generate initial errorlog file
 
 ;// so streamdeck scripts can receive premiere timeline coords
 onMsgObj := ObjBindMethod(WM, "__recieveMessage")

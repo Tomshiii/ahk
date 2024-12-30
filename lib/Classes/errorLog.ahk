@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2023/12/30
- * @version 2.1.2
+ * @date 2024/12/30
+ * @version 2.1.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -15,7 +15,9 @@
 ; }
 
 /**
- * A class designed to log errors in scripts if they occur. Simply pass in an error object and optionally pass a backup func/hotkey name. The output will also be send to `OutputDebug`.
+ * A class designed to log errors in scripts if they occur. Simply pass in an error object. The output will also be send to `OutputDebug`.
+ *
+ * ##### It is recommended you run this function like; `errorlog({})` once per day before anything else to generate the initial file - while not mandatory it will avoid instances of the intro block being generated two or more times if errorlog happens to get called back to back
  * @param {Object} err The error object you want to report on. Within an error object is `err.What` which states what threw the error - it should be noted this function manually checks for, and strips that string of `Prototype.` to make it less confusing to read in the log. This means that if you have a function with that exact string its name may be stripped.
  * @param {String} optMessage An optional message you wish to append alongside the error. This message will be tabbed in to visually distinguish it
  * @param {Boolean/Object} toolCust Allows the user to determine if they wish for a tooltip of the current error to be automatically generated. This parameter can either be a passed as a `true` boolean, or an object to determine a custom tooltip. If you wish to pass an object, follow the naming below:
@@ -43,6 +45,13 @@ class errorLog extends log {
         if !IsSet(setVar) || !IsObject(setVar)
             throw UnsetError("Parameter #1 is unset", -1, this.err)
 
+        ;// stops errors in the event `{}` is passed as `err`
+        errors := Map('Message', "", 'what', "", 'Extra', "", 'File', A_LineFile, 'Line', "~error")
+        for k, v in errors {
+            if !this.err.HasOwnProp(k)
+                this.err.%k% := v
+        }
+
         ;// clean up the message string
         this.err.Message := StrReplace(this.err.Message, "`n`n", "- ")
         this.err.Message := StrReplace(this.err.Message, "`r`r", "- ")
@@ -60,8 +69,19 @@ class errorLog extends log {
             DirCreate(ptf.ErrorLog)
 
         ;// if a file for the day doesn't exist, create it and append the first start info
-        if !FileExist(this.logLocation)
+        if !FileExist(this.logLocation) {
             this.__firstError()
+            ;// if errorlog is initialised with an empty param list, it's to generate the inital file then exit
+            ;// so here we check to see if that's the case
+            different := false
+            for k, v in errors {
+                if this.err.%k% = v
+                    continue
+                different := true
+            }
+            if different = false
+                return
+        }
 
         ;// getting the name of the script that called the function
         script := obj.SplitPath(this.err.File)
@@ -101,21 +121,20 @@ class errorLog extends log {
             removePathPos := InStr(OSNameResult, "|",,, 1)
             OSName := (removePathPos != 0) ? SubStr(OSNameResult, 1, removePathPos - 1) : OSNameResult
 
-            ;// get OS architecture
-            For OperatingSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_OperatingSystem")
-                OSArch := OperatingSystem.OSArchitecture
+            ;// get OS architecture & remaining free ram
+            For OperatingSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_OperatingSystem") {
+                OSArch    := OperatingSystem.OSArchitecture
+                Response2 := OperatingSystem.FreePhysicalMemory / "1048576"
+            }
             ;// get CPU
             For Processor in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_Processor")
                 CPU := Processor.Name
-            ;// get number of processors
-            For ComputerSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_ComputerSystem")
-                Logical := ComputerSystem.NumberOfLogicalProcessors
-            ;// get total system ram
-            For ComputerSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_ComputerSystem")
+            ;// get number of processors & total system ram
+            For ComputerSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_ComputerSystem") {
+                Logical  := ComputerSystem.NumberOfLogicalProcessors
                 Response := ComputerSystem.TotalPhysicalMemory / "1073741824"
-            ;// get remaining free ram
-            For OperatingSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_OperatingSystem")
-                Response2 := OperatingSystem.FreePhysicalMemory / "1048576"
+
+            }
 
             Memory      := Round(Response, 2)
             FreePhysMem := Round(Response2, 2)
@@ -130,11 +149,13 @@ class errorLog extends log {
                 try {
                     LatestReleaseBeta := getScriptRelease(True)
                     LatestReleaseMain := getScriptRelease()
+                    if LatestReleaseBeta = LatestReleaseMain
+                        LatestReleaseBeta := "[No Current Beta Release]"
                 }
-                if LatestReleaseBeta = LatestReleaseMain
-                    LatestReleaseBeta := "[No Current Beta Release]"
             }
 
+            ;// remove date/time from being at the beginning of file
+            this.logger := log("",, this.logLocation)
             this.logger.append(Format("
             (
                 \\ ErrorLogs

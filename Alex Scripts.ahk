@@ -37,6 +37,7 @@ start.adobeVerOverride()
 start.updateAHK()
 start.checkShortcuts()
 start.__Delete()
+errorLog({})
 
 ;// so streamdeck scripts can receive premiere timeline coords
 onMsgObj := ObjBindMethod(WM, "__recieveMessage")
