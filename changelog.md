@@ -6,7 +6,7 @@
 
 `errorLog()`
 - Fixed date/time from being printed unintentially at the beginning of the file
-- Function can now be called like; `errorLog({})` to generate the initial file
+- Function can now be called like; `errorLog({state:"empty"})` to generate the initial file
 
 ## Other Changes
 - Added [`MsgBoxCreator.ahk`](https://www.autohotkey.com/boards/viewtopic.php?t=78253)

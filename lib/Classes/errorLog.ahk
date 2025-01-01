@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2024/12/30
- * @version 2.1.3
+ * @date 2025/01/01
+ * @version 2.1.4
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -17,7 +17,7 @@
 /**
  * A class designed to log errors in scripts if they occur. Simply pass in an error object. The output will also be send to `OutputDebug`.
  *
- * ##### It is recommended you run this function like; `errorlog({})` once per day before anything else to generate the initial file - while not mandatory it will avoid instances of the intro block being generated two or more times if errorlog happens to get called back to back
+ * ##### It is recommended you run this function like; `errorlog({state:"empty"})` once per day before anything else to generate the initial file - while not mandatory it will avoid instances of the intro block being generated two or more times if errorlog happens to get called back to back
  * @param {Object} err The error object you want to report on. Within an error object is `err.What` which states what threw the error - it should be noted this function manually checks for, and strips that string of `Prototype.` to make it less confusing to read in the log. This means that if you have a function with that exact string its name may be stripped.
  * @param {String} optMessage An optional message you wish to append alongside the error. This message will be tabbed in to visually distinguish it
  * @param {Boolean/Object} toolCust Allows the user to determine if they wish for a tooltip of the current error to be automatically generated. This parameter can either be a passed as a `true` boolean, or an object to determine a custom tooltip. If you wish to pass an object, follow the naming below:
@@ -44,6 +44,9 @@ class errorLog extends log {
         setVar := this.err
         if !IsSet(setVar) || !IsObject(setVar)
             throw UnsetError("Parameter #1 is unset", -1, this.err)
+
+        if FileExist(this.logLocation) && this.err.HasOwnProp('state') && this.err.state = "empty"
+            return
 
         ;// stops errors in the event `{}` is passed as `err`
         errors := Map('Message', "", 'what', "", 'Extra', "", 'File', A_LineFile, 'Line', "~error")
@@ -74,12 +77,7 @@ class errorLog extends log {
             ;// if errorlog is initialised with an empty param list, it's to generate the inital file then exit
             ;// so here we check to see if that's the case
             different := false
-            for k, v in errors {
-                if this.err.%k% = v
-                    continue
-                different := true
-            }
-            if different = false
+            if this.err.HasOwnProp('state') && this.err.state = "empty"
                 return
         }
 
