@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2024/11/28
- * @version 1.2.20
+ * @date 2025/01/01
+ * @version 1.2.21
  ***********************************************************************/
 
 class UserPref {
@@ -29,7 +29,7 @@ class UserPref {
     workingDir := A_WorkingDir
     defaults := Map(
         ;// [Settings]
-        "update_check", "true", "beta_update_check", "false", "package_update_check", "true", "lib_update_check", "true", "ahk_update_check", "true",
+        "update_check", "true", "beta_update_check", "false", "package_update_check", "true", "lib_update_check", "true", "ahk_update_check", "true", "update_adobe_verAHK", "true",
         "dark_mode", "",
         "run_at_startup", "false", "show_adobe_vers_startup", "true",
         "autosave_beep", "true", "autosave_check_checklist", "true", "autosave_save_override", "true", "autosave_check_mouse", "true",
@@ -211,6 +211,7 @@ class UserPref {
                     update check={}
                     beta update check={}
                     ahk update check={}
+                    update adobe verAHK={}
                     package update check={}
                     lib update check={}
                     dark mode={}

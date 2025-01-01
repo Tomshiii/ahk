@@ -14,6 +14,13 @@
       "false": "Scripts will not check for updates using Chocolatey or the user's defined package manager"
     }
   },
+  "versUpdate": {
+    "title": "Check for Vers.ahk Updates",
+    "tooltip": {
+      "true": "Scripts will check to see if any updates for the `Vers.ahk`/`adobeVers.ahk` files",
+      "false": "Scripts will not check to see if any updates for the `Vers.ahk`/`adobeVers.ahk` files"
+    }
+  },
   "libUpdate": {
     "title": "Check for Library Updates",
     "tooltip": {

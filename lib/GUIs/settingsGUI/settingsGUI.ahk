@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2024/11/25
- * @version 2.3.3
+ * @date 2025/01/01
+ * @version 2.3.4
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -167,6 +167,10 @@ settingsGUI()
     ;// package update check
     settingsGUI.AddCheckbox("vpackageCheck Checked" UserSettings.package_update_check " Y+5", setJSON.packageUpdate.title).OnEvent("Click", toggle.Bind("package update check", ""))
     settingsGUI["packageCheck"].ToolTip := (UserSettings.package_update_check = true) ? setJSON.packageUpdate.tooltip.true : setJSON.packageUpdate.tooltip.false
+
+    ;// vers.ahk update check
+    settingsGUI.AddCheckbox("vVersCheck Checked" UserSettings.update_adobe_verAHK " Y+5", setJSON.versUpdate.title).OnEvent("Click", toggle.Bind("update adobe verAHK", ""))
+    settingsGUI["VersCheck"].ToolTip := (UserSettings.update_adobe_verAHK = true) ? setJSON.versUpdate.tooltip.true : setJSON.versUpdate.tooltip.false
 
     ;// dark mode toggle
     settingsGUI.AddCheckbox("vdarkCheck Checked" UserSettings.dark_mode " Y+5", setJSON.dark.title).OnEvent("Click", darkToggle)

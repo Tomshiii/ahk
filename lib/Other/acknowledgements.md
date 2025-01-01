@@ -28,3 +28,6 @@
 
 `GroggyOtter`
 `definition_updater.v2.ahk` => : https://github.com/GroggyOtter/ahkv2_definition_rewrite/tree/main
+
+`boiler`
+`MsgBoxCreator.ahk` => : https://www.autohotkey.com/boards/viewtopic.php?t=78253

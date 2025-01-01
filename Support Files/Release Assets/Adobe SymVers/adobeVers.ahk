@@ -25,7 +25,7 @@ class adobeVers {
         ;// to keep the version list short I'll periodically reduce the amount of versions it creates.
         ;// uncomment them if you use a version in here
         ;// however, a note: the `deleteAdobeSyms.ahk` script will now similarly no longer delete these symlink folders
-        ;// so if you've alread installed my repo before, you'll need to manually delete them
+        ;// so if you've already installed my repo before, you'll need to manually delete them
 
         ; 24: psVers.v24,
         25: psVers.v25,

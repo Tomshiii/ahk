@@ -23,3 +23,4 @@ $^c::VSCode.copy()
 ; *::discord.surround("*")
 
 !`::SendText('``n')
+^+d::SendText(Format("{}/{}/{}", A_YYYY, A_MM, A_DD))

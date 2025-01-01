@@ -1,6 +1,6 @@
  ;// If any versions are commented out, assume it's because some UI changes occur so the version requires its own folder
 
-class premVers {
+ class premVers {
     static v22 := Map("v22.4", "v22.3.1", "22.5", "v22.3.1", "22.6", "v22.3.1")
     static v23 := Map(
         "v23.0", "v22.3.1", "v23.1", "v22.3.1", "v23.2", "v22.3.1", "v23.3", "v22.3.1", "v23.4", "v22.3.1", "v23.5", "v22.3.1", "v23.6", "v22.3.1", "v23.6.2", "v22.3.1", "v23.6.4", "v22.3.1", "v23.6.5", "v22.3.1", "v23.6.7", "v22.3.1", "v23.6.8", "v22.3.1", "v23.6.9", "v22.3.1",
@@ -36,7 +36,7 @@ class aeVers {
         "v24.3",    "v22.6",
         "v24.4",    "v22.6",        "v24.4.1", "v22.6",
         "v24.5",    "v22.6",
-        "v24.6",    "v24.5",        "v24.6.1", "v24.4", "v24.6.2", "v24.4", "v24.6.3", "24.4"
+        "v24.6",    "v24.5",        "v24.6.1", "v24.4", "v24.6.2", "v24.4", "v24.6.3", "24.4", "v24.6.4", "24.4"
     )
     ;// VER         || IMAGE VER     ||  SUBSEQUENT MINOR VERS
     static v25 := Map(

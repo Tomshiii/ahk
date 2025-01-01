@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2024/11/26
- * @version 1.7.45
+ * @date 2025/01/01
+ * @version 1.7.46
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -408,6 +408,50 @@ class Startup {
         }
     }
 
+    /** Updates a user's adobe `vers.ahk` file & `adobeVers.ahk` file */
+    updateAdobeVerAHK() {
+        if this.isReload != false || this.UserSettings.update_adobe_verAHK = false ;checks if script was reloaded
+            return
+        if !DirExist(A_Temp "\tomshi")
+            DirCreate(A_Temp "\tomshi")
+
+        installedVers      := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers.ahk"
+        latestVers         := A_Temp "\tomshi\Vers.ahk"
+        installedAdobeVer  := ptf.SupportFiles "\Release Assets\Adobe SymVers\adobeVers.ahk"
+        latestAdobeVers    := A_Temp "\tomshi\adobeVers.ahk"
+        genSymLinks        := ptf.SupportFiles "\Release Assets\Adobe SymVers\generateAdobeSym.ahk"
+        symDir             := ptf.SupportFiles "\Release Assets\Adobe SymVers"
+
+        if !FileExist(installedVers) {
+            errorLog(TargetError("Could not determine Vers.ahk file", -1),, true)
+            return
+        }
+        readInstalledVers := FileRead(installedVers)
+        ;// downloads
+        __dld(url, path, filename) {
+            try Download(url, path)
+            catch {
+                errorLog(MethodError(Format("Failed to download latest {}.ahk file", filename), -1),,, true)
+                return
+            }
+        }
+        __dld("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/dev/Support%20Files/Release%20Assets/Adobe%20SymVers/Vers.ahk", latestVers, "Vers")
+        readLatestVers := FileRead(latestVers)
+        __dld("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/dev/Support%20Files/Release%20Assets/Adobe%20SymVers/adobeVers.ahk", latestAdobeVers, "adobeVers")
+        readLatestVers := FileRead(latestAdobeVers)
+
+        if readInstalledVers == readLatestVers
+            return
+
+        promptUser := MsgBox("The user's adobe Vers.ahk file appears to be outdated.`nDo you wish to update it?`n`n(note: This will regenerate symlinks and as such will require an admin prompt)", "Update Vers.ahk?", "4148")
+        if promptUser = "No"
+            return
+
+        FileMove(latestVers, installedVers, true)
+        FileMove(latestAdobeVers, installedAdobeVer, true)
+        Run(genSymLinks, symDir)
+    }
+
     /**
      * This function will check for any updates in the user's package manager. If any are available they will be prompted asking if they wish to update.
      * ### _Please note_; the code for this function is designed around `chocolatey` and may not function with other package managers. The code to send the upgrade command specifically is also choco specific
@@ -763,6 +807,8 @@ class Startup {
         __addAndIncrement("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
         __addAndIncrement("Close All Scripts", (*) => reset.ex_exit())
         __addAndIncrement("Notify Creator", (*) => Run(ptf.rootDir "\lib\Other\Notify\Notify Creator.ahk"))
+        __addAndIncrement("MsgBox Creator", (*) => Run(ptf.rootDir "\lib\Other\MsgBoxCreator.ahk"))
+        __addAndIncrement("") ;adds a divider bar
         __addAndIncrement("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
         __addAndIncrement("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
         __addAndIncrement("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false).__setNewVal() : MsgBox("Premiere needs to be open for this option to function correctly!"))
