@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/01/01
- * @version 1.7.46
+ * @date 2025/01/02
+ * @version 1.7.47
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -417,8 +417,8 @@ class Startup {
 
         installedVers      := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers.ahk"
         latestVers         := A_Temp "\tomshi\Vers.ahk"
-        installedAdobeVer  := ptf.SupportFiles "\Release Assets\Adobe SymVers\adobeVers.ahk"
-        latestAdobeVers    := A_Temp "\tomshi\adobeVers.ahk"
+        installedAdobe     := ptf.SupportFiles "\Release Assets\Adobe SymVers\adobeVers.ahk"
+        latestAdobe        := A_Temp "\tomshi\adobeVers.ahk"
         genSymLinks        := ptf.SupportFiles "\Release Assets\Adobe SymVers\generateAdobeSym.ahk"
         symDir             := ptf.SupportFiles "\Release Assets\Adobe SymVers"
 
@@ -437,10 +437,11 @@ class Startup {
         }
         __dld("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/dev/Support%20Files/Release%20Assets/Adobe%20SymVers/Vers.ahk", latestVers, "Vers")
         readLatestVers := FileRead(latestVers)
-        __dld("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/dev/Support%20Files/Release%20Assets/Adobe%20SymVers/adobeVers.ahk", latestAdobeVers, "adobeVers")
-        readLatestVers := FileRead(latestAdobeVers)
+        __dld("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/dev/Support%20Files/Release%20Assets/Adobe%20SymVers/adobeVers.ahk", latestAdobe, "adobeVers")
+        readLatestAdobe    := FileRead(latestAdobe)
+        readInstalledAdobe := FileRead(installedAdobe)
 
-        if readInstalledVers == readLatestVers
+        if (readInstalledVers == readLatestVers) && (readInstalledAdobe == readLatestAdobe)
             return
 
         promptUser := MsgBox("The user's adobe Vers.ahk file appears to be outdated.`nDo you wish to update it?`n`n(note: This will regenerate symlinks and as such will require an admin prompt)", "Update Vers.ahk?", "4148")
@@ -448,7 +449,7 @@ class Startup {
             return
 
         FileMove(latestVers, installedVers, true)
-        FileMove(latestAdobeVers, installedAdobeVer, true)
+        FileMove(latestAdobe, installedAdobe, true)
         Run(genSymLinks, symDir)
     }
 
