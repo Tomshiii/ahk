@@ -1,8 +1,8 @@
 /********************************************************************************************
  * Notify - Simplifies the creation and display of notification GUIs.
  * @author Martin Chartier (XMCQCX)
- * @date 2024/11/20
- * @version 1.7.0
+ * @date 2025/01/02
+ * @version 1.8.0
  * @see {@link https://github.com/XMCQCX/NotifyClass-NotifyCreator GitHub}
  * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 AHK Forum}
  * @license MIT license
@@ -10,7 +10,8 @@
  * - JSON by thqby, HotKeyIt. {@link https://github.com/thqby/ahk2_lib/blob/master/JSON.ahk GitHub}
  * - FrameShadow by Klark92. {@link https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29117&hilit=FrameShadow AHK Forum}
  * - DrawBorder by ericreeves. {@link https://gist.github.com/ericreeves/fd426cc0457a5a47058e1ad1a29d9bd6 GitHub}
- * - CalculatePopupWindowPosition by lexikos  {@link https://www.autohotkey.com/boards/viewtopic.php?t=103459 AHK Forum}
+ * - CalculatePopupWindowPosition by lexikos. {@link https://www.autohotkey.com/boards/viewtopic.php?t=103459 AHK Forum}
+ * - PlayWavConcurrent by Faddix. {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=130425 AHK Forum}
  * - Notify by gwarble. {@link https://www.autohotkey.com/board/topic/44870-notify-multiple-easy-tray-area-notifications-v04991/ AHK Forum}
  * - Notify by the-Automator. {@link https://www.the-automator.com/downloads/maestrith-notify-class-v2/ the-automator.com}
  * - WiseGui by SKAN. {@link https://www.autohotkey.com/boards/viewtopic.php?t=94044 AHK Forum}
@@ -19,10 +20,10 @@
  * - Choose from built-in themes or create your own custom themes with Notify Creator.
  * - Rounded or edged corners.
  * - Position at different locations on the screen.
+ * - Call a function when clicking on it.
  * - GUI stacking and repositioning.
  * - Multi-Monitor support.
  * - Multi-Script support.
- * - Call a function when clicking on it.
  * @methods
  * - Show(title, msg, image, sound, callback, options) - Builds and displays a notification GUI.
  * - Destroy(param) - Destroys GUIs.
@@ -45,16 +46,15 @@ Class Notify {
  * @param title Title
  * @param msg Message
  * @param image
- * - The path of an image.
+ * - File path of an image. Supported file types: `.ico, .dll, .exe, .cpl, .png, .jpeg, .jpg, .gif, .bmp, .tif`
  * - String: `'icon!'`, `'icon?'`, `'iconx'`, `'iconi'`
  * - Icon from dll. For example: `'C:\Windows\System32\imageres.dll|icon19'`
- * - Image Handle. For example: 'HICON:' hwnd
- * - Filename of image located in "Pictures\Notify".
- * - Supported file types: `.ico, .dll, .exe, .cpl, .png, .jpeg, .jpg, .gif, .bmp, .tif`
+ * - Image Handle. For example: `'HICON:' hwnd`
+ * - Filename of an image located in "Pictures\Notify".
  * @param sound
- * - The path of the WAV file to be played.
+ * - File path of a WAV file.
  * - String: `'soundx'`, `'soundi'`
- * - Filename of WAV file located in "C:\Windows\Media" or "Music\Sounds". For example: `'Ding'`, `'tada'`, `'Windows Error'` etc.
+ * - Filename of a WAV file located in "C:\Windows\Media" or "Music\Sounds". For example: `'Ding'`, `'tada'`, `'Windows Error'` etc.
  * - Use Notify Creator to view and play all available notification sounds.
  * @param callback Function object to call when left-clicking on the GUI.
  * @param options For example: `'POS=TL DUR=6 IW=70 TF=Impact TS=42 TC=GREEN MC=blue BC=Silver STYLE=edge SHOW=Fade Hide=Fade@250'`
@@ -86,22 +86,22 @@ Class Notify {
  * - `TS` - Title size `*15`
  * - `TC` - Title color `*White`
  * - `TALI` - Title alignment
- *   - `LEFT`*
- *   - `RIGHT`
- *   - `CENTER`
+ *   - `Left`*
+ *   - `Right`
+ *   - `Center`
  * - `MF` - Message font `*Segoe UI`
  * - `MFO` - Message font options. For example: `mfo=underline italic strike`
  * - `MS` - Message size `*12`
  * - `MC` - Message color `*0xEAEAEA`
  * - `MALI` - Message alignment
- *   - `LEFT`*
- *   - `RIGHT`
- *   - `CENTER`
+ *   - `Left`*
+ *   - `Right`
+ *   - `Center`
  * - `PROG` - Progress bar. For example: `prog=1`, `prog=h40 cGreen`, `prog=w400`, {@link https://www.autohotkey.com/docs/v2/lib/GuiControls.htm#Progress Progress Options}
  * - `BC` - Background color `*0x1F1F1F`
  * - `STYLE` - Notification Appearance
- *   - `ROUND` - Rounded corners*
- *   - `EDGE` - Edged corners
+ *   - `Round` - Rounded corners*
+ *   - `Edge` - Edged corners
  * - `BDR` - Border. For example: `bdr=Aqua`,`bdr=Red,4`
  *   - The round style's maximum border width is limited to 1 pixel, while the edge style allows up to 5 pixels.
  *   - If the theme includes a border and the style is set to edge, you can specify only the border width like this: `bdr=,3`
@@ -118,6 +118,7 @@ Class Notify {
  *   - GMY - Top/bottom margins of the GUI.
  *   - SpX - Horizontal spacing between the right side of the image and other controls.
  *   - SpY - Vertical spacing between the title, message, and progress bar.
+ * - `WIDTH` - Fixed width of the GUI (excluding the image width and margins).
  * - `MAXW` - Maximum width of the GUI (excluding image width and margins).
  * - `WSTC` - WinSetTransColor. Not compatible with the round style, fade animation. For example: `style=edge bdr=0 bc=black WSTC=black` {@link https://www.autohotkey.com/docs/v2/lib/WinSetTransColor.htm WinSetTransColor}
  * - `WSTP` - WinSetTransparent. Not compatible with the round style, fade animation. For example: `style=edge wstp=120` {@link https://www.autohotkey.com/docs/v2/lib/WinSetTransparent.htm WinSetTransparent}
@@ -174,10 +175,20 @@ Class Notify {
             'Solarized Dark', 'tc=0xB58900 mc=0x839496 bc=0x002B36 bdr=0x839496 tf=Consolas mf=Calibri',
             'Atomic', 'tc=0xE49013 mc=0xDFCA9B bc=0x1F1F1F bdr=0xDFCA9B tf=Consolas mf=Lucida Console',
             'PCB', 'tc=0xCCAA00 mc=0x00CC00 bc=0x002200 bdr=0x00CC00 tf=Consolas mf=Arial',
+            'Deep Sea', 'tc=0x00CED1 mc=0x5F9EA0 bc=0x002B36 bdr=0x4682B4 tf=Arial mf=Verdana',
+            'Firewatch', 'tc=0xFF4500 mc=0xFF8C00 bc=0x2C1B18 bdr=0xFFA500 tf=Verdana mf=Georgia',
+            'Nord', 'tc=0xD8DEE9 mc=0xECEFF4 bc=0x2E3440 bdr=0x88C0D0 tf=Calibri mf=Lucida Console',
+            'Ivory', 'tc=0x333333 mc=0x666666 bc=0xFFFFF0 bdr=0xCCCCCC tf=Georgia mf=Tahoma',
+            'Neon', 'tc=Yellow mc=Fuchsia bc=Black bdr=Fuchsia tf=Consolas mf=Lucida Console',
+            'Frost', 'tc=Aqua mc=0xE0FFFF bc=0x002233 bdr=Aqua tf=Calibri mf=Arial',
+            'Charcoal', 'tc=0xD3D3D3 mc=0xA9A9A9 bc=0x2F2F2F bdr=0xA9A9A9 tf=Tahoma mf=Consolas',
+            'Zenburn', 'tc=0xDECEA3 mc=0xD3D3C4 bc=0x3F3F3F bdr=0x839496 tf=Consolas mf=Calibri',
+            'Matcha', 'tc=0xD5D1B5 mc=0x87A9A2 bc=0x273136 bdr=0xD5D1B5',
+            'Monaspace', 'tc=0x79C1FD mc=0xD1A7FE bc=0x0D1116 bdr=0xD1A7FE',
+            'Milky Way', 'tc=0x9370DB mc=0xC0CAD7 bc=0x0D1B2A bdr=0x9370DB tf=Trebuchet MS mf=Calibri',
+            'Reptilian', 'tc=Yellow mc=0xF0FFF0 bc=0x004D00 bdr=Yellow',
             'Aurora', 'tc=0x47F0AC mc=0xEAEAEA bc=0x0C1631 bdr=0x47F0AC',
-            'Milky Way', 'tc=0x9370DB mc=0xE0E1DD bc=0x0D1B2A bdr=0xE0E1DD tf=Trebuchet MS mf=Calibri',
             'Venom', 'tc=0xF9EA2C mc=0xFAF2A4 bc=0x317140 tf=Segoe UI mf=Segoe UI bdr=0x86EE99',
-            'Gator', 'tc=0xADFF2F mc=0xF0FFF0 bc=0x006400 bdr=0x7CCD7C',
             'Forum', 'tc=0x3F5770 mc=0x272727 bc=0xDFDFDF bdr=0x686868',
             'Cappuccino', 'tc=0x6F4E37 mc=0x886434 bc=0xFFF8DC bdr=0x886434 tf=Trebuchet MS mf=Times New Roman',
             'Earthy', 'tc=0xF5FFFA mc=0x4DCA22 bc=0x3E2723 bdr=0x41A91D tf=Lucida Console mf=Arial',
@@ -231,6 +242,7 @@ Class Notify {
             'prog', '',            ; Progress bar
             'wstc', '',            ; WinSetTransColor
             'wstp', '',            ; WinSetTransparent
+            'width', '',           ; Fixed width
             'maxW', '',            ; Maximum width
             'tag', '',             ; GUI window title identifying marker
             'opt', '+Owner -Caption +AlwaysOnTop',
@@ -493,26 +505,28 @@ Class Notify {
         if (m['prog'] && IsSet(progUserW)) && ((progUserW + (picWidth ?? g.MarginX*2)) > (visibleScreenWidth))
             progWidth := visibleScreenWidth - m['padX']*2 - (picWidth ?? g.MarginX*2)
 
-        maxWidth := Max(
+        bodyWidth := Max(
             (title ? (titleWidth ?? titleCtrlW ?? 0) : 0),
             (msg ? (msgWidth ?? msgCtrlW ?? 0) : 0),
             (m['prog'] ? (progWidth ?? progUserW ?? 0) : 0)
         )
 
-        if m['maxW'] && (m['maxW'] < maxWidth)
-            maxWidth := m['maxW']
+        switch {
+            case m['width']: bodyWidth := m['width']
+            case (m['maxW'] && m['maxW'] < bodyWidth): bodyWidth := m['maxW']
+        }
 
         ;==============================================
 
         if (title) {
             this.SetFont(g, 's' m['ts'] ' c' m['tc'] ' ' m['tfo'], m['tf'])
-            m['title'] := g.Add('Text', m['tali'] (IsSet(picWidth) ? ' x+' m['spX'] : '') ' w' maxWidth, title)
+            m['title'] := g.Add('Text', m['tali'] (IsSet(picWidth) ? ' x+' m['spX'] : '') ' w' bodyWidth, title)
         }
 
         if (m['prog']) {
             switch {
-                case !IsSet(progUserW): m['prog'] := m['prog'] ' w' maxWidth
-                case IsSet(progUserW): m['prog'] := progUserW > maxWidth ? RegExReplace(m['prog'], 'w\d+', 'w' maxWidth) : m['prog']
+                case !IsSet(progUserW): m['prog'] := m['prog'] ' w' bodyWidth
+                case IsSet(progUserW): m['prog'] := progUserW > bodyWidth ? RegExReplace(m['prog'], 'w\d+', 'w' bodyWidth) : m['prog']
             }
 
             g.MarginY := title ? m['spY'] : m['gmY'] + m['bdrW']
@@ -522,7 +536,7 @@ Class Notify {
         if (msg) {
             g.MarginY := title || m['prog'] ? m['spY'] : m['gmY'] + m['bdrW']
             this.SetFont(g, 's' m['ms'] ' c' m['mc'] ' ' m['mfo'], m['mf'])
-            m['msg'] := g.Add('Text', m['mali'] ((!title && !m['prog']) && IsSet(picWidth) ? ' x+' m['spX'] : '') ' w' maxWidth, msg)
+            m['msg'] := g.Add('Text', m['mali'] ((!title && !m['prog']) && IsSet(picWidth) ? ' x+' m['spX'] : '') ' w' bodyWidth, msg)
         }
 
         g.MarginY := m['gmY'] + m['bdrW']
@@ -663,7 +677,7 @@ Class Notify {
             }
 
             for value in arrGUIs {
-                switch g.pos, false{
+                switch g.pos, false {
                     case 'br', 'bc', 'bl': posY -= value['gH']
                     case 'ct', 'ctl', 'ctr': (A_Index = 1 && posY := monWATop + monWAheight/2 - value['gH']/2)
                 }
@@ -1026,8 +1040,10 @@ Class Notify {
         if this.mSounds.Has(sound)
             sound := this.mSounds[sound]
 
-        if FileExist(sound) || RegExMatch(sound,'^\*\-?\d+')
-            try Soundplay(sound)
+        switch {
+            case FileExist(sound): try this.PlayWavConcurrent(sound)
+            case RegExMatch(sound,'^\*\-?\d+'): try Soundplay(sound)
+        }
     }
 
     ;============================================================================================
@@ -1167,7 +1183,7 @@ Class Notify {
     }
 
     /********************************************************************************************
-     * @credits Klark92 (original author), XMCQCX (v2 conversion)
+     * @credits Klark92, XMCQCX (v2 conversion)
      * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29117&hilit=FrameShadow AHK Forum}
      */
     static FrameShadow(hwnd)
@@ -1246,30 +1262,38 @@ Class Notify {
 
     static MonitorGetMouseIsIn()
     {
-        point := Buffer(8)
-        DllCall("user32\GetCursorPos", "Ptr", point)
-        x := NumGet(point, 0, "Int")
-        y := NumGet(point, 4, "Int")
-        hMonitor := DllCall("user32\MonitorFromPoint", "Int64", (y << 32) | (x & 0xFFFFFFFF), "UInt", 0x2, "Ptr")
-        return hMonitor ? this.MonitorGetNumberFromHandle(hMonitor) : MonitorGetPrimary()
+        cmmPrev := A_CoordModeMouse
+        CoordMode('Mouse', 'Screen')
+        MouseGetPos(&posX, &posY)
+        CoordMode('Mouse', cmmPrev)
+
+        Loop MonitorGetCount() {
+            MonitorGet(A_Index, &monLeft, &monTop, &monRight, &monBottom)
+            if (posX >= monLeft) && (posX <= monRight) && (posY >= monTop) && (posY <= monBottom)
+                return A_Index
+        }
+
+        return MonitorGetPrimary()
     }
 
     ;============================================================================================
 
     static MonitorGetWindowIsIn(winTitle)
     {
-        hMonitor := DllCall("user32\MonitorFromWindow", "Ptr", WinExist(winTitle), "UInt", 0x2, "Ptr")
-        return hMonitor ? this.MonitorGetNumberFromHandle(hMonitor) : MonitorGetPrimary()
-    }
+        try WinGetPos(&posX, &posY, &winW, &winH, winTitle)
+        catch
+            return MonitorGetPrimary()
 
-    ;============================================================================================
+        centerWinX := posX + winW/2
+        centerWinY := posY + winH/2
 
-    static MonitorGetNumberFromHandle(hMonitor)
-    {
-        NumPut("UInt", 104, MONITORINFOEX := Buffer(104), 0)
-        return DllCall("user32\GetMonitorInfo", "Ptr", hMonitor, "Ptr", MONITORINFOEX)
-        ? RegExReplace( StrGet(MONITORINFOEX.Ptr + 40, 32) , ".*(\d+)$", "$1")
-        : MonitorGetPrimary()
+        Loop MonitorGetCount() {
+            MonitorGet(A_Index, &monLeft, &monTop, &monRight, &monBottom)
+            if (centerWinX >= monLeft) && (centerWinX < monRight) && (centerWinY >= monTop) && (centerWinY < monBottom)
+                return A_Index
+        }
+
+        return MonitorGetPrimary()
     }
 
     /********************************************************************************************
@@ -1278,8 +1302,10 @@ Class Notify {
      */
     static CalculatePopupWindowPosition(hwnd)
     {
+        cmmPrev := A_CoordModeMouse
         CoordMode('Mouse', 'Screen')
         MouseGetPos(&x, &y)
+        CoordMode('Mouse', cmmPrev)
         anchorPt := Buffer(8)
         windowRect := Buffer(16), windowSize := windowRect.ptr + 8
         excludeRect := Buffer(16)
@@ -1297,6 +1323,68 @@ Class Notify {
         NumPut("int", x-3, "int", y-3, "int", x+3, "int", y+3, excludeRect) ; Avoid the area around the mouse pointer.
         DllCall("CalculatePopupWindowPosition", "ptr", anchorPt, "ptr", windowSize, "uint", flags, "ptr", excludeRect, "ptr", outRect)
         return 'x' NumGet(outRect, 0, 'int') ' y' NumGet(outRect, 4, 'int')
+    }
+
+    /********************************************************************************************
+     * @credits Faddix
+     * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=130425 AHK Forum}
+     */
+    static PlayWavConcurrent(wavFileName) {
+        static obj := initialize()
+
+        initialize() {
+            if !hModule := DllCall("LoadLibrary", "Str", "XAudio2_9.dll", "Ptr")
+                return false
+
+            DllCall("XAudio2_9\XAudio2Create", "Ptr*", IXAudio2 := ComValue(13, 0), "Uint", 0, "Uint", 1)
+            ComCall(7, IXAudio2, "Ptr*", &IXAudio2MasteringVoice := 0, "Uint", 0, "Uint", 0, "Uint", 0, "Ptr", 0, "Ptr", 0, "Int", 6) ;CreateMasteringVoice
+            return { IXAudio2: IXAudio2, someMap: Map() }
+        }
+
+        if !obj
+            return
+
+        ;freeing is unnecessary, but..
+        XAUDIO2_VOICE_STATE := Buffer(A_PtrSize * 2 + 0x8)
+        keys_to_delete := []
+        for IXAudio2SourceVoice in obj.someMap {
+            ComCall(25, IXAudio2SourceVoice, "Ptr", XAUDIO2_VOICE_STATE, "Uint", 0, "Int") ;GetState
+            if (!NumGet(XAUDIO2_VOICE_STATE, A_PtrSize, "Uint")) { ;BuffersQueued (includes the one that is being processed)
+                keys_to_delete.Push(IXAudio2SourceVoice)
+            }
+        }
+        for IXAudio2SourceVoice in keys_to_delete {
+            ComCall(20, IXAudio2SourceVoice, "Uint", 0, "Uint", 0) ;Stop
+            ComCall(18, IXAudio2SourceVoice, "Int") ;void DestroyVoice
+            obj.someMap.Delete(IXAudio2SourceVoice)
+        }
+
+        waveFile := FileRead(wavFileName, "RAW")
+        root_tag_to_offset := get_tag_to_offset_map(0, waveFile.Size)
+        idk_tag_to_offset := get_tag_to_offset_map(root_tag_to_offset["RIFF"].ofs + 0xc, waveFile.Size)
+        WAVEFORMAT_ofs := idk_tag_to_offset["fmt "].ofs + 0x8
+        data_ofs := idk_tag_to_offset["data"].ofs + 0x8
+        data_size := idk_tag_to_offset["data"].size
+
+        get_tag_to_offset_map(i, end) {
+            tag_to_offset := Map()
+            while (i < end) {
+                tag := StrGet(waveFile.Ptr + i, 4, "UTF-8") ;RIFFChunk::tag
+                size := NumGet(waveFile, i + 0x4, "Uint") ;RIFFChunk::size
+                tag_to_offset[tag] := { ofs: i, size: size }
+                i += size + 0x8
+            }
+            return tag_to_offset
+        }
+
+        ComCall(5, obj.IXAudio2, "Ptr*", &IXAudio2SourceVoice := 0, "Ptr", waveFile.Ptr + WAVEFORMAT_ofs, "int", 0, "float", 2.0, "Ptr", 0, "Ptr", 0, "Ptr", 0) ;CreateSourceVoice
+        XAUDIO2_BUFFER := Buffer(A_PtrSize * 2 + 0x1c, 0)
+        NumPut("Uint", 0x0040, XAUDIO2_BUFFER, 0x0) ;Flags=XAUDIO2_END_OF_STREAM
+        NumPut("Uint", data_size, XAUDIO2_BUFFER, 0x4) ;AudioBytes
+        NumPut("Ptr", waveFile.Ptr + data_ofs, XAUDIO2_BUFFER, 0x8) ;pAudioData
+        ComCall(21, IXAudio2SourceVoice, "Ptr", XAUDIO2_BUFFER, "Ptr", 0) ;SubmitSourceBuffer
+        ComCall(19, IXAudio2SourceVoice, "Uint", 0, "Uint", 0) ;Start
+        obj.someMap[IXAudio2SourceVoice] := waveFile
     }
 
     ;============================================================================================

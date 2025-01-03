@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/01/01
- * @version 2.3.4
+ * @date 2025/01/03
+ * @version 2.3.5
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -172,6 +172,11 @@ settingsGUI()
     settingsGUI.AddCheckbox("vVersCheck Checked" UserSettings.update_adobe_verAHK " Y+5", setJSON.versUpdate.title).OnEvent("Click", toggle.Bind("update adobe verAHK", ""))
     settingsGUI["VersCheck"].ToolTip := (UserSettings.update_adobe_verAHK = true) ? setJSON.versUpdate.tooltip.true : setJSON.versUpdate.tooltip.false
 
+
+    ;// adobe version override
+    settingsGUI.AddCheckbox("vadobeExeOverride Checked" UserSettings.adobeExeOverride " Y+15", setJSON.adobeExeOverride.title).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
+    settingsGUI["adobeExeOverride"].ToolTip := (UserSettings.adobeExeOverride = true) ? setJSON.adobeExeOverride.tooltip.true : setJSON.adobeExeOverride.tooltip.false
+
     ;// dark mode toggle
     settingsGUI.AddCheckbox("vdarkCheck Checked" UserSettings.dark_mode " Y+5", setJSON.dark.title).OnEvent("Click", darkToggle)
     switch UserSettings.dark_mode {
@@ -197,6 +202,10 @@ settingsGUI()
         goDark(false, "Light")
     }
 
+    ;// disc disable autoreply
+    settingsGUI.AddCheckbox("vdiscAutoReply Checked" UserSettings.disc_disable_autoreply " Y+5", setJSON.discAutoReply.title).OnEvent("Click", toggle.Bind("disc disable autoreply", ""))
+    settingsGUI["discAutoReply"].ToolTip := (UserSettings.disc_disable_autoreply = true) ? setJSON.discAutoReply.tooltip.true : setJSON.discAutoReply.tooltip.false
+
     ;// run at startup
     settingsGUI.AddCheckbox("vstartup Checked" UserSettings.run_at_startup " Y+5", setJSON.startup.title).OnEvent("Click", toggle.Bind("run at startup", ""))
     settingsGUI["startup"].ToolTip := (UserSettings.run_at_startup = true) ? setJSON.startup.tooltip.true : setJSON.startup.tooltip.false
@@ -208,16 +217,8 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! script checkboxes
 
-    ;// adobe version override
-    settingsGUI.AddCheckbox("vadobeExeOverride Checked" UserSettings.adobeExeOverride " xs+223 ys Section", setJSON.adobeExeOverride.title).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
-    settingsGUI["adobeExeOverride"].ToolTip := (UserSettings.adobeExeOverride = true) ? setJSON.adobeExeOverride.tooltip.true : setJSON.adobeExeOverride.tooltip.false
-
-    ;// disc disable autoreply
-    settingsGUI.AddCheckbox("vdiscAutoReply Checked" UserSettings.disc_disable_autoreply " Y+5", setJSON.discAutoReply.title).OnEvent("Click", toggle.Bind("disc disable autoreply", ""))
-    settingsGUI["discAutoReply"].ToolTip := (UserSettings.disc_disable_autoreply = true) ? setJSON.discAutoReply.tooltip.true : setJSON.discAutoReply.tooltip.false
-
     ;// autosave always save
-    settingsGUI.AddCheckbox("vautosaveAlwaysSave Checked" UserSettings.autosave_always_save " Y+15", setJSON.autosaveAlwaysSave.title).OnEvent("Click", toggle.Bind("autosave always save", "autosave"))
+    settingsGUI.AddCheckbox("vautosaveAlwaysSave Checked" UserSettings.autosave_always_save " xs+223 ys Section", setJSON.autosaveAlwaysSave.title).OnEvent("Click", toggle.Bind("autosave always save", "autosave"))
     settingsGUI["autosaveAlwaysSave"].ToolTip := (UserSettings.autosave_always_save = true) ? setJSON.autosaveAlwaysSave.tooltip.true : setJSON.autosaveAlwaysSave.tooltip.false
 
     ;// autosave beep
