@@ -12,3 +12,5 @@
 ## Other Changes
 - Added [`MsgBoxCreator.ahk`](https://www.autohotkey.com/boards/viewtopic.php?t=78253)
     - Added shortcut to `My Scripts.ahk` tray icon right click menu
+- Added `move 1sec.ahk` to move the `Premiere` playhead forwards/backwards by 1 second
+    - Added `movePlayhead` as a PremiereRemote function

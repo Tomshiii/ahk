@@ -103,6 +103,10 @@ export const host = {
 
   setZeroPoint: function(tick: string) {
     app.project.activeSequence.setZeroPoint(tick)
+  },
+
+  movePlayhead: function(subtract: string, seconds: string) {
+    Utils.movePlayhead(subtract, parseInt(seconds))
   }
 };
 

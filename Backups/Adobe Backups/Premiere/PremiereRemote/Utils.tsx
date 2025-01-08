@@ -18,6 +18,16 @@ export class Utils {
       return null;
     }
 
+    static movePlayhead(subtract: string, seconds: number) {
+      const currentSequence = app.project.activeSequence;
+      if(subtract == "false") {
+        var newPlayhead = parseInt(currentSequence.getPlayerPosition().ticks) + (this.ticksPerSecond*seconds);
+      } else {
+        var newPlayhead = parseInt(currentSequence.getPlayerPosition().ticks) - (this.ticksPerSecond*seconds);
+      }
+      currentSequence.setPlayerPosition(String(newPlayhead));
+    }
+
     static getVideoClip(trackIndex: number, clipIndex: number) {
       const currentSequence = app.project.activeSequence;
       return currentSequence.videoTracks[trackIndex].clips[clipIndex];
