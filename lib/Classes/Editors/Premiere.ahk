@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2024/11/29
- * @version 2.1.38
+ * @date 2025/01/08
+ * @version 2.1.39
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2259,7 +2259,7 @@ class Prem {
             return
         }
         prefixTitle := "sourceMon_"
-        if !ImageSearch(&sourceX, &sourceY, sourceMonNN.x, sourceMonNN.y+(sourceMonNN.height*0.7), sourceMonNN.x+sourceMonNN.width, sourceMonNN.y+sourceMonNN.height,  "*2 " ptf.Premiere prefixTitle audOrVid ".png") {
+        if !obj.imgSrchMulti({x1: sourceMonNN.x, y1: sourceMonNN.y+(sourceMonNN.height*0.7), x2: sourceMonNN.x+sourceMonNN.width, y2: sourceMonNN.y+sourceMonNN.height},, &sourceX, &sourceY, ptf.Premiere prefixTitle audOrVid ".png", ptf.Premiere prefixTitle audOrVid "2.png") {
             errorLog(TargetError("Image: ``" prefixTitle audOrVid ".png`` not found. Source monitor may not contain a file.", -1),, true)
             block.Off()
             return

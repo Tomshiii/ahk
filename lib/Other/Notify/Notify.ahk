@@ -1,8 +1,8 @@
 /********************************************************************************************
  * Notify - Simplifies the creation and display of notification GUIs.
  * @author Martin Chartier (XMCQCX)
- * @date 2025/01/02
- * @version 1.8.0
+ * @date 2025/01/06
+ * @version 1.8.1
  * @see {@link https://github.com/XMCQCX/NotifyClass-NotifyCreator GitHub}
  * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 AHK Forum}
  * @license MIT license
@@ -1326,7 +1326,7 @@ Class Notify {
     }
 
     /********************************************************************************************
-     * @credits Faddix
+     * @credits Faddix, XMCQCX (minor modifications)
      * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=130425 AHK Forum}
      */
     static PlayWavConcurrent(wavFileName) {
@@ -1360,19 +1360,32 @@ Class Notify {
         }
 
         waveFile := FileRead(wavFileName, "RAW")
-        root_tag_to_offset := get_tag_to_offset_map(0, waveFile.Size)
-        idk_tag_to_offset := get_tag_to_offset_map(root_tag_to_offset["RIFF"].ofs + 0xc, waveFile.Size)
+
+        if !root_tag_to_offset := get_tag_to_offset_map(0, waveFile.Size)
+            return
+
+        if !idk_tag_to_offset := get_tag_to_offset_map(root_tag_to_offset["RIFF"].ofs + 0xc, waveFile.Size)
+            return
+
         WAVEFORMAT_ofs := idk_tag_to_offset["fmt "].ofs + 0x8
         data_ofs := idk_tag_to_offset["data"].ofs + 0x8
         data_size := idk_tag_to_offset["data"].size
 
         get_tag_to_offset_map(i, end) {
             tag_to_offset := Map()
-            while (i < end) {
-                tag := StrGet(waveFile.Ptr + i, 4, "UTF-8") ;RIFFChunk::tag
-                size := NumGet(waveFile, i + 0x4, "Uint") ;RIFFChunk::size
+            while (i + 8 <= end) { ; Ensure there's enough data for a chunk header
+                tag := StrGet(waveFile.Ptr + i, 4, "UTF-8") ; RIFFChunk::tag
+                size := NumGet(waveFile, i + 0x4, "Uint") ; RIFFChunk::size
+
+                ; Stop execution and return false if chunk size exceeds file bounds
+                if (i + 8 + size > end)
+                    return false
+
                 tag_to_offset[tag] := { ofs: i, size: size }
-                i += size + 0x8
+                ; Align to next 2-byte or 4-byte boundary
+                i += size + 8
+                if (i & 1) ; 2-byte alignment
+                    i += 1
             }
             return tag_to_offset
         }
