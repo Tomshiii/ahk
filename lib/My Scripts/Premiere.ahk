@@ -5,11 +5,13 @@
 ; }
 
 ;stopTabHotkey;
+LCtrl & Tab::
 Shift & Tab::
 $Tab::
 {
 	if WinActive("Modify Clip " prem.winTitle) {
-		prem.swapChannels(1, 16, ksa.labelPurple)
+		(GetKeyState("LCtrl", "P") = true) ? prem.swapChannels(1) : prem.swapChannels(1, 16, ksa.labelPurple)
+		KeyWait("LCtrl")
 		return
 	}
 	if !isDoubleClick()

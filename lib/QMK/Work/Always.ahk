@@ -23,7 +23,7 @@ Up::switchTo.Explorer()
 o::unassigned()
 l::unassigned()
 .::unassigned()
-Down::switchTo.Premiere()
+Down::switchTo.Premiere(, true)
 
 i::unassigned()
 k::unassigned()
