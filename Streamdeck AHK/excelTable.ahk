@@ -2,7 +2,7 @@
 ;// not really useful for anyone else sorryyyyyyyyyyy
 #SingleInstance Force
 
-arr1 := ["Food & Bev", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Health"]
+arr1 := ["Eating Out", "Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Health", "Amazon"]
 arr2 := ["Gift", "Salary", "Loan Repayments", "Other Repayments"]
 
 ;// this will assume the second pivot table is 3 cells to the right of the first pivot table
