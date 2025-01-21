@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/01/08
- * @version 2.1.39
+ * @date 2025/01/21
+ * @version 2.1.40
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1390,8 +1390,15 @@ class Prem {
             return
         }
 		title := WinGet.Title(, false)
-		if (title = "Audio Gain" || title = "") || this.timelineFocusStatus() != 1 {
+        descernTitle := (title = "Audio Gain" || title = "") ? true : false
+        currTimelineStatus := this.timelineFocusStatus()
+		if descernTitle || currTimelineStatus != 1 {
 			SendInput(sendOnFail)
+            premUIA := premUIA_Values()
+            createEl := this.__createUIAelement(false)
+            toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
+            if (!descernTitle && currTimelineStatus != 1) && (ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png") = false)
+                tool.Cust("If you are attempting to adjust audio;`nThe timeline is not currently in focus", 2000)
 			return
 		}
 

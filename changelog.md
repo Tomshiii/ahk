@@ -3,7 +3,10 @@
 ## Functions
 - Added `startup.updateAdobeVerAHK()` to alerts the user of updates to the `Vers.ahk`/`adobeVers.ahk` files so that they may select newer versions of adobe programs without needing to wait for a full release
     - Can be toggled in `settingsGUI()`
-- `prem.dragSourceMon("video")` will now work for sources like `Bars and Tone` when the image is different
+
+`prem {`
+- `dragSourceMon("video")` will now work for sources like `Bars and Tone` when the image is different
+- `numpadGain()` will now alert the user under certain circumstances if the timeline is not in focus
 
 `errorLog()`
 - Fixed date/time from being printed unintentially at the beginning of the file
