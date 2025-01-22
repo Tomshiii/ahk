@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/01/23
- * @version 2.1.43
+ * @version 2.1.44
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1044,10 +1044,23 @@ class Prem {
      * Move back and forth between edit points from anywhere in premiere
      * @param {String} window the hotkey required to focus the desired window within premiere
      * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
-     * @param {String} keyswait a string you wish to pass to `keys.allWait()`'s first parameter
+     * @param {String} [keyswait="all"] a string you wish to pass to `keys.allWait()`'s first parameter
+     * @param {Boolean/Object} [checkMButton=false] determine whether the function will wait to see if <kbd>MButton</kbd> is pressed shortly after (or is being held). This can be useful with panning around Premiere's `Program` monitor (assuming this function is activated using tilted scroll wheels, otherwise leave this param as false). This parameter can either be set to `True` or an object containing key `T` along with the timeout duration. Eg. `{T:"0.3"}`
      */
-    static wheelEditPoint(window, direction, keyswait := "all")
+    static wheelEditPoint(window, direction, keyswait := "all", checkMButton := false)
     {
+        if Type(window) != "string" || Type(direction) != "string" || Type(keyswait) != "string" || (Type(checkMButton) != "integer" && Type(checkMButton) != "object") {
+            ;// throw
+            errorLog(TypeError("Incorrect Parameter type passed to function", -1),,, true)
+            return
+        }
+        if checkMButton != false {
+            if GetKeyState("MButton", "P") || GetKeyState("MButton")
+                return
+            timeoutVal := (IsObject(checkMButton) && checkMButton.HasOwnProp("T")) ? "T" LTrim(String(checkMButton.T), "T") : "T0.1"
+            if KeyWait("MButton", timeoutVal " D")
+                return
+        }
         SendInput(KSA.shuttleStop)
         switch window {
             ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a nulticam nest for whatever reason. Doing it this way however, is unfortunately slower.

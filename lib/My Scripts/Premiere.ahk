@@ -90,18 +90,18 @@ $+3::prem.zoomPreviewWindow(A_ThisHotkey)
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;previouspremkeyframeHotkey;
-Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "second") ;goes to the next keyframe point towards the left
+Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "second", true) ;goes to the next keyframe point towards the left
 ;nextpremkeyframeHotkey;
-Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second") ;goes to the next keyframe towards the right
+Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second", true) ;goes to the next keyframe towards the right
 
 F20::prem.dragSourceMon("video", "{F20}")
 F19::prem.dragSourceMon(, "{F19}", "Bars and Tone - Rec 709")
 F14 & F19::prem.dragSourceMon(, "")
 
 ;previouseditHotkey;
-F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint) ;goes to the next edit point towards the left
+F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint,, true) ;goes to the next edit point towards the left
 ;nexteditHotkey;
-F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint) ;goes to the next edit point towards the right
+F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint,, true) ;goes to the next edit point towards the right
 
 ;playstopHotkey;
 F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button

@@ -10,6 +10,7 @@
     - Will now activate if `Effect Controls` is the active window to make keyframing `Levels` more natural
 - `toggleLayerButtons()` will now function properly with different layer heights
     - Will now activate even if the `Timeline` is not active, as long as the cursor is within the timeline coordinates
+- `wheelEditPoint()` now accepts parameter `checkMButton` which when set to either `true` or an `object` can wait a specified amount of time to ensure the user doesn't click <kbd>MButton</kbd> afterwards (or to ensure it isn't being held). This is useful when panning in `Premiere's` `Program Monitor` when the function is activated using a tilting mouse scroll wheel
 
 `errorLog()`
 - Fixed date/time from being printed unintentially at the beginning of the file
