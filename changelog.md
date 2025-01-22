@@ -7,7 +7,9 @@
 `prem {`
 - `dragSourceMon("video")` will now work for sources like `Bars and Tone` when the image is different
 - `numpadGain()` will now alert the user with a tooltip under certain circumstances if the timeline is not in focus
+    - Will now activate if `Effect Controls` is the active window to make keyframing `Levels` more natural
 - `toggleLayerButtons()` will now function properly with different layer heights
+    - Will now activate even if the `Timeline` is not active, as long as the cursor is within the timeline coordinates
 
 `errorLog()`
 - Fixed date/time from being printed unintentially at the beginning of the file

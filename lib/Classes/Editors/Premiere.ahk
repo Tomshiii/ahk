@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/01/22
- * @version 2.1.42
+ * @date 2025/01/23
+ * @version 2.1.43
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2357,12 +2357,16 @@ class Prem {
         getTitle := WinGet.PremName()
         if WinGetTitle("A") != getTitle.winTitle
             return
-        if !prem.timelineFocusStatus()
-            return
 
         block.On()
         coord.client()
         origMouseCords := obj.MousePos()
+
+        if !this.timelineFocusStatus() && !this.__checkCoords(origMouseCords) {
+            block.Off()
+            return
+        }
+
         dividerCheck := PixelGetColor(this.timelineRawX+5, origMouseCords.y)
         if dividerCheck = this.layerDivider {
             Notify.Show(, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
