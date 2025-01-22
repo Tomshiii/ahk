@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/01/22
- * @version 2.1.41
+ * @version 2.1.42
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2363,18 +2363,46 @@ class Prem {
         block.On()
         coord.client()
         origMouseCords := obj.MousePos()
-        dividerCheck := PixelGetColor(this.timelineRawX+this.layer%which%, origMouseCords.y)
+        dividerCheck := PixelGetColor(this.timelineRawX+5, origMouseCords.y)
         if dividerCheck = this.layerDivider {
             Notify.Show(, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
             block.Off()
             return
         }
-        MouseMove(this.timelineRawX+this.layer%which%, origMouseCords.y, 1)
+
+        topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+5, origMouseCords.y, this.timelineRawX+5, this.timelineRawY, this.layerDivider)
+        botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+5, origMouseCords.y, this.timelineRawX+5, this.timelineYControl, this.layerDivider)
+        midDivider := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+15, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
+
+        if !topDiv || !botDiv || !midDivider {
+            Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+            block.Off()
+            return
+        }
+
+        doMinusSmall := (which != "lock") ? "15" : "0"
+        doMinus := (which != "lock") ? "32" : "0"
+        midDivY += 2
+        diff := botDivY-topDivY
+        switch {
+            ;// versions less than 25.2
+            case (VerCompare(ptf.premIMGver, "v25.2") < 0) && (which != "lock" || diff <= 54): MouseMove(this.timelineRawX+this.layer%which%, topDivY+7, 1)
+            case (VerCompare(ptf.premIMGver, "v25.2") < 0) && (which = "lock" && diff > 54): MouseMove(this.timelineRawX+this.layer%which%, topDivY+((diff/2)-doMinus), 1)
+
+            ;// versions greater than or equal to 25.2
+            case (VerCompare(ptf.premIMGver, "v25.2") >= 0):
+                switch {
+                    case (diff <= 54): MouseMove(this.timelineRawX+this.layer%which%, topDivY+6, 1)
+                    case (diff > 54 && diff < 77): MouseMove(this.timelineRawX+this.layer%which%, topDivY+((diff/2)-doMinusSmall), 1)
+                    case (diff >= 77): MouseMove(this.timelineRawX+this.layer%which%, topDivY+((diff/2)-doMinus), 1)
+                }
+        }
+
         if which = "solo" {
-            ;// check to see if the user is hovering over a video track by determining if the colour under the cursor isn't getting highlighted
+            ;// check to see if the user is hovering over a video track
             ;// we have to do this otherwise if the user spams the solo button, the function will double click the layer and expand it
-            checkCol := PixelGetColor(this.timelineRawX+this.layer%which%, origMouseCords.y)
-            if checkCol = this.layerEmpty {
+            newCoords := obj.MousePos()
+            if origMouseCords.y < midDivY {
                 MouseMove(origMouseCords.x, origMouseCords.y, 1)
                 block.Off()
                 return
