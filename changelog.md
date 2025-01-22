@@ -6,7 +6,7 @@
 
 `prem {`
 - `dragSourceMon("video")` will now work for sources like `Bars and Tone` when the image is different
-- `numpadGain()` will now alert the user under certain circumstances if the timeline is not in focus
+- `numpadGain()` will now alert the user with a tooltip under certain circumstances if the timeline is not in focus
 
 `errorLog()`
 - Fixed date/time from being printed unintentially at the beginning of the file

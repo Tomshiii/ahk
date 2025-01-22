@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/01/21
- * @version 2.1.40
+ * @date 2025/01/22
+ * @version 2.1.41
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1389,26 +1389,49 @@ class Prem {
             this.__checkTimeline()
             return
         }
+        needsTimelineFocus := false
 		title := WinGet.Title(, false)
         descernTitle := (title = "Audio Gain" || title = "") ? true : false
         currTimelineStatus := this.timelineFocusStatus()
+
+        ;// because getting the UIA element of the active window is slow, we need to start an initial inputhook here for the sole purpose
+        ;// of check whether * is pressed, otherwise it may end up missed while waiting
+        ;// this does however mean we nean to manually stop this input hook or the user may lose control
+        star_ih := InputHook()
+        star_ih.Start()
+
+        ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
 		if descernTitle || currTimelineStatus != 1 {
-			SendInput(sendOnFail)
-            premUIA := premUIA_Values()
-            createEl := this.__createUIAelement(false)
-            toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
-            if (!descernTitle && currTimelineStatus != 1) && (ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png") = false)
-                tool.Cust("If you are attempting to adjust audio;`nThe timeline is not currently in focus", 2000)
-			return
+            premUIA    := premUIA_Values()
+            createEl   := this.__createUIAelement(true)
+            toolsNN    := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
+            textStatus := ImageSearch(&xx, &yy, toolsNN.x+200, toolsNN.y, toolsNN.x+200 + 200, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
+
+            switch {
+                case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
+                    if createEl.activeElement !== premUIA.effectsControl {
+                        star_ih.Stop()
+                        SendInput(sendOnFail star_ih.Input)
+                        tool.Cust("If you are attempting to adjust audio;`nThe timeline is not currently in focus", 2000)
+                        return
+                    }
+                    needsTimelineFocus := true
+                default:
+                    star_ih.Stop()
+                    SendInput(sendOnFail star_ih.Input)
+                    return
+            }
 		}
 
         ih := InputHook("L3 T4", "{NumpadEnter}")
         ih.Start()
         ih.Wait()
+        star_ih.Stop()
 
-        sendGain := ih.Input
+        starCheck := star_ih.Input
+        sendGain  := ih.Input
         sendAsLevel := false
-        if star := InStr(sendGain, "*") || mult := InStr(sendGain, "NumpadMult") {
+        if star := ((InStr(sendGain, "*") || InStr(starCheck, "*")) ? true : false) || mult := InStr(sendGain, "NumpadMult") {
             sendGain := (star != false) ? StrReplace(sendGain, "*", "") : StrReplace(sendGain, "NumpadMult", "")
             sendAsLevel := true
         }
@@ -1418,6 +1441,8 @@ class Prem {
             return
 
         ;// otherwise we proceed
+        if needsTimelineFocus = true
+            this.__checkTimelineFocus()
         if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels")
             prem.gain(which sendGain)
         else {
@@ -2334,6 +2359,7 @@ class Prem {
             return
         if !prem.timelineFocusStatus()
             return
+
         block.On()
         coord.client()
         origMouseCords := obj.MousePos()
