@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/01/23
- * @version 2.1.44
+ * @version 2.1.45
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1397,6 +1397,12 @@ class Prem {
     static numpadGain(which := A_ThisHotkey, sendOnFail := "{" A_ThisHotkey "}") {
         which := LTrim(which, "~")
         which := (which = "NumpadSub") ? "-" : ""
+
+        ;// check to see if the user is typing
+        if CaretGetPos(&carx, &cary) {
+            SendInput(sendOnFail)
+            return
+        }
 
         if this.timelineVals = false {
             this.__checkTimeline()
