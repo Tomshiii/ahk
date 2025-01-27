@@ -35,6 +35,8 @@ loop files selectedFile "\*", "F" recurse {
     if FileExist(fileObj.dir "\" fileObj.NameNoExt "_combined." fileObj.ext) {
         if MsgBox("File: " fileObj.NameNoExt "_combined." fileObj.ext "`nAlready exists, would you like to ignore and continue?`n`nDoing so could cause ffmpeg to run into issues", "Abort or Continue?", "4 32 4096") = "No"
             return
+        else
+            continue
     }
     filepaths.Push(A_LoopFileFullPath)
 }
@@ -65,8 +67,7 @@ for i, v in filepaths {
     fileObj   := obj.SplitPath(v)
     append    := (A_Index != filepaths.Length) ? "&&" A_space : ""
     currentOp := Format(baseCommand, v, fileObj.dir "\" fileObj.NameNoExt "_D." fileObj.ext, fileObj.dir "\" fileObj.NameNoExt "_combined." fileObj.ext, channels["codec_name"])
-    if (!InStr(command, "|||") && StrLen(command . currentOp A_Space append) >= 8191) ||
-        (StrLen(Format('{1}{2} {3}', SubStr(command, InStr(command, "|||",,, -1)), currentOp, append)) >= 8191) {
+    if (!InStr(command, "|||") && (StrLen(command . currentOp A_Space append) >= 8000)) || (StrLen(Format('{1}{2} {3}', SubStr(command, InStr(command, "|||",,, -1)), currentOp, append)) >= 8000) {
             command := Format('{1} ||| {2} {3}', command, currentOp, append)
             continue
         }
