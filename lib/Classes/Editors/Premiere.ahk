@@ -112,7 +112,7 @@ class Prem {
     ;// swapChannels()
     static secondChannel := 0
 
-    ;// 387
+    ;// toggleLayerButtons()
     static layerSource := 16
     static layerLock   := 48
     static layerTarget := 71
@@ -1045,7 +1045,7 @@ class Prem {
      * @param {String} window the hotkey required to focus the desired window within premiere
      * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
      * @param {String} [keyswait="all"] a string you wish to pass to `keys.allWait()`'s first parameter
-     * @param {Boolean/Object} [checkMButton=false] determine whether the function will wait to see if <kbd>MButton</kbd> is pressed shortly after (or is being held). This can be useful with panning around Premiere's `Program` monitor (assuming this function is activated using tilted scroll wheels, otherwise leave this param as false). This parameter can either be set to `True` or an object containing key `T` along with the timeout duration. Eg. `{T:"0.3"}`
+     * @param {Boolean/Object} [checkMButton=false] determine whether the function will wait to see if <kbd>MButton</kbd> is pressed shortly after (or is being held). This can be useful with panning around Premiere's `Program` monitor (assuming this function is activated using tilted scroll wheels, otherwise leave this param as false). This parameter can either be set to `true/false` or an object containing key `T` along with the timeout duration. Eg. `{T:"0.3"}`
      */
     static wheelEditPoint(window, direction, keyswait := "all", checkMButton := false)
     {
@@ -1063,7 +1063,7 @@ class Prem {
         }
         SendInput(KSA.shuttleStop)
         switch window {
-            ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a nulticam nest for whatever reason. Doing it this way however, is unfortunately slower.
+            ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a multicam nest for whatever reason. Doing it this way however, is unfortunately slower.
             ;// if you do not use the multiview window simply replace the below line with `this.__checkTimelineFocus()`
             case ksa.timelineWindow: delaySI(50, ksa.effectControls, window)
             case ksa.effectControls: delaySI(20, window, ksa.programMonitor, window, "^a", ksa.deselectAll) ;// indicates the user is trying to use `Select previous/next Keyframe`

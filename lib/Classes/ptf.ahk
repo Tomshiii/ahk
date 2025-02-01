@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2024/09/27
- * @version 1.2.8
+ * @date 2025/02/01
+ * @version 1.2.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -94,7 +94,7 @@ class ptf {
         "SDdirsINI",       this.SupportFiles "\Streamdeck Files\dirs.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",
-        "Game List",       this.lib "\gameCheck\Game List.ahk",
+        "Game List",       this.lib "\gameCheck\games.txt",
         "textreplace",     this.rootDir "\..\textreplace\textreplace.ahk",
         "textreplaceUser", this.SupportFiles "\textreplace\textreplace.ahk",
 

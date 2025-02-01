@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2024/11/25
- * @version 1.0.14
+ * @date 2025/02/01
+ * @version 1.0.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -70,8 +70,17 @@ class ytdlp {
      * Activates the directory
      */
     __activateDir(folder) {
-        SplitPath(folder, &name)
-        __determineFolder(path, name) {
+        SplitPath(folder, &name,,,, &drive)
+        __determineFolder(path, name, drive) {
+            ;// handle if the chosen directory is the root of a drive
+            if (StrLen(path) = 4 && SubStr(path, -3, 3) = ":\\") || (StrLen(path) = 3 && SubStr(path, -2, 2) = ":\") {
+                getDriveName := DriveGetLabel(drive)
+                if WinExist(getDriveName " (" drive ")") {
+                    WinActivate()
+                    return true
+                }
+            }
+
             hasPath := WinExist(path " ahk_exe explorer.exe")
             noPath  := WinExist(name " ahk_exe explorer.exe")
             if !hasPath && !noPath
@@ -87,7 +96,7 @@ class ytdlp {
         }
 
         if WinExist(folder " ahk_exe explorer.exe") || WinExist(name " ahk_exe explorer.exe") {
-            if __determineFolder(folder, name)
+            if __determineFolder(folder, name, drive)
                 return
         }
         RunWait("explore " folder)

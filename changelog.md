@@ -1,8 +1,9 @@
 # <> Release 2.15.x - 
 
 ## Functions
-- Added `startup.updateAdobeVerAHK()` to alerts the user of updates to the `Vers.ahk`/`adobeVers.ahk` files so that they may select newer versions of adobe programs without needing to wait for a full release
+- Added `startup.updateAdobeVerAHK()` to alert the user of updates to the `Vers.ahk`/`adobeVers.ahk` files so that they may select newer versions of adobe programs without needing to wait for a full release
     - Can be toggled in `settingsGUI()`
+- Fixed `ytdlp.__activateDir()` failing to activate if the chosen directory is the root folder of a drive
 
 `prem {`
 - `dragSourceMon("video")` will now work for sources like `Bars and Tone` when the image is different

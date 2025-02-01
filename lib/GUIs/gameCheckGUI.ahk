@@ -49,14 +49,6 @@ class gameCheckGUI extends tomshiBasic {
     }
 
     /**
-     * create temp folders
-     */
-    __generateTempDir() {
-        if !DirExist(A_Temp "\tomshi")
-            DirCreate(A_Temp "\tomshi")
-    }
-
-    /**
      * searching for the input value in the list to check for dupes
      * @param {String} readGameCheck the game list
      * @param {String} listFormat the input value
@@ -80,13 +72,8 @@ class gameCheckGUI extends tomshiBasic {
      */
     __appendInput(readGameCheck, listFormat) {
         detect()
-        ;// finding the end of the string
-        findEnd := InStr(readGameCheck, "; --", 1,, 1)
-        ;// adding the user input to the end of the string
-        addUserInput := StrReplace(readGameCheck, "; --", listFormat, 1,, 1)
-        ;// replacing the list
-        FileAppend(addUserInput, A_Temp "\tomshi\Game List.ahk")
-        FileMove(A_Temp "\tomshi\Game List.ahk", ptf["Game List"], 1)
+        FileAppend(",`n" listFormat, ptf["Game List"])
+
         ;// reloading the script
         if WinExist("gameCheck.ahk - AutoHotkey")
             PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
@@ -128,10 +115,9 @@ class gameCheckGUI extends tomshiBasic {
         procVal := this.gameProcess.Value
 
         this.__checkGameList()
-        this.__generateTempDir()
         readGameCheck := FileRead(ptf["Game List"])
         ;//! what to search for
-        listFormat := Format('GroupAdd(`"games`", `"{} {}`")`n; --', titleVal, procVal)
+        listFormat := Format('"{} {}"', titleVal, procVal)
         ;// check list for input value
         if !this.__checkForInput(readGameCheck, listFormat) {
             MsgBox("The desired window is already in the list!", "Game already added! - gameCheck")
