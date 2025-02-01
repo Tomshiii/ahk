@@ -117,7 +117,7 @@ class gameCheckGUI extends tomshiBasic {
         this.__checkGameList()
         readGameCheck := FileRead(ptf["Game List"])
         ;//! what to search for
-        listFormat := Format('"{} {}"', titleVal, procVal)
+        listFormat := Format('{} {}', titleVal, procVal)
         ;// check list for input value
         if !this.__checkForInput(readGameCheck, listFormat) {
             MsgBox("The desired window is already in the list!", "Game already added! - gameCheck")

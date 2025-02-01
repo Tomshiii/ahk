@@ -2,8 +2,8 @@
 
 SplitPath(A_LineFile,, &currDir)
 list := FileRead(currDir "\games.txt")
-splitList := StrSplit(list, ",")
+splitList := StrSplit(list, [","], "`n`r")
 
-for v in list {
+for v in splitList {
     GroupAdd("games", v)
 }
