@@ -22,5 +22,5 @@ $^c::VSCode.copy()
 ;vscodeAsterixHotkey;
 ; *::discord.surround("*")
 
-!`::SendText('``n')
+!`::SendText('``n'), SendInput("{Right}")
 ^+d::SendText(Format("{}/{}/{}", A_YYYY, A_MM, A_DD))

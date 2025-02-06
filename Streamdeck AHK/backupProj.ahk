@@ -27,13 +27,21 @@ if !DirExist(sd.backupFolder) {
 else
     backupFolder := sd.backupFolder
 
+additionalDir := []
+loop {
+    userResponse := MsgBox("Would you like to backup an additional video folder?`n`n*note: already backed up files will NOT be overriden. This function also assumes the selected directory is in the VIDEOS folder.", "Additional Video Folders?", "292")
+    if (userResponse != "Yes")
+        break
+    additionalDir.Push(FileSelect("D3", WinGet.pathU(defaultDir "\..\videos")))
+}
+
 ;// folders to backup
 backFolders := ["AC Footage", "Adobe After Effects Auto-Save", "Adobe After Effects Auto-Save  (Beta)", "Adobe Premiere Pro Auto-Save", "Adobe Premiere Pro Auto-Save (Beta)", "Motion Graphics Template Media", "Premiere Composer Files"]
 
 rootDir := SubStr(folder := WinGet.pathU(projectFolder "\..\"), -1, 1) = "\" ? SubStr(folder, 1, StrLen(folder)-1) : folder
 proj := obj.SplitPath(rootDir)
 
-__doBackup(backupFolder) {
+__doBackup(backupFolder, additionalDir) {
     ;// creating necessary destination folders
     if !DirExist(backupFolder "\" proj.Name)
         DirCreate(backupFolder "\" proj.Name)
@@ -76,10 +84,15 @@ __doBackup(backupFolder) {
     loop files rootDir "\audio\sfx\*", 'F' {
         try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\sfx\*.*", false)
     }
+
+    for v in additionalDir {
+        SplitPath(v, &dirName)
+        try DirCopy(v, backupFolder "\_Additional Assets\videos\" dirName)
+    }
 }
 
-__doBackup(backupFolder)
+__doBackup(backupFolder, additionalDir)
 if !DirExist(sd.backupFolderWork)
     return
 backupFolder := sd.backupFolderWork
-__doBackup(backupFolder)
+__doBackup(backupFolder, additionalDir)

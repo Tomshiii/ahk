@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to easily trim audio/video files using ffmpeg
  * @author tomshi
- * @date 2023/05/06
- * @version 1.0.2.1
+ * @date 2025/02/06
+ * @version 1.0.3
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -18,11 +18,21 @@ class trimGUI extends tomshiBasic {
         if !this.__selectFile(this)
             ExitApp()
         super.__New(,,, "Trim Settings")
-        this.AddText(, "This script uses ffmpeg to trim the selected " audOrVid " file.`nPlease provide the start time and duration (in seconds)")
-        this.AddText("Section", "Start time:")
-        this.AddEdit("ys-3 xs+65 r1 w100 Number").OnEvent("Change", this.__changeVal.bind(this, "start"))
-        this.AddText("ys xs+190", "Duration:")
-        this.AddEdit("ys-3 xs+250 r1 w100 Number").OnEvent("Change", this.__changeVal.bind(this, "duration"))
+        this.AddText(, "This script uses ffmpeg to trim the selected " audOrVid " file.`nPlease provide the start and end timecode of the desired section.")
+         loop 2 {
+            this.AddText(((A_Index = 1) ? "" : "xs y+15 ") "Section", (A_Index = 1) ? "Start Timecode:   H" : "End Timecode:    H")
+            this.AddEdit("xs+120 ys-3 w50")
+            this.AddUpDown("vH" A_Index " Range0-11 ", 0)
+
+            this.AddText("x+10 ys", "M")
+            this.AddEdit("x+5 ys-3 w50")
+            this.AddUpDown("vM" A_Index " Range0-59 ", 0)
+
+            this.AddText("x+10 ys", "S")
+            this.AddEdit("x+5 ys-3 w50")
+            this.AddUpDown("vS" A_Index " Range0-59 ", 0)
+        }
+
         this.AddCheckbox("ys xs+370 Checked" this.overwrite, "Overwrite?").OnEvent("Click", this.__changeCheck.Bind(this))
         this.AddText("xs", "Current File: ")
         this.currentFileName := this.AddText("x+5 W300", this.currentFileName), this.currentFileName.SetFont("Bold")
@@ -61,5 +71,15 @@ class trimGUI extends tomshiBasic {
     }
 
     /** Sends the trim command to ffmpeg */
-    __doTrim(*) => ffmpeg().trim(this.getFile, this.startVal, this.durationVal, this.overwrite, this.commands)
+    __doTrim(*) {
+        ;// for duration calculation
+        startVal := A_YYYY A_MM A_DD Format("{:02}", this["H1"].value) Format("{:02}", this["M1"].value) Format("{:02}", this["S1"].value)
+        endVal   := A_YYYY A_MM A_DD Format("{:02}", this["H2"].value) Format("{:02}", this["M2"].value) Format("{:02}", this["S2"].value)
+        ;// for trim function
+        this.startVal    := DateDiff(A_YYYY A_MM A_DD "000000", startVal, "S")
+        this.durationVal := DateDiff(endVal, startVal, "S")
+        ;// for duration calculation
+
+        ffmpeg().trim(this.getFile, this.startVal, this.durationVal, this.overwrite, this.commands)
+    }
 }
