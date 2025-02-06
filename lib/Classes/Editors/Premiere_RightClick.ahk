@@ -2,7 +2,7 @@
  * @description move the Premere Pro playhead to the cursor
  * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 moved workflow to v24+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
- * @premVer 24.5
+ * @premVer 25.0
  * @author tomshi, taranVH
  * @date 2024/12/03
  * @version 2.3.10

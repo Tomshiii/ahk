@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PremiereData Version="3">
-	<IngestPresetUserComments></IngestPresetUserComments>
-	<DoEffects>true</DoEffects>
-	<DoCaptions>true</DoCaptions>
-	<DoMetadata>true</DoMetadata>
 	<PresetName>prores4444 8bit+alpha</PresetName>
 	<PresetComments>Custom</PresetComments>
 	<PresetUserComments></PresetUserComments>
@@ -13,15 +9,14 @@
 	<ExporterClassID>1061109567</ExporterClassID>
 	<ExporterFileType>1299148630</ExporterFileType>
 	<ExportParamContainer ObjectRef="1"/>
-	<PresetID>eab72251-5c45-44e8-b52e-dc265059f991</PresetID>
+	<PresetID>6f44af57-f536-42a0-8d67-c52fbe41bb36</PresetID>
 	<DoAudio>false</DoAudio>
 	<DoVideo>true</DoVideo>
 	<DoEmulation>false</DoEmulation>
 	<FolderDisplayPath></FolderDisplayPath>
 	<StandardFilters Version="1">
-		<RenderAlphaOnly>false</RenderAlphaOnly>
-		<MaximumFileSize>0</MaximumFileSize>
-		<UseProxiesForExport>false</UseProxiesForExport>
+		<TimeInterpolationType>0</TimeInterpolationType>
+		<Rotation>0.</Rotation>
 		<CropState>false</CropState>
 		<CropRect>0,0,0,0</CropRect>
 		<CropType>0</CropType>
@@ -30,8 +25,10 @@
 		<UsePreview>false</UsePreview>
 		<UseFrameBlending>false</UseFrameBlending>
 		<CustomStartTime>-101606400000000000</CustomStartTime>
-		<TimeInterpolationType>0</TimeInterpolationType>
-		<Rotation>0.</Rotation>
+		<RenderAlphaOnly>false</RenderAlphaOnly>
+		<MaximumFileSize>0</MaximumFileSize>
+		<UseProxiesForExport>false</UseProxiesForExport>
+		<DoExportCR>false</DoExportCR>
 	</StandardFilters>
 	<ExportXMPOptionKey>10</ExportXMPOptionKey>
 	<IngestPreset>false</IngestPreset>
@@ -46,6 +43,11 @@
 	<IngestNamingPreset></IngestNamingPreset>
 	<IngestMetadataEnabled>false</IngestMetadataEnabled>
 	<IngestMetadataPreset></IngestMetadataPreset>
+	<IngestPresetUserComments></IngestPresetUserComments>
+	<IngestAnalysisEnabled>false</IngestAnalysisEnabled>
+	<DoEffects>true</DoEffects>
+	<DoCaptions>true</DoCaptions>
+	<DoMetadata>true</DoMetadata>
 	<ExporterParamContainer ObjectID="1" ClassID="5c20a4a5-5e7c-4032-85b8-26ad4531fe7b" Version="1">
 		<ParamContainerItems Version="1">
 			<ParamContainerItem Index="0" ObjectRef="2"/>
@@ -201,7 +203,6 @@
 		<ParamValue>1,1</ParamValue>
 		<ParamType>11</ParamType>
 		<ParamOrdinalValue>6</ParamOrdinalValue>
-		<ParamConstrainedListIsOptional>true</ParamConstrainedListIsOptional>
 		<ParamIdentifier>ADBEVideoAspect</ParamIdentifier>
 	</ExporterParam>
 	<ExporterParam ObjectID="21" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">

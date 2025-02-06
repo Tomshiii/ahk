@@ -1,10 +1,10 @@
-# <> Release 2.15.x - 
+# <> Release 2.15.2 - QoL Improvements
 
 ## Functions
 - Added `startup.updateAdobeVerAHK()` to alert the user of updates to the `Vers.ahk`/`adobeVers.ahk` files so that they may select newer versions of adobe programs without needing to wait for a full release
     - Can be toggled in `settingsGUI()`
 - Fixed `ytdlp.__activateDir()` failing to activate if the chosen directory is the root folder of a drive
-- `trimGUI {` now requires a start/end timecode instead of the user needing to determine the start time & the duration in seconds
+- `trimGUI {` now requires a start/end timecode instead of the user needing to determine the `start time` & `duration` in seconds
 
 `prem {`
 - `dragSourceMon("video")` will now work for sources like `Bars and Tone` when the image is different
@@ -24,3 +24,5 @@
 - Added `move 1sec.ahk` to move the `Premiere` playhead forwards/backwards by 1 second
     - Added `movePlayhead` as a PremiereRemote function
 - `backupProj.ahk` will ask the user if they wish to backup any additional `videos` folders
+
+[![Github Wiki](https://img.shields.io/badge/-Wiki-brightgreen.svg?style=for-the-badge&logo=GitBook&labelColor=555555)](https://github.com/Tomshiii/ahk/wiki) [![GitHub Downloads (all assets, specific tag)](https://img.shields.io/github/downloads/tomshiii/ahk/v2.15.2/total?style=for-the-badge&label=downloads)](https://github.com/Tomshiii/ahk/releases) [![GitHub commits since tagged version (branch)](https://img.shields.io/github/commits-since/tomshiii/ahk/v2.15.2/dev?style=for-the-badge&label=commits%20(dev)%20since%20release)](https://github.com/Tomshiii/ahk/tree/dev)
