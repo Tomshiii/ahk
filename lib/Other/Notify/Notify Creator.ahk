@@ -1,4 +1,4 @@
-﻿#Requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0
 #SingleInstance
 
 #include Notify.ahk
@@ -11,8 +11,8 @@
 /********************************************************************************************
  * Notify Creator - Explore all customization settings of the Notify class, create themes, generate ready-to-copy code snippets, and more.
  * @author Martin Chartier (XMCQCX)
- * @date 2024/11/20
- * @version 1.0.0
+ * @date 2025/01/02
+ * @version 1.1.0
  * @see {@link https://github.com/XMCQCX/NotifyClass-NotifyCreator GitHub}
  * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 AHK Forum}
  * @license MIT license
@@ -22,8 +22,8 @@
  * - LVGridColor by just me. {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=125259 GitHub}
  * - GuiButtonIcon by FanaticGuru. {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=115871 AHK Forum}
  * - YACS - Yet Another Color Selector by Komrad Toast. {@link https://github.com/tylerjcw/YACS GitHub}
- * - FontPicker by Maestrith (original author), TheArkive (v2 conversion). {@link https://github.com/TheArkive/FontPicker_ahk2 GitHub}
- * - ColorPicker by Maestrith (original author), TheArkive (v2 conversion). {@link https://github.com/TheArkive/ColorPicker_ahk2 GitHub}
+ * - FontPicker by Maestrith, TheArkive (v2 conversion). {@link https://github.com/TheArkive/FontPicker_ahk2 GitHub}
+ * - ColorPicker by Maestrith, TheArkive (v2 conversion). {@link https://github.com/TheArkive/ColorPicker_ahk2 GitHub}
  * - GetFontNames by teadrinker. {@link https://www.autohotkey.com/boards/viewtopic.php?t=66000 AHK Forum}
  * - DisplayCheck by the-Automator. {@link https://www.the-automator.com/downloads/maestrith-notify-class-v2/ the-automator.com}
  * - MoveControls by Descolada. {@link https://github.com/Descolada/UIA-v2 GitHub}
@@ -36,7 +36,7 @@ Class NotifyCreator {
     static __New()
     {
         this.scriptName := 'Notify Creator'
-        this.scriptVersion := 'v1.0.0'
+        this.scriptVersion := 'v1.1.0'
         this.linkGitHubRepo := 'https://github.com/XMCQCX/NotifyClass-NotifyCreator'
         this.gMainTitle := this.scriptName ' - ' this.scriptVersion
         this.gRipTitle := 'ResIconsPicker - ' this.scriptName
@@ -71,7 +71,7 @@ Class NotifyCreator {
         this.arrProg := ['', 1, 'h40 cGreen', 'w400']
         this.arrWstc := ['', 'bc=black wstc=black', 'bc=gray wstc=gray']
         this.arrDgc := [0, 1]
-        this.arrDg := [0, 1, 2, 3, 4 ,5]
+        this.arrDg := [0, 1, 2, 3, 4, 5]
         this.arrTrayMenuIconSize := [16, 20, 24, 28, 32]
         this.arrAhkColors := this.MapToArray(Notify.mAHKcolors)
         this.arrFontNames := this.MapToArray(this.GetFontNames())
@@ -89,7 +89,7 @@ Class NotifyCreator {
         this.arrFontSizeRange := [1,250]
         this.arrDurationRange := [0,999]
         this.arrImageDimRange := [-1,999]
-        this.arrMaxWrange := [1,999]
+        this.arrWidthWrange := [1,999]
 
         this.strOpts := ''
         for key, value in Notify.mOrig_mDefaults
@@ -97,6 +97,7 @@ Class NotifyCreator {
                 this.strOpts .= key '=' value ' '
 
         this.strOpts := StrReplace(this.strOpts, 'maxw=', 'maxw=425')
+        this.strOpts := StrReplace(this.strOpts, 'width=', 'width=0')
 
         ;==============================================
 
@@ -120,6 +121,7 @@ Class NotifyCreator {
             ['Background color', 'bc'],
             ['Border', 'bdr'],
             ['Padding/Margins', 'pad'],
+            ['Width' ,'width'],
             ['Maximum width', 'maxW'],
             ['Image', 'image'],
             ['Sound', 'sound'],
@@ -231,7 +233,7 @@ Class NotifyCreator {
 
         for value in ['mThemes', 'mOrig_mThemes'] {
             for theme, mtheme in Notify.%value% {
-                if (value = 'mThemes') {
+                if (value == 'mThemes') {
                     Notify.SetDefault_MiscValues(mTheme)
                     Notify.ParseBorderOption(mTheme)
 
@@ -315,7 +317,6 @@ Class NotifyCreator {
             'clipBoard', 'HICON:*' LoadPicture('Icons.dll', 'Icon24 w32', &imageType),
             'font', 'HICON:*' LoadPicture('Icons.dll', 'Icon33 w32', &imageType),
             'buymeacoffee', 'HICON:*' LoadPicture('Icons.dll', 'Icon48 w32', &imageType),
-            '?Small', 'HICON:*' LoadPicture('Icons.dll', 'Icon21 w32', &imageType),
             'reset', 'HICON:*' LoadPicture('Icons.dll', 'Icon30 w32', &imageType),
             'musicNote', 'HICON:*' LoadPicture('Icons.dll', 'Icon34 w32', &imageType),
             'destroy', 'HICON:*' LoadPicture('Icons.dll', 'Icon37 w64', &imageType),
@@ -435,7 +436,7 @@ Class NotifyCreator {
 
     static gMain_Show(*)
     {
-        if this.IfGUIexistReturn(['gMain', 'gSettings', 'gAbout'])
+        if this.GuiExist(['gMain', 'gSettings', 'gAbout'])
             return
 
         this.gMain := Gui(, this.gMainTitle)
@@ -465,19 +466,19 @@ Class NotifyCreator {
         gbHeightDp := 120
         gbWitdhDp := 150
         this.gMain.gb_display := this.gMain.Add('GroupBox', 'xm ym+' gbHeightText + this.gMain.MarginY ' w' gbWitdhDp ' h' gbHeightDp ' cBlack', 'Display')
-        this.gMain.txt_mon := this.gMain.Add('Text', 'xp+8 yp+25 Section +0x0100', 'Monitor:')
+        this.gMain.txt_mon := this.gMain.Add('Text', 'xp+8 yp+28 Section +0x0100', 'Monitor:')
         this.gMain.ddl_mon := this.gMain.Add('DropDownList', 'xp+58 yp-2 w73 vmon')
         this.gMain.txt_pos := this.gMain.Add('Text', 'xs +0x0100', 'Position:')
         this.gMain.ddl_pos := this.gMain.Add('DropDownList', 'xp+58 yp-2 w73 vpos', this.arrPos)
         this.gMain.ddl_pos.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_ddl_pos_Change'))
         this.gMain.txt_dur := this.gMain.Add('Text', 'xs +0x0100', 'Duration:')
-        this.gMain.edit_dur := this.gMain.Add('Edit', 'xp+58 yp-2 w55 vdur Number Limit' StrLen(this.arrDurationRange[2]))
+        this.gMain.edit_dur := this.gMain.Add('Edit', 'xp+58 yp-2 w50 vdur Number Limit' StrLen(this.arrDurationRange[2]))
         this.gMain.edit_dur.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_dur_Change'))
         this.gMain.Add('UpDown', 'Range' this.arrDurationRange[1] '-' this.arrDurationRange[2])
-        this.gMain.btn_displayReset := this.gMain.Add('Button', 'xs+' gbWitdhDp - 40 ' ys-27 w22 h22')
+        this.gMain.btn_displayReset := this.gMain.Add('Button', 'xs+' gbWitdhDp - 40 ' ys-30 w22 h22')
         this.gMain.btn_displayReset.OnEvent('Click', this.gMain_btn_displayReset_Click.Bind(this))
         GuiButtonIcon(this.gMain.btn_displayReset, this.mIcons['reset'], 1, 's12')
-        this.gMain.cb_displayLock := this.gMain.Add('CheckBox', 'xs+' gbWitdhDp - 60 ' ys-23 w15 h15')
+        this.gMain.cb_displayLock := this.gMain.Add('CheckBox', 'xs+' gbWitdhDp - 60 ' ys-26 w15 h15')
 
         ;===== IMAGE ===============================
 
@@ -507,10 +508,10 @@ Class NotifyCreator {
         this.gMain.btn_removeImage := this.gMain.Add('Button', 'x+5 ys w' btnSize ' h' btnSize)
         this.gMain.btn_removeImage.OnEvent('Click', this.gList_Show.Bind(this, 'image'))
         GuiButtonIcon(this.gMain.btn_removeImage, this.mIcons['removeList'], 1, 's20')
-        this.gMain.btn_imageReset := this.gMain.Add('Button', 'xs+' gbWidthImage - 40 ' ys-57 w22 h22')
+        this.gMain.btn_imageReset := this.gMain.Add('Button', 'xs+' gbWidthImage - 40 ' ys-58 w22 h22')
         this.gMain.btn_imageReset.OnEvent('Click', this.gMain_btn_imageReset_Click.Bind(this))
         GuiButtonIcon(this.gMain.btn_imageReset, this.mIcons['reset'], 1, 's12')
-        this.gMain.cb_imageLock := this.gMain.Add('CheckBox', 'xs+' gbWidthImage - 60 ' ys-53 w15 h15')
+        this.gMain.cb_imageLock := this.gMain.Add('CheckBox', 'xs+' gbWidthImage - 60 ' ys-54 w15 h15')
 
         ;===== SOUND ===============================
 
@@ -700,15 +701,20 @@ Class NotifyCreator {
 
         ;===== MISC ==================================
 
-        gbHeighMisc := 145
+        gbHeighMisc := 175
         gbWidthMisc := 185
         this.gMain.gb_misc := this.gMain.Add('GroupBox',  'xm+' gbWidthText + this.gMain.Marginx
         ' ym+' gbHeighTS + gbHeightTM + this.gMain.MarginY*2 ' w' gbWidthMisc ' h' gbHeighMisc ' cBlack', 'Misc.')
-        this.gMain.cb_maxW := this.gMain.Add('CheckBox', 'xp+8 yp+28 Section', ' Max. width:')
-        this.gMain.cb_maxW.OnEvent('Click', this.gMain_cb_maxW_Click.Bind(this))
-        this.gMain.edit_maxW := this.gMain.Add('Edit', 'xs+95 yp-2 w60 vmaxW Number Limit' StrLen(this.arrMaxWrange[2]))
-        this.gMain.edit_maxW.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_maxW_Change'))
-        this.gMain.Add('UpDown', 'Range' this.arrMaxWrange[1] '-' this.arrMaxWrange[2])
+        this.gMain.cb_width := this.gMain.Add('CheckBox', 'xp+8 yp+28 Section', ' Width:')
+        this.gMain.cb_width.OnEvent('Click', this.gMain_cb_maxW_Click.Bind(this, 'width'))
+        this.gMain.edit_width := this.gMain.Add('Edit', 'xs+95 yp-2 w50 vwidth Number Limit' StrLen(this.arrWidthWrange[2]))
+        this.gMain.edit_width.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_Width_Change', 'width'))
+        this.gMain.Add('UpDown', 'Range' this.arrWidthWrange[1] '-' this.arrWidthWrange[2])
+        this.gMain.cb_maxW := this.gMain.Add('CheckBox', 'xs', ' Max. Width:')
+        this.gMain.cb_maxW.OnEvent('Click', this.gMain_cb_maxW_Click.Bind(this, 'maxW'))
+        this.gMain.edit_maxW := this.gMain.Add('Edit', 'xs+95 yp-2 w50 vmaxW Number Limit' StrLen(this.arrWidthWrange[2]))
+        this.gMain.edit_maxW.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_Width_Change', 'maxW'))
+        this.gMain.Add('UpDown', 'Range' this.arrWidthWrange[1] '-' this.arrWidthWrange[2])
         this.gMain.txt_tag := this.gMain.Add('Text', 'xs +0x0100', 'Tag:')
         this.gMain.edit_tag := this.gMain.Add('Edit', 'xs+40 yp-2 w125 vtag')
         this.gMain.txt_prog := this.gMain.Add('Text', 'xs +0x0100', 'Prog:')
@@ -930,7 +936,7 @@ Class NotifyCreator {
         )')
         this.gMain.Tips.SetTip(this.gMain.txt_mon, '
         (
-            Monitor number to display the GUI. AutoHotkey uses different monitor numbers than the ones`ndisplayed in Windows System Display and NVIDIA Control Panel (MON).
+            Monitor number to display the GUI. AutoHotkey monitor numbers may differ`nfrom those in windows display settings and the NVIDIA control panel. (MON).
             Primary - The primary monitor.
             Active - The monitor on which the active window is displayed.
             Mouse - The monitor on which the mouse is currently positioned.
@@ -958,6 +964,8 @@ Class NotifyCreator {
         this.gMain.Tips.SetTip(this.gMain.btn_removeImage, 'Remove images from the images history.')
         this.gMain.Tips.SetTip(this.gMain.btn_removeSound, 'Remove sounds from the sounds history.')
         this.gMain.Tips.SetTip(this.gMain.cb_txtWstc, 'WinSetTransColor')
+        this.gMain.Tips.SetTip(this.gMain.cb_width, 'Fixed width of the GUI (excluding the image width and margins).')
+        this.gMain.Tips.SetTip(this.gMain.cb_maxW, 'Maximum width of the GUI (excluding image width and margins).')
         this.gMain.Tips.SetTip(this.gMain.btn_donate, 'If you find my AHK code useful and would like to show your appreciation,`na donation would be greatly appreciated. Thank you!')
         this.gMain.Tips.SetTip(this.gMain.btn_about, 'About')
         this.gMain.Tips.SetTip(this.gMain.btn_settings, 'Settings')
@@ -968,8 +976,7 @@ Class NotifyCreator {
         this.gMain.Tips.SetTip(this.gMain.btn_editTheme, 'Edit theme')
         this.gMain.Tips.SetTip(this.gMain.btn_removeTheme, 'Delete user-created themes.')
         this.gMain.Tips.SetTip(this.gMain.txt_dur, 'Display duration (in seconds). Set to 0 to keep it on the screen until left-clicking on the GUI or programmatically destroying it.')
-        this.gMain.Tips.SetTip(this.gMain.txt_tag, 'TAG - Marker to identify a GUI. The Destroy method accepts a tag,'
-        . '`nit destroys every GUI containing this tag across all scripts.')
+        this.gMain.Tips.SetTip(this.gMain.txt_tag, 'Marker to identify a GUI. The Destroy method accepts a tag,`nit destroys every GUI containing this tag across all scripts.')
 
         ;==============================================
 
@@ -1270,7 +1277,7 @@ Class NotifyCreator {
     static gMain_SetImagePreview(image)
     {
         this.gMain.ddl_image.GetPos(,, &ctrlWidth)
-        txtTip := (this.ControlGetTextWidth(this.gMain.ddl_image.hwnd, image)) > (ctrlWidth - 25) ? image : 'Drag and drop images here. Supported formats: ' Notify.ArrayToString(Notify.arrImageExt, ', ')
+        txtTip := (this.ControlGetTextWidth(this.gMain.ddl_image.hwnd, image)) > (ctrlWidth - 25) ? image : 'Drag and drop images here. Supported file types: ' Notify.ArrayToString(Notify.arrImageExt, ', ')
         this.gMain.Tips.SetTip(this.gMain.ddl_image, txtTip)
 
         try {
@@ -1510,10 +1517,12 @@ Class NotifyCreator {
         this.DDLchoose(mTheme['dgc'], this.arrDgc, this.gMain.ddl_dgc)
         this.DDLchoose(mTheme['dg'], this.arrDg, this.gMain.ddl_dg)
 
-        if mTheme['maxW']
-            this.gMain.edit_maxW.Value := mTheme['maxW'], this.gMain.cb_maxW.Value := 1, this.gMain.edit_maxW.Enabled := true
-        else
-            this.gMain.edit_maxW.Value := 400, this.gMain.cb_maxW.Value := 0, this.gMain.edit_maxW.Enabled := false
+        for value in ['maxW', 'width'] {
+            if mTheme[value]
+                this.gMain.edit_%value%.Value := mTheme[value], this.gMain.cb_%value%.Value := 1, this.gMain.edit_%value%.Enabled := true
+            else
+                this.gMain.edit_%value%.Value := 400, this.gMain.cb_%value%.Value := 0, this.gMain.edit_%value%.Enabled := false
+        }
     }
 
     ;============================================================================================
@@ -1615,9 +1624,9 @@ Class NotifyCreator {
 
     ;============================================================================================
 
-    static gMain_cb_maxW_Click(objCtrl, *)
+    static gMain_cb_maxW_Click(param, *)
     {
-        (this.gMain.cb_maxW.Value = 1) ? this.gMain.edit_maxW.Enabled := true : this.gMain.edit_maxW.Enabled := false
+        (this.gMain.cb_%param%.Value = 1) ? this.gMain.edit_%param%.Enabled := true : this.gMain.edit_%param%.Enabled := false
         this.UpdateResultString()
     }
 
@@ -1675,14 +1684,14 @@ Class NotifyCreator {
 
     ;============================================================================================
 
-    static gMain_edit_maxW_Change(*)
+    static gMain_edit_Width_Change(arrParams, *)
     {
-        if (width := this.gMain.edit_maxW.Text) = ''
+        if (width := this.gMain.edit_%arrParams[1]%.Text) = ''
             return
 
         switch {
-            case (width < this.arrMaxWrange[1] || width = 0): this.gMain.edit_maxW.Text := this.arrMaxWrange[1]
-            case width > this.arrMaxWrange[2]: this.gMain.edit_maxW.Text := this.arrMaxWrange[2]
+            case (width < this.arrWidthWrange[1] || width = 0): this.gMain.edit_%arrParams[1]%.Text := this.arrWidthWrange[1]
+            case width > this.arrWidthWrange[2]: this.gMain.edit_%arrParams[1]%.Text := this.arrWidthWrange[2]
         }
 
         this.UpdateResultString()
@@ -1805,10 +1814,12 @@ Class NotifyCreator {
 
         ;==============================================
 
-        if this.gMain.edit_maxW.Enabled
-            (m['maxW'] != mTheme['maxW']) && options .= 'maxW=' m['maxW'] ' '
-        else
-            mTheme['maxW'] && options .= 'maxW= '
+        for value in ['width', 'maxW'] {
+            if this.gMain.edit_%value%.Enabled
+                (m[value] != mTheme[value]) && options .= value '=' m[value] ' '
+            else
+                mTheme[value] && options .= value '= '
+        }
 
         ;==============================================
 
@@ -1951,12 +1962,12 @@ Class NotifyCreator {
 
     /********************************************************************************************
      * Win32 Color Picker for AHK v2.
-     * @credits Maestrith (original author), TheArkive (v2 conversion), XMCQCX (minor modifications).
+     * @credits Maestrith, TheArkive (v2 conversion), XMCQCX (minor modifications).
      * @see {@link https://www.autohotkey.com/board/topic/94083-ahk-11-font-and-color-dialogs Font and Color Dialogs - AHK Forum}
      * @see {@link https://github.com/TheArkive/ColorPicker_ahk2 ColorPicker_ahk2 - GitHub}
      * @param {number} Color - Start color (0 = black) - Format = 0xRRGGBB
      * @param {number} hwnd - Parent window
-     * @param {number} disp - 1=full / 0=basic ... full displays custom colors panel, basic does not
+     * @param {number} disp - 1=full / 0=basic ... full displays custom colors panel, basic does not.
      */
     static ColorSelect(color := 0, hwnd := 0, disp:=false)
     {
@@ -2026,7 +2037,7 @@ Class NotifyCreator {
 
     /********************************************************************************************
      * Displays a font selection dialog and returns the selected font properties.
-     * @credits Maestrith (original author), TheArkive (v2 conversion), XMCQCX (modifications).
+     * @credits Maestrith, TheArkive (v2 conversion), XMCQCX (modifications).
      * @see {@link https://www.autohotkey.com/board/topic/94083-ahk-11-font-and-color-dialogs AHK Forum}
      * @see {@link https://github.com/TheArkive/FontPicker_ahk2 GitHub}
      * @param {Object} [m=""] - An object containing font properties.
@@ -2304,6 +2315,7 @@ Class NotifyCreator {
                     user := ',,' RTrim(strPadUser, ',')
                 }
                 case 'bdr': user := this.gMain.cbb_bdrc.Enabled ? bdrC : 0
+                case 'width': user := this.gMain.edit_width.Enabled ? m['width'] : ''
                 case 'maxW': user := this.gMain.edit_maxW.Enabled ? m['maxW'] : ''
                 default: user := m[value[2]]
             }
@@ -2911,13 +2923,13 @@ Class NotifyCreator {
 	{
         static boundFuncTimer := 0
 
-        if this.IfGUIexistReturn(['gRip'])
+        if this.GuiExist(['gRip'])
             return
 
         if boundFuncTimer
             SetTimer(boundFuncTimer, 0)
 
-        mGUI := Notify.Show('Please wait, loading icons...',, this.mIcons['notifgRip'],,, this.strOpts 'Theme=iDark pos=tc dur=0 tc=0x95C0DD dgc=0 dg=5 tag=ResIconsPicker')
+        mGUI := Notify.Show('Please wait, loading icons...',, this.mIcons['notifgRip'],,, this.strOpts 'theme=iDark prog=h8 c0x41A5EE pos=tc dur=0 tc=0x95C0DD dgc=0 dg=5 tag=ResIconsPicker')
         boundFuncTimer := Notify.Destroy.Bind(Notify, 'ResIconsPicker')
 
 		this.gRip := Gui(, this.gRipTitle)
@@ -2927,28 +2939,31 @@ Class NotifyCreator {
         this.gRip.lv.OnEvent('DoubleClick', this.gRip_DoubleClick.Bind(this))
 
 		if (!this.arrIcons.Length) {
+            cntPath := 0
             for index, path in this.arrIconPaths {
                 if (FileExist(path)) {
-                    SplitPath(path,,,, &fileName)
+                    SplitPath(path,,,, &fileName), cntPath++
                     Loop {
                         if !hIcon := LoadPicture(path, 'Icon' A_Index, &ImageType)
                             break
-                        this.arrIcons.Push(Map('fileName', fileName, 'path', path, 'index', A_Index))
+                        this.arrIcons.Push(Map('fileName', fileName, 'path', path, 'index', A_Index, 'cntPath', cntPath))
                         DllCall('DestroyIcon', 'ptr', hIcon)
                     }
-                }
+                } else this.arrIconPaths.RemoveAt(index)
             }
         }
 
         imageListID := IL_Create(this.arrIcons.Length,, true)
 
-        for index, iconInfo in this.arrIcons
-			IL_Add(imageListID, iconInfo['path'], iconInfo['index'])
+        for index, mIco in this.arrIcons
+			IL_Add(imageListID, mIco['path'], mIco['index'])
 
 		this.gRip.lv.SetImageList(imageListID)
 
-		for index, mIco in this.arrIcons
-			this.gRip.lv.Add('Icon' index, mIco['fileName'] ' (' mIco['index'] ')', mIco['path'], mIco['index'])
+		for index, mIco in this.arrIcons {
+            this.gRip.lv.Add('Icon' index, mIco['fileName'] ' (' mIco['index'] ')', mIco['path'], mIco['index'])
+            mGUI['prog'].Value := (mIco['cntPath'] / this.arrIconPaths.Length) * 100
+        }
 
         try mGUI['title'].Text := 'Icons loading completed.'
         SetTimer(boundFuncTimer, -5000)
@@ -3050,7 +3065,7 @@ Class NotifyCreator {
 
     static gSettings_Show(*)
     {
-        if this.IfGUIexistReturn(['gSettings', 'gAbout', 'gList', 'gTheme', 'fileDialog'])
+        if this.GuiExist(['gSettings', 'gAbout']) || (this.GuiExist(['gMain']) && !DllCall('User32\IsWindowEnabled', 'Ptr', this.gMain.hwnd, 'Int'))
             return
 
         this.gSettings := Gui('-MinimizeBox' , 'Settings - ' this.scriptName)
@@ -3062,7 +3077,7 @@ Class NotifyCreator {
         gbWidthMisc := 325
         gSettingsWidth := gbWidthMisc + this.gSettings.Marginx*2
         this.gSettings.gb_misc := this.gSettings.Add('GroupBox',  'w' gbWidthMisc ' h' gbHeighMisc ' cBlack')
-        this.gSettings.cb_openMainOnStart := this.gSettings.Add('CheckBox', 'xp+10 yp+25 Section', ' Open the Main GUI when the application starts.')
+        this.gSettings.cb_openMainOnStart := this.gSettings.Add('CheckBox', 'xp+10 yp+25 Section', ' Open the main GUI when the application starts.')
         this.gSettings.cb_closeMainExitApp := this.gSettings.Add('CheckBox', 'xs', ' Exit application when closing the main GUI.')
         this.gSettings.cb_soundOnSelection := this.gSettings.Add('CheckBox', 'xs', ' Play the sound when a sound is selected.')
         gbStartupHeight := 145
@@ -3115,7 +3130,7 @@ Class NotifyCreator {
 
     static gAbout_Show(*)
     {
-        if this.IfGUIexistReturn(['gAbout', 'gSettings', 'gList', 'gTheme', 'fileDialog'])
+        if this.GuiExist(['gAbout', 'gSettings']) || (this.GuiExist(['gMain']) && !DllCall('User32\IsWindowEnabled', 'Ptr', this.gMain.hwnd, 'Int'))
             return
 
         this.gAbout := Gui('-MinimizeBox', 'About - ' this.scriptName)
@@ -3148,9 +3163,9 @@ Class NotifyCreator {
         this.gAbout.Add('Link', 'xs yp+30', '<a href="https://github.com/tylerjcw/YACS">YACS - Yet Another Color Selector</a>')
         this.gAbout.Add('Text', 'x+5', 'by Komrad Toast.')
         this.gAbout.Add('Link', 'xs yp+30', '<a href="https://github.com/TheArkive/FontPicker_ahk2">FontPicker</a>')
-        this.gAbout.Add('Text', 'x+5', ' by Maestrith (original author), TheArkive (v2 conversion).')
+        this.gAbout.Add('Text', 'x+5', ' by Maestrith, TheArkive (v2 conversion).')
         this.gAbout.Add('Link', 'xs yp+30', '<a href="https://github.com/TheArkive/ColorPicker_ahk2">ColorPicker</a>')
-        this.gAbout.Add('Text', 'x+5', 'by Maestrith (original author), TheArkive (v2 conversion).')
+        this.gAbout.Add('Text', 'x+5', 'by Maestrith, TheArkive (v2 conversion).')
         this.gAbout.Add('Link', 'xs yp+30', '<a href="https://www.autohotkey.com/boards/viewtopic.php?t=66000">GetFontNames</a>')
         this.gAbout.Add('Text', 'x+5', 'by teadrinker.')
         this.gAbout.Add('Link', 'xs yp+30', '<a href="https://www.the-automator.com/downloads/maestrith-notify-class-v2/">DisplayCheck</a>')
@@ -3195,7 +3210,7 @@ Class NotifyCreator {
 
 	;============================================================================================
 
-    static IfGUIexistReturn(arrGUIs)
+    static GuiExist(arrGUIs)
     {
         for guiName in arrGUIs {
             try {
@@ -3269,7 +3284,7 @@ Class NotifyCreator {
             case 'export': title := 'Settings string' txtClip, msg := strOpts, dur := 12
             case 'sound', 'image':
             {
-                title := param txtClip
+                title := StrTitle(param) txtClip
                 if (msg := this.gMain.ddl_%param%.Text) = 'none'
                     return
             }
@@ -3280,7 +3295,7 @@ Class NotifyCreator {
 
         if ClipWait(1)
             Notify.Show(title, msg, this.mIcons['clipBoard'],,,
-                this.strOpts 'dg=5 tag=copyToClip theme=OKDark dur=' (dur ?? Notify.mOrig_mDefaults['dur']) ' pos=' (pos ?? 'bc'))
+                this.strOpts 'dg=5 tag=copyToClip theme=OKDark dur=' (dur ?? Notify.mOrig_mDefaults['dur']) ' pos=bc')
         else
             Notify.Show('Error', 'Copy to clipboard failed.',,,, this.strOpts 'dg=5 tag=copyToClip theme=xDark pos=bc')
     }
@@ -3420,7 +3435,7 @@ Class NotifyCreator {
 
     /********************************************************************************************
      * Get the names of all fonts currently installed on the system.
-     * @credits teadrinker (original author), XMCQCX (v2 conversion).
+     * @credits teadrinker, XMCQCX (v2 conversion).
      * @see {@link https://www.autohotkey.com/boards/viewtopic.php?t=66000 GetFontNames - AHK Forum}
      */
     static GetFontNames()

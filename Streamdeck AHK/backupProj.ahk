@@ -29,7 +29,7 @@ else
 
 additionalDir := []
 loop {
-    userResponse := MsgBox("Would you like to backup an additional video folder?`n`n*note: already backed up files will NOT be overriden. This function also assumes the selected directory is in the VIDEOS folder.", "Additional Video Folders?", "292")
+    userResponse := MsgBox("Would you like to backup an additional video folder?`n`n*note: Already backed up files will NOT be overriden.`nThis function also assumes the selected directory is in the VIDEOS folder.", "Additional Video Folders?", "292")
     if (userResponse != "Yes")
         break
     additionalDir.Push(FileSelect("D3", WinGet.pathU(defaultDir "\..\videos")))
@@ -91,6 +91,7 @@ __doBackup(backupFolder, additionalDir) {
     }
 }
 
+Notify.Show(, 'Your project is being backed up!', 'C:\Windows\System32\imageres.dll|icon249', 'Windows Battery Critical',, 'dur=5 bc=Black show=Fade@250 hide=None bdr=Yellow')
 __doBackup(backupFolder, additionalDir)
 if !DirExist(sd.backupFolderWork)
     return
