@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.0
  * @author tomshi, taranVH
- * @date 2024/12/03
- * @version 2.3.10
+ * @date 2025/02/10
+ * @version 2.3.11
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -341,7 +341,7 @@ class rbuttonPrem {
 			}
 		}
 
-		try WinEvent.Exist((*) => prem.dismissWarning(), "DroverLord - Overlay Window")
+		WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
 		try WinEvent.NotActive((*) => (checkstuck(), Exit()), gettitle.winTitle)
 		InstallMouseHook(1)
 		prem.RClickIsActive := true

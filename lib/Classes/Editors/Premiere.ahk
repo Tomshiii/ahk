@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/01/23
- * @version 2.1.45
+ * @date 2025/02/10
+ * @version 2.1.46
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2238,12 +2238,12 @@ class Prem {
             return
 
         block.On()
-        coord.client()
+        coord.s()
         origMouse := obj.MousePos()
         drover    := obj.WinPos("DroverLord - Overlay Window")
-        MouseMove((drover.x + drover.width)-15, drover.y+15, 1)
+        MouseMove((drover.x + drover.width)-15, drover.y+15, 2)
         SendInput("{Click}")
-        MouseMove(origMouse.x, origMouse.y, 1)
+        MouseMove(origMouse.x, origMouse.y, 2)
         block.Off()
     }
 
