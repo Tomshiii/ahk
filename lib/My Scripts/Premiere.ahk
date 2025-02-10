@@ -28,6 +28,11 @@ Space::
 			SendInput("{Enter}")
 			return
 		case "Save Project": return
+		case "Color Picker":
+			if !CaretGetPos(&x, &y) {
+				SendInput("{Enter}")
+				return
+			}
 	}
 	prem.delayPlayback()
 }
@@ -83,7 +88,7 @@ $+2::prem.zoomPreviewWindow(A_ThisHotkey)
 $+3::
 {
 	;// shift+3 for me is zoom to fit, with prem 25.2 that hotkey can now be set globally
-	if VerCompare(ptf.premIMGver, "v25.2") <= 0 {
+	if VerCompare(ptf.premIMGver, "v25.2") >= 0 {
 		SendInput(A_ThisHotkey)
 		return
 	}

@@ -5,8 +5,9 @@
 #Include <Classes\Streamdeck_opt>
 #Include <Functions\useNVENC>
 ; }
-SendInput("^c")
 
+storedClip := A_Clipboard
+clip.copyWait(storedClip)
 if !selectedDir := FileSelect("D2",, "Select Download Location")
     return
 
@@ -18,4 +19,5 @@ SDopt := SD_Opt()
 ;// determine whether nvenc is possible (this is a rudimentary check and might not be bulletproof, remove if you encounter issues)
 encoder := (useNVENC() = true) ? SDopt.defaultNVENCencode : ""
 
+A_Clipboard := storedClip
 ytdlp().download(Format('-N 8 -o "{1}" --verbose --windows-filenames --recode-video mp4 {2}', "{}", encoder), WinGet.pathU(selectedDir))
