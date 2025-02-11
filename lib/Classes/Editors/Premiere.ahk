@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/02/10
- * @version 2.1.46
+ * @date 2025/02/11
+ * @version 2.1.47
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -46,11 +46,11 @@ class Prem {
                 ;// set timeline and playhead colours
                 this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
                 ;// set layer button offsets (these get added onto `timelineRawX`)
-                this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.layerEmpty := 0x1D1D1D, this.layerDivider := 0x303030
+                this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.layerEmpty := 0x1D1D1D, this.layerDivider := 0x303030, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21
             ;// old ui
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
                 ;// set timeline and playhead colours
-                this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55
+                this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
     }
 
@@ -71,7 +71,11 @@ class Prem {
     static zToolY     := 0
 
     ;// colour of playhead
-    static playhead := 0x4096F3
+    static playhead  := 0x4096F3
+
+    ;// valuehold()
+    static valueBlue      := 0x4096f3
+    static effCtrlSegment := 21
 
     ;// variable for prem.thumbScroll()
     static scrollSpeed := 5
@@ -145,7 +149,7 @@ class Prem {
         }
     }
 
-    __fxPanel() => (SendInput(KSA.effectControls), SendInput(KSA.effectControls))
+    __fxPanel() => (delaySI(16, KSA.effectControls, ksa.programMonitor, KSA.effectControls))
 
     /**
      * This function cuts repeat code. It activates the findbox and waits for the carot to appear.
@@ -793,67 +797,13 @@ class Prem {
         block.Off()
     }
 
-    /**
-     * This function defines what `valuehold()` should do if the user wishes to adjust the `level` property.
-     * @param {Object} classCoords an object containing the classNN information
-     */
-    __vholdLevels(classCoords) {
-        ;// don't add WheelDown's, they suck in hotkeys, idk why, they lag everything out and stop Click's from working properly
-        if ImageSearch(&vidx, &vidy, classCoords.classX, classCoords.classY, classCoords.classX + (classCoords.width/KSA.ECDivide), classCoords.classY + classCoords.height, "*2 " ptf.Premiere "video.png") {
-            block.Off()
-            errorLog(Error("The user wasn't scrolled down", -1),, 1)
-            keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-            return false
-        }
-    }
-
-    /**
-     * This function defines what `valuehold()` should do if the `blendMode` param is passed
-     * @param {String} filepath the passed in `filepath` param
-     * @param {String} blendmode the passed in `blendmode` param
-     * @param {Object} xy an object containing the x/y coordinates to search
-     * @param {Object} origCoords an object containing the original mouse x/y coordinates
-     */
-    __vholdBlend(filepath, blendmode, xy, origCoords) {
-        if !ImageSearch(&arrX, &arrY, xy.x, xy.y, xy.x+400, xy.y+40, "*2 " ptf.Premiere filepath "arrow.png") {
-            errorLog(Error("Couldn't find the arrow to open the blend mode menu", -1),, 1)
-            MouseMove(origCoords.xpos, origCoords.ypos)
-            block.Off()
-            return
-        }
-        MouseMove(arrx, arrY)
-        SendInput("{Click}")
-        sleep 500
-        if (
-            ;// if the "drop down" menu goes up
-            !obj.imgSrchMulti({x1: arrx-400, y1: arrY-700, x2: arrx, y2: arrY},, &modeX, &modeY
-                , ptf.Premiere "blend\" blendmode ".png"
-                , ptf.Premiere "blend\" blendmode "2.png") &&
-            ;// if the "drop down" menu goes down
-            !obj.imgSrchMulti({x1: arrx-400, y1:arrY, x2: arrx, y2: arrY+700},, &modeX, &modeY
-                , ptf.Premiere "blend\" blendmode ".png"
-                , ptf.Premiere "blend\" blendmode "2.png")
-        )
-            {
-                errorLog(Error("Couldn't find the desired blend mode", -1),, 1)
-                MouseMove(origCoords.xpos, origCoords.ypos)
-                block.Off()
-                return
-            }
-        MouseMove(modeX, modeY)
-        SendInput("{Click}")
-        MouseMove(origCoords.xpos, origCoords.ypos)
-        block.Off()
-    }
-
 
     /**
      * A function to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-     * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed). If you wish to adjust the blendmode, this string needs to be `blend\blendmode`.
+     * @param {String} control is which control you wish to adjust. This parameter is CASE SENSETIVE!!. Valids options; `Position`, `Scale`, `Rotation`, `Opacity`
      * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
-     * @param {String} blendMode the filename of the blend mode you wish to change the current track to.
      */
-    static valuehold(filepath, optional := 0, blendMode := "")
+    static valuehold(control, optional := 0)
     {
         ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
         ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
@@ -879,43 +829,30 @@ class Prem {
                         return
                     }
             }
-        if filepath = "levels" {
-            if !this().__vholdLevels({classX: effCtrlNN.x, classY: effCtrlNN.y, width: effCtrlNN.width, height: effCtrlNN.height})
-                return
+
+        motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
+        switch {
+            ;// spectrum UI
+            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
+            ;// old ui
+			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0: effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
         }
-        loop {
-            if A_Index > 1 {
-                ToolTip(A_Index)
-                this().__fxPanel()
-            }
-            checkImg(checkfilepath) {
-                blendheight := (filepath = "blend\blendmode") ? 50 : 0
-                if FileExist(checkfilepath) && ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height + blendheight, "*2 " checkfilepath)
-                    return true
-                return false
-            }
-            if ( ;finds the value you want to adjust, then finds the value adjustment to the right of it
-                checkImg(ptf.Premiere filepath ".png") ||
-                checkImg(ptf.Premiere filepath "2.png") ||
-                checkImg(ptf.Premiere filepath "3.png") ||
-                checkImg(ptf.Premiere filepath "4.png")
-            )
-                break
-            if A_Index > 3 {
+        startPos := {x: motionPos.x+15, y: motionPos.y+this.effCtrlSegment}
+        for i, v in effCtrlArr {
+            if v !== control && i != effCtrlArr.Length
+                continue
+            if v !== control && i = effCtrlArr.Length {
                 block.Off()
-                errorLog(IndexError("Failed to find the requested property", -1, filepath),, 1)
+                errorLog(IndexError("Failed to find the requested control", -1, control),, 1)
                 keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
                 MouseMove(xpos, ypos)
-                block.Off()
                 return
             }
-            sleep 50
+            startPos.y += (this.effCtrlSegment*i)-(this.effCtrlSegment*0.75)
+            break
         }
-        if filepath = "blend\blendmode" {
-            this().__vholdBlend(filepath, blendMode, {x: x, y:y}, {xpos: xpos, ypos: ypos})
-            return
-        }
-        if !PixelSearch(&xcol, &ycol, x, y+5, x + xdist, y + 40, 0x205cce, 2) {
+
+        if !PixelSearch(&xcol, &ycol, startPos.x, startPos.y, startPos.x + xdist, startpos.y + (this.effCtrlSegment*.75), this.valueBlue, 3) {
             block.Off()
             errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
             keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
@@ -927,14 +864,8 @@ class Prem {
         ToolTip("")
         if !GetKeyState(A_ThisHotkey, "P") {
             ;// searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
-            if !ImageSearch(&x2, &y2, x, y - 10, x + 1500, y + 20, "*2 " ptf.Premiere "reset.png") {
+            if !ImageSearch(&x2, &y2, startPos.x, startPos.y - (this.effCtrlSegment*.25), startPos.x + 1500, startPos.y + (this.effCtrlSegment*.75), "*2 " ptf.Premiere "reset.png") {
                 ;// this block is for adjusting the "level" property, change in the KSA.ini file
-                if filepath = "levels" {
-                    SendInput("{Click}" "0" "{Enter}")
-                    MouseMove(xpos, ypos)
-                    block.Off()
-                    return
-                }
                 MouseMove(xpos, ypos)
                 block.Off()
                 errorLog(Error("Couldn't find the reset button", -1),, 1)
@@ -953,91 +884,6 @@ class Prem {
         SendInput("{Click Up}" "{Enter}")
         sleep 200 ;was experiencing times where ahk would just fail to excecute the below mousemove. no idea why. This sleep seems to stop that from happening and is practically unnoticable
         MouseMove(xpos, ypos)
-    }
-
-    /**
-     * This function is to turn off keyframing for a given property within premiere pro
-     * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
-     */
-    static keyreset(filepath) ;I think this function is broken atm, I need to do something about it... soon
-    {
-        MouseGetPos(&xpos, &ypos)
-        coord.s()
-        block.On()
-        this().__fxPanel()
-        premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
-            block.Off()
-            return
-        }
-        this.__checkTimelineFocus() ;focuses the timeline
-        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") { ;searches to check if no clips are selected
-            SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-            sleep 50
-            if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                {
-                    errorLog(Error("No clips were selected", -1),, 1)
-                    block.Off()
-                    return
-                }
-        }
-        if !ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere filepath "2.png") && !ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere filepath "4.png")
-            {
-                errorLog(Error("The user was already keyframing", -1),, 1)
-                block.Off()
-                return
-            }
-        MouseMove(x + 7, y + 4)
-        click
-        block.Off()
-        MouseMove(xpos, ypos)
-    }
-
-    /**
-     * This function is to either turn on keyframing, or create a new keyframe at the cursor for a given property within premiere pro
-     * @param {String} filepath is the png name of the image ImageSearch is going to use to find what value you want to adjust (either with/without the keyframe button pressed)
-     */
-    static keyframe(filepath)
-    {
-        MouseGetPos(&xpos, &ypos)
-        coord.s()
-        block.On()
-        this().__fxPanel()
-        premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
-            block.Off()
-            return
-        }
-        this.__checkTimelineFocus() ;focuses the timeline
-        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            {
-                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-                sleep 50
-                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                    {
-                        block.Off()
-                        errorLog(Error("No clips were selected", -1),, 1)
-                        return
-                    }
-            }
-        if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &x, &y
-                , ptf.Premiere filepath ".png"
-                , ptf.Premiere filepath "2.png"
-                , ptf.Premiere filepath "3.png"
-                , ptf.Premiere filepath "4.png")
-            {
-                block.Off()
-                errorLog(Error("Couldn't find the desired value", -1),, 1)
-                return
-            }
-        if ImageSearch(&keyx, &keyy, x, y, x + 500, y + 20, "*2 " ptf.Premiere "keyframeButton.png") || ImageSearch(&keyx, &keyy, x, y, x + 500, y + 20, "*2 " ptf.Premiere "keyframeButton2.png")
-            MouseMove(keyx + 3, keyy)
-        else
-            MouseMove(x + 5, y + 5)
-        SendInput("{Click}")
-        this.__checkTimelineFocus() ;focuses the timeline
-        MouseMove(xpos, ypos)
-        block.Off()
     }
 
     /**
@@ -1077,6 +923,18 @@ class Prem {
         }
     }
 
+    /** checks to see if there are any clips selected */
+    static checkNoClips(UIA_obj, &x, &y) {
+        if ImageSearch(&x, &y, UIA_obj.x, UIA_obj.y, UIA_obj.x + (UIA_obj.width/KSA.ECDivide), UIA_obj.y + UIA_obj.height, "*2 " ptf.Premiere "noclips.png") {
+            SendInput(KSA.selectAtPlayhead)
+            sleep 50
+            ;// checks for no clips again incase it has attempted to select 2 separate audio/video tracks
+            if ImageSearch(&x, &y, UIA_obj.x, UIA_obj.y, UIA_obj.x + (UIA_obj.width/KSA.ECDivide), UIA_obj.y + UIA_obj.height, "*2 " ptf.Premiere "noclips.png")
+                return false
+        }
+        return true
+    }
+
     /**
      * This function is to adjust the framing of a video within the preview window in premiere pro. Let go of this hotkey to confirm, simply tap this hotkey to reset values
      */
@@ -1092,17 +950,7 @@ class Prem {
         }
         this.__checkTimelineFocus() ;focuses the timeline
         sleep 25
-        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            {
-                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-                sleep 50
-                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                    {
-                        block.Off()
-                        errorLog(Error("No clips were selected", -1),, 1)
-                        return
-                    }
-            }
+        this.checkNoClips(effCtrlNN, &x, &y)
         loop {
             if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
                     {
@@ -1123,23 +971,11 @@ class Prem {
         sleep 50
         ToolTip("")
         ;// gets the state of the hotkey, enough time now has passed that if the user just presses the button, you can assume they want to reset the paramater instead of edit it
-        if !GetKeyState(A_ThisHotkey, "P")
-            {
-                if !ImageSearch(&xcol, &ycol, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "reset.png")
-                    {
-                        block.Off()
-                        MouseMove(xpos, ypos)
-                        errorLog(Error("Couldn't find the reset button", -1)
-                                    ,, 1)
-                        return
-                    }
-                MouseMove(xcol, ycol)
-                SendInput("{Click}")
-                sleep 50
-                MouseMove(xpos, ypos)
-                block.Off()
-                return
-            }
+        if !GetKeyState(A_ThisHotkey, "P") {
+            this.reset()
+            block.Off()
+            return
+        }
         ;//* you can simply double click the preview window to achieve the same result in premiere, but doing so then requires you to wait over .5s before you can reinteract with it which imo is just dumb, so unfortunately clicking "motion" is both faster and more reliable to move the preview window
         /**
          * This codeblock is potentially used below if the first loop fails
@@ -1161,24 +997,10 @@ class Prem {
                         return false
                     }
                 check := PixelGetColor(previewWin.x, previewWin.y)
-                ;// debugging
-                /* FileAppend(Format("
-                (
-                    Index: {}
-                    x: {}
-                    y: {}
-                    width: {}
-                    height: {}
-                    origX: {}
-                    origY: {}
-                    ________________
-
-                )", A_Index, previewWin.x, previewWin.y, previewWin.width, previewWin.height, origX, origY), "test.txt") */
-                if check != 0x232323 && check != 0x000000
-                    {
-                        MouseMove(previewWin.x, previewWin.y)
-                        break
-                    }
+                if check != 0x232323 && check != 0x000000 {
+                    MouseMove(previewWin.x, previewWin.y)
+                    break
+                }
             }
             return true
         }
@@ -1233,17 +1055,7 @@ class Prem {
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
-        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            {
-                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-                sleep 50
-                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                    {
-                        block.Off()
-                        errorLog(Error("No clips were selected", -1),, 1)
-                        return
-                    }
-            }
+        this.checkNoClips(effCtrlNN, &x, &y)
         MouseGetPos(&xpos, &ypos)
         loop {
             ;// checks if the "motion" value is in view
@@ -1284,17 +1096,7 @@ class Prem {
             return
         }
         this.__checkTimelineFocus()
-        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            {
-                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-                sleep 50
-                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                    {
-                        block.Off()
-                        errorLog(Error("No clips were selected", -1),, 1)
-                        return
-                    }
-            }
+        this.checkNoClips(effCtrlNN, &x, &y)
         ;// finds the scale value you want to adjust, then finds the value adjustment to the right of it
         if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &x, &y
             , ptf.Premiere property ".png"

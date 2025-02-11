@@ -47,14 +47,14 @@ Enter & y::prem.keyreset("opacity")
 Right::unassigned()
 
 p::prem.preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
-SC027::prem.valuehold("position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-; /::prem.valuehold("position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+SC027::prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+; /::
 
 
 o::prem.preset("audio_basic")
-l::prem.valuehold("scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+l::prem.valuehold("Scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
-.::prem.preset("Transform Me") ;prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+.::prem.preset("Transform Me")
 ;Down::unassigned()
 
 i::prem.preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your prem.preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
@@ -62,12 +62,12 @@ k::prem.gain("-2") ;REDUCE GAIN BY -2db
 ,::prem.anchorToPosition() ;prem.gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
 ;Left::unassigned()
 
-u::prem.valuehold("rotation") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+u::prem.valuehold("Rotation") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 j::prem.gain("-6") ;REDUCE GAIN BY -6db
 g::prem.gain("6") ;INCREASE GAIN BY 6db
 ;PgUp::unassigned()
 
-y::prem.valuehold("opacity")
+y::prem.valuehold("Opacity")
 h::prem.gain("2")
 #MaxThreadsBuffer True
 n::prem.zoom()
@@ -120,8 +120,8 @@ x::prem.fxSearch()
 ;F15::unassigned()
 
 q::prem.preset("S_Shake Me")
-a:: ;prem.preset("Transform Me")
-; z::
+a::prem.valuehold("Position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+z::prem.valuehold("Position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 ;F16::unassigned()
 
