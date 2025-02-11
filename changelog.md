@@ -4,6 +4,8 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 ## Functions
 - `startup.libUpdateCheck()` now checks for `Notify Creator.ahk` updates
 - Fixed `prem.dismissWarning()` utilising incorrect coords
+- Fixed bug with `trimGUI {` calculating the duration between two timecodes causing empty files to be generated
+    - Will now warn the user if incorrect timecodes have been given
 
 ## Other Changes
 - `backupProj.ahk` now alerts the user once it begins the backup process
