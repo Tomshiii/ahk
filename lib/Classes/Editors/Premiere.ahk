@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/02/12
- * @version 2.1.48
+ * @version 2.1.49
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -521,284 +521,6 @@ class Prem {
     }
 
     /**
-     * This function on first run will ask you to select a clip with the exact zoom you wish to use for the current session. Any subsequent activations of the script will simply zoom the current clip to that zoom amount. You can reset this zoom by refreshing the script.
-     *
-     * If a specified client name is in the title of the window (usually in the url project path) this function will set predefined zooms. These clients can be defined within the neseted class `Prem.ClientInfo`
-     *
-     * > This function contains code that will check for `PremiereRemote` and use it if detected. This code will make the function faster to excecute.
-     */
-    static zoom()
-    {
-        keys.allWait()
-        CoordMode("ToolTip", "Screen")
-
-        UserSettings := UserPref()
-        mainScript := UserSettings.MainScriptName
-        UserSettings := ""
-
-        ;// ensure timeline coords are set
-        detect()
-        __fallback() {
-            if !this.__checkTimeline(false)
-                return
-            tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
-        }
-        if !this.__checkTimelineValues() {
-            if !(A_ScriptName != mainScript ".ahk" && WinExist(mainScript ".ahk")) {
-                __fallback()
-                return
-            }
-            WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, mainScript ".ahk")
-            if !this.__waitForTimeline() {
-                __fallback()
-                return
-            }
-        }
-
-        premUIA := premUIA_Values()
-        ;// get coordinates for a tooltip that appears to alert the user that toggles have reset
-        if this.zToolX = 0 || this.zToolY = 0
-            {
-                this.__checkTimelineFocus()
-                sleep 50
-                if !progMonNN := this.__uiaCtrlPos(premUIA.programMon,,, false) {
-                    block.Off()
-                    return
-                }
-                this.zToolX := (progMonNN.x+70) ;// adjust this value if your tooltips appear in the wrong position. I had it at +15 before swapping to an ultrawide monitor
-                this.zToolY := (progMonNN.y+progMonNN.height+13)
-                ToolTip("",,, 4)
-                tool.Cust("Some tooltips for this function will appear here",, this.zToolX, this.zToolY, 4)
-            }
-
-        ;// start bulk of function
-        this.presses++
-
-        ;// giving the user 250ms to increment the zoom
-        waitms := 250
-        startTime := A_TickCount
-        SetTimer(waitTimer.Bind(startTime), 16)
-        waitTimer(time) {
-            CoordMode("ToolTip", "Screen")
-            if A_ThisHotkey != "" {
-                if GetKeyState(A_ThisHotkey, "P")
-                    {
-                        ToolTip("")
-                        SetTimer(, 0)
-                        return
-                    }
-            }
-            ToolTip("Presses: " this.presses "`nWill reset in: " waitms - (A_TickCount - time) "ms", this.zToolX, this.zToolY-10, 4)
-            if (A_TickCount - time) < waitms
-                return
-            this.isWaiting := false
-            ToolTip("",,, 4)
-            SetTimer(, 0)
-        }
-
-        resetTime := 5 * 1000 ;convert ms to s
-        /**
-         * This function is for a timer we activate anytime a client's zoom has a toggle
-         * @param {Integer} time the current tick count that gets passed in as `A_TickCount`
-         */
-        reset(time) {
-            ListLines(0)
-            ;// if the user activates this function before the timer finishes, due to some code below
-            ;// this variable will be set to false. The timer will then see this change and cancel
-            ;// itself so it can be later reset
-            if !this.timer
-                {
-                    SetTimer(, 0)
-                    return
-                }
-            if ((A_TickCount - time) >= resetTime) || GetKeyState("Esc", "P")
-                {
-                    tool.Cust("zoom toggle reset",, this.zToolX, this.zToolY, 2)
-                    this.timer := false, this.presses := 0, this.zoomToggle := 0
-                    Tog := 1
-                    SetTimer(, 0)
-                    return
-                }
-        }
-
-        ;// assign the nested class to an object
-        clientList := this.ClientInfo()
-        ;// then we'll define the values that will allow us to change things depending on the project
-        static x := 0, y := 0, scale := 0, anchorX := "false", anchorY := "false"
-
-        coord.s()
-        if !WinActive(this.winTitle) {
-            block.Off()
-            errorLog(Error("Premiere is not the active window", -1),, 1)
-            return
-        }
-        sleep 50
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
-            block.Off()
-            return
-        }
-        try effCtrlNN.uiaVar.ElementFromPath(premUIA.effectsControl).SetFocus()
-
-        ;//get client name
-        ClientName := WinGet.ProjClient()
-        if !ClientName {
-            block.Off()
-            tool.Wait()
-            tool.Cust("Couldn't get the client name")
-            return
-        }
-        ;// check to see if the clientlist contains the current client name
-        if clientList.HasOwnProp(ClientName) {
-            block.On()
-            MouseGetPos(&xpos, &ypos)
-            loop {
-                if A_ThisHotkey != "" {
-                    if GetKeyState(A_ThisHotkey, "P") {
-                        block.Off()
-                        return
-                    }
-                }
-                if this.isWaiting = false
-                    break
-            }
-            this.isWaiting := true
-            count := ObjOwnPropCount(clientList.%ClientName%)
-
-            ;// logic for the toggle using a class variable
-            loop this.presses {
-                this.zoomToggle++
-                if this.zoomToggle > count
-                    this.zoomToggle := 1
-            }
-
-            this.presses := 0
-            if clientList.%ClientName%.HasOwnProp("1") && count = 1
-                {
-                    x     := clientList.%ClientName%.punchIn[1]
-                    y     := clientList.%ClientName%.punchIn[2]
-                    scale := clientList.%ClientName%.punchIn[3]
-                    anchorX := clientList.%ClientName%.punchIn[4]
-                    anchorY := clientList.%ClientName%.punchIn[5]
-                }
-            else if count > 1
-                {
-                    if !this.timer
-                        {
-                            this.timer := true
-                            SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
-                        }
-                    else
-                        {
-                            ;// if the timer is already active, we first have to stop it before restarting it
-                            ;// since the timer checks the state of `this.timer` which is a variable at the top of this class, we simply set that variable to false
-                            ;// sleep for a fraction of a second so the timer has time to notice the change
-                            ;// then reset the value and reset the timer
-                            ;// otherwise you end up with multiple tooltip stating that toggles have been reset
-                            this.timer := false
-                            sleep 50
-                            this.timer := true
-                            SetTimer(reset.bind(A_TickCount), 15) ;reset toggle values after x seconds
-                        }
-                    tool.Cust("zoom " this.zoomToggle "/" count, 2.0, this.zToolX, this.zToolY)
-                    ;// this for loop stops the need to hard code each potential toggle
-                    ;// as long as the object contains '1' & more than 1 property, this will function correctly
-                    for Name in clientList.%ClientName%.OwnProps() {
-                        if A_Index != this.zoomToggle
-                            continue
-                        x := clientList.%ClientName%.%Name%[1]
-                        y := clientList.%ClientName%.%Name%[2]
-                        scale := clientList.%ClientName%.%Name%[3]
-                        anchorX := clientList.%ClientName%.%Name%[4]
-                        anchorY := clientList.%ClientName%.%Name%[5]
-                    }
-                }
-        }
-        if scale = 0 {
-            setValue := MsgBox("You haven't set the zoom amount/position for this session yet.`nIs the current track your desired zoom?", "Set Zoom", "4 32 4096")
-            if setValue = "No" {
-                block.Off()
-                return
-            }
-        }
-        block.On()
-        MouseGetPos(&xpos, &ypos)
-        this.__checkTimelineFocus()
-        sleep 50
-
-        ;// if the user is using premiereremote we can excecute now and terminate early
-        if x != 0 && this.__checkPremRemoteDir("setZoomOfCurrentClip") {
-            this.__remoteFunc("setZoomOfCurrentClip", true, "zoomLevel=" String(scale), "xPos=" String(x), "yPos=" String(y), "anchorX=" String(anchorX), "anchorY=" String(anchorY))
-            block.Off()
-            return
-        }
-
-        ;// searches to check if no clips are selected
-        if ImageSearch(&clipX, &clipY, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") {
-            SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-            sleep 50
-            ;// checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-            if ImageSearch(&clipX, &clipY, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") {
-                errorLog(Error("No clips were selected", -1),, 1)
-                block.Off()
-                return
-            }
-        }
-        if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &motionX, &motionY
-            , ptf.Premiere "motion2.png"
-            , ptf.Premiere "motion3.png"
-            , ptf.Premiere "motion4.png"
-            , ptf.Premiere "motion5.png")
-        {
-            MouseMove(xpos, ypos)
-            block.Off()
-            errorLog(Error("Couldn't find the video section", -1),, 1)
-            return
-        }
-        MouseMove(motionX + 10, motionY + 10)
-        SendInput("{Click}")
-        MouseMove(xpos, ypos)
-        SendInput("{Tab 2}")
-        ;// the user hasn't set a zoom for the current client
-        if x = 0 {
-            cleanCopy()
-            {
-                A_Clipboard := ""
-                SendInput("^c")
-                ClipWait()
-            }
-            previousClipboard := A_Clipboard
-            cleanCopy()
-            x := A_Clipboard
-            SendInput("{Tab}")
-            cleanCopy()
-            y := A_Clipboard
-            SendInput("{Tab}")
-            cleanCopy()
-            scale := A_Clipboard
-            SendInput("{Tab 3}")
-            cleanCopy()
-            anchorX := A_Clipboard
-            SendInput("{Tab}")
-            cleanCopy()
-            anchorY := A_Clipboard
-            SendInput("{Enter}")
-            block.Off()
-            tool.Cust("Setting up your zoom has completed")
-            return
-        }
-        ;// the user HAS set up zooms for the current client
-        delaySI(1, x, "{Tab}", y, "{Tab}", scale)
-        if anchorX != "false" && anchorY != "false" {
-            delaySI(1, "{Tab 3}", anchorX, "{Tab}", anchorY)
-            anchorX := "false", anchorY := "false"
-        }
-        SendInput("{Enter}")
-        sleep 50
-        block.Off()
-    }
-
-
-    /**
      * A function to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
      * @param {String} control is which control you wish to adjust. This parameter is CASE SENSETIVE!!. Valids options; `Position`, `Scale`, `Rotation`, `Opacity`
      * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
@@ -845,7 +567,7 @@ class Prem {
             break
         }
 
-        if !PixelSearch(&xcol, &ycol, startPos.x, startPos.y, startPos.x + xdist, startpos.y + (this.effCtrlSegment*.75), this.valueBlue, 3) {
+        if !PixelSearch(&xcol, &ycol, startPos.x, startPos.y, startPos.x + xdist, startpos.y + (this.effCtrlSegment*.75), this.valueBlue, 6) {
             block.Off()
             errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
             keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
@@ -933,7 +655,7 @@ class Prem {
      */
     static movepreview()
     {
-        coord.s()
+        coord.client()
         block.On()
         MouseGetPos(&xpos, &ypos)
         premUIA := premUIA_Values()
@@ -948,23 +670,9 @@ class Prem {
             errorLog(Error("No clips are selected", -1),, 1)
             return
         }
-        loop {
-            if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
-                    {
-                        MouseMove(x + "25", y)
-                        SendInput("{Click}")
-                        break
-                    }
-            if A_Index > 3
-                {
-                    block.Off()
-                    errorLog(IndexError("Couldn't find the requested property."),, {ttip: 2, y:30})
-                    keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-                    MouseMove(xpos, ypos)
-                    return
-                }
-            sleep 50
-        }
+        motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
+        MouseMove(motionPos.x + 25, motionPos.y+5)
+        SendInput("{Click}")
         sleep 50
         ToolTip("")
         ;// gets the state of the hotkey, enough time now has passed that if the user just presses the button, you can assume they want to reset the paramater instead of edit it
@@ -1058,23 +766,13 @@ class Prem {
             return
         }
         MouseGetPos(&xpos, &ypos)
-        loop {
-            ;// checks if the "motion" value is in view
-            if obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &x2, &y2
-                , ptf.Premiere "motion2.png"
-                , ptf.Premiere "motion3.png"
-                , ptf.Premiere "motion4.png"
-                , ptf.Premiere "motion5.png")
-                break
-            if A_Index > 5 {
-                block.Off()
-                errorLog(IndexError("Couldn't find the motion image", -1),, 1)
-                return
-            }
+        motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
+        if !ImageSearch(&xcol, &ycol, motionPos.x, motionPos.y-20, motionPos.x+700, motionPos.y+20, "*2 " ptf.Premiere "reset.png") {
+            block.Off()
+            errorLog(Error("Could not find reset image", -1),, 1)
+            return
         }
-        this.__checkTimelineFocus() ;~ check the keyboard shortcut ini file to adjust hotkeys
-        if ImageSearch(&xcol, &ycol, x2, y2 - "20", x2 + "700", y2 + "20", "*2 " ptf.Premiere "reset.png") ;this will look for the reset button directly next to the "motion" value
-            MouseMove(xcol, ycol)
+        MouseMove(xcol+2, ycol+2)
         SendInput("{Click}")
         MouseMove(xpos, ypos)
         block.Off()

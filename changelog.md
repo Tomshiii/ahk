@@ -9,6 +9,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 
 `Prem {`
 - Removed `keyreset()` & `keyframe()`. A simpler method could be created using `PremiereRemote` but no current plans to develop said function
+- Removed `zoom()`
 - `valuehold()`
     - No longer requires individual screenshots for each control, greatly simplifying the function and making it less prone to breaking
     - No longer adjusts the blendmode and all reference to that ability has been removed
