@@ -28,12 +28,6 @@ premTimeline() {
 ; BackSpace::unassigned()
 ; SC028::unassigned()
 Enter::prem.reset()
-Enter & SC027::prem.keyreset("position")
-Enter & l::prem.keyreset("position")
-Enter & k::prem.keyreset("scale")
-Enter & g::prem.keyreset("level")
-Enter & j::prem.keyreset("rotation")
-Enter & h::prem.keyreset("opacity")
 Right::unassigned()
 
 t::prem.preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track

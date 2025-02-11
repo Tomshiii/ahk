@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/02/12
- * @version 2.1.49
+ * @version 2.1.49.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -61,14 +61,6 @@ class Prem {
     static winTitle := this.exeTitle
     static class    := Editors.Premiere.class
     static path     := ptf["Premiere"]
-
-    ;// variables used in functions
-    static timer      := false
-    static isWaiting  := true
-    static presses    := 0
-    static zoomToggle := 0
-    static zToolX     := 0
-    static zToolY     := 0
 
     ;// colour of playhead
     static playhead  := 0x4096F3
@@ -126,28 +118,6 @@ class Prem {
     static layerEmpty   := 0x1D1D1D
     static layerDivider := 0x303030
     static toggleWaiting := false
-
-    class ClientInfo {
-        ;//! these values are numbered so that the automatic toggles in `zoom()` enumerate in the proper order (as it goes alphabetically)
-
-        alex := {
-            1: [2064, -26, 215, 960, 540],
-            2: [3467, 339, 390, 960, 540]
-        }
-        d0yle := {
-            1: [1925, 1085, 210, 1916.8, 1082],
-            2: [1917.5, 1077.5, 288, 1915, 1074.6]
-        }
-        chloe := {
-            1: [-426, -238, 267, 960, 540],
-            2: [-1776, -932, 495, 960, 540],
-            3: [632, 278, 292, 960, 540]
-        }
-        emerldd := {
-            1: [1913, 67, 200, 960, 540],
-            2: [2873, -436, 300, 960, 540]
-        }
-    }
 
     __fxPanel() => (delaySI(16, KSA.effectControls, ksa.programMonitor, KSA.effectControls))
 

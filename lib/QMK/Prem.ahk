@@ -25,12 +25,6 @@ premTimeline() {
 	prem.__checkTimelineFocus()
 }
 
-BackSpace & SC027::prem.keyframe("position")
-; BackSpace & /::prem.keyframe("position")
-BackSpace & l::prem.keyframe("scale")
-BackSpace & t::prem.keyframe("level")
-BackSpace & u::prem.keyframe("rotation")
-BackSpace & y::prem.keyframe("opacity")
 SC028 & SC027::prem.manInput("position") ;manually input an x value
 ; SC028 & /::prem.manInput("position", "60") ;manually input a y value
 SC028 & l::prem.manInput("scale") ;manually input a scale value
@@ -38,12 +32,6 @@ SC028 & u::prem.manInput("rotation") ;manually input a rotation value
 SC028 & y::prem.manInput("opacity") ;manually input an opacity value
 SC028 & t::prem.manInput("level") ;manually input a level value
 Enter::prem.reset()
-Enter & SC027::prem.keyreset("position")
-; Enter & /::prem.keyreset("position")
-Enter & l::prem.keyreset("scale")
-Enter & t::prem.keyreset("level")
-Enter & u::prem.keyreset("rotation")
-Enter & y::prem.keyreset("opacity")
 Right::unassigned()
 
 p::prem.preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
@@ -70,7 +58,7 @@ g::prem.gain("6") ;INCREASE GAIN BY 6db
 y::prem.valuehold("Opacity")
 h::prem.gain("2")
 #MaxThreadsBuffer True
-n::prem.zoom()
+n::unassigned()
 #MaxThreadsBuffer false
 ;Space::unassigned()
 
