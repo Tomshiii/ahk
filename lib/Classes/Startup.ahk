@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/02/11
- * @version 1.7.49
+ * @date 2025/02/12
+ * @version 1.7.50
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -172,6 +172,10 @@ class Startup {
                     setSection(tempAdjust, allAdjust, "Adjust")
                     setSection(tempTrack, allTrack, "Track", true)
                     this.UserSettings.__delAll()
+                    sleep 1000
+                    Notify.Show(, 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+                    SetTimer((*) => reset.ext_reload(), -3000)
+                    Sleep(5000)
                     return
                 }
             }

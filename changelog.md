@@ -20,6 +20,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 - Added `gitBranchCheck()` to check for upstream changes to the git branch and offer the ability to `pull` upstream changes
     - Can be toggled in `settingsGUI()` and defaults to `false`
 - `libUpdateCheck()` now checks for `Notify Creator.ahk` updates
+- `generate()` will now attempt a reload if it has added any settings entries
 
 ## Streamdeck AHK
 - `backupProj.ahk` now alerts the user once it begins the backup process
