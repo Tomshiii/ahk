@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/02/11
- * @version 2.1.47
+ * @date 2025/02/12
+ * @version 2.1.48
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -818,18 +818,11 @@ class Prem {
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
-        if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-            { ;any imagesearches on the effect controls window includes a division variable (KSA.ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
-                SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-                sleep 50
-                if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                    {
-                        block.Off()
-                        errorLog(Error("No clips are selected", -1),, 1)
-                        return
-                    }
-            }
-
+        if !this.checkNoClips(effCtrlNN, &x, &y) {
+            block.Off()
+            errorLog(Error("No clips are selected", -1),, 1)
+            return
+        }
         motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
         switch {
             ;// spectrum UI
@@ -950,7 +943,11 @@ class Prem {
         }
         this.__checkTimelineFocus() ;focuses the timeline
         sleep 25
-        this.checkNoClips(effCtrlNN, &x, &y)
+        if !this.checkNoClips(effCtrlNN, &x, &y) {
+            block.Off()
+            errorLog(Error("No clips are selected", -1),, 1)
+            return
+        }
         loop {
             if ImageSearch(&x, &y, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "motion.png") ;moves to the motion tab
                     {
@@ -1055,7 +1052,11 @@ class Prem {
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
-        this.checkNoClips(effCtrlNN, &x, &y)
+        if !this.checkNoClips(effCtrlNN, &x, &y) {
+            block.Off()
+            errorLog(Error("No clips are selected", -1),, 1)
+            return
+        }
         MouseGetPos(&xpos, &ypos)
         loop {
             ;// checks if the "motion" value is in view
@@ -1096,7 +1097,11 @@ class Prem {
             return
         }
         this.__checkTimelineFocus()
-        this.checkNoClips(effCtrlNN, &x, &y)
+        if !this.checkNoClips(effCtrlNN, &x, &y) {
+            block.Off()
+            errorLog(Error("No clips are selected", -1),, 1)
+            return
+        }
         ;// finds the scale value you want to adjust, then finds the value adjustment to the right of it
         if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &x, &y
             , ptf.Premiere property ".png"

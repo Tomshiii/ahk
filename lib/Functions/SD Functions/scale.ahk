@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\ptf>
+#Include <Classes\Editors\Premiere>
 #Include <Classes\block>
 #Include <Classes\coord>
 #Include <Classes\tool>
@@ -30,7 +31,7 @@ scale(amount)
     SendInput(KSA.effectControls)
     SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     try {
-        ClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
+        effCtrlNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
         ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
     } catch as e {
         block.Off() ;just incase
@@ -38,17 +39,11 @@ scale(amount)
         errorLog(e)
         return
     }
-    SendInput(KSA.timelineWindow) ;focuses the timeline
-    if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;searches to check if no clips are selected
-        { ;any imagesearches on the effect controls window includes a division variable (KSA.ECDivide) as I have my effect controls quite wide and there's no point in searching the entire width as it slows down the script
-            SendInput(KSA.selectAtPlayhead) ;adjust this in the keyboard shortcuts ini file
-            sleep 50
-            if ImageSearch(&x, &y, classX, classY, classX + (width/KSA.ECDivide), classY + height, "*2 " ptf.Premiere "noclips.png") ;checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-                {
-                    block.Off()
-                    errorLog(Error("No clips are selected", -1),, 1)
-                    return
-                }
+    prem.__checkTimelineFocus() ;focuses the timeline
+    if !prem.checkNoClips(effCtrlNN, &x, &y) {
+            block.Off()
+            errorLog(Error("No clips are selected", -1),, 1)
+            return
         }
     loop {
         if A_Index > 1
@@ -97,6 +92,6 @@ scale(amount)
     SendInput(amount)
     SendInput("{Enter}")
     MouseMove xpos, ypos
-    SendInput(KSA.timelineWindow)
+    prem.__checkTimelineFocus() ;focuses the timeline
     block.Off()
 }
