@@ -21,6 +21,13 @@
       "false": "Scripts will not check to see if any updates for the `Vers.ahk`/`adobeVers.ahk` files"
     }
   },
+  "gitUpdate": {
+    "title": "Check for git branch updates",
+    "tooltip": {
+      "true": "Scripts will check the upstream git branch for any changes and prompt the user when they occur",
+      "false": "Scripts will not check the upstream git branch for any changes"
+    }
+  },
   "libUpdate": {
     "title": "Check for Library Updates",
     "tooltip": {

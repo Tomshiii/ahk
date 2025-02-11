@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/01/03
- * @version 2.3.5
+ * @date 2025/02/11
+ * @version 2.3.6
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -171,6 +171,10 @@ settingsGUI()
     ;// vers.ahk update check
     settingsGUI.AddCheckbox("vVersCheck Checked" UserSettings.update_adobe_verAHK " Y+5", setJSON.versUpdate.title).OnEvent("Click", toggle.Bind("update adobe verAHK", ""))
     settingsGUI["VersCheck"].ToolTip := (UserSettings.update_adobe_verAHK = true) ? setJSON.versUpdate.tooltip.true : setJSON.versUpdate.tooltip.false
+
+    ;// git update check
+    settingsGUI.AddCheckbox("vgitCheck Checked" UserSettings.update_git " Y+5", setJSON.gitUpdate.title).OnEvent("Click", toggle.Bind("update git", ""))
+    settingsGUI["gitCheck"].ToolTip := (UserSettings.update_git = true) ? setJSON.gitUpdate.tooltip.true : setJSON.gitUpdate.tooltip.false
 
 
     ;// adobe version override
@@ -342,7 +346,7 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! BOTTOM TEXT
-    resetText := settingsGUI.Add("Text", "Section W100 H20 X9 Y+95", "Reset")
+    resetText := settingsGUI.Add("Text", "Section W100 H20 Xs Y+15", "Reset")
     resetText.SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -385,10 +389,11 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! GROUP EXIT BUTTONS
-    settingsGUI.AddGroupBox("W201 H58 xs+500 ys+5", "Exit")
-    settingsGUI.AddButton("W85 H30 x+-190 y+-40", "Hard Reset").OnEvent("Click", close.bind("hard"))
-
-    settingsGUI.AddButton("W85 H30 x+10", "Save && Exit").OnEvent("Click", close)
+    exitText := settingsGUI.Add("Text", "W100 H20 Xs Y+15", "Exit")
+    exitText.SetFont("S13 Bold")
+    settingsGUI.AddButton("w100 h30 Y+5", "Hard Reset").OnEvent("Click", close.bind("hard"))
+    settingsGUI.AddButton("w100 h30 X+15", "Reload").OnEvent("Click", close.bind("reload"))
+    settingsGUI.AddButton("w100 h30 Y+5", "Save && Exit").OnEvent("Click", close)
 
     settingsGUI.OnEvent("Escape", close)
     settingsGUI.OnEvent("Close", close)
@@ -410,11 +415,16 @@ settingsGUI()
         Notify.Show("settingsGUI()", "Settings changes are being saved", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 Hide=Fade@250")
         UserSettings.__delAll() ;// close the settings instance
         ToolTip("")
-        if IsSet(butt) && butt = "hard"
-            {
-                reset.reset()
-                return ;// this is necessary
+        if IsSet(butt) {
+            switch butt {
+                case "hard":
+                    reset.reset()
+                    return ;// this is necessary
+                case "reload":
+                    reset.ext_reload()
+                    return ;// this is necessary
             }
+        }
         ;before finally closing
         settingsGUI.Destroy()
     }

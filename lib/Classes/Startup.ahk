@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/02/07
- * @version 1.7.48
+ * @date 2025/02/11
+ * @version 1.7.49
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1133,6 +1133,38 @@ class Startup {
         found := doLooop()
         if !found
             try RunWait(ptf.SupportFiles "\shortcuts\createShortcuts.ahk", ptf.SupportFiles "\shortcuts\")
+    }
+
+    /** checks if there are upstream changes to the current git branch and pulls them if there are */
+    gitBranchCheck() {
+        if this.isReload != false ;checks if script was reloaded
+            return
+        if this.UserSettings.update_git = "false" || this.UserSettings.update_git = false
+            return
+        if !DirExist(ptf.rootDir "\.git") {
+            Notify.Show('Git directory does not exist!', 'The Git folder could not be found in:`n' ptf.rootDir "`n`nPlease ensure your root dir is set correctly within;`n" A_MyDocuments "\tomshi\settings.ini", 'C:\Windows\System32\imageres.dll|icon244', 'soundx',, 'dur=7 bdr=0xC72424')
+            return
+        }
+        getStatus := cmd.result("git status -uno",,, ptf.rootDir)
+        if InStr(getStatus, "Your branch is up to date")
+            return
+
+        getBranch := SubStr(getStatus, first := InStr(getStatus, "'",, 1, 1)+1, InStr(getStatus, "'",, first+1, 1)-first)
+        userResponse := MsgBox("Branch " getBranch " appears to have changes.`nWould you like to pull these changes?", "Would you like to pull repo?", "4132")
+        if userResponse != "Yes"
+            return
+
+        getLocalStatus := cmd.result("git status --short",,, ptf.rootDir)
+        switch getLocalStatus {
+            case "": cmd.run(,,, "git pull", ptf.rootDir, "Hide")
+            default:
+                cmd.run(,,, "git stash", ptf.rootDir, "Hide")
+                sleep 3000
+                cmd.run(,,, "git pull", ptf.rootDir, "Hide")
+                sleep 3000
+                cmd.run(,,, "git stash pop", ptf.rootDir, "Hide")
+        }
+        Notify.Show(, 'Recent Github changes have been applied.`nA reload is recommended!', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=Purple')
     }
 
     __Delete() {

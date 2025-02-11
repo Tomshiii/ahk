@@ -1,5 +1,4 @@
 #SingleInstance Force
-;// This script is for a friend and is simply kept in the repo to more easily track it as well as allowing them to more easily access it in multiple locations
 
 #Include <Classes\Startup>
 #Include <Classes\ptf>
@@ -28,6 +27,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 start := Startup()
 start.generate()
 SD_Opt().checkCount()
+start.gitBranchCheck()
 ; start.updateChecker()
 start.updatePackages(,,,, ["vcredist"])
 start.trayMen()

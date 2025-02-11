@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2024/11/25
- * @version 2.1.31
+ * @date 2025/02/11
+ * @version 2.1.32
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -410,8 +410,10 @@ class adobeAutoSave extends count {
             return
 
         ;// checking for save dialogue box
-        if !this.__checkDialogueClass()
+        if !this.__checkDialogueClass() {
+            Notify.Show(, 'Premiere appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
+        }
 
         ;// getting window title/information
         this.premWindow := WinGet.PremName()
@@ -507,8 +509,10 @@ class adobeAutoSave extends count {
             return
 
         ;// checking for save dialogue box
-        if !this.__checkDialogueClass("AfterFX")
+        if !this.__checkDialogueClass("AfterFX") {
+            Notify.Show(, 'AE appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
+        }
 
         ;// checking idle status
         this.__checkIdle()

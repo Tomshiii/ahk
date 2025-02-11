@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.14
+;\\v2.34.15
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -117,6 +117,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 start := Startup()
 start.generate()                          ;generates/replaces the `settings.ini` file every release
 SD_Opt().checkCount()                     ;checks the streamdeck `options.ini` file to ensure the user has all settings
+start.gitBranchCheck()                    ;checks the git branch for updates
 start.updateChecker()                     ;runs the update checker
 start.updateAdobeVerAHK()
 start.updatePackages(,,,, ["vcredist"])   ;checks for updates to packages installed through choco by default

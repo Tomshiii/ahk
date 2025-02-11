@@ -2,10 +2,15 @@
 A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-libraries/issues/15>) was causing `prem.dissmissWarning()` to never fire when used in `Premiere_RightClick.ahk`. This issue has now been recitified and is once again working as expected.
 
 ## Functions
-- `startup.libUpdateCheck()` now checks for `Notify Creator.ahk` updates
 - Fixed `prem.dismissWarning()` utilising incorrect coords
 - Fixed bug with `trimGUI {` calculating the duration between two timecodes causing empty files to be generated
     - Will now warn the user if incorrect timecodes have been given
+- Added `Reload` option to the `Exit` menu in `settingsGUI()`
+
+`startup {`
+- Added `gitBranchCheck()` to check for upstream changes to the git branch and offer the ability to `pull` upstream changes
+    - Can be toggled in `settingsGUI()` and defaults to `false`
+- `libUpdateCheck()` now checks for `Notify Creator.ahk` updates
 
 ## Other Changes
 - `backupProj.ahk` now alerts the user once it begins the backup process
