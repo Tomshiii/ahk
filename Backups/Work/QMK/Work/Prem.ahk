@@ -9,26 +9,20 @@
 #Include <QMK\unassigned>
 
 premTimeline() {
-	block.On()
 	UserSettings := UserPref()
 	__fallback() {
-		if !prem.__checkTimeline(false) {
-			block.Off()
+		if !prem.__checkTimeline(false)
 			return
-		}
 		tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
 	}
 	if !prem.__checkTimelineValues() {
 		WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
 		if !prem.__waitForTimeline() {
 			__fallback()
-			block.Off()
 			return
 		}
 	}
-	; prem.__checkTimelineFocus()
-	block.Off()
-	Exit()
+	prem.__checkTimelineFocus()
 }
 
 SC028 & SC027::prem.manInput("position") ;manually input an x value
@@ -61,8 +55,8 @@ j::prem.gain("-6") ;REDUCE GAIN BY -6db
 g::prem.gain("6") ;INCREASE GAIN BY 6db
 ;PgUp::unassigned()
 
-y::prem.valuehold("Opacity")
-h::prem.gain("2")
+; y::prem.valuehold("opacity")
+;h::unassigned()
 #MaxThreadsBuffer True
 n::unassigned()
 #MaxThreadsBuffer false
@@ -84,7 +78,7 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 	else
 		prem.preset("fix clipping_default")
 }
-m:: ;this hotkey will fill the frame to fit the window
+y:: ;this hotkey will fill the frame to fit the window
 {
 	premTimeline()
 	SendInput(KSA.scaleFrameSize)

@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/02/12
- * @version 2.1.49.1
+ * @version 2.1.50
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -500,7 +500,6 @@ class Prem {
         ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
         ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
         ;You can plug your own x distance in by changing the value below
-        xdist := 210
         coord.client()
         MouseGetPos(&xpos, &ypos)
         block.On()
@@ -537,7 +536,16 @@ class Prem {
             break
         }
 
-        if !PixelSearch(&xcol, &ycol, startPos.x, startPos.y, startPos.x + xdist, startpos.y + (this.effCtrlSegment*.75), this.valueBlue, 6) {
+        ;// determining the edge of the pixel search (otherwise it might grab the playhead)
+        if !ImageSearch(&collapseX, &collapseY, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/ksa.ECDivide), effCtrlNN.y+50, "*2 " ptf.Premiere "effCtrlCollapse.png") {
+            block.Off()
+            errorLog(TargetError("Failed to find the edge of the Effect Controls window", -1),, 1)
+            keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
+            MouseMove(xpos, ypos)
+            return
+        }
+
+        if !PixelSearch(&xcol, &ycol, startPos.x, startPos.y, collapseX, startpos.y + (this.effCtrlSegment*.75), this.valueBlue, 6) {
             block.Off()
             errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
             keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
