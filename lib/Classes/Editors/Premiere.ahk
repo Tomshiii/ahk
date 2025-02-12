@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/02/12
- * @version 2.1.50
+ * @version 2.1.51
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -491,6 +491,33 @@ class Prem {
     }
 
     /**
+     * checks for and disables the `Direct Manipulation` button that appears in the bottom left of the program monitor when you select a clip
+     * this button being enabled can be annoying as it will then pause playback if you click anything else in the timeline
+     */
+    static disableDirectManip() {
+        ;// button was only added in specrum UI
+        if VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0
+            return
+        coord.client()
+        block.On()
+        premUIA := premUIA_Values()
+        if !progNN := this.__uiaCtrlPos(premUIA.programMon,,, false) {
+            block.Off()
+            return
+        }
+        if !ImageSearch(&x, &y, progNN.x, (progNN.y+progNN.height)-65, progNN.x+75, (progNN.y+progNN.height), "*2 " ptf.Premiere "directManip.png") {
+            block.Off()
+            return
+        }
+        origPos := obj.MousePos()
+        MouseMove(x+2, y+2, 2)
+        SendInput("{Click}")
+        MouseMove(origPos.x, origPos.y, 2)
+        block.Off()
+        return
+    }
+
+    /**
      * A function to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
      * @param {String} control is which control you wish to adjust. This parameter is CASE SENSETIVE!!. Valids options; `Position`, `Scale`, `Rotation`, `Opacity`
      * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
@@ -558,7 +585,6 @@ class Prem {
         if !GetKeyState(A_ThisHotkey, "P") {
             ;// searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
             if !ImageSearch(&x2, &y2, startPos.x, startPos.y - (this.effCtrlSegment*.25), startPos.x + 1500, startPos.y + (this.effCtrlSegment*.75), "*2 " ptf.Premiere "reset.png") {
-                ;// this block is for adjusting the "level" property, change in the KSA.ini file
                 MouseMove(xpos, ypos)
                 block.Off()
                 errorLog(Error("Couldn't find the reset button", -1),, 1)
@@ -567,6 +593,7 @@ class Prem {
             MouseMove(x2, y2)
             SendInput("{Click}")
             MouseMove(xpos, ypos)
+            this.disableDirectManip()
             block.Off()
             return
         }
@@ -576,6 +603,7 @@ class Prem {
         keys.allWait()
         SendInput("{Click Up}" "{Enter}")
         sleep 200 ;was experiencing times where ahk would just fail to excecute the below mousemove. no idea why. This sleep seems to stop that from happening and is practically unnoticable
+        this.disableDirectManip()
         MouseMove(xpos, ypos)
     }
 
@@ -705,6 +733,7 @@ class Prem {
                         {
                             errorLog(IndexError("Couldn't find the video in the Program Monitor.", -1)
                                         , "Or the function kept finding pure black at each checking coordinate", 1)
+                            this.disableDirectManip()
                             return
                         }
                     break
@@ -721,6 +750,9 @@ class Prem {
         block.Off()
         keys.allWait()
         SendInput("{Click Up}")
+        getMouse := obj.MousePos()
+        this.disableDirectManip()
+        MouseMove(getMouse.x, getMouse.y, 2)
         ;!MouseMove(xpos, ypos) ; // moving the mouse position back to origin after doing this is incredibly disorienting
     }
 

@@ -8,6 +8,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 - Added `Reload` option to the `Exit` menu in `settingsGUI()`
 
 `Prem {`
+- Added `disableDirectManip()`
 - Removed `keyreset()` & `keyframe()`. A simpler method could be created using `PremiereRemote` but no current plans to develop said function
 - Removed `zoom()`
 - `valuehold()`

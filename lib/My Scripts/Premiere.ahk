@@ -62,6 +62,8 @@ Escape::prem.escFxMenu()
 ;premselecttoolHotkey;
 SC03A & v::prem.selectionTool()
 
+SC03A & d::prem.disableDirectManip()
+
 LAlt & SC03A::prem.layerSizeAdjust()
 
 LCtrl & 1::prem.toggleLayerButtons("mute")
