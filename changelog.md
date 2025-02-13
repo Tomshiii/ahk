@@ -13,7 +13,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 - Removed `zoom()`
 - `valuehold()`
     - No longer requires individual screenshots for each control, greatly simplifying the function and making it less prone to breaking
-    - No longer adjusts the blendmode and all reference to that ability has been removed
+    - No longer adjusts the `blend mode` and all reference to that ability has been removed
     - No longer adjusts `levels`. That functionality is better left to `numpadGain()`
     - First parameter `filepath` renamed => `control` is now <kbd>Case Sensitive</kbd>
 
@@ -32,4 +32,4 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
     - `push to audition.ahk`, `syncWorkAssets.ahk` & `tiktok voice.ahk`
 
 ## Other Changes
-- Removed all `ImageSearch` images relating to `blend` scripts & `prem.valuehold()`
+- Removed all now obsolete `ImageSearch` images relating to `blend` scripts & `prem.valuehold()`

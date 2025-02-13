@@ -9,75 +9,68 @@
 #Include <QMK\unassigned>
 
 premTimeline() {
+	block.On()
 	UserSettings := UserPref()
 	__fallback() {
-		if !prem.__checkTimeline(false)
+		if !prem.__checkTimeline(false) {
+			block.Off()
 			return
+		}
 		tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
 	}
 	if !prem.__checkTimelineValues() {
 		WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
 		if !prem.__waitForTimeline() {
 			__fallback()
+			block.Off()
 			return
 		}
 	}
-	prem.__checkTimelineFocus()
+	; prem.__checkTimelineFocus()
+	block.Off()
+	Exit()
 }
 
-SC028 & SC027::prem.manInput("position") ;manually input an x value
-; SC028 & /::prem.manInput("position", "60") ;manually input a y value
-SC028 & l::prem.manInput("scale") ;manually input a scale value
-SC028 & u::prem.manInput("rotation") ;manually input a rotation value
-SC028 & y::prem.manInput("opacity") ;manually input an opacity value
-SC028 & t::prem.manInput("level") ;manually input a level value
+BackSpace:: ;this hotkey will activate the program monitor, then send the hotkey to activate safe margins
+{
+	SendInput(KSA.programMonitor)
+	SendInput(KSA.premSafeMargins)
+	sleep 100
+	premTimeline()
+}
+SC028::prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 Enter::prem.reset()
 Right::unassigned()
 
-p::prem.preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
-SC027::prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+p::prem.gain("-2") ;REDUCE GAIN BY -2db
+SC027::prem.valuehold("Position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ; /::
 
 
 o::prem.preset("audio_basic")
-l::prem.valuehold("Scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+l::prem.valuehold("Position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
 .::prem.preset("Transform Me")
 ;Down::unassigned()
 
-i::prem.preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your prem.preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
-k::prem.gain("-2") ;REDUCE GAIN BY -2db
+i::prem.gain("-6") ;REDUCE GAIN BY -6db
+k::prem.valuehold("Scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ,::prem.anchorToPosition() ;prem.gain("2") ;INCREASE GAIN BY 2db == set g to open gain window
 ;Left::unassigned()
 
-u::prem.valuehold("Rotation") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-j::prem.gain("-6") ;REDUCE GAIN BY -6db
-g::prem.gain("6") ;INCREASE GAIN BY 6db
+u::prem.gain("6") ;INCREASE GAIN BY 6db
+j::prem.valuehold("Rotation") ;press then hold this hotkey and drag to increase/decrease rotation. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+g::
 ;PgUp::unassigned()
 
-; y::prem.valuehold("opacity")
+; y::prem.valuehold("Opacity")
 ;h::unassigned()
 #MaxThreadsBuffer True
 n::unassigned()
 #MaxThreadsBuffer false
 ;Space::unassigned()
 
-t:: ;preset for applying an eq effect to lessen harshness of clipping
-{
-	;// attempt to grab client name from the title dir path
-	ClientName := WinGet.ProjClient()
-	if !ClientName
-		return
-	;// read the preset file
-	preset := FileRead(ptf["PremPresets"])
-	SendInput(KSA.effectControls)
-	SendInput(KSA.effectControls)
-	;// check if preset for current proj exists
-	if InStr(preset, "fix clipping_" ClientName)
-		prem.preset("fix clipping_" ClientName)
-	else
-		prem.preset("fix clipping_default")
-}
+t::prem.preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
 y:: ;this hotkey will fill the frame to fit the window
 {
 	premTimeline()
@@ -88,13 +81,7 @@ y:: ;this hotkey will fill the frame to fit the window
 r::prem.preset("Lowpass Me")
 f::prem.preset("Highpass Me")
 
-v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
-{
-	SendInput(KSA.programMonitor)
-	SendInput(KSA.premSafeMargins)
-	sleep 100
-	premTimeline()
-}
+v::
 ;PgDn::unassigned()
 
 e::prem.preset("tint 100")
@@ -108,8 +95,8 @@ x::prem.fxSearch()
 ;F15::unassigned()
 
 q::prem.preset("S_Shake Me")
-a::prem.valuehold("Position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-z::prem.valuehold("Position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+a::
+z::
 
 ;F16::unassigned()
 
