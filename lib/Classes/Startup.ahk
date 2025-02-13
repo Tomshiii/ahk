@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/02/12
- * @version 1.7.50
+ * @date 2025/02/13
+ * @version 1.7.51
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1149,12 +1149,14 @@ class Startup {
             Notify.Show('Git directory does not exist!', 'The Git folder could not be found in:`n' ptf.rootDir "`n`nPlease ensure your root dir is set correctly within;`n" A_MyDocuments "\tomshi\settings.ini", 'C:\Windows\System32\imageres.dll|icon244', 'soundx',, 'dur=7 bdr=0xC72424')
             return
         }
+        cmd.run(,,, "git fetch", ptf.rootDir, "Hide")
+        sleep 1000
         getStatus := cmd.result("git status -uno",,, ptf.rootDir)
         if InStr(getStatus, "Your branch is up to date")
             return
 
         getBranch := SubStr(getStatus, first := InStr(getStatus, "'",, 1, 1)+1, InStr(getStatus, "'",, first+1, 1)-first)
-        userResponse := MsgBox("Branch " getBranch " appears to have changes.`nWould you like to pull these changes?", "Would you like to pull repo?", "4132")
+        userResponse := MsgBox("Branch " getBranch " appears to have changes.`nWould you like to pull these changes? (this process will stash any uncommitted changes and then pop them once finished)", "Would you like to pull repo?", "4132")
         if userResponse != "Yes"
             return
 
@@ -1169,6 +1171,9 @@ class Startup {
                 cmd.run(,,, "git stash pop", ptf.rootDir, "Hide")
         }
         Notify.Show(, 'Recent Github changes have been applied.`nA reload is recommended!', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=Purple')
+        if MsgBox("Github changes have been applied.`nWould you like to reload all scripts now?", "Would you like to reload?", "4132") != "Yes"
+            return
+        reset.ext_reload()
     }
 
     __Delete() {
