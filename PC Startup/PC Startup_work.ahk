@@ -30,6 +30,6 @@ FileCopy(ptf.rootDir "\Support Files\Streamdeck Files\options.ini", ptf.rootDir 
 FileCopy(ptf.rootDir "\lib\My Scripts\Windows.ahk", ptf.rootDir "\Backups\Work\Windows.ahk", 1)
 FileCopy(ptf.rootDir "\lib\Classes\Apps\Discord.ahk", ptf.rootDir "\Backups\Work\Discord.ahk", 1)
 FileCopy(ptf.rootDir "\lib\Classes\move.ahk", ptf.rootDir "\Backups\Work\move.ahk", 1)
-FileCopy(ptf.rootDir "\lib\Classes\QMK\Work\Prem.ahk", ptf.rootDir "\Backups\Work\QMK\Prem.ahk", 1)
+FileCopy(ptf.rootDir "\lib\QMK\Work\Prem.ahk", ptf.rootDir "\Backups\Work\QMK\Work\Prem.ahk", 1)
 
 deleteDotUnderscore("N:\")

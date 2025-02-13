@@ -15,3 +15,15 @@ F23::SendInput(KSA.nextKeyframe) ;check the keyboard shortcut ini file to adjust
 
 
 $+3::ae.zoomCompWindow({x:0, y:0, x2: 738, y2: 29}, A_ThisHotkey, 1)
+
+Space::
+{
+	switch getTitle := WinGetTitle("A") {
+		case "Color":
+			if !CaretGetPos(&x, &y) {
+				SendInput("{Enter}")
+				return
+			}
+	}
+	SendInput("{Space}")
+}
