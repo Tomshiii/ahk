@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/02/13
- * @version 1.7.51
+ * @date 2025/02/14
+ * @version 1.7.51.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1159,6 +1159,7 @@ class Startup {
         userResponse := MsgBox("Branch " getBranch " appears to have changes.`nWould you like to pull these changes? (this process will stash any uncommitted changes and then pop them once finished)", "Would you like to pull repo?", "4132")
         if userResponse != "Yes"
             return
+        Notify.Show(, 'Git branch updating now... Please wait', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=lime')
 
         getLocalStatus := cmd.result("git status --short",,, ptf.rootDir)
         switch getLocalStatus {
