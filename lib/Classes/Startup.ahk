@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2025/02/14
- * @version 1.7.51.1
+ * @version 1.7.52
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -111,6 +111,8 @@ class Startup {
             {
                 this.UserSettings.dark_mode := "disabled"
                 this.UserSettings.__delAll()
+                if !this.__checkForReloadAttempt("checkDark")
+                    return
                 reset.reset()
                 return "disabled"
             }
@@ -173,8 +175,10 @@ class Startup {
                     setSection(tempTrack, allTrack, "Track", true)
                     this.UserSettings.__delAll()
                     sleep 1000
+                    if !this.__checkForReloadAttempt("generate")
+                        return
                     Notify.Show(, 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
-                    SetTimer((*) => reset.ext_reload(), -3000)
+                    SetTimer((*) => reset.reset(), -3000)
                     Sleep(5000)
                     return
                 }
@@ -777,7 +781,12 @@ class Startup {
         if operatePrem = true || operateAE = true {
             this.UserSettings.__delAll()
             this.UserSettings := ""
-            reset.reset()
+            if !this.__checkForReloadAttempt("adobeVerOverride")
+                return
+            Notify.Show(, 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+            SetTimer((*) => reset.reset(), -3000)
+            Sleep(5000)
+            return
         }
     }
 
@@ -1143,6 +1152,7 @@ class Startup {
     gitBranchCheck() {
         if this.isReload != false ;checks if script was reloaded
             return
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if this.UserSettings.update_git = "false" || this.UserSettings.update_git = false
             return
         if !DirExist(ptf.rootDir "\.git") {
@@ -1174,10 +1184,62 @@ class Startup {
         Notify.Show(, 'Recent Github changes have been applied.`nA reload is recommended!', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=Purple')
         if MsgBox("Github changes have been applied.`nWould you like to reload all scripts now?", "Would you like to reload?", "4132") != "Yes"
             return
-        reset.ext_reload()
+        if !this.__checkForReloadAttempt("gitBranchCheck")
+            return
+        Notify.Show(, 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+        SetTimer((*) => reset.reset(), -3000)
+        Sleep(5000)
+        return
     }
 
+    /**
+     * checks ini file to see if a reload for the passed function has already been attempted this calandar day.
+     * this is to stop potential bootloops from occurring in the event that something goes wrong
+     */
+    __checkForReloadAttempt(funcName) {
+        this.__createTrackReloads()
+        readIni := IniRead(this.trackReloadsIni, "Track", funcName, A_YYYY "_" A_MM "_" A_DD)
+        if readIni = A_YYYY "_" A_MM "_" A_DD {
+            Notify.Show(, funcName '() appears to be attempting to reload multiple times, this may be because something is stopping it from progressing forward.`n`nThis function will no longer reload today, it is recommended you report this issue on Github as a bug', 'C:\Windows\System32\imageres.dll|icon80',,, 'dur=10 pos=BR bdr=0xD50000 maxW=400')
+            return false
+        }
+        IniWrite(A_YYYY "_" A_MM "_" A_DD, this.trackReloadsIni, "Track", funcName)
+        return true
+    }
+
+    iniList := ["generate", "gitBranchCheck", "checkDark", "adobeVerOverride"]
+    trackReloadsIni := A_MyDocuments "\tomshi\track_reloads.ini"
+
+    /** a helper function to create the initial ini file or to add any new values */
+    __createTrackReloads() {
+        if !FileExist(this.trackReloadsIni) {
+            for v in this.iniList {
+                IniWrite("false", this.trackReloadsIni, "Track", v)
+            }
+            return
+        }
+        for v in this.iniList {
+            if !IniRead(this.trackReloadsIni, "Track", v, false) {
+                IniWrite("false", this.trackReloadsIni, "Track", v)
+            }
+        }
+    }
+
+    /** resets the values to default */
+    __resetReloadTracking() {
+        wholeSection := IniRead(this.trackReloadsIni, "Track")
+        allKeys := StrSplit(wholeSection, ["=", "`n", "`r"])
+        for k, v in allKeys {
+            if Mod(k, 2) = 0
+                continue
+            readCurrent := IniRead(this.trackReloadsIni, "Track", v)
+            if readCurrent = A_YYYY "_" A_MM "_" A_DD
+                continue
+            IniWrite("false",  this.trackReloadsIni, "Track", v)
+        }
+    }
     __Delete() {
+        this.__resetReloadTracking()
         this.UserSettings.__delAll()
         this.alertTimer := false
         this.activeFunc := ""

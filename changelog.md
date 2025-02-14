@@ -22,6 +22,8 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
     - Can be toggled in `settingsGUI()` and defaults to `false`
 - `libUpdateCheck()` now checks for `Notify Creator.ahk` updates
 - `generate()` will now attempt a reload if it has added any settings entries
+- Functions that `reload` or `reset` all scripts will now track their reloads to ensure they can only reload once per day
+    - They will also all now use `Notify` to alert the user that a reload is taking place to minimise confusion incase multiple need to happen in succession
 
 ## Streamdeck AHK
 - Added `updateGitBranch.ahk`

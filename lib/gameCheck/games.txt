@@ -27,4 +27,5 @@ Deep Rock Galactic   ahk_exe FSD-Win64-Shipping.exe,
 Borderlands ahk_exe Borderlands3.exe,
 The Witcher 3 ahk_exe witcher3.exe,
 DRAGON BALL Sparking! ZERO   ahk_exe SparkingZERO-Win64-Shipping.exe,
-Golf With Your Friends ahk_exe Golf With Your Friends.exe
+Golf With Your Friends ahk_exe Golf With Your Friends.exe,
+Terraria ahk_exe dotnet.exe
