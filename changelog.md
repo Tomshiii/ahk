@@ -30,7 +30,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 - `backupProj.ahk` now alerts the user once it begins the backup process
 - `[aud/vid][Part/Select].ahk` scripts now better manage the clipboard to allow the user to copy/paste before the actual download process begins
 - Removed;
-    - `blend` Streamdeck scripts. I never built them out and it may be possible to just use `PremiereRemote` instead but no current plans to develop said function
+    - `blend` scripts. I never built them out and it may be possible to just use `PremiereRemote` instead but no current plans to investigate or develop said function
     - `swap solo.ahk` and associated `ImageSearch` images. This functionality is better utilised using `prem.toggleLayerButtons("solo")`
     - `push to audition.ahk`, `syncWorkAssets.ahk` & `tiktok voice.ahk`
 
