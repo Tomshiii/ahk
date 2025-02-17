@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/02/11
- * @version 2.3.6
+ * @date 2025/02/17
+ * @version 2.3.7
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -102,9 +102,9 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! Top Titles
-    settingsGUI.AddText("W100 H20 xs Y7", "Toggle").SetFont("S13 Bold")
-    settingsGUI.AddText("W100 H20 x+355", "Adjust").SetFont("S13 Bold")
-    settingsGUI.AddButton("W23 H22 x+125", "ℹ️").OnEvent("Click", (*) => (Run("https://github.com/Tomshiii/ahk/wiki/settingsGUI()")))
+    settingsGUI.AddText("W100 H20 xs Y7", "✔️ Toggle").SetFont("S13 Bold")
+    settingsGUI.AddText("W100 H20 x+355", "↩ Adjust").SetFont("S13 Bold")
+    settingsGUI.AddButton("W23 H22 x+125", "❓").OnEvent("Click", (*) => (Run("https://github.com/Tomshiii/ahk/wiki/settingsGUI()")))
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! checkboxes
@@ -346,7 +346,7 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! BOTTOM TEXT
-    resetText := settingsGUI.Add("Text", "Section W100 H20 Xs Y+15", "Reset")
+    resetText := settingsGUI.Add("Text", "Section W100 H20 Xs Y+15", "⭮ Reset")
     resetText.SetFont("S13 Bold")
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -389,11 +389,11 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! GROUP EXIT BUTTONS
-    exitText := settingsGUI.Add("Text", "W100 H20 Xs Y+15", "Exit")
+    exitText := settingsGUI.Add("Text", "W150 H20 Xs Y+15", "💾 Save && Exit")
     exitText.SetFont("S13 Bold")
     settingsGUI.AddButton("w100 h30 Y+5", "Hard Reset").OnEvent("Click", close.bind("hard"))
     settingsGUI.AddButton("w100 h30 X+15", "Reload").OnEvent("Click", close.bind("reload"))
-    settingsGUI.AddButton("w100 h30 Y+5", "Save && Exit").OnEvent("Click", close)
+    settingsGUI.AddButton("w100 h30 Y+5", "Close").OnEvent("Click", close)
 
     settingsGUI.OnEvent("Escape", close)
     settingsGUI.OnEvent("Close", close)
@@ -563,12 +563,6 @@ settingsGUI()
         adobeGui.AddText("xs y+10", "Version: ")
         __generateDropVer(genProg, &ver, ctrlX)
         adobeGui.AddCheckbox("x+10 y+-20 vIsBeta Checked" (%short%IsBeta ?? UserSettings.__convertToBool(short "IsBeta", "Adjust")), "Is Beta Version?").OnEvent("Click", (guiCtrl, *) => (%short%IsBeta := guiCtrl.value, UserSettings.%short%IsBeta := UserSettings.__convertToStr(guiCtrl.value), __generateShortcut()))
-        if program = "Premiere" {
-            adobeGui.AddText("xs y+10 Section", "Focus Timeline Icon: ")
-            timelineCheckbox := adobeGui.AddCheckbox("xs+135 ys+1 Checked" UserSettings.prem_Focus_Icon)
-            timelineCheckbox.OnEvent("Click", timelineCheckbx)
-            timelineCheckbx(guiobj, *) => UserSettings.prem_Focus_Icon := UserSettings.__convertToStr(timelineCheckbox.value)
-        }
         if program != "Photoshop" {
             adobeGui.AddText("xs y+12 Section", "Cache Dir: ")
             cacheInit := short "cache"

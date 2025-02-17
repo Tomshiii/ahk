@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2025/02/11
- * @version 1.2.22
+ * @date 2025/02/17
+ * @version 1.2.23
  ***********************************************************************/
 
 class UserPref {
@@ -35,7 +35,7 @@ class UserPref {
         "autosave_beep", "true", "autosave_check_checklist", "true", "autosave_save_override", "true", "autosave_check_mouse", "true",
         "autosave_always_save", "true", "autosave_restart_playback", "false",
         "checklist_hotkeys", "true", "checklist_tooltip", "true", "checklist_wait", "false",
-        "prem_Focus_Icon", "false", "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
+        "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
         "Always Check UIA", "true", "Set UIA Limit Daily", "disabled",
 
         ;// [Adjust]
@@ -228,7 +228,6 @@ class UserPref {
                     checklist hotkeys={}
                     checklist tooltip={}
                     checklist wait={}
-                    prem Focus Icon={}
                     disc disable autoreply={}
                     adobeExeOverride={}
                     Always Check UIA={}

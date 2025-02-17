@@ -23,7 +23,6 @@
 #Include <Other\WinEvent>
 #Include <Other\Notify\Notify>
 #Include <Functions\checkStuck>
-#Include <GUIs\Premiere Timeline GUI>
 ; }
 
 ;//! if you intend on running this as a separate script, please read the notes below and the wiki page so you're aware of the unexpected behaviours that can cause!
@@ -67,7 +66,6 @@ There's probably some dumb hacky way to work around that but ultimately it's jus
 
 ;// there may be code that EXPECTS the activation hotkey to be RButton
 RButton::rbuttonPrem().movePlayhead(,, prem.currentSetVer)
-; MButton::prem.__toggleTimelineFocus()
 
 ;// there is code that EXPECTS the activation hotkey to be XButton1
 ;// including uses of `checkStuck()`

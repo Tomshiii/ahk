@@ -83,7 +83,6 @@ class Prem {
     static focusColour      := 0x4096F3
 
     ;// rbuttonPrem
-    static focusTimelineStatus := true
     static RClickIsActive      := false
 
     ;// variables for `delayPlayback()` && `rippleTrim()`
@@ -988,24 +987,12 @@ class Prem {
 
     /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */
 	static __checkTimelineFocus() {
-		if this.focusTimelineStatus != true
-            return
         check := this.timelineFocusStatus()
         if check != false
             return
         sleep 1
         SendEvent(KSA.timelineWindow)
         sleep 25
-	}
-
-    /**
-	 * This function will toggle the state of an internal variable that tracks whether you user wishes for timeline focusing to be enabled or disabled.
-	 * Toggling this can help scenarios where the user has multiple sequences open and the main function would otherwise start cycling between them
-	 */
-	static __toggleTimelineFocus() {
-		which := (this.focusTimelineStatus = true) ? "disabled" : "enabled"
-		tool.Cust(Format("Timeline focusing is now {}.", which), 2000)
-		this.focusTimelineStatus := !this.focusTimelineStatus
 	}
 
     /**

@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2025/02/17
- * @version 1.7.52.1
+ * @version 1.7.53
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -154,35 +154,37 @@ class Startup {
         }
 
         ;// checking to see if the settings folder location exists
-        if FileExist(this.UserSettings.SettingsFile)
-            {
-                ;// this check ensures that the function will prematurely return if the release version in the settings.ini is the same as the current release AND
-                ;// that the amount of settings all line up, otherwise the function will continue so that it may add missing settings values
-                if (this.UserSettings.defaults.Count != (allSettings.Count + allAdjust.Count + allTrack.Count)) || (VerCompare(this.MyRelease, this.UserSettings.version) > 0) {
-                    tempFile := A_MyDocuments "\tomshi\settings_temp.ini"
-                    UserPref().__createIni(tempFile)
-                    tempSettings := genNewMap(), tempAdjust := genNewMap(), tempTrack  := genNewMap()
-                    for v in StrSplit(IniRead(tempFile), "`n") {
-                        for k, v2 in valArr := StrSplit(IniRead(tempFile, v), ["=", "`n", "`r"]) {
-                            if Mod(k, 2) = 0
-                                continue
-                            temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
-                        }
+        if FileExist(this.UserSettings.SettingsFile) {
+            ;// this check ensures that the function will prematurely return if the release version in the settings.ini is the same as the current release AND
+            ;// that the amount of settings all line up, otherwise the function will continue so that it may add missing settings values
+            if (this.UserSettings.defaults.Count != (allSettings.Count + allAdjust.Count + allTrack.Count)) || (VerCompare(this.MyRelease, this.UserSettings.version) > 0) {
+                tempFile := A_MyDocuments "\tomshi\settings_temp.ini"
+                UserPref().__createIni(tempFile)
+                tempSettings := genNewMap(), tempAdjust := genNewMap(), tempTrack  := genNewMap()
+                for v in StrSplit(IniRead(tempFile), "`n") {
+                    for k, v2 in valArr := StrSplit(IniRead(tempFile, v), ["=", "`n", "`r"]) {
+                        if Mod(k, 2) = 0
+                            continue
+                        temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
                     }
-                    FileDelete(tempFile)
-                    setSection(tempSettings, allSettings, "Settings")
-                    setSection(tempAdjust, allAdjust, "Adjust")
-                    setSection(tempTrack, allTrack, "Track", true)
-                    this.UserSettings.__delAll()
-                    sleep 1000
-                    if !this.__checkForReloadAttempt("generate")
-                        return
-                    Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
-                    SetTimer((*) => reset.reset(), -3000)
-                    Sleep(5000)
+                }
+                FileDelete(this.UserSettings.SettingsFile)
+                FileMove(tempFile, this.UserSettings.SettingsFile)
+                setSection(tempSettings, allSettings, "Settings")
+                setSection(tempAdjust, allAdjust, "Adjust")
+                setSection(tempTrack, allTrack, "Track", true)
+                this.UserSettings.__delAll()
+                sleep 1000
+                if !this.__checkForReloadAttempt("generate") {
+                    this.UserSettings := UserPref()
                     return
                 }
+                Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+                SetTimer((*) => reset.reset(), -3000)
+                Sleep(5000)
+                return
             }
+        }
 
         ;// generate new settings
         ;// [settings]
@@ -1200,7 +1202,7 @@ class Startup {
         this.__createTrackReloads()
         readIni := IniRead(this.trackReloadsIni, "Track", funcName, A_YYYY "_" A_MM "_" A_DD)
         if readIni = A_YYYY "_" A_MM "_" A_DD {
-            Notify.Show(, funcName '() appears to be attempting to reload multiple times, this may be because something is stopping it from progressing forward.`n`nThis function will no longer reload today, it is recommended you report this issue on Github as a bug', 'C:\Windows\System32\imageres.dll|icon80',,, 'dur=10 pos=BR bdr=0xD50000 maxW=400')
+            Notify.Show(, funcName '() appears to be attempting to reload multiple times, this may be because something is stopping it from progressing forward.`n`nThis function will no longer reload today, if this was unintentional it is recommended you report this issue on Github as a bug, otherwise a manual reload is required.', 'C:\Windows\System32\imageres.dll|icon80',,, 'dur=10 pos=BR bdr=0xD50000 maxW=400')
             return false
         }
         IniWrite(A_YYYY "_" A_MM "_" A_DD, this.trackReloadsIni, "Track", funcName)

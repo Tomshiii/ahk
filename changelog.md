@@ -5,7 +5,8 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 - Fixed `prem.dismissWarning()` utilising incorrect coords
 - Fixed bug with `trimGUI {` calculating the duration between two timecodes causing empty files to be generated
     - Will now warn the user if incorrect timecodes have been given
-- Added `Reload` option to the `Exit` menu in `settingsGUI()`
+- Added `Reload` option to the `Exit` menu in `settingsGUI()`  
+![image](https://github.com/user-attachments/assets/2ee0243d-9ad4-45b4-8591-3207a5bd1b5a)  
 - `rbuttonPrem {` will now return early in the event that `A_ThisHotkey` gets set as two keys
 
 `Prem {`
@@ -22,9 +23,11 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 - Added `gitBranchCheck()` to check for upstream changes to the git branch and offer the ability to `pull` upstream changes
     - Can be toggled in `settingsGUI()` and defaults to `false`
 - `libUpdateCheck()` now checks for `Notify Creator.ahk` updates
-- `generate()` will now attempt a reload if it has added any settings entries
 - Functions that `reload` or `reset` all scripts will now track their reloads to ensure they can only reload once per day
     - They will also all now use `Notify` to alert the user that a reload is taking place to minimise confusion incase multiple need to happen in succession
+- `generate()`
+    - Fixed function improperly handling when a settings value is removed causing the setting to remain in the user's .ini file
+    - Will now attempt a reload if it has added any settings entries
 
 ## Streamdeck AHK
 - Added `updateGitBranch.ahk`
@@ -37,3 +40,4 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 
 ## Other Changes
 - Removed all now obsolete `ImageSearch` images relating to `blend` scripts & `prem.valuehold()`
+- Removed `Premiere Timeline GUI.ahk` and all references to it. The functionality of this script has long since been superseded by `Premiere_UIA.ahk`
