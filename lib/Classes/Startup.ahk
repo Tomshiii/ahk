@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/02/14
- * @version 1.7.52
+ * @date 2025/02/17
+ * @version 1.7.52.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -177,7 +177,7 @@ class Startup {
                     sleep 1000
                     if !this.__checkForReloadAttempt("generate")
                         return
-                    Notify.Show(, 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+                    Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
                     SetTimer((*) => reset.reset(), -3000)
                     Sleep(5000)
                     return
@@ -783,7 +783,7 @@ class Startup {
             this.UserSettings := ""
             if !this.__checkForReloadAttempt("adobeVerOverride")
                 return
-            Notify.Show(, 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+            Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
             SetTimer((*) => reset.reset(), -3000)
             Sleep(5000)
             return
@@ -1186,7 +1186,7 @@ class Startup {
             return
         if !this.__checkForReloadAttempt("gitBranchCheck")
             return
-        Notify.Show(, 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+        Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
         SetTimer((*) => reset.reset(), -3000)
         Sleep(5000)
         return

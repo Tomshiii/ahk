@@ -24,11 +24,11 @@ $Tab::
 Space::
 {
 	switch getTitle := WinGetTitle("A") {
-		case "Modify Clip", "Audio Gain":
+		case "Modify Clip", "Audio Gain", "Delete Tracks":
 			SendInput("{Enter}")
 			return
 		case "Save Project": return
-		case "Color Picker":
+		case "Color Picker", "Add Tracks":
 			if !CaretGetPos(&x, &y) {
 				SendInput("{Enter}")
 				return

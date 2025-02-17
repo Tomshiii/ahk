@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.0
  * @author tomshi, taranVH
- * @date 2025/02/10
- * @version 2.3.11
+ * @date 2025/02/17
+ * @version 2.3.12
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -312,6 +312,8 @@ class rbuttonPrem {
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton1</kbd>).
 	 * This function has built in checks for <kbd>LButton</kbd> & <kbd>XButton2</kbd> during activation - check the wiki for more details.
 	 * This function should work as intended on both the old UI and the Spectrum UI assuming you use the default darkest themeing for both UI versions. Other themes will require the user to add additional colour values to `timelineColours {`
+	 *
+	 * #### This function has code to exit early in the event that `A_ThisHotkey` gets set to something with `&` in it. If you want to do this on purpose, you will need to remove that block of code.
 	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like <kbd>RButton</kbd> as that removes the ability for the keys native function to operate
 	 * @param {String} [theme="darkest"] the desired theme the user uses and wishes to use for the required colour values. Currently only "darkest" has mapped values
 	 * @param {String} [version=unset] the currently selected version of premiere within `settingsGUI()`. This parameter can usually be filled in using `prem.currentSetVer`
@@ -321,6 +323,16 @@ class rbuttonPrem {
 		if !IsSet(version) {
 			;// throw
 			errorLog(UnsetError("User has not set Paramater #2"),,, true)
+		}
+		;// sometimes ahk can be a bit slow off the mark if the user clicks multiple buttons at the same time
+		;// as their activation hotkey (and those other buttons are setup with other functions)
+		;// which can cause A_ThisHotkey to become something else other than RButton (ie. F14 & F23)
+		;// If this happens, some code later on will throw because GetKeyState doesn't know how to handle
+		;// a hotkey that has `&` in it
+		if InStr(A_ThisHotkey, "&") {
+			if IsSet(sendOnFailure)
+				SendInput(sendOnFailure)
+			return
 		}
 
 		if IsSet(sendOnFailure)

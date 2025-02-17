@@ -6,6 +6,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 - Fixed bug with `trimGUI {` calculating the duration between two timecodes causing empty files to be generated
     - Will now warn the user if incorrect timecodes have been given
 - Added `Reload` option to the `Exit` menu in `settingsGUI()`
+- `rbuttonPrem {` will now return early in the event that `A_ThisHotkey` gets set as two keys
 
 `Prem {`
 - Added `disableDirectManip()`
