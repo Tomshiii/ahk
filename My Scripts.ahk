@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.15
+;\\v2.34.16
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -51,6 +51,7 @@
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
+#Include <Other\ObjRegisterActive>
 ;#Include Premiere_RightClick.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 
@@ -65,7 +66,13 @@ A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If yo
 A_MenuMaskKey := "vkD7"				   ;necessary for `alt_menu_acceleration_disabler.ahk` to work correctly
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
-
+try {
+    ObjRegisterActive(prem, "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+    OnExit(revoke)
+    revoke(*) {
+        ObjRegisterActive(prem, "")
+    }
+}
 
 ; ============================================================================================================================================
 ;

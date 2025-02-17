@@ -2,7 +2,6 @@
 A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-libraries/issues/15>) was causing `prem.dissmissWarning()` to never fire when used in `Premiere_RightClick.ahk`. This issue has now been recitified and is once again working as expected.
 
 ## Functions
-- Fixed `prem.dismissWarning()` utilising incorrect coords
 - Fixed bug with `trimGUI {` calculating the duration between two timecodes causing empty files to be generated
     - Will now warn the user if incorrect timecodes have been given
 - Added `Reload` option to the `Exit` menu in `settingsGUI()`  
@@ -11,6 +10,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 
 `Prem {`
 - Added `disableDirectManip()`
+- Fixed `dismissWarning()` utilising incorrect coords
 - Removed `keyreset()` & `keyframe()`. A simpler method could be created using `PremiereRemote` but no current plans to develop said function
 - Removed `zoom()`
 - `valuehold()`
@@ -39,5 +39,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
     - `push to audition.ahk`, `syncWorkAssets.ahk` & `tiktok voice.ahk`
 
 ## Other Changes
-- Removed all now obsolete `ImageSearch` images relating to `blend` scripts & `prem.valuehold()`
+- Removed all, now obsolete, `ImageSearch` images relating to `blend` scripts & `prem.valuehold()`
 - Removed `Premiere Timeline GUI.ahk` and all references to it. The functionality of this script has long since been superseded by `Premiere_UIA.ahk`
+- Added [`ObjRegisterActive.ahk`](<https://www.autohotkey.com/boards/viewtopic.php?f=6&t=6148&sid=79f2a3736ebcc2c9b88842b5a5145d27&start=40>)
+    - `My Scripts.ahk` can now better share its instance of `prem {` with `QMK.ahk` scripts resulting in less UIA window focusing
