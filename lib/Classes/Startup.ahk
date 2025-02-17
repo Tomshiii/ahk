@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/02/17
- * @version 1.7.53
+ * @date 2025/02/18
+ * @version 1.7.54
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1241,6 +1241,8 @@ class Startup {
         }
     }
     __Delete() {
+        if !FileExist(this.trackReloadsIni)
+            this.__createTrackReloads()
         this.__resetReloadTracking()
         this.UserSettings.__delAll()
         this.alertTimer := false
