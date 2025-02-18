@@ -85,6 +85,16 @@ F5::prem.reset()
 NumpadSub::
 NumpadAdd::prem.numpadGain()
 
+$+c::
+{
+	if prem.timelineFocusStatus() != true {
+		SendInput("+c")
+		return
+	}
+	delaySI(16, ksa.shuttleStop, ksa.premRippleDelete)
+	return
+}
+
 $+1::
 $+2::prem.zoomPreviewWindow(A_ThisHotkey)
 $+3::
@@ -130,7 +140,7 @@ F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback 
 ;speedUpHotkey;
 F14 & F23::
 {
-	SendInput(ksa.speedUpIncrement ksa.speedUpIncrement ksa.speedUpIncrement ksa.speedUpIncrement ksa.speedUpIncrement) ;alternate way to speed up playback on the timeline with mouse buttons
+	delaySI(16, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement) ;alternate way to speed up playback on the timeline with mouse buttons
 	keys.allWait()
 }
 
