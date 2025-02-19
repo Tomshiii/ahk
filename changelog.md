@@ -20,7 +20,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
     - First parameter `filepath` renamed => `control` is now <kbd>Case Sensitive</kbd>
 
 `startup {`
-- Added `gitBranchCheck()` to check for upstream changes to the git branch and offer the ability to `pull` upstream changes
+- Added `gitBranchCheck()` to check for upstream changes to a git branch and offer the ability to `pull` upstream changes
     - Can be toggled in `settingsGUI()` and defaults to `false`
 - `libUpdateCheck()` now checks for `Notify Creator.ahk` updates
 - Functions that `reload` or `reset` all scripts will now track their reloads to ensure they can only reload once per day

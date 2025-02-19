@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.16
+;\\v2.34.17
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -122,23 +122,23 @@ try {
 ;
 ; =======================================================================================================================================
 start := Startup()
-start.generate()                          ;generates/replaces the `settings.ini` file every release
-SD_Opt().checkCount()                     ;checks the streamdeck `options.ini` file to ensure the user has all settings
-start.gitBranchCheck()                    ;checks the git branch for updates
-start.updateChecker()                     ;runs the update checker
+start.generate()
+SD_Opt().checkCount()
+start.gitBranchCheck([ptf.rootDir, WinGet.pathU(ptf.rootDir "\..\textreplace")])
+start.updateChecker()
 start.updateAdobeVerAHK()
-start.updatePackages(,,,, ["vcredist"])   ;checks for updates to packages installed through choco by default
-start.trayMen()                           ;adds the ability to toggle checking for updates when you right click on this scripts tray icon
-start.firstCheck()                        ;runs the firstCheck() function
-start.oldLogs()                           ;runs the loop to delete old log files
-start.adobeTemp()                         ;runs the loop to delete cache files
-start.adobeVerOverride()                  ;attempts to automatically set premiere/after effects versions
-start.libUpdateCheck()                    ;runs a loop to check for lib updates
-start.updateAHK()                         ;checks for a newer version of ahk and alerts the user asking if they wish to download it
-start.monitorAlert()                      ;checks the users monitor work area for any changes
-start.checkShortcuts()                    ;attempts to create shortcuts if they haven't already been generated
+start.updatePackages(,,,, ["vcredist"])
+start.trayMen()
+start.firstCheck()
+start.oldLogs()
+start.adobeTemp()
+start.adobeVerOverride()
+start.libUpdateCheck()
+start.updateAHK()
+start.monitorAlert()
+start.checkShortcuts()
 start.__Delete()
-errorLog({state:"empty"})                 ;generate initial errorlog file
+errorLog({state:"empty"})
 
 ;// so streamdeck scripts can receive premiere timeline coords
 onMsgObj := ObjBindMethod(WM, "__recieveMessage")
