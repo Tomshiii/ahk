@@ -108,6 +108,15 @@ $+3::
 }
 
 ^!f::prem.flattenAndColour(ksa.labelIris)
+$+d::
+{
+	if prem.timelineFocusStatus() != true {
+		SendInput("+d")
+		return
+	}
+	delaySI(16, "+d", "{Escape}")
+	return
+}
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;
