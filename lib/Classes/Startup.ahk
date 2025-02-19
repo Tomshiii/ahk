@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2025/02/19
- * @version 1.7.55
+ * @version 1.7.55.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1152,7 +1152,7 @@ class Startup {
 
     /**
      * checks if there are upstream changes to the current git branch and pulls them if there are
-     * @param [gitDir=ptf.rootDir] the root directory that contains your `.git` folder. Do NOT include the `\.git` in this parameter.
+     * @param {Array} [gitDir=ptf.rootDir] An array of strings containing the root directories that contains your `.git` folder. Do NOT include the `\.git` in this parameter.
      */
     gitBranchCheck(gitDirs := [ptf.rootDir]) {
         if this.isReload != false ;checks if script was reloaded
@@ -1178,7 +1178,7 @@ class Startup {
             userResponse := MsgBox("Branch: ``" getBranch "`` for repo: ``" repo "`` appears to have changes.`nWould you like to pull these changes? (this process will stash any uncommitted changes and then pop them once finished)", "Would you like to pull repo?", "4132")
             if userResponse != "Yes"
                 continue
-            Notify.Show(, 'Git branch updating now... Please wait', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=lime')
+            Notify.Show(repo, 'Git branch updating now... Please wait', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=lime')
 
             getLocalStatus := cmd.result("git status --short",,, v)
             switch getLocalStatus {
@@ -1189,6 +1189,7 @@ class Startup {
                     cmd.run(,,, "git pull", v, "Hide")
                     sleep 3000
                     cmd.run(,,, "git stash pop", v, "Hide")
+                    sleep 1500
             }
         }
         Notify.Show(, 'Recent Github changes have been applied.`nA reload is recommended!', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=Purple')
@@ -1196,7 +1197,7 @@ class Startup {
             return
         if !this.__checkForReloadAttempt("gitBranchCheck")
             return
-        Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+        Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'A reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
         SetTimer((*) => reset.reset(), -3000)
         Sleep(5000)
         return
