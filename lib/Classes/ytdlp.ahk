@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/02/01
- * @version 1.0.15
+ * @date 2025/02/20
+ * @version 1.0.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -151,8 +151,9 @@ class ytdlp {
      * ### If this function is called more than once and before the previous instance is able to begin downloading, both instances may error out.
      * It will then read the users highlighted text and if a youtube (or twitch video/clip) link is found, download that link with whatever arguments are passed, if the user isn't highlighting any text or a youtube/twitch link isn't found, it will check the users clipboard instead.
      *
-     * @param {String} args is any arguments you wish to pass to yt-dlp
-     * @param {String} folder is the folder you wish the files to save. By default it's this scripts directory
+     * @param {String} [args=""] is any arguments you wish to pass to yt-dlp
+     * @param {String} [folder=A_ScriptDir] is the folder you wish the files to save. By default it's this scripts directory
+     * @param {String} [URL?]
      * @returns the url
      * ```
      * ytdlp().download("", "download\path")
@@ -160,7 +161,7 @@ class ytdlp {
      * ;// yt-dlp -P "link\to\path" "URL"
      * ```
      */
-    download(args := "", folder := A_ScriptDir) {
+    download(args := "", folder := A_ScriptDir, URL?) {
         if (Type(args) != "string" || Type(folder) != "string") {
                 ;// throw
                 errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
@@ -170,16 +171,20 @@ class ytdlp {
             folder := SubStr(folder, 1, 1) ":\\"
         if !DirExist(folder) ;saftey check
             folder := A_ScriptDir
-        oldClip := clip.clear()
-        this.URL := oldClip.storedClip
-        SendInput("^c")
-        if ClipWait(0.3) {
-            if !this.__checkClipboard(A_Clipboard, oldClip.storedClip, args, folder) {
-                if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No" {
-                    clip.returnClip(oldClip)
-                    return this.URL
+        if !IsSet(URL) {
+            oldClip := clip.clear()
+            SendInput("^c")
+            if ClipWait(0.3) {
+                if !this.__checkClipboard(A_Clipboard, oldClip.storedClip, args, folder) {
+                    if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No" {
+                        clip.returnClip(oldClip)
+                        return this.URL
+                    }
                 }
             }
+        }
+        else {
+            this.URL := URL
         }
 
         ;// checking if filename already exists
@@ -214,7 +219,8 @@ class ytdlp {
         this.command := Format(this.defaultCommand, args, folder, this.URL)
         cmd.run(,,, this.command)
         this.__activateDir(folder)
-        clip.returnClip(oldClip)
+        if !IsSet(URL)
+            clip.returnClip(oldClip)
         return this.URL
     }
 
