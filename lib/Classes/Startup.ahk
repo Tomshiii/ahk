@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/02/19
- * @version 1.7.55.1
+ * @date 2025/02/20
+ * @version 1.7.56
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1192,6 +1192,8 @@ class Startup {
                     sleep 1500
             }
         }
+        if changes = false
+            return
         Notify.Show(, 'Recent Github changes have been applied.`nA reload is recommended!', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=Purple')
         if MsgBox("Github changes have been applied.`nWould you like to reload all scripts now?", "Would you like to reload?", "4132") != "Yes"
             return
