@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/02/20
- * @version 1.0.16
+ * @date 2025/02/22
+ * @version 1.0.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -50,7 +50,7 @@ class ytdlp {
                 this.URL := clip
                 break
             }
-            if InStr(stored, v) {
+            if stored != false && InStr(stored, v) {
                 this.URL := stored
                 this.checkClipState := "attempt"
                 return true
@@ -153,7 +153,7 @@ class ytdlp {
      *
      * @param {String} [args=""] is any arguments you wish to pass to yt-dlp
      * @param {String} [folder=A_ScriptDir] is the folder you wish the files to save. By default it's this scripts directory
-     * @param {String} [URL?]
+     * @param {String} [URL?] pass through a URL instead of using the user's clipboard
      * @returns the url
      * ```
      * ytdlp().download("", "download\path")
@@ -184,7 +184,19 @@ class ytdlp {
             }
         }
         else {
-            this.URL := URL
+            for v in this.links {
+                if InStr(URL, v) {
+                    this.check := true
+                    this.URL := URL
+                    break
+                }
+            }
+            if !this.check {
+                if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No" {
+                    return URL
+                }
+                this.URL := URL
+            }
         }
 
         ;// checking if filename already exists
