@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/02/20
- * @version 1.7.56
+ * @date 2025/02/22
+ * @version 1.7.57
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1172,12 +1172,12 @@ class Startup {
             getStatus := cmd.result("git status -uno",,, v)
             if InStr(getStatus, "Your branch is up to date")
                 continue
-            changes := true
             SplitPath(v, &repo)
             getBranch := SubStr(getStatus, first := InStr(getStatus, "'",, 1, 1)+1, InStr(getStatus, "'",, first+1, 1)-first)
             userResponse := MsgBox("Branch: ``" getBranch "`` for repo: ``" repo "`` appears to have changes.`nWould you like to pull these changes? (this process will stash any uncommitted changes and then pop them once finished)", "Would you like to pull repo?", "4132")
             if userResponse != "Yes"
                 continue
+            changes := true
             Notify.Show(repo, 'Git branch updating now... Please wait', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=lime')
 
             getLocalStatus := cmd.result("git status --short",,, v)
