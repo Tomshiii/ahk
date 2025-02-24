@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/02/17
- * @version 2.1.52
+ * @version 2.1.52.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1498,6 +1498,7 @@ class Prem {
         SendEvent(A_ThisHotkey)
         SetTimer(__track.Bind(A_TickCount), 16)
         __track(initialTime) {
+            ListLines(0)
             currentTime := A_TickCount - initialTime
             if currentTime >= this.defaultDelay {
                 this.delayTime := 0
