@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/02/17
- * @version 2.1.52.1
+ * @date 2025/02/25
+ * @version 2.1.53
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -46,7 +46,7 @@ class Prem {
                 ;// set timeline and playhead colours
                 this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
                 ;// set layer button offsets (these get added onto `timelineRawX`)
-                this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.layerEmpty := 0x1D1D1D, this.layerDivider := 0x303030, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21
+                this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.layerEmpty := 0x1D1D1D, this.layerDivider := 0x303030, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21, this.iconHighlight := 0x6A6A6A
             ;// old ui
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
                 ;// set timeline and playhead colours
@@ -64,6 +64,9 @@ class Prem {
 
     ;// colour of playhead
     static playhead  := 0x4096F3
+
+    ;// colour of highlighted icons
+    static iconHighlight := 0x6A6A6A
 
     ;// valuehold()
     static valueBlue      := 0x4096f3
@@ -492,8 +495,9 @@ class Prem {
     /**
      * checks for and disables the `Direct Manipulation` button that appears in the bottom left of the program monitor when you select a clip
      * this button being enabled can be annoying as it will then pause playback if you click anything else in the timeline
+     * @param {String} [toggleKey=ksa.toggleCropDirectManip] the shortcut to send to toggle off Direct Manip. Defaults to a KSA value
      */
-    static disableDirectManip() {
+    static disableDirectManip(toggleKey := ksa.toggleCropDirectManip) {
         ;// button was only added in specrum UI
         if VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0
             return
@@ -504,14 +508,11 @@ class Prem {
             block.Off()
             return
         }
-        if !ImageSearch(&x, &y, progNN.x, (progNN.y+progNN.height)-65, progNN.x+75, (progNN.y+progNN.height), "*2 " ptf.Premiere "directManip.png") {
-            block.Off()
+        if PixelGetColor(progNN.x+15, progNN.y+(progNN.height-10)) != this.iconHighlight
             return
-        }
-        origPos := obj.MousePos()
-        MouseMove(x+2, y+2, 2)
-        SendInput("{Click}")
-        MouseMove(origPos.x, origPos.y, 2)
+
+        delaySI(25, toggleKey, toggleKey)
+
         block.Off()
         return
     }
