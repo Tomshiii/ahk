@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.0
  * @author tomshi, taranVH
- * @date 2025/02/17
- * @version 2.3.12
+ * @date 2025/02/26
+ * @version 2.3.13
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -474,13 +474,19 @@ class rbuttonPrem {
 		if this.remote = true && useRemote = true
 			SetTimer(this.__ensureSeq.Bind(this, this.origSeq, 1), -1)
 
-		if allChecks = true {
+		if allChecks = true || (allChecks = false && this.leftClick = true) {
 			;// determines whether to resume playback & how fast to playback
-			if !this.leftClick && !this.xbuttonClick {
+			if allChecks = true && !this.leftClick && !this.xbuttonClick {
 				this.__exit()
 			}
-			if this.leftClick
-				this.__restartPlayback()
+			switch allChecks {
+				case true:
+					if this.leftClick
+						this.__restartPlayback()
+				case false:
+					if this.leftClick
+						SendInput("{LButton}")
+			}
 			;// resets `LButton` & `XButton2` to their original function
 			PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
 		}

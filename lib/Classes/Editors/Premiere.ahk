@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/02/25
- * @version 2.1.53
+ * @date 2025/02/26
+ * @version 2.1.54
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -974,16 +974,18 @@ class Prem {
         if !IsNumber(sendGain)
             return
 
+        block.On()
         ;// otherwise we proceed
         if needsTimelineFocus = true
             this.__checkTimelineFocus()
         if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels")
-            prem.gain(which sendGain)
+            this.gain(which sendGain)
         else {
             if sendGain > 15
                 sendGain := 15
             this.__remoteFunc("changeAudioLevels",, "level=" String(which sendGain))
         }
+        block.Off()
     }
 
     /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */
@@ -1452,7 +1454,7 @@ class Prem {
         ;// check whether the timeline is already in focus & focuses it if it isn't
 		this.__checkTimelineFocus()
         ;// determines the position of the playhead
-        if !playhead := this.searchPlayhead({x1: prem.timelineXValue, y1: origMouse.y, x2: prem.timelineXControl, y2: origMouse.y}) {
+        if !playhead := this.searchPlayhead({x1: this.timelineXValue, y1: origMouse.y, x2: this.timelineXControl, y2: origMouse.y}) {
             block.Off()
             errorLog(TargetError("Could not determine the position of the playhead", -1),, 1)
             keys.allWait()
@@ -1660,9 +1662,9 @@ class Prem {
         SetDefaultMouseSpeed(mouseSpeed)
 
         if !WinActive(clipWinTitle) {
-            if prem.__checkTimelineValues() = true {
+            if this.__checkTimelineValues() = true {
                 sleep 100
-                if !prem.__waitForTimeline(3)
+                if !this.__waitForTimeline(3)
                     return
             }
             SendInput(ksa.audioChannels)
@@ -1872,7 +1874,7 @@ class Prem {
         getTitle := WinGet.PremName()
         if WinGetTitle("A") != getTitle.winTitle
             return
-        if !prem.timelineFocusStatus()
+        if !this.timelineFocusStatus()
             return
 
         if !activationKey := getHotkeys()

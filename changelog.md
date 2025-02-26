@@ -6,8 +6,12 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
     - Will now warn the user if incorrect timecodes have been given
 - Added `Reload` option to the `Exit` menu in `settingsGUI()`  
 ![image](https://github.com/user-attachments/assets/2ee0243d-9ad4-45b4-8591-3207a5bd1b5a)  
-- `rbuttonPrem {` will now return early in the event that `A_ThisHotkey` gets set as two keys
 - `ytdlp.download()` now accepts parameter `URL` to pass in a url string instead of checking the user's clipboard
+
+`rbuttonPrem {`
+- `movePlayhead()`
+    - Will now return early in the event that `A_ThisHotkey` gets set as two keys
+    - Fixed user being unable to left click to select a clip while `allChecks` was set to `false`
 
 `Prem {`
 - Added `disableDirectManip()`
