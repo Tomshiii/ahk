@@ -23,12 +23,19 @@ $Tab::
 ;spaceDelayHotkey;
 Space::
 {
-	switch getTitle := WinGetTitle("A") {
-		case "Modify Clip", "Audio Gain", "Delete Tracks":
+	getTitle := WinGetTitle("A")
+	isIn(title) => InStr(getTitle, title)
+	switch {
+		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"):
 			SendInput("{Enter}")
 			return
-		case "Save Project": return
-		case "Color Picker", "Add Tracks":
+		case isIn("Save Project"): return
+		case isIn("Clip Fx Editor - DeNoise"):
+			SendInput("{Enter}")
+			if IsSet(A_PriorKey) && isDoubleClick(750, "key")
+				prem.escFxMenu()
+			return
+		case isIn("Color Picker"), isIn("Add Tracks"):
 			if !CaretGetPos(&x, &y) {
 				SendInput("{Enter}")
 				return
@@ -41,8 +48,9 @@ NumpadEnter::
 Enter::
 {
 	getTitle := WinGetTitle("A")
+	isIn(title) => InStr(getTitle, title)
 	switch {
-		case InStr(getTitle, "Clip Fx Editor"), InStr(getTitle, "Track Fx Editor"):
+		case isIn("Clip Fx Editor"), isIn("Track Fx Editor"):
 			delaySI(75, "{Tab}", "+{Tab}") ;// ensures the enter doesn't toggle enable/disabling
 			if IsSet(A_PriorKey) && isDoubleClick(750, "key")
 				prem.escFxMenu()
