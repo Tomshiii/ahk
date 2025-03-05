@@ -29,6 +29,7 @@
     - First parameter `filepath` renamed => `control` is now <kbd>Case Sensitive</kbd>
 
 `startup {`
+- Moved progress tooltip to the bottom left (previously bottom right) to avoid obscuring any `Notify` alerts
 - Added `gitBranchCheck()` to check for upstream changes to a git branch and offer the ability to `pull` upstream changes
     - Can be toggled in `settingsGUI()` and defaults to `false`
 - `libUpdateCheck()` now checks for `Notify Creator.ahk` updates

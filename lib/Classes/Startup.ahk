@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/02/22
- * @version 1.7.57
+ * @date 2025/03/05
+ * @version 1.7.58
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -88,8 +88,9 @@ class Startup {
                 case 2: dot := ".."
                 case 3: dot := "..."
             }
+            MonitorGetWorkArea(MonitorGetPrimary(), &left,,, &bottom)
             if this.activeFunc != ""
-                ToolTip("⚠️ Startup functions running" dot "`nCurrent function: " this.activeFunc, A_ScreenWidth, A_ScreenHeight, this.alertTtipNum)
+                ToolTip("⚠️ Startup functions running" dot "`nCurrent function: " this.activeFunc, left, bottom, this.alertTtipNum)
             if ++dotAmount > 3
                 dotAmount := 1
             sleep 750
