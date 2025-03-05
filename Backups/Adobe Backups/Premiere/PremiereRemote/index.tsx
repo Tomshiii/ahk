@@ -86,7 +86,7 @@ export const host = {
    *                type: number
    */
   changeAudioLevels: function(level: string) {
-    EffectUtils.changeAllAudioLevels(parseInt(level));
+    return EffectUtils.changeAllAudioLevels(parseInt(level));
   },
 
   setZoomOfCurrentClip: function(zoomLevel: string, xPos: string, yPos: string, anchorX: string, anchorY: string) {

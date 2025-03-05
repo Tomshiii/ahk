@@ -1,5 +1,8 @@
 # <> Release 2.15.x - 
-A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-libraries/issues/15>) was causing `prem.dissmissWarning()` to never fire when used in `Premiere_RightClick.ahk`. This issue has now been recitified and is once again working as expected.
+- A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-libraries/issues/15>) was causing `prem.dissmissWarning()` to never fire when used in `Premiere_RightClick.ahk`. This issue has now been recitified and is once again working as expected.
+
+> [!Caution]
+> If the user uses `PremiereRemote`, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated.
 
 ## Functions
 - Fixed bug with `trimGUI {` calculating the duration between two timecodes causing empty files to be generated
@@ -18,6 +21,7 @@ A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-l
 - Fixed `dismissWarning()` utilising incorrect coords
 - Removed `keyreset()` & `keyframe()`. A simpler method could be created using `PremiereRemote` but no current plans to develop said function
 - Removed `zoom()`
+- `numpadGain()` may alert the user if setting a new value returns an unexpected value
 - `valuehold()`
     - No longer requires individual screenshots for each control, greatly simplifying the function and making it less prone to breaking
     - No longer adjusts the `blend mode` and all reference to that ability has been removed

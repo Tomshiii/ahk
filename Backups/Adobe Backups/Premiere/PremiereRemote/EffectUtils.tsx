@@ -44,7 +44,7 @@ export class EffectUtils {
       const level = 20 * Math.log(parseFloat(checkVal)) * Math.LOG10E + 15;
       const newLevel = level + levelInDb;
       const encodedLevel = Math.min(Math.pow(10, (newLevel - 15)/20), 1.0);
-      levelInfo.setValueAtKey(clipPos, encodedLevel, true);
+      return levelInfo.setValueAtKey(clipPos, encodedLevel, true);
     }
 
     static changeAllAudioLevels(levelInDb: number) {
@@ -53,8 +53,8 @@ export class EffectUtils {
         for (let j = 0; j < currentSequence.audioTracks[i].clips.numItems; j++) {
             const currentClip = currentSequence.audioTracks[i].clips[j];
             if(currentClip.isSelected()) {
-            //  this.changeAudioLevel(currentClip, levelInDb);
-             this.changeKeyframeLevel(currentClip, levelInDb);
+              //  this.changeAudioLevel(currentClip, levelInDb);
+              return this.changeKeyframeLevel(currentClip, levelInDb);
             }
         }
       }

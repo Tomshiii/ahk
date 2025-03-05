@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/03/04
- * @version 2.1.55
+ * @date 2025/03/05
+ * @version 2.1.56
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -983,7 +983,9 @@ class Prem {
         else {
             if sendGain > 15
                 sendGain := 15
-            this.__remoteFunc("changeAudioLevels",, "level=" String(which sendGain))
+            levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
+            if levels != true || levels != "true"
+                Notify.Show('prem.numpadGain()', 'Setting level keyframe may have encountered an issue.',,,, 'dur=5 bc=Black show=Fade@100 hide=Fade@250 bdr=Red')
         }
         block.Off()
     }
