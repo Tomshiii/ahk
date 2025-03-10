@@ -9,3 +9,5 @@ HH:MM:SS.MS // `Function()/hotkey::` encountered the following error: `Error` //
 01:28:31.951 // `^+w::` encountered the following error: "Couldn't find the dm button" // Script: `My Scripts.ahk`, Line: 876
 01:31:00.548 // `movepreview()` encountered the following error: "Couldn't find the motion tab" // Script: `QMK Keyboard.ahk`, Line: 712
 ```
+
+By default logs will be kept for 30 days.

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2024/12/04
- * @version 1.1.1
+ * @date 2025/03/10
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -381,6 +381,45 @@ class ffmpeg {
         baseCommand := this.__baseCommandExtract(filepath)
         command     := baseCommand A_space this.__buildExtractCommand(filepath, audioStreams.amount, audioStreams.hzArr)
         cmd.run(,,, command)
+    }
+
+    /**
+     * adjusts the gain of the selected file by the desired decibel amount
+     * @param {String} filepath the filepath of the file you wish to extract the audio from
+     * @param {String} dbVal the decibel value you wish to adjust the file by
+     * @param {Boolean} [overwrite=false] whether the file should be overwritten
+     */
+    adjustGain_db(filepath, dbVal, overwrite := false) {
+        if dbVal = 0 || dbVal = "0"
+            return
+        outputFile := this.__getIndex(filepath)
+        command := Format('ffmpeg -i "{1}" -filter:a "volume={2}dB" "{3}"', filepath, dbVal, outputFile)
+        cmd.run(,,, command)
+        if overwrite {
+            FileDelete(filepath)
+            FileMove(outputFile, filepath)
+        }
+    }
+
+    /**
+     * Adjusts the gain of the selected file using loudness normalisation
+     * @param {String} filepath the filepath of the file you wish to extract the audio from
+     * @param {String} [IL="-5"] integrated loudness target. Range is `-70.0` - `-5.0`. Default value is `-5`
+     * @param {String} [TPL="-2"] maximum true peak. Range is `-9.0` - `+0.0`. Default value is `-2.0`
+     * @param {String} [LRT="7"] loudness range target. Range is `1.0` - `50.0`. Default value is `7.0`
+     * @param {Boolean} [overwrite=false] whether the file should be overwritten
+     */
+    adjustGain_Normalise(filepath, IL := "-5", TPL := "-2", LRT := "7", overwrite := false) {
+        outputFile := this.__getIndex(filepath)
+        passOne := cmd.result(Format('ffmpeg -i "{}" -af "loudnorm=print_format=json" -f null -', filepath))
+        RegExMatch(passOne, "\{([^}]*)\}", &passOne)
+        passOneResult := JSON.parse(passOne[])
+        command := Format('ffmpeg -i "{1}" -af "loudnorm=I={2}:TP={3}:LRA={4}:measured_I={5}:measured_TP={6}:measured_LRA={7}:measured_thresh={8}:offset={9}:linear=true:print_format=none" "{10}"', filepath, IL, TPL, LRT, passOneResult['input_i'], passOneResult['input_tp'], passOneResult['input_lra'], passOneResult['input_thresh'], passOneResult['target_offset'], outputFile)
+        cmd.run(,,, command)
+        if overwrite {
+            FileDelete(filepath)
+            FileMove(outputFile, filepath)
+        }
     }
 
     __Delete() {

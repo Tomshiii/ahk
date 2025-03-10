@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/03/06
- * @version 2.1.56.1
+ * @version 2.1.56.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -984,8 +984,10 @@ class Prem {
             if sendGain > 15
                 sendGain := 15
             levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
-            if levels != true && levels != "true"
-                Notify.Show('prem.numpadGain()', 'Setting level keyframe may have encountered an issue.',,,, 'dur=5 bc=Black show=Fade@100 hide=Fade@250 bdr=Red')
+            if levels != true && levels != "true" {
+                errorLog(MethodError("Unexpected response", -1), "Response: " levels " - Type: " Type(levels))
+                Notify.Show('prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition',, 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
+            }
         }
         block.Off()
     }
