@@ -9,18 +9,24 @@ class adjustAudio extends tomshiBasic {
         this.AddText(, "This script uses ffmpeg to adjust the audio gain of the selected file.`nPlease choose one of the methods below to adjust gain.")
 
         this.AddRadio("vdbAdjust Group Checked1 Section", "db Adjust")
-        this.AddRadio("xs ys+75 Checked0", "Loudness Normalisation")
+        this.AddRadio("vdynAud xs ys+95 Checked0", "dynaudnorm")
+        this.AddRadio("vloudNorm xs ys+120 Checked0", "loudnorm")
+        this.AddText("vnormText xs ys+65 w250", "Loudness Normalisation")
+        this["normText"].SetFont("Bold s12")
 
         this.AddButton("xs+300 ys+25 w100", "Select File").OnEvent("Click", this.__selectFile.Bind(this))
         this.AddButton("y+3 w100", "Adjust Gain").OnEvent("Click", this.adjustGain.Bind(this))
         this.AddCheckbox("y+3 Checked" this.overwrite, "Overwrite?").OnEvent("Click", this.__changeCheck.Bind(this))
 
-        this.AddEdit("xs+25 ys+25 w55")
+        ;//db adjust
+        this["dbAdjust"].GetPos(&dbAdjustX, &dbAdjustY)
+        this.AddEdit("x" dbAdjustX+25 " y" dbAdjustY+25 " w55")
         this.AddUpDown("vdbUpDwn Range-96-96")
 
 
         ;// Til
-        this.AddEdit("xs+25 ys+100 w55")
+        this["loudNorm"].GetPos(&loudPosX, &loudPosY)
+        this.AddEdit("x" loudPosX+25 " y" loudPosY+25 " w55")
         this.AddUpDown("vTilUpDwn Range-70--5")
         this.AddText("x+10", "- Target integrated loudness")
 
@@ -63,9 +69,10 @@ class adjustAudio extends tomshiBasic {
 
     /** adjust gain in the selected manor */
     adjustGain(*) {
-        switch this["dbAdjust"].value {
-            case 1: ffmpeg().adjustGain_db(this.getFile, this["dbUpDwn"].value, this.overwrite)
-            case 0: ffmpeg().adjustGain_Normalise(this.getFile, this["TilUpDwn"].value, this["TplUpDwn"].value, this["LraUpDwn"].value, this.overwrite)
+        switch {
+            case this["dbAdjust"].value = 1: ffmpeg().adjustGain_db(this.getFile, this["dbUpDwn"].value, this.overwrite)
+            case this["loudNorm"].value = 1: ffmpeg().adjustGain_loudnorm(this.getFile, this["TilUpDwn"].value, this["TplUpDwn"].value, this["LraUpDwn"].value, this.overwrite)
+            case this["dynAud"].value   = 1: ffmpeg().adjustGain_dynAud(this.getFile, this.overwrite)
         }
     }
 }

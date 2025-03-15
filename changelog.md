@@ -8,19 +8,19 @@
 ## Functions
 - ✅ Fixed bug with `trimGUI {` calculating the duration between two timecodes causing empty files to be generated
     - Will now warn the user if incorrect timecodes have been given
-- ✏️ Added `ffmpeg().adjustGain_db()` & `ffmpeg().adjustGain_Normalise()`
+- ✏️ Added `ffmpeg().adjustGain_db()`, `ffmpeg().adjustGain_loudnorm()` & `ffmpeg().adjustGain_dynAud()`
 - ✏️ Added `Reload` option to the `Exit` menu in `settingsGUI()`  
 ![image](https://github.com/user-attachments/assets/2ee0243d-9ad4-45b4-8591-3207a5bd1b5a)  
 - `ytdlp.download()` now accepts parameter `URL` to pass in a url string instead of checking the user's clipboard
 
-⚠️ `rbuttonPrem {`
+#### ⚠️ `rbuttonPrem {`
 - `movePlayhead()`
     - Will now return early in the event that `A_ThisHotkey` gets set as two keys
     - Fixed user being unable to left click to select a clip while `allChecks` was set to `false`
 
-⚠️ `Prem {`
-- ✏️ Added `disableDirectManip()`
+#### ⚠️ `Prem {`
 - ✅ Fixed `dismissWarning()` utilising incorrect coords
+- ✏️ Added `disableDirectManip()`
 - ❌ Removed `keyreset()` & `keyframe()`. A simpler method could be created using `PremiereRemote` but no current plans to develop said function
 - ❌ Removed `zoom()`
 - `numpadGain()` may alert the user if setting a new value returns an unexpected value
@@ -30,10 +30,10 @@
     - No longer adjusts `levels`. That functionality is better left to `numpadGain()`
     - First parameter `filepath` renamed => `control` is now <kbd>Case Sensitive</kbd>
 
-⚠️ `startup {`
-- Moved progress tooltip to the bottom left (previously bottom right) to avoid obscuring any `Notify` alerts
+#### ⚠️ `startup {`
 - ✏️ Added `gitBranchCheck()` to check for upstream changes to a git branch and offer the ability to `pull` upstream changes
     - Can be toggled in `settingsGUI()` and defaults to `false`
+- Moved progress tooltip to the bottom left (previously bottom right) to avoid obscuring any `Notify` alerts
 - `libUpdateCheck()` now checks for `Notify Creator.ahk` updates
 - Functions that `reload` or `reset` all scripts will now track their reloads to ensure they can only reload once per day
     - They will also all now use `Notify` to alert the user that a reload is taking place to minimise confusion incase multiple need to happen in succession
@@ -51,9 +51,9 @@
     - `push to audition.ahk`, `syncWorkAssets.ahk` & `tiktok voice.ahk`
 
 ## Other Changes
-- ❌ Removed all, now obsolete, `ImageSearch` images relating to `blend` scripts & `prem.valuehold()`
-- ❌ Removed `Premiere Timeline GUI.ahk` and all references to it. The functionality of this script has long since been superseded by `Premiere_UIA.ahk`
 - ✏️ Added [`ObjRegisterActive.ahk`](<https://www.autohotkey.com/boards/viewtopic.php?f=6&t=6148&sid=79f2a3736ebcc2c9b88842b5a5145d27&start=40>)
     - `My Scripts.ahk` can now better share its instance of `prem {` with `QMK.ahk` scripts resulting in less UIA window focusing
 - ✏️ Added `adjust audio.ahk` streamdeck script that offers a GUI to quickly and easily adjust the gain of files  
-<img src="https://github.com/user-attachments/assets/6af81626-af6a-437c-b497-4277f99c0b66" width="350"/>
+<img src="https://github.com/user-attachments/assets/21633053-66d0-4573-950d-2a0eff825f2c" width="275"/>
+- ❌ Removed all, now obsolete, `ImageSearch` images relating to `blend` scripts & `prem.valuehold()`
+- ❌ Removed `Premiere Timeline GUI.ahk` and all references to it. The functionality of this script has long since been superseded by `Premiere_UIA.ahk`

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/02/22
- * @version 1.0.17
+ * @date 2025/03/15
+ * @version 1.0.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -176,7 +176,7 @@ class ytdlp {
             SendInput("^c")
             if ClipWait(0.3) {
                 if !this.__checkClipboard(A_Clipboard, oldClip.storedClip, args, folder) {
-                    if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No" {
+                    if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nClipboard: " A_Clipboard "`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No" {
                         clip.returnClip(oldClip)
                         return this.URL
                     }

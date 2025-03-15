@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/03/10
- * @version 1.1.2
+ * @date 2025/03/15
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -383,6 +383,9 @@ class ffmpeg {
         cmd.run(,,, command)
     }
 
+
+    ;// one day I should really combine all of the adjustGain functions
+    ;// I just can't be bothered for now
     /**
      * adjusts the gain of the selected file by the desired decibel amount
      * @param {String} filepath the filepath of the file you wish to extract the audio from
@@ -402,19 +405,34 @@ class ffmpeg {
     }
 
     /**
-     * Adjusts the gain of the selected file using loudness normalisation
+     * Adjusts the gain of the selected file using `loudnorm` loudness normalisation
      * @param {String} filepath the filepath of the file you wish to extract the audio from
      * @param {String} [IL="-5"] integrated loudness target. Range is `-70.0` - `-5.0`. Default value is `-5`
      * @param {String} [TPL="-2"] maximum true peak. Range is `-9.0` - `+0.0`. Default value is `-2.0`
      * @param {String} [LRT="7"] loudness range target. Range is `1.0` - `50.0`. Default value is `7.0`
      * @param {Boolean} [overwrite=false] whether the file should be overwritten
      */
-    adjustGain_Normalise(filepath, IL := "-5", TPL := "-2", LRT := "7", overwrite := false) {
+    adjustGain_loudnorm(filepath, IL := "-5", TPL := "-2", LRT := "7", overwrite := false) {
         outputFile := this.__getIndex(filepath)
         passOne := cmd.result(Format('ffmpeg -i "{}" -af "loudnorm=print_format=json" -f null -', filepath))
         RegExMatch(passOne, "\{([^}]*)\}", &passOne)
         passOneResult := JSON.parse(passOne[])
         command := Format('ffmpeg -i "{1}" -af "loudnorm=I={2}:TP={3}:LRA={4}:measured_I={5}:measured_TP={6}:measured_LRA={7}:measured_thresh={8}:offset={9}:linear=true:print_format=none" "{10}"', filepath, IL, TPL, LRT, passOneResult['input_i'], passOneResult['input_tp'], passOneResult['input_lra'], passOneResult['input_thresh'], passOneResult['target_offset'], outputFile)
+        cmd.run(,,, command)
+        if overwrite {
+            FileDelete(filepath)
+            FileMove(outputFile, filepath)
+        }
+    }
+
+    /**
+     * Adjusts the gain of the selected file using `dynAud` loudness normalisation
+     * @param {String} filepath the filepath of the file you wish to extract the audio from
+     * @param {Boolean} [overwrite=false] whether the file should be overwritten
+     */
+    adjustGain_dynAud(filepath, overwrite := false) {
+        outputFile := this.__getIndex(filepath)
+        command := Format('ffmpeg -i "{1}" -filter:a "dynaudnorm" "{2}', filepath, outputFile)
         cmd.run(,,, command)
         if overwrite {
             FileDelete(filepath)
