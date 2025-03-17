@@ -1,19 +1,20 @@
 /********************************************************************************************
  * Notify - Simplifies the creation and display of notification GUIs.
  * @author Martin Chartier (XMCQCX)
- * @date 2025/01/06
- * @version 1.8.1
+ * @date 2025/03/16
+ * @version 1.9.0
  * @see {@link https://github.com/XMCQCX/NotifyClass-NotifyCreator GitHub}
  * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 AHK Forum}
  * @license MIT license
  * @credits
  * - JSON by thqby, HotKeyIt. {@link https://github.com/thqby/ahk2_lib/blob/master/JSON.ahk GitHub}
- * - FrameShadow by Klark92. {@link https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29117&hilit=FrameShadow AHK Forum}
+ * - FrameShadow by Klark92. {@link https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29117 AHK Forum}
  * - DrawBorder by ericreeves. {@link https://gist.github.com/ericreeves/fd426cc0457a5a47058e1ad1a29d9bd6 GitHub}
  * - CalculatePopupWindowPosition by lexikos. {@link https://www.autohotkey.com/boards/viewtopic.php?t=103459 AHK Forum}
  * - PlayWavConcurrent by Faddix. {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=130425 AHK Forum}
- * - Notify by gwarble. {@link https://www.autohotkey.com/board/topic/44870-notify-multiple-easy-tray-area-notifications-v04991/ AHK Forum}
- * - Notify by the-Automator. {@link https://www.the-automator.com/downloads/maestrith-notify-class-v2/ the-automator.com}
+ * - CreatePixel by TheDewd. {@link https://www.autohotkey.com/boards/viewtopic.php?t=7312 AHK Forum}
+ * - Notify by gwarble. {@link https://www.autohotkey.com/board/topic/44870-notify-multiple-easy-tray-area-notifications-v04991 AHK Forum}
+ * - Notify by the-Automator. {@link https://www.the-automator.com/downloads/maestrith-notify-class-v2 the-automator.com}
  * - WiseGui by SKAN. {@link https://www.autohotkey.com/boards/viewtopic.php?t=94044 AHK Forum}
  * @features
  * - Customize various parameters such as text, font, color, image, sound, animation, and more.
@@ -37,6 +38,7 @@
  * - DestroyAll() - Destroys all GUIs.
  * - Exist(tag) - Checks if a GUI with the specified tag exists and returns the unique ID (HWND) of the first matching GUI.
  * - SetDefaultTheme(theme) - Set a different theme as the default.
+ * - Sound(sound) - Plays a sound.
  ********************************************************************************************/
 Class Notify {
 
@@ -56,75 +58,69 @@ Class Notify {
  * - String: `'soundx'`, `'soundi'`
  * - Filename of a WAV file located in "C:\Windows\Media" or "Music\Sounds". For example: `'Ding'`, `'tada'`, `'Windows Error'` etc.
  * - Use Notify Creator to view and play all available notification sounds.
- * @param callback Function object to call when left-clicking on the GUI.
+ * @param callback The function(s) to execute when clicking on the GUI, image, or background image.
+ * - Accepts a single function or an array of functions.
+ * - If a single function is provided, it will be used as the callback when clicking on the GUI.
+ * - If an array is provided:
+ *   - First item: Executed when clicking on the GUI.
+ *   - Second item: Executed when clicking on the image.
+ *   - Third item: Executed when clicking on the background image.
  * @param options For example: `'POS=TL DUR=6 IW=70 TF=Impact TS=42 TC=GREEN MC=blue BC=Silver STYLE=edge SHOW=Fade Hide=Fade@250'`
  * - The string is case-insensitive.
  * - The asterisk (*) indicates the default option.
  * - `THEME` - Built-in themes and user-created themes.
  *   - Use Notify Creator to view all themes and their visual appearance.
- * - `POS` - Position
- *   - `BR` - Bottom right*
- *   - `BC` - Bottom center
- *   - `BL` - Bottom left
- *   - `TL` - Top left
- *   - `TC` - Top center
- *   - `TR` - Top right
- *   - `CT` - Center
- *   - `CTL` - Center left
- *   - `CTR` - Center right
- *   - `Mouse` - Near the cursor.
- * - `DUR` - Display duration (in seconds). Set to 0 to keep it on the screen until left-clicking on the GUI or programmatically destroying it. `*8`
- * - `MON` - Monitor number to display the GUI. AutoHotkey monitor numbers differ from those in Windows Display settings or NVIDIA Control Panel.
- *   - `Primary`* - The primary monitor.
- *   - `Active` - The monitor on which the active window is displayed.
- *   - `Mouse` - The monitor on which the mouse is currently positioned.
- * - `IW` - Image width - `*32` If only one dimension is specified, the other dimension will automatically adjust to preserve the aspect ratio.
- * - `IH` - Image height `*-1`
- *   - `iw=0` or `ih=0` - Uses the actual dimensions of the image.
- * - `TF` - Title font `*Segoe UI`
- * - `TFO` - Title font options. `*Bold` For example: `tfo=underline italic strike`
- * - `TS` - Title size `*15`
- * - `TC` - Title color `*White`
- * - `TALI` - Title alignment
- *   - `Left`*
- *   - `Right`
- *   - `Center`
- * - `MF` - Message font `*Segoe UI`
- * - `MFO` - Message font options. For example: `mfo=underline italic strike`
- * - `MS` - Message size `*12`
- * - `MC` - Message color `*0xEAEAEA`
- * - `MALI` - Message alignment
- *   - `Left`*
- *   - `Right`
- *   - `Center`
- * - `PROG` - Progress bar. For example: `prog=1`, `prog=h40 cGreen`, `prog=w400`, {@link https://www.autohotkey.com/docs/v2/lib/GuiControls.htm#Progress Progress Options}
- * - `BC` - Background color `*0x1F1F1F`
  * - `STYLE` - Notification Appearance
  *   - `Round` - Rounded corners*
  *   - `Edge` - Edged corners
- * - `BDR` - Border. For example: `bdr=Aqua`,`bdr=Red,4`
- *   - The round style's maximum border width is limited to 1 pixel, while the edge style allows up to 5 pixels.
- *   - If the theme includes a border and the style is set to edge, you can specify only the border width like this: `bdr=,3`
- *   - `0` - No border
- *   - `1` - Border
- *   - `Default`
- *   - `Color`
- *   - `Color,border width` - Specify color and width, separated by a comma.
- * - `PAD` - Comma-separated values. Can range from 0 to 25. For example: `pad=0,0,15,15,5,10`, `pad=,10`
- *   - If values aren’t specified, the default padding settings for the style will be set.
- *   - PadX - Padding between the left or right edge of the GUI and the screen's edge.
- *   - PadY - Padding between the top or bottom edge of the GUI and the screen's edge.
- *   - GMX - Left/right margins of the GUI.
- *   - GMY - Top/bottom margins of the GUI.
- *   - SpX - Horizontal spacing between the right side of the image and other controls.
- *   - SpY - Vertical spacing between the title, message, and progress bar.
- * - `WIDTH` - Fixed width of the GUI (excluding the image width and margins).
- * - `MAXW` - Maximum width of the GUI (excluding image width and margins).
- * - `WSTC` - WinSetTransColor. Not compatible with the round style, fade animation. For example: `style=edge bdr=0 bc=black WSTC=black` {@link https://www.autohotkey.com/docs/v2/lib/WinSetTransColor.htm WinSetTransColor}
- * - `WSTP` - WinSetTransparent. Not compatible with the round style, fade animation. For example: `style=edge wstp=120` {@link https://www.autohotkey.com/docs/v2/lib/WinSetTransparent.htm WinSetTransparent}
+ * - `POS` - Position
+ *   - `TL` - Top left
+ *   - `TC` - Top center
+ *   - `TR` - Top right
+ *   - `CTL` - Center left
+ *   - `CT` - Center
+ *   - `CTR` - Center right
+ *   - `BL` - Bottom left
+ *   - `BC` - Bottom center
+ *   - `BR` - Bottom right*
+ *   - `Mouse` - Near the cursor.
+ * - `DUR` - Display duration (in seconds). Set to 0 to keep it on the screen until left-clicking on the GUI or programmatically destroying it. `*8`
+ * - `MON` - Monitor to display the GUI. AutoHotkey monitor numbers may differ from those in Windows Display settings or NVIDIA Control Panel.
+ *   - `Number` - A specific monitor number.
+ *   - `Active` - The monitor on which the active window is displayed.
+ *   - `Mouse` - The monitor on which the mouse is currently positioned.
+ *   - `Primary`* - The primary monitor.
+ * - `IW` - Image width - `*32`
+ * - `IH` - Image height `*-1`
+ *   - Image Dimensions (width and height)
+ *     - To resize the image while preserving its aspect ratio, specify -1 for one dimension and a positive number for the other.
+ *     - Specify 0 to retain the image's original width or height (DPI scaling does not apply).
+ * - `BGIMG` - Background image. A valid image format. See the documentation for the image parameter.
+ * - `BGIMGPOS` - Background image Position. Parameters for positioning and sizing the background image. For example: `ct Scale1.5`, `ctl w20 hStretch`, `tr w20 h-1 ofstx-10 ofsty10`
+ *   - Positions
+ *     - `TL` - Top left
+ *     - `TC` - Top center
+ *     - `TR` - Top right
+ *     - `CTL` - Center left
+ *     - `CT` - Center
+ *     - `CTR` - Center right
+ *     - `BL` - Bottom left
+ *     - `BC` - Bottom center
+ *     - `BR` - Bottom right
+ *     - `X` - Custom horizontal position.
+ *     - `Y` - Custom vertical position.
+ *     - `OFSTX` - Horizontal pixel offset.
+ *     - `OFSTY` - Vertical pixel offset.
+ *   - Display Modes
+ *     - `STRETCH`* - Stretches both the width and height of the image to fill the entire GUI.
+ *     - `SCALE` - Resizes the image proportionally.
+ *   - Image Dimensions (width and height)
+ *     - `STRETCH` - Adjusts either the width or height of the image to match the GUI dimension.
+ *     - To resize the image while preserving its aspect ratio, specify -1 for one dimension and a positive number for the other.
+ *     - Specify 0 to retain the image's original width or height (DPI scaling does not apply).
+ *     - Omit the W or H options to retain the image's original width or height (DPI scaling applies).
  * - `SHOW` and `HIDE` - Animation when showing and destroying the GUI. The duration, which is optional, can range from 1 to 2500 milliseconds. For example: `STYLE=EDGE SHOW=SlideNorth HIDE=SlideSouth@250`
- *   - The round style is not compatible with most animations. It renders only the fade-in (Show=fade) animation correctly. If the round style and fade-out (Hide=fade) are used, the corners become edged during the animation.
- *   - If animations aren’t specified, the default animations for the style and position will be set.
+ *   - The round style is not compatible with most animations. To use all available animations, choose the edge style. If animations aren’t specified, the default animations for the style and position will be set.
  *   - `None`
  *   - `Fade`
  *   - `Expand`
@@ -144,11 +140,52 @@ Class Notify {
  *   - `RollNorthWest`
  *   - `RollSouthEast`
  *   - `RollSouthWest`
+ * - `TF` - Title font `*Segoe UI`
+ * - `TFO` - Title font options. `*Bold` For example: `tfo=underline italic strike`
+ * - `TS` - Title size `*15`
+ * - `TC` - Title color `*White`
+ * - `TALI` - Title alignment
+ *   - `Left`*
+ *   - `Right`
+ *   - `Center`
+ * - `MF` - Message font `*Segoe UI`
+ * - `MFO` - Message font options. For example: `mfo=underline italic strike`
+ * - `MS` - Message size `*12`
+ * - `MC` - Message color `*0xEAEAEA`
+ * - `MALI` - Message alignment
+ *   - `Left`*
+ *   - `Right`
+ *   - `Center`
+ * - `BC` - Background color `*0x1F1F1F`
+ * - `BDR` - Border. For example: `bdr=Aqua`,`bdr=Red,4`
+ *   - The round style's maximum border width is limited to 1 pixel, while the edge style allows up to 10 pixels.
+ *   - If the theme includes a border and the style is set to edge, you can specify only the border width like this: `bdr=,3`
+ *   - `0` - No border
+ *   - `1` - Border
+ *   - `Default`
+ *   - `Color`
+ *   - `Color,border width` - Specify color and width, separated by a comma.
+ * - `WSTC` - WinSetTransColor. Not compatible with the round style, fade animation. For example: `style=edge bdr=0 bc=black wstc=black` {@link https://www.autohotkey.com/docs/v2/lib/WinSetTransColor.htm WinSetTransColor}
+ * - `WSTP` - WinSetTransparent. Not compatible with the round style, fade animation. For example: `style=edge wstp=120` {@link https://www.autohotkey.com/docs/v2/lib/WinSetTransparent.htm WinSetTransparent}
+ * - `PAD` - Padding, margins, and spacing. Accepts comma-separated values or explicit key-value pairs. For examples: `pad=0,0,16,16,16,16,8,10`, `pad=,10`, `padx=10 pady=10`
+ *   - `PadX` and `PadY` can range from 0 to 25. The others can range from 0 to 999.
+ *   - `PadX` - Padding between the GUI's left or right edge and the screen's edge.
+ *   - `PadY` - Padding between the GUI's top or bottom edge and the screen's edge or taskbar.
+ *   - `gmT` - Top margin of the GUI.
+ *   - `gmB` - Bottom margin of the GUI.
+ *   - `gmL` - Left margin of the GUI.
+ *   - `gmR` - Right margin of the GUI.
+ *   - `SpX` - Horizontal spacing between the right side of the image and other controls.
+ *   - `SpY` - Vertical spacing between the title, message, and progress bar.
+ * - `MAXW` - Maximum width of the GUI (excluding image width and margins).
+ * - `WIDTH` - Fixed width of the GUI (excluding the image width and margins).
+ * - `MINH` - Minimum height of the GUI.
+ * - `PROG` - Progress bar. For example: `prog=1`, `prog=h40 cGreen`, `prog=w400` {@link https://www.autohotkey.com/docs/v2/lib/GuiControls.htm#Progress Progress Options}
  * - `TAG` - Marker to identify a GUI. The Destroy method accepts a handle or a tag, it destroys every GUI containing this tag across all scripts.
- * - `DGC` - Destroy GUI click. Allow or prevent the GUI from being destroyed when clicked.
+ * - `DGC` - Allow or prevent the GUI from being destroyed when clicked.
  *   - `0` - Clicking on the GUI does not destroy it.
  *   - `1` - Clicking on the GUI destroys it.*
- * - `DG` - Destroy GUIs before creating the new GUI.
+ * - `DG` - Destroy GUIs before showing the new GUI.
  *   - `0` - Do not destroy GUIs.*
  *   - `1` - Destroy all GUIs on the monitor option at the position option.
  *   - `2` - Destroy all GUIs on all monitors at the position option.
@@ -162,7 +199,43 @@ Class Notify {
 
     static __New()
     {
-        this.mNotifyGUIs := this.MapCI()
+        this.mDefaults := this.MapCI().Set(
+            'theme', 'Default',
+            'mon', 'Primary',
+            'pos', 'BR',
+            'dur', 8,
+            'style', 'Round',
+            'ts', 15,
+            'tc', 'White',
+            'tf', 'Segoe UI',
+            'tfo', 'norm Bold',
+            'tali', 'Left',
+            'ms', 12,
+            'mc', '0xEAEAEA',
+            'mf', 'Segoe UI',
+            'mfo', 'norm',
+            'mali', 'Left',
+            'bc', '0x1F1F1F',
+            'bdr', 'Default',
+            'sound', 'None',
+            'image', 'None',
+            'iw', 32,
+            'ih', -1,
+            'bgImg', 'None',
+            'bgImgPos', 'Stretch',
+            'pad', ',,16,16,16,16,8,10',
+            'width', '',
+            'minH', '',
+            'maxW', '',
+            'prog', '',
+            'tag', '',
+            'dgc', 1,
+            'dg', 0,
+            'wstc', '',
+            'wstp', '',
+            'opt', '+Owner -Caption +AlwaysOnTop'
+        )
+
         this.mThemesStrings := this.MapCI().Set(
             'Light', 'tc=Black mc=Black bc=White',
             'Dark', 'tc=White mc=0xEAEAEA bc=0x1F1F1F',
@@ -172,7 +245,7 @@ Class Notify {
             'Synthwave', 'tc=Fuchsia mc=Aqua bc=0x1A0E2F bdr=Aqua tf=Consolas mf=Arial',
             'Dracula', 'tc=0xFF79C6 mc=0x8BE9FD bc=0x282A36 bdr=0x8BE9FD tf=Consolas mf=Arial',
             'Monokai', 'tc=0xF8F8F2 mc=0xA6E22E bc=0x272822 bdr=0xE8F7C8 tf=Lucida Console mf=Tahoma',
-            'Solarized Dark', 'tc=0xB58900 mc=0x839496 bc=0x002B36 bdr=0x839496 tf=Consolas mf=Calibri',
+            'Solarized Dark', 'tc=0xD9A300 mc=0x9FADAE bc=0x002B36 bdr=0x9FADAE tf=Consolas mf=Calibri',
             'Atomic', 'tc=0xE49013 mc=0xDFCA9B bc=0x1F1F1F bdr=0xDFCA9B tf=Consolas mf=Lucida Console',
             'PCB', 'tc=0xCCAA00 mc=0x00CC00 bc=0x002200 bdr=0x00CC00 tf=Consolas mf=Arial',
             'Deep Sea', 'tc=0x00CED1 mc=0x5F9EA0 bc=0x002B36 bdr=0x4682B4 tf=Arial mf=Verdana',
@@ -200,6 +273,11 @@ Class Notify {
             'Pink Light', 'tc=0xFF1493 mc=0xFF69B4 bc=0xFFE4E1 bdr=0xFF69B4 tf=Comic Sans MS mf=Verdana',
             'Pink Dark', 'tc=0xFF1493 mc=0xFF69B4 bc=0x1F1F1F bdr=0xFF69B4 tf=Comic Sans MS mf=Verdana',
             'Sticky', 'tc=Black mc=0x333333 bc=0xF9E15B bdr=0x5F5103 tf=Arial mf=Verdana',
+            'Chestnut', 'tc=0xF8F8E8 mc=0xC5735F bc=0x282828 bdr=0xF8F8E8',
+            'Amber', 'tc=0xFFF8DC mc=0xFFBF00 bc=0x292929 bdr=0xFFF8DC',
+            'Volcanic', 'tc=0xFE5F55 mc=0xFFC857 bc=0x1D1D1D bdr=0xFE5F55 tf=Lucida Console mf=Tahoma',
+            'Amethyst', 'tc=0xD6ADFF mc=0xA56FFF bc=0x2A1B3D bdr=0xA56FFF tf=Trebuchet MS mf=Consolas',
+            'Cosmos', 'tc=0x87CEEB mc=0xE6E6FA bc=0x0C0032 bdr=0x87CEEB tf=Consolas mf=Lucida Console',
             'OK', 'tc=Black mc=Black bc=0x49C149 bdr=0x336F50',
             'OKLight', 'tc=0x52CB43 mc=Black bc=0xF1F8F4 bdr=0x52CB43',
             'OKDark', 'tc=0x52CB43 mc=0xEAEAEA bc=0x1F1F1F bdr=0x52CB43 ',
@@ -216,48 +294,6 @@ Class Notify {
             'iDark', 'tc=0x41A5EE mc=0xEAEAEA bc=0x1F1F1F bdr=0x41A5EE image=iconi',
             '?Dark', 'tc=0x41A5EE mc=0xEAEAEA bc=0x1F1F1F bdr=0x41A5EE image=icon?',
         )
-
-        this.mDefaults := this.MapCI().Set(
-            'theme', 'Default',
-            'style', 'Round',
-            'mon', 'Primary',      ; Monitor
-            'pos', 'BR',           ; Position
-            'dur', 8,              ; Duration
-            'iw', 32,              ; Image width
-            'ih', -1,              ; Image height
-            'tf', 'Segoe UI',      ; Title font
-            'tfo', 'norm Bold',    ; Title font options
-            'ts', 15,              ; Title size
-            'tc', 'White',       ; Title color
-            'tali', 'Left',        ; Title alignment
-            'mf', 'Segoe UI',      ; Message font
-            'mfo', 'norm',         ; Message font options
-            'ms', 12,              ; Message size
-            'mc', '0xEAEAEA',    ; Message color
-            'mali', 'Left',        ; Message alignment
-            'bc', '0x1F1F1F',    ; Background color
-            'dg', 0,               ; Destroy GUIs
-            'dgc', 1,              ; Destroy GUI click
-            'bdr', 'Default',      ; Border
-            'prog', '',            ; Progress bar
-            'wstc', '',            ; WinSetTransColor
-            'wstp', '',            ; WinSetTransparent
-            'width', '',           ; Fixed width
-            'maxW', '',            ; Maximum width
-            'tag', '',             ; GUI window title identifying marker
-            'opt', '+Owner -Caption +AlwaysOnTop',
-            'image', 'None',
-            'sound', 'None',
-            'pad', ',,16,16,8,10'
-        )
-
-        this.padG := 10 ; Pad between GUIs
-        this.bdrWdefaultEdge := 2
-        this.arrBdrWrange := [1,5]
-        this.arrPadRange := [0,25]
-        this.ParsePadOption(this.mDefaults)
-        this.arrFonts := Array()
-        this.isTooManyFonts := false
 
         this.mAHKcolors := this.MapCI().Set(
             'Black',  '0x000000', 'Silver', '0xC0C0C0',
@@ -291,6 +327,20 @@ Class Notify {
             'rollSouthEast', '0x00005',  ; ROLL_DIAG_TL_TO_BR
             'rollSouthWest', '0x00006'   ; ROLL_DIAG_TR_TO_BL
         )
+
+        this.mNotifyGUIs := this.MapCI()
+        this.padG := 10 ; Pad between GUIs
+        this.arrAnimDurRange := [1,2500]
+        this.bdrWdefaultEdge := 2
+        this.padXYdefaultEdge := 0
+        this.padXYdefaultRound := 10
+        this.arrBdrWrange := [1,10]
+        this.arrPadXYrange := [0,25]
+        this.arrPadRange := [0,999]
+        this.arrFonts := Array()
+        this.isTooManyFonts := false
+
+        ;==============================================
 
         this.pathImagesFolder := RegRead('HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders', 'My Pictures') '\Notify'
         this.arrImageExt := ['ico', 'dll', 'exe', 'cpl', 'png', 'jpeg', 'jpg', 'gif', 'bmp', 'tif']
@@ -354,12 +404,6 @@ Class Notify {
                 for key, value in this.mDefaults
                     if this.mThemes['Default'].Has(key)
                         this.mDefaults[key] := this.mThemes['Default'][key]
-
-                for key in ['padX', 'padY', 'gmX', 'gmY', 'spX', 'spY']
-                    if this.mDefaults.Has(key)
-                        this.mDefaults.Delete(key)
-
-                this.ParsePadOption(this.mDefaults)
             }
 
             if (mJSON.Has('mThemes')) {
@@ -396,13 +440,8 @@ Class Notify {
 
         ;==============================================
 
-        for theme, mTheme in this.mThemes {
+        for theme, mTheme in this.mThemes
             this.ParseBorderOption(mTheme)
-
-            for value in ['show', 'hide']
-                if mtheme.Has(value)
-                    mtheme.Delete(value)
-        }
     }
 
     ;============================================================================================
@@ -415,6 +454,12 @@ Class Notify {
         if !m.Has('theme') || !this.mThemes.Has(m['theme'])
             m['theme'] := this.mDefaults['theme']
 
+        if image
+            m['image'] := image
+
+        if sound
+            m['sound'] := sound
+
         this.SetThemeSettings(m, this.mThemes[m['theme']])
         this.SetDefault_MiscValues(m)
         this.ParseAnimationOption(m)
@@ -424,21 +469,18 @@ Class Notify {
         this.ParseBorderOption(m)
         this.SetBorderOption(m)
 
-        if image
-            m['image'] := image
-
-        if sound
-            m['sound'] := sound
-
-        if (!title && !msg && (m['image'] = '' || m['image'] = 'none'))
+        if !title && !msg && m['image'] = 'none'
             return
 
         ;==============================================
 
         switch {
-            case (m['mon'] = 'mouse' || m['pos'] = 'mouse'): m['mon'] := this.MonitorGetMouseIsIn()
-            case m['mon'] = 'active': m['mon'] := this.MonitorGetWindowIsIn('A')
-            case (m['mon'] = 'primary' || m['mon'] < 1 || m['mon'] > MonitorGetCount()) : m['mon'] := MonitorGetPrimary()
+            case (m['mon'] = 'mouse' || m['pos'] = 'mouse'):
+                m['mon'] := this.MonitorGetMouseIsIn()
+            case m['mon'] = 'active':
+                m['mon'] := this.MonitorGetWindowIsIn('A')
+            case (m['mon'] = 'primary' || m['mon'] < 1 || m['mon'] > MonitorGetCount()):
+                m['mon'] := MonitorGetPrimary()
         }
 
         switch m['dg'] {
@@ -453,8 +495,8 @@ Class Notify {
 
         g := Gui(m['opt'], 'NotifyGUI_' m['mon'] '_' m['pos'] '_' m['style'] '_' m['bdrC'] '_' m['bdrW'] '_'  m['padY'] '_' A_Now A_MSec (m['tag'] && '_' m['tag']))
         g.BackColor := m['bc']
-        g.MarginX := m['gmX'] + m['bdrW']
-        g.MarginY := m['gmY'] + m['bdrW']
+        g.MarginX := m['gmL'] + m['bdrW']
+        g.MarginY := m['gmT'] + m['bdrW']
         g.gIndex := ++gIndex
         m['hwnd'] := g.handle := g.hwnd
 
@@ -463,29 +505,14 @@ Class Notify {
 
         ;==============================================
 
-        switch {
-            case RegExMatch(m['image'], 'i)^(icon!|icon\?|iconx|iconi)$'):
-                try m['pic'] := g.Add('Picture', 'w' m['iw'] ' h' m['ih'] ' Icon' this.mImages[m['image']], A_WinDir '\system32\user32.dll')
-
-            case this.mImages.Has(m['image']) && FileExist(this.mImages[m['image']]):
-                try m['pic'] := g.Add('Picture', 'w' m['iw'] ' h' m['ih'], this.mImages[m['image']])
-
-            case RegExMatch(m['image'], 'i)^(.+?\.(?:dll|exe|cpl))\|icon(\d+)$', &matchIcon) && FileExist(matchIcon[1]):
-                try m['pic'] := g.Add('Picture', 'w' m['iw'] ' h' m['ih'] ' Icon' matchIcon[2], matchIcon[1])
-
-            case FileExist(m['image']) || RegExMatch(m['image'], 'i)^h(icon|bitmap).*\d+'):
-                try m['pic'] := g.Add('Picture', 'w' m['iw'] ' h' m['ih'], m['image'])
-        }
-
-        ;==============================================
-
         MonitorGetWorkArea(m['mon'], &monWALeft, &monWATop, &monWARight, &monWABottom)
         monWAwidth := Abs(monWARight - monWALeft)
         monWAheight := Abs(monWABottom - monWATop)
-        visibleScreenWidth := monWAwidth / (A_ScreenDPI / 96)
+        visibleScreenWidth := this.DpiScale(monWAwidth)
+        marginsWidth := (g.MarginX + m['gmR'] + m['bdrW'])
 
-        if m.Has('pic')
-            picWidth := this.GetPicWidth(m['pic'], monWALeft, monWATop) + m['spX'] + g.MarginX*2
+        if (mPicDimensions := this.GetImageDimensions(m['image'], 'x' monWALeft ' y' monWATop, ' w' m['iw'] ' h' m['ih']))
+            pic_spX_mgn_Width := mPicDimensions['ctrlW'] + m['spX'] + marginswidth
 
         if title
             titleCtrlW := this.GetTextWidth(title, m['tf'], m['ts'], m['tfo'], monWALeft, monWATop)
@@ -493,17 +520,17 @@ Class Notify {
         if msg
             msgCtrlW := this.GetTextWidth(msg, m['mf'], m['ms'], m['mfo'], monWALeft, monWATop)
 
-        if title && (titleCtrlW + (picWidth ?? g.MarginX*2)) > visibleScreenWidth
-            titleWidth := visibleScreenWidth - m['padX']*2 - (picWidth ?? g.MarginX*2)
+        if title && (titleCtrlW + (pic_spX_mgn_Width ?? marginsWidth)) > visibleScreenWidth
+            titleWidth := visibleScreenWidth - m['padX']*2 - (pic_spX_mgn_Width ?? marginsWidth)
 
-        if msg && (msgCtrlW + (picWidth ?? g.MarginX*2)) > visibleScreenWidth
-            msgWidth := visibleScreenWidth - m['padX']*2 - (picWidth ?? g.MarginX*2)
+        if msg && (msgCtrlW + (pic_spX_mgn_Width ?? marginsWidth)) > visibleScreenWidth
+            msgWidth := visibleScreenWidth - m['padX']*2 - (pic_spX_mgn_Width ?? marginsWidth)
 
         if m['prog'] && RegExMatch(m['prog'], 'i)\bw(\d+)\b', &match_width)
             progUserW := match_width[1]
 
-        if (m['prog'] && IsSet(progUserW)) && ((progUserW + (picWidth ?? g.MarginX*2)) > (visibleScreenWidth))
-            progWidth := visibleScreenWidth - m['padX']*2 - (picWidth ?? g.MarginX*2)
+        if (m['prog'] && IsSet(progUserW)) && ((progUserW + (pic_spX_mgn_Width ?? marginsWidth)) > (visibleScreenWidth))
+            progWidth := visibleScreenWidth - m['padX']*2 - (pic_spX_mgn_Width ?? marginsWidth)
 
         bodyWidth := Max(
             (title ? (titleWidth ?? titleCtrlW ?? 0) : 0),
@@ -516,11 +543,36 @@ Class Notify {
             case (m['maxW'] && m['maxW'] < bodyWidth): bodyWidth := m['maxW']
         }
 
+        if (m['bgImg'] != 'none')
+            if mPicDim := this.GetImageDimensions(m['bgImg'], 'x' monWALeft ' y' monWATop,, false)
+                m['bgPic'] := g.Add('Picture', 'x0 y0')
+
         ;==============================================
+        if (m['image'] != 'none') {
+            switch {
+                case this.isInternalString(m['image']):
+                    try m['pic'] := g.Add('Picture', 'xm ym w' m['iw'] ' h' m['ih'] ' Icon' this.mImages[m['image']] ' BackgroundTrans', A_WinDir '\system32\user32.dll')
+
+                case this.isInternalImage(m['image']):
+                    try m['pic'] := g.Add('Picture', 'xm ym w' m['iw'] ' h' m['ih'] ' BackgroundTrans', this.mImages[m['image']])
+
+                case arrRegExMatch := this.isIconResourceFile(m['image']):
+                    try m['pic'] := g.Add('Picture', 'xm ym w' m['iw'] ' h' m['ih'] ' Icon' arrRegExMatch[2] ' BackgroundTrans', arrRegExMatch[1])
+
+                case this.isImagePathOrHandle(m['image']):
+                    try m['pic'] := g.Add('Picture', 'xm ym w' m['iw'] ' h' m['ih'] ' BackgroundTrans', m['image'])
+            }
+        }
 
         if (title) {
-            this.SetFont(g, 's' m['ts'] ' c' m['tc'] ' ' m['tfo'], m['tf'])
-            m['title'] := g.Add('Text', m['tali'] (IsSet(picWidth) ? ' x+' m['spX'] : '') ' w' bodyWidth, title)
+            this.SetFont(g, m['ts'], m['tc'], m['tfo'], m['tf'])
+
+            switch {
+                case m.Has('bgPic') && !m.Has('pic'): titlePosX := 'xm ym'
+                case m.Has('pic'): titlePosX := 'x+' m['spX']
+            }
+
+            m['title'] := g.Add('Text', m['tali'] ' ' (titlePosX ?? '') ' w' bodyWidth ' BackgroundTrans', title)
         }
 
         if (m['prog']) {
@@ -529,23 +581,132 @@ Class Notify {
                 case IsSet(progUserW): m['prog'] := progUserW > bodyWidth ? RegExReplace(m['prog'], 'w\d+', 'w' bodyWidth) : m['prog']
             }
 
-            g.MarginY := title ? m['spY'] : m['gmY'] + m['bdrW']
-            m['prog'] := g.Add('Progress', (!title && IsSet(picWidth) ? ' x+' m['spX'] : '') ' ' m['prog'])
+            g.MarginY := title ? m['spY'] : m['gmT'] + m['bdrW']
+
+            switch {
+                case m.Has('bgPic') && !title && !m.Has('pic'): progPosXY := 'xm ym'
+                case !title && m.Has('pic'): progPosXY := 'x+' m['spX']
+            }
+
+            m['prog'] := g.Add('Progress', (progPosXY ?? '')  ' ' m['prog'])
         }
 
         if (msg) {
-            g.MarginY := title || m['prog'] ? m['spY'] : m['gmY'] + m['bdrW']
-            this.SetFont(g, 's' m['ms'] ' c' m['mc'] ' ' m['mfo'], m['mf'])
-            m['msg'] := g.Add('Text', m['mali'] ((!title && !m['prog']) && IsSet(picWidth) ? ' x+' m['spX'] : '') ' w' bodyWidth, msg)
+            g.MarginY := title || m['prog'] ? m['spY'] : m['gmT'] + m['bdrW']
+            this.SetFont(g, m['ms'], m['mc'], m['mfo'], m['mf'])
+
+            switch {
+                case m.Has('bgPic') && !title && !m['prog'] && !m.Has('pic'): msgPosXY := 'xm ym'
+                case !title && !m['prog'] && m.Has('pic'): msgPosXY := 'x+' m['spX'] ' ym'
+            }
+
+            m['msg'] := g.Add('Text', m['mali']  ' ' (msgPosXY ?? '') ' w' bodyWidth ' BackgroundTrans', msg)
         }
 
-        g.MarginY := m['gmY'] + m['bdrW']
-        g.Show('Hide')
-        WinGetPos(,, &gW, &gH, g)
+        g.MarginX := m['gmR'] + m['bdrW']
+        g.MarginY := m['gmB'] + m['bdrW']
+
+        g.Show('hide')
+        WinGetPos(&gX, &gY, &gW, &gH, g)
+
+        if (m['minH'] && (gH < m['minH']))
+            g.Show('hide h' m['minH']), WinGetPos(&gX, &gY, &gW, &gH, g)
+
+        m['gW'] := gW
+        m['gH'] := gH
+
+        ;==============================================
+
+        if (m.Has('bgPic')) {
+            try {
+                for value in ['w', 'h'] {
+                    switch {
+                        case RegExMatch(m['bgImgPos'], 'i)\b' value '0\b'):
+                            continue
+
+                        case RegExMatch(m['bgImgPos'], 'i)\b' value 'stretch\b') || m['bgImgPos'] = 'stretch':
+                            mPicDim['ctrl' value] := m['g' value]
+
+                        case RegExMatch(m['bgImgPos'], 'i)\b' value '-1\b'):
+                            mPicDim['ctrl' value] := -1
+
+                        case RegExMatch(m['bgImgPos'], 'i)\b' value '\K\d+\b', &matchWH):
+                            mPicDim['ctrl' value] := matchWH[0] * (A_ScreenDPI / 96)
+
+                        default: mPicDim['ctrl' value] *= (A_ScreenDPI / 96)
+                    }
+                }
+
+                switch {
+                    case mPicDim['ctrlW'] = -1: mPicDim['ctrlW'] := Round(mPicDim['ctrlH'] * mPicDim['aspectRatio'])
+                    case mPicDim['ctrlH'] = -1: mPicDim['ctrlH'] := Round(mPicDim['ctrlW'] / mPicDim['aspectRatio'])
+                }
+
+                if RegExMatch(m['bgImgPos'], 'i)\bscale\K([\d\.]+)\b', &matchScale)
+                    for value in ['w', 'h']
+                        mPicDim['ctrl' value] *= matchScale[0]
+
+                switch {
+                    case m['bgImgPos'] ~= 'i)\btl\b' : m['bgImgPosX'] := 0, m['bgImgPosY'] := 0
+                    case m['bgImgPos'] ~= 'i)\btc\b' : m['bgImgPosX'] := this.DpiScale(m['gW']/2 - mPicDim['ctrlW']/2)
+                    case m['bgImgPos'] ~= 'i)\btr\b' : m['bgImgPosX'] := this.DpiScale(m['gW'] - mPicDim['ctrlW'])
+                    case m['bgImgPos'] ~= 'i)\bctl\b' : m['bgImgPosY'] := this.DpiScale(m['gH']/2 - mPicDim['ctrlH']/2)
+                    case m['bgImgPos'] ~= 'i)\bct\b' : m['bgImgPosX'] := this.DpiScale(m['gW']/2 - mPicDim['ctrlW']/2), m['bgImgPosY'] := this.DpiScale(m['gH']/2 - mPicDim['ctrlH']/2)
+                    case m['bgImgPos'] ~= 'i)\bctr\b' : m['bgImgPosY'] := this.DpiScale(m['gH']/2 - mPicDim['ctrlH']/2), m['bgImgPosX'] := this.DpiScale(m['gW'] - mPicDim['ctrlW'])
+                    case m['bgImgPos'] ~= 'i)\bbl\b' : m['bgImgPosY'] := this.DpiScale(m['gH'] - mPicDim['ctrlH'])
+                    case m['bgImgPos'] ~= 'i)\bbc\b' : m['bgImgPosX'] := this.DpiScale(m['gW']/2 - mPicDim['ctrlW']/2), m['bgImgPosY'] := this.DpiScale(m['gH'] - mPicDim['ctrlH'])
+                    case m['bgImgPos'] ~= 'i)\bbr\b' : m['bgImgPosX'] := this.DpiScale(m['gW'] - mPicDim['ctrlW']), m['bgImgPosY'] := this.DpiScale(m['gH'] - mPicDim['ctrlH'])
+                }
+
+                for value in ['x', 'y'] {
+                    m['bgImgPos' value] := m.Get('bgImgPos' value, 0)
+
+                    switch {
+                        case RegExMatch(m['bgImgPos'], 'i)\b' value '\K-?\d+\b', &matchPos):
+                            m['bgImgPos' value] := matchPos[0]
+
+                        case RegExMatch(m['bgImgPos'], 'i)\bofst' value '\K-?\d+\b', &matchOfst):
+                            m['bgImgPos' value] += matchOfst[0]
+                    }
+                }
+
+                switch {
+                    case this.isInternalString(m['bgImg']):
+                        m['bgPic'].Value := '*w' mPicDim['ctrlW'] ' *h' mPicDim['ctrlH'] ' *Icon' this.mImages[m['bgImg']] ' ' A_WinDir '\system32\user32.dll'
+
+                    case this.isInternalImage(m['bgImg']):
+                        m['bgPic'].Value := '*w' mPicDim['ctrlW'] ' *h' mPicDim['ctrlH'] ' ' this.mImages[m['bgImg']]
+
+                    case arrRegExMatch := this.isIconResourceFile(m['bgImg']):
+                        m['bgPic'].Value := '*w' mPicDim['ctrlW'] ' *h' mPicDim['ctrlH'] ' *Icon' arrRegExMatch[2] ' ' arrRegExMatch[1]
+
+                    case this.isImagePathOrHandle(m['bgImg']):
+                        m['bgPic'].Value := '*w' mPicDim['ctrlW'] ' *h' mPicDim['ctrlH'] ' ' m['bgImg']
+
+                    case this.isValidColor(m['bgImg']):
+                        m['bgPic'].Value := '*w' mPicDim['ctrlW'] ' *h' mPicDim['ctrlH'] ' hBitmap: ' this.CreatePixel(m['bgImg'])
+                }
+
+                m['bgPic'].Move(m['bgImgPosX'], m['bgImgPosY'])
+            }
+        }
+
+        ;==============================================
+
         clickArea := g.Add('Text', 'x0 y0 w' gW ' h' gH ' BackgroundTrans')
 
-        if callback
-            clickArea.OnEvent('Click', callback)
+        switch Type(callback) {
+            case 'Func': clickArea.OnEvent('Click', callback)
+            case 'Array':
+            {
+                if callback.Has(1) && callback[1] != ''
+                    clickArea.OnEvent('Click', callback[1])
+
+                for value in ['pic', 'bgPic']
+                    if m.Has(value) && callback.Has(A_Index+1) && callback[A_Index+1] != ''
+                        m[value].OnEvent('Click', callback[A_Index+1])
+            }
+        }
 
         if m['dgc']
             clickArea.OnEvent('Click', this.gDestroy.Bind(this, g, 'clickArea'))
@@ -553,14 +714,14 @@ Class Notify {
         g.OnEvent('Close', this.gDestroy.Bind(this, g, 'close'))
         g.boundFuncTimer := this.gDestroy.Bind(this, g, 'timer')
 
-        if m['sound']
+        if m['sound'] != 'none'
             this.Sound(m['sound'])
 
         ;==============================================
 
         switch m['pos'], false {
-            case 'br', 'bc', 'bl': minMaxPosY := monWABottom
-            case 'tr', 'tc', 'tl', 'ct', 'ctl', 'ctr': minMaxPosY := monWATop
+            case 'bl', 'bc', 'br': minMaxPosY := monWABottom
+            case 'tl', 'tc', 'tr', 'ctl', 'ct', 'ctr': minMaxPosY := monWATop
         }
 
         mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')
@@ -569,8 +730,8 @@ Class Notify {
             try {
                 WinGetPos(, &guiY,, &guiH, 'ahk_id ' id)
                 switch m['pos'], false {
-                    case 'br', 'bc', 'bl': minMaxPosY := Min(minMaxPosY, guiY)
-                    case 'tr', 'tc', 'tl', 'ct', 'ctl', 'ctr': minMaxPosY := Max(minMaxPosY, guiY + guiH)
+                    case 'bl', 'bc', 'br': minMaxPosY := Min(minMaxPosY, guiY)
+                    case 'tl', 'tc', 'tr', 'ctl', 'ct', 'ctr': minMaxPosY := Max(minMaxPosY, guiY + guiH)
                 }
             } catch
                 break
@@ -579,21 +740,21 @@ Class Notify {
         this.Set_DHWindows_TMMode(mDhwTmm['dhwPrev'], mDhwTmm['tmmPrev'])
 
         switch m['pos'], false {
-            case 'br':  gPos := 'x' monWARight - gW - m['padX']      ' y' ((minMaxPosY = monWABottom) ? monWABottom - gH - m['padY'] : minMaxPosY - gH - this.padG)
-            case 'bc':  gPos := 'x' monWARight - monWAwidth/2 - gW/2 ' y' ((minMaxPosY = monWABottom) ? monWABottom - gH - m['padY'] : minMaxPosY - gH - this.padG)
-            case 'bl':  gPos := 'x' monWALeft + m['padX']            ' y' ((minMaxPosY = monWABottom) ? monWABottom - gH - m['padY'] : minMaxPosY - gH - this.padG)
             case 'tl':  gPos := 'x' monWALeft + m['padX']            ' y' ((minMaxPosY = monWATop) ? monWATop + m['padY'] : minMaxPosY + this.padG)
             case 'tc':  gPos := 'x' monWARight - monWAwidth/2 - gW/2 ' y' ((minMaxPosY = monWATop) ? monWATop + m['padY'] : minMaxPosY + this.padG)
             case 'tr':  gPos := 'x' monWARight - m['padX'] - gW      ' y' ((minMaxPosY = monWATop) ? monWATop + m['padY'] : minMaxPosY + this.padG)
-            case 'ct':  gPos := 'x' monWARight - monWAwidth/2 - gW/2 ' y' ((minMaxPosY = monWATop) ? monWATop + monWAheight/2 - gH/2 : minMaxPosY + this.padG)
             case 'ctl': gPos := 'x' monWALeft + m['padX']            ' y' ((minMaxPosY = monWATop) ? monWATop + monWAheight/2 - gH/2 : minMaxPosY + this.padG)
+            case 'ct':  gPos := 'x' monWARight - monWAwidth/2 - gW/2 ' y' ((minMaxPosY = monWATop) ? monWATop + monWAheight/2 - gH/2 : minMaxPosY + this.padG)
             case 'ctr': gPos := 'x' monWARight - m['padX'] - gW      ' y' ((minMaxPosY = monWATop) ? monWATop + monWAheight/2 - gH/2 : minMaxPosY + this.padG)
+            case 'bl':  gPos := 'x' monWALeft + m['padX']            ' y' ((minMaxPosY = monWABottom) ? monWABottom - gH - m['padY'] : minMaxPosY - gH - this.padG)
+            case 'bc':  gPos := 'x' monWARight - monWAwidth/2 - gW/2 ' y' ((minMaxPosY = monWABottom) ? monWABottom - gH - m['padY'] : minMaxPosY - gH - this.padG)
+            case 'br':  gPos := 'x' monWARight - gW - m['padX']      ' y' ((minMaxPosY = monWABottom) ? monWABottom - gH - m['padY'] : minMaxPosY - gH - this.padG)
             case 'mouse': gPos := this.CalculatePopupWindowPosition(g.hwnd)
         }
 
         switch g.pos, false {
-            case 'br', 'bc', 'bl': outOfWorkArea := (minMaxPosY < (monWATop + gH + this.padG))
-            case 'tr', 'tc', 'tl', 'ct', 'ctl', 'ctr': outOfWorkArea := (minMaxPosY > (monWABottom - gH - this.padG))
+            case 'bl', 'bc', 'br': outOfWorkArea := (minMaxPosY < (monWATop + gH + this.padG))
+            case 'tl', 'tc', 'tr', 'ctl', 'ct', 'ctr': outOfWorkArea := (minMaxPosY > (monWABottom - gH - this.padG))
             case 'mouse': outOfWorkArea := false
         }
 
@@ -612,9 +773,13 @@ Class Notify {
         if m['wstc']
             WinSetTransColor(m['wstc'], g)
 
-        if m['showHex']
-            g.Show(gPos ' NoActivate Hide'), DllCall('AnimateWindow', 'Ptr', g.hwnd, 'Int', m['showDur'], 'Int', m['showHex'])
-        else
+        g.Show(gPos ' NoActivate Hide')
+
+        if (m['showHex']) {
+            try DllCall('AnimateWindow', 'Ptr', g.hwnd, 'Int', m['showDur'], 'Int', m['showHex'])
+            catch
+                g.Show(gPos ' NoActivate')
+        } else
             g.Show(gPos ' NoActivate')
 
         if m['style'] = 'edge' && !RegExMatch(m['bdrC'], 'i)^(default|1|0)$')
@@ -672,28 +837,27 @@ Class Notify {
             SetWinDelay(0)
 
             switch g.pos, false {
-                case 'br', 'bc', 'bl': arrGUIs := this.SortArrayGUIPosY(arrGUIs, true),  posY := monWABottom - arrGUIs[1]['padY']
-                case 'tr', 'tc', 'tl', 'ct', 'ctl', 'ctr': arrGUIs := this.SortArrayGUIPosY(arrGUIs),  posY := monWATop + arrGUIs[1]['padY']
+                case 'bl', 'bc', 'br': arrGUIs := this.SortArrayGUIPosY(arrGUIs, true),  posY := monWABottom - arrGUIs[1]['padY']
+                case 'tl', 'tc', 'tr', 'ctl', 'ct', 'ctr': arrGUIs := this.SortArrayGUIPosY(arrGUIs),  posY := monWATop + arrGUIs[1]['padY']
             }
 
             for value in arrGUIs {
                 switch g.pos, false {
-                    case 'br', 'bc', 'bl': posY -= value['gH']
-                    case 'ct', 'ctl', 'ctr': (A_Index = 1 && posY := monWATop + monWAheight/2 - value['gH']/2)
+                    case 'bl', 'bc', 'br': posY -= value['gH']
+                    case 'ctl', 'ct', 'ctr': (A_Index = 1 && posY := monWATop + monWAheight/2 - value['gH']/2)
                 }
 
                 if (Abs(posY - value['gY']) > 10) {
                     try {
                         WinMove(, posY,,, 'ahk_id ' value['id'])
                         this.ReDrawBorderEdge(value['id'], value['style'], value['bdrC'], value['bdrW'])
-                    }
-                    catch
+                    } catch
                         break
                 }
 
                 switch g.pos, false {
-                    case 'br', 'bc', 'bl': posY -= this.padG
-                    case 'tr', 'tc', 'tl', 'ct', 'ctl', 'ctr': posY += value['gH'] + this.padG
+                    case 'bl', 'bc', 'br': posY -= this.padG
+                    case 'tl', 'tc', 'tr', 'ctl', 'ct', 'ctr': posY += value['gH'] + this.padG
                 }
             }
         }
@@ -706,7 +870,7 @@ Class Notify {
      * Destroys GUIs.
      * @param {integer|string} param
      * - Window handle (hwnd) - Destroys the GUI with the specified window handle.
-     * - Tag - destroys every GUI containing this tag across all scripts.
+     * - Tag - Destroys every GUI containing this tag across all scripts.
      * - 'oldest' or no param - Destroys the oldest GUI.
      * - 'latest' - Destroys the most recent GUI.
      */
@@ -832,8 +996,11 @@ Class Notify {
         this.Set_DHWindows_TMMode(mDhwTmm['dhwPrev'], mDhwTmm['tmmPrev'])
     }
 
-    ;============================================================================================
-
+    /********************************************************************************************
+     * Checks if a GUI with the specified tag exists.
+     * @param {string} tag - The tag to search.
+     * @returns {integer|false} - The unique ID (HWND) of the first matching GUI if found, otherwise false.
+     */
     static Exist(tag)
     {
         mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')
@@ -844,7 +1011,7 @@ Class Notify {
         }
 
         this.Set_DHWindows_TMMode(mDhwTmm['dhwPrev'], mDhwTmm['tmmPrev'])
-        return idFound ?? 0
+        return idFound ?? false
     }
 
     ;============================================================================================
@@ -861,14 +1028,8 @@ Class Notify {
 
     static SetDefault_MiscValues(m)
     {
-        switch {
-            case (m.has('iw') && !m.has('ih')) : m['ih'] := -1
-            case (m.has('ih') && !m.has('iw')) : m['iw'] := -1
-        }
-
         for key, value in this.mDefaults
-            if !m.has(key)
-                m[key] := value
+            m[key] := m.Get(key, value)
 
         if !RegExMatch(m['style'], 'i)^(round|edge)$')
             m['style'] := this.mDefaults['style']
@@ -887,13 +1048,59 @@ Class Notify {
 
     ;============================================================================================
 
+    static ParsePadOption(m)
+    {
+        if (m.has('pad')) {
+            arrPad := StrSplit(m['pad'], ',', A_Space)
+
+            for key in ['padX', 'padY', 'gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY']
+                if !m.Has(key) && arrPad.Has(A_Index) && arrPad[A_Index] != ''
+                    m[key] := arrPad[A_Index]
+
+            this.SetValidPadRange(m)
+        }
+    }
+
+    ;============================================================================================
+
+    static SetPadDefault(m)
+    {
+        padXYdefault := (m['style'] = 'edge' ? this.padXYdefaultEdge : this.padXYdefaultRound)
+
+        for key in ['padX', 'padY']
+            m[key] := m.Get(key, padXYdefault)
+
+        if this.mThemes[m['theme']].Has('pad')
+            arrPad := StrSplit(this.mThemes[m['theme']]['pad'], ',', A_Space)
+        else
+            arrPad := StrSplit(this.mDefaults['pad'], ',', A_Space)
+
+        for key in ['gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY']
+            if !m.Has(key) && arrPad.Has(A_Index+2) && arrPad[A_Index+2] != ''
+                m[key] := arrPad[A_Index+2]
+
+        this.SetValidPadRange(m)
+    }
+
+    ;============================================================================================
+
+    static SetValidPadRange(m)
+    {
+        for key in ['padX', 'padY', 'gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY'] {
+            strPad := RegExMatch(key, '^(padX|padY)$') ? 'arrPadXYrange' : 'arrPadRange'
+            m.Has(key) ? m[key] := Min(this.%strPad%[2], Max(this.%strPad%[1], Integer(m[key]))) : ''
+        }
+    }
+
+    ;============================================================================================
+
     static ParseAnimationOption(m)
     {
         for value in ['show', 'hide'] {
             if (m.has(value)) {
                 arrAnim := StrSplit(m[value], '@', A_Space)
                 m[value 'Hex'] := this.mAW[arrAnim[1] = 0 ? 'none' : arrAnim[1]]
-                arrAnim.Has(2) && (m[value 'Dur'] := Min(2500, Max(1, integer(arrAnim[2]))))
+                arrAnim.Has(2) && (m[value 'Dur'] := Min(this.arrAnimDurRange[2], Max(this.arrAnimDurRange[1], integer(arrAnim[2]))))
             }
         }
     }
@@ -905,7 +1112,7 @@ Class Notify {
         switch m['style'], false {
             case 'edge':
             {
-                if !m.has('showHex') {
+                if !m.Has('showHex') {
                     switch m['pos'], false {
                         case 'br', 'tr', 'ctr': m['showHex'] := this.mAW['slideWest']
                         case 'bl', 'tl', 'ctl': m['showHex'] := this.mAW['slideEast']
@@ -916,7 +1123,7 @@ Class Notify {
                     }
                 }
 
-                if !m.has('hideHex') {
+                if !m.Has('hideHex') {
                     switch m['pos'], false {
                         case 'br', 'tr', 'ctr': m['hideHex'] := this.mAW['slideEast']
                         case 'bl', 'tl', 'ctl': m['hideHex'] := this.mAW['slideWest']
@@ -942,34 +1149,9 @@ Class Notify {
 
     ;============================================================================================
 
-    static ParsePadOption(m)
-    {
-        if (m.has('pad')) {
-            arrPad := StrSplit(m['pad'], ',', A_Space)
-
-            for index, value in ['padX', 'padY', 'gmX', 'gmY', 'spX', 'spY']
-                if arrPad.Has(index) && arrPad[index] != ''
-                    m[value] := Min(this.arrPadRange[2], Max(this.arrPadRange[1], Integer(arrPad[index])))
-        }
-    }
-
-    ;============================================================================================
-
-    static SetPadDefault(m)
-    {
-        m['padX'] := m.Has('padX') ? m['padX'] : (m['style'] = 'edge' ? 0 : 10)
-        m['padY'] := m.Has('padY') ? m['padY'] : (m['style'] = 'edge' ? 0 : 10)
-
-        for key in ['gmX', 'gmY', 'spX', 'spY']
-            if !m.has(key)
-                m[key] := this.mDefaults[key]
-    }
-
-    ;============================================================================================
-
     static ParseBorderOption(m)
     {
-        if (m.has('bdr')) {
+        if (m.Has('bdr')) {
             arrBdr := StrSplit(m['bdr'], ',', A_Space)
             m['bdr'] := this.NormAHKColor(m['bdr'])
             m['bdrC'] := this.NormAHKColor(arrBdr[1])
@@ -1007,11 +1189,12 @@ Class Notify {
 
     ;============================================================================================
 
-    static SetFont(g, options, fontName)
+    static SetFont(g, size, color, fontOption, fontName)
     {
-        g.SetFont(options, fontName)
+        g.SetFont('s' size ' c' color ' ' fontOption, fontName)
+        strFont := size ' ' this.NormalizeFontOptions(fontOption) . fontName
 
-        if !this.HasVal(strFont := options ' ' fontName, this.arrFonts)
+        if !this.HasVal(strFont, this.arrFonts)
             this.arrFonts.Push(strFont)
 
         if (this.arrFonts.Length >= 190) {
@@ -1020,6 +1203,19 @@ Class Notify {
         }
 
         return true
+    }
+
+    ;============================================================================================
+
+    static NormalizeFontOptions(str)
+    {
+        strFontopt := ''
+
+        for option in ['bold', 'italic', 'strike', 'underline']
+            if InStr(str, option)
+                strFontopt .= option ' '
+
+        return strFontopt
     }
 
     ;============================================================================================
@@ -1033,8 +1229,10 @@ Class Notify {
         return Map('dhwPrev', dhwPrev, 'tmmPrev', tmmPrev)
     }
 
-    ;============================================================================================
-
+    /********************************************************************************************
+     * Plays a sound.
+     * @param {string|integer} sound - A valid sound format. See the documentation for the sound parameter.
+     */
     static Sound(sound)
     {
         if this.mSounds.Has(sound)
@@ -1044,6 +1242,83 @@ Class Notify {
             case FileExist(sound): try this.PlayWavConcurrent(sound)
             case RegExMatch(sound,'^\*\-?\d+'): try Soundplay(sound)
         }
+    }
+
+    /********************************************************************************************
+     * @credits Faddix, XMCQCX (minor modifications)
+     * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=130425 AHK Forum}
+     */
+    static PlayWavConcurrent(fPath)
+    {
+        static obj := initialize()
+        SplitPath(fPath,,, &ext)
+
+        initialize() {
+            if !hModule := DllCall("LoadLibrary", "Str", "XAudio2_9.dll", "Ptr")
+                return false
+
+            DllCall("XAudio2_9\XAudio2Create", "Ptr*", IXAudio2 := ComValue(13, 0), "Uint", 0, "Uint", 1)
+            ComCall(7, IXAudio2, "Ptr*", &IXAudio2MasteringVoice := 0, "Uint", 0, "Uint", 0, "Uint", 0, "Ptr", 0, "Ptr", 0, "Int", 6) ; CreateMasteringVoice
+            return { IXAudio2: IXAudio2, someMap: Map() }
+        }
+
+        if !obj || !RegExMatch(ext, 'i)^wav$')
+            return
+
+        ; freeing is unnecessary, but..
+        XAUDIO2_VOICE_STATE := Buffer(A_PtrSize * 2 + 0x8)
+        keys_to_delete := []
+        for IXAudio2SourceVoice in obj.someMap {
+            ComCall(25, IXAudio2SourceVoice, "Ptr", XAUDIO2_VOICE_STATE, "Uint", 0, "Int") ;GetState
+            if (!NumGet(XAUDIO2_VOICE_STATE, A_PtrSize, "Uint")) { ; BuffersQueued (includes the one that is being processed)
+                keys_to_delete.Push(IXAudio2SourceVoice)
+            }
+        }
+        for IXAudio2SourceVoice in keys_to_delete {
+            ComCall(20, IXAudio2SourceVoice, "Uint", 0, "Uint", 0) ;Stop
+            ComCall(18, IXAudio2SourceVoice, "Int") ; void DestroyVoice
+            obj.someMap.Delete(IXAudio2SourceVoice)
+        }
+
+        waveFile := FileRead(fPath, "RAW")
+
+        if !root_tag_to_offset := get_tag_to_offset_map(0, waveFile.Size)
+            return
+
+        if !idk_tag_to_offset := get_tag_to_offset_map(root_tag_to_offset["RIFF"].ofs + 0xc, waveFile.Size)
+            return
+
+        WAVEFORMAT_ofs := idk_tag_to_offset["fmt "].ofs + 0x8
+        data_ofs := idk_tag_to_offset["data"].ofs + 0x8
+        data_size := idk_tag_to_offset["data"].size
+
+        get_tag_to_offset_map(i, end) {
+            tag_to_offset := Map()
+            while (i + 8 <= end) { ; Ensure there's enough data for a chunk header
+                tag := StrGet(waveFile.Ptr + i, 4, "UTF-8") ; RIFFChunk::tag
+                size := NumGet(waveFile, i + 0x4, "Uint") ; RIFFChunk::size
+
+                ; Stop execution and return false if chunk size exceeds file bounds
+                if (i + 8 + size > end)
+                    return false
+
+                tag_to_offset[tag] := { ofs: i, size: size }
+                ; Align to next 2-byte or 4-byte boundary
+                i += size + 8
+                if (i & 1) ; 2-byte alignment
+                    i += 1
+            }
+            return tag_to_offset
+        }
+
+        ComCall(5, obj.IXAudio2, "Ptr*", &IXAudio2SourceVoice := 0, "Ptr", waveFile.Ptr + WAVEFORMAT_ofs, "int", 0, "float", 2.0, "Ptr", 0, "Ptr", 0, "Ptr", 0) ; CreateSourceVoice
+        XAUDIO2_BUFFER := Buffer(A_PtrSize * 2 + 0x1c, 0)
+        NumPut("Uint", 0x0040, XAUDIO2_BUFFER, 0x0) ; Flags=XAUDIO2_END_OF_STREAM
+        NumPut("Uint", data_size, XAUDIO2_BUFFER, 0x4) ; AudioBytes
+        NumPut("Ptr", waveFile.Ptr + data_ofs, XAUDIO2_BUFFER, 0x8) ; pAudioData
+        ComCall(21, IXAudio2SourceVoice, "Ptr", XAUDIO2_BUFFER, "Ptr", 0) ; SubmitSourceBuffer
+        ComCall(19, IXAudio2SourceVoice, "Uint", 0, "Uint", 0) ; Start
+        obj.someMap[IXAudio2SourceVoice] := waveFile
     }
 
     ;============================================================================================
@@ -1061,8 +1336,7 @@ Class Notify {
     {
         if (m['theme'] != 'default')
             for key in mTheme['arrKeyDefined']
-                if !m.Has(key)
-                    m[key] := mTheme[key]
+                m[key] := m.Get(key, mTheme[key])
     }
 
     ;============================================================================================
@@ -1073,21 +1347,43 @@ Class Notify {
         g.SetFont('s' fontSize ' ' fontOption, font)
         g.txt := g.Add('Text',, str)
         g.Show('x' monWALeft ' y' monWATop ' Hide')
-        g.txt.GetPos(,, &ctrlWidth)
+        g.txt.GetPos(,, &ctrlW)
         g.Destroy()
-        return ctrlWidth
+        return ctrlW
     }
 
     ;============================================================================================
 
-    static GetPicWidth(picCtrl, monWALeft:='', monWATop:='')
+    static GetImageDimensions(image, posXY?, dimWH:='', dpiScale:=true)
     {
-        g := Gui()
-        g.pic := picCtrl
-        g.Show('x' monWALeft ' y' monWATop ' Hide')
-        g.pic.GetPos(,, &ctrlWidth)
+        g := Gui(dpiScale ? '' : '-DPIScale')
+        posXY := (posXY ?? 'x0 y0')
+
+        switch {
+            case this.isInternalString(image):
+                try g.pic := g.Add('Picture', dimWH ' Icon' this.mImages[image] ' BackgroundTrans', A_WinDir '\system32\user32.dll')
+
+            case this.isInternalImage(image):
+                try g.pic := g.Add('Picture', dimWH ' BackgroundTrans', this.mImages[image])
+
+            case arrRegExMatch := this.isIconResourceFile(image):
+                try g.pic := g.Add('Picture', dimWH ' Icon' arrRegExMatch[2] ' BackgroundTrans', arrRegExMatch[1])
+
+            case this.isImagePathOrHandle(image):
+                try g.pic := g.Add('Picture', dimWH ' BackgroundTrans', image)
+
+            case this.isValidColor(image):
+                try g.pic := g.Add('Picture',, 'hBitmap: ' this.CreatePixel(image))
+        }
+
+        if (g.HasOwnProp('pic')) {
+            g.Show(posXY ' hide')
+            g.pic.GetPos(,, &ctrlW, &ctrlH)
+            mDim := this.MapCI().Set('ctrlW', ctrlW, 'ctrlH', ctrlH, 'aspectRatio', Round(ctrlW / ctrlH, 2))
+        }
+
         g.Destroy()
-        return ctrlWidth
+        return mDim ?? false
     }
 
     ;============================================================================================
@@ -1183,8 +1479,24 @@ Class Notify {
     }
 
     /********************************************************************************************
+     * @credits TheDewd, XMCQCX (v2 conversion, minor modifications)
+     * @see {@link https://www.autohotkey.com/boards/viewtopic.php?t=7312 AHK Forum}
+     */
+    static CreatePixel(color)
+    {
+        color := this.NormHexClrCode(color)
+        hBitmap := DllCall("CreateBitmap", "Int", 1, "Int", 1, "UInt", 1, "UInt", 32, "Ptr", 0, "Ptr")
+        hBM := DllCall("CopyImage", "Ptr", hBitmap, "UInt", 0, "Int", 0, "Int", 0, "UInt", 0x2008, "Ptr")
+        BMBITS := Buffer(4, 0)
+        NumPut("UInt", color, BMBITS, 0)
+        DllCall("SetBitmapBits", "Ptr", hBM, "UInt", 4, "Ptr", BMBITS)
+        DllCall("DeleteObject", "Ptr", hBitmap)
+        return hBM
+    }
+
+    /********************************************************************************************
      * @credits Klark92, XMCQCX (v2 conversion)
-     * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29117&hilit=FrameShadow AHK Forum}
+     * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29117 AHK Forum}
      */
     static FrameShadow(hwnd)
     {
@@ -1269,7 +1581,7 @@ Class Notify {
 
         Loop MonitorGetCount() {
             MonitorGet(A_Index, &monLeft, &monTop, &monRight, &monBottom)
-            if (posX >= monLeft) && (posX <= monRight) && (posY >= monTop) && (posY <= monBottom)
+            if (posX >= monLeft) && (posX < monRight) && (posY >= monTop) && (posY < monBottom)
                 return A_Index
         }
 
@@ -1325,86 +1637,21 @@ Class Notify {
         return 'x' NumGet(outRect, 0, 'int') ' y' NumGet(outRect, 4, 'int')
     }
 
-    /********************************************************************************************
-     * @credits Faddix, XMCQCX (minor modifications)
-     * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=130425 AHK Forum}
-     */
-    static PlayWavConcurrent(wavFileName) {
-        static obj := initialize()
-
-        initialize() {
-            if !hModule := DllCall("LoadLibrary", "Str", "XAudio2_9.dll", "Ptr")
-                return false
-
-            DllCall("XAudio2_9\XAudio2Create", "Ptr*", IXAudio2 := ComValue(13, 0), "Uint", 0, "Uint", 1)
-            ComCall(7, IXAudio2, "Ptr*", &IXAudio2MasteringVoice := 0, "Uint", 0, "Uint", 0, "Uint", 0, "Ptr", 0, "Ptr", 0, "Int", 6) ;CreateMasteringVoice
-            return { IXAudio2: IXAudio2, someMap: Map() }
-        }
-
-        if !obj
-            return
-
-        ;freeing is unnecessary, but..
-        XAUDIO2_VOICE_STATE := Buffer(A_PtrSize * 2 + 0x8)
-        keys_to_delete := []
-        for IXAudio2SourceVoice in obj.someMap {
-            ComCall(25, IXAudio2SourceVoice, "Ptr", XAUDIO2_VOICE_STATE, "Uint", 0, "Int") ;GetState
-            if (!NumGet(XAUDIO2_VOICE_STATE, A_PtrSize, "Uint")) { ;BuffersQueued (includes the one that is being processed)
-                keys_to_delete.Push(IXAudio2SourceVoice)
-            }
-        }
-        for IXAudio2SourceVoice in keys_to_delete {
-            ComCall(20, IXAudio2SourceVoice, "Uint", 0, "Uint", 0) ;Stop
-            ComCall(18, IXAudio2SourceVoice, "Int") ;void DestroyVoice
-            obj.someMap.Delete(IXAudio2SourceVoice)
-        }
-
-        waveFile := FileRead(wavFileName, "RAW")
-
-        if !root_tag_to_offset := get_tag_to_offset_map(0, waveFile.Size)
-            return
-
-        if !idk_tag_to_offset := get_tag_to_offset_map(root_tag_to_offset["RIFF"].ofs + 0xc, waveFile.Size)
-            return
-
-        WAVEFORMAT_ofs := idk_tag_to_offset["fmt "].ofs + 0x8
-        data_ofs := idk_tag_to_offset["data"].ofs + 0x8
-        data_size := idk_tag_to_offset["data"].size
-
-        get_tag_to_offset_map(i, end) {
-            tag_to_offset := Map()
-            while (i + 8 <= end) { ; Ensure there's enough data for a chunk header
-                tag := StrGet(waveFile.Ptr + i, 4, "UTF-8") ; RIFFChunk::tag
-                size := NumGet(waveFile, i + 0x4, "Uint") ; RIFFChunk::size
-
-                ; Stop execution and return false if chunk size exceeds file bounds
-                if (i + 8 + size > end)
-                    return false
-
-                tag_to_offset[tag] := { ofs: i, size: size }
-                ; Align to next 2-byte or 4-byte boundary
-                i += size + 8
-                if (i & 1) ; 2-byte alignment
-                    i += 1
-            }
-            return tag_to_offset
-        }
-
-        ComCall(5, obj.IXAudio2, "Ptr*", &IXAudio2SourceVoice := 0, "Ptr", waveFile.Ptr + WAVEFORMAT_ofs, "int", 0, "float", 2.0, "Ptr", 0, "Ptr", 0, "Ptr", 0) ;CreateSourceVoice
-        XAUDIO2_BUFFER := Buffer(A_PtrSize * 2 + 0x1c, 0)
-        NumPut("Uint", 0x0040, XAUDIO2_BUFFER, 0x0) ;Flags=XAUDIO2_END_OF_STREAM
-        NumPut("Uint", data_size, XAUDIO2_BUFFER, 0x4) ;AudioBytes
-        NumPut("Ptr", waveFile.Ptr + data_ofs, XAUDIO2_BUFFER, 0x8) ;pAudioData
-        ComCall(21, IXAudio2SourceVoice, "Ptr", XAUDIO2_BUFFER, "Ptr", 0) ;SubmitSourceBuffer
-        ComCall(19, IXAudio2SourceVoice, "Uint", 0, "Uint", 0) ;Start
-        obj.someMap[IXAudio2SourceVoice] := waveFile
-    }
-
     ;============================================================================================
+
+    static isInternalString(image) => RegExMatch(image, 'i)^(icon!|icon\?|iconx|iconi)$')
+
+    static isInternalImage(image) => this.mImages.Has(image) && FileExist(this.mImages[image])
+
+    static isIconResourceFile(image) => RegExMatch(image, 'i)^(.+?\.(?:dll|exe|cpl))\|icon(\d+)$', &match) && FileExist(match[1]) ? [match[1], match[2]] : ''
+
+    static isImagePathOrHandle(image) => FileExist(image) || RegExMatch(image, 'i)^h(icon|bitmap).*\d+')
+
+    static isValidColor(color) => this.mAHKcolors.Has(color) || color ~= 'i)^(?:0x)?[0-9A-F]{1,6}$'
 
     static RGB_BGR(c) => ((c & 0xFF) << 16 | c & 0xFF00 | c >> 16)
 
-    ;============================================================================================
+    static DpiScale(value) => (value / (A_ScreenDPI / 96))
 
     static MapCI() => (m := Map(), m.CaseSense := false, m)
 }

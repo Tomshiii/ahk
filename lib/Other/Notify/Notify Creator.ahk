@@ -11,24 +11,24 @@
 /********************************************************************************************
  * Notify Creator - Explore all customization settings of the Notify class, create themes, generate ready-to-copy code snippets, and more.
  * @author Martin Chartier (XMCQCX)
- * @date 2025/01/02
- * @version 1.1.0
+ * @date 2025/03/16
+ * @version 1.2.0
  * @see {@link https://github.com/XMCQCX/NotifyClass-NotifyCreator GitHub}
  * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 AHK Forum}
  * @license MIT license
  * @credits
  * - JSON by thqby, HotKeyIt. {@link https://github.com/thqby/ahk2_lib/blob/master/JSON.ahk GitHub}
  * - GuiCtrlTips by just me. {@link https://github.com/AHK-just-me/AHKv2_GuiCtrlTips GitHub}
- * - LVGridColor by just me. {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=125259 GitHub}
+ * - LVGridColor by just me. {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=125259 AHK Forum}
  * - GuiButtonIcon by FanaticGuru. {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=115871 AHK Forum}
  * - YACS - Yet Another Color Selector by Komrad Toast. {@link https://github.com/tylerjcw/YACS GitHub}
  * - FontPicker by Maestrith, TheArkive (v2 conversion). {@link https://github.com/TheArkive/FontPicker_ahk2 GitHub}
  * - ColorPicker by Maestrith, TheArkive (v2 conversion). {@link https://github.com/TheArkive/ColorPicker_ahk2 GitHub}
  * - GetFontNames by teadrinker. {@link https://www.autohotkey.com/boards/viewtopic.php?t=66000 AHK Forum}
- * - DisplayCheck by the-Automator. {@link https://www.the-automator.com/downloads/maestrith-notify-class-v2/ the-automator.com}
+ * - DisplayCheck by the-Automator. {@link https://www.the-automator.com/downloads/maestrith-notify-class-v2 the-automator.com}
  * - MoveControls by Descolada. {@link https://github.com/Descolada/UIA-v2 GitHub}
  * - Control_GetFont by SKAN, swagfag.
- *   - {@link https://www.autohotkey.com/board/topic/66235-retrieving-the-fontname-and-fontsize-of-a-gui-control/ AHK Forum}
+ *   - {@link https://www.autohotkey.com/board/topic/66235-retrieving-the-fontname-and-fontsize-of-a-gui-control AHK Forum}
  *   - {@link https://www.autohotkey.com/boards/viewtopic.php?t=113540 AHK Forum}
 ********************************************************************************************/
 Class NotifyCreator {
@@ -36,7 +36,7 @@ Class NotifyCreator {
     static __New()
     {
         this.scriptName := 'Notify Creator'
-        this.scriptVersion := 'v1.1.0'
+        this.scriptVersion := 'v1.2.0'
         this.linkGitHubRepo := 'https://github.com/XMCQCX/NotifyClass-NotifyCreator'
         this.gMainTitle := this.scriptName ' - ' this.scriptVersion
         this.gRipTitle := 'ResIconsPicker - ' this.scriptName
@@ -67,7 +67,8 @@ Class NotifyCreator {
         this.debounceTimers := Map()
         this.arrStyle := ['Round', 'Edge']
         this.arrAli := ['Left', 'Right', 'Center']
-        this.arrPos := ['BR', 'BC', 'BL', 'TL', 'TC', 'TR', 'CT', 'CTL', 'CTR', 'Mouse']
+        this.arrPos := ['TL', 'TC', 'TR', 'CTL', 'CT', 'CTR', 'BL', 'BC', 'BR', 'Mouse']
+        this.arrBgImgPos := ['', 'Stretch', 'TL', 'TC', 'TR', 'CTL', 'CT', 'CTR', 'BL', 'BC', 'BR', 'ct Scale1.5', 'w50 hStretch', 'tr w20 h-1 ofstx-10 ofsty10']
         this.arrProg := ['', 1, 'h40 cGreen', 'w400']
         this.arrWstc := ['', 'bc=black wstc=black', 'bc=gray wstc=gray']
         this.arrDgc := [0, 1]
@@ -79,7 +80,7 @@ Class NotifyCreator {
         this.arrImage := this.MapToArray(Notify.mImages), this.arrImage.InsertAt(1, 'None')
         this.arrSound := this.MapToArray(Notify.mSounds), this.arrSound.InsertAt(1, 'None')
         this.arrBdrColors := this.MapToArray(Notify.mAHKcolors), this.arrBdrColors.InsertAt(1, 'Default')
-        this.arrAnimDur := this.CreateIncrementalArray(25, 25, 2500), this.arrAnimDur.InsertAt(1, 1)
+        this.arrAnimDur := this.CreateIncrementalArray(25, 25, Notify.arrAnimDurRange[2]), this.arrAnimDur.InsertAt(1, Notify.arrAnimDurRange[1])
         this.arrWstp := this.CreateIncrementalArray(1, 100, 255)
         this.arrAnimRoundShow := ['Fade']
         this.arrAnimRoundHide := ['None', 'Fade']
@@ -89,49 +90,43 @@ Class NotifyCreator {
         this.arrFontSizeRange := [1,250]
         this.arrDurationRange := [0,999]
         this.arrImageDimRange := [-1,999]
-        this.arrWidthWrange := [1,999]
-
-        this.strOpts := ''
-        for key, value in Notify.mOrig_mDefaults
-            if !RegExMatch(key, 'i)^(tc|mc|bc|bdr|image)$')
-                this.strOpts .= key '=' value ' '
-
-        this.strOpts := StrReplace(this.strOpts, 'maxw=', 'maxw=425')
-        this.strOpts := StrReplace(this.strOpts, 'width=', 'width=0')
+        this.arrGuiDimRange := [1,999]
 
         ;==============================================
+        this.arrOptsBasic := ['tc', 'mc', 'bc', 'tf', 'mf', 'bdr']
 
         this.arrOpts := [
             ['Monitor', 'mon'],
             ['Position', 'pos'],
             ['Duration', 'dur'],
             ['Style', 'style'],
-            ['Image width', 'iw'],
-            ['Image height', 'ih'],
+            ['Title size', 'ts'],
             ['Title color', 'tc'],
             ['Title font', 'tf'],
-            ['Title size', 'ts'],
             ['Title font options', 'tfo'],
             ['Title alignment', 'tali'],
+            ['Message size', 'ms'],
             ['Message color', 'mc'],
             ['Message font', 'mf'],
-            ['Message size', 'ms'],
             ['Message font options', 'mfo'],
             ['Message alignment', 'mali'],
             ['Background color', 'bc'],
             ['Border', 'bdr'],
-            ['Padding/Margins', 'pad'],
-            ['Width' ,'width'],
-            ['Maximum width', 'maxW'],
-            ['Image', 'image'],
             ['Sound', 'sound'],
+            ['Image', 'image'],
+            ['Image width', 'iw'],
+            ['Image height', 'ih'],
+            ['Background image', 'bgImg'],
+            ['Background image position', 'bgImgPos'],
+            ['Padding/Margins', 'pad'],
+            ['Maximum width', 'maxW'],
+            ['Width' ,'width'],
+            ['Minimum height' ,'minH'],
+            ['Progress bar', 'prog'],
             ['Tag', 'tag'],
-            ['Destroy GUIs', 'dg'],
             ['Destroy GUI click', 'dgc'],
-            ['Progress bar', 'prog']
+            ['Destroy GUIs', 'dg'],
         ]
-
-        this.arrOptsBasic := ['tc', 'mc', 'bc', 'tf', 'mf', 'bdr']
 
         ;==============================================
 
@@ -222,20 +217,12 @@ Class NotifyCreator {
             'C:\Windows\System32\xwizards.dll'
         ]
 
-        this.strImageExtfilter := 'Image ('
-
-        for value in Notify.arrImageExt
-            this.strImageExtfilter .= '*.' value '; '
-
-        this.strImageExtfilter := SubStr(this.strImageExtfilter, 1, -2) . ')'
-
         ;==============================================
 
         for value in ['mThemes', 'mOrig_mThemes'] {
             for theme, mtheme in Notify.%value% {
                 if (value == 'mThemes') {
                     Notify.SetDefault_MiscValues(mTheme)
-                    Notify.ParseBorderOption(mTheme)
 
                     if !mTheme.Has('bdr') || RegExMatch(mTheme['bdr'], 'i)^(default|1|0)$')
                         mTheme['bdrC'] := 'default'
@@ -250,9 +237,11 @@ Class NotifyCreator {
                     if mTheme.Has(value) && !this.HasVal(mTheme[value], this.arr%value%)
                         this.arr%value%.Push(mTheme[value])
 
-                for value in ['show', 'hide']
-                    if mtheme.Has(value)
-                        mtheme.Delete(value)
+                if mTheme.Has('bgImg') && !this.HasVal(mTheme['bgImg'], this.arrImage)
+                    this.arrImage.Push(mTheme['bgImg'])
+
+                if mTheme.Has('bgImgPos') && !this.HasVal(mTheme['bgImgPos'], this.arrBgImgPos)
+                    this.arrBgImgPos.Push(mTheme['bgImgPos'])
             }
         }
 
@@ -262,6 +251,15 @@ Class NotifyCreator {
             for item in this.arr%value%
                 this.arr%value%Notify.Push(item)
         }
+
+        this.strImageExtfilter := 'Image ('
+
+        for value in Notify.arrImageExt
+            this.strImageExtfilter .= '*.' value '; '
+
+        this.strImageExtfilter := SubStr(this.strImageExtfilter, 1, -2) . ')'
+
+        ;==============================================
 
         this.mAnimDefStyle := this.MapCI()
 
@@ -274,11 +272,6 @@ Class NotifyCreator {
                 this.CreateAnimationString(mKeyRef)
             }
         }
-
-        this.mPadDefStyle := this.MapCI()
-
-        for style in this.arrStyle
-            Notify.SetPadDefault(this.mPadDefStyle[style] := this.MapCI().Set('style', style))
 
         ;==============================================
 
@@ -319,6 +312,7 @@ Class NotifyCreator {
             'buymeacoffee', 'HICON:*' LoadPicture('Icons.dll', 'Icon48 w32', &imageType),
             'reset', 'HICON:*' LoadPicture('Icons.dll', 'Icon30 w32', &imageType),
             'musicNote', 'HICON:*' LoadPicture('Icons.dll', 'Icon34 w32', &imageType),
+            'stopSound', 'HICON:*' LoadPicture('Icons.dll', 'Icon51 w32', &imageType),
             'destroy', 'HICON:*' LoadPicture('Icons.dll', 'Icon37 w64', &imageType),
             'test', 'HICON:*' LoadPicture('Icons.dll', 'Icon36 w64', &imageType),
             'delete', 'HICON:*' LoadPicture('Icons.dll', 'Icon19 w64', &imageType),
@@ -328,7 +322,7 @@ Class NotifyCreator {
             'transIcon', 'HICON:*' LoadPicture('Icons.dll', 'Icon38 w32', &imageType),
             'monInfo', 'HICON:*' LoadPicture('Icons.dll', 'Icon40 w32', &imageType),
             'gitHub', 'HICON:*' LoadPicture('Icons.dll', 'Icon28 w32', &imageType),
-            'iSmall', 'HICON:*' LoadPicture('Icons.dll', 'Icon20 w24', &imageType),
+            'iSmall', 'HICON:*' LoadPicture('Icons.dll', 'Icon49 w24', &imageType),
             'removeList', 'HICON:*' LoadPicture('Icons.dll', 'Icon41 w32', &imageType),
             'unCheckAll', 'HICON:*' LoadPicture('Icons.dll', 'Icon13 w32', &imageType),
             'checkAll', 'HICON:*' LoadPicture('Icons.dll', 'Icon14 w32', &imageType),
@@ -349,10 +343,20 @@ Class NotifyCreator {
             'clipBoard', 'HICON:*' LoadPicture('Icons.dll', 'Icon24 w64', &imageType),
             'resIconsPicker', 'HICON:*' LoadPicture('Icons.dll', 'Icon42 w' this.mUser['trayMenuIconSize'], &imageType),
             'tMenuTrans', 'HICON:*' LoadPicture('Icons.dll', 'Icon16 w' this.mUser['trayMenuIconSize'], &imageType),
+            'dark-gradient', 'HICON:*' LoadPicture('Icons.dll', 'Icon50', &imageType),
         )
 
         for value in ['main', 'loading', 'exit', 'reload', 'about', 'settings', 'edit', 'folder', 'tools']
             this.mIcons[value] := 'HICON:*' LoadPicture('Icons.dll', 'Icon' A_Index ' w' this.mUser['trayMenuIconSize'], &imageType)
+
+        ;==============================================
+
+        this.strOpts := ''
+        for key, value in Notify.mOrig_mDefaults
+            if !RegExMatch(key, 'i)^(tc|mc|bc|bdr|image|maxw|bgImg)$')
+                this.strOpts .= key '=' value ' '
+
+        this.strOpts .= 'maxw=425 bgImg=' this.mIcons['dark-gradient'] ' '
 
         ;==============================================
 
@@ -388,7 +392,7 @@ Class NotifyCreator {
             this.mUser['a' value 'History'] := Array()
 
             for item in this.arr%value%
-                if item != 'None' && !this.HasVal(item, this.arr%value%Notify)
+                if item != 'none' && !this.HasVal(item, this.arr%value%Notify)
                     this.mUser['a' value 'History'].Push(item)
         }
 
@@ -446,7 +450,7 @@ Class NotifyCreator {
         this.gMain.Tips := GuiCtrlTips(this.gMain)
         this.gMain.Tips.SetDelayTime('AUTOPOP', 30000)
 
-        gbHeightText := 140
+        gbHeightText := 136
         gbWidthText := 495
         editWidth := 440
         btnSize := 30
@@ -463,7 +467,7 @@ Class NotifyCreator {
 
         ;===== DISPLAY ===============================
 
-        gbHeightDp := 120
+        gbHeightDp := 117
         gbWitdhDp := 150
         this.gMain.gb_display := this.gMain.Add('GroupBox', 'xm ym+' gbHeightText + this.gMain.MarginY ' w' gbWitdhDp ' h' gbHeightDp ' cBlack', 'Display')
         this.gMain.txt_mon := this.gMain.Add('Text', 'xp+8 yp+28 Section +0x0100', 'Monitor:')
@@ -475,6 +479,7 @@ Class NotifyCreator {
         this.gMain.edit_dur := this.gMain.Add('Edit', 'xp+58 yp-2 w50 vdur Number Limit' StrLen(this.arrDurationRange[2]))
         this.gMain.edit_dur.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_dur_Change'))
         this.gMain.Add('UpDown', 'Range' this.arrDurationRange[1] '-' this.arrDurationRange[2])
+        this.gMain.pic_display := this.gMain.Add('Picture', 'xs+65 ys-27 w15 h15 +0x0100', this.mIcons['iSmall'])
         this.gMain.btn_displayReset := this.gMain.Add('Button', 'xs+' gbWitdhDp - 40 ' ys-30 w22 h22')
         this.gMain.btn_displayReset.OnEvent('Click', this.gMain_btn_displayReset_Click.Bind(this))
         GuiButtonIcon(this.gMain.btn_displayReset, this.mIcons['reset'], 1, 's12')
@@ -482,7 +487,7 @@ Class NotifyCreator {
 
         ;===== IMAGE ===============================
 
-        gbHeightImage := 120
+        gbHeightImage := 117
         gbWidthImage := gbWidthText - gbWitdhDp - this.gMain.MarginX
         this.gMain.gb_image := this.gMain.Add('GroupBox',  'xm+' gbWitdhDp + this.gMain.MarginX
         ' ym+' gbHeightText + this.gMain.MarginY ' w' gbWidthImage ' h' gbHeightImage ' cBlack', 'Image')
@@ -508,16 +513,39 @@ Class NotifyCreator {
         this.gMain.btn_removeImage := this.gMain.Add('Button', 'x+5 ys w' btnSize ' h' btnSize)
         this.gMain.btn_removeImage.OnEvent('Click', this.gList_Show.Bind(this, 'image'))
         GuiButtonIcon(this.gMain.btn_removeImage, this.mIcons['removeList'], 1, 's20')
+        this.gMain.pic_imageInfo := this.gMain.Add('Picture', 'xs+55 ys-54 w15 h15 +0x0100', this.mIcons['iSmall'])
         this.gMain.btn_imageReset := this.gMain.Add('Button', 'xs+' gbWidthImage - 40 ' ys-58 w22 h22')
-        this.gMain.btn_imageReset.OnEvent('Click', this.gMain_btn_imageReset_Click.Bind(this))
+        this.gMain.btn_imageReset.OnEvent('Click', this.gMain_btn_imageReset_Click.Bind(this, 'image'))
         GuiButtonIcon(this.gMain.btn_imageReset, this.mIcons['reset'], 1, 's12')
         this.gMain.cb_imageLock := this.gMain.Add('CheckBox', 'xs+' gbWidthImage - 60 ' ys-54 w15 h15')
 
+        ;===== BACKGROUND IMAGE ====================
+
+        gbWitdhBgImg := 495
+        gbHeightBgImg := 88
+        this.gMain.gb_bgImg := this.gMain.Add('GroupBox', 'xm ym+' gbHeightText + gbHeightDp + this.gMain.MarginY*2
+        ' w' gbWitdhBgImg ' h' gbHeightBgImg ' cBlack', 'Background Image')
+        this.gMain.ddl_bgImg := this.gMain.Add('DropDownList', 'xp+8 yp+25 w337 Section vbgImg', this.arrImage)
+        this.gMain.ddl_bgImg.OnEvent('Change',  this.DebounceCall.Bind(this, 125, 'gMain_ddl_image_Change', 'bgImg'))
+        this.gMain.txt_bgImgPos := this.gMain.Add('Text', 'xs +0x0100', 'Position:')
+        this.gMain.cbb_bgImgPos := this.gMain.Add('ComboBox', 'xs+55 yp-1 w173 vbgImgPos', this.arrBgImgPos)
+        this.gMain.btn_browseBgImg := this.gMain.Add('Button', 'xs+342 ys-3 w' btnSize ' h' btnSize, '...')
+        this.gMain.btn_browseBgImg.OnEvent('Click', this.gMain_btn_browse.Bind(this, 'bgImg'))
+        this.gMain.btn_copyBgImg := this.gMain.Add('Button', 'x+5 yp w' btnSize ' h' btnSize)
+        this.gMain.btn_copyBgImg.OnEvent('Click', this.CopyToClipboard.Bind(this, 'bgImg'))
+        GuiButtonIcon(this.gMain.btn_copyBgImg, this.mIcons['clipBoard'], 1, 's20')
+        this.gMain.pic_bgImg := this.gMain.Add('Picture', 'x+m yp+2 w50 h50 +Border')
+        this.gMain.pic_bgImgInfo := this.gMain.Add('Picture', 'xs+140 ys-23 w15 h15 +0x0100', this.mIcons['iSmall'])
+        this.gMain.btn_bgImgReset := this.gMain.Add('Button', 'xs+' gbWitdhBgImg - 40 ' ys-27 w22 h22')
+        this.gMain.btn_bgImgReset.OnEvent('Click', this.gMain_btn_imageReset_Click.Bind(this, 'bgImg'))
+        GuiButtonIcon(this.gMain.btn_bgImgReset, this.mIcons['reset'], 1, 's12')
+        this.gMain.cb_bgImgLock := this.gMain.Add('CheckBox', 'xs+' gbWitdhBgImg - 60 ' ys-23 w15 h15')
+
         ;===== SOUND ===============================
 
-        gbHeightSound := 65
+        gbHeightSound := 61
         gbWitdhSound := 495
-        this.gMain.gb_sound := this.gMain.Add('GroupBox', 'xm ym+' gbHeightText + gbHeightDp + this.gMain.MarginY*2
+        this.gMain.gb_sound := this.gMain.Add('GroupBox', 'xm ym+' gbHeightText + gbHeightDp + gbHeightBgImg + this.gMain.MarginY*3
         ' w' gbWitdhSound ' h' gbHeightSound ' cBlack', 'Sound')
         this.gMain.ddl_sound := this.gMain.Add('DropDownList', 'xp+8 yp+25 w337 Section vsound', this.arrSound)
         this.gMain.ddl_sound.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_ddl_sound_Change'))
@@ -537,17 +565,52 @@ Class NotifyCreator {
         GuiButtonIcon(this.gMain.btn_soundReset, this.mIcons['reset'], 1, 's12')
         this.gMain.cb_soundLock := this.gMain.Add('CheckBox', 'xs+' gbWitdhSound - 60 ' ys-23 w15 h15')
 
+        ;===== ANIMATION =============================
+
+        gbHeightAnim := 89
+        gbwitdhAnim := 240
+        this.gMain.gb_animation := this.gMain.Add('GroupBox', 'xm ym+' gbHeightText + gbHeightDp + gbHeightBgImg + gbHeightSound + this.gMain.MarginY*4
+        ' w' gbwitdhAnim ' h' gbHeightAnim ' cBlack', 'Animation')
+        this.gMain.Add('Text', 'xp+10 yp+30 Section', 'Show:')
+        this.gMain.ddl_show := this.gMain.Add('DropDownList', 'xp+40 yp-2 w120 vshowName', this.arrAnimEdge)
+        this.gMain.ddl_show.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_ddl_anim', 'show'))
+        this.gMain.ddl_showDur := this.gMain.Add('DropDownList', 'x+5 w55 vshowDur', this.arrAnimDur)
+        this.gMain.Add('Text', 'xs', 'Hide:')
+        this.gMain.ddl_hide := this.gMain.Add('DropDownList', 'xp+40 yp-2 w120 vhideName', this.arrAnimEdge)
+        this.gMain.ddl_hide.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_ddl_anim', 'hide'))
+        this.gMain.ddl_hideDur := this.gMain.Add('DropDownList', 'x+5 w55 vhideDur', this.arrAnimDur)
+        this.gMain.pic_animInfo := this.gMain.Add('Picture', 'xs+80 ys-29 w15 h15 +0x0100', this.mIcons['iSmall'])
+        this.gMain.btn_animReset := this.gMain.Add('Button', 'xs+' gbwitdhAnim - 42 ' ys-33 w22 h22')
+        this.gMain.btn_animReset.OnEvent('Click', this.gMain_btn_animReset.Bind(this))
+        GuiButtonIcon(this.gMain.btn_animReset, this.mIcons['reset'], 1, 's12')
+
+        ;===== EDGE STYLE ONLY =======================
+
+        gbHeighteso := 89
+        gbWidtheso := gbWidthText - gbwitdhAnim - this.gMain.MarginX
+        this.gMain.gb_eso := this.gMain.Add('GroupBox',  'xm+' gbwitdhAnim + this.gMain.MarginX
+        ' ym+' gbHeightText + gbHeightDp + gbHeightBgImg + gbHeightSound + this.gMain.MarginY*4 ' w' gbWidtheso ' h' gbHeighteso ' cBlack', 'Edge style only')
+        this.gMain.cb_txtWstc := this.gMain.Add('Text', 'xp+8 yp+30 Section +0x0100', 'WSTC:')
+        this.gMain.cbb_wstc := this.gMain.Add('ComboBox', 'xs+50 yp-2 w173 vwstc', this.arrWstc)
+        this.gMain.cb_wstp := this.gMain.Add('CheckBox', 'xs', ' WinSetTransparent:')
+        this.gMain.cb_wstp.OnEvent('Click', this.gMain_cb_wstp_Click.Bind(this))
+        this.gMain.ddl_wstp := this.gMain.Add('DropDownList', 'xs+149 yp-2 w50 vwstp', this.arrWstp)
+        this.gMain.btn_esoReset := this.gMain.Add('Button', 'xs+' gbWidtheso - 40 ' ys-33 w22 h22')
+        this.gMain.btn_esoReset.OnEvent('Click', this.gMain_btn_esoReset_Click.Bind(this))
+        GuiButtonIcon(this.gMain.btn_esoReset, this.mIcons['reset'], 1, 's12')
+        this.gMain.cb_esoLock := this.gMain.Add('CheckBox', 'xs+' gbWidtheso - 60 ' ys-29 w15 h15')
+
         ;===== THEME - STYLE - RESET ALL =============
 
         gbHeighTS := 55
-        gbWidthTS := 495
+        gbWidthTS := 520
         this.gMain.gb_theme := this.gMain.Add('GroupBox',  'xm+' gbWidthText + this.gMain.MarginX ' ym w' gbWidthTS ' h' gbHeighTS ' cBlack', 'Theme')
-        this.gMain.ddl_theme := this.gMain.Add('DropDownList', 'xp+8 yp+21 w165 Section vtheme', this.arrTheme)
+        this.gMain.ddl_theme := this.gMain.Add('DropDownList', 'xp+8 yp+21 w180 Section vtheme', this.arrTheme)
         this.gMain.ddl_theme.OnEvent('Change', this.DebounceCall.Bind(this, 175, 'gMain_ShowTheme', 'theme'))
-        this.gMain.cb_styleLock := this.gMain.Add('CheckBox', 'x+8 yp+2', ' Style:')
-        this.gMain.ddl_style := this.gMain.Add('DropDownList', 'x+1 yp-2 w65 vstyle', this.arrStyle)
+        this.gMain.cb_styleLock := this.gMain.Add('CheckBox', 'x+14 yp+3', ' Style:')
+        this.gMain.ddl_style := this.gMain.Add('DropDownList', 'x+1 yp-4 w65 vstyle', this.arrStyle)
         this.gMain.ddl_style.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_ddl_style_Change', 'style'))
-        this.gMain.btn_copyTheme := this.gMain.Add('Button', 'x+8 yp-3 w' btnSize ' h' btnSize)
+        this.gMain.btn_copyTheme := this.gMain.Add('Button', 'x+14 yp-3 w' btnSize ' h' btnSize)
         this.gMain.btn_copyTheme.OnEvent('Click', this.CopyToClipboard.Bind(this, 'theme'))
         GuiButtonIcon(this.gMain.btn_copyTheme, this.mIcons['clipBoard'], 1, 's20')
         this.gMain.btn_editTheme := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
@@ -562,20 +625,17 @@ Class NotifyCreator {
         this.gMain.btn_themeReset := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
         this.gMain.btn_themeReset.OnEvent('Click', this.gMain_SetAllValues.Bind(this, 'btn_themeReset'))
         GuiButtonIcon(this.gMain.btn_themeReset, this.mIcons['resetTheme'], 1, 's20')
-        this.gMain.btn_defaultAll := this.gMain.Add('Button', 'x+30 w' btnSize ' h' btnSize)
+        this.gMain.btn_defaultAll := this.gMain.Add('Button', 'xm+' gbWidthText + gbWidthTS + 38 ' yp w' btnSize ' h' btnSize)
         this.gMain.btn_defaultAll.OnEvent('Click', this.gMain_SetAllValues.Bind(this, 'btn_default_reset'))
         GuiButtonIcon(this.gMain.btn_defaultAll, this.mIcons['reset'], 1, 's20')
         this.gMain.btn_settings := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
         this.gMain.btn_settings.OnEvent('Click', this.gSettings_Show.Bind(this))
         GuiButtonIcon(this.gMain.btn_settings, this.mIcons['btn_settings'], 1, 's20')
-        this.gMain.btn_about := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
-        this.gMain.btn_about.OnEvent('Click', this.gAbout_Show.Bind(this))
-        GuiButtonIcon(this.gMain.btn_about, this.mIcons['btn_about'], 1, 's20')
 
         ;===== TITLE =================================
 
         gbWidthTM := 302
-        gbHeightTM := 278
+        gbHeightTM := 273
         this.gMain.gb_title := this.gMain.Add('GroupBox',  'xm+' gbWidthText + this.gMain.MarginX
         ' ym+' gbHeighTS + this.gMain.MarginY ' w' gbWidthTM ' h' gbHeightTM ' cBlack', 'Title')
         this.gMain.txt_tc := this.gMain.Add('Text', 'xp+10 yp+25 w280 h120 Section Border -Wrap')
@@ -664,108 +724,11 @@ Class NotifyCreator {
         GuiButtonIcon(this.gMain.btn_msgReset, this.mIcons['reset'], 1, 's12')
         this.gMain.cb_mLock := this.gMain.Add('CheckBox', 'xs+' gbWidthTM - 63 ' w15 h15 ys-23')
 
-        ;===== ANIMATION =============================
-
-        gbHeightAnim := 90
-        gbwitdhAnim := 240
-        this.gMain.gb_animation := this.gMain.Add('GroupBox', 'xm ym+' gbHeighTS + gbHeightTM + this.gMain.MarginY*2
-        ' w' gbwitdhAnim ' h' gbHeightAnim ' cBlack', 'Animation')
-        this.gMain.Add('Text', 'xp+10 yp+30 Section', 'Show:')
-        this.gMain.ddl_show := this.gMain.Add('DropDownList', 'xp+40 yp-2 w120 vshowName', this.arrAnimEdge)
-        this.gMain.ddl_show.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_ddl_anim', 'show'))
-        this.gMain.ddl_showDur := this.gMain.Add('DropDownList', 'x+5 w55 vshowDur', this.arrAnimDur)
-        this.gMain.Add('Text', 'xs', 'Hide:')
-        this.gMain.ddl_hide := this.gMain.Add('DropDownList', 'xp+40 yp-2 w120 vhideName', this.arrAnimEdge)
-        this.gMain.ddl_hide.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_ddl_anim', 'hide'))
-        this.gMain.ddl_hideDur := this.gMain.Add('DropDownList', 'x+5 w55 vhideDur', this.arrAnimDur)
-        this.gMain.pic_animInfo := this.gMain.Add('Picture', 'xs+80 ys-29 w15 h15 +0x0100', this.mIcons['iSmall'])
-        this.gMain.btn_animReset := this.gMain.Add('Button', 'xs+' gbwitdhAnim - 40 ' ys-33 w22 h22')
-        this.gMain.btn_animReset.OnEvent('Click', this.gMain_btn_animReset.Bind(this))
-        GuiButtonIcon(this.gMain.btn_animReset, this.mIcons['reset'], 1, 's12')
-
-        ;===== EDGE STYLE ONLY =======================
-
-        gbHeighteso := 90
-        gbWidtheso := gbWidthText - gbwitdhAnim - this.gMain.MarginX
-        this.gMain.gb_eso := this.gMain.Add('GroupBox',  'xm+' gbwitdhAnim + this.gMain.MarginX
-        ' ym+' gbHeighTS + gbHeightTM + this.gMain.MarginY*2 ' w' gbWidtheso ' h' gbHeighteso ' cBlack', 'Edge style only')
-        this.gMain.cb_txtWstc := this.gMain.Add('Text', 'xp+8 yp+30 Section +0x0100', 'WSTC:')
-        this.gMain.cbb_wstc := this.gMain.Add('ComboBox', 'xs+50 yp-2 w173 vwstc', this.arrWstc)
-        this.gMain.cb_wstp := this.gMain.Add('CheckBox', 'xs', ' WinSetTransparent:')
-        this.gMain.cb_wstp.OnEvent('Click', this.gMain_cb_wstp_Click.Bind(this))
-        this.gMain.ddl_wstp := this.gMain.Add('DropDownList', 'xs+149 yp-2 w50 vwstp', this.arrWstp)
-        this.gMain.btn_esoReset := this.gMain.Add('Button', 'xs+' gbWidtheso - 40 ' ys-33 w22 h22')
-        this.gMain.btn_esoReset.OnEvent('Click', this.gMain_btn_esoReset_Click.Bind(this))
-        GuiButtonIcon(this.gMain.btn_esoReset, this.mIcons['reset'], 1, 's12')
-        this.gMain.cb_esoLock := this.gMain.Add('CheckBox', 'xs+' gbWidtheso - 60 ' ys-29 w15 h15')
-
-        ;===== MISC ==================================
-
-        gbHeighMisc := 175
-        gbWidthMisc := 185
-        this.gMain.gb_misc := this.gMain.Add('GroupBox',  'xm+' gbWidthText + this.gMain.Marginx
-        ' ym+' gbHeighTS + gbHeightTM + this.gMain.MarginY*2 ' w' gbWidthMisc ' h' gbHeighMisc ' cBlack', 'Misc.')
-        this.gMain.cb_width := this.gMain.Add('CheckBox', 'xp+8 yp+28 Section', ' Width:')
-        this.gMain.cb_width.OnEvent('Click', this.gMain_cb_maxW_Click.Bind(this, 'width'))
-        this.gMain.edit_width := this.gMain.Add('Edit', 'xs+95 yp-2 w50 vwidth Number Limit' StrLen(this.arrWidthWrange[2]))
-        this.gMain.edit_width.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_Width_Change', 'width'))
-        this.gMain.Add('UpDown', 'Range' this.arrWidthWrange[1] '-' this.arrWidthWrange[2])
-        this.gMain.cb_maxW := this.gMain.Add('CheckBox', 'xs', ' Max. Width:')
-        this.gMain.cb_maxW.OnEvent('Click', this.gMain_cb_maxW_Click.Bind(this, 'maxW'))
-        this.gMain.edit_maxW := this.gMain.Add('Edit', 'xs+95 yp-2 w50 vmaxW Number Limit' StrLen(this.arrWidthWrange[2]))
-        this.gMain.edit_maxW.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_Width_Change', 'maxW'))
-        this.gMain.Add('UpDown', 'Range' this.arrWidthWrange[1] '-' this.arrWidthWrange[2])
-        this.gMain.txt_tag := this.gMain.Add('Text', 'xs +0x0100', 'Tag:')
-        this.gMain.edit_tag := this.gMain.Add('Edit', 'xs+40 yp-2 w125 vtag')
-        this.gMain.txt_prog := this.gMain.Add('Text', 'xs +0x0100', 'Prog:')
-        this.gMain.cbb_prog := this.gMain.Add('ComboBox', 'xs+40 yp-2 w125 vprog', this.arrProg)
-        this.gMain.txt_dgc := this.gMain.Add('Text', 'xs +0x0100', 'DGC:')
-        this.gMain.ddl_dgc := this.gMain.Add('DropDownList', 'xs+40 yp-2 w40 vdgc', this.arrDgc)
-        this.gMain.txt_dg := this.gMain.Add('Text', 'x+m yp+2 +0x0100', 'DG:')
-        this.gMain.ddl_dg := this.gMain.Add('DropDownList', 'xp+32 yp-2 w40 vdg', this.arrDg)
-        this.gMain.btn_miscReset := this.gMain.Add('Button', 'xs+' gbWidthMisc - 40 ' ys-30 w22 h22')
-        this.gMain.btn_miscReset.OnEvent('Click', this.gMain_btn_miscReset.Bind(this))
-        GuiButtonIcon(this.gMain.btn_miscReset, this.mIcons['reset'], 1, 's12')
-        this.gMain.cb_miscLock := this.gMain.Add('CheckBox', 'xs+' gbWidthMisc - 60 ' ys-26 w15 h15')
-
-        ;===== PADDING ===============================
-
-        gbHeightPad := 120
-        gbWidthPad := 200
-        this.gMain.gb_padding := this.gMain.Add('GroupBox',  'xm+' gbWidthText + gbWidthMisc + this.gMain.MarginX*2
-        ' ym+' gbHeighTS + gbHeightTM + this.gMain.MarginY*2 ' w' gbWidthPad ' h' gbHeightPad ' cBlack', 'Padding/Margins')
-        this.gMain.txt_padX := this.gMain.Add('Text', 'xp+8 yp+28 Section +0x0100', 'PadX:')
-        this.gMain.edit_padX := this.gMain.Add('Edit', 'xp+40 yp-2 w45 vpadX Number Limit' StrLen(Notify.arrPadRange[2]))
-        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
-        this.gMain.txt_gmX := this.gMain.Add('Text', 'xs +0x0100', 'GMX:')
-        this.gMain.edit_gmX := this.gMain.Add('Edit', 'xp+40 yp-2 w45 vgmX Number Limit' StrLen(Notify.arrPadRange[2]))
-        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
-        this.gMain.txt_spX := this.gMain.Add('Text', 'xs +0x0100', 'SpX:')
-        this.gMain.edit_spX := this.gMain.Add('Edit', 'xp+40 yp-2 w45 vspX Number Limit' StrLen(Notify.arrPadRange[2]))
-        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
-        this.gMain.txt_padY := this.gMain.Add('Text', 'xs+95 ys Section +0x0100', 'PadY:')
-        this.gMain.edit_padY := this.gMain.Add('Edit', 'xp+40 yp-2 w45 vpadY Number Limit' StrLen(Notify.arrPadRange[2]))
-        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
-        this.gMain.txt_gmY := this.gMain.Add('Text', 'xs +0x0100', 'GMY:')
-        this.gMain.edit_gmY := this.gMain.Add('Edit', 'xp+40 yp-2 w45 vgmY Number Limit' StrLen(Notify.arrPadRange[2]))
-        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
-        this.gMain.txt_spY := this.gMain.Add('Text', 'xs +0x0100', 'SpY:')
-        this.gMain.edit_spY := this.gMain.Add('Edit', 'xp+40 yp-2 w45 vspY Number Limit' StrLen(Notify.arrPadRange[2]))
-        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
-
-        for value in ['padX', 'padY', 'gmX', 'gmY', 'spX', 'spY']
-            this.gMain.edit_%value%.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_pad_Change', value))
-
-        this.gMain.btn_paddingReset := this.gMain.Add('Button', 'xs+65 ys-30 w22 h22')
-        this.gMain.btn_paddingReset.OnEvent('Click', this.gMain_btn_paddingReset_Click.Bind(this, Notify.mDefaults['theme']))
-        GuiButtonIcon(this.gMain.btn_paddingReset, this.mIcons['reset'], 1, 's12')
-        this.gMain.cb_paddingLock := this.gMain.Add('CheckBox', 'xs+45 w15 h15 ys-26')
-
         ;===== BACKGROUND ============================
 
         gbHeightBg := 65
-        gbWidthBg := 205
-        this.gMain.gb_bg := this.gMain.Add('GroupBox',  'xm+' gbWidthText + gbWidthMisc + gbWidthPad + this.gMain.MarginX*3
+        gbWidthBg := 202
+        this.gMain.gb_bg := this.gMain.Add('GroupBox',  'xm+' gbWidthText + this.gMain.Marginx
         ' ym+' gbHeighTS + gbHeightTM + this.gMain.MarginY*2 ' w' gbWidthBg ' h' gbHeightBg ' cBlack', 'Background')
         this.gMain.cbb_bc := this.gMain.Add('ComboBox', 'xp+28 yp+28 w95 vbc Section', this.arrAhkColors)
         this.gMain.cbb_bc.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_cbb_color_Change', 'bc'))
@@ -782,8 +745,8 @@ Class NotifyCreator {
         ;===== BORDER ================================
 
         gbHeightBdr := 95
-        gbWidthBdr := 205
-        this.gMain.gb_bdr := this.gMain.Add('GroupBox',  'xm+' gbWidthText + gbWidthMisc + gbWidthPad + this.gMain.MarginX*3
+        gbWidthBdr := 202
+        this.gMain.gb_bdr := this.gMain.Add('GroupBox',  'xm+' gbWidthText + this.gMain.Marginx
         ' ym+' gbHeighTS + gbHeightTM + gbHeightBg + this.gMain.MarginY*3 ' w' gbWidthBdr ' h' gbHeightBdr ' cBlack', 'Border')
         this.gMain.cb_bdr := this.gMain.Add('CheckBox', 'xp+8 yp+32 w15 h15 Section')
         this.gMain.cb_bdr.OnEvent('Click', this.gMain_cb_bdr_Click.Bind(this))
@@ -801,65 +764,210 @@ Class NotifyCreator {
         this.gMain.Add('UpDown', 'Range' Notify.arrBdrWrange[1] '-' Notify.arrBdrWrange[2])
         this.gMain.pic_bdrC := this.gMain.Add('Picture', 'x+8 h5 w60 +Border')
         this.gMain.pic_bdrInfo := this.gMain.Add('Picture', 'xs+60 ys-31 w15 h15 +0x0100', this.mIcons['iSmall'])
-        this.gMain.btn_bdrCreset := this.gMain.Add('Button', 'xs+' gbWidthBg - 43 ' ys-34 w22 h22')
+        this.gMain.btn_bdrCreset := this.gMain.Add('Button', 'xs+' gbWidthBg - 39 ' ys-34 w22 h22')
         this.gMain.btn_bdrCreset.OnEvent('Click', this.gMain_btn_bdrCreset_Click.Bind(this))
         GuiButtonIcon(this.gMain.btn_bdrCreset, this.mIcons['reset'], 1, 's12')
-        this.gMain.cb_bdrLock := this.gMain.Add('CheckBox', 'xs+' gbWidthBdr - 63 ' ys-30 w15 h15')
+        this.gMain.cb_bdrLock := this.gMain.Add('CheckBox', 'xs+' gbWidthBdr - 59 ' ys-30 w15 h15')
 
-        btnWidth := 90
-        btnHeight := 35
-        this.gMain.btn_copyResult := this.gMain.Add('Button',
-        'xm ym+' gbHeightText + gbHeightDp + gbHeightSound + gbHeighMisc + this.gMain.MarginY*3 - btnHeight ' w' btnWidth ' h' btnHeight, 'Result')
-        this.gMain.btn_copyResult.OnEvent('Click', this.CopyToClipboard.Bind(this, 'result'))
-        GuiButtonIcon(this.gMain.btn_copyResult, this.mIcons['clipBoard'], 1, 's20 a0 l10')
-        this.gMain.btn_monInfo := this.gMain.Add('Button', 'x+8 w' btnWidth ' h' btnHeight, 'Info')
-        this.gMain.btn_monInfo.OnEvent('Click', this.MonitorGetInfo.Bind(this))
-        GuiButtonIcon(this.gMain.btn_monInfo, this.mIcons['monInfo'], 1, 's20 a0 l10')
-        this.gMain.btn_gitHub := this.gMain.Add('Button', 'x+8 w' btnWidth ' h' btnHeight, 'GitHub')
-        this.gMain.btn_gitHub.OnEvent('Click', (*) => Run(this.linkGitHubRepo))
-        GuiButtonIcon(this.gMain.btn_gitHub, this.mIcons['gitHub'], 1, 's20 a0 l10')
-        this.gMain.btn_donate := this.gMain.Add('Button', 'x+8 w' btnWidth ' h' btnHeight, 'Donate')
-        this.gMain.btn_donate.OnEvent('Click', (*) => Run('https://buymeacoffee.com/xmcqcx'))
-        GuiButtonIcon(this.gMain.btn_donate, this.mIcons['buymeacoffee'], 1, 's20 a0 l10')
+        ;===== PADDING ===============================
+
+        gbHeightPad := 150
+        gbWidthPad := 205
+        this.gMain.gb_padding := this.gMain.Add('GroupBox',  'xm+' gbWidthText + gbWidthBg + this.gMain.MarginX*2
+        ' ym+' gbHeighTS + gbHeightTM + this.gMain.MarginY*2 ' w' gbWidthPad ' h' gbHeightPad ' cBlack', 'Padding/Margins')
+        this.gMain.txt_padX := this.gMain.Add('Text', 'xp+8 yp+28 Section +0x0100', 'PadX:')
+        this.gMain.edit_padX := this.gMain.Add('Edit', 'xp+40 yp-2 w50 vpadX Number Limit' StrLen(Notify.arrPadXYrange[2]))
+        this.gMain.Add('UpDown', 'Range' Notify.arrPadXYrange[1] '-' Notify.arrPadXYrange[2])
+        this.gMain.txt_gmT := this.gMain.Add('Text', 'xs +0x0100', 'GmT:')
+        this.gMain.edit_gmT := this.gMain.Add('Edit', 'xp+40 yp-2 w50 vgmT Number Limit' StrLen(Notify.arrPadRange[2]))
+        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
+        this.gMain.txt_gmL := this.gMain.Add('Text', 'xs +0x0100', 'GmL:')
+        this.gMain.edit_gmL := this.gMain.Add('Edit', 'xp+40 yp-2 w50 vgmL Number Limit' StrLen(Notify.arrPadRange[2]))
+        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
+        this.gMain.txt_spX := this.gMain.Add('Text', 'xs +0x0100', 'SpX:')
+        this.gMain.edit_spX := this.gMain.Add('Edit', 'xp+40 yp-2 w50 vspX Number Limit' StrLen(Notify.arrPadRange[2]))
+        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
+        this.gMain.txt_padY := this.gMain.Add('Text', 'xs+95 ys Section +0x0100', 'PadY:')
+        this.gMain.edit_padY := this.gMain.Add('Edit', 'xp+40 yp-2 w50 vpadY Number Limit' StrLen(Notify.arrPadXYrange[2]))
+        this.gMain.Add('UpDown', 'Range' Notify.arrPadXYrange[1] '-' Notify.arrPadXYrange[2])
+        this.gMain.txt_gmB := this.gMain.Add('Text', 'xs +0x0100', 'GmB:')
+        this.gMain.edit_gmB := this.gMain.Add('Edit', 'xp+40 yp-2 w50 vgmB Number Limit' StrLen(Notify.arrPadRange[2]))
+        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
+        this.gMain.txt_gmR := this.gMain.Add('Text', 'xs +0x0100', 'GmR:')
+        this.gMain.edit_gmR := this.gMain.Add('Edit', 'xp+40 yp-2 w50 vgmR Number Limit' StrLen(Notify.arrPadRange[2]))
+        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
+        this.gMain.txt_spY := this.gMain.Add('Text', 'xs +0x0100', 'SpY:')
+        this.gMain.edit_spY := this.gMain.Add('Edit', 'xp+40 yp-2 w50 vspY Number Limit' StrLen(Notify.arrPadRange[2]))
+        this.gMain.Add('UpDown', 'Range' Notify.arrPadRange[1] '-' Notify.arrPadRange[2])
+
+        for value in ['padX', 'padY', 'gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY']
+            this.gMain.edit_%value%.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_pad_Change', value))
+
+        this.gMain.pic_padInfo := this.gMain.Add('Picture', 'xs+26 ys-26 w15 h15 +0x0100', this.mIcons['iSmall'])
+        this.gMain.btn_paddingReset := this.gMain.Add('Button', 'xs+70 ys-30 w22 h22')
+        this.gMain.btn_paddingReset.OnEvent('Click', this.gMain_btn_paddingReset_Click.Bind(this, Notify.mDefaults['theme']))
+        GuiButtonIcon(this.gMain.btn_paddingReset, this.mIcons['reset'], 1, 's12')
+        this.gMain.cb_paddingLock := this.gMain.Add('CheckBox', 'xs+50 w15 h15 ys-26')
+
+        ;===== MISC ==================================
+
+        gbHeighMisc := 205
+        gbWidthMisc := 185
+        this.gMain.gb_misc := this.gMain.Add('GroupBox',  'xm+' gbWidthText + gbWidthBg + gbWidthPad + this.gMain.MarginX*3
+        ' ym+' gbHeighTS + gbHeightTM + this.gMain.MarginY*2 ' w' gbWidthMisc ' h' gbHeighMisc ' cBlack', 'Misc.')
+        this.gMain.cb_maxW := this.gMain.Add('CheckBox', 'xp+8 yp+28 Section', ' Max. Width:')
+        this.gMain.cb_maxW.OnEvent('Click', this.gMain_cb_maxW_Click.Bind(this, 'maxW'))
+        this.gMain.edit_maxW := this.gMain.Add('Edit', 'xs+95 yp-2 w50 vmaxW Number Limit' StrLen(this.arrGuiDimRange[2]))
+        this.gMain.edit_maxW.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_GuiDim_Change', 'maxW'))
+        this.gMain.Add('UpDown', 'Range' this.arrGuiDimRange[1] '-' this.arrGuiDimRange[2])
+        this.gMain.cb_width := this.gMain.Add('CheckBox', 'xs', ' Width:')
+        this.gMain.cb_width.OnEvent('Click', this.gMain_cb_maxW_Click.Bind(this, 'width'))
+        this.gMain.edit_width := this.gMain.Add('Edit', 'xs+95 yp-2 w50 vwidth Number Limit' StrLen(this.arrGuiDimRange[2]))
+        this.gMain.edit_width.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_GuiDim_Change', 'width'))
+        this.gMain.Add('UpDown', 'Range' this.arrGuiDimRange[1] '-' this.arrGuiDimRange[2])
+        this.gMain.cb_minH := this.gMain.Add('CheckBox', 'xs', ' Min. Height:')
+        this.gMain.cb_minH.OnEvent('Click', this.gMain_cb_maxW_Click.Bind(this, 'minH'))
+        this.gMain.edit_minH := this.gMain.Add('Edit', 'xs+95 yp-2 w50 vminH Number Limit' StrLen(this.arrGuiDimRange[2]))
+        this.gMain.edit_minH.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_GuiDim_Change', 'minH'))
+        this.gMain.Add('UpDown', 'Range' this.arrGuiDimRange[1] '-' this.arrGuiDimRange[2])
+        this.gMain.txt_prog := this.gMain.Add('Text', 'xs +0x0100', 'Prog:')
+        this.gMain.cbb_prog := this.gMain.Add('ComboBox', 'xs+40 yp-2 w125 vprog', this.arrProg)
+        this.gMain.txt_tag := this.gMain.Add('Text', 'xs +0x0100', 'Tag:')
+        this.gMain.edit_tag := this.gMain.Add('Edit', 'xs+40 yp-2 w125 vtag')
+        this.gMain.txt_dgc := this.gMain.Add('Text', 'xs +0x0100', 'DGC:')
+        this.gMain.ddl_dgc := this.gMain.Add('DropDownList', 'xs+40 yp-2 w40 vdgc', this.arrDgc)
+        this.gMain.txt_dg := this.gMain.Add('Text', 'x+m yp+2 +0x0100', 'DG:')
+        this.gMain.ddl_dg := this.gMain.Add('DropDownList', 'xp+32 yp-2 w40 vdg', this.arrDg)
+        this.gMain.pic_miscInfo := this.gMain.Add('Picture', 'xs+50 ys-26 w15 h15 +0x0100', this.mIcons['iSmall'])
+        this.gMain.btn_miscReset := this.gMain.Add('Button', 'xs+' gbWidthMisc - 40 ' ys-30 w22 h22')
+        this.gMain.btn_miscReset.OnEvent('Click', this.gMain_btn_miscReset.Bind(this))
+        GuiButtonIcon(this.gMain.btn_miscReset, this.mIcons['reset'], 1, 's12')
+        this.gMain.cb_miscLock := this.gMain.Add('CheckBox', 'xs+' gbWidthMisc - 60 ' ys-26 w15 h15')
 
         ;===== RESULT ================================
 
-        gbWidthResult := 670
-        gbHeightResult := 110
-        this.gMain.gb_result := this.gMain.Add('GroupBox', 'xm ym+' gbHeightText + gbHeightDp + gbHeightSound + gbHeighMisc + this.gMain.MarginY*4
+        gbWidthResult := 708
+        gbHeightResult := 106
+        this.gMain.gb_result := this.gMain.Add('GroupBox', 'xm ym+' gbHeightText + gbHeightDp + gbHeightBgImg + gbHeightSound + gbHeightAnim + this.gMain.MarginY*5
         ' w' gbWidthResult ' h' gbHeightResult ' cBlack Section', 'Result')
-        this.gMain.edit_result := this.gMain.Add('Edit', 'xp+10 yp+25 w645 r4 vresult ReadOnly BackgroundWhite')
-        this.gMain.btn_test := this.gMain.Add('Button', 'xs+' gbWidthResult + this.gMain.MarginX ' ys+6 w105 h105', 'Test')
+        this.gMain.btn_copyResult := this.gMain.Add('Button', 'xp+8 yp+21 w58 h75', 'Copy')
+        this.gMain.btn_copyResult.OnEvent('Click', this.CopyToClipboard.Bind(this, 'result'))
+        this.gMain.btn_copyResult.SetFont('bold s9')
+        GuiButtonIcon(this.gMain.btn_copyResult, this.mIcons['clipBoard'], 1, 's35 a2 t15 l2')
+        this.gMain.edit_result := this.gMain.Add('Edit', 'x+7 yp+1 w625 r4 vresult ReadOnly BackgroundWhite')
+        this.gMain.btn_test := this.gMain.Add('Button', 'xs+' gbWidthResult + this.gMain.MarginX ' ys+9 w97 h97 Section', 'Test')
         this.gMain.btn_test.SetFont('bold')
         this.gMain.btn_test.OnEvent('Click', this.gMain_btn_test.Bind(this))
-        GuiButtonIcon(this.gMain.btn_test, this.mIcons['test'], 1, 's50 a2 t18 l1')
-        this.gMain.btn_destroyAll := this.gMain.Add('Button', 'x+m w105 h105', 'Destroy All')
+        GuiButtonIcon(this.gMain.btn_test, this.mIcons['test'], 1, 's45 a2 t18 l2')
+        this.gMain.btn_destroyAll := this.gMain.Add('Button', 'x+m w97 h97', 'Destroy All')
         this.gMain.btn_destroyAll.SetFont('bold')
         this.gMain.btn_destroyAll.OnEvent('Click', (*) => Notify.DestroyAll())
-        GuiButtonIcon(this.gMain.btn_destroyAll, this.mIcons['destroy'], 1, 's50 a2 t18 l1')
+        GuiButtonIcon(this.gMain.btn_destroyAll, this.mIcons['destroy'], 1, 's45 a2 t18 l2')
+
+        btnWidth := 90
+        btnHeight := 35
+        this.gMain.btn_monInfo := this.gMain.Add('Button', 'x+m ys+20 w' btnWidth ' h' btnHeight ' Section', 'Info')
+        this.gMain.btn_monInfo.OnEvent('Click', this.MonitorGetInfo.Bind(this))
+        GuiButtonIcon(this.gMain.btn_monInfo, this.mIcons['monInfo'], 1, 's20 a0 l10')
+        this.gMain.btn_about := this.gMain.Add('Button', 'xp w' btnWidth ' h' btnHeight, 'About')
+        this.gMain.btn_about.OnEvent('Click', this.gAbout_Show.Bind(this))
+        GuiButtonIcon(this.gMain.btn_about, this.mIcons['btn_about'], 1, 's20 a0 l10')
+        this.gMain.btn_donate := this.gMain.Add('Button', 'xs+' btnWidth + 5 ' ys w' btnWidth ' h' btnHeight, 'Donate')
+        this.gMain.btn_donate.OnEvent('Click', (*) => Run('https://buymeacoffee.com/xmcqcx'))
+        GuiButtonIcon(this.gMain.btn_donate, this.mIcons['buymeacoffee'], 1, 's20 a0 l10')
+        this.gMain.btn_gitHub := this.gMain.Add('Button', 'xp w' btnWidth ' h' btnHeight, 'GitHub')
+        this.gMain.btn_gitHub.OnEvent('Click', (*) => Run(this.linkGitHubRepo))
+        GuiButtonIcon(this.gMain.btn_gitHub, this.mIcons['gitHub'], 1, 's20 a0 l10')
         this.gMain.sb := this.gMain.Add('StatusBar')
         this.gMain.sb.SetParts(155, 155,)
 
         ;==============================================
 
-        for value in ['text', 'sound', 'image', 'display', 'animation', 'title', 'msg', 'bg', 'padding', 'eso', 'misc', 'bdr', 'result', 'theme']
+        for value in ['text', 'sound', 'image', 'bgImg', 'display', 'animation', 'title', 'msg', 'bg', 'padding', 'eso', 'misc', 'bdr', 'result', 'theme']
             this.gMain.gb_%value%.SetFont('bold')
 
-        for value in ['mon', 'showDur', 'hideDur', 'mali', 'tali', 'wstp', 'wstc', 'prog', 'dg', 'dgc', 'tag']
+        for value in ['mon', 'showDur', 'hideDur', 'mali', 'tali', 'wstp', 'wstc', 'prog', 'dg', 'dgc', 'tag', 'bgImgPos']
             this.gMain[value].OnEvent('Change', this.DebounceCall.Bind(this, 125, 'UpdateResultString'))
 
         ;==============================================
 
         this.mGuiCtrlTips := this.MapCI().Set(
-            'gMain.pad', '
+            'mon', '
             (
-                Padding, margin, and spacing (PAD).
-                PadX - Padding between the left or right edge of the GUI and the screen's edge.
-                PadY - Padding between the top or bottom edge of the GUI and the screen's edge.
-                GMX - Left/right margins of the GUI.
-                GMY - Top/bottom margins of the GUI.
-                SpX - Horizontal spacing between the right side of the image and other controls.
-                SpY - Vertical spacing between the title, message, and progress bar.
+                ➤ MON - Monitor
+                    • NUMBER - A specific monitor number.
+                    • ACTIVE - The monitor on which the active window is displayed.
+                    • MOUSE - The monitor on which the mouse is currently positioned.
+                    • PRIMARY - The primary monitor.
+            )',
+            'pos', '
+            (
+                ➤ POS - Position
+                    • TL - Top left
+                    • TC - Top center
+                    • TR - Top right
+                    • CTL - Center left
+                    • CT - Center
+                    • CTR - Center right
+                    • BL - Bottom left
+                    • BC - Bottom center
+                    • BR - Bottom right
+                    • MOUSE -  Near the cursor.
+            )',
+            'dur', '
+            (
+                ➤ DUR - Display duration (in seconds). Set to 0 to keep it on the screen until
+                left-clicking on the GUI or programmatically destroying it.
+            )',
+            'gMain.pic_bgImgInfo', '
+            (
+                ➤ BGIMG - Background image.
+                ➤ BGIMGPOS - Background image position. Parameters for positioning and sizing the background image.
+                    -- Positions --
+                        • TL - Top left
+                        • TC - Top center
+                        • TR - Top right
+                        • CTL - Center left
+                        • CT - Center
+                        • CTR - Center right
+                        • BL - Bottom left
+                        • BC - Bottom center
+                        • BR - Bottom right
+                        • X - Custom horizontal position.
+                        • Y - Custom vertical position.
+                        • OFSTX - Horizontal pixel offset.
+                        • OFSTY - Vertical pixel offset.
+
+                    -- Display Modes --
+                        • STRETCH - Stretches both the width and height of the image to fill the entire GUI.
+                        • SCALE - Resizes the image proportionally.
+
+                    -- Image Dimensions (width and height) --
+                        • STRETCH - Adjusts either the width or height of the image to match the GUI dimension.
+                        • To resize the image while preserving its aspect ratio, specify -1 for one dimension and a positive number for the other.
+                        • Specify 0 to retain the image's original width or height (DPI scaling does not apply).
+                        • Omit the W or H options to retain the image's original width or height (DPI scaling applies).
+            )',
+            'gMain.pic_imageInfo', '
+            (
+                -- Image Dimensions (width and height) --
+                    • To resize the image while preserving its aspect ratio, specify -1 for one dimension and a positive number for the other.
+                    • Specify 0 to retain the image's original width or height (DPI scaling does not apply).
+            )',
+            'pad', '
+            (
+                ➤ PAD - Padding, margins, and spacing.
+                    • PADX - Padding between the GUI's left or right edge and the screen's edge.
+                    • PADY - Padding between the GUI's top or bottom edge and the screen's edge or taskbar.
+                    • GMT - Top margin of the GUI.
+                    • GMB - Bottom margin of the GUI.
+                    • GML - Left margin of the GUI.
+                    • GMR - Right margin of the GUI.
+                    • SPX - Horizontal spacing between the right side of the image and other controls.
+                    • SPY - Vertical spacing between the title, message, and progress bar.
+
+                • PadX and PadY can range from 0 to 25. The others can range from 0 to 999.
+                • PadX and PadY cannot be included in themes.
             )',
             'gMain.cbLock', '
             (
@@ -882,21 +990,43 @@ Class NotifyCreator {
             'gMain.btn_colorSelect', 'Open the color selector.',
             'gMain.btn_colorPicker', 'Pick color from screen.',
             'gMain.btn_fontSelect', 'Open the font selector.',
+            'gMain.pic_animInfo', 'The round style is limited to the fade animation or none.`nTo unlock all animations, choose the edge style.',
+            'gMain.pic_bdrInfo', 'The round style`'s maximum border width is limited to 1 pixel,`nwhile the edge style allows up to 10 pixels.',
+            'maxW', '➤ MAXW - Maximum width of the GUI (excluding image width and margins).',
+            'width', '➤ WIDTH - Fixed width of the GUI (excluding image width and margins).',
+            'minH', '➤ MINH - Minimum height of the GUI.',
+            'prog', '➤ PROG - Progress Bar',
+            'tag', '➤ TAG - Marker to identify a GUI. The Destroy method accepts a tag,`nit destroys every GUI containing this tag across all scripts.',
+            'dgc', '
+            (
+                ➤ DGC - Allow or prevent the GUI from being destroyed when clicked.
+                    • 0 - Clicking on the GUI does not destroy it.
+                    • 1 - Clicking on the GUI destroys it.
+            )',
+            'dg', '
+            (
+                ➤ DG - Destroy GUIs before showing the new GUI.
+                    • 0 - Do not destroy GUIs.
+                    • 1 - Destroy all GUIs on the monitor option at the position option.
+                    • 2 - Destroy all GUIs on all monitors at the position option.
+                    • 3 - Destroy all GUIs on the monitor option.
+                    • 4 - Destroy all GUIs.
+                    • 5 - Destroy all GUIs containing the tag.
+            )',
         )
 
-        for value in ['padX', 'padY', 'gmX', 'gmY', 'spX', 'spY']
-            this.gMain.Tips.SetTip(this.gMain.txt_%value%, this.mGuiCtrlTips['gMain.pad'])
+        for value in ['padX', 'padY', 'gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY']
+            this.gMain.Tips.SetTip(this.gMain.txt_%value%, this.mGuiCtrlTips['pad'])
 
-        for value in ['display', 'image', 'sound', 'misc', 'eso', 'padding', 'bdr']
+        for value in ['display', 'image', 'bgImg', 'sound', 'misc', 'eso', 'padding', 'bdr']
             this.gMain.Tips.SetTip(this.gMain.cb_%value%Lock, this.mGuiCtrlTips['gMain.cbLock'])
 
-        for value in ['display', 'image', 'sound', 'misc', 'eso', 'bg', 'title', 'msg', 'bdrC']
+        for value in ['display', 'image', 'bgImg', 'sound', 'misc', 'eso', 'bg', 'title', 'msg', 'bdrC']
             this.gMain.Tips.SetTip(this.gMain.btn_%value%Reset, this.mGuiCtrlTips['gMain.btnReset'])
 
-        for value in ['mc', 'tc', 'bc', 'bdrC'] {
-            this.gMain.Tips.SetTip(this.gMain.btn_%value%Select, this.mGuiCtrlTips['gMain.btn_colorSelect'])
-            this.gMain.Tips.SetTip(this.gMain.btn_%value%Picker, this.mGuiCtrlTips['gMain.btn_colorPicker'])
-        }
+        for value in ['mc', 'tc', 'bc', 'bdrC']
+            for val in ['select', 'picker']
+                this.gMain.Tips.SetTip(this.gMain.btn_%value%%val%, this.mGuiCtrlTips['gMain.btn_color' val])
 
         for value in ['image', 'sound', 'result']
             this.gMain.Tips.SetTip(this.gMain.btn_copy%value%, 'Copy ' value ' to clipboard.')
@@ -904,44 +1034,25 @@ Class NotifyCreator {
         for value in ['show', 'hide']
             this.gMain.Tips.SetTip(this.gMain.ddl_%value%Dur, 'Duration (in milliseconds)')
 
-        this.gMain.Tips.SetTip(this.gMain.txt_dgc, '
-        (
-            Destroy GUI click. Allow or prevent the GUI from being destroyed when clicked (DGC).
-            0 - Clicking on the GUI does not destroy it.
-            1 - Clicking on the GUI destroys it.
-        )')
-        this.gMain.Tips.SetTip(this.gMain.txt_dg, '
-        (
-            Destroy GUIs before creating the new GUI (DG).
-            0 - Do not destroy GUIs.
-            1 - Destroy all GUIs on the monitor option at the position option.
-            2 - Destroy all GUIs on all monitors at the position option.
-            3 - Destroy all GUIs on the monitor option.
-            4 - Destroy all GUIs.
-            5 - Destroy all GUIs containing the tag.
-        )')
-        this.gMain.Tips.SetTip(this.gMain.txt_pos, '
-        (
-            Position (POS)
-            BR - Bottom right
-            BC - Bottom center
-            BL - Bottom left
-            TL - Top left
-            TC - Top center
-            TR - Top right
-            CT - Center
-            CTL - Center left
-            CTR - Center right
-            Mouse - Near the cursor.
-        )')
-        this.gMain.Tips.SetTip(this.gMain.txt_mon, '
-        (
-            Monitor number to display the GUI. AutoHotkey monitor numbers may differ`nfrom those in windows display settings and the NVIDIA control panel. (MON).
-            Primary - The primary monitor.
-            Active - The monitor on which the active window is displayed.
-            Mouse - The monitor on which the mouse is currently positioned.
-        )')
+        this.mGuiCtrlTips['misc'] := ((this.mGuiCtrlTips['maxW'] '`n' this.mGuiCtrlTips['width'] '`n' this.mGuiCtrlTips['minH'] '`n' this.mGuiCtrlTips['prog'] '`n`n'
+            this.mGuiCtrlTips['tag'] '`n`n' this.mGuiCtrlTips['dgc'] '`n`n' this.mGuiCtrlTips['dg']
+        ))
 
+        this.gMain.Tips.SetTip(this.gMain.pic_display, this.mGuiCtrlTips['mon'] '`n`n' this.mGuiCtrlTips['pos'] '`n`n' this.mGuiCtrlTips['dur'])
+        this.gMain.Tips.SetTip(this.gMain.txt_mon, this.mGuiCtrlTips['mon'])
+        this.gMain.Tips.SetTip(this.gMain.txt_pos, this.mGuiCtrlTips['pos'])
+        this.gMain.Tips.SetTip(this.gMain.txt_dur, this.mGuiCtrlTips['dur'])
+        this.gMain.Tips.SetTip(this.gMain.pic_miscInfo, this.mGuiCtrlTips['misc'])
+        this.gMain.Tips.SetTip(this.gMain.cb_maxW, this.mGuiCtrlTips['maxW'])
+        this.gMain.Tips.SetTip(this.gMain.cb_width, this.mGuiCtrlTips['width'])
+        this.gMain.Tips.SetTip(this.gMain.cb_minH, this.mGuiCtrlTips['minH'])
+        this.gMain.Tips.SetTip(this.gMain.txt_prog, this.mGuiCtrlTips['prog'])
+        this.gMain.Tips.SetTip(this.gMain.txt_tag, this.mGuiCtrlTips['tag'])
+        this.gMain.Tips.SetTip(this.gMain.txt_dgc, this.mGuiCtrlTips['dgc'])
+        this.gMain.Tips.SetTip(this.gMain.txt_dg, this.mGuiCtrlTips['dg'])
+        this.gMain.Tips.SetTip(this.gMain.pic_padInfo, this.mGuiCtrlTips['pad'])
+        this.gMain.Tips.SetTip(this.gMain.pic_imageInfo, this.mGuiCtrlTips['gMain.pic_imageInfo'])
+        this.gMain.Tips.SetTip(this.gMain.pic_bgImgInfo, this.mGuiCtrlTips['gMain.pic_bgImgInfo'])
         this.gMain.Tips.SetTip(this.gMain.cb_styleLock, this.mGuiCtrlTips['gMain.cb_styleLock'])
         this.gMain.Tips.SetTip(this.gMain.cb_tLock, this.mGuiCtrlTips['gMain.cb_tmLock'])
         this.gMain.Tips.SetTip(this.gMain.cb_mLock, this.mGuiCtrlTips['gMain.cb_tmLock'])
@@ -949,34 +1060,31 @@ Class NotifyCreator {
         this.gMain.Tips.SetTip(this.gMain.btn_mFontSelect, this.mGuiCtrlTips['gMain.btn_fontSelect'])
         this.gMain.Tips.SetTip(this.gMain.btn_animReset, this.mGuiCtrlTips['gMain.btn_animReset'])
         this.gMain.Tips.SetTip(this.gMain.btn_paddingReset, this.mGuiCtrlTips['gMain.btn_paddingReset'])
+        this.gMain.Tips.SetTip(this.gMain.pic_animInfo, this.mGuiCtrlTips['gMain.pic_animInfo'])
+        this.gMain.Tips.SetTip(this.gMain.pic_bdrInfo, this.mGuiCtrlTips['gMain.pic_bdrInfo'])
+        this.gMain.Tips.SetTip(this.gMain.btn_copyBgImg, 'Copy background image to clipboard.')
         this.gMain.Tips.SetTip(this.gMain.btn_copyTheme, 'Copy theme name to clipboard.')
         this.gMain.Tips.SetTip(this.gMain.btn_copyTfont, 'Copy title font name to clipboard.')
         this.gMain.Tips.SetTip(this.gMain.btn_copyMfont, 'Copy message font name to clipboard.')
         this.gMain.Tips.SetTip(this.gMain.btn_textReset, 'Reset to default.')
         this.gMain.Tips.SetTip(this.gMain.btn_defaultAll, 'Reset user interface to default.')
         this.gMain.Tips.SetTip(this.gMain.btn_gitHub, 'GitHub repository')
+        this.gMain.Tips.SetTip(this.gMain.btn_donate, 'If you find my AHK code useful and would like to show your appreciation,`na donation would be greatly appreciated. Thank you!')
+        this.gMain.Tips.SetTip(this.gMain.btn_monInfo, 'Displays information about the monitors connected to the system.')
         this.gMain.Tips.SetTip(this.gMain.btn_destroyAll, 'Destroy all GUIs.')
         this.gMain.Tips.SetTip(this.gMain.btn_playsound, 'Play sound')
         this.gMain.Tips.SetTip(this.gMain.btn_browseImage, 'Browse image')
+        this.gMain.Tips.SetTip(this.gMain.btn_browseBgImg, 'Browse background Image.')
         this.gMain.Tips.SetTip(this.gMain.btn_browseSound, 'Browse sound')
-        this.gMain.Tips.SetTip(this.gMain.txt_prog, 'Progress Bar')
-        this.gMain.Tips.SetTip(this.gMain.btn_monInfo, 'Displays information about the monitors connected to the system.')
         this.gMain.Tips.SetTip(this.gMain.btn_removeImage, 'Remove images from the images history.')
         this.gMain.Tips.SetTip(this.gMain.btn_removeSound, 'Remove sounds from the sounds history.')
         this.gMain.Tips.SetTip(this.gMain.cb_txtWstc, 'WinSetTransColor')
-        this.gMain.Tips.SetTip(this.gMain.cb_width, 'Fixed width of the GUI (excluding the image width and margins).')
-        this.gMain.Tips.SetTip(this.gMain.cb_maxW, 'Maximum width of the GUI (excluding image width and margins).')
-        this.gMain.Tips.SetTip(this.gMain.btn_donate, 'If you find my AHK code useful and would like to show your appreciation,`na donation would be greatly appreciated. Thank you!')
         this.gMain.Tips.SetTip(this.gMain.btn_about, 'About')
         this.gMain.Tips.SetTip(this.gMain.btn_settings, 'Settings')
-        this.gMain.Tips.SetTip(this.gMain.pic_animInfo, 'The round style is limited to the fade animation or none.`nTo unlock all animations, choose the edge style.')
         this.gMain.Tips.SetTip(this.gMain.btn_gRip_Show, 'Choose an icon from system resource files (ResIconsPicker)')
-        this.gMain.Tips.SetTip(this.gMain.pic_bdrInfo, 'The round style`'s maximum border width is limited to 1 pixel,`nwhile the edge style allows up to 5 pixels.')
         this.gMain.Tips.SetTip(this.gMain.btn_AddTheme, 'Add theme')
         this.gMain.Tips.SetTip(this.gMain.btn_editTheme, 'Edit theme')
         this.gMain.Tips.SetTip(this.gMain.btn_removeTheme, 'Delete user-created themes.')
-        this.gMain.Tips.SetTip(this.gMain.txt_dur, 'Display duration (in seconds). Set to 0 to keep it on the screen until left-clicking on the GUI or programmatically destroying it.')
-        this.gMain.Tips.SetTip(this.gMain.txt_tag, 'Marker to identify a GUI. The Destroy method accepts a tag,`nit destroys every GUI containing this tag across all scripts.')
 
         ;==============================================
 
@@ -989,7 +1097,7 @@ Class NotifyCreator {
 
 	;============================================================================================
 
-    static gMain_Close(*) => this.mUser['closeMainExitApp'] ? ExitApp() : this.gMain.Destroy()
+    static gMain_Close(*) => (this.mUser['closeMainExitApp'] ? ExitApp() : this.gMain.Destroy())
 
     ;============================================================================================
 
@@ -1014,7 +1122,7 @@ Class NotifyCreator {
             {
                 theme := Notify.mDefaults['theme']
 
-                for value in ['style', 'display', 'image', 'sound', 'misc', 'padding', 'eso', 'bdr', 't', 'm']
+                for value in ['style', 'display', 'image', 'bgImg', 'sound', 'misc', 'padding', 'eso', 'bdr', 't', 'm']
                     this.gMain.cb_%value%Lock.Value := 0
             }
         }
@@ -1026,6 +1134,7 @@ Class NotifyCreator {
         this.gMain_SetDisplay(theme)
         this.gMain_SetAnimation(theme, 'setDefault')
         this.gMain_SetImage(theme)
+        this.gMain_SetBgImg(theme)
         this.gMain_SetSound(theme)
         this.gMain_SetMisc(theme)
         this.gMain_SetPadding(theme)
@@ -1048,7 +1157,7 @@ Class NotifyCreator {
         theme := this.mUser[arrParams[1]] := this.gMain[arrParams[1]].Text
         mTheme := Notify.mThemes[theme]
 
-        for value in ['style', 'display', 'image', 'sound', 'misc', 'padding']
+        for value in ['style', 'display', 'image', 'bgImg', 'sound', 'misc', 'padding']
             if this.gMain.cb_%value%Lock.Value = 0
                 this.gMain_Set%value%(theme)
 
@@ -1063,7 +1172,6 @@ Class NotifyCreator {
         this.gMain_SetColor(mTheme['bc'], 'b')
         this.gMain_SetESO(theme)
         this.gMain_SetAnimation(theme, 'showTheme')
-        this.gMain_SetImagePreview(this.gMain.ddl_image.Text)
         this.Enabled_Disabled_Border(theme)
         this.gMain_SetTip_btn_editTheme(theme)
         this.gMain_SetTip_btn_themeReset(theme)
@@ -1082,11 +1190,11 @@ Class NotifyCreator {
 
     ;============================================================================================
 
-    static gMain_SetTip_btn_editTheme(theme)=> this.gMain.Tips.SetTip(this.gMain.btn_editTheme, theme = 'default' ? 'Edit default settings.' : 'Edit theme')
+    static gMain_SetTip_btn_editTheme(theme) => this.gMain.Tips.SetTip(this.gMain.btn_editTheme, theme = 'default' ? 'Edit default settings.' : 'Edit theme')
 
     ;============================================================================================
 
-    static gMain_SetTip_btn_themeReset(theme)=> this.gMain.Tips.SetTip(this.gMain.btn_themeReset, 'Reset all to the current ' (theme = 'default' ? 'default' : 'theme') ' settings.')
+    static gMain_SetTip_btn_themeReset(theme) => this.gMain.Tips.SetTip(this.gMain.btn_themeReset, 'Reset all to the current ' (theme = 'default' ? 'default' : 'theme') ' settings.')
 
     ;============================================================================================
 
@@ -1203,15 +1311,15 @@ Class NotifyCreator {
 
     static ProcessFileInput(guiObj:='', param:='', arrFile := Array(), fromMethod:='')
     {
-        if !(RegExMatch((Type(param) = 'String' ? param : (IsObject(param) ? param.Name : '')), 'i)^(image|sound)$'))
+        if !(RegExMatch((a := Type(param) == 'String' ? param : (IsObject(param) ? param.Name : '')), '^(image|bgImg|sound)$'))
             return
 
         switch fromMethod {
             case 'btn_browse':
             {
                 this.gMain.Opt('+OwnDialogs')
-                fileFilter := param = 'sound' ? 'Audio (*.wav)' : this.strImageExtfilter
-                arrFile := FileSelect('M3',, 'Select ' StrTitle(param) ' - ' this.scriptName, fileFilter)
+                fileFilter := param = 'sound' ? 'Sound (*.wav)' : this.strImageExtfilter
+                arrFile := FileSelect('M3',, 'Select ' (param == 'sound' ? 'Sound' : 'Image') ' - ' this.scriptName, fileFilter)
             }
             case 'dropFiles': param := param.Name
         }
@@ -1220,22 +1328,30 @@ Class NotifyCreator {
             for index, fPath in arrFile.Clone() {
                 RegExMatch(fPath, 'i)^.+\.(dll|exe|cpl)\|icon\d+$', &matchExt) ? ext := matchExt[1] : SplitPath(fPath,,, &ext)
 
-                if (param = 'sound' && ext != 'wav') || (param = 'image' && !RegExMatch(ext, 'i)^(' Notify.strImageExt ')$'))
+                if (param == 'sound' && ext != 'wav') || (RegExMatch(param, '^(image|bgImg)$') && !RegExMatch(ext, 'i)^(' Notify.strImageExt ')$'))
                     index := this.HasVal(fPath, arrFile), arrFile.RemoveAt(index)
             }
 
-            for index, fPath in arrFile
-                if !this.Hasval(fPath, this.arr%param%)
-                    this.arr%param%.Push(fPath), lastPath := fPath
+            strArr := (param == 'sound' ? 'sound' : 'image')
 
-            this.arr%param% := this.SortArray(this.arr%param%)
+            for index, fPath in arrFile
+                if !this.Hasval(fPath, this.arr%strArr%)
+                    this.arr%strArr%.Push(fPath), lastPath := fPath
+
+            this.arr%strArr% := this.SortArray(this.arr%strArr%)
+
+            if (RegExMatch(param, '^(image|bgImg)$')) {
+                otherCtrlName := (param == 'image' ? 'bgImg' : 'image')
+                txtOtherCtrl := this.gMain.ddl_%otherCtrlName%.Text
+                this.DDLArrayChange_Choose(txtOtherCtrl, this.arrImage, this.gMain.ddl_%otherCtrlName%), SetImage_SetSound(txtOtherCtrl, otherCtrlName)
+            }
 
             switch {
                 case IsSet(lastPath):
-                    this.DDLArrayChange_Choose(lastPath, this.arr%param%, this.gMain.ddl_%param%), SetImage_SetSound(lastPath, param)
+                    this.DDLArrayChange_Choose(lastPath, this.arr%strArr%, this.gMain.ddl_%param%), SetImage_SetSound(lastPath, param)
 
                 case arrFile.Length && !IsSet(lastPath):
-                    this.DDLchoose(arrFile[1], this.arr%param%, this.gMain.ddl_%param%), SetImage_SetSound(arrFile[1], param)
+                    this.DDLchoose(arrFile[1], this.arr%strArr%, this.gMain.ddl_%param%), SetImage_SetSound(arrFile[1], param)
             }
         }
 
@@ -1244,7 +1360,7 @@ Class NotifyCreator {
 
         SetImage_SetSound(file, param) {
             switch param {
-                case 'image': this.gMain_SetImagePreview(file)
+                case 'image', 'bgImg': this.gMain_SetImagePreview(file, param)
                 case 'sound': this.gMain_SetTip_ddl_sound(file)
             }
         }
@@ -1261,50 +1377,61 @@ Class NotifyCreator {
             this.gMain.edit_%value%.Text := mTheme[value]
 
         this.DDLchoose(image, this.arrImage, this.gMain.ddl_image)
-        this.gMain_SetImagePreview(image)
+        this.gMain_SetImagePreview(image, 'image')
+    }
+
+    ;============================================================================================
+
+    static gMain_SetBgImg(theme, fromMethod:='')
+    {
+        mTheme := Notify.mThemes[theme]
+        image := mTheme['bgImg']
+        this.gMain.cbb_bgImgPos.Text := mTheme['bgImgPos']
+        this.DDLchoose(image, this.arrImage, this.gMain.ddl_bgImg)
+        this.gMain_SetImagePreview(image, 'bgImg')
     }
 
     ;============================================================================================
 
     static gMain_ddl_image_Change(arrParams, *)
     {
-        this.gMain_SetImagePreview(this.gMain[arrParams[1]].Text)
+        this.gMain_SetImagePreview(this.gMain[arrParams[1]].Text, arrParams[1])
         this.UpdateResultString()
     }
 
     ;============================================================================================
 
-    static gMain_SetImagePreview(image)
+    static gMain_SetImagePreview(image, param)
     {
-        this.gMain.ddl_image.GetPos(,, &ctrlWidth)
-        txtTip := (this.ControlGetTextWidth(this.gMain.ddl_image.hwnd, image)) > (ctrlWidth - 25) ? image : 'Drag and drop images here. Supported file types: ' Notify.ArrayToString(Notify.arrImageExt, ', ')
-        this.gMain.Tips.SetTip(this.gMain.ddl_image, txtTip)
+        this.gMain.ddl_%param%.GetPos(,, &ctrlWidth)
+        txtTip := (this.ControlGetTextWidth(this.gMain.ddl_%param%.hwnd, image)) > (ctrlWidth - 25) ? image : 'Drag and drop images here.'
+        this.gMain.Tips.SetTip(this.gMain.ddl_%param%, txtTip)
 
         try {
             switch {
-                case RegExMatch(image, 'i)^(icon!|icon\?|iconx|iconi)$'):
-                    this.gMain.pic_image.Value := '*icon' Notify.mImages[image] ' ' A_WinDir '\system32\user32.dll', set := true
+                case Notify.isInternalString(image):
+                    this.gMain.pic_%param%.Value := '*icon' Notify.mImages[image] ' ' A_WinDir '\system32\user32.dll', set := true
 
-                case Notify.mImages.Has(image) && FileExist(Notify.mImages[image]):
-                    this.gMain.pic_image.Value := Notify.mImages[image], set := true
+                case Notify.isInternalImage(image):
+                    this.gMain.pic_%param%.Value := Notify.mImages[image], set := true
 
-                case RegExMatch(image, 'i)^(.+?\.(?:dll|exe|cpl))\|icon(\d+)$', &matchIcon) && FileExist(matchIcon[1]):
-                    this.gMain.pic_image.Value := '*Icon' matchIcon[2] ' ' matchIcon[1], set := true
+                case arrRegExMatch := Notify.isIconResourceFile(image):
+                    this.gMain.pic_%param%.Value := '*Icon' arrRegExMatch[2] ' ' arrRegExMatch[1], set := true
 
-                case FileExist(image): this.gMain.pic_image.Value := image, set := true
-                case !FileExist(image): this.gMain.pic_image.Value := this.mIcons['transIcon'], set := false
+                case FileExist(image): this.gMain.pic_%param%.Value := image, set := true
+                case !FileExist(image): this.gMain.pic_%param%.Value := this.mIcons['transIcon'], set := false
             }
         } catch
-            this.gMain.pic_image.Value := this.mIcons['transIcon'], set := false
+            this.gMain.pic_%param%.Value := this.mIcons['transIcon'], set := false
 
-        this.gMain.pic_image.Enabled := (set ? true : false)
+        this.gMain.pic_%param%.Enabled := (set ? true : false)
     }
 
     ;============================================================================================
 
-    static gMain_btn_imageReset_Click(*)
+    static gMain_btn_imageReset_Click(param, *)
     {
-        this.gMain_SetImage(this.gMain.ddl_theme.Text)
+        this.gMain_Set%param%(this.gMain.ddl_theme.Text)
         this.UpdateResultString()
     }
 
@@ -1341,7 +1468,7 @@ Class NotifyCreator {
 
     ;============================================================================================
 
-    static gMain_PlaySound(*) => SetTimer( Notify.Sound.Bind(Notify, this.gMain.ddl_sound.Text) , -1)
+    static gMain_PlaySound(*) => SetTimer( Notify.Sound.Bind(Notify, this.gMain.ddl_sound.Text), -1)
 
     ;============================================================================================
 
@@ -1358,6 +1485,9 @@ Class NotifyCreator {
     {
         param := arrParams[1]
         color := this.gMain.cbb_%arrParams[1]%.Text
+
+        if !Notify.isValidColor(color)
+            color := 'White'
 
         try {
             switch param {
@@ -1382,6 +1512,9 @@ Class NotifyCreator {
         if (color) {
             hex := color.ToHex("{R}{G}{B}")
             this.gMain_SetColor(Notify.NormAHKColor('0x' hex.Full), param)
+
+            if param ='bdr'
+                this.Enabled_Disabled_edit_bdrW()
         }
     }
 
@@ -1393,7 +1526,7 @@ Class NotifyCreator {
         || RegExMatch(fromMethod, '^(setDefault|titleMessageReset|btn_font)$') {
             this.gMain.edit_%param 's'%.Text := obj[param 's']
 
-            if !Notify.SetFont(this.gMain.txt_%param 'c'%, 's' obj[param 's'] ' c' obj[param 'c'] ' ' obj[param 'fo'], obj[param 'f'])
+            if !Notify.SetFont(this.gMain.txt_%param 'c'%, obj[param 's'], obj[param 'c'], obj[param 'fo'], obj[param 'f'])
                 this.MsgBox_WarningTooManyFonts()
 
             this.gMain_SetStatusBar()
@@ -1502,7 +1635,7 @@ Class NotifyCreator {
     static Enabled_Disabled_edit_bdrW()
     {
         switch this.gMain.ddl_style.Text, false {
-            case 'edge': this.gMain.edit_bdrW.Enabled := this.gMain.cbb_bdrC.Text = 'default' ? false : true
+            case 'edge': this.gMain.edit_bdrW.Enabled := (this.gMain.cbb_bdrC.Text = 'default' ? false : true)
             case 'round': this.gMain.edit_bdrW.Enabled := false
         }
     }
@@ -1517,11 +1650,11 @@ Class NotifyCreator {
         this.DDLchoose(mTheme['dgc'], this.arrDgc, this.gMain.ddl_dgc)
         this.DDLchoose(mTheme['dg'], this.arrDg, this.gMain.ddl_dg)
 
-        for value in ['maxW', 'width'] {
+        for value in ['width', 'minH', 'maxW'] {
             if mTheme[value]
                 this.gMain.edit_%value%.Value := mTheme[value], this.gMain.cb_%value%.Value := 1, this.gMain.edit_%value%.Enabled := true
             else
-                this.gMain.edit_%value%.Value := 400, this.gMain.cb_%value%.Value := 0, this.gMain.edit_%value%.Enabled := false
+                this.gMain.edit_%value%.Value := (value ~= '^(width|maxW)$' ? 400 : 200), this.gMain.cb_%value%.Value := 0, this.gMain.edit_%value%.Enabled := false
         }
     }
 
@@ -1539,9 +1672,13 @@ Class NotifyCreator {
     {
         style := this.gMain.ddl_style.Text
         mTheme := Notify.mThemes[theme]
+        defaultPadXY := (style = 'edge' ? Notify.padXYdefaultEdge : Notify.padXYdefaultRound)
 
-        for value in ['padX', 'padY', 'gmX', 'gmY', 'spX', 'spY']
-            this.gMain.edit_%value%.Text := mTheme.Has(value) ? mTheme[value] : this.mPadDefStyle[style][value]
+        for value in ['padX', 'padY']
+            this.gMain.edit_%value%.Text := defaultPadXY
+
+        for value in ['gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY']
+            this.gMain.edit_%value%.Text := mTheme[value]
     }
 
     ;============================================================================================
@@ -1638,8 +1775,12 @@ Class NotifyCreator {
         theme := this.gMain.ddl_theme.Text
         this.gMain_SetAnimation(theme, 'ddl_style')
 
-        if this.gMain.cb_paddingLock.Value = 0
-            this.gMain_SetPadding(theme)
+        if (this.gMain.cb_paddingLock.Value = 0) {
+            defaultPadXY := (style = 'edge' ? Notify.padXYdefaultEdge : Notify.padXYdefaultRound)
+
+            for value in ['padX', 'padY']
+                this.gMain.edit_%value%.Text := defaultPadXY
+        }
 
         this.Enabled_Disabled_ESO(theme, style)
         this.Enabled_Disabled_Border(theme)
@@ -1684,14 +1825,14 @@ Class NotifyCreator {
 
     ;============================================================================================
 
-    static gMain_edit_Width_Change(arrParams, *)
+    static gMain_edit_GuiDim_Change(arrParams, *)
     {
         if (width := this.gMain.edit_%arrParams[1]%.Text) = ''
             return
 
         switch {
-            case (width < this.arrWidthWrange[1] || width = 0): this.gMain.edit_%arrParams[1]%.Text := this.arrWidthWrange[1]
-            case width > this.arrWidthWrange[2]: this.gMain.edit_%arrParams[1]%.Text := this.arrWidthWrange[2]
+            case (width < this.arrGuiDimRange[1] || width = 0): this.gMain.edit_%arrParams[1]%.Text := this.arrGuiDimRange[1]
+            case width > this.arrGuiDimRange[2]: this.gMain.edit_%arrParams[1]%.Text := this.arrGuiDimRange[2]
         }
 
         this.UpdateResultString()
@@ -1701,11 +1842,13 @@ Class NotifyCreator {
 
     static gMain_edit_pad_Change(arrParams, *)
     {
-        if (txt := this.gMain.edit_%arrParams[1]%.Text) = ''
+        if (pad := this.gMain.edit_%arrParams[1]%.Text) = ''
             return
 
-        if txt > Notify.arrPadRange[2]
-            this.gMain.edit_%arrParams[1]%.Text := Notify.arrPadRange[2]
+        strPad := RegExMatch(arrParams[1], '^(padX|padY)$') ? 'arrPadXYrange' : 'arrPadRange'
+
+        if pad > Notify.%strPad%[2]
+            this.gMain.edit_%arrParams[1]%.Text := Notify.%strPad%[2]
 
         this.UpdateResultString()
     }
@@ -1714,10 +1857,10 @@ Class NotifyCreator {
 
     static gMain_edit_dur_Change(*)
     {
-        if (txt := this.gMain.edit_dur.Text) = ''
+        if (dur := this.gMain.edit_dur.Text) = ''
             return
 
-        if txt > this.arrDurationRange[2]
+        if dur > this.arrDurationRange[2]
             this.gMain.edit_dur.Text := this.arrDurationRange[2]
 
         this.UpdateResultString()
@@ -1739,9 +1882,11 @@ Class NotifyCreator {
 
         strFontOptions := this.BuildFontOptionsString(param)
         font := this.gMain.ddl_%param 'f'%.Text
-        color := this.gMain.cbb_%param 'c'%.Text
 
-        if !Notify.SetFont(this.gMain.txt_%param 'c'%, 's' size ' c' color ' ' strFontOptions, font)
+        if !Notify.isValidColor(color := this.gMain.cbb_%param 'c'%.Text)
+            color := '0xFFFFFF'
+
+        if !Notify.SetFont(this.gMain.txt_%param 'c'%, size, color, strFontOptions, font)
             this.MsgBox_WarningTooManyFonts()
 
         this.gMain_SetStatusBar()
@@ -1758,7 +1903,7 @@ Class NotifyCreator {
         if m['theme'] != Notify.mDefaults['theme']
             options .= 'theme=' m['theme'] ' '
 
-        for value in ['dur', 'pos', 'mon', 'style']
+        for value in ['mon', 'pos', 'dur', 'style']
             if m[value] != mTheme[value]
                 options .= value '=' m[value] ' '
 
@@ -1771,7 +1916,7 @@ Class NotifyCreator {
             m[value] := this.EscapeCharacters(m[value])
             str := (value = 'title' ? 't' : 'm')
 
-            for val in [str 's', str 'f', str 'c', str 'ali']
+            for val in [str 's', str 'c', str 'f', str 'ali']
                 if m[val] != mTheme[val]
                     options .= val '=' m[val] ' '
 
@@ -1781,50 +1926,8 @@ Class NotifyCreator {
                 options .= str 'fo=' this.BuildFontOptionsString(str) ' '
         }
 
-        ;==============================================
-
-        (m['bc'] != mTheme['bc']) && options .= 'bc=' m['bc'] ' '
-
-        for value in ['image', 'sound']
-            if m[value] = mTheme[value]
-                m[value] := ''
-
-        if (this.gMain.pic_image.Enabled) && (m['iw'] != mTheme['iw'] || m['ih'] != mTheme['ih'])
-            for value in ['iw', 'ih']
-                if m[value] != -1
-                    options .= value '=' m[value] ' '
-
-        this.CreateAnimationString(m)
-
-        if m['strAnim'] != this.mAnimDefStyle[m['style']][m['pos']]['strAnim']
-            options .= m['strAnim'] ' '
-
-        ;==============================================
-
-        for value in ['padX', 'padY', 'gmX', 'gmY', 'spX', 'spY'] {
-            valueDef := this.mPadDefStyle[m['style']][value]
-            if mTheme.Has(value)
-                strPad .= (m[value] != mTheme[value] ? m[value] : '') ','
-            else
-                strPad .= (m[value] != valueDef ? m[value] : '') ','
-        }
-
-        if strPad != ',,,,,,'
-            options .= 'pad=' RTrim(strPad, ',') ' '
-
-        ;==============================================
-
-        for value in ['width', 'maxW'] {
-            if this.gMain.edit_%value%.Enabled
-                (m[value] != mTheme[value]) && options .= value '=' m[value] ' '
-            else
-                mTheme[value] && options .= value '= '
-        }
-
-        ;==============================================
-
-        for value in ['dgc', 'dg']
-            (m[value] != mTheme[value]) && options .= value '=' m[value] ' '
+        if m['bc'] != mTheme['bc']
+            options .= 'bc=' m['bc'] ' '
 
         ;==============================================
 
@@ -1857,6 +1960,52 @@ Class NotifyCreator {
 
         ;==============================================
 
+        for value in ['sound', 'image']
+            if m[value] = mTheme[value]
+                m[value] := ''
+
+        if (this.gMain.pic_image.Enabled) && (m['iw'] != mTheme['iw'] || m['ih'] != mTheme['ih'])
+            for value in ['iw', 'ih']
+                if m[value] != -1
+                    options .= value '=' m[value] ' '
+
+        if m['bgImg'] != mTheme['bgImg']
+                options .= 'bgImg=' m['bgImg'] ' '
+
+        if m['bgImgPos']
+            (m['bgImgPos'] != mTheme['bgImgPos']) && options .= 'bgImgPos=' m['bgImgPos'] ' '
+        else
+            mTheme['bgImgPos'] && options .= 'bgImgPos= '
+
+        ;==============================================
+
+        this.CreateAnimationString(m)
+
+        if m['strAnim'] != this.mAnimDefStyle[m['style']][m['pos']]['strAnim']
+            options .= m['strAnim'] ' '
+
+        for value in ['width', 'minH', 'maxW'] {
+            if this.gMain.edit_%value%.Enabled
+                (m[value] != mTheme[value]) && options .= value '=' m[value] ' '
+            else
+                mTheme[value] && options .= value '= '
+        }
+
+        ;==============================================
+
+        defaultPadXY := (m['style'] = 'edge' ? Notify.padXYdefaultEdge : Notify.padXYdefaultRound)
+
+        for value in ['padX', 'padY']
+            strPad .= (m[value] != defaultPadXY ? m[value] : '') ','
+
+        for value in ['gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY']
+            strPad .= (m[value] != mTheme[value] ? m[value] : '') ','
+
+        if strPad != ',,,,,,,,'
+            options .= 'pad=' RTrim(strPad, ',') ' '
+
+        ;==============================================
+
         if (m['style'] = 'edge') {
             if this.gMain.ddl_wstp.Enabled
                 (m['wstp'] != mTheme['wstp']) && options .= 'wstp=' m['wstp'] ' '
@@ -1876,6 +2025,9 @@ Class NotifyCreator {
             else
                 mTheme[value] && options .= value '= '
         }
+
+        for value in ['dgc', 'dg']
+            (m[value] != mTheme[value]) && options .= value '=' m[value] ' '
 
         ;==============================================
 
@@ -1897,6 +2049,14 @@ Class NotifyCreator {
     static gMain_btn_test(*)
     {
         m := this.UpdateResultString()
+
+        for value in ['tc', 'mc'] {
+            if (!Notify.isValidColor(m[value])) {
+                Notify.Show('Error', 'Gui.Prototype.SetFont`nInvalid option.',,,, this.strOpts 'theme=xdark dg=5 tag=errorMsg')
+                return
+            }
+        }
+
         this.ShowNotify(m['title'], m['msg'], m['image'], m['sound'], m['options'])
     }
 
@@ -1911,7 +2071,7 @@ Class NotifyCreator {
 
         try Notify.Show(m['title'], m['msg'], image, sound,, options)
         catch as e
-            Notify.Show('Error', e.what '`n' e.Message,,,, this.strOpts 'theme=xdark dg=5 tag=catchError')
+            Notify.Show('Error', e.what '`n' e.Message,,,, this.strOpts 'theme=xdark dg=5 tag=errorMsg')
     }
 
     ;============================================================================================
@@ -1952,11 +2112,12 @@ Class NotifyCreator {
 
     static gMain_btn_colorSelect_Click(param, *)
     {
-        color := this.ColorSelect( this.gMain.cbb_%param 'c'%.Text , this.gMain.hwnd, 1)
+        color := this.ColorSelect(this.gMain.cbb_%param 'c'%.Text , this.gMain.hwnd, 1)
         if color = -1
             return
 
         this.gMain_SetColor(Notify.NormAHKColor(color), param)
+        this.Enabled_Disabled_edit_bdrW()
         this.UpdateResultString()
     }
 
@@ -2101,7 +2262,7 @@ Class NotifyCreator {
 
     /********************************************************************************************
      * @credits DisplayCheck by the-Automator
-     * @see {@link https://www.the-automator.com/downloads/maestrith-notify-class-v2/ the-automator.com}
+     * @see {@link https://www.the-automator.com/downloads/maestrith-notify-class-v2 the-automator.com}
      */
     static MonitorGetInfo(*)
     {
@@ -2133,29 +2294,25 @@ Class NotifyCreator {
     static RemoveNonExistentFiles(arr)
     {
         if (this.HasVal('image', arr)) {
-            txtImage := this.gMain.ddl_image.Text
-
             for image in this.arrImage.Clone() {
                 if !this.HasVal(image, this.arrImageNotify)
-                && ((RegExMatch(image, 'i)^(.+?\.(?:dll|exe|cpl))\|icon(\d+)$', &matchIcon) && !FileExist(matchIcon[1]))
+                && ((RegExMatch(image, 'i)^(.+?\.(?:dll|exe|cpl))\|icon(\d+)$', &match) && !FileExist(match[1]))
                 || (RegExMatch(image, 'i)^(.+?\.(?:' Notify.strImageExt '))$') && !FileExist(image)))
                     (index := this.HasVal(image, this.arrImage)) && this.arrImage.RemoveAt(index)
             }
 
-            image := this.HasVal(txtImage, this.arrImage) ? txtImage : 'none'
-            this.DDLArrayChange_Choose(image, this.arrImage, this.gMain.ddl_image)
-            this.gMain_SetImagePreview(image)
+            for value in ['image', 'bgImg']
+                if !this.HasVal(this.gMain.ddl_%value%.Text, this.arrImage)
+                    this.DDLArrayChange_Choose('none', this.arrImage, this.gMain.ddl_%value%), this.gMain_SetImagePreview('none', value)
         }
 
         if (this.HasVal('sound', arr)) {
-            txtSound := this.gMain.ddl_sound.Text
-
             for sound in this.arrSound.Clone()
                 if !this.HasVal(sound, this.arrSoundNotify) && !FileExist(sound) && (index := this.HasVal(sound, this.arrSound))
                     this.arrSound.RemoveAt(index)
 
-            sound := this.HasVal(txtSound, this.arrSound) ? txtSound : 'none'
-            this.DDLArrayChange_Choose(sound, this.arrSound, this.gMain.ddl_sound)
+            if !this.HasVal(this.gMain.ddl_sound.Text, this.arrSound)
+                this.DDLArrayChange_Choose('none', this.arrSound, this.gMain.ddl_sound)
         }
 
         this.UpdateResultString()
@@ -2248,7 +2405,6 @@ Class NotifyCreator {
 
         if (addOrEdit == 'edit' && (theme = 'default' || Notify.mOrig_mThemes.Has(theme)))
         {
-
             this.gTheme.edit_themeName.Enabled := false
             this.gTheme.btn_resetThemeOrig := this.gTheme.Add('Button', (addOrEdit == 'edit' && theme = 'default' ? 'x+8 yp-3' : 'x+5') ' w' btnSize ' h' btnSize)
             this.gTheme.btn_resetThemeOrig.OnEvent('Click', this.gTheme_resetTheme.Bind(this, theme))
@@ -2310,13 +2466,14 @@ Class NotifyCreator {
             switch value[2], false {
                 case 'pad':
                 {
-                    for index, value in ['gmX', 'gmY', 'spX', 'spY']
+                    for index, value in ['gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY']
                         strPadUser .= m[value] ','
                     user := ',,' RTrim(strPadUser, ',')
                 }
                 case 'bdr': user := this.gMain.cbb_bdrc.Enabled ? bdrC : 0
                 case 'width': user := this.gMain.edit_width.Enabled ? m['width'] : ''
                 case 'maxW': user := this.gMain.edit_maxW.Enabled ? m['maxW'] : ''
+                case 'minH': user := this.gMain.edit_minH.Enabled ? m['minH'] : ''
                 default: user := m[value[2]]
             }
 
@@ -2408,7 +2565,7 @@ Class NotifyCreator {
 
         if (addOrEdit == 'add' && Notify.mThemes.Has(editTheme))
         || (addOrEdit == 'edit' && Notify.mThemes.Has(editTheme) && theme != editTheme) {
-            Notify.Show('Duplicate Theme', 'A theme with this name already exists.',,,, this.strOpts 'dg=5 tag=dupTheme theme=!Dark pos=bc')
+            Notify.Show('Duplicate Theme', 'A theme with this name already exists.', 'none',,, this.strOpts 'dg=5 tag=dupTheme theme=!Dark pos=bc tali=center mali=center')
             return
         }
 
@@ -2470,7 +2627,15 @@ Class NotifyCreator {
 
         ;==============================================
 
-        this.ResetValues(Notify.mThemes[editTheme], editTheme, ctrlObj.Text)
+        this.ResetValues(mTheme, editTheme, ctrlObj.Text)
+
+        for value in ['sound', 'image']
+            if !this.Hasval(mTheme[value], this.arr%value%Notify)
+                this.arr%value%Notify.Push(mTheme[value])
+
+        if !this.Hasval(mTheme['bgImg'], this.arrImageNotify)
+            this.arrImageNotify.Push(mTheme['bgImg'])
+
         this.SaveToJSONpreferences()
         this.gMain_SetStatusBar()
         this.SetIconTip()
@@ -2505,7 +2670,13 @@ Class NotifyCreator {
 
         SetVariousValues(mTheme) {
             Notify.SetDefault_MiscValues(mTheme)
+
+            for index, key in ['padX', 'padY', 'gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY']
+                if mTheme.Has(key)
+                    mTheme.Delete(key)
+
             Notify.ParsePadOption(mTheme)
+            Notify.SetPadDefault(mTheme)
             Notify.ParseBorderOption(mTheme)
 
             if RegExMatch(mTheme['bdr'], '^(1|0)$')
@@ -2765,7 +2936,7 @@ Class NotifyCreator {
             {
                 this.RemoveNonExistentFiles([param])
 
-                if param = 'image'
+                if param == 'image'
                     imageList := IL_Create(), this.gList.lv.SetImageList(imageList)
 
                 for item in this.arr%param% {
@@ -2882,11 +3053,17 @@ Class NotifyCreator {
 
     static DeleteEntry_ClickYes(selectedContent, param, *)
     {
-		Loop Parse, selectedContent, '`n' {
-			if index := this.HasVal(A_LoopField, this.arr%param%)
-                this.arr%param%.RemoveAt(index)
+        switch param {
+            case 'image', 'bgImg': strArr := 'image'
+            case 'sound': strArr := 'sound'
+            case 'theme': strArr := 'theme'
+        }
 
-            if (param = 'theme') {
+		Loop Parse, selectedContent, '`n' {
+			if index := this.HasVal(A_LoopField, this.arr%strArr%)
+                this.arr%strArr%.RemoveAt(index)
+
+            if (param == 'theme') {
                 Notify.mThemes.Delete(A_LoopField)
 
                 if A_LoopField = Notify.mDefaults['theme']
@@ -2894,7 +3071,7 @@ Class NotifyCreator {
             }
         }
 
-        if (param = 'theme') {
+        if (param == 'theme') {
             this.SaveToJSONpreferences()
             this.gMain_SetStatusBar()
             this.SetIconTip()
@@ -2905,15 +3082,19 @@ Class NotifyCreator {
 
         this.gList.lv.ModifyCol(1, 'AutoHdr')
 
-        if (!this.HasVal(item := this.gMain.ddl_%param%.Text , this.arr%param%)) {
-            switch param {
-                case 'image': this.gMain_SetImagePreview( item := 'none' )
-                case 'sound': item := 'none'
-                case 'theme': this.gMain_SetAllValues( item := 'default' )
-            }
+        switch param {
+            case 'image', 'bgImg':
+                for value in ['image', 'bgImg']
+                    if !this.HasVal(this.gMain.ddl_%value%.Text , this.arr%strArr%)
+                        this.gMain_SetImagePreview('none', value), this.DDLArrayChange_Choose('none', this.arr%strArr%, this.gMain.ddl_%value%)
+            case 'sound':
+                if !this.HasVal(this.gMain.ddl_%param%.Text , this.arr%strArr%)
+                    this.DDLArrayChange_Choose('none', this.arr%strArr%, this.gMain.ddl_%param%)
+            case 'theme':
+                if !this.HasVal(this.gMain.ddl_%param%.Text , this.arr%strArr%)
+                    this.gMain_SetAllValues('default'), this.DDLArrayChange_Choose('default', this.arr%strArr%, this.gMain.ddl_%param%)
         }
 
-        this.DDLArrayChange_Choose(item, this.arr%param%, this.gMain.ddl_%param%)
         this.UpdateResultString()
     }
 
@@ -2929,7 +3110,9 @@ Class NotifyCreator {
         if boundFuncTimer
             SetTimer(boundFuncTimer, 0)
 
-        mGUI := Notify.Show('Please wait, loading icons...',, this.mIcons['notifgRip'],,, this.strOpts 'theme=iDark prog=h8 c0x41A5EE pos=tc dur=0 tc=0x95C0DD dgc=0 dg=5 tag=ResIconsPicker')
+        mGUI := Notify.Show('Please wait, loading icons...',, this.mIcons['notifgRip'],,,
+            this.strOpts 'theme=iDark prog=h8 c0x41A5EE pos=tc dur=0 tc=0x95C0DD dgc=0 dg=5 tag=ResIconsPicker')
+
         boundFuncTimer := Notify.Destroy.Bind(Notify, 'ResIconsPicker')
 
 		this.gRip := Gui(, this.gRipTitle)
@@ -2940,7 +3123,7 @@ Class NotifyCreator {
 
 		if (!this.arrIcons.Length) {
             cntPath := 0
-            for index, path in this.arrIconPaths {
+            for index, path in this.arrIconPaths.Clone() {
                 if (FileExist(path)) {
                     SplitPath(path,,,, &fileName), cntPath++
                     Loop {
@@ -2987,7 +3170,12 @@ Class NotifyCreator {
         try this.gPreviewIcon.Destroy()
         this.gPreviewIcon := Gui('+ToolWindow +AlwaysOnTop -MinimizeBox -MaximizeBox', name)
         this.gPreviewIcon.OnEvent('Escape', (*) => this.gPreviewIcon.Destroy())
-        CoordMode('Mouse', 'Screen'), MouseGetPos(&posX, &posY)
+
+        cmmPrev := A_CoordModeMouse
+        CoordMode('Mouse', 'Screen')
+        MouseGetPos(&posX, &posY)
+        CoordMode('Mouse', cmmPrev)
+
         this.gPreviewIcon.Add('Picture', 'w225 h-1 Icon' index, path)
         this.gPreviewIcon.Show('x' posX ' y' posY)
     }
@@ -3168,7 +3356,7 @@ Class NotifyCreator {
         this.gAbout.Add('Text', 'x+5', 'by Maestrith, TheArkive (v2 conversion).')
         this.gAbout.Add('Link', 'xs yp+30', '<a href="https://www.autohotkey.com/boards/viewtopic.php?t=66000">GetFontNames</a>')
         this.gAbout.Add('Text', 'x+5', 'by teadrinker.')
-        this.gAbout.Add('Link', 'xs yp+30', '<a href="https://www.the-automator.com/downloads/maestrith-notify-class-v2/">DisplayCheck</a>')
+        this.gAbout.Add('Link', 'xs yp+30', '<a href="https://www.the-automator.com/downloads/maestrith-notify-class-v2">DisplayCheck</a>')
         this.gAbout.Add('Text', 'x+5', 'by the-Automator.')
         this.gAbout.Add('Link', 'xs yp+30', '<a href="https://github.com/Descolada/UIA-v2">MoveControls</a>')
         this.gAbout.Add('Text', 'x+5', 'by Descolada. (from UIATreeInspector.ahk)')
@@ -3275,29 +3463,30 @@ Class NotifyCreator {
 
     static CopyToClipboard(param, strOpts:='', *)
     {
-        txtClip := ' copied to clipboard.'
+        strClip := ' copied to clipboard.'
 
         switch param {
-            case 'theme':  title := 'Theme name' txtClip, msg := this.gMain.ddl_theme.Text
-            case 'result' : title := 'Result' txtClip, msg := this.gMain.edit_result.Text
-            case 'tf', 'mf': title := (param = 'tf' ? 'Title' : 'Message') ' font name' txtClip, msg := this.gMain.ddl_%param%.Text
-            case 'export': title := 'Settings string' txtClip, msg := strOpts, dur := 12
-            case 'sound', 'image':
+            case 'theme': title := 'Theme name' strClip, msg := this.gMain.ddl_theme.Text
+            case 'result' : title := 'Result' strClip, msg := this.gMain.edit_result.Text
+            case 'tf', 'mf': title := (param == 'tf' ? 'Title' : 'Message') ' font name' strClip, msg := this.gMain.ddl_%param%.Text
+            case 'export': title := 'Settings string' strClip, msg := strOpts, dur := 12
+            case 'sound', 'image', 'bgImg':
             {
-                title := StrTitle(param) txtClip
+                title := (param == 'bgImg' ? 'Background Image' : StrTitle(param)) strClip
+
                 if (msg := this.gMain.ddl_%param%.Text) = 'none'
                     return
             }
-            default: title := 'Content' txtClip, msg := param
+            default: title := 'Content' strClip, msg := param
         }
 
         A_Clipboard := '', A_Clipboard := msg
 
         if ClipWait(1)
-            Notify.Show(title, msg, this.mIcons['clipBoard'],,,
-                this.strOpts 'dg=5 tag=copyToClip theme=OKDark dur=' (dur ?? Notify.mOrig_mDefaults['dur']) ' pos=bc')
+            Notify.Show(title, msg,,,,
+                this.strOpts 'dg=5 tag=copyToClip theme=OKDark dur=' (dur ?? Notify.mOrig_mDefaults['dur']) ' pos=bc mali=center tali=center')
         else
-            Notify.Show('Error', 'Copy to clipboard failed.',,,, this.strOpts 'dg=5 tag=copyToClip theme=xDark pos=bc')
+            Notify.Show('Error', 'Copy to clipboard failed.',,,, this.strOpts 'dg=5 tag=copyToClip theme=xDark pos=bc mali=center tali=center')
     }
 
     ;============================================================================================
@@ -3436,7 +3625,7 @@ Class NotifyCreator {
     /********************************************************************************************
      * Get the names of all fonts currently installed on the system.
      * @credits teadrinker, XMCQCX (v2 conversion).
-     * @see {@link https://www.autohotkey.com/boards/viewtopic.php?t=66000 GetFontNames - AHK Forum}
+     * @see {@link https://www.autohotkey.com/boards/viewtopic.php?t=66000 AHK Forum}
      */
     static GetFontNames()
     {

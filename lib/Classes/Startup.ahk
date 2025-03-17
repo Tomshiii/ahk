@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/03/05
- * @version 1.7.58
+ * @date 2025/03/17
+ * @version 1.7.59
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -866,41 +866,46 @@ class Startup {
 
         webView2 := {
             name: "WebView2",                        url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/WebView2/WebView2.ahk",
-            scriptPos: ptf.lib "\Other\WebView2"
+            scriptPos: ptf.lib "\Other\WebView2",    ext: "unset"
         }
         comVar := {
             name: "ComVar",                          url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/ComVar.ahk",
-            scriptPos: ptf.lib "\Other"
+            scriptPos: ptf.lib "\Other",             ext: "unset"
         }
         JSON := {
             name: "JSON",                            url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/JSON.ahk",
-            scriptPos: ptf.lib "\Other"
+            scriptPos: ptf.lib "\Other",             ext: "unset"
         }
         UIA := {
             name: "UIA",                             url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA.ahk",
-            scriptPos: ptf.lib "\Other\UIA"
+            scriptPos: ptf.lib "\Other\UIA",         ext: "unset"
         }
         UIA_Browser := {
             name: "UIA_Browser",                     url: "https://raw.githubusercontent.com/Descolada/UIA-v2/main/Lib/UIA_Browser.ahk",
-            scriptPos: ptf.lib "\Other\UIA"
+            scriptPos: ptf.lib "\Other\UIA",         ext: "unset"
         }
         WinEvent := {
             name: "WinEvent",                        url: "https://raw.githubusercontent.com/Descolada/AHK-v2-libraries/main/Lib/WinEvent.ahk",
-            scriptPos: ptf.lib "\Other"
+            scriptPos: ptf.lib "\Other",             ext: "unset"
         }
         Notify := {
             name: "Notify",                          url: "https://raw.githubusercontent.com/XMCQCX/NotifyClass-NotifyCreator/refs/heads/main/Notify.ahk",
-            scriptPos: ptf.lib "\Other\Notify"
+            scriptPos: ptf.lib "\Other\Notify",      ext: "unset"
         }
         NotifyCreator := {
-            name: "Notify Creator",                          url: "https://raw.githubusercontent.com/XMCQCX/NotifyClass-NotifyCreator/refs/heads/main/Notify%20Creator.ahk",
-            scriptPos: ptf.lib "\Other\Notify"
+            name: "Notify Creator",                  url: "https://raw.githubusercontent.com/XMCQCX/NotifyClass-NotifyCreator/refs/heads/main/Notify%20Creator.ahk",
+            scriptPos: ptf.lib "\Other\Notify",      ext: "unset"
+        }
+        NotifyIcons := {
+            name: "Icons",                           url: "https://github.com/XMCQCX/NotifyClass-NotifyCreator/raw/refs/heads/main/Icons.dll",
+            scriptPos: ptf.lib "\Other\Notify",      ext: ".dll"
         }
 
-        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator]
+        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator, this.NotifyIcons]
         name        := []
         url         := []
         scriptPos   := []
+        ext         := []
     }
 
     /**
@@ -944,13 +949,14 @@ class Startup {
         }
         ;// begin loop
         loop allLibs.name.Length {
-            localVersion := getLocalVer(, StrReplace(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk", ptf.rootDir "\", ""),,, true) ;localVer(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
-            latestVer := getString(allLibs.url[A_Index], allLibs.name[A_Index] ".ahk")
+            fileExt := (allLibs.ext[A_Index] = "unset") ? ".ahk" : allLibs.ext[A_Index]
+            localVersion := getLocalVer(, StrReplace(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] fileExt, ptf.rootDir "\", ""),,, true) ;localVer(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
+            latestVer := getString(allLibs.url[A_Index], allLibs.name[A_Index] fileExt)
             if latestVer.version = ""
                 { ;if the lib doesn't have a @version tag, we'll instead compare the entire file against the local copy and override it if there are differences
                     if localVersion.script !== latestVer.script
                         {
-                            Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
+                            Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] fileExt)
                             Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated", 'iconi',,, 'POS=BR dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
                         }
                     continue
@@ -959,7 +965,7 @@ class Startup {
                 continue
             if VerCompare(latestVer.version, localVersion.version) > 0
                 {
-                    Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
+                    Download(allLibs.url[A_Index], allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] fileExt)
                     Notify.Show(, allLibs.name[A_Index] ".ahk lib file updated to v" latestVer.version, 'iconi',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
                     continue
                 }

@@ -23,7 +23,7 @@
 - ✏️ Added `disableDirectManip()`
 - ❌ Removed `keyreset()` & `keyframe()`. A simpler method could be created using `PremiereRemote` but no current plans to develop said function
 - ❌ Removed `zoom()`
-- `numpadGain()` may alert the user if setting a new value returns an unexpected value
+- `numpadGain()` may alert the user if setting a new value causes `PremiereRemote` to return an unexpected value
 - `valuehold()`
     - No longer requires individual screenshots for each control, greatly simplifying the function and making it less prone to breaking
     - No longer adjusts the `blend mode` and all reference to that ability has been removed
@@ -34,7 +34,7 @@
 - ✏️ Added `gitBranchCheck()` to check for upstream changes to a git branch and offer the ability to `pull` upstream changes
     - Can be toggled in `settingsGUI()` and defaults to `false`
 - Moved progress tooltip to the bottom left (previously bottom right) to avoid obscuring any `Notify` alerts
-- `libUpdateCheck()` now checks for `Notify Creator.ahk` updates
+- `libUpdateCheck()` now checks for `Notify Creator.ahk` & `Icons.dll` updates
 - Functions that `reload` or `reset` all scripts will now track their reloads to ensure they can only reload once per day
     - They will also all now use `Notify` to alert the user that a reload is taking place to minimise confusion incase multiple need to happen in succession
 - `generate()`
@@ -54,6 +54,6 @@
 - ✏️ Added [`ObjRegisterActive.ahk`](<https://www.autohotkey.com/boards/viewtopic.php?f=6&t=6148&sid=79f2a3736ebcc2c9b88842b5a5145d27&start=40>)
     - `My Scripts.ahk` can now better share its instance of `prem {` with `QMK.ahk` scripts resulting in less UIA window focusing
 - ✏️ Added `adjust audio.ahk` streamdeck script that offers a GUI to quickly and easily adjust the gain of files  
-<img src="https://github.com/user-attachments/assets/21633053-66d0-4573-950d-2a0eff825f2c" width="275"/>
-- ❌ Removed all, now obsolete, `ImageSearch` images relating to `blend` scripts & `prem.valuehold()`
+    - <img src="https://github.com/user-attachments/assets/21633053-66d0-4573-950d-2a0eff825f2c" width="275"/>
+- ❌ Removed all obsolete `ImageSearch` images relating to `blend` scripts & `prem.valuehold()`
 - ❌ Removed `Premiere Timeline GUI.ahk` and all references to it. The functionality of this script has long since been superseded by `Premiere_UIA.ahk`
