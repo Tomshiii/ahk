@@ -683,7 +683,7 @@
 	"OpenLayerSourceWindow" = "(Alt+Enter)"
 	"Orientation" = "(Ctrl+Alt+Shift+R)"
 	"Paste" = "(Ctrl+V)"
-	"PasteReversedKeyframes" = "(Ctrl+Shift+V)()"
+	"PasteReversedKeyframes" = "(Ctrl+Shift+V)"
 	"PrefsGeneral" = "(Ctrl+Alt+;)"
 	"PrevXferMode" = "(Shift+-)"
 	"ProjectSettings" = "(Ctrl+Alt+Shift+K)"

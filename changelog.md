@@ -1,4 +1,4 @@
-# <> Release 2.15.x - 
+# <> Release 2.15.3 - Features & Bugfixes
 > [!Note]
 > A bug in the third party lib [`WinEvent`](<https://github.com/Descolada/AHK-v2-libraries/issues/15>) was causing `prem.dissmissWarning()` to never fire when used in `Premiere_RightClick.ahk`. This issue has now been recitified and is once again working as expected.
 

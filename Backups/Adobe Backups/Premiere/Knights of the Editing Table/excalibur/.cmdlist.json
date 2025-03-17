@@ -2705,6 +2705,9 @@
         },
         "uni.Unmult": {
             "show": 1
+        },
+        "GoPro Reframe": {
+            "show": 1
         }
     },
     "af": {
@@ -2882,6 +2885,9 @@
             "show": 1
         },
         "Text Preset": {
+            "show": 1
+        },
+        "flashback": {
             "show": 1
         }
     },
@@ -3850,103 +3856,58 @@
             "show": 1
         }
     },
-"af": {
-    "Anchor": {
-        "show": 1,
-        "extensionID": "knights_of_the_editing_table.anchor",
-        "control": "knights_of_the_editing_table.anchor.control",
-        "cmds": {
-            "LEFT_CENTER": {
-                "name": {
-                    "en": "Middle Left"
-                }
-            },
-            "CENTER": {
-                "name": {
-                    "en": "Middle Center"
-                }
-            },
-            "RIGHT_CENTER": {
-                "name": {
-                    "en": "Middle Right"
-                }
-            },
-            "TOP_LEFT": {
-                "name": {
-                    "en": "Top Left"
-                }
-            },
-            "TOP_CENTER": {
-                "name": {
-                    "en": "Top Center"
-                }
-            },
-            "TOP_RIGHT": {
-                "name": {
-                    "en": "Top Right"
-                }
-            },
-            "BOTTOM_LEFT": {
-                "name": {
-                    "en": "Bottom Left"
-                }
-            },
-            "BOTTOM_CENTER": {
-                "name": {
-                    "en": "Bottom Center"
-                }
-            },
-            "BOTTOM_RIGHT": {
-                "name": {
-                    "en": "Bottom Right"
-                }
-            },
-            "LEFT_CENTER,alpha": {
-                "name": {
-                    "en": "Middle Left (use alpha)"
-                }
-            },
-            "CENTER,alpha": {
-                "name": {
-                    "en": "Middle Center (use alpha)"
-                }
-            },
-            "RIGHT_CENTER,alpha": {
-                "name": {
-                    "en": "Middle Right (use alpha)"
-                }
-            },
-            "TOP_LEFT,alpha": {
-                "name": {
-                    "en": "Top Left (use alpha)"
-                }
-            },
-            "TOP_CENTER,alpha": {
-                "name": {
-                    "en": "Top Center (use alpha)"
-                }
-            },
-            "TOP_RIGHT,alpha": {
-                "name": {
-                    "en": "Top Right (use alpha)"
-                }
-            },
-            "BOTTOM_LEFT,alpha": {
-                "name": {
-                    "en": "Bottom Left (use alpha)"
-                }
-            },
-            "BOTTOM_CENTER,alpha": {
-                "name": {
-                    "en": "Bottom Center (use alpha)"
-                }
-            },
-            "BOTTOM_RIGHT,alpha": {
-                "name": {
-                    "en": "Bottom Right (use alpha)"
+    "md": {
+        "Anchor": {
+            "show": 1,
+            "extensionID": "knights_of_the_editing_table.anchor",
+            "control": "knights_of_the_editing_table.anchor.control",
+            "cmds": {
+                "TOP_LEFT": {
+                    "name": {
+                        "en": "Top Left"
+                    }
+                },
+                "TOP_CENTER": {
+                    "name": {
+                        "en": "Top Center"
+                    }
+                },
+                "TOP_RIGHT": {
+                    "name": {
+                        "en": "Top Right"
+                    }
+                },
+                "LEFT_CENTER": {
+                    "name": {
+                        "en": "Middle Left"
+                    }
+                },
+                "CENTER": {
+                    "name": {
+                        "en": "Center"
+                    }
+                },
+                "RIGHT_CENTER": {
+                    "name": {
+                        "en": "Middle Right"
+                    }
+                },
+                "BOTTOM_LEFT": {
+                    "name": {
+                        "en": "Bottom Left"
+                    }
+                },
+                "BOTTOM_CENTER": {
+                    "name": {
+                        "en": "Bottom Center"
+                    }
+                },
+                "BOTTOM_RIGHT": {
+                    "name": {
+                        "en": "Bottom Right"
+                    }
                 }
             }
         }
     }
-}
 }
