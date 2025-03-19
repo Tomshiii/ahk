@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/03/15
- * @version 1.0.18
+ * @date 2025/03/19
+ * @version 1.0.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -28,7 +28,9 @@ class ytdlp {
         "https://old.reddit.com/",   "https://www.reddit.com/"
     ]
     URL := ""
-    defaultCommand := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
+    defaultCommand      := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
+    defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 {2}'
+    defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav'
     defaultFilename := "%(title).{1}s [%(id)s].%(ext)s"
     command := ""
     check := false
@@ -154,6 +156,7 @@ class ytdlp {
      * @param {String} [args=""] is any arguments you wish to pass to yt-dlp
      * @param {String} [folder=A_ScriptDir] is the folder you wish the files to save. By default it's this scripts directory
      * @param {String} [URL?] pass through a URL instead of using the user's clipboard
+     * @param {Boolean} [openDirOnFinish=true] determines whether the destination directory will be opened once the download process is complete. Defaults to `true`
      * @returns the url
      * ```
      * ytdlp().download("", "download\path")
@@ -161,7 +164,7 @@ class ytdlp {
      * ;// yt-dlp -P "link\to\path" "URL"
      * ```
      */
-    download(args := "", folder := A_ScriptDir, URL?) {
+    download(args := "", folder := A_ScriptDir, URL?, openDirOnFinish := true) {
         if (Type(args) != "string" || Type(folder) != "string") {
                 ;// throw
                 errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
@@ -230,7 +233,8 @@ class ytdlp {
         }
         this.command := Format(this.defaultCommand, args, folder, this.URL)
         cmd.run(,,, this.command)
-        this.__activateDir(folder)
+        if openDirOnFinish = true
+            this.__activateDir(folder)
         if !IsSet(URL)
             clip.returnClip(oldClip)
         return this.URL

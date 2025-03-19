@@ -26,4 +26,5 @@ commsFolder    := SubStr(projFolder.dir, 1, InStr(projFolder.dir, "\",, -1)) "vi
 ;// determine whether nvenc is possible (this is a rudimentary check and might not be bulletproof, remove if you encounter issues)
 encoder := (useNVENC() = true) ? SDopt.defaultNVENCencode : ""
 
-ytdlp().download(Format('-N 8 -o "{1}" --verbose --windows-filenames --recode-video mp4 {2}', "{}", encoder), commsFolder, storedClip)
+ytdl := ytdlp()
+ytdl.download(Format(ytdl.defaultVideoCommand, "{}", encoder), commsFolder, storedClip)

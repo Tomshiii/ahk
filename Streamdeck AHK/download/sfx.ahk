@@ -10,4 +10,5 @@ if !DirExist(SDopt.sfxFolder)
 storedClip := A_Clipboard
 
 ;yt-dlp --extract-audio --audio-format wav -P "link\to\path" "URL"
-ytdlp().download(Format('-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav', "{}"), SDopt.sfxFolder, storedClip)
+ytdl := ytdlp()
+ytdl.download(Format(ytdl.defaultAudioCommand, "{}"), SDopt.sfxFolder, storedClip)

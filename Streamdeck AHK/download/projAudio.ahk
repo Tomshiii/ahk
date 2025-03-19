@@ -17,4 +17,5 @@ if !projFolder := WinGet.ProjPath()
 ;// I keep my project files buried in an extra folder so this string manipulation is to simply step back in the folder tree
 sfxFolder    := SubStr(projFolder.dir, 1, InStr(projFolder.dir, "\",, -1)) "audio"
 
-ytdlp().download(Format('-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav', "{}"), sfxFolder, storedClip)
+ytdl := ytdlp()
+ytdl.download(Format(ytdl.defaultAudioCommand, "{}"), sfxFolder, storedClip)

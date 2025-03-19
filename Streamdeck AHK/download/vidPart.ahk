@@ -25,4 +25,5 @@ SDopt := SD_Opt()
 ;// determine whether nvenc is possible (this is a rudimentary check and might not be bulletproof, remove if you encounter issues)
 encoder := (useNVENC() = true) ? SDopt.defaultNVENCencode : ""
 
-ytdlp().download(Format('-N 8 -o "{1}" --download-sections "*{3}" --verbose --windows-filenames --recode-video mp4 {2}', "{}", encoder, timecode.value), WinGet.pathU(selectedDir), storedClip)
+
+ytdlp().download(Format('-N 8 -o "{1}" --download-sections "*{3}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 {2}', "{}", encoder, timecode.value), WinGet.pathU(selectedDir), storedClip)
