@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2025/03/22
  ***********************************************************************/
-global currentVer := "1.0.0"
+global currentVer := "1.0.1"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -48,12 +48,14 @@ class multiDL extends tomshiBasic {
             ExitApp()
         super.__New(,,, "Multi Download")
 
-        this.AddEdit("r10 vlist w320 Multi Wrap", "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files.")
+        this.AddEdit("y24 r10 vlist w320 Multi Wrap", "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files.")
         this.AddButton("vDL", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddButton("vupdates x+75", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
         this["DL"].GetPos(&x, &y, &wid, &height)
         this.AddButton("x" x " y+1 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
 
+        this["list"].GetPos(&listx, &listy, &listwid, &listheight)
+        this.AddText("Right y7 x" listx " w" listwid, "v" currentVer)
         this.show()
     }
 
@@ -116,16 +118,17 @@ class multiDL extends tomshiBasic {
         if !DirExist(A_Temp "\tomshi")
             DirCreate(A_Temp "\tomshi")
         try {
+            if FileExist(A_Temp "\tomshi\mult-dl.ahk")
+                FileDelete(A_Temp "\tomshi\mult-dl.ahk")
             Download("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/main/Streamdeck%20AHK/download/mult-dl.ahk", A_Temp "\tomshi\mult-dl.ahk")
             readDl := FileRead(A_Temp "\tomshi\mult-dl.ahk")
-            dlVer := getLocalVer(readDl)
-
+            dlVer := getLocalVer(readDl,, "currentVer := ", '"')
             if VerCompare(dlVer, currentVer) > 0 {
                 if MsgBox("New version of mult-dl.exe available, would you like to download it?",, 0x4) = "No"
                     return
                 if !dlLoc := FileSelect("D3",, "Download mult-dl.exe")
                     return
-                Download("https://github.com/Tomshiii/ahk/blob/main/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl.exe")
+                Download("https://github.com/Tomshiii/ahk/raw/refs/heads/main/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl.exe")
                 MsgBox("Download Complete, please run the new file")
                 ExitApp()
             }

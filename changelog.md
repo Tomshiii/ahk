@@ -1,6 +1,8 @@
 # <> Release 2.15.x - 
 
 ## Functions
+- ✅ Fixed `getLocalVer()` returning early
+
 `ytdlp {`
 - `download()`
     - Fixed function failing if `URL` param isn't passed into the function

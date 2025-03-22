@@ -25,8 +25,8 @@ getLocalVer(varRead?, script := "My Scripts.ahk", searchTag := "@version", endFi
         read := varRead
     else
         read := FileRead(ptf.rootDir "\" script)
-    getVerPos := InStr(read, "@version")
-    if getVerPos = 0 ;if the lib doesn't have a @version tag, we'll pass back a blank script and do something else later
+    getVerPos := InStr(read, searchTag)
+    if !getVerPos ;if the lib doesn't have a @version tag, we'll pass back a blank script and do something else later
         return((returnObj = false) ? false : {version: "", script: read})
     ver := Trim(
         SubStr(read
