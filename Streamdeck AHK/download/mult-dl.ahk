@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2025/03/22
  ***********************************************************************/
-global currentVer := "1.0.1"
+global currentVer := "1.0.2"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -48,14 +48,16 @@ class multiDL extends tomshiBasic {
             ExitApp()
         super.__New(,,, "Multi Download")
 
-        this.AddEdit("y24 r10 vlist w320 Multi Wrap", "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files.")
+        this.AddEdit("y45 r10 vlist w320 Multi Wrap", "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files.")
         this.AddButton("vDL", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
-        this.AddButton("vupdates x+75", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
+        this.AddCheckbox("x+10 yp-1 vdeprioritise", " Avoid reencode`n (may result in lower quality)")
         this["DL"].GetPos(&x, &y, &wid, &height)
-        this.AddButton("x" x " y+1 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
+        this.AddButton("x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
 
         this["list"].GetPos(&listx, &listy, &listwid, &listheight)
-        this.AddText("Right y7 x" listx " w" listwid, "v" currentVer)
+        this.AddText("Right y28 x" listx " w" listwid, "v" currentVer)
+        this.AddButton("vupdates x" listx " y7", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
+        this.AddCheckbox("vcheckDev x+10 yp+7", "check dev branch")
         this.show()
     }
 
@@ -75,15 +77,18 @@ class multiDL extends tomshiBasic {
         this.Hide()
         yt := ytdlp()
         for v in list {
-            switch vidOrAud {
-                case "vid": yt.download(yt.defaultVideoCommand, this.getFile, v, false)
-                case "aud": yt.download(yt.defaultAudioCommand, this.getFile, v, false)
+            switch {
+                case (vidOrAud = "vid" && this["deprioritise"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, v, false)
+                case (vidOrAud = "vid" && this["deprioritise"].value = true):
+                    altCommand := '-N 8 -o "{1}" -f "bv*[vcodec!*=av01][vcodec!=av1][vcodec!*=vp9]+ba" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
+                    yt.download(altCommand, this.getFile, v, false)
+                case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, v, false)
             }
         }
         this.show()
         this["DL"].Enabled := True
         yt.__activateDir(this.getFile)
-        yt.__Delete()
+        yt := ""
     }
 
     __install_choco(*) {
@@ -112,7 +117,7 @@ class multiDL extends tomshiBasic {
     }
 
     __checkUpdates(*) {
-        cmd.run(true,, true, "choco upgrade chocolatey --yes && choco upgrade ffmpeg --yes && choco upgrade yt-dlp --yes")
+        cmd.run(true,, true, 'choco upgrade chocolatey --yes && choco upgrade ffmpeg --yes && choco upgrade yt-dlp --yes && echo. && echo. && echo Updates Complete. You may now close this window')
         if !A_IsCompiled
             return
         if !DirExist(A_Temp "\tomshi")
@@ -120,7 +125,8 @@ class multiDL extends tomshiBasic {
         try {
             if FileExist(A_Temp "\tomshi\mult-dl.ahk")
                 FileDelete(A_Temp "\tomshi\mult-dl.ahk")
-            Download("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/main/Streamdeck%20AHK/download/mult-dl.ahk", A_Temp "\tomshi\mult-dl.ahk")
+            mainOrDev := (this["checkDev"].value = true) ? "dev" : "main"
+            Download("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.ahk", A_Temp "\tomshi\mult-dl.ahk")
             readDl := FileRead(A_Temp "\tomshi\mult-dl.ahk")
             dlVer := getLocalVer(readDl,, "currentVer := ", '"')
             if VerCompare(dlVer, currentVer) > 0 {
@@ -128,7 +134,7 @@ class multiDL extends tomshiBasic {
                     return
                 if !dlLoc := FileSelect("D3",, "Download mult-dl.exe")
                     return
-                Download("https://github.com/Tomshiii/ahk/raw/refs/heads/main/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl.exe")
+                Download("https://github.com/Tomshiii/ahk/raw/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl.exe")
                 MsgBox("Download Complete, please run the new file")
                 ExitApp()
             }

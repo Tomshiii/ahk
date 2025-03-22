@@ -307,53 +307,13 @@ if !FileExist(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe") {
     if !WinWait("Ahk2Exe for AutoHotkey",, 10)
         return
 }
-if !WinExist("Ahk2Exe for AutoHotkey")
-    Run(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe")
-WinWait("Ahk2Exe for AutoHotkey")
-;// open script
-if !WinActive("Ahk2Exe for AutoHotkey") {
-    WinActivate("Ahk2Exe for AutoHotkey")
-    WinWaitActive("Ahk2Exe for AutoHotkey")
-}
-sleep 500
-SendInput("{Tab 2}")
-sleep 250
-SendInput("{Space}")
-WinWait("Open Script")
-if !WinActive("Open Script") {
-    WinActivate("Open Script")
-    WinWaitActive("Open Script")
-}
-sleep 250
-SendInput("{F4}")
-sleep 1000
-delaySI(250, "^a", "{BackSpace}", A_WorkingDir "\release\", "{Enter}", "!n", yes.value ".ahk", "!o")
-;// save exe
-if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2) {
-    WinActivate("Ahk2Exe for AutoHotkey")
-    WinWaitActive("Ahk2Exe for AutoHotkey")
-}
-SendInput("{Tab 2}")
-SendInput("{Space}")
-WinWait("Save Executable As")
-if !WinActive("Save Executable As") {
-    WinActivate("Save Executable As")
-    WinWaitActive("Save Executable As")
-}
-sleep 1000
-delaySI(1000, "{F4}", "^a", "{BackSpace}", A_WorkingDir "\release\", "{Enter}", "+{Tab 8}", "!n")
-delaySI(250, yes.value ".exe", "!s")
-;// change ahk ver
-if !WinWaitActive("Ahk2Exe for AutoHotkey",, 2) {
-    WinActivate("Ahk2Exe for AutoHotkey")
-    WinWaitActive("Ahk2Exe for AutoHotkey")
-}
-SendInput("{Tab 5}")
-SendInput("{Down 20}" "{Up}")
-SendInput("{Enter}")
-WinWait("Ahk2Exe", "Successfully compiled as")
-SendInput("{Enter}")
-
+releaseCompile := FileRead(A_ScriptDir "\release_Compile.ahk")
+newCompile := Format(releaseCompile, yes.value, A_AhkVersion)
+if !DirExist(A_Temp "\tomshi")
+    DirCreate(A_Temp "\tomshi")
+FileAppend(newCompile, A_Temp "\tomshi\newCompile.ahk")
+RunWait(A_Temp "\tomshi\newCompile.ahk")
+FileDelete(A_Temp "\tomshi\newCompile.ahk")
 
 currentDir := ""
 getverNum() {

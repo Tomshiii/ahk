@@ -3,7 +3,7 @@
 ## Functions
 - ✅ Fixed `getLocalVer()` returning early
 
-`ytdlp {`
+⚠️ `ytdlp {`
 - `download()`
     - Fixed function failing if `URL` param isn't passed into the function
     - Fixed function sometimes failing to increment the filename if a video is downloaded multiple times

@@ -2,7 +2,7 @@
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
  * @date 2025/03/22
- * @version 1.0.21
+ * @version 1.0.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,11 +29,11 @@ class ytdlp {
     ]
     URL := ""
     defaultCommand      := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
-    defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4'
+    defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
     defaultPostProcess  := 'ffmpeg -i "{2}\{3}" {1} -c:a copy "{2}\temp_{3}" && del /f /q "{2}\{3}" && move /y "{2}\temp_{3}" "{2}\{3}"'
-    defaultCPU          := "-c:v libx264 -crf 17 -preset medium"
-    defaultGPU          := "-c:v h264_nvenc -preset 18 -cq 17"
-    defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav'
+    defaultCPU          := "-c:v libx264 -crf 21 -preset medium"
+    defaultGPU          := "-c:v h264_nvenc -preset 18 -cq 19"
+    defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav --cookies-from-browser firefox'
     defaultFilename := "%(title).{1}s [%(id)s].%(ext)s"
     command := ""
     check := false
@@ -210,8 +210,9 @@ class ytdlp {
         mNotifyGUI_Prog := Notify.Show(, 'Determining name of the output file...', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=6 maxW=400 bdr=0x75AEDC')
         SDopt := SD_Opt()
         outputFileName := Format(this.defaultFilename, SDopt.filenameLengthLimit)
-        nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}"', outputFileName, this.URL))
+        nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" --cookies-from-browser firefox', outputFileName, this.URL))
         SplitPath(nameOutput,,, &ext, &nameNoExt)
+        ext := (ext = "webm") ? "mp4" : ext
         checkPath1 := WinGet.pathU(folder "\" nameOutput)
         checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
         if FileExist(checkPath1) || FileExist(checkPath2) {
