@@ -1,4 +1,5 @@
-# <> Release 2.15.x - 
+# <> Release 2.15.4 - `yt-dlp.ahk` Hotfix
+Although this release comes hot off the heels of <kbd>v2.15.3</kbd> I wanted to semi-rush this one out to fix a few mishaps with `yt-dlp.ahk`.
 
 ## Functions
 - ✅ Fixed `getLocalVer()` returning early
