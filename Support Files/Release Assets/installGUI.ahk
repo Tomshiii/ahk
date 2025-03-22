@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2024/04/26
- * @version 1.0.2
+ * @date 2025/03/22
+ * @version 1.0.2.1
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -11,7 +11,7 @@ SetWorkingDir(A_ScriptDir) ;! A_ScriptDir in this case is the users install loca
 A_ScriptName := "yes.value"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
-;@Ahk2Exe-SetCopyright Copyright (C) 2024
+;@Ahk2Exe-SetCopyright Copyright (C) 2025
 ;@Ahk2Exe-SetDescription Installer file for Tomshi's ahk github repo
 
 ;// setting version

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/03/19
- * @version 1.0.20
+ * @date 2025/03/22
+ * @version 1.0.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,7 +29,10 @@ class ytdlp {
     ]
     URL := ""
     defaultCommand      := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
-    defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 {2}'
+    defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4'
+    defaultPostProcess  := 'ffmpeg -i "{2}\{3}" {1} -c:a copy "{2}\temp_{3}" && del /f /q "{2}\{3}" && move /y "{2}\temp_{3}" "{2}\{3}"'
+    defaultCPU          := "-c:v libx264 -crf 17 -preset medium"
+    defaultGPU          := "-c:v h264_nvenc -preset 18 -cq 17"
     defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav'
     defaultFilename := "%(title).{1}s [%(id)s].%(ext)s"
     command := ""
@@ -151,12 +154,13 @@ class ytdlp {
     /**
      * ## This function requires [yt-dlp](https://github.com/yt-dlp/yt-dlp) to be installed correctly on the users system
      * ### If this function is called more than once and before the previous instance is able to begin downloading, both instances may error out.
-     * It will then read the users highlighted text and if a youtube (or twitch video/clip) link is found, download that link with whatever arguments are passed, if the user isn't highlighting any text or a youtube/twitch link isn't found, it will check the users clipboard instead.
+     * This function will either downloaded the value passed into parameter `URL` or will attempt to read the user's clipboard in the event that parameter has not been set.
      *
      * @param {String} [args=""] is any arguments you wish to pass to yt-dlp
      * @param {String} [folder=A_ScriptDir] is the folder you wish the files to save. By default it's this scripts directory
      * @param {String} [URL?] pass through a URL instead of using the user's clipboard
      * @param {Boolean} [openDirOnFinish=true] determines whether the destination directory will be opened once the download process is complete. Defaults to `true`
+     * @param {String/boolean} [postArgs=this.defaultPostProcess] any cmdline args you wish to execute after the initial download. By default this process will determine the codec of the downloaded file and if it isn't `h264` or `h265` it will reencode the file to `h264`. *Please note:* If you pass custom arguments to this parameter the prementioned codec check will **no longer** occur. You may also pass `false` to prevent any post download execution.
      * @returns the url
      * ```
      * ytdlp().download("", "download\path")
@@ -164,12 +168,13 @@ class ytdlp {
      * ;// yt-dlp -P "link\to\path" "URL"
      * ```
      */
-    download(args := "", folder := A_ScriptDir, URL?, openDirOnFinish := true) {
+    download(args := "", folder := A_ScriptDir, URL?, openDirOnFinish := true, postArgs := this.defaultPostProcess) {
         if (Type(args) != "string" || Type(folder) != "string") {
                 ;// throw
                 errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
             }
         check := false
+        origFold := folder
         if (StrLen(folder) = 2 && SubStr(folder, 2, 1) = ":") || (StrLen(folder) = 3 && SubStr(folder, 2, 2) =":\")
             folder := SubStr(folder, 1, 1) ":\\"
         if !DirExist(folder) ;saftey check
@@ -206,17 +211,18 @@ class ytdlp {
         SDopt := SD_Opt()
         outputFileName := Format(this.defaultFilename, SDopt.filenameLengthLimit)
         nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}"', outputFileName, this.URL))
-        SplitPath(nameOutput,,,, &nameNoExt)
+        SplitPath(nameOutput,,, &ext, &nameNoExt)
         checkPath1 := WinGet.pathU(folder "\" nameOutput)
-        checkPath2 := WinGet.pathU(folder "\" nameNoExt ".mp4")
+        checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
         if FileExist(checkPath1) || FileExist(checkPath2) {
             index := 1
             loop {
-                if FileExist(folder "\" nameNoExt String(index) ".webm") || FileExist(folder "\" nameNoExt String(index) ".mp4") {
+                if FileExist(folder "\" nameNoExt String(index) "." ext) {
                     index++
                     continue
                 }
                 args := Format(args, nameNoExt index)
+                nameNoExt := nameNoExt String(index)
                 break
             }
         }
@@ -230,8 +236,28 @@ class ytdlp {
             this.command := Format(this.defaultCommand, args, folder, oldClip.storedClip)
             clip.returnClip(oldClip)
         }
+        folderU := WinGet.pathU(origFold)
+        folderU := (SubStr(folderU, -1, 1) = "\") ? SubStr(folderU, 1, StrLen(folderU)-1) : folderU
         this.command := Format(this.defaultCommand, args, folder, this.URL)
+
+        ;// running command
         cmd.run(,,, this.command)
+
+        ;// determine if the downloaded file is a video file
+        isVideo := (cmd.result(Format('ffprobe -v error -select_streams v -show_entries stream=codec_type -of csv=p=0 "{1}"', folderU "\" nameNoExt "." ext)) = "video") ? true : false
+        switch {
+            ;// determining what post args to perform
+            case (isVideo = true && postArgs != false && postArgs == this.defaultPostProcess):
+                ;// determining whether to use cpu encoding or gpu encoding
+                fixArgs := (useNVENC() = true) ? Format(postArgs, this.defaultGPU, folderU, nameNoExt "." ext) : Format(postArgs, this.defaultCPU, folderU, nameNoExt "." ext)
+                ;// determining if downloaded file needs to be reencoded
+                getEncoding := cmd.result(Format('ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "{1}"', folderU "\" nameNoExt "." ext))
+                if getEncoding != "h264" && getEncoding != "h265" {
+                    Notify.Show(, 'Downloaded file is being reencoded to h264 for NLE compatibility', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=6 maxW=400 bdr=0x75AEDC')
+                    cmd.run(,,, fixArgs)
+                }
+            case (isVideo = true && postArgs != false && postArgs !== this.defaultPostProcess): cmd.run(postArgs)
+        }
         if openDirOnFinish = true
             this.__activateDir(folder)
         if !IsSet(URL)

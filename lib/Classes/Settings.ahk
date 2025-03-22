@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2025/02/17
- * @version 1.2.23
+ * @date 2025/03/22
+ * @version 1.2.23.1
  ***********************************************************************/
 
 class UserPref {
@@ -41,8 +41,8 @@ class UserPref {
         ;// [Adjust]
         "adobe_GB", 45, "adobe_FS", 2,
         "autosave_MIN",  5, "game_SEC",  2, "multi_SEC", 5,
-        "prem_year", 2024, "ae_year", 2024, "ps_year", 2024,
-        "premVer", "v24.4.1", "aeVer", "v24.4.1", "psVer", "25.5", "resolveVer", "v18.5",
+        "prem_year", 2025, "ae_year", 2025, "ps_year", 2025,
+        "premVer", "v25.0", "aeVer", "v25.0", "psVer", "25.5", "resolveVer", "v18.5",
         "premIsBeta", "false", "aeIsBeta", "false", "psIsBeta", "false",
         "premCache", A_AppData "\Adobe\Common", "aeCache", A_AppData "\Adobe\Common",
 
