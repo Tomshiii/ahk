@@ -10,4 +10,5 @@
 - Fixed user being able to bypass installation by simply closing the window
 - Fixed compiled script throwing after installation
 - Fixed script sometimes downloading `vp9` codec videos when `avoid reencode` is enabled
+- Compiled executable will now append the new version number to the update `.exe` download to prevent the user from trying to download to the same directory and having nothing happen as `Download` would silently fail
 - Main window will now be disabled during update check

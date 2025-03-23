@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2025/03/23
  ***********************************************************************/
-global currentVer := "1.0.3"
+global currentVer := "1.0.4"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -143,7 +143,7 @@ class multiDL extends tomshiBasic {
                     return
                 if !dlLoc := FileSelect("D3",, "Download mult-dl.exe")
                     return
-                Download("https://github.com/Tomshiii/ahk/raw/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl.exe")
+                Download("https://github.com/Tomshiii/ahk/raw/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl_v" dlVer ".exe")
                 MsgBox("Download Complete, please run the new file")
                 ExitApp()
             }
