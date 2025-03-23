@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/03/22
- * @version 1.0.22
+ * @date 2025/03/23
+ * @version 1.0.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -208,8 +208,9 @@ class ytdlp {
 
         ;// checking if filename already exists
         mNotifyGUI_Prog := Notify.Show(, 'Determining name of the output file...', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=6 maxW=400 bdr=0x75AEDC')
-        SDopt := SD_Opt()
-        outputFileName := Format(this.defaultFilename, SDopt.filenameLengthLimit)
+        try SDopt := SD_Opt()
+        fileNameLengthLimit := IsSet(SDopt) ? SDopt.filenameLengthLimit : 50
+        outputFileName := Format(this.defaultFilename, fileNameLengthLimit)
         nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" --cookies-from-browser firefox', outputFileName, this.URL))
         SplitPath(nameOutput,,, &ext, &nameNoExt)
         ext := (ext = "webm") ? "mp4" : ext
@@ -243,7 +244,6 @@ class ytdlp {
 
         ;// running command
         cmd.run(,,, this.command)
-
         ;// determine if the downloaded file is a video file
         isVideo := (cmd.result(Format('ffprobe -v error -select_streams v -show_entries stream=codec_type -of csv=p=0 "{1}"', folderU "\" nameNoExt "." ext)) = "video") ? true : false
         switch {

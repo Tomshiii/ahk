@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
- * @date 2023/02/20
- * @version 1.0.2
+ * @date 2025/03/23
+ * @version 1.0.3
  ***********************************************************************/
 
 ;{ \\ #Includes
@@ -62,6 +62,8 @@ class KeyShortAdjust {
      * generate all variables based off ini file
      */
     __SetSections(iniLocation := this.iniLocation) {
+        if !FileExist(iniLocation) ;// a standalone app might attempt to call this function and the user may not have my whole repo installed
+            return
         readSections := IniRead(iniLocation)
         allSections := StrSplit(readSections, ["`n", "`r"])
         for v in allSections {

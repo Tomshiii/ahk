@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download multiple videos at once
  * @author tomshi
- * @date 2025/03/22
+ * @date 2025/03/23
  ***********************************************************************/
-global currentVer := "1.0.2"
+global currentVer := "1.0.3"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -40,15 +40,21 @@ class multiDL extends tomshiBasic {
                 }
             }
 
+            this.OnEvent("Escape", __checkInstalled.Bind(this))
+            this.OnEvent("Close", __checkInstalled.Bind(this))
             this.show()
+            __checkInstalled(*) {
+                if this["choco"].text != "done" || this["ffmpeg"].text != "done" || this["ytdlp"].text != "done"
+                    ExitApp()
+                Reload()
+            }
             WinWaitClose(this.Title)
-            this.Destroy()
         }
         if !this.__selectFile(this)
             ExitApp()
         super.__New(,,, "Multi Download")
 
-        this.AddEdit("y45 r10 vlist w320 Multi Wrap", "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files.")
+        this.AddEdit("x9 y45 r10 vlist w320 Multi Wrap", "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files.")
         this.AddButton("vDL", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise", " Avoid reencode`n (may result in lower quality)")
         this["DL"].GetPos(&x, &y, &wid, &height)
@@ -80,7 +86,7 @@ class multiDL extends tomshiBasic {
             switch {
                 case (vidOrAud = "vid" && this["deprioritise"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, v, false)
                 case (vidOrAud = "vid" && this["deprioritise"].value = true):
-                    altCommand := '-N 8 -o "{1}" -f "bv*[vcodec!*=av01][vcodec!=av1][vcodec!*=vp9]+ba" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
+                    altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
                     yt.download(altCommand, this.getFile, v, false)
                 case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, v, false)
             }
@@ -100,7 +106,7 @@ class multiDL extends tomshiBasic {
 
     __checkChoco(*) {
         chkChoco := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
-        if (InStr(chkChoco, "is not recognized") || chkChoco != "") {
+        if (InStr(chkChoco, "is not recognized") || chkChoco = "") {
             MsgBox("Choco is required to install this tool, please install choco first")
             return false
         }
@@ -117,9 +123,12 @@ class multiDL extends tomshiBasic {
     }
 
     __checkUpdates(*) {
+        this.Opt("Disabled")
         cmd.run(true,, true, 'choco upgrade chocolatey --yes && choco upgrade ffmpeg --yes && choco upgrade yt-dlp --yes && echo. && echo. && echo Updates Complete. You may now close this window')
-        if !A_IsCompiled
+        if !A_IsCompiled {
+            this.Opt("-Disabled")
             return
+        }
         if !DirExist(A_Temp "\tomshi")
             DirCreate(A_Temp "\tomshi")
         try {
@@ -139,6 +148,7 @@ class multiDL extends tomshiBasic {
                 ExitApp()
             }
         }
+        this.Opt("-Disabled")
     }
 }
 
