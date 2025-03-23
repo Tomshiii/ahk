@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download multiple videos at once
  * @author tomshi
- * @date 2025/03/23
+ * @date 2025/03/24
  ***********************************************************************/
-global currentVer := "1.0.4"
+global currentVer := "1.0.5"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -18,19 +18,18 @@ A_ScriptName := "multi-dl"
 
 class multiDL extends tomshiBasic {
     __New() {
-        choco  := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
         ffmpeg := cmd.result('powershell -c "Get-Command -Name ffmpeg -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
         ytdlp  := cmd.result('powershell -c "Get-Command -Name yt-dlp -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
 
-        choco := (!InStr(choco, "is not recognized")   && choco != "")   ? true : false
         ffmpeg := (!InStr(ffmpeg, "is not recognized") && ffmpeg != "")  ? true : false
         ytdlp := (!InStr(ytdlp, "is not recognized")   && ytdlp != "")   ? true : false
 
-        if !choco || !ffmpeg || !ytdlp {
+        if !ffmpeg || !ytdlp {
+            choco := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+            choco := (!InStr(choco, "is not recognized") && choco != "") ? true : false
             super.__New(,,, "Prerequisites Required")
             this.AddText(, "Installing these prerequisites will require admin permissions.")
-            arr := ["choco", "ffmpeg", "ytdlp"]
-            for v in arr {
+            for v in this.arr {
                 this.AddText("x5", v ":")
                 this.AddButton("xm+70 yp-7 w100 h30 v" v, "Install " v)
                 this[v].OnEvent("Click", this.__install_tool.Bind(this, v))
@@ -44,7 +43,7 @@ class multiDL extends tomshiBasic {
             this.OnEvent("Close", __checkInstalled.Bind(this))
             this.show()
             __checkInstalled(*) {
-                if this["choco"].text != "done" || this["ffmpeg"].text != "done" || this["ytdlp"].text != "done"
+                if this["choco"].text != "done" || this["ffmpeg"].text != "done" || this["yt-dlp"].text != "done"
                     ExitApp()
                 Reload()
             }
@@ -63,11 +62,38 @@ class multiDL extends tomshiBasic {
         this["list"].GetPos(&listx, &listy, &listwid, &listheight)
         this.AddText("Right y28 x" listx " w" listwid, "v" currentVer)
         this.AddButton("vupdates x" listx " y7", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
+        this["updates"].Opt("Disabled")
         this.AddCheckbox("vcheckDev x+10 yp+7", "check dev branch")
         this.show()
+
+        ;// attempt check package updates
+        choco  := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+        if (!InStr(choco, "is not recognized") && choco != "") {
+            buildStr := ""
+            newArr := this.arr.Clone()
+            newArr.RemoveAt(1, 1)
+            for v in newArr {
+                cmnd := Format('choco outdated | Select-String "{1}"', v)
+                getres := cmd.result("powershell -c " cmnd)
+                if getres != ""
+                    buildStr := (A_Index = 1) ? Format("choco upgrade chocolatey --yes && choco upgrade {1} --yes ", v) : Format("{1} && choco upgrade {2} --yes ", buildStr, v)
+            }
+            if buildStr != "" {
+                if MsgBox("Updates for installed packages are available, would you like to install them now?",, 0x4) = "No" {
+                    this["updates"].Opt("-Disabled")
+                    return
+                }
+                this.Opt("Disabled")
+                cmd.run(true,,, buildStr)
+                this.Opt("-Disabled")
+                this["updates"].Opt("-Disabled")
+            }
+        }
+        this["updates"].Opt("-Disabled")
     }
 
     getFile := ""
+    arr := ["choco", "ffmpeg", "yt-dlp"]
 
     /** Allows the user to change the file to operate on */
     __selectFile(*) {
@@ -116,39 +142,51 @@ class multiDL extends tomshiBasic {
     __install_tool(val, *) {
         if !this.__checkChoco()
             return
-        installVal := (val = "ytdlp") ? "yt-dlp" : val
-        cmd.run(true,,, "choco install " installVal)
+        cmd.run(true,,, "choco install " val " --yes")
         this[val].text := "done"
         this[val].Opt("Disabled")
     }
 
     __checkUpdates(*) {
         this.Opt("Disabled")
-        cmd.run(true,, true, 'choco upgrade chocolatey --yes && choco upgrade ffmpeg --yes && choco upgrade yt-dlp --yes && echo. && echo. && echo Updates Complete. You may now close this window')
-        if !A_IsCompiled {
+        choco  := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+        if (InStr(choco, "is not recognized") || choco = "") {
+            MsgBox("Checking for updates for ffmpeg or yt-dlp requires the package manager chocolatey to be installed.")
+            __checkExeUpdate()
             this.Opt("-Disabled")
             return
         }
-        if !DirExist(A_Temp "\tomshi")
-            DirCreate(A_Temp "\tomshi")
-        try {
-            if FileExist(A_Temp "\tomshi\mult-dl.ahk")
-                FileDelete(A_Temp "\tomshi\mult-dl.ahk")
-            mainOrDev := (this["checkDev"].value = true) ? "dev" : "main"
-            Download("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.ahk", A_Temp "\tomshi\mult-dl.ahk")
-            readDl := FileRead(A_Temp "\tomshi\mult-dl.ahk")
-            dlVer := getLocalVer(readDl,, "currentVer := ", '"')
-            if VerCompare(dlVer, currentVer) > 0 {
-                if MsgBox("New version of mult-dl.exe available, would you like to download it?",, 0x4) = "No"
-                    return
-                if !dlLoc := FileSelect("D3",, "Download mult-dl.exe")
-                    return
-                Download("https://github.com/Tomshiii/ahk/raw/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl_v" dlVer ".exe")
-                MsgBox("Download Complete, please run the new file")
-                ExitApp()
+        cmd.run(true,, true, 'choco upgrade chocolatey --yes && choco upgrade ffmpeg --yes && choco upgrade yt-dlp --yes && echo. && echo. && echo Updates Complete. You may now close this window')
+        WinActivate(this.Title)
+        __checkExeUpdate()
+        WinActivate(this.Title)
+        this.Opt("-Disabled")
+
+        __checkExeUpdate() {
+            if !A_IsCompiled {
+                this.Opt("-Disabled")
+                return
+            }
+            if !DirExist(A_Temp "\tomshi")
+                DirCreate(A_Temp "\tomshi")
+            try {
+                if FileExist(A_Temp "\tomshi\mult-dl.ahk")
+                    FileDelete(A_Temp "\tomshi\mult-dl.ahk")
+                mainOrDev := (this["checkDev"].value = true) ? "dev" : "main"
+                Download("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.ahk", A_Temp "\tomshi\mult-dl.ahk")
+                readDl := FileRead(A_Temp "\tomshi\mult-dl.ahk")
+                dlVer := getLocalVer(readDl,, "currentVer := ", '"')
+                if VerCompare(dlVer, currentVer) > 0 {
+                    if MsgBox("New version of mult-dl.exe available, would you like to download it?",, 0x4) = "No"
+                        return
+                    if !dlLoc := FileSelect("D3",, "Download mult-dl.exe")
+                        return
+                    Download("https://github.com/Tomshiii/ahk/raw/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl_v" dlVer ".exe")
+                    MsgBox("Download Complete, please run the new file")
+                    ExitApp()
+                }
             }
         }
-        this.Opt("-Disabled")
     }
 }
 
