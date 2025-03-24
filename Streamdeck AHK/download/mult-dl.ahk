@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2025/03/24
  ***********************************************************************/
-global currentVer := "1.0.6"
+global currentVer := "1.0.6.1"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -179,15 +179,16 @@ class multiDL extends tomshiBasic {
 
     __checkUpdates(*) {
         this.Opt("Disabled")
+        this.__checkingButton("move")
         choco  := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
         if (InStr(choco, "is not recognized") || choco = "") {
             MsgBox("Checking for updates for ffmpeg or yt-dlp requires the package manager chocolatey to be installed.")
             __checkExeUpdate()
+            this.__checkingButton("reset")
             this.Opt("-Disabled")
             return
         }
 
-        this.__checkingButton("move")
         buildStr := this.__buildUpdateCmd()
         updates := false
         if buildStr != "" {
