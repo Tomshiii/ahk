@@ -18,6 +18,8 @@
 		}
 	],
 	"settings": {
+		"editor.formatOnPaste": false,
+		"editor.formatOnType": true
 	},
 	"launch": {
 		"version": "0.2.0",

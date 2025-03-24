@@ -14,3 +14,5 @@
 - Main window will now be disabled during update check
 - No longer *requires* `chocolatey` to be installed to use script, only during any installation processes
 - Will now perform an automatic package update check on startup for `ffmpeg` && `yt-dlp`
+- `Check for updates` button will only prompt the user for admin if there are actual updates available. Otherwise it will inform the user there are none
+    - Button will also dynamically update to communicate to the user that an update check is being performed

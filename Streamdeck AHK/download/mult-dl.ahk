@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2025/03/24
  ***********************************************************************/
-global currentVer := "1.0.5"
+global currentVer := "1.0.6"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -53,14 +53,14 @@ class multiDL extends tomshiBasic {
             ExitApp()
         super.__New(,,, "Multi Download")
 
-        this.AddEdit("x9 y45 r10 vlist w320 Multi Wrap", "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files.")
+        this.AddEdit("x9 y50 r10 vlist w320 Multi Wrap", "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files.")
         this.AddButton("vDL", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise", " Avoid reencode`n (may result in lower quality)")
         this["DL"].GetPos(&x, &y, &wid, &height)
         this.AddButton("x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
 
         this["list"].GetPos(&listx, &listy, &listwid, &listheight)
-        this.AddText("Right y28 x" listx " w" listwid, "v" currentVer)
+        this.AddText("Right y32 x" listx " w" listwid, "v" currentVer)
         this.AddButton("vupdates x" listx " y7", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
         this["updates"].Opt("Disabled")
         this.AddCheckbox("vcheckDev x+10 yp+7", "check dev branch")
@@ -68,32 +68,36 @@ class multiDL extends tomshiBasic {
 
         ;// attempt check package updates
         choco  := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+        this.chkDevObj := this.__getPosObj("checkDev")
+        this.updObj    := this.__getPosObj("updates")
+        this.__checkingButton("move")
+
         if (!InStr(choco, "is not recognized") && choco != "") {
-            buildStr := ""
-            newArr := this.arr.Clone()
-            newArr.RemoveAt(1, 1)
-            for v in newArr {
-                cmnd := Format('choco outdated | Select-String "{1}"', v)
-                getres := cmd.result("powershell -c " cmnd)
-                if getres != ""
-                    buildStr := (A_Index = 1) ? Format("choco upgrade chocolatey --yes && choco upgrade {1} --yes ", v) : Format("{1} && choco upgrade {2} --yes ", buildStr, v)
-            }
+            buildStr := this.__buildUpdateCmd()
             if buildStr != "" {
                 if MsgBox("Updates for installed packages are available, would you like to install them now?",, 0x4) = "No" {
                     this["updates"].Opt("-Disabled")
+                    this.__checkingButton("reset")
                     return
                 }
                 this.Opt("Disabled")
                 cmd.run(true,,, buildStr)
                 this.Opt("-Disabled")
-                this["updates"].Opt("-Disabled")
             }
         }
         this["updates"].Opt("-Disabled")
+        this.__checkingButton("reset")
     }
 
     getFile := ""
     arr := ["choco", "ffmpeg", "yt-dlp"]
+    chkDevObj := unset
+    updObj    := unset
+
+    __getPosObj(ctrl) {
+        this[ctrl].GetPos(&x, &y, &width, &height)
+        return {x: x, y: y, width: width, height: height}
+    }
 
     /** Allows the user to change the file to operate on */
     __selectFile(*) {
@@ -101,6 +105,19 @@ class multiDL extends tomshiBasic {
             return false
         this.getFile := newFile
         return true
+    }
+
+    __buildUpdateCmd() {
+        buildStr := ""
+        newArr := this.arr.Clone()
+        newArr.RemoveAt(1, 1)
+        for v in newArr {
+            cmnd := Format('choco outdated | Select-String "{1}"', v)
+            getres := cmd.result("powershell -c " cmnd)
+            if getres != ""
+                buildStr := (buildStr = "") ? Format("choco upgrade chocolatey --yes && choco upgrade {1} --yes ", v) : Format("{1} && choco upgrade {2} --yes ", buildStr, v)
+        }
+        return buildStr
     }
 
     __download(vidOrAud, *) {
@@ -147,6 +164,19 @@ class multiDL extends tomshiBasic {
         this[val].Opt("Disabled")
     }
 
+    __checkingButton(which, *) {
+        switch which {
+            case "move":
+                this["updates"].text := "Checking for Updates..."
+                this["updates"].Move(this.updObj.x, this.updObj.y, this.updObj.width+24, this.updObj.height)
+                this["checkDev"].Move(this.chkDevObj.x+24, this.chkDevObj.y, this.chkDevObj.width, this.chkDevObj.height)
+            case "reset":
+                this["updates"].text := "Check for updates"
+                this["updates"].Move(this.updObj.x, this.updObj.y, this.updObj.width, this.updObj.height)
+                this["checkDev"].Move(this.chkDevObj.x, this.chkDevObj.y, this.chkDevObj.width, this.chkDevObj.height)
+        }
+    }
+
     __checkUpdates(*) {
         this.Opt("Disabled")
         choco  := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
@@ -156,11 +186,22 @@ class multiDL extends tomshiBasic {
             this.Opt("-Disabled")
             return
         }
-        cmd.run(true,, true, 'choco upgrade chocolatey --yes && choco upgrade ffmpeg --yes && choco upgrade yt-dlp --yes && echo. && echo. && echo Updates Complete. You may now close this window')
+
+        this.__checkingButton("move")
+        buildStr := this.__buildUpdateCmd()
+        updates := false
+        if buildStr != "" {
+            updates := true
+            cmd.run(true,,, buildStr)
+        }
         WinActivate(this.Title)
         __checkExeUpdate()
+        if updates = false {
+            MsgBox("No updates available.")
+        }
         WinActivate(this.Title)
         this.Opt("-Disabled")
+        this.__checkingButton("reset")
 
         __checkExeUpdate() {
             if !A_IsCompiled {
@@ -177,6 +218,7 @@ class multiDL extends tomshiBasic {
                 readDl := FileRead(A_Temp "\tomshi\mult-dl.ahk")
                 dlVer := getLocalVer(readDl,, "currentVer := ", '"')
                 if VerCompare(dlVer, currentVer) > 0 {
+                    updates := true
                     if MsgBox("New version of mult-dl.exe available, would you like to download it?",, 0x4) = "No"
                         return
                     if !dlLoc := FileSelect("D3",, "Download mult-dl.exe")
