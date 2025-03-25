@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2024/11/25
- * @version 2.0.13
+ * @date 2025/03/25
+ * @version 2.0.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include <Other\UIA\UIA>
 #Include <Other\JSON>
 #Include <Other\Notify\Notify>
+#Include <Other\WinEvent>
 ; }
 
 ;// [Table of Contents]
@@ -96,6 +97,7 @@ Class premUIA_Values {
         currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
         UserSettings    := ""
         premName := WinGet.PremName()
+        ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
         AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space prem.winTitle)
         try {
             currentVers  := JSON.parse(FileRead(ptf.SupportFiles "\UIA\values.ini"),, false)
@@ -148,11 +150,23 @@ Class premUIA_Values {
             sleep 50
             try currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
             catch {
-                block.Off()
-                errorLog(Error("UIA Values could not be determined. Please try again later"))
-                Notify.Destroy(attemptNotify['hwnd'])
-                Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
-                return
+                if WinExist("DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
+                    prem.dismissWarning()
+                    switchTo.Premiere()
+                    if currentPanel != "timeline"
+                        SendInput(currHotkey)
+                    else
+                        delaySI(50, this.windowHotkeys["effectsControl"], currHotkey) ;// if timeline is already active, it'll swap sequences which is annoying
+                    sleep 50
+                    try currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
+                    catch {
+                        block.Off()
+                        errorLog(Error("UIA Values could not be determined. Please try again later"))
+                        Notify.Destroy(attemptNotify['hwnd'])
+                        Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
+                        return
+                    }
+                }
             }
             currentVers.%currentPremVer%.%currentPanel% := currentEl
         }

@@ -2,6 +2,8 @@
 
 ## Functions
 - ✅ Fixed `KeyShortAdjust {` throwing if script is called but the `.ini` file doesn't exist
+- ✅ Fixed `premUIA_Values.__setNewVal()` failing if an error window appears during the process
+    - Should now use `prem.dismissWarning()` to first remove the error message before continuing
 
 ## Other Changes
 
