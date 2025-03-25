@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2024/03/03
- * @version 1.4.9.4
+ * @date 2025/03/26
+ * @version 1.5.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -30,6 +30,7 @@ class discord {
             this.disableAutoReplyPing := this.UserSettings.disc_disable_autoreply
             this.UserSettings := ""
         }
+        this.imgSrchDisc .= this.theme "\"
     }
     UserSettings := unset
     static logoCheck := false
@@ -56,15 +57,18 @@ class discord {
 
     static surroundActive := false
 
+    static theme := "onyx_compact"
+    static imgSrchDisc := ptf.Discord
+
     /**
      * This function is called by a few other User facing functions and is designed to alert the user when discord has gone and changed the logo button within the main UI. This logo changing breaks those functions in certain ways.
      * The discord logo may also appear slightly different on the system based off whether the user has discord on a landscape/portrait oriented monitor. I have taken screenshots of both and try to keep them updated but they may break at any time.
      */
-    __logoCheck() {
+    static __logoCheck() {
         WinGetPos(&nx, &ny, &width, &height, discord.winTitle)
         if !obj.imgSrchMulti({x1: 0, y1: 0, x2: 100, y2: 100},,,
-                                        , ptf.Discord "dm1.png", ptf.Discord "dm1_2.png"
-                                        , ptf.Discord "dm2.png", ptf.Discord "dm2_2.png")
+                                        , this.imgSrchDisc "dm1.png", this.imgSrchDisc "dm1_2.png"
+                                        , this.imgSrchDisc "dm2.png", this.imgSrchDisc "dm2_2.png")
             {
                 title := "Logo Match Not Found"
                 SetTimer(change_msgButton.Bind(title, "OK", "Open Dir"), 25) ;// calls change_msgButton()
@@ -82,18 +86,18 @@ class discord {
                         (landscape)
 
                     Then reload all scripts.
-                )", ptf.Discord), title, "4 48 4096")
+                )", this.imgSrchDisc), title, "4 48 4096")
                 if alert = "No" {
-                    if WinExist(ptf.Discord)
+                    if WinExist(this.imgSrchDisc)
                         {
-                            WinActivate(ptf.Discord)
+                            WinActivate(this.imgSrchDisc)
                             return
                         }
-                    Run(ptf.Discord)
+                    Run(this.imgSrchDisc)
                 }
                 Exit()
             }
-        discord.logoCheck := true
+        this.logoCheck := true
     }
 
     /**
@@ -114,6 +118,7 @@ class discord {
     }
 
     /**
+     * ## If the user does not use the `onyx` theme, `compact` at `70%` saturation, you will be required to take your own imagesearch screenshots.
      * This function uses an imagesearch to look for buttons within the right click context menu as defined in the screenshots in `..\Support Files\ImageSearch\disc[button].png` and automatically clicks the one you're after, allowing the user to more quickly navigate the UI.
      * - This function is **constantly** being broken as discord updates their logo/the text for words. When this happens you can try taking new screenshots to see if that fixes the issue.
      * - This function may encounter different behaviours depending on the orientation of the monitor that it's on/the resolution. It hasn't been tested on anything higher than a `1440p` monitor.
@@ -133,21 +138,23 @@ class discord {
     static button(button)
     {
         if !this.logoCheck
-            this().__logoCheck()
-        yheight := 400
+            this.__logoCheck()
         keys.allWait("second")
         MouseGetPos(&x, &y)
+        yheight := 400
+        xstart := x
+        x2 := xstart+200
         WinGetPos(&nx, &ny, &width, &height, this.winTitle) ;gets the width and height to help this function work no matter how you have discord
         block.On()
         SendInput("{RButton}") ;this opens the right click context menu on the message you're hovering over
         sleep 50 ;sleep required so the right click context menu has time to open
         loop {
             ;// searches for the button you've requested
-            if ImageSearch(&xpos, &ypos, x-200, y-400,  x+200, y + yheight, "*2 " ptf.Discord button) {
+            if ImageSearch(&xpos, &ypos, xstart, y-400,  x2, y + yheight, "*2 " this.imgSrchDisc button) {
                 MouseMove(xpos, ypos)
                 break
             }
-            if (button == "DiscDelete.png" || button == "DiscEdit.png") && ImageSearch(&xpos, &ypos, x-200, y-400,  x+200, y + yheight, "*2 " ptf.Discord "report.png") {
+            if (button == "DiscDelete.png" || button == "DiscEdit.png") && ImageSearch(&xpos, &ypos, x-200, y-400,  x+200, y + yheight, "*2 " this.imgSrchDisc "report.png") {
                 block.Off()
                 errorLog(ValueError("User isn't hovering a message they sent.", -1),, 1)
                 return
@@ -155,6 +162,8 @@ class discord {
             ;// if the button isn't found, we increase the search area
             sleep 50
             yheight += 100
+            xstart -= 100
+            x2 += 100
             if A_Index > 4
                 ToolTip(A_ThisFunc "() has attempted to find the desired button " A_Index " times")
 
@@ -187,7 +196,7 @@ class discord {
     static Unread(which := "")
     {
         if !this.logoCheck
-            this().__logoCheck()
+            this.__logoCheck()
         end(var := 20) {
             MouseMove(x + var, y, 2)
             SendInput("{Click}")
@@ -203,7 +212,7 @@ class discord {
                                 Exit()
                             }
                         sleep 100
-                        if ImageSearch(&x2, &y2, 0, 0, width, height/3, "*2 " ptf.Discord "\markread.png")
+                        if ImageSearch(&x2, &y2, 0, 0, width, height/3, "*2 " this.imgSrchDisc "\markread.png")
                             break
                     }
                     sleep 100
@@ -211,7 +220,7 @@ class discord {
                     ;// button, it can stop the mouse from focusing on the element
                     ;// so we jiggle it around in the hops to shake the hover element
                     MouseMove(x2+10, y2+4, 1)
-                    sleep 500
+                    sleep 250
                     MouseMove(50, 5, 2, "R")
                     sleep 150
                     MouseMove(-40, -5, 2, "R")
@@ -226,7 +235,7 @@ class discord {
                 y2 := 0
                 message := "servers"
             case 2:
-                x2 := 70
+                x2 := 60
                 y2 := 30
                 message := "channels"
         }
@@ -234,13 +243,13 @@ class discord {
             WinActivate(this.winTitle)
         MouseGetPos(&xPos, &yPos)
         WinGetPos(,, &width, &height, this.winTitle)
-        if which = "" {
-            if ImageSearch(&x, &y, 0 + x2, 0, 80, height, "*2 " ptf.Discord "\unread3.png")
+        /* if which = "" { ;// idk if this exists anymore
+            if ImageSearch(&x, &y, 0 + x2, 0, 80, height, "*2 " this.imgSrchDisc "\unread3.png")
                 end(-20)
-        }
+        } */
         if !obj.imgSrchMulti({x1:0 + x2, y1:0, x2:50 + y2, y2:height},, &x, &y,
-                                ptf.Discord "\unread" which "_1.png", ptf.Discord "\unread" which "_2.png",
-                                ptf.Discord "\unread" which "_3.png", ptf.Discord "\unread" which "_4.png") {
+                                this.imgSrchDisc "\unread" which "_1.png", this.imgSrchDisc "\unread" which "_2.png",
+                                this.imgSrchDisc "\unread" which "_3.png", this.imgSrchDisc "\unread" which "_4.png") {
             tool.Cust("Couldn't find any unread " message)
             return
         }

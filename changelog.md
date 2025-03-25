@@ -5,6 +5,11 @@
 - ✅ Fixed `premUIA_Values.__setNewVal()` failing if an error window appears during the process
     - Should now use `prem.dismissWarning()` to first remove the error message before continuing
 
+`discord {`
+- New screenshots for new theme (I personally use `onyx`, `compact` at <kbd>70% saturation</kbd>. If you use anything else you'll be required to take all new screenshots)
+    - Old screenshots have been moved to `_old` folder incase update hasn't been pushed completely. (expect these to eventually be removed)
+- Fixed `button()` failing to find the requested button if the right click context menu opens to the left of the cursor
+
 ## Other Changes
 
 ⚠️ `mult-dl.ahk`
