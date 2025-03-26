@@ -28,11 +28,19 @@ else
     backupFolder := sd.backupFolder
 
 additionalDir := []
-loop {
-    userResponse := MsgBox("Would you like to backup an additional video folder?`n`n*note: Already backed up files will NOT be overriden.`nThis function also assumes the selected directory is in the VIDEOS folder.", "Additional Video Folders?", "292")
-    if (userResponse != "Yes")
-        break
-    additionalDir.Push(FileSelect("D3", WinGet.pathU(defaultDir "\..\videos")))
+nonFootage := []
+videosFolder := WinGet.pathU(defaultDir "\..\videos")
+loop files videosFolder "\", "D" {
+    if A_LoopFileName != "footage"
+        nonFootage.Push(A_LoopFileName)
+}
+if nonFootage.Length >= 1 {
+    loop {
+        userResponse := MsgBox("Would you like to backup an additional video folder?`n`n*note: Already backed up files will NOT be overriden.`nThis function also assumes the selected directory is in the VIDEOS folder.", "Additional Video Folders?", "292")
+        if (userResponse != "Yes")
+            break
+        additionalDir.Push(FileSelect("D3", videosFolder))
+    }
 }
 
 ;// folders to backup
