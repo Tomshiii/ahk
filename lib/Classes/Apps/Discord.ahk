@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/03/26
- * @version 1.5.0
+ * @date 2025/03/27
+ * @version 1.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -140,7 +140,9 @@ class discord {
         if !this.logoCheck
             this.__logoCheck()
         keys.allWait("second")
-        MouseGetPos(&x, &y)
+        MouseGetPos(&x, &y, &win)
+        if WinGetProcessName(win) != WinGetProcessName(this.winTitle)
+            return
         yheight := 400
         xstart := x
         x2 := xstart+200

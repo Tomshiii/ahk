@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2024/05/06
- * @version 1.0.1
+ * @date 2025/03/27
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -104,6 +104,8 @@ class Slack {
         cursor := A_Cursor
         keys.allWait("second")
         origMousePos := obj.MousePos()
+        if WinGetProcessName(origMousePos.win) != WinGetProcessName(this.winTitle)
+            return
         winPos := obj.WinPos(this.exeTitle)
         yheight := 400
 
