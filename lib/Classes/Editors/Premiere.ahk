@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/03/06
- * @version 2.1.56.2
+ * @date 2025/03/27
+ * @version 2.1.57
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -867,8 +867,6 @@ class Prem {
             return false
         }
 
-        premUIA := premUIA_Values()
-
         try {
             if ImageSearch(&x3, &y3, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png"){ ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                 delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
@@ -1136,7 +1134,6 @@ class Prem {
 
         ;// this block is called if the function originates from a script that isn't `UserSettings.mainScriptName`
         if A_ScriptName != mainScriptName ".ahk" && WinExist(mainScriptName ".ahk") {
-            resetOrig(orig)
             try {
                 activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
                 if activeObj.__checkTimelineValues() {
@@ -1148,6 +1145,7 @@ class Prem {
                     return true
                 }
             } catch {
+                resetOrig(orig)
                 Notify.Show(, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 Exit()

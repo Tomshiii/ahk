@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.17
+;\\v2.34.18
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -67,10 +67,13 @@ A_MenuMaskKey := "vkD7"				   ;necessary for `alt_menu_acceleration_disabler.ahk
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
 try {
+    uiaCheckRunning := {isRunning: false}
     ObjRegisterActive(prem, "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+    ObjRegisterActive(uiaCheckRunning, "{dcee88ec-9327-44cf-9d2a-5bc47c624e0e}")
     OnExit(revoke)
     revoke(*) {
         ObjRegisterActive(prem, "")
+        ObjRegisterActive(uiaCheckRunning, "")
     }
 }
 
