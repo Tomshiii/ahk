@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/03/27
- * @version 2.1.57
+ * @version 2.1.58
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1804,7 +1804,8 @@ class Prem {
         }
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
-        if WinGetTitle("A") != getTitle.winTitle {
+        try activeWin := WinGetTitle("A")
+        if !IsSet(activeWin) || activeWin != getTitle.winTitle {
             if !InStr(A_ThisHotkey, "&")
                 try SendInput("{" Format("sc{:X}", GetKeySC(A_ThisHotkey)) "}")
             /* else
