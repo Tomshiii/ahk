@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/02/17
- * @version 2.3.7
+ * @date 2025/04/03
+ * @version 2.3.8
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -73,8 +73,11 @@ settingsGUI()
             case "local":
                 if WinExist("Wiki explorer.exe")
                     WinActivate("Wiki explorer.exe")
-                else
+                else {
+                    if !DirExist(ptf.Wiki "\Latest")
+                        return
                     Run(ptf.Wiki "\Latest")
+                }
             case "web": openWikiPage("Home · Tomshiii/ahk Wiki", "https://github.com/Tomshiii/ahk/wiki")
             case "cheat": openWikiPage("settingsGUI() · Tomshiii/ahk Wiki", "https://github.com/Tomshiii/ahk/wiki/settingsGUI()")
         }

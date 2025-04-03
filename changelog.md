@@ -8,6 +8,7 @@
 - ✅ Fixed `discord.button()` attempting to fire while the user is not hovering the window
 - ✅ Fixed `premUIA_Values().__setNewVal()` trying to set UIA values multiple times if function is called again shortly after it starts running
 - ✅ Fixed `prem.dragSourceMon()` throwing if unable to determine the active window due to prem being busy
+- ✅ Fixed `settingsGUI()` throwing if the user attempts to <kbd>Open > Wiki Dir</kbd> and the directory does not exist
 
 ⚠️ `discord {`
 - New screenshots for new theme (I personally use `onyx`, `compact` at <kbd>70% saturation</kbd>. If you use anything else you'll be required to take all new screenshots and adjust a little code within the class unless you simply override the onyx screenshots)
