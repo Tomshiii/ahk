@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/03/27
- * @version 2.1.58
+ * @date 2025/04/07
+ * @version 2.1.59
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,6 +29,7 @@
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
 #Include <Functions\detect>
+#Include <Functions\checkStuck>
 #Include <Other\Notify\Notify>
 ; }
 
@@ -608,14 +609,15 @@ class Prem {
     }
 
     /**
-     * Move back and forth between edit points from anywhere in premiere
+     * Move back and forth between edit points from anywhere in premiere. Be careful that your `shuttle stop` keyframe doesn't have any additional keyboard shortcuts assigned with modifiers.
+     * ie. if `Shuttle Stop` is <kbd>k</kbd> don't have anything set to <kbd>Shift + k</kbd> or <kbd>Ctrl + k</kbd> etc. Otherwise if you activate this function consecutively, modifiers might "leak" when unintended causing that hotkey to be activated.
      * @param {String} window the hotkey required to focus the desired window within premiere
      * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
      * @param {String} [keyswait="all"] a string you wish to pass to `keys.allWait()`'s first parameter
      * @param {Boolean/Object} [checkMButton=false] determine whether the function will wait to see if <kbd>MButton</kbd> is pressed shortly after (or is being held). This can be useful with panning around Premiere's `Program` monitor (assuming this function is activated using tilted scroll wheels, otherwise leave this param as false). This parameter can either be set to `true/false` or an object containing key `T` along with the timeout duration. Eg. `{T:"0.3"}`
      */
-    static wheelEditPoint(window, direction, keyswait := "all", checkMButton := false)
-    {
+    static wheelEditPoint(window, direction, keyswait := "all", checkMButton := false) {
+        SetKeyDelay(0)
         if Type(window) != "string" || Type(direction) != "string" || Type(keyswait) != "string" || (Type(checkMButton) != "integer" && Type(checkMButton) != "object") {
             ;// throw
             errorLog(TypeError("Incorrect Parameter type passed to function", -1),,, true)
@@ -629,11 +631,35 @@ class Prem {
                 return
         }
         SendInput(KSA.shuttleStop)
+        sleep 25
+        premUIA := premUIA_Values()
+        try premEl := prem.__createUIAelement(false)
+
         switch window {
             ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a multicam nest for whatever reason. Doing it this way however, is unfortunately slower.
-            ;// if you do not use the multiview window simply replace the below line with `this.__checkTimelineFocus()`
-            case ksa.timelineWindow: delaySI(50, ksa.effectControls, window)
-            case ksa.effectControls: delaySI(20, window, ksa.programMonitor, window, "^a", ksa.deselectAll) ;// indicates the user is trying to use `Select previous/next Keyframe`
+            ;// hopefully one day adobe fixes this bug @link https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
+            ;// if you do not use the multiview window simply replace the below line with `this.__checkTimelineFocus()` or `premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()`
+            case ksa.timelineWindow:
+                try {
+                    premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
+                    premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
+                } catch {
+                    SendEvent(ksa.effectControls)
+                    Sleep(50)
+                    this.__checkTimelineFocus()
+                }
+            case ksa.effectControls:
+                try {
+                    premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
+                    Sleep(25)
+                    premEl.AdobeEl.ElementFromPath(premUIA.programMonitor).SetFocus()
+                    Sleep(25)
+                    premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
+                    delaySI(20, "^a", ksa.deselectAll)
+                }
+                catch {
+                    delaySI(20, window, ksa.programMonitor, window, "^a", ksa.deselectAll) ;// indicates the user is trying to use `Select previous/next Keyframe`
+                }
             default: SendInput(window) ;focuses the timeline/desired window
         }
         SendInput(direction)

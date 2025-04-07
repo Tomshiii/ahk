@@ -7,4 +7,4 @@
 if !WinActive(prem.winTitle)
     return
 
-delaySI(25, "!w", "{Down 2}", "{Right}", "{Up 1}", "{Enter}")
+delaySI(25, "!w", "{Down 2}", "{Right}", "{Up 3}", "{Enter}")

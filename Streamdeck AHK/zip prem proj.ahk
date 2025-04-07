@@ -44,6 +44,13 @@ loop files SelectedFolder "\videos\*.*", 'F' {
     }
     try FileCopy(A_LoopFileFullPath, SelectedFolder "\_proj\videos\*.*")
 }
+loop files SelectedFolder "\videos\*.*", 'D' {
+    if A_LoopFileName = "footage"
+        continue
+    if MsgBox("Do you wish to backup the folder: ``" A_LoopFileName "`` contained in the 'videos' directory?", "Include or Ignore?", "YesNo Icon?") = "No"
+        continue
+    try DirCopy(A_LoopFileFullPath, SelectedFolder "\_proj\videos\*.*")
+}
 
 zip := SevenZip().AutoZip(SelectedFolder "\_proj")
 

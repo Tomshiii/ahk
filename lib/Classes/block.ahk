@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2023/06/30
- * @version 1.3.5.1
+ * @date 2025/04/07
+ * @version 1.3.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -78,5 +78,28 @@ class block {
                 return
             }
         this().__inputs(option)
+    }
+}
+
+class block_ext {
+    blocker := {}
+    modifiers := "{LCtrl}{RCtrl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}"
+    defaultAdditional := "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}"
+
+    On(blockMouse := true, allowModifiers := true, additionalKeys := this.defaultAdditional) {
+        this.blocker := InputHook("L0 I")
+        this.blocker.KeyOpt("{All}", "S")
+        ; Exclude the modifiers
+        suppress := (allowModifiers = true) ? this.modifiers : ((allowModifiers = false) ? "" : allowModifiers)
+        this.blocker.KeyOpt(suppress, "-S")
+        this.blocker.KeyOpt(additionalKeys, "+V")
+        (blockMouse = true) ? (BlockInput("SendAndMouse"), BlockInput("MouseMove")) : BlockInput('Send')
+        this.blocker.Start()
+    }
+
+    Off() {
+        this.blocker.Stop()
+        BlockInput("Default"), BlockInput("MouseMoveOff")
+        this.blocker := {}
     }
 }
