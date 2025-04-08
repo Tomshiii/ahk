@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/04/07
- * @version 2.1.59
+ * @date 2025/04/08
+ * @version 2.1.60
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1005,8 +1005,6 @@ class Prem {
         if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels")
             this.gain(which sendGain)
         else {
-            if sendGain > 15
-                sendGain := 15
             levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
             if levels != true && levels != "true" {
                 errorLog(MethodError("Unexpected response", -1), "Response: " levels " - Type: " Type(levels))
