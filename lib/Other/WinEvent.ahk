@@ -352,8 +352,12 @@ class WinEvent {
 
     static __New() {
         this.Prototype.__WinEvent := this
-        this.__RegisteredEvents := Map(), this.__RegisteredEvents.CaseSense := 0, this.__RegisteredEvents.Default := []
+        this.__RegisteredEvents := Map(), this.__RegisteredEvents.CaseSense := 0, this.__RegisteredEvents.Default := Map()
         this.__Hooks := Map(), this.__Hooks.CaseSense := 0
+    }
+    static __Delete() {
+        for key, hook in this.__Hooks
+            this.__Hooks.Delete(key)
     }
     ; Extracts hWnd property from an object-type WinTitle
     static __DeobjectifyWinTitle(WinTitle) => (IsObject(WinTitle) ? WinTitle.hWnd : WinTitle)
@@ -371,8 +375,9 @@ class WinEvent {
     }
     ; Internal use: activates a new hook if not already active and increases its reference count
     static __AddHook(Hook) {
+        static BoundHandleWinEvent := this.__HandleWinEvent.Bind(this)
         if !this.__Hooks.Has(Hook)
-            this.__Hooks[Hook] := this.Hook(this.__HandleWinEvent.Bind(this), Hook), this.__Hooks[Hook].RefCount := 0
+            this.__Hooks[Hook] := this.Hook(BoundHandleWinEvent, Hook), this.__Hooks[Hook].RefCount := 0
         this.__Hooks[Hook].RefCount++
     }
     ; Internal use: decreases a hooks reference count and removes it if it falls to 0
@@ -423,7 +428,7 @@ class WinEvent {
     __Delete() {
         if !this.MatchCriteria
             return
-        this.__WinEvent.__RegisteredEvents[this.EventType].Delete(this.MatchCriteria)
+        try this.__WinEvent.__RegisteredEvents[this.EventType].Delete(this.MatchCriteria)
         this.__WinEvent.__RemoveRequiredHooks(this.EventType)
     }
     ; Internal use: adds the callback function to a queue that gets emptied at the end of __HandleWinEvent.
@@ -453,7 +458,8 @@ class WinEvent {
         local HookObj, MatchCriteria
 
         if (event = EVENT_OBJECT_DESTROY || event = EVENT_OBJECT_CLOAKED || event = EVENT_OBJECT_HIDE) {
-            for EventName in ["Close", "NotExist"]
+            static WinCloseEventNames := ["Close", "NotExist"]
+            for EventName in WinCloseEventNames
                 for MatchCriteria, HookObj in this.__RegisteredEvents[EventName] {
                     if !HookObj.IsPaused && HookObj.MatchingWinList.Has(hWnd) && !WinExist(HookObj.DetectHiddenWindows ? hWnd : "ahk_id" hWnd)
                         this.__AddCallbackToQueue(hWnd, HookObj, dwmsEventTime, HookObj.MatchingWinList[hWnd])
@@ -471,7 +477,8 @@ class WinEvent {
                         this.__AddCallbackToQueue(hWnd, HookObj, dwmsEventTime, HookObj.MatchingWinList[hWnd])
                 }
             }
-            for EventName in ["Close", "NotExist", "Restore"] {
+            static WindowChangeEventNames := ["Close", "NotExist", "Restore"]
+            for EventName in WindowChangeEventNames {
                 for MatchCriteria, HookObj in this.__RegisteredEvents[EventName]
                     HookObj.__UpdateMatchingWinList(hWnd)
             }
