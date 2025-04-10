@@ -1,8 +1,8 @@
 /********************************************************************************************
  * Notify - Simplifies the creation and display of notification GUIs.
  * @author Martin Chartier (XMCQCX)
- * @date 2025/03/16
- * @version 1.9.0
+ * @date 2025/04/09
+ * @version 1.10.0
  * @see {@link https://github.com/XMCQCX/NotifyClass-NotifyCreator GitHub}
  * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 AHK Forum}
  * @license MIT license
@@ -27,15 +27,17 @@
  * - Multi-Script support.
  * @methods
  * - Show(title, msg, image, sound, callback, options) - Builds and displays a notification GUI.
- * - Destroy(param) - Destroys GUIs.
- *   - Window handle (hwnd) - Destroys the GUI with the specified window handle.
- *   - tag - Destroys every GUI containing this tag across all scripts.
- *   - 'oldest' or no param - Destroys the oldest GUI.
- *   - 'latest' - Destroys the most recent GUI.
- * - DestroyAllOnMonitorAtPosition(monitorNumber, position) - Destroys all GUIs on a specific monitor at a given position.
- * - DestroyAllOnAllMonitorAtPosition(position) - Destroys all GUIs on all monitors at a specific position.
- * - DestroyAllOnMonitor(monitorNumber) - Destroys all GUIs on a specific monitor.
- * - DestroyAll() - Destroys all GUIs.
+ * - Destroy(param, force) - Destroys GUIs.
+ *   - param
+ *     - Window handle (hwnd) - Destroys the GUI with the specified window handle.
+ *     - tag - Destroys every GUI containing this tag across all scripts.
+ *     - 'oldest' or no param - Destroys the oldest GUI.
+ *     - 'latest' - Destroys the most recent GUI.
+ *   - force - When true, overrides Destroy GUI block (DGB) setting and forces GUI destruction.
+ * - DestroyAllOnMonitorAtPosition(monitorNumber, position, force) - Destroys all GUIs on a specific monitor at a given position.
+ * - DestroyAllOnAllMonitorAtPosition(position, force) - Destroys all GUIs on all monitors at a specific position.
+ * - DestroyAllOnMonitor(monitorNumber, force) - Destroys all GUIs on a specific monitor.
+ * - DestroyAll(force) - Destroys all GUIs.
  * - Exist(tag) - Checks if a GUI with the specified tag exists and returns the unique ID (HWND) of the first matching GUI.
  * - SetDefaultTheme(theme) - Set a different theme as the default.
  * - Sound(sound) - Plays a sound.
@@ -182,7 +184,7 @@ Class Notify {
  * - `MINH` - Minimum height of the GUI.
  * - `PROG` - Progress bar. For example: `prog=1`, `prog=h40 cGreen`, `prog=w400` {@link https://www.autohotkey.com/docs/v2/lib/GuiControls.htm#Progress Progress Options}
  * - `TAG` - Marker to identify a GUI. The Destroy method accepts a handle or a tag, it destroys every GUI containing this tag across all scripts.
- * - `DGC` - Allow or prevent the GUI from being destroyed when clicked.
+ * - `DGC` - Destroy GUI click. Allow or prevent the GUI from being destroyed when clicked.
  *   - `0` - Clicking on the GUI does not destroy it.
  *   - `1` - Clicking on the GUI destroys it.*
  * - `DG` - Destroy GUIs before showing the new GUI.
@@ -192,7 +194,15 @@ Class Notify {
  *   - `3` - Destroy all GUIs on the monitor option.
  *   - `4` - Destroy all GUIs.
  *   - `5` - Destroy all GUIs containing the tag. For example: `dg=5 tag=myTAG`
- * - `OPT` - Sets various options and styles for the appearance and behavior of the window. `*+Owner -Caption +AlwaysOnTop` {@link https://www.autohotkey.com/docs/v2/lib/Gui.htm#Opt GUI Opt}
+ * - `DGB` - Destroy GUI block. Prevents the GUI from being destroyed unless the force parameter of the destroy methods is set to true.
+ *           It does not prevent GUI destruction after the duration expires or when the GUI is clicked. In most cases, you’ll likely want to set
+ *           both the Duration (DUR) and Destroy GUI Click (DGC) to 0. For example: `dgb=1 dur=0 dgc=0`
+ *   - `0` - The GUI can be destroyed without setting the force parameter to true.
+ *   - `1` - The GUI cannot be destroyed unless the force parameter is set to true.
+ * - `DGA` - Destroy GUI animation. Enables or disables the hide animation when destroying the GUI using the destroy methods.
+ *   - `0` - No animation.
+ *   - `1` - Animation enabled.
+ * - `OPT` - Sets various options and styles for the appearance and behavior of the window. `*+Owner -Caption +AlwaysOnTop +E0x08000000` {@link https://www.autohotkey.com/docs/v2/lib/Gui.htm#Opt GUI Opt}
  * @returns Map object
 ********************************************************************************************/
     static Show(title:='', msg:='', image:='', sound:='', callback:='', options:='') => this._Show(title, msg, image, sound, callback, options)
@@ -231,9 +241,11 @@ Class Notify {
             'tag', '',
             'dgc', 1,
             'dg', 0,
+            'dgb', 0,
+            'dga', 0,
             'wstc', '',
             'wstp', '',
-            'opt', '+Owner -Caption +AlwaysOnTop'
+            'opt', '+Owner -Caption +AlwaysOnTop +E0x08000000',
         )
 
         this.mThemesStrings := this.MapCI().Set(
@@ -363,6 +375,7 @@ Class Notify {
         ;==============================================
 
         this.mThemes := this.MapCI()
+        this.mThemes['Default'] := this.MapCI()
 
         for theme, str in this.mThemesStrings
             this.OptionsStringToMap(this.mThemes[theme] := this.MapCI(), str)
@@ -392,19 +405,12 @@ Class Notify {
 
         if (FileExist(pathDir '\Preferences.json')) {
             objFile := FileOpen(pathDir '\Preferences.json', 'r', 'UTF-8')
-            mJSON := _JSON_thqby.parse(objFile.Read(), keepbooltype := false, as_map := true)
+            mJSON := _JSON_thqby.parse(objFile.Read(), false, true)
             objFile.Close()
 
-            if (mJSON.Has('mDefaults')) {
-                this.mThemes['Default'] := this.MapCI()
-
+            if mJSON.Has('mDefaults')
                 for key, value in mJSON['mDefaults']
-                    this.mThemes['Default'][key] := value
-
-                for key, value in this.mDefaults
-                    if this.mThemes['Default'].Has(key)
-                        this.mDefaults[key] := this.mThemes['Default'][key]
-            }
+                    this.mDefaults[key] := value
 
             if (mJSON.Has('mThemes')) {
                 for key, value in mJSON['mThemes'] {
@@ -417,8 +423,6 @@ Class Notify {
         }
 
         ;==============================================
-
-        this.mThemes['Default'] := this.MapCI()
 
         if !this.mThemes.Has(this.mDefaults['theme'])
             this.mDefaults['theme'] := 'Default'
@@ -493,14 +497,14 @@ Class Notify {
 
         ;==============================================
 
-        g := Gui(m['opt'], 'NotifyGUI_' m['mon'] '_' m['pos'] '_' m['style'] '_' m['bdrC'] '_' m['bdrW'] '_'  m['padY'] '_' A_Now A_MSec (m['tag'] && '_' m['tag']))
+        g := Gui(m['opt'], 'NotifyGUI_' m['dgb'] '_' m['mon'] '_' m['pos'] '_' m['style'] '_' m['bdrC'] '_' m['bdrW'] '_'  m['padY'] '_' A_Now A_MSec (m['tag'] && '_' m['tag']))
         g.BackColor := m['bc']
         g.MarginX := m['gmL'] + m['bdrW']
         g.MarginY := m['gmT'] + m['bdrW']
         g.gIndex := ++gIndex
         m['hwnd'] := g.handle := g.hwnd
 
-        for value in ['pos', 'mon', 'hideHex', 'hideDur', 'tag']
+        for value in ['pos', 'mon', 'hideHex', 'hideDur', 'tag', 'dga']
             g.%value% := m[value]
 
         ;==============================================
@@ -726,7 +730,7 @@ Class Notify {
 
         mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')
 
-        for id in WinGetList('i)^NotifyGUI_' m['mon'] '_' m['pos'] '_ ahk_class AutoHotkeyGUI') {
+        for id in WinGetList('i)^NotifyGUI_[0-1]_' m['mon'] '_' m['pos'] '_ ahk_class AutoHotkeyGUI') {
             try {
                 WinGetPos(, &guiY,, &guiH, 'ahk_id ' id)
                 switch m['pos'], false {
@@ -797,8 +801,8 @@ Class Notify {
     {
         SetTimer(g.boundFuncTimer, 0)
 
-        if g.hideHex && !RegExMatch(fromMethod, 'i)^(destroy|close)')
-            try DllCall('AnimateWindow', 'Ptr', g.hwnd, 'Int', g.hideDur, 'Int', Format("{:#X}", g.hideHex + 0x10000))
+        if g.hideHex && (fromMethod != 'close' || g.dga)
+            try DllCall('AnimateWindow', 'Ptr', g.hwnd, 'Int', g.hideDur, 'Int', Format('{:#X}', g.hideHex + 0x10000))
 
         g.Destroy()
 
@@ -806,14 +810,15 @@ Class Notify {
             this.mNotifyGUIs.Delete(g.gIndex)
 
         ;==============================================
+
         Sleep(25)
         arrGUIs := Array()
         mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')
 
-        for id in WinGetList('i)^NotifyGUI_' g.mon '_' g.pos '_ ahk_class AutoHotkeyGUI') {
+        for id in WinGetList('i)^NotifyGUI_[0-1]_' g.mon '_' g.pos '_ ahk_class AutoHotkeyGUI') {
             try {
                 WinGetPos(, &gY,, &gH, 'ahk_id ' id)
-                RegExMatch(WinGetTitle('ahk_id ' id), 'i)^NotifyGUI_\d+_([a-z]+)_([a-z]+)_(\w+)_(\d+)_(\d+)_\d+', &match)
+                RegExMatch(WinGetTitle('ahk_id ' id), 'i)^NotifyGUI_[0-1]_\d+_([a-z]+)_([a-z]+)_(\w+)_(\d+)_(\d+)_\d{17}', &match)
 
                 if match[1] = 'mouse'
                     continue
@@ -873,115 +878,71 @@ Class Notify {
      * - Tag - Destroys every GUI containing this tag across all scripts.
      * - 'oldest' or no param - Destroys the oldest GUI.
      * - 'latest' - Destroys the most recent GUI.
+     * @param {boolean} force - When true, overrides Destroy GUI block (DGB) setting and forces GUI destruction.
      */
-    static Destroy(param:='')
+    static Destroy(param:='', force:=false)
     {
-        mDhwTmm := this.Set_DHWindows_TMMode(0, A_TitleMatchMode)
+        mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')
+        bin := (force ? '[0-1]' : 0)
         SetWinDelay(25)
 
-        if (WinExist('ahk_id ' param)) {
-            for gIndex, value in this.mNotifyGUIs.Clone() {
-                if (param = value.handle && this.mNotifyGUIs.Has(gIndex)) {
-                    this.gDestroy(this.mNotifyGUIs[gIndex], 'destroy')
-                    break
+        switch {
+            case (param = 'oldest' || param = 'latest' || param = ''):
+            {
+                m := Map()
+                for id in WinGetList('i)^NotifyGUI_' bin '_ ahk_class AutoHotkeyGUI') {
+                    try {
+                        RegExMatch(WinGetTitle('ahk_id ' id), 'i)^NotifyGUI_' bin '_\d+_[a-z]+_[a-z]+_\w+_\d+_\d+_(\d{17})', &match)
+                        m[match[1]] := id
+                    }
+                }
+
+                if (param = 'latest') {
+                    for timestamp, id in m
+                        destroyId := id
+                } else {
+                    for timestamp, id in m {
+                        destroyId := id
+                        break
+                    }
+                }
+
+                if IsSet(destroyId)
+                    try WinClose('ahk_id ' destroyId)
+            }
+
+            ;==============================================
+
+            case (WinExist('ahk_id ' param)):
+            {
+                for id in WinGetList('i)^NotifyGUI_' bin '_ ahk_class AutoHotkeyGUI') {
+                    if (param = id) {
+                        try WinClose('ahk_id ' id)
+                        this.Set_DHWindows_TMMode(mDhwTmm['dhwPrev'], mDhwTmm['tmmPrev'])
+                        return
+                    }
                 }
             }
 
-            SetTitleMatchMode(1)
-            for id in WinGetList('NotifyGUI_ ahk_class AutoHotkeyGUI') {
-                if (param = id) {
+            ;==============================================
+
+            default:
+                for id in WinGetList('i)^NotifyGUI_' bin '_\d+_[a-z]+_[a-z]+_\w+_\d+_\d+_\d{17}_\Q' param '\E$ ahk_class AutoHotkeyGUI')
                     try WinClose('ahk_id ' id)
-                    break
-                }
-            }
         }
-
-        ;==============================================
-
-        if (param) {
-            for gIndex, value in this.mNotifyGUIs.Clone()
-                if param = value.tag && this.mNotifyGUIs.Has(gIndex)
-                    this.gDestroy(this.mNotifyGUIs[gIndex], 'destroy')
-
-            SetTitleMatchMode('RegEx')
-            for id in WinGetList('i)^NotifyGUI_\d+_[a-z]+_[a-z]+_\w+_\d+_\d+_\d+_\Q' param '\E$ ahk_class AutoHotkeyGUI')
-                try WinClose('ahk_id ' id)
-        }
-
-        ;==============================================
-
-        if (param = 'oldest' || param = 'latest' || param = '') {
-            m := Map()
-            SetTitleMatchMode(1)
-            for id in WinGetList('NotifyGUI_ ahk_class AutoHotkeyGUI') {
-                try {
-                    RegExMatch(WinGetTitle('ahk_id ' id), 'i)^NotifyGUI_\d+_[a-z]+_[a-z]+_\w+_\d+_\d+_(\d+)', &match)
-                    m[match[1]] := id
-                }
-            }
-
-            if (param = 'latest') {
-                for timestamp, id in m
-                    destroyId := id
-            } else {
-                for timestamp, id in m {
-                    destroyId := id
-                    break
-                }
-            }
-
-            if IsSet(destroyId)
-                try WinClose('ahk_id ' destroyId)
-        }
-
-        ;==============================================
 
         this.Set_DHWindows_TMMode(mDhwTmm['dhwPrev'], mDhwTmm['tmmPrev'])
     }
 
     ;============================================================================================
 
-    static DestroyAllOnMonitorAtPosition(monNum, position)
-    {
-        for gIndex, value in this.mNotifyGUIs.Clone()
-            if value.mon = monNum && value.pos = position && this.mNotifyGUIs.Has(gIndex)
-                this.gDestroy(this.mNotifyGUIs[gIndex], 'destroyAllOnMonitorAtPosition')
+    static DestroyAllOnMonitorAtPosition(monNum, position, force:=false)=> this.WinGetList_WinClose('i)^NotifyGUI_' (force ? '[0-1]' : '0') '_' monNum '_' position '_ ahk_class AutoHotkeyGUI', 0, 'RegEx')
 
-        this.WinGetList_WinClose('i)^NotifyGUI_' monNum '_' position '_ ahk_class AutoHotkeyGUI', 0, 'RegEx')
-    }
+    static DestroyAllOnAllMonitorAtPosition(position, force:=false)=> this.WinGetList_WinClose('i)^NotifyGUI_' (force ? '[0-1]' : '0') '_\d+_' position '_ ahk_class AutoHotkeyGUI', 0, 'RegEx')
 
-    ;============================================================================================
+    static DestroyAllOnMonitor(monNum, force:=false)=> this.WinGetList_WinClose('i)NotifyGUI_' (force ? '[0-1]' : '0') '_' monNum '_ ahk_class AutoHotkeyGUI', 0, 'RegEx')
 
-    static DestroyAllOnAllMonitorAtPosition(position)
-    {
-        for gIndex, value in this.mNotifyGUIs.Clone()
-            if value.pos = position && this.mNotifyGUIs.Has(gIndex)
-                this.gDestroy(this.mNotifyGUIs[gIndex], 'destroyAllOnAllMonitorAtPosition')
-
-        this.WinGetList_WinClose('i)^NotifyGUI_\d+_' position '_ ahk_class AutoHotkeyGUI', 0, 'RegEx')
-    }
-
-    ;============================================================================================
-
-    static DestroyAllOnMonitor(monNum)
-    {
-        for gIndex, value in this.mNotifyGUIs.Clone()
-            if value.mon = monNum && this.mNotifyGUIs.Has(gIndex)
-                this.gDestroy(this.mNotifyGUIs[gIndex], 'destroyAllOnMonitor')
-
-        this.WinGetList_WinClose('i)NotifyGUI_' monNum '_ ahk_class AutoHotkeyGUI', 0, 'RegEx')
-    }
-
-    ;============================================================================================
-
-    static DestroyAll()
-    {
-        for gIndex, value in this.mNotifyGUIs.Clone()
-            if this.mNotifyGUIs.Has(gIndex)
-                this.gDestroy(this.mNotifyGUIs[gIndex], 'destroyAll')
-
-        this.WinGetList_WinClose('NotifyGUI_ ahk_class AutoHotkeyGUI', 0, 1)
-    }
+    static DestroyAll(force:=false)=> this.WinGetList_WinClose('i)^NotifyGUI_' (force ? '[0-1]' : '0') '_ ahk_class AutoHotkeyGUI', 0, 'RegEx')
 
     ;============================================================================================
 
@@ -1005,7 +966,7 @@ Class Notify {
     {
         mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')
 
-        for id in WinGetList('i)^NotifyGUI_\d+_[a-z]+_[a-z]+_\w+_\d+_\d+_\d+_\Q' tag '\E$ ahk_class AutoHotkeyGUI') {
+        for id in WinGetList('i)^NotifyGUI_[0-1]_\d+_[a-z]+_[a-z]+_\w+_\d+_\d+_\d{17}_\Q' tag '\E$ ahk_class AutoHotkeyGUI') {
             idFound := id
             break
         }
@@ -1033,6 +994,9 @@ Class Notify {
 
         if !RegExMatch(m['style'], 'i)^(round|edge)$')
             m['style'] := this.mDefaults['style']
+
+        if !RegExMatch(m['dgb'], '^(0|1)$')
+            m['dgb'] := this.mDefaults['dgb']
 
         for value in ['tfo', 'mfo'] {
             m['arr' value] := Array()
@@ -1558,12 +1522,12 @@ Class Notify {
 
     static RedrawAllBorderEdge()
     {
-        mDhwTmm := this.Set_DHWindows_TMMode(0, 1)
+        mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')
 
-        for id in WinGetList('NotifyGUI_ ahk_class AutoHotkeyGUI') {
+        for id in WinGetList('i)^NotifyGUI_[0-1]_\d+_[a-z]+_edge_\w+_\d+_\d+_\d{17} ahk_class AutoHotkeyGUI') {
             try {
-                RegExMatch(WinGetTitle('ahk_id ' id), 'i)^NotifyGUI_\d+_([a-z]+)_([a-z]+)_(\w+)_(\d+)_(\d+)_\d+', &match)
-                this.ReDrawBorderEdge(id, match[2], match[3], match[4])
+                RegExMatch(WinGetTitle('ahk_id ' id), 'i)^NotifyGUI_[0-1]_\d+_[a-z]+_edge_(\w+)_(\d+)_\d+_\d{17}', &match)
+                this.ReDrawBorderEdge(id, 'edge', match[1], match[2])
             }
         }
 

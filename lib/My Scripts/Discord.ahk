@@ -4,13 +4,13 @@
 ; }
 
 ;disceditHotkey;
-SC03A & e::discord.button("DiscEdit.png") ;edit the message you're hovering over
+SC03A & e::discord.button("edit") ;edit the message you're hovering over
 ;discreplyHotkey;
-SC03A & r::discord.button("DiscReply.png") ;reply to the message you're hovering over ;this reply hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+SC03A & r::discord.button("reply") ;reply to the message you're hovering over ;this reply hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
 ;discreactHotkey;
-SC03A & a::discord.button("DiscReact.png") ;add a reaction to the message you're hovering over
+SC03A & a::discord.button("react") ;add a reaction to the message you're hovering over
 ;discdeleteHotkey;
-SC03A & d::discord.button("DiscDelete.png") ;delete the message you're hovering over. Also hold shift to skip the prompt
+SC03A & d::discord.button("delete") ;delete the message you're hovering over. Also hold shift to skip the prompt
 ^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 

@@ -19,8 +19,11 @@
 
 ⚠️ `discord {`
 - 📋 Replaced screenshots for new theme (I personally use `onyx`, `compact` at <kbd>70% saturation</kbd>. If you use anything else you'll be required to take all new screenshots and adjust a little code within the class unless you simply override the onyx screenshots)
+- `Unread()` will now use `UIA` to attempt to click the `Mark as Read` button instead of relying on screenshots
 - `button()`
-    - ✅ Fixed function failing to find the requested button if the right click context menu opens to the left of the cursor
+    - 📋 Function now uses `UIA` to click the desired buttons instead of relying on screenshots.
+        - Parameter `button` now requires; `reply`, `edit`, `react`, `delete` or `report`
+        - Completely removes reliance on per theme screenshots *(for this function)*
     - ✅ Fixed function attempting to fire while the user is not hovering the window
 
 ## Other Changes
