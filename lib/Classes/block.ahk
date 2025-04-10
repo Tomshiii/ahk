@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2025/04/07
- * @version 1.3.6
+ * @date 2025/04/11
+ * @version 1.3.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -98,7 +98,7 @@ class block_ext {
     }
 
     Off() {
-        this.blocker.Stop()
+        try this.blocker.Stop()
         BlockInput("Default"), BlockInput("MouseMoveOff")
         this.blocker := {}
     }

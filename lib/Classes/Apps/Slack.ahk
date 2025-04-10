@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/03/27
- * @version 1.0.2
+ * @date 2025/04/11
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -10,6 +10,7 @@
 #Include <Classes\keys>
 #Include <Classes\obj>
 #Include <Functions\delaySI>
+#Include <Other\UIA\UIA>
 ; }
 
 class Slack {
@@ -27,52 +28,6 @@ class Slack {
         MouseMove(foundCoords.x, foundCoords.y, 2)
         SendInput("{Click}")
         MouseMove(orig.x, orig.y, 2)
-    }
-
-    /**
-     * A function to cut repeat code. Designed to search for an image and increase the search radius if the image is not found
-     * @param {String} image the filename of the image you're searching for, including the file extension
-     * @param {Object} coords an object containing the x1,y1,x2,y2 coordinates you wish to search
-     * @param {Integer} increaseAmount the amount you want the search to increase (in both the top and bottom of the search area)
-     */
-    __expandingLoop(image, coords, increaseAmount) {
-        loop {
-            if A_Index = 1 {
-                if ImageSearch(&x, &y, coords.x1, coords.y1, coords.x2, coords.y2, "*2 " ptf.Slack image)
-                    return {x: x, y:y}
-            }
-            if A_Index > 5 {
-                errorLog(TargetError("Unable to find the desired button", -1),, true)
-                return false
-            }
-            if ImageSearch(&x, &y, coords.x1, coords.y1 - (increaseAmount*(A_Index-1)), coords.x2, coords.y2 + (increaseAmount*(A_Index-1)), "*2 " ptf.Slack image)
-                return {x: x, y:y}
-        }
-    }
-
-    /**
-     * A function to reduce repeat code. Performs different actions depending on the state of the cursor.
-     * @param {String} cursor the current cursor
-     * @param {String} image the image you wish to search for
-     * @param {Object} coords an object containing the x1,y1,x2,y2 coordinates you wish to search
-     * @param {Integer} increaseAmount the amount you want the search to increase (in both the top and bottom of the search area)
-     * @param {String} button the button you wish to be sent to perform the desired action
-     * @param {Object} origMousePos an object containing the x/y values of the original mouse coordinates
-     * @param {Boolean} doEscape whether you wish for the function to send a final <kbd>Escape</kbd> key at the end
-     */
-    __containsBoth(cursor, image, coords, increaseAmount, button, origMousePos, doEscape := true) {
-        finalPress := doEscape = true ? "{Esc}" : ""
-        switch cursor {
-            case "IBeam", "Unknown":
-                if !foundPos := this.__expandingLoop(image, coords, increaseAmount)
-                    return false
-                this.__moveReturn({x: foundPos.x, y: foundPos.y}, origMousePos)
-                delaySI(50, button, finalPress)
-                return
-            case "Arrow":
-                delaySI(50, "{RButton}", button, finalPress)
-                return
-        }
     }
 
     /**
@@ -97,29 +52,64 @@ class Slack {
 
     /**
      * A function designed to quickly access many features that often require a little fiddling to reach.
-     * @param {String} button the desired button name you wish to click
+     * @param {String} button the desired button name you wish to click. Supported buttons are; `reaction`, `reply`, `edit`, `delete`
      */
     static button(button) {
-        coord.s()
-        cursor := A_Cursor
         keys.allWait("second")
         origMousePos := obj.MousePos()
         if WinGetProcessName(origMousePos.win) != WinGetProcessName(this.winTitle)
             return
-        winPos := obj.WinPos(this.exeTitle)
-        yheight := 400
+        blocker := block_ext()
+        blocker.On()
+        currentTitle := WinGet.Title()
+        try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
+        catch {
+            errorLog(UnsetError("Failed to set UIA element", -1),, true)
+            blocker.Off()
+            return
+        }
+
+        pressButton(uiaObj, type, button) {
+            if button = "Delete message… delete" || button = "Edit message E" {
+                findLocation := uiaObj.FindElement({LocalizedType: "button", Name: "Reply in thread"})
+                for el in uiaObj.FindElements({LocalizedType: "menu item", Name: "More actions"}) {
+                    if el.location.y != findLocation.location.y
+                        continue
+                    el.ControlClick()
+                }
+                try uiaObj.FindElement({LocalizedType: type, Name: button}).ControlClick()
+                catch {
+                    SetTimer(_waitForMenu.Bind(uiaObj, button), 1)
+                }
+                return
+            }
+            try uiaObj.FindElement({LocalizedType: type, Name: button}).ControlClick()
+            catch {
+                SetTimer(_waitForMenu.Bind(uiaObj, button), 1)
+            }
+            _waitForMenu(uiaObj, button, *) {
+                static attempt := 1
+                if attempt > 80 {
+                    errorLog(IndexError("Was unable to find the requested button", -1),, 1)
+                    blocker.Off()
+                    SetTimer(, 0)
+                }
+                try uiaObj.FindElement({ LocalizedType: type, Name: button }).ControlClick()
+                catch {
+                    attempt += 1
+                    sleep 25
+                    return
+                }
+                SetTimer(, 0)
+            }
+        }
 
         switch button {
-            case "reaction":
-                if !foundPos := this().__expandingLoop("reaction.png", {x1: winPos.x, y1: origMousePos.y - 100, x2: winPos.x + winPos.width, y2: origMousePos.y + 100}, yheight)
-                    return
-                this().__moveReturn({x: foundPos.x, y: foundPos.y}, origMousePos)
-            case "edit":
-                if !this().__containsBoth(cursor, "threedot.png", {x1: winPos.x, y1: origMousePos.y - 100, x2: winPos.x + winPos.width, y2: origMousePos.y + 100}, yheight, "e", origMousePos)
-                    return
-            case "delete":
-                if !this().__containsBoth(cursor, "threedot.png", {x1: winPos.x, y1: origMousePos.y - 100, x2: winPos.x + winPos.width, y2: origMousePos.y + 100}, yheight, "{Del}", origMousePos, false)
-                    return
+            case "reaction": pressButton(slackEl, "button", "Add reaction…")
+            case "reply": pressButton(slackEl, "button", "Reply in thread")
+            case "delete": pressButton(slackEl, "menu item", "Delete message… delete")
+            case "edit": pressButton(slackEl, "menu item", "Edit message E")
         }
+        blocker.Off()
     }
 }

@@ -16,6 +16,7 @@
 #Include <Classes\Settings>
 #Include <Classes\Streamdeck_opt>
 #Include <GUIs\settingsGUI\settingsGUI>
+#Include <Functions\isDoubleClick>
 
 SetWorkingDir(ptf.rootDir)             ;sets the scripts working directory to the directory it's launched from
 SetDefaultMouseSpeed(0)                ;sets default MouseMove speed to 0 (instant)
@@ -64,11 +65,23 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;spaceDelayHotkey;
 Space::
 {
-	switch getTitle := WinGetTitle("A") {
-		case "Modify Clip", "Audio Gain":
+	getTitle := WinGetTitle("A")
+	isIn(title) => InStr(getTitle, title)
+	switch {
+		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"):
 			SendInput("{Enter}")
 			return
-		case "Save Project": return
+		case isIn("Save Project"): return
+		case isIn("Clip Fx Editor - DeNoise"):
+			SendInput("{Enter}")
+			if IsSet(A_PriorKey) && isDoubleClick(750, "key")
+				prem.escFxMenu()
+			return
+		case isIn("Color Picker"), isIn("Add Tracks"):
+			if !CaretGetPos(&x, &y) {
+				SendInput("{Enter}")
+				return
+			}
 	}
 	prem.delayPlayback()
 }

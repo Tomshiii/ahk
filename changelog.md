@@ -2,7 +2,6 @@
 
 ## Functions
 - ✅ Fixed `KeyShortAdjust {` throwing if script is called but the `.ini` file doesn't exist
-- ✅ Fixed `slack.button()` attempting to fire while the user is not hovering the window
 - ✅ Fixed `settingsGUI()` throwing if the user attempts to <kbd>Open > Wiki Dir</kbd> and the directory does not exist
 - ✏️ Added `block_ext {` a block class that allows complete input blocking without the script being run as admin
 
@@ -18,12 +17,20 @@
     - ✅ Fixed function trying to set UIA values multiple times if function is called again shortly after it starts running
 
 ⚠️ `discord {`
-- 📋 Replaced screenshots for new theme (I personally use `onyx`, `compact` at <kbd>70% saturation</kbd>. If you use anything else you'll be required to take all new screenshots and adjust a little code within the class unless you simply override the onyx screenshots)
-- `Unread()` will now use `UIA` to attempt to click the `Mark as Read` button instead of relying on screenshots
+- ❗All functions are now completely `ImageSearch` free. Meaning discord updates should no longer constantly break these functions!
+- 📋 `Unread()` will now use `PixelSearch` & `UIA` to find; unread `servers`/`channels` & the `Mark as Read` button instead of relying on screenshots
+> [!caution]
+> Parameter `which` now requires either `channels` or `servers`
 - `button()`
     - 📋 Function now uses `UIA` to click the desired buttons instead of relying on screenshots.
-        - Parameter `button` now requires; `reply`, `edit`, `react`, `delete` or `report`
-        - Completely removes reliance on per theme screenshots *(for this function)*
+    - ✅ Fixed function attempting to fire while the user is not hovering the window
+> [!caution]
+> Parameter `button` now requires; `reply`, `edit`, `react`, `delete` or `report`
+
+`slack {`
+- `button()`
+    - 📋 Function now uses `UIA` to click the desired buttons instead of relying on screenshots.
+        - `reply` is now additionally supported
     - ✅ Fixed function attempting to fire while the user is not hovering the window
 
 ## Other Changes

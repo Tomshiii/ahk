@@ -23,8 +23,8 @@ SC03A & d::discord.button("delete") ;delete the message you're hovering over. Al
  */
 
 ;discserverHotkey;
-F1::discord.Unread() ;will click any unread servers
+F1::discord.Unread("servers") ;will click any unread servers
 ;discmsgHotkey;
-F2::discord.Unread(2) ;will click any unread channels
+F2::discord.Unread("channels") ;will click any unread channels
 ;discdmHotkey;
 F3::discord.DMs()

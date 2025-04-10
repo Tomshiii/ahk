@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/04/10
- * @version 1.6.0
+ * @date 2025/04/11
+ * @version 1.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,10 +32,8 @@ class discord {
             this.disableAutoReplyPing := this.UserSettings.disc_disable_autoreply
             this.UserSettings := ""
         }
-        this.imgSrchDisc .= this.theme "\"
     }
     UserSettings := unset
-    static logoCheck := false
 
     ;// set to false if you want discord to replies to leave the @ping enabled by default
     static disableAutoReplyPing := true
@@ -59,65 +57,7 @@ class discord {
 
     static surroundActive := false
 
-    static theme := "onyx_compact"
-    static imgSrchDisc := ptf.Discord
-
-    /**
-     * This function is called by a few other User facing functions and is designed to alert the user when discord has gone and changed the logo button within the main UI. This logo changing breaks those functions in certain ways.
-     * The discord logo may also appear slightly different on the system based off whether the user has discord on a landscape/portrait oriented monitor. I have taken screenshots of both and try to keep them updated but they may break at any time.
-     */
-    static __logoCheck() {
-        WinGetPos(&nx, &ny, &width, &height, discord.winTitle)
-        if !obj.imgSrchMulti({x1: 0, y1: 0, x2: 100, y2: 100},,,
-                                        , this.imgSrchDisc "dm1.png", this.imgSrchDisc "dm1_2.png"
-                                        , this.imgSrchDisc "dm2.png", this.imgSrchDisc "dm2_2.png")
-            {
-                title := "Logo Match Not Found"
-                SetTimer(change_msgButton.Bind(title, "OK", "Open Dir"), 25) ;// calls change_msgButton()
-                alert := MsgBox(Format("
-                (
-                    Discord's logo button appears to have changed (very first button on the left of the UI to get to dms/friends). This logo is needed for a few scripts to function correctly.`n
-                    Please take new screenshots and replace:
-                    - {1}dm1.png
-                        (portrait)
-                    - {1}dm1_2.png
-                        (landscape)
-                    - {1}dm2.png
-                        (portrait)
-                    - {1}dm2_2.png
-                        (landscape)
-
-                    Then reload all scripts.
-                )", this.imgSrchDisc), title, "4 48 4096")
-                if alert = "No" {
-                    if WinExist(this.imgSrchDisc)
-                        {
-                            WinActivate(this.imgSrchDisc)
-                            return
-                        }
-                    Run(this.imgSrchDisc)
-                }
-                Exit()
-            }
-        this.logoCheck := true
-    }
-
-    /**
-     * move to coords and click
-     */
-    __move_click(x, y) {
-        MouseMove(x, y)
-        SendInput("{Click}")
-    }
-
-    /**
-     * move to coords, unblock inputs and exit
-     */
-    __move_exit(x, y) {
-        MouseMove(x, y) ;moves the mouse back to the original coords
-        block.Off()
-        Exit()
-    }
+    static checkingUnread := false
 
     /**
      * This function uses UIA to look for buttons within the right click context menu and automatically clicks the one you're after, allowing the user to more quickly navigate the UI.
@@ -141,24 +81,29 @@ class discord {
         try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
         catch {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
+            blocker.Off()
             return
         }
 
         pressButton(uiaObj, button) {
             try uiaObj.FindElement({LocalizedType: "menu item", A: "message-" button}).ControlClick()
             catch {
-                SetTimer(_waitForMenu.Bind(uiaObj, button), -1)
+                SetTimer(_waitForMenu.Bind(uiaObj, button), 1)
             }
             _waitForMenu(uiaObj, button, *) {
                 static attempt := 1
                 if attempt > 80 {
                     errorLog(IndexError("Was unable to find the requested button", -1),, 1)
-                    sleep 1000
-                    return
+                    blocker.Off()
+                    SetTimer(, 0)
                 }
                 try uiaObj.FindElement({LocalizedType: "menu item", AutomationId: "message-" button}).ControlClick()
-                attempt += 1
-                sleep 25
+                catch {
+                    attempt += 1
+                    sleep 25
+                    return
+                }
+                SetTimer(, 0)
             }
         }
         switch button {
@@ -169,16 +114,21 @@ class discord {
                     return
                 }
                 pressButton(DiscordEl, "reply")
-                SetTimer(__Mention.Bind(DiscordEl), -1)
+                SetTimer(__Mention.Bind(DiscordEl), 1)
                 __Mention(uiaObj, *) {
                     static attempt := 1
                     if attempt > 80 {
                         errorLog(IndexError("Was unable to find the @ mention button", -1),, 1)
-                        return
+                        blocker.Off()
+                        SetTimer(, 0)
                     }
                     try uiaObj.FindElement({Name: "Mention ON", LocalizedType: "button"}).ControlClick()
-                    attempt += 1
-                    sleep 25
+                    catch {
+                        attempt += 1
+                        sleep 25
+                        return
+                    }
+                    SetTimer(, 0)
                 }
             case "edit": pressButton(DiscordEl, "edit")
             case "react": pressButton(DiscordEl, "add-reaction")
@@ -199,49 +149,79 @@ class discord {
     /**
      * This function will search for and automatically click on either unread servers or unread channels depending on which image you feed into the function
      *
-     * @param {String} which is simply which image you want to feed into the function. I have it left blank for servers and `"2"` for channels
+     * @param {String} which whether you wish to search for unread `servers` or `channels`.
      */
-    static Unread(which := "")
+    static Unread(which := "servers")
     {
-        switch which {
-            default:
-                x2 := 0
-                y2 := 0
-                message := "servers"
-            case 2:
-                x2 := 60
-                y2 := 30
-                message := "channels"
-        }
         if !WinActive(this.winTitle)
             WinActivate(this.winTitle)
-        MouseGetPos(&xPos, &yPos)
-        WinGetPos(,, &width, &height, this.winTitle)
-        if !obj.imgSrchMulti({x1:0 + x2, y1:0, x2:50 + y2, y2:height},, &x, &y,
-                                this.imgSrchDisc "\unread" which "_1.png", this.imgSrchDisc "\unread" which "_2.png",
-                                this.imgSrchDisc "\unread" which "_3.png", this.imgSrchDisc "\unread" which "_4.png") {
-            tool.Cust("Couldn't find any unread " message)
-            return
-        }
-        MouseMove(x + 20, y, 2)
-        SendInput("{Click}")
-        MouseMove(xPos, yPos, 2)
+        coord.s()
+        origMousePos := obj.MousePos()
+        WinGetPos(&xpos, &ypos, &width, &height, this.winTitle)
+        saveY := ypos
         currentTitle := WinGet.Title()
         try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
         catch {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             return
         }
-        sleep 200
-        loop {
-            if A_Index > 160
-                return
-            try DiscordEl.FindElement({ Name: "Mark as Read", LocalizedType: "button" }).ControlClick()
-            catch {
-                sleep 25
-                continue
+
+        __findGrey(x, y, returnVals := false) {
+            coord.s()
+            if PixelSearch(&x, &y, x, y, x + 8, saveY + height - 60, 0xe3e3e6) {
+                if returnVals = true
+                    return {x: x, y: y}
+                MouseMove(x+20, y+3, 2)
+                SendInput("{Click}")
+                MouseMove(origMousePos.x, origMousePos.y, 2)
             }
-            break
+        }
+        __markRead(uiaEl, *) {
+            static attempt := 1
+            if attempt > 80 {
+                this.checkingUnread := false
+                SetTimer(, 0)
+            }
+            try uiaEl.FindElement({Name: "Mark as Read", LocalizedType: "button"}).ControlClick()
+            catch {
+                attempt += 1
+                sleep 25
+                return
+            }
+            this.checkingUnread := false
+            SetTimer(, 0)
+        }
+        switch which {
+            case "servers":
+                getServerName := (!InStr(currentTitle, "|") && SubStr(currentTitle, 1, 1) = "@") ? "Direct Messages" : SubStr(currentTitle, start := InStr(currentTitle, "|", , -1) + 2, StrLen(currentTitle) - (start + 9))
+                activeServer := DiscordEl.FindElement({LocalizedType: "tree item", Name: getServerName, matchmode:"Substring"})
+                findFirstGrey := __findGrey(xpos, ypos, true)
+                if !findFirstGrey
+                    return
+                serverY := (getServerName = "Direct Messages") ? activeServer.location.y + 3 : activeServer.location.y + 1
+                if findFirstGrey.y != serverY {
+                    __findGrey(xpos, ypos)
+                    if this.checkingUnread != true {
+                        this.checkingUnread := true
+                        SetTimer(__markRead.bind(this, DiscordEl), 1)
+                    }
+                    return
+                }
+                ypos := activeServer.location.y + activeServer.location.h + 2
+                __findGrey(xpos, ypos, height)
+                if this.checkingUnread != true {
+                    this.checkingUnread := true
+                    SetTimer(__markRead.bind(this, DiscordEl), 1)
+                }
+                return
+            case "channels":
+                getLoc := DiscordEl.FindElement({LocalizedType: "group", AutomationId: "channels"})
+                __findGrey(getLoc.location.x, getLoc.location.y, getLoc.location.h)
+                if this.checkingUnread != true {
+                    this.checkingUnread := true
+                    SetTimer(__markRead.bind(this, DiscordEl), 1)
+                }
+                return
         }
     }
 

@@ -11,8 +11,8 @@
 /********************************************************************************************
  * Notify Creator - Explore all customization settings of the Notify class, create themes, generate ready-to-copy code snippets, and more.
  * @author Martin Chartier (XMCQCX)
- * @date 2025/03/16
- * @version 1.2.0
+ * @date 2025/04/09
+ * @version 1.3.0
  * @see {@link https://github.com/XMCQCX/NotifyClass-NotifyCreator GitHub}
  * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 AHK Forum}
  * @license MIT license
@@ -36,7 +36,7 @@ Class NotifyCreator {
     static __New()
     {
         this.scriptName := 'Notify Creator'
-        this.scriptVersion := 'v1.2.0'
+        this.scriptVersion := 'v1.3.0'
         this.linkGitHubRepo := 'https://github.com/XMCQCX/NotifyClass-NotifyCreator'
         this.gMainTitle := this.scriptName ' - ' this.scriptVersion
         this.gRipTitle := 'ResIconsPicker - ' this.scriptName
@@ -71,7 +71,6 @@ Class NotifyCreator {
         this.arrBgImgPos := ['', 'Stretch', 'TL', 'TC', 'TR', 'CTL', 'CT', 'CTR', 'BL', 'BC', 'BR', 'ct Scale1.5', 'w50 hStretch', 'tr w20 h-1 ofstx-10 ofsty10']
         this.arrProg := ['', 1, 'h40 cGreen', 'w400']
         this.arrWstc := ['', 'bc=black wstc=black', 'bc=gray wstc=gray']
-        this.arrDgc := [0, 1]
         this.arrDg := [0, 1, 2, 3, 4, 5]
         this.arrTrayMenuIconSize := [16, 20, 24, 28, 32]
         this.arrAhkColors := this.MapToArray(Notify.mAHKcolors)
@@ -126,6 +125,8 @@ Class NotifyCreator {
             ['Tag', 'tag'],
             ['Destroy GUI click', 'dgc'],
             ['Destroy GUIs', 'dg'],
+            ['Destroy GUI block', 'dgb'],
+            ['Destroy GUI animation', 'dga'],
         ]
 
         ;==============================================
@@ -277,7 +278,7 @@ Class NotifyCreator {
 
         if (FileExist('Settings.json')) {
             fileObj := FileOpen('Settings.json', 'r', 'UTF-8')
-            this.mUser := _JSON_thqby.parse(fileObj.Read(), keepbooltype := false, as_map := true) ; this.mUser CaseSense is On.
+            this.mUser := _JSON_thqby.parse(fileObj.Read(), false, true) ; this.mUser CaseSense is On.
             fileObj.Close()
         }
         else this.mUser := Map()
@@ -360,7 +361,7 @@ Class NotifyCreator {
 
         ;==============================================
 
-        HotIfWinExist('NotifyGUI_ ahk_class AutoHotkeyGUI')
+        HotIfWinExist('NotifyGUI_0 ahk_class AutoHotkeyGUI')
         Hotkey('Esc', (*) => Notify.Destroy())
         HotIfWinExist()
 
@@ -603,14 +604,14 @@ Class NotifyCreator {
         ;===== THEME - STYLE - RESET ALL =============
 
         gbHeighTS := 55
-        gbWidthTS := 520
+        gbWidthTS := 510
         this.gMain.gb_theme := this.gMain.Add('GroupBox',  'xm+' gbWidthText + this.gMain.MarginX ' ym w' gbWidthTS ' h' gbHeighTS ' cBlack', 'Theme')
-        this.gMain.ddl_theme := this.gMain.Add('DropDownList', 'xp+8 yp+21 w180 Section vtheme', this.arrTheme)
+        this.gMain.ddl_theme := this.gMain.Add('DropDownList', 'xp+8 yp+21 w175 Section vtheme', this.arrTheme)
         this.gMain.ddl_theme.OnEvent('Change', this.DebounceCall.Bind(this, 175, 'gMain_ShowTheme', 'theme'))
         this.gMain.cb_styleLock := this.gMain.Add('CheckBox', 'x+14 yp+3', ' Style:')
         this.gMain.ddl_style := this.gMain.Add('DropDownList', 'x+1 yp-4 w65 vstyle', this.arrStyle)
         this.gMain.ddl_style.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_ddl_style_Change', 'style'))
-        this.gMain.btn_copyTheme := this.gMain.Add('Button', 'x+14 yp-3 w' btnSize ' h' btnSize)
+        this.gMain.btn_copyTheme := this.gMain.Add('Button', 'x+8 yp-3 w' btnSize ' h' btnSize)
         this.gMain.btn_copyTheme.OnEvent('Click', this.CopyToClipboard.Bind(this, 'theme'))
         GuiButtonIcon(this.gMain.btn_copyTheme, this.mIcons['clipBoard'], 1, 's20')
         this.gMain.btn_editTheme := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
@@ -625,12 +626,15 @@ Class NotifyCreator {
         this.gMain.btn_themeReset := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
         this.gMain.btn_themeReset.OnEvent('Click', this.gMain_SetAllValues.Bind(this, 'btn_themeReset'))
         GuiButtonIcon(this.gMain.btn_themeReset, this.mIcons['resetTheme'], 1, 's20')
-        this.gMain.btn_defaultAll := this.gMain.Add('Button', 'xm+' gbWidthText + gbWidthTS + 38 ' yp w' btnSize ' h' btnSize)
+        this.gMain.btn_defaultAll := this.gMain.Add('Button', 'xm+' gbWidthText + gbWidthTS + 20 ' yp w' btnSize ' h' btnSize)
         this.gMain.btn_defaultAll.OnEvent('Click', this.gMain_SetAllValues.Bind(this, 'btn_default_reset'))
         GuiButtonIcon(this.gMain.btn_defaultAll, this.mIcons['reset'], 1, 's20')
         this.gMain.btn_settings := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
         this.gMain.btn_settings.OnEvent('Click', this.gSettings_Show.Bind(this))
         GuiButtonIcon(this.gMain.btn_settings, this.mIcons['btn_settings'], 1, 's20')
+        this.gMain.btn_about := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
+        this.gMain.btn_about.OnEvent('Click', this.gAbout_Show.Bind(this))
+        GuiButtonIcon(this.gMain.btn_about, this.mIcons['btn_about'], 1, 's20')
 
         ;===== TITLE =================================
 
@@ -811,7 +815,7 @@ Class NotifyCreator {
 
         ;===== MISC ==================================
 
-        gbHeighMisc := 205
+        gbHeighMisc := 230
         gbWidthMisc := 185
         this.gMain.gb_misc := this.gMain.Add('GroupBox',  'xm+' gbWidthText + gbWidthBg + gbWidthPad + this.gMain.MarginX*3
         ' ym+' gbHeighTS + gbHeightTM + this.gMain.MarginY*2 ' w' gbWidthMisc ' h' gbHeighMisc ' cBlack', 'Misc.')
@@ -830,14 +834,15 @@ Class NotifyCreator {
         this.gMain.edit_minH := this.gMain.Add('Edit', 'xs+95 yp-2 w50 vminH Number Limit' StrLen(this.arrGuiDimRange[2]))
         this.gMain.edit_minH.OnEvent('Change', this.DebounceCall.Bind(this, 125, 'gMain_edit_GuiDim_Change', 'minH'))
         this.gMain.Add('UpDown', 'Range' this.arrGuiDimRange[1] '-' this.arrGuiDimRange[2])
+        this.gMain.cb_dgc := this.gMain.Add('CheckBox', 'xs vdgc', ' DGC')
+        this.gMain.txt_dg := this.gMain.Add('Text', 'x+10 +0x0100', 'DG:')
+        this.gMain.ddl_dg := this.gMain.Add('DropDownList', 'xp+38 yp-2 w40 vdg', this.arrDg)
+        this.gMain.cb_dgb := this.gMain.Add('CheckBox', 'xs vdgb', ' DGB')
+        this.gMain.cb_dga := this.gMain.Add('CheckBox', 'xp+80 yp vdga', ' DGA')
         this.gMain.txt_prog := this.gMain.Add('Text', 'xs +0x0100', 'Prog:')
         this.gMain.cbb_prog := this.gMain.Add('ComboBox', 'xs+40 yp-2 w125 vprog', this.arrProg)
         this.gMain.txt_tag := this.gMain.Add('Text', 'xs +0x0100', 'Tag:')
         this.gMain.edit_tag := this.gMain.Add('Edit', 'xs+40 yp-2 w125 vtag')
-        this.gMain.txt_dgc := this.gMain.Add('Text', 'xs +0x0100', 'DGC:')
-        this.gMain.ddl_dgc := this.gMain.Add('DropDownList', 'xs+40 yp-2 w40 vdgc', this.arrDgc)
-        this.gMain.txt_dg := this.gMain.Add('Text', 'x+m yp+2 +0x0100', 'DG:')
-        this.gMain.ddl_dg := this.gMain.Add('DropDownList', 'xp+32 yp-2 w40 vdg', this.arrDg)
         this.gMain.pic_miscInfo := this.gMain.Add('Picture', 'xs+50 ys-26 w15 h15 +0x0100', this.mIcons['iSmall'])
         this.gMain.btn_miscReset := this.gMain.Add('Button', 'xs+' gbWidthMisc - 40 ' ys-30 w22 h22')
         this.gMain.btn_miscReset.OnEvent('Click', this.gMain_btn_miscReset.Bind(this))
@@ -861,23 +866,20 @@ Class NotifyCreator {
         GuiButtonIcon(this.gMain.btn_test, this.mIcons['test'], 1, 's45 a2 t18 l2')
         this.gMain.btn_destroyAll := this.gMain.Add('Button', 'x+m w97 h97', 'Destroy All')
         this.gMain.btn_destroyAll.SetFont('bold')
-        this.gMain.btn_destroyAll.OnEvent('Click', (*) => Notify.DestroyAll())
+        this.gMain.btn_destroyAll.OnEvent('Click', (*) => Notify.DestroyAll(1))
         GuiButtonIcon(this.gMain.btn_destroyAll, this.mIcons['destroy'], 1, 's45 a2 t18 l2')
-
         btnWidth := 90
         btnHeight := 35
-        this.gMain.btn_monInfo := this.gMain.Add('Button', 'x+m ys+20 w' btnWidth ' h' btnHeight ' Section', 'Info')
+        this.gMain.btn_monInfo := this.gMain.Add('Button', 'x+m ys+40 w' btnSize ' h' btnSize ' Section')
         this.gMain.btn_monInfo.OnEvent('Click', this.MonitorGetInfo.Bind(this))
-        GuiButtonIcon(this.gMain.btn_monInfo, this.mIcons['monInfo'], 1, 's20 a0 l10')
-        this.gMain.btn_about := this.gMain.Add('Button', 'xp w' btnWidth ' h' btnHeight, 'About')
-        this.gMain.btn_about.OnEvent('Click', this.gAbout_Show.Bind(this))
-        GuiButtonIcon(this.gMain.btn_about, this.mIcons['btn_about'], 1, 's20 a0 l10')
-        this.gMain.btn_donate := this.gMain.Add('Button', 'xs+' btnWidth + 5 ' ys w' btnWidth ' h' btnHeight, 'Donate')
-        this.gMain.btn_donate.OnEvent('Click', (*) => Run('https://buymeacoffee.com/xmcqcx'))
-        GuiButtonIcon(this.gMain.btn_donate, this.mIcons['buymeacoffee'], 1, 's20 a0 l10')
-        this.gMain.btn_gitHub := this.gMain.Add('Button', 'xp w' btnWidth ' h' btnHeight, 'GitHub')
+        GuiButtonIcon(this.gMain.btn_monInfo, this.mIcons['monInfo'], 1, 's20')
+        this.gMain.btn_gitHub := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
         this.gMain.btn_gitHub.OnEvent('Click', (*) => Run(this.linkGitHubRepo))
-        GuiButtonIcon(this.gMain.btn_gitHub, this.mIcons['gitHub'], 1, 's20 a0 l10')
+        GuiButtonIcon(this.gMain.btn_gitHub, this.mIcons['gitHub'], 1, 's20')
+        this.gMain.btn_donate := this.gMain.Add('Button', 'x+5 w' btnSize ' h' btnSize)
+        this.gMain.btn_donate.OnEvent('Click', (*) => Run('https://buymeacoffee.com/xmcqcx'))
+        GuiButtonIcon(this.gMain.btn_donate, this.mIcons['buymeacoffee'], 1, 's20')
+
         this.gMain.sb := this.gMain.Add('StatusBar')
         this.gMain.sb.SetParts(155, 155,)
 
@@ -886,8 +888,11 @@ Class NotifyCreator {
         for value in ['text', 'sound', 'image', 'bgImg', 'display', 'animation', 'title', 'msg', 'bg', 'padding', 'eso', 'misc', 'bdr', 'result', 'theme']
             this.gMain.gb_%value%.SetFont('bold')
 
-        for value in ['mon', 'showDur', 'hideDur', 'mali', 'tali', 'wstp', 'wstc', 'prog', 'dg', 'dgc', 'tag', 'bgImgPos']
+        for value in ['mon', 'showDur', 'hideDur', 'mali', 'tali', 'wstp', 'wstc', 'prog', 'dg', 'tag', 'bgImgPos']
             this.gMain[value].OnEvent('Change', this.DebounceCall.Bind(this, 125, 'UpdateResultString'))
+
+        for value in ['dgc', 'dgb', 'dga']
+            this.gMain[value].OnEvent('Click', this.DebounceCall.Bind(this, 125, 'UpdateResultString'))
 
         ;==============================================
 
@@ -919,9 +924,12 @@ Class NotifyCreator {
                 ➤ DUR - Display duration (in seconds). Set to 0 to keep it on the screen until
                 left-clicking on the GUI or programmatically destroying it.
             )',
-            'gMain.pic_bgImgInfo', '
+            'bgImg', '
             (
                 ➤ BGIMG - Background image.
+            )',
+            'bgImgPos', '
+            (
                 ➤ BGIMGPOS - Background image position. Parameters for positioning and sizing the background image.
                     -- Positions --
                         • TL - Top left
@@ -999,7 +1007,7 @@ Class NotifyCreator {
             'tag', '➤ TAG - Marker to identify a GUI. The Destroy method accepts a tag,`nit destroys every GUI containing this tag across all scripts.',
             'dgc', '
             (
-                ➤ DGC - Allow or prevent the GUI from being destroyed when clicked.
+                ➤ DGC - Destroy GUI click. Allow or prevent the GUI from being destroyed when clicked.
                     • 0 - Clicking on the GUI does not destroy it.
                     • 1 - Clicking on the GUI destroys it.
             )',
@@ -1013,6 +1021,23 @@ Class NotifyCreator {
                     • 4 - Destroy all GUIs.
                     • 5 - Destroy all GUIs containing the tag.
             )',
+            'dgb', '
+            (
+                ➤ DGB - Destroy GUI block. Prevents the GUI from being destroyed unless the force parameter of the destroy methods is set to true.
+                It does not prevent GUI destruction after the duration expires or when the GUI is clicked. In most cases, you’ll likely want to set
+                both the Duration (DUR) and Destroy GUI Click (DGC) to 0. For example: 'dgb=1 dur=0 dgc=0'
+                -------------------
+                    • 0 - The GUI can be destroyed without setting the force parameter to true.
+                    • 1 - The GUI cannot be destroyed unless the force parameter is set to true.
+            )',
+            'dga', '
+            (
+                ➤ DGA - Destroy GUI animation. Enables or disables the hide animation
+                when destroying the GUI using the destroy methods.
+                -------------------
+                    • 0 - No animation.
+                    • 1 - Animation enabled.
+            )'
         )
 
         for value in ['padX', 'padY', 'gmT', 'gmB', 'gmL', 'gmR', 'spX', 'spY']
@@ -1034,25 +1059,27 @@ Class NotifyCreator {
         for value in ['show', 'hide']
             this.gMain.Tips.SetTip(this.gMain.ddl_%value%Dur, 'Duration (in milliseconds)')
 
-        this.mGuiCtrlTips['misc'] := ((this.mGuiCtrlTips['maxW'] '`n' this.mGuiCtrlTips['width'] '`n' this.mGuiCtrlTips['minH'] '`n' this.mGuiCtrlTips['prog'] '`n`n'
-            this.mGuiCtrlTips['tag'] '`n`n' this.mGuiCtrlTips['dgc'] '`n`n' this.mGuiCtrlTips['dg']
+        this.gMain.Tips.SetTip(this.gMain.pic_miscInfo, (this.mGuiCtrlTips['maxW'] '`n' this.mGuiCtrlTips['width'] '`n' this.mGuiCtrlTips['minH'] '`n' this.mGuiCtrlTips['dgc'] '`n`n'
+            this.mGuiCtrlTips['dg'] '`n`n' this.mGuiCtrlTips['dgb'] '`n`n' this.mGuiCtrlTips['dga'] '`n`n' this.mGuiCtrlTips['prog'] '`n`n' this.mGuiCtrlTips['tag']
         ))
 
-        this.gMain.Tips.SetTip(this.gMain.pic_display, this.mGuiCtrlTips['mon'] '`n`n' this.mGuiCtrlTips['pos'] '`n`n' this.mGuiCtrlTips['dur'])
-        this.gMain.Tips.SetTip(this.gMain.txt_mon, this.mGuiCtrlTips['mon'])
-        this.gMain.Tips.SetTip(this.gMain.txt_pos, this.mGuiCtrlTips['pos'])
-        this.gMain.Tips.SetTip(this.gMain.txt_dur, this.mGuiCtrlTips['dur'])
-        this.gMain.Tips.SetTip(this.gMain.pic_miscInfo, this.mGuiCtrlTips['misc'])
         this.gMain.Tips.SetTip(this.gMain.cb_maxW, this.mGuiCtrlTips['maxW'])
         this.gMain.Tips.SetTip(this.gMain.cb_width, this.mGuiCtrlTips['width'])
         this.gMain.Tips.SetTip(this.gMain.cb_minH, this.mGuiCtrlTips['minH'])
         this.gMain.Tips.SetTip(this.gMain.txt_prog, this.mGuiCtrlTips['prog'])
         this.gMain.Tips.SetTip(this.gMain.txt_tag, this.mGuiCtrlTips['tag'])
-        this.gMain.Tips.SetTip(this.gMain.txt_dgc, this.mGuiCtrlTips['dgc'])
+        this.gMain.Tips.SetTip(this.gMain.cb_dgc, this.mGuiCtrlTips['dgc'])
+        this.gMain.Tips.SetTip(this.gMain.cb_dgb, this.mGuiCtrlTips['dgb'])
+        this.gMain.Tips.SetTip(this.gMain.cb_dga, this.mGuiCtrlTips['dga'])
         this.gMain.Tips.SetTip(this.gMain.txt_dg, this.mGuiCtrlTips['dg'])
+        this.gMain.Tips.SetTip(this.gMain.pic_bgImgInfo, (this.mGuiCtrlTips['bgImg'] '`n' this.mGuiCtrlTips['bgImgPos']))
+        this.gMain.Tips.SetTip(this.gMain.txt_bgImgPos, this.mGuiCtrlTips['bgImgPos'])
+        this.gMain.Tips.SetTip(this.gMain.pic_display, this.mGuiCtrlTips['mon'] '`n`n' this.mGuiCtrlTips['pos'] '`n`n' this.mGuiCtrlTips['dur'])
+        this.gMain.Tips.SetTip(this.gMain.txt_mon, this.mGuiCtrlTips['mon'])
+        this.gMain.Tips.SetTip(this.gMain.txt_pos, this.mGuiCtrlTips['pos'])
+        this.gMain.Tips.SetTip(this.gMain.txt_dur, this.mGuiCtrlTips['dur'])
         this.gMain.Tips.SetTip(this.gMain.pic_padInfo, this.mGuiCtrlTips['pad'])
         this.gMain.Tips.SetTip(this.gMain.pic_imageInfo, this.mGuiCtrlTips['gMain.pic_imageInfo'])
-        this.gMain.Tips.SetTip(this.gMain.pic_bgImgInfo, this.mGuiCtrlTips['gMain.pic_bgImgInfo'])
         this.gMain.Tips.SetTip(this.gMain.cb_styleLock, this.mGuiCtrlTips['gMain.cb_styleLock'])
         this.gMain.Tips.SetTip(this.gMain.cb_tLock, this.mGuiCtrlTips['gMain.cb_tmLock'])
         this.gMain.Tips.SetTip(this.gMain.cb_mLock, this.mGuiCtrlTips['gMain.cb_tmLock'])
@@ -1068,10 +1095,6 @@ Class NotifyCreator {
         this.gMain.Tips.SetTip(this.gMain.btn_copyMfont, 'Copy message font name to clipboard.')
         this.gMain.Tips.SetTip(this.gMain.btn_textReset, 'Reset to default.')
         this.gMain.Tips.SetTip(this.gMain.btn_defaultAll, 'Reset user interface to default.')
-        this.gMain.Tips.SetTip(this.gMain.btn_gitHub, 'GitHub repository')
-        this.gMain.Tips.SetTip(this.gMain.btn_donate, 'If you find my AHK code useful and would like to show your appreciation,`na donation would be greatly appreciated. Thank you!')
-        this.gMain.Tips.SetTip(this.gMain.btn_monInfo, 'Displays information about the monitors connected to the system.')
-        this.gMain.Tips.SetTip(this.gMain.btn_destroyAll, 'Destroy all GUIs.')
         this.gMain.Tips.SetTip(this.gMain.btn_playsound, 'Play sound')
         this.gMain.Tips.SetTip(this.gMain.btn_browseImage, 'Browse image')
         this.gMain.Tips.SetTip(this.gMain.btn_browseBgImg, 'Browse background Image.')
@@ -1085,11 +1108,15 @@ Class NotifyCreator {
         this.gMain.Tips.SetTip(this.gMain.btn_AddTheme, 'Add theme')
         this.gMain.Tips.SetTip(this.gMain.btn_editTheme, 'Edit theme')
         this.gMain.Tips.SetTip(this.gMain.btn_removeTheme, 'Delete user-created themes.')
+        this.gMain.Tips.SetTip(this.gMain.btn_destroyAll, 'Destroy all GUIs (force).')
+        this.gMain.Tips.SetTip(this.gMain.btn_gitHub, 'GitHub repository')
+        this.gMain.Tips.SetTip(this.gMain.btn_donate, 'If you find my AHK code useful and would like to show your appreciation,`na donation would be greatly appreciated. Thank you!')
+        this.gMain.Tips.SetTip(this.gMain.btn_monInfo, 'Displays information about the monitors connected to the system.')
 
         ;==============================================
 
-        this.gMain_SetAllValues(this.mUser['theme'])
         this.RemoveNonExistentFiles(['image', 'sound'])
+        this.gMain_SetAllValues(this.mUser['theme'])
         this.gMain_SetStatusBar()
         try ControlFocus(this.gMain.btn_test.hwnd, this.gMain.hwnd)
         this.gMain.Show()
@@ -1647,7 +1674,9 @@ Class NotifyCreator {
         mTheme := Notify.mThemes[theme]
         this.gMain.edit_tag.Text := mTheme['tag']
         this.gMain.cbb_prog.Text := mTheme['prog']
-        this.DDLchoose(mTheme['dgc'], this.arrDgc, this.gMain.ddl_dgc)
+        this.gMain.cb_dgc.Value := mTheme['dgc']
+        this.gMain.cb_dgb.Value := mTheme['dgb']
+        this.gMain.cb_dga.Value := mTheme['dga']
         this.DDLchoose(mTheme['dg'], this.arrDg, this.gMain.ddl_dg)
 
         for value in ['width', 'minH', 'maxW'] {
@@ -2026,7 +2055,7 @@ Class NotifyCreator {
                 mTheme[value] && options .= value '= '
         }
 
-        for value in ['dgc', 'dg']
+        for value in ['dgc', 'dg', 'dgb', 'dga']
             (m[value] != mTheme[value]) && options .= value '=' m[value] ' '
 
         ;==============================================
@@ -2287,35 +2316,6 @@ Class NotifyCreator {
                 ),,,, this.strOpts 'dur=0 mon=' A_Index ' pos=ct tali=center theme=okdark tag=monitorInfo image=none'
             )
         }
-    }
-
-    ;============================================================================================
-
-    static RemoveNonExistentFiles(arr)
-    {
-        if (this.HasVal('image', arr)) {
-            for image in this.arrImage.Clone() {
-                if !this.HasVal(image, this.arrImageNotify)
-                && ((RegExMatch(image, 'i)^(.+?\.(?:dll|exe|cpl))\|icon(\d+)$', &match) && !FileExist(match[1]))
-                || (RegExMatch(image, 'i)^(.+?\.(?:' Notify.strImageExt '))$') && !FileExist(image)))
-                    (index := this.HasVal(image, this.arrImage)) && this.arrImage.RemoveAt(index)
-            }
-
-            for value in ['image', 'bgImg']
-                if !this.HasVal(this.gMain.ddl_%value%.Text, this.arrImage)
-                    this.DDLArrayChange_Choose('none', this.arrImage, this.gMain.ddl_%value%), this.gMain_SetImagePreview('none', value)
-        }
-
-        if (this.HasVal('sound', arr)) {
-            for sound in this.arrSound.Clone()
-                if !this.HasVal(sound, this.arrSoundNotify) && !FileExist(sound) && (index := this.HasVal(sound, this.arrSound))
-                    this.arrSound.RemoveAt(index)
-
-            if !this.HasVal(this.gMain.ddl_sound.Text, this.arrSound)
-                this.DDLArrayChange_Choose('none', this.arrSound, this.gMain.ddl_sound)
-        }
-
-        this.UpdateResultString()
     }
 
     ;============================================================================================
@@ -2934,7 +2934,7 @@ Class NotifyCreator {
         switch param {
             case 'image','sound':
             {
-                this.RemoveNonExistentFiles([param])
+                this.RemoveNonExistentFiles([param], 'updateResultStr')
 
                 if param == 'image'
                     imageList := IL_Create(), this.gList.lv.SetImageList(imageList)
@@ -3083,19 +3083,72 @@ Class NotifyCreator {
         this.gList.lv.ModifyCol(1, 'AutoHdr')
 
         switch param {
-            case 'image', 'bgImg':
-                for value in ['image', 'bgImg']
-                    if !this.HasVal(this.gMain.ddl_%value%.Text , this.arr%strArr%)
-                        this.gMain_SetImagePreview('none', value), this.DDLArrayChange_Choose('none', this.arr%strArr%, this.gMain.ddl_%value%)
-            case 'sound':
-                if !this.HasVal(this.gMain.ddl_%param%.Text , this.arr%strArr%)
-                    this.DDLArrayChange_Choose('none', this.arr%strArr%, this.gMain.ddl_%param%)
+            case 'image', 'bgImg': updateResultStr := this.UpdateDDL_SetImagePreview()
+            case 'sound': updateResultStr := this.UpdateDDL_Sound()
             case 'theme':
-                if !this.HasVal(this.gMain.ddl_%param%.Text , this.arr%strArr%)
-                    this.gMain_SetAllValues('default'), this.DDLArrayChange_Choose('default', this.arr%strArr%, this.gMain.ddl_%param%)
+            {
+                strTheme := this.gMain.ddl_%param%.Text
+                targetValue := (this.HasVal(strTheme, this.arr%strArr%) ? strTheme : 'default')
+                this.DDLArrayChange_Choose(targetValue, this.arr%strArr%, this.gMain.ddl_%param%)
+
+                if strTheme != 'default' && targetValue = 'default'
+                    this.gMain_SetAllValues('default'), updateResultStr := true
+            }
         }
 
-        this.UpdateResultString()
+        if IsSet(updateResultStr)
+            this.UpdateResultString()
+    }
+
+    ;============================================================================================
+
+    static RemoveNonExistentFiles(arr, param:='')
+    {
+        if (this.HasVal('image', arr)) {
+            for image in this.arrImage.Clone() {
+                if !this.HasVal(image, this.arrImageNotify)
+                && ((RegExMatch(image, 'i)^(.+?\.(?:dll|exe|cpl))\|icon(\d+)$', &match) && !FileExist(match[1]))
+                || (RegExMatch(image, 'i)^(.+?\.(?:' Notify.strImageExt '))$') && !FileExist(image)))
+                    (index := this.HasVal(image, this.arrImage)) && this.arrImage.RemoveAt(index)
+            }
+            updateResultStr := this.UpdateDDL_SetImagePreview()
+        }
+
+        if (this.HasVal('sound', arr)) {
+            for sound in this.arrSound.Clone()
+                if !this.HasVal(sound, this.arrSoundNotify) && !FileExist(sound) && (index := this.HasVal(sound, this.arrSound))
+                    this.arrSound.RemoveAt(index)
+
+            updateResultStr := this.UpdateDDL_Sound()
+        }
+
+        if param == 'updateResultStr' && updateResultStr
+            this.UpdateResultString()
+    }
+
+    ;============================================================================================
+
+    static UpdateDDL_SetImagePreview()
+    {
+        for value in ['image', 'bgImg'] {
+            strImage := this.gMain.ddl_%value%.Text
+            targetValue := (this.HasVal(strImage, this.arrImage) ? strImage : 'none')
+            this.DDLArrayChange_Choose(targetValue, this.arrImage, this.gMain.ddl_%value%)
+
+            if strImage != 'none' && targetValue = 'none'
+                this.gMain_SetImagePreview('none', value), updateResultStr := true
+        }
+        return updateResultStr ?? false
+    }
+
+    ;============================================================================================
+
+    static UpdateDDL_Sound()
+    {
+        strSound := this.gMain.ddl_sound.Text
+        targetValue := (this.HasVal(strSound, this.arrSound) ? strSound : 'none')
+        this.DDLArrayChange_Choose(targetValue, this.arrSound, this.gMain.ddl_sound)
+        return ((strSound != 'none' && targetValue = 'none') ? true : false)
     }
 
     ;============================================================================================
