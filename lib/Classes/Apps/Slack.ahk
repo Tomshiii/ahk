@@ -2,13 +2,15 @@
  * @description Speed up interactions with slack.
  * @author tomshi
  * @date 2025/04/11
- * @version 1.1.0
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\keys>
 #Include <Classes\obj>
+#Include <Classes\block>
+#Include <Classes\winget>
 #Include <Functions\delaySI>
 #Include <Other\UIA\UIA>
 ; }
@@ -71,7 +73,16 @@ class Slack {
 
         pressButton(uiaObj, type, button) {
             if button = "Delete message… delete" || button = "Edit message E" {
-                findLocation := uiaObj.FindElement({LocalizedType: "button", Name: "Reply in thread"})
+                try findLocation := uiaObj.FindElement({LocalizedType: "button", Name: "Reply in thread"})
+                catch {
+                    sleep 1000
+                    try findLocation := uiaObj.FindElement({LocalizedType: "button", Name: "Reply in thread"})
+                    catch {
+                        errorLog(UnsetError("Failed to find Reply in Thread element", -1),, true)
+                        blocker.Off()
+                        Exit()
+                    }
+                }
                 for el in uiaObj.FindElements({LocalizedType: "menu item", Name: "More actions"}) {
                     if el.location.y != findLocation.location.y
                         continue
@@ -94,7 +105,7 @@ class Slack {
                     blocker.Off()
                     SetTimer(, 0)
                 }
-                try uiaObj.FindElement({ LocalizedType: type, Name: button }).ControlClick()
+                try uiaObj.FindElement({LocalizedType: type, Name: button}).ControlClick()
                 catch {
                     attempt += 1
                     sleep 25
