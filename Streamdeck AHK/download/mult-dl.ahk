@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2025/04/14
  ***********************************************************************/
-global currentVer := "1.1.0"
+global currentVer := "1.1.1"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -15,6 +15,11 @@ A_ScriptName := "multi-dl"
 #Include <Classes\ytdlp>
 #Include <GUIs\tomshiBasic>
 #Include <Functions\getLocalVer>
+
+try {
+    if !A_IsCompiled && FileExist(ptf.Icons "\myscript.ico")
+        TraySetIcon(ptf.Icons "\myscript.ico")
+}
 
 class multiDL extends tomshiBasic {
     __New() {
