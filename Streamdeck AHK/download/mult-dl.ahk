@@ -1,9 +1,9 @@
 /************************************************************************
- * @description a small gui to quickly download multiple videos at once
+ * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/03/24
+ * @date 2025/04/14
  ***********************************************************************/
-global currentVer := "1.0.6.1"
+global currentVer := "1.1.0"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -53,20 +53,69 @@ class multiDL extends tomshiBasic {
             ExitApp()
         super.__New(,,, "Multi Download")
 
-        this.AddEdit("x9 y50 r10 vlist w320 Multi Wrap", "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files.")
+        this.tabs := this.AddTab3("+Theme -Background x9 y50", ["Single", "Multi", "Part"])
+
+        ;// single
+        ;// ================================================================
+        this.AddText("Section x25 y85", "Paste URL: ")
+        this.AddEdit("x+5 y+-20 r1 vsingleURL w220 -Wrap", "")
+        this.AddButton("vDL_single xs", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
+        this.AddCheckbox("x+10 yp-1 vdeprioritise_single", " Avoid reencode`n (may result in lower quality)")
+        this["DL_single"].GetPos(&x, &y, &wid, &height)
+        this.AddButton("vAud_single x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
+        ;// ================================================================
+
+        ;// multi
+        ;// ================================================================
+        this.tabs.UseTab("Multi")
+
+        this.AddEdit("x25 y80 r10 vlist w320 Multi Wrap", this.defaultListText)
         this.AddButton("vDL", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise", " Avoid reencode`n (may result in lower quality)")
         this["DL"].GetPos(&x, &y, &wid, &height)
-        this.AddButton("x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
+        this.AddButton("vAud x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
+        ;// ================================================================
 
+        ;// Part
+        ;// ================================================================
+        this.tabs.UseTab("Part")
+        this.AddText("Section x25 y85", "Paste URL: ")
+        this.AddEdit("x+5 y+-20 r1 vpartURL w220 -Wrap", "")
+        this.AddText("xs Wrap w280", "Please provide the timecode that all content you wish to download sits within.")
+
+        loop 2 {
+            this.AddText(((A_Index = 1) ? "" : "xs y+15 ") "Section", (A_Index = 1) ? "Start Timecode:   H" : "End Timecode:    H")
+            this.AddEdit("xs+120 ys-3 w50")
+            this.AddUpDown("vH" A_Index " Range0-11 ", 0)
+
+            this.AddText("x+10 ys", "M")
+            this.AddEdit("x+5 ys-3 w50")
+            this.AddUpDown("vM" A_Index " Range0-59 ", 0)
+
+            this.AddText("x+10 ys", "S")
+            this.AddEdit("x+5 ys-3 w50")
+            this.AddUpDown("vS" A_Index " Range0-59 ", 0)
+        }
+        this.AddButton("vDL_part xs", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
+        this.AddCheckbox("x+10 yp-1 vdeprioritise_part", " Avoid reencode`n (may result in lower quality)")
+        this["DL_part"].GetPos(&x, &y, &wid, &height)
+        this.AddButton("vAud_part x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
+        ;// ================================================================
+
+        ;// Setting version text & Update Button to the top of the window
         this["list"].GetPos(&listx, &listy, &listwid, &listheight)
-        this.AddText("Right y32 x" listx " w" listwid, "v" currentVer)
-        this.AddButton("vupdates x" listx " y7", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
+        this.tabs.UseTab(0)
+        this.AddText("vVerText Right BackgroundTrans y55 x" listx " w" listwid, "v" currentVer)
+        this["VerText"].GetPos(&verx, &very, &verwid, &verheight)
+        this["VerText"].Move(verx+(verwid*0.7), very, verwid/3, verheight)
+        this.AddButton("vupdates x9 y7", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
         this["updates"].Opt("Disabled")
         this.AddCheckbox("vcheckDev x+10 yp+7", "check dev branch")
-        this.show()
+
+        this.show(, {DarkColour: "F0F0F0"})
 
         ;// attempt check package updates
+        ;// ================================================================
         choco  := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
         this.chkDevObj := this.__getPosObj("checkDev")
         this.updObj    := this.__getPosObj("updates")
@@ -87,12 +136,16 @@ class multiDL extends tomshiBasic {
         }
         this["updates"].Opt("-Disabled")
         this.__checkingButton("reset")
+        ;// ================================================================
     }
 
     getFile := ""
     arr := ["choco", "ffmpeg", "yt-dlp"]
     chkDevObj := unset
-    updObj    := unset
+    updObj := unset
+    tabs := unset
+    timecodeValue := ""
+    defaultListText := "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files."
 
     __getPosObj(ctrl) {
         this[ctrl].GetPos(&x, &y, &width, &height)
@@ -121,22 +174,64 @@ class multiDL extends tomshiBasic {
     }
 
     __download(vidOrAud, *) {
-        list := StrSplit(this["list"].value, [","], " `r`n")
-        this["DL"].Enabled := false
+        this["DL"].Enabled := false, this["Aud"].Enabled := false
+        this["DL_single"].Enabled := false, this["Aud_single"].Enabled := false
+        this["DL_part"].Enabled := false, this["Aud_part"].Enabled := false
         this.Hide()
         yt := ytdlp()
-        for v in list {
-            switch {
-                case (vidOrAud = "vid" && this["deprioritise"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, v, false)
-                case (vidOrAud = "vid" && this["deprioritise"].value = true):
-                    altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
-                    yt.download(altCommand, this.getFile, v, false)
-                case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, v, false)
-            }
+        showDir := true
+        switch this.tabs.value {
+            case 1: ;// single
+                if this["singleURL"].value = "" {
+                    showDir := false
+                    goto break
+                }
+                switch {
+                        case (vidOrAud = "vid" && this["deprioritise_single"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, this["singleURL"].value, false)
+                        case (vidOrAud = "vid" && this["deprioritise_single"].value = true):
+                            altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
+                            yt.download(altCommand, this.getFile, this["singleURL"].value, false)
+                        case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, this["singleURL"].value, false)
+                    }
+            case 2: ;// multi
+                if this["list"].value = "" || this['list'].value == this.defaultListText {
+                    showDir := false
+                    goto break
+                }
+                list := StrSplit(this["list"].value, [","], " `r`n")
+                for v in list {
+                    switch {
+                        case (vidOrAud = "vid" && this["deprioritise"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, v, false)
+                        case (vidOrAud = "vid" && this["deprioritise"].value = true):
+                            altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
+                            yt.download(altCommand, this.getFile, v, false)
+                        case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, v, false)
+                    }
+                }
+            case 3: ;// part
+                this.timecodeValue := (Format("{:02}", this["H1"].value) ":" Format("{:02}", this["M1"].value) ":" Format("{:02}", this["S1"].value) "-" Format("{:02}", this["H2"].value) ":" Format("{:02}", this["M2"].value) ":" Format("{:02}", this["S2"].value))
+                if this.timecodeValue == "00:00:00-00:00:00" || this["partURL"].value = "" {
+                    showDir := false
+                    goto break
+                }
+                partCommand := Format('-N 8 -o "{1}" --download-sections "*{2}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 --cookies-from-browser firefox', "{}", this.timecodeValue)
+                switch {
+                        case (vidOrAud = "vid" && this["deprioritise_part"].value = false): yt.download(partCommand, this.getFile, this["partURL"].value, false)
+                        case (vidOrAud = "vid" && this["deprioritise_part"].value = true):
+                            altCommand := Format('-N 8 -o "{1}" --download-sections "*{2}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox', "{}", this.timecodeValue)
+                            yt.download(altCommand, this.getFile, this["partURL"].value, false)
+                        case (vidOrAud = "aud"): yt.download(Format('-N 8 -o "{1}" --download-sections "*{2}" --verbose --windows-filenames --extract-audio --audio-format wav', "{}", this.timecodeValue), this.getFile, this["partURL"].value, false)
+                    }
         }
+        break:
         this.show()
-        this["DL"].Enabled := True
-        yt.__activateDir(this.getFile)
+        this["DL"].Enabled := true, this["Aud"].Enabled := true
+        this["DL_single"].Enabled := true, this["Aud_single"].Enabled := true
+        this["DL_part"].Enabled := true, this["Aud_part"].Enabled := true
+
+        if showDir = true {
+            yt.__activateDir(this.getFile)
+        }
         yt := ""
     }
 

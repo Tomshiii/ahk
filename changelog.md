@@ -37,10 +37,12 @@
 - `backupProj.ahk` will now only ask if you wish to backup additional video folders *if* there are folders other than `footage` present
 
 ⚠️ `mult-dl.ahk`
-- Fixed a function using incorrect logic causing the user to be unable to install `yt-dlp`/`ffmpeg`
-- Fixed user being able to bypass installation steps by simply closing the window
-- Fixed compiled script throwing after installation
-- Fixed script sometimes downloading `vp9` codec videos when `avoid reencode` is enabled
+- ❗Now offers `Single`, `Multi` & `Part` downloading options
+- ✅ Fixed a function using incorrect logic causing the user to be unable to install `yt-dlp`/`ffmpeg`
+- ✅ Fixed user being able to bypass installation steps by simply closing the window
+- ✅ Fixed compiled script throwing after installation
+- ✅ Fixed script sometimes downloading `vp9` codec videos when `avoid reencode` is enabled
+- ✅ Fixed script attempting downloads using the user's clipboard if the user attempts to press either of the download buttons without inputting any URLs
 - Compiled executable will now append the new version number to the update `.exe` download to prevent the user from trying to download to the same directory and having nothing happen as `Download` would silently fail
 - Main window will now be disabled during update check
 - No longer *requires* `chocolatey` to be installed to use script, only during any installation processes
