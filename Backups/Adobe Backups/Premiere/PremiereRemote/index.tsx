@@ -50,7 +50,7 @@ export const host = {
       if(app.project.rootItem.children[i].name == "_Assets" && (app.project.rootItem.children[i].type == 2)) {
         const folder = app.project.rootItem.children[i]
         for (let i = 0; i < folder.children.numItems; i++) {
-          if(folder.children[i].name == "Other" && (folder.children[i].type == 2)){
+          if((folder.children[i].name == "Other" || folder.children[i].name == "01_Other") && (folder.children[i].type == 2)){
             const folder2 = folder.children[i]
             for (let i = 0; i < folder2.children.numItems; i++) {
               if(folder2.children[i].name == "Bars and Tone - Rec 709"){
