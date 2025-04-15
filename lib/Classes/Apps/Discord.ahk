@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/04/11
- * @version 1.6.1
+ * @date 2025/04/15
+ * @version 1.6.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -165,6 +165,10 @@ class discord {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             return
         }
+        header := DiscordEl.FindElement({Type: "50026 (Group)", Name: "Channel header", LocalizedType: "region"})
+        try directM := header.FindElement({LocalizedType: "text", Name: "Direct Message"})
+        try groupDM := header.FindElement({LocalizedType: "text", Name: "Group DM"})
+        headerText := (IsSet(directM) || IsSet(groupDM)) ? true : false
 
         __findGrey(x, y, returnVals := false) {
             coord.s()
@@ -193,7 +197,7 @@ class discord {
         }
         switch which {
             case "servers":
-                getServerName := (!InStr(currentTitle, "|") && SubStr(currentTitle, 1, 1) = "@") ? "Direct Messages" : SubStr(currentTitle, start := InStr(currentTitle, "|", , -1) + 2, StrLen(currentTitle) - (start + 9))
+                getServerName := (headerText = true || !InStr(currentTitle, "|") && SubStr(currentTitle, 1, 1) = "@") ? "Direct Messages" : SubStr(currentTitle, start := InStr(currentTitle, "|", , -1) + 1, StrLen(currentTitle) - (start + 9))
                 activeServer := DiscordEl.FindElement({LocalizedType: "tree item", Name: getServerName, matchmode:"Substring"})
                 findFirstGrey := __findGrey(xpos, ypos, true)
                 if !findFirstGrey
@@ -203,7 +207,7 @@ class discord {
                     __findGrey(xpos, ypos)
                     if this.checkingUnread != true {
                         this.checkingUnread := true
-                        SetTimer(__markRead.bind(this, DiscordEl), 1)
+                        SetTimer(__markRead.bind(DiscordEl), 1)
                     }
                     return
                 }
@@ -211,15 +215,20 @@ class discord {
                 __findGrey(xpos, ypos, height)
                 if this.checkingUnread != true {
                     this.checkingUnread := true
-                    SetTimer(__markRead.bind(this, DiscordEl), 1)
+                    SetTimer(__markRead.bind(DiscordEl), 1)
                 }
                 return
             case "channels":
+                if headerText = true {
+                    errorLog(TargetError("You're currently in Direct Messages, Channels don't exist.", -1),, true)
+                    return
+                }
                 getLoc := DiscordEl.FindElement({LocalizedType: "group", AutomationId: "channels"})
+
                 __findGrey(getLoc.location.x, getLoc.location.y, getLoc.location.h)
                 if this.checkingUnread != true {
                     this.checkingUnread := true
-                    SetTimer(__markRead.bind(this, DiscordEl), 1)
+                    SetTimer(__markRead.bind(DiscordEl), 1)
                 }
                 return
         }
