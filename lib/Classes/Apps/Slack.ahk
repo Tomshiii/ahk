@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/04/11
- * @version 1.1.1
+ * @date 2025/04/16
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -73,46 +73,21 @@ class Slack {
 
         pressButton(uiaObj, type, button) {
             if button = "Delete message… delete" || button = "Edit message E" {
-                try findLocation := uiaObj.FindElement({LocalizedType: "button", Name: "Reply in thread"})
+                try findLocation := uiaObj.WaitElement({LocalizedType: "button", Name: "Reply in thread"}, 2000)
                 catch {
-                    sleep 1000
-                    try findLocation := uiaObj.FindElement({LocalizedType: "button", Name: "Reply in thread"})
-                    catch {
-                        errorLog(UnsetError("Failed to find Reply in Thread element", -1),, true)
-                        blocker.Off()
-                        Exit()
-                    }
+                    errorLog(UnsetError("Failed to find Reply in Thread element", -1),, true)
+                    blocker.Off()
+                    Exit()
                 }
                 for el in uiaObj.FindElements({LocalizedType: "menu item", Name: "More actions"}) {
                     if el.location.y != findLocation.location.y
                         continue
                     el.ControlClick()
                 }
-                try uiaObj.FindElement({LocalizedType: type, Name: button}).ControlClick()
-                catch {
-                    SetTimer(_waitForMenu.Bind(uiaObj, button), 1)
-                }
+                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
                 return
             }
-            try uiaObj.FindElement({LocalizedType: type, Name: button}).ControlClick()
-            catch {
-                SetTimer(_waitForMenu.Bind(uiaObj, button), 1)
-            }
-            _waitForMenu(uiaObj, button, *) {
-                static attempt := 1
-                if attempt > 80 {
-                    errorLog(IndexError("Was unable to find the requested button", -1),, 1)
-                    blocker.Off()
-                    SetTimer(, 0)
-                }
-                try uiaObj.FindElement({LocalizedType: type, Name: button}).ControlClick()
-                catch {
-                    attempt += 1
-                    sleep 25
-                    return
-                }
-                SetTimer(, 0)
-            }
+            try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
         }
 
         switch button {

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/04/15
- * @version 1.6.2
+ * @date 2025/04/16
+ * @version 1.6.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -85,61 +85,29 @@ class discord {
             return
         }
 
-        pressButton(uiaObj, button) {
-            try uiaObj.FindElement({LocalizedType: "menu item", A: "message-" button}).ControlClick()
-            catch {
-                SetTimer(_waitForMenu.Bind(uiaObj, button), 1)
-            }
-            _waitForMenu(uiaObj, button, *) {
-                static attempt := 1
-                if attempt > 80 {
-                    errorLog(IndexError("Was unable to find the requested button", -1),, 1)
-                    blocker.Off()
-                    SetTimer(, 0)
-                }
-                try uiaObj.FindElement({LocalizedType: "menu item", AutomationId: "message-" button}).ControlClick()
-                catch {
-                    attempt += 1
-                    sleep 25
-                    return
-                }
-                SetTimer(, 0)
-            }
-        }
         switch button {
             case "reply":
                 if dms = true || this.disableAutoReplyPing != true {
-                    pressButton(DiscordEl, "reply")
+                    DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick()
                     blocker.Off()
                     return
                 }
-                pressButton(DiscordEl, "reply")
-                SetTimer(__Mention.Bind(DiscordEl), 1)
-                __Mention(uiaObj, *) {
-                    static attempt := 1
-                    if attempt > 80 {
-                        errorLog(IndexError("Was unable to find the @ mention button", -1),, 1)
-                        blocker.Off()
-                        SetTimer(, 0)
-                    }
-                    try uiaObj.FindElement({Name: "Mention ON", LocalizedType: "button"}).ControlClick()
-                    catch {
-                        attempt += 1
-                        sleep 25
-                        return
-                    }
-                    SetTimer(, 0)
+                try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick()
+                catch {
+                    blocker.Off()
+                    return
                 }
-            case "edit": pressButton(DiscordEl, "edit")
-            case "react": pressButton(DiscordEl, "add-reaction")
-            case "report": pressButton(DiscordEl, "report")
+                try DiscordEl.WaitElement({Name: "Mention ON", LocalizedType: "button" }, 1500).ControlClick()
+            case "edit": DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-edit"}, 1500).ControlClick()
+            case "react": DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-add-reaction"}, 1500).ControlClick()
+            case "report": DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-report"}, 1500).ControlClick()
             case "delete":
                 shift := false
                 if (GetKeyState("Shift", "P")) {
                     shift := true
                     SendInput("{Shift Down}")
                 }
-                pressButton(DiscordEl, "delete")
+                DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-delete"}, 1500).ControlClick()
                 if shift = true
                     SendInput("{Shift Up}")
         }
@@ -180,21 +148,7 @@ class discord {
                 MouseMove(origMousePos.x, origMousePos.y, 2)
             }
         }
-        __markRead(uiaEl, *) {
-            static attempt := 1
-            if attempt > 80 {
-                this.checkingUnread := false
-                SetTimer(, 0)
-            }
-            try uiaEl.FindElement({Name: "Mark as Read", LocalizedType: "button"}).ControlClick()
-            catch {
-                attempt += 1
-                sleep 25
-                return
-            }
-            this.checkingUnread := false
-            SetTimer(, 0)
-        }
+
         switch which {
             case "servers":
                 getServerName := (headerText = true || !InStr(currentTitle, "|") && SubStr(currentTitle, 1, 1) = "@") ? "Direct Messages" : SubStr(currentTitle, start := InStr(currentTitle, "|", , -1) + 1, StrLen(currentTitle) - (start + 9))
@@ -205,18 +159,12 @@ class discord {
                 serverY := (getServerName = "Direct Messages") ? activeServer.location.y + 3 : activeServer.location.y + 1
                 if findFirstGrey.y != serverY {
                     __findGrey(xpos, ypos)
-                    if this.checkingUnread != true {
-                        this.checkingUnread := true
-                        SetTimer(__markRead.bind(DiscordEl), 1)
-                    }
+                    try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}).ControlClick()
                     return
                 }
                 ypos := activeServer.location.y + activeServer.location.h + 2
                 __findGrey(xpos, ypos, height)
-                if this.checkingUnread != true {
-                    this.checkingUnread := true
-                    SetTimer(__markRead.bind(DiscordEl), 1)
-                }
+                try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}).ControlClick()
                 return
             case "channels":
                 if headerText = true {
@@ -226,10 +174,7 @@ class discord {
                 getLoc := DiscordEl.FindElement({LocalizedType: "group", AutomationId: "channels"})
 
                 __findGrey(getLoc.location.x, getLoc.location.y, getLoc.location.h)
-                if this.checkingUnread != true {
-                    this.checkingUnread := true
-                    SetTimer(__markRead.bind(DiscordEl), 1)
-                }
+                try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}).ControlClick()
                 return
         }
     }
