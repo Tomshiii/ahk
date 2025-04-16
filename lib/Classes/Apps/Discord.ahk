@@ -2,7 +2,7 @@
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
  * @date 2025/04/16
- * @version 1.6.3
+ * @version 1.6.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -92,8 +92,7 @@ class discord {
                     blocker.Off()
                     return
                 }
-                try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick()
-                catch {
+                if !DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick() {
                     blocker.Off()
                     return
                 }
