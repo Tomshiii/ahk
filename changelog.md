@@ -7,8 +7,12 @@
 
 ⚠️ `prem {`
 - ✅ Fixed `dragSourceMon()` throwing if unable to determine the active window due to prem being busy
-- ✅ Fixed `numpadGain()` arbitrarily being unable to make adjustments larger than 15db
-    - *note: prem still has an internal limit of +15db for the `levels` property*
+- `numpadGain()`
+    - ✅ Fixed function arbitrarily being unable to make adjustments larger than 15db
+        - *note: prem still has an internal limit of +15db for the `levels` property*
+    - Function can now adjust the `levels` property in `float` instead of only `int`
+        - Will require the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as `index.tsx` has been adjusted
+    - Will clean up the input keys using `regex` instead of outright failing if any other key is pressed accidentally
 
 ⚠️ `premUIA_Values {`
 - `__setNewVal()`

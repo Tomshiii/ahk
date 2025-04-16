@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/04/08
- * @version 2.1.60
+ * @date 2025/04/16
+ * @version 2.1.61
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -981,7 +981,7 @@ class Prem {
             }
 		}
 
-        ih := InputHook("L3 T4", "{NumpadEnter}")
+        ih := InputHook("L5 T4", "{NumpadEnter}")
         ih.Start()
         ih.Wait()
         star_ih.Stop()
@@ -994,10 +994,8 @@ class Prem {
             sendAsLevel := true
         }
 
-        ;// if the user missclicks something other than a number
-        if !IsNumber(sendGain)
-            return
-
+        ;// removes anything that isn't a digit or `+`/`-`
+        sendGain := RegExReplace(sendGain, "[^\d.]")
         block.On()
         ;// otherwise we proceed
         if needsTimelineFocus = true
