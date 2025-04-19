@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/04/14
+ * @date 2025/04/19
  ***********************************************************************/
-global currentVer := "1.1.1"
+global currentVer := "1.1.2"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -107,9 +107,14 @@ class multiDL extends tomshiBasic {
         this.AddButton("vAud_part x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
         ;// ================================================================
 
-        ;// Setting version text & Update Button to the top of the window
+        ;// adding current folder path
         this["list"].GetPos(&listx, &listy, &listwid, &listheight)
         this.tabs.UseTab(0)
+        this.AddText("BackgroundTrans x9 y" listy + listheight + 95, "Current Download Path").SetFont("underline")
+        this.AddButton("x+15 w185 h20 y+-18", "Change Download Location").OnEvent("Click", this.__changeDlDir.bind(this))
+        this.AddText("vCurrDir BackgroundTrans x9 y+5 h50 w" listwid+10, this.getFile)
+        this["currDir"].SetFont("Bold s10")
+        ;// Setting version text & Update Button to the top of the window
         this.AddText("vVerText Right BackgroundTrans y55 x" listx " w" listwid, "v" currentVer)
         this["VerText"].GetPos(&verx, &very, &verwid, &verheight)
         this["VerText"].Move(verx+(verwid*0.7), very, verwid/3, verheight)
@@ -163,6 +168,13 @@ class multiDL extends tomshiBasic {
             return false
         this.getFile := newFile
         return true
+    }
+
+    __changeDlDir(*) {
+        if !newFile := FileSelect("D2",, "Select download location")
+            return false
+        this.getFile := newFile
+        this["currDir"].text := this.getFile
     }
 
     __buildUpdateCmd() {

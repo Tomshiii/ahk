@@ -53,3 +53,4 @@
 - Will now perform an automatic package update check on startup for `ffmpeg` && `yt-dlp`
 - `Check for updates` button will only prompt the user for admin if there are actual updates available. Otherwise it will inform the user there are none
     - Button will also dynamically update to communicate to the user that an update check is being performed
+- Can now change the download location without needing to restart the script
