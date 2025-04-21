@@ -1,4 +1,4 @@
-# <> Release 2.15.x - 
+# <> Release 2.15.5 - New Discord Support
 
 ## Functions
 - ✅ Fixed `KeyShortAdjust {` throwing if script is called but the `.ini` file doesn't exist
@@ -22,18 +22,19 @@
 
 ⚠️ `discord {`
 - ❗All functions are now completely `ImageSearch` free. Meaning discord updates should no longer constantly break these functions!
-- 📋 `Unread()` will now use `PixelSearch` & `UIA` to find; unread `servers`/`channels` & the `Mark as Read` button instead of relying on screenshots
+- `Unread()`
+    - 📋 Will now use `PixelSearch` & `UIA` to find; unread `servers`/`channels` & the `Mark as Read` button instead of relying on screenshots
 > [!caution]
 > Parameter `which` now requires either `channels` or `servers`
 - `button()`
-    - 📋 Function now uses `UIA` to click the desired buttons instead of relying on screenshots.
+    - 📋 Now uses `UIA` to click the desired buttons instead of relying on screenshots.
     - ✅ Fixed function attempting to fire while the user is not hovering the window
 > [!caution]
 > Parameter `button` now requires; `reply`, `edit`, `react`, `delete` or `report`
 
 `slack {`
 - `button()`
-    - 📋 Function now uses `UIA` to click the desired buttons instead of relying on screenshots.
+    - 📋 Now uses `UIA` to click the desired buttons instead of relying on screenshots.
         - `reply` is now additionally supported
     - ✅ Fixed function attempting to fire while the user is not hovering the window
 
@@ -41,6 +42,7 @@
 - `backupProj.ahk` will now only ask if you wish to backup additional video folders *if* there are folders other than `footage` present
 
 ⚠️ `mult-dl.ahk`
+###### *(v1.0.2 -> v1.1.2)*
 - ❗Now offers `Single`, `Multi` & `Part` downloading options
 - ✅ Fixed a function using incorrect logic causing the user to be unable to install `yt-dlp`/`ffmpeg`
 - ✅ Fixed user being able to bypass installation steps by simply closing the window

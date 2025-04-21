@@ -86,6 +86,11 @@ class block_ext {
     modifiers := "{LCtrl}{RCtrl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}"
     defaultAdditional := "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}"
 
+    /**
+     * @param [blockMouse=true] Determine whether to also block mouse input. Defaults to `true`
+     * @param [allowModifiers=true] Determines whether to allow certain modifiers to pass through. It is recommended to leave this enabled so the user still has *some* inputs available to them in the event of failed logic leaving inputs blocked. You may optionally provide your own list of allowed modifiers. Simply pass one long string containing all modifiers.
+     * @param [additionalKeys=this.defaultAdditional] Determines any additional keys that are allowed to pass through. By default the following are set; `"{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}"`. If the user wishes to change this list, simply pass your own string to this parameter, although it is recommended to also include these as a miniumum.
+     */
     On(blockMouse := true, allowModifiers := true, additionalKeys := this.defaultAdditional) {
         this.blocker := InputHook("L0 I")
         this.blocker.KeyOpt("{All}", "S")

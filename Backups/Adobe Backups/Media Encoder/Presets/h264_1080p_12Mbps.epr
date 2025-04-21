@@ -9,14 +9,12 @@
 	<ExporterClassID>1313424203</ExporterClassID>
 	<ExporterFileType>1211250228</ExporterFileType>
 	<ExportParamContainer ObjectRef="1"/>
-	<PresetID>b045610a-4a6a-4c6b-b30f-7a6b5473a470</PresetID>
+	<PresetID>77620542-ae04-4a69-8652-cf8cadc4236e</PresetID>
 	<DoAudio>true</DoAudio>
 	<DoVideo>true</DoVideo>
 	<DoEmulation>false</DoEmulation>
 	<FolderDisplayPath></FolderDisplayPath>
 	<StandardFilters Version="1">
-		<TimeInterpolationType>0</TimeInterpolationType>
-		<Rotation>0.</Rotation>
 		<CropState>false</CropState>
 		<CropRect>0,0,0,0</CropRect>
 		<CropType>0</CropType>
@@ -29,6 +27,8 @@
 		<MaximumFileSize>0</MaximumFileSize>
 		<UseProxiesForExport>false</UseProxiesForExport>
 		<DoExportCR>false</DoExportCR>
+		<TimeInterpolationType>0</TimeInterpolationType>
+		<Rotation>0.</Rotation>
 	</StandardFilters>
 	<ExportXMPOptionKey>10</ExportXMPOptionKey>
 	<IngestPreset>false</IngestPreset>
@@ -452,7 +452,6 @@
 		<ParamType>11</ParamType>
 		<ParamOrdinalValue>6</ParamOrdinalValue>
 		<ParamIsDisabled>true</ParamIsDisabled>
-		<ParamConstrainedListIsOptional>true</ParamConstrainedListIsOptional>
 		<ParamIdentifier>ADBEVideoAspect</ParamIdentifier>
 	</ExporterParam>
 	<ExporterParam ObjectID="55" ClassID="d0f6b8af-8ddb-4381-acf8-3e817480d07d" Version="1">
