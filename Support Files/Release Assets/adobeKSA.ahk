@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a function designed to parse through AE and Premiere Pro keyboard shortcut files to automatically assign KSA.ini values
  * @author tomshi
- * @date 2024/11/05
- * @version 1.0.3
+ * @date 2025/04/21
+ * @version 1.0.4
  ***********************************************************************/
 
 #Warn VarUnset, StdOut
@@ -57,7 +57,7 @@ class adobeKSA extends tomshiBasic {
     __generate() {
         this.AddText(this.Xmargin, "Please select the root directory locations for where each program keeps its keyboard shortcut file.")
         this.AddText(this.Xmargin " r1 w500", "Please include your version number && profile folder if applicible.").SetFont("bold")
-        this.AddText(this.Xmargin, "example: " this.defaultPremiereFolder "\22.0\Profile-Tom`n").SetFont("s8")
+        this.AddText(this.Xmargin, "example: " this.defaultPremiereFolder "\" ptf.PremYearVer ".0\Profile-Tom`n").SetFont("s8")
 
         this.__indivSection(this.defaultPremiereFolder, "Premiere")
         this.__indivSection(this.defaultAEFolder, "AE")
@@ -416,8 +416,6 @@ class adobeXML {
      * haven't quite figured out why some keys provide different values than most. until the day that the math adds up, here's a list of keys that provide a different result alongside their actual values (on my pc atleast, who knows with adobe)
      */
     knownKeys := Map(
-        "2147483713",     "d",
-
         "14",             "{F8}",
         "42",             "{Left}",
         "43",             "{Right}",

@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/04/16
- * @version 2.1.61
+ * @date 2025/04/22
+ * @version 2.1.62
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -996,6 +996,11 @@ class Prem {
 
         ;// removes anything that isn't a digit or `+`/`-`
         sendGain := RegExReplace(sendGain, "[^\d.]")
+        if !IsNumber(sendGain) {
+            ;// if the user times out, or the regex fails, we want to halt here or you'll end up with a `nan` keyframe in prem
+            tool.Cust("A number could not be interpreted from the input keys. Please try again", 2.0)
+            return
+        }
         block.On()
         ;// otherwise we proceed
         if needsTimelineFocus = true
@@ -1006,7 +1011,9 @@ class Prem {
             levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
             if levels != true && levels != "true" {
                 errorLog(MethodError("Unexpected response", -1), "Response: " levels " - Type: " Type(levels))
-                Notify.Show('prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition',, 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
+                Notify.Show('prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
+                block.Off()
+                return
             }
         }
         block.Off()
