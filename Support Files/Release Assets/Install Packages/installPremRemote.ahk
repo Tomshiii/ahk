@@ -18,19 +18,21 @@ if !getNPM {
     return
 }
 
-;// registry key required to run unsigned extensions within Premiere Pro
-cepSelect := cepVer()
-WinWait(cepSelect.Title)
-WinWaitClose(cepSelect.Title)
-
 downloadURl    := "https://github.com/sebinside/PremiereRemote/archive/refs/heads/main.zip"
 extensionsPath := A_AppData "\Adobe\CEP\extensions"
 remotePath     := extensionsPath "\PremiereRemote"
 
 if DirExist(remotePath) {
-    MsgBox("PremiereRemote appears to already be installed!`n`nExiting...")
+    if MsgBox("PremiereRemote appears to already be installed!`nWould you like to update .tsx files?`n`n(keep in mind this may override any custom functions you've created, but not updating may result in errors with my scripts.)`nIt is recommended you make a backup of the following directory:`n" A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src\",, 'YesNo Icon?') = "No"
+        return
+    Run(A_WorkingDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk")
     return
 }
+
+;// registry key required to run unsigned extensions within Premiere Pro
+cepSelect := cepVer()
+WinWait(cepSelect.Title)
+WinWaitClose(cepSelect.Title)
 
 if !DirExist(remotePath)
     DirCreate(remotePath)
@@ -51,7 +53,9 @@ cmd.run(,,, "npm i", remotePath "\host")
 BackupLocation := A_WorkingDir "\Backups\Adobe Backups\Premiere\PremiereRemote"
 if !DirExist(remotePath "\typings")
     DirCreate(remotePath "\typings")
-FileCopy(BackupLocation "\typings\PremierePro.14.0.d.ts", remotePath "\typings\*.*", true)
+loop files BackupLocation "\typings\*.ts", "F" {
+    FileCopy(A_LoopFileFullPath, remotePath "\typings\*.*", true)
+}
 if !DirExist(remotePath "\host\src")
     DirCreate(remotePath "\host\src")
 loop files BackupLocation "\*.tsx", "F" {

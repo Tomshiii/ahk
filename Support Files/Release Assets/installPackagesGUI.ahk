@@ -27,13 +27,13 @@ class newGUI extends Gui {
         this.AddButton("ys+20 xs+350 w65 Hidden vInstallButton", "Install").OnEvent("Click", (*) => this.__install())
         this.AddButton("ys+20 xs+350 w65 vDoneButton", "Done").OnEvent("Click", (*) => ExitApp())
 
-        this.AddCheckbox("xs+25 ys+20 Section vPremRemote", "Install Premiere Remote").OnEvent("Click", (guiObj, *) => (this.__checkboxes(guiObj, "PremRemote")))
+        this.AddCheckbox("xs+25 ys+20 Section vPremRemote", "Install/Update Premiere Remote").OnEvent("Click", (guiObj, *) => (this.__checkboxes(guiObj, "PremRemote")))
         this.AddText("xs y+5", "*note: NodeJS must already be installed").SetFont("S9 Italic")
 
     }
     TitleBack  := 'BackgroundWhite'
     TitleFore  := 'c3F627F'
-    TotalWidth := 450
+    TotalWidth := 430
     InstallDir := A_WorkingDir
 
     PremRemote := 0
@@ -60,7 +60,7 @@ class newGUI extends Gui {
 
     __premRemote() {
         try {
-            RunWait(A_WorkingDir "\Release Assets\Install Packages\installPremRemote.ahk")
+            RunWait(A_WorkingDir "\Install Packages\installPremRemote.ahk")
             sleep 100
         } catch {
             throw TargetError("Unable to determine requested file.", -1)
