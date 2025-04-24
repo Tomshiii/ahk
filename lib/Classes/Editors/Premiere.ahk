@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/04/22
- * @version 2.1.62
+ * @date 2025/04/24
+ * @version 2.1.63
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -985,6 +985,11 @@ class Prem {
         ih.Start()
         ih.Wait()
         star_ih.Stop()
+
+        if ih.EndReason = "Timeout" {
+            tool.Cust(A_ThisFunc "() timed out. Further number inputs may result in`nmoving clips instead of adjusting audio", 5.0)
+            return
+        }
 
         starCheck := star_ih.Input
         sendGain  := ih.Input
