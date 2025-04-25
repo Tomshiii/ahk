@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/03/17
- * @version 1.7.59
+ * @date 2025/04/26
+ * @version 1.7.60
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -156,6 +156,11 @@ class Startup {
 
         ;// checking to see if the settings folder location exists
         if FileExist(this.UserSettings.SettingsFile) {
+            ;// set `MainScriptName`
+            SplitPath(A_ScriptFullPath,,,, &name)
+            if name != "doStartup.ahk"
+                this.UserSettings.MainScriptName := name
+
             ;// this check ensures that the function will prematurely return if the release version in the settings.ini is the same as the current release AND
             ;// that the amount of settings all line up, otherwise the function will continue so that it may add missing settings values
             if (this.UserSettings.defaults.Count != (allSettings.Count + allAdjust.Count + allTrack.Count)) || (VerCompare(this.MyRelease, this.UserSettings.version) > 0) {

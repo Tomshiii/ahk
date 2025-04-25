@@ -1,7 +1,7 @@
 # <> Release 2.15.x - 
 
 ## Functions
-
+- ✅ Fixed `startup.generate()` not always setting `MainScriptName`
 
 `prem {`
 - `numpadGain()`
