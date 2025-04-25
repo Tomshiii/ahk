@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/04/24
- * @version 2.1.64
+ * @date 2025/04/26
+ * @version 2.1.65
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2026,6 +2026,19 @@ class Prem {
         ;// to toggle the source/target.
         this.toggleWaiting := true
         SetTimer((*) => (block.Off(), this.toggleWaiting := false), -400)
+    }
+
+    /**
+     * A wrapper function to set the scale of the currently selected clip. This function **requires** the use of `PremiereRemote`
+     * @param {Float} [scaleVal] the value you wish to set the scale property to
+     */
+    static setScale(scaleVal) {
+        if !this.__checkPremRemoteDir('setScale') {
+            ;// throw
+            errorLog(MethodError('Required PremiereRemote functions missing', -1),,, true)
+            return
+        }
+        this.__remoteFunc('setScale',, "scale=" String(scaleVal))
     }
 
     ;//! *** ===============================================

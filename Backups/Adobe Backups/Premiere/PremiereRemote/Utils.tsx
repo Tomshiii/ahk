@@ -51,6 +51,13 @@ export class Utils {
       }
     }
 
+    static setScaleOfCurrentClip(zoomLevel: number) {
+      const clipInfo = Utils.getFirstSelectedClip(true)
+      const scaleInfo = clipInfo.clip.components[1].properties[1];
+      // set zoom level
+      scaleInfo.setValue(zoomLevel, true);
+    }
+
     static zoomToFit(videoClip) {
       if(videoClip != null) {
         const clipSize = this.getClipSize(videoClip.clip);

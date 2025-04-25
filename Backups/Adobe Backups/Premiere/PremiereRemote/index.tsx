@@ -93,6 +93,10 @@ export const host = {
     Utils.setZoomOfCurrentClip(parseFloat(zoomLevel), parseFloat(xPos), parseFloat(yPos), parseFloat(anchorX), parseFloat(anchorY));
   },
 
+  setScale: function(scale: string) {
+    Utils.setScaleOfCurrentClip(parseFloat(scale));
+  },
+
   getProxyToggle: function() {
     return app.getEnableProxies();
   },
