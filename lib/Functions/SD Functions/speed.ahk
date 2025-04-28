@@ -23,7 +23,7 @@ speed(amount)
     SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     try {
         effCtrlNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-        ControlGetPos(&classX, &classY, &width, &height, ClassNN) ;gets the x/y value and width/height value
+        ControlGetPos(&classX, &classY, &width, &height, effCtrlNN) ;gets the x/y value and width/height value
     } catch as e {
         block.Off() ;just incase
         tool.Cust("Couldn't get the ClassNN of the desired panel")

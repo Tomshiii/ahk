@@ -8,6 +8,9 @@
 
 ⚠️ `prem {`
 - ✏️ Added `setScale()`
+- ✏️ Added `rippleCut()`
+- ✅ Fixed `save()` not actually getting a return value for the current sequence
+- `__remoteFunc()` will now return boolean `true`/`false` instead of a string
 - `numpadGain()`
     - Will now inform the user if it times out
     - Can now be cancelled by pressing <kbd>Escape</kbd>

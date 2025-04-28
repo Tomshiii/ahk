@@ -43,6 +43,7 @@ This script is the "central" script if you will. A lot of my windows scripts are
 This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional. These `startup` functions are contained within a class `startup {` and are as follows;
 - `generate()` - Handles creating a new `settings.ini` file each new release. The `settings.ini` file will be located in `A_MyDocuments \tomshi\`. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings` or by pulling up `settingsGUI()` (default hotkey is <kbd>win + F1</kbd>)
 - `updateChecker()` - Checks github to see if there is a new version of my scripts available and can automatically download it for you as well as backup your current script directory
+- `updateAdobeVerAHK()` - Updates a user's adobe `vers.ahk` file & `adobeVers.ahk` file
 - `updatePackages()` Checks for updates to packages installed through the `choco` package manager
 - `trayMen()` - Adds some tray menu items to the right click menu of `My Scripts.ahk`
 - `firstCheck()` - Will check to see if this is the first time you're running my scripts and offer a helpful GUI to run you through a few things to get you going.

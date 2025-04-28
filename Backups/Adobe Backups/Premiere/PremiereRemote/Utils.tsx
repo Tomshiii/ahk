@@ -18,6 +18,16 @@ export class Utils {
       return null;
     }
 
+    static isSelected() {
+      var activeSequence = app.project.activeSequence;
+      var selection = activeSequence.getSelection();
+
+      if (!selection.length) {
+          return false;
+      }
+      return true
+    }
+
     static movePlayhead(subtract: string, seconds: number) {
       const currentSequence = app.project.activeSequence;
       if(subtract == "false") {

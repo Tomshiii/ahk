@@ -1,8 +1,8 @@
 /********************************************************************************************
  * Notify - Simplifies the creation and display of notification GUIs.
  * @author Martin Chartier (XMCQCX)
- * @date 2025/04/09
- * @version 1.10.0
+ * @date 2025/04/26
+ * @version 1.10.1
  * @see {@link https://github.com/XMCQCX/NotifyClass-NotifyCreator GitHub}
  * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 AHK Forum}
  * @license MIT license
@@ -700,7 +700,7 @@ Class Notify {
         clickArea := g.Add('Text', 'x0 y0 w' gW ' h' gH ' BackgroundTrans')
 
         switch Type(callback) {
-            case 'Func': clickArea.OnEvent('Click', callback)
+            case 'Func', 'BoundFunc': clickArea.OnEvent('Click', callback)
             case 'Array':
             {
                 if callback.Has(1) && callback[1] != ''

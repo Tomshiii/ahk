@@ -111,6 +111,10 @@ export const host = {
 
   movePlayhead: function(subtract: string, seconds: string) {
     Utils.movePlayhead(subtract, parseInt(seconds))
+  },
+
+  isSelected: function () {
+    return Utils.isSelected()
   }
 };
 

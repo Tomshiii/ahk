@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/04/26
- * @version 2.1.65
+ * @date 2025/04/28
+ * @version 2.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -261,7 +261,10 @@ class Prem {
                 errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
                 return false
             }
-            return parse["result"]
+            if parse["result"] != "true" && parse["result"] != "false"
+                return parse["result"]
+            else
+                return(parse["result"] = "true" ? true : false)
         }
     }
 
@@ -278,7 +281,7 @@ class Prem {
     static save(andWait := true, checkSeqTime := 1000, checkAmount := 1) {
         if !this.__checkPremRemoteDir("saveProj") || !this.__checkPremRemoteFunc("getActiveSequence")
             return false
-        origSeq := this.__remoteFunc("getActiveSequence")
+        origSeq := this.__remoteFunc("getActiveSequence", true)
         if !this.__remoteFunc("saveProj")
             return false
 
@@ -296,9 +299,9 @@ class Prem {
 
         sleep checkSeqTime
         loop checkAmount {
-            currentSeq := this.__remoteFunc("getActiveSequence")
+            currentSeq := this.__remoteFunc("getActiveSequence", true)
             if currentSeq != origSeq {
-                this.__remoteFunc("focusSequence")
+                this.__remoteFunc("focusSequence",, "ID=" String(origSeq))
                 break
             }
             sleep checkSeqTime
@@ -1549,6 +1552,18 @@ class Prem {
     }
 
     /**
+     * Copies the selected content to the clipboard, then performs a ripple delete
+     * @link https://github.com/kristenmaxwell/KMAP/blob/master/premiere/inc_premiere_subroutines.ahk#L70
+     */
+    static rippleCut() {
+        if !this.__remoteFunc('isSelected', true)
+            return
+        name := WinGet.PremName()
+        MenuSelect(name.winTitle, , "Edit", "Copy")
+        MenuSelect(name.winTitle, , "Edit", "Ripple Delete")
+    }
+
+    /**
      * #### This function is almost entirely designed for my own workflow and requires hardcoded variables at the top of the class that are then specifically acted apon in various other classes/scripts.
      * A function to facilitate quickly retriving large quantities of screenshots for yt thumbnails. This function is designed to be called from a streamdeck script and there may be unexpected behaviour if done in any other way
      * @param {String} who the name of the person I'm grabbing the screenshot of
@@ -2038,6 +2053,8 @@ class Prem {
             errorLog(MethodError('Required PremiereRemote functions missing', -1),,, true)
             return
         }
+        if !this.__remoteFunc('isSelected', true)
+            return
         this.__remoteFunc('setScale',, "scale=" String(scaleVal))
     }
 
