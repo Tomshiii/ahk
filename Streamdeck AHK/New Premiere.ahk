@@ -74,59 +74,7 @@ sleep 5000
 skip:
 block.On()
 switchTo.Premiere()
-;// only needed because ingest below is commented out
-pause.pause("autosave")
-pause.pause("adobe fullscreen check")
-block.Off()
-;//
 
-/**
-;// if you want proxies to be automatically set to be created on ingest, uncomment the below code
-SendInput(KSA.premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
-if !WinWait("Project Settings",, 2)
-    {
-        sleep 1000
-        WinActivate(editors.Premiere.winTitle)
-        SendInput(KSA.premIngest) ;we want to use a shortcut here instead of trying to navigate the alt menu because the alt menu is unreliable and often doesn't work as intended in scripts
-        if !WinWait("Project Settings",, 2)
-            {
-                block.Off()
-                MsgBox("Opening Injest settings failed")
-                pause.pause("autosave")
-                pause.pause("adobe fullscreen check")
-                return
-            }
-    }
-sleep 1000
-WinActivate("Project Settings")
-coord.s()
-MouseGetPos(&x, &y)
-MouseMove(0, 0, 2) ;// get it out of the way
-sleep 50
-delaySI(500, "{Tab 3}")
-delaySI(1000, "{Space}")
-delaySI(50, "{Tab}", "{Space}", "{Down 2}", "{Space}")
-sleep 1000
-delaySI(300, "{Tab}" "{Space}", "{Down 5}" "{Space}", "{Tab 2}" "{Space}", "{Up}" "{Space}")
-WinWait("Select Folder")
-sleep 800
-delaySI(800, "{F4}", "^a" "+{BackSpace}")
-SendText(SelectedFolder "\proxies")
-sleep 800
-delaySI(250, "{Enter}", "+{Tab 5}", "{Enter}")
-sleep 1750
-delaySI(1000, "{Tab}" "{Space}") ;// if you're on premiere v22.5 or above you may need 2 tabs here. I've downgraded back to 22.3.1 for stability reasons
-MouseMove(x, y, 2) ;// get it out of the way
-block.Off()
-Run(SelectedFolder) ;open an explorer window for your selected directory
-SplitPath SelectedFolder, &name
-if !WinExist("Checklist - " name)
-    {
-        try {
-            Run(ptf["checklist"])
-        } catch as e {
-            tool.Cust("File not found")
-        }
-    }
 pause.pause("autosave")
 pause.pause("adobe fullscreen check")
+block.Off()

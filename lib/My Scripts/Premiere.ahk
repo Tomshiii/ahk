@@ -70,7 +70,7 @@ Escape::prem.escFxMenu()
 ;premselecttoolHotkey;
 SC03A & v::prem.selectionTool()
 
-^+x::prem.rippleCut()
+!+x::prem.rippleCut()
 
 SC03A & d::prem.disableDirectManip()
 

@@ -23,7 +23,7 @@ if Move = SelectedFolder
     }
 
 ;// deleting any temp directories that contain files we don't need to store
-folders := ["\proxies", "\renders\draft", "\_project files\Adobe Premiere Pro Video Previews", "\_project files\Adobe Premiere Pro Auto-Save", "\_project files\Adobe After Effects Auto-Save"]
+folders := ["\proxies", "\timeline renders", "\renders\draft", "\_project files\Adobe Premiere Pro Video Previews", "\_project files\Adobe Premiere Pro Auto-Save", "\_project files\Adobe After Effects Auto-Save"]
 for v in folders {
     if DirExist(SelectedFolder v)
         DirDelete(SelectedFolder v, 1)
