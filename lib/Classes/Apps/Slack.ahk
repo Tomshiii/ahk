@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/04/16
- * @version 1.1.3
+ * @date 2025/04/30
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,8 +55,9 @@ class Slack {
     /**
      * A function designed to quickly access many features that often require a little fiddling to reach.
      * @param {String} button the desired button name you wish to click. Supported buttons are; `reaction`, `reply`, `edit`, `delete`
+     * @param {Boolean} [replyInThread=false] determine whether `reply` will also enable the `Also send to...` checkbox when replying in a thread. Defaults to `false`
      */
-    static button(button) {
+    static button(button, replyInThread := false) {
         keys.allWait("second")
         origMousePos := obj.MousePos()
         if WinGetProcessName(origMousePos.win) != WinGetProcessName(this.winTitle)
@@ -73,12 +74,12 @@ class Slack {
 
         pressButton(uiaObj, type, button) {
             if button = "Delete message… delete" || button = "Edit message E" {
-                if !uiaObj.WaitElement({LocalizedType: "button", Name: "Forward message…"}, 2000) {
-                    errorLog(UnsetError("Failed to find Reply in Thread element", -1),, true)
+                if !uiaObj.WaitElement({LocalizedType: "button", Name: "Save for later"}, 2000) {
+                    errorLog(UnsetError("Failed to find Save for later element", -1),, true)
                     blocker.Off()
                     Exit()
                 }
-                findLocation := uiaObj.WaitElement({LocalizedType: "button", Name: "Forward message…"}, 2000)
+                findLocation := uiaObj.WaitElement({LocalizedType: "button", Name: "Save for later"}, 2000)
                 for el in uiaObj.FindElements({LocalizedType: "menu item", Name: "More actions"}) {
                     if el.location.y != findLocation.location.y
                         continue
@@ -87,7 +88,24 @@ class Slack {
                 try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
                 return
             }
+
+            ;// if a thread is open we need to hone our search to just the thread
+            if uiaObj.ElementExist({LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}) && button != "Reply in thread" {
+                findLocation := uiaObj.WaitElement([{LocalizedType:"dialog", Name:"Thread in channel", matchmode:"Substring"}, {LocalizedType: "button", Name: "Save for later"}], 2000)
+                for el in uiaObj.FindElements([{LocalizedType:"dialog", Name:"Thread in channel", matchmode:"Substring"}, {LocalizedType: "menu item", Name: "More actions"}]) {
+                    if el.location.y != findLocation.location.y
+                        continue
+                    el.ControlClick()
+                }
+                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
+                return
+            }
+            ;// otherwise we just search for the button
             try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
+            if replyInThread = true && button = "Reply in thread" {
+                uiaObj.WaitElement({LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}, 2000)
+                try uiaObj.WaitElement({AutomationId:"p-thread_footer__broadcast_checkbox", matchmode: "Substring"}, 2000).ControlClick()
+            }
         }
 
         switch button {

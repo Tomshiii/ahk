@@ -1273,7 +1273,7 @@ class Prem {
      * Trying to zoom in on the preview window can be really annoying when the hotkey only works while the window is focused
      * This function will ensure it happens regardless
      * @param {String} command the hotkey to send to premiere to zoom however you wish
-     * @param {Boolean} [zoomToFit=true] determine whether the hotkey you're trying to send is the `zoom to fit`. This hotkey was made a global hotkey in premiere versions >=25.2 so this function has code to end logic early if the user's prem ver is higher than that
+     * @param {Boolean} [zoomToFit=true] determine whether the hotkey you're trying to send is the `zoom to fit` hotkey. This hotkey was made a global hotkey in premiere versions >=25.2 so this function has code to end logic early if the user's prem ver is higher than that
     */
     static zoomPreviewWindow(command, zoomToFit := false) {
         __sendOrig() {

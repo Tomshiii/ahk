@@ -8,6 +8,11 @@
 - ✅ Fixed `rbuttonPrem {` not ending early if the user simply taps a button, but the script has to use `dismissWarning()`
 - ✅ Fixed `premUIA_Values {` still attempting to set UIA values even if another window is obstructing its ability to do so
 
+`slack {`
+- `button()`
+    - ✅ Fixed function failing if attempting to be used in a reply thread
+    - 📋 Now accepts parameter `replyInThread` to determine if `reply` will also enable the `Also send to...` checkbox when replying in a thread
+
 ⚠️ `prem {`
 - ✏️ Added `setScale()`
 - ✏️ Added `rippleCut()`
