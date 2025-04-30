@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/04/28
- * @version 2.2.0
+ * @version 2.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -151,6 +151,17 @@ class Prem {
                     } until findx != "" ; as soon as premiere has found the find box, this will populate and break the loop
             }
         return findx
+    }
+
+    /**
+     * Check for a window containing a class used by windows to denote that a file select/dir select GUI is open (ie. a save window)
+     * @returns {Boolean} true if the window **doesn't** exist or false if it does
+     */
+    static __checkDialogueClass() {
+        if WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro.exe") || WinExist("ahk_class #32770 ahk_exe Adobe Premiere Pro (Beta).exe") {
+            return false
+        }
+        return true
     }
 
     /**
@@ -1193,7 +1204,7 @@ class Prem {
 
         this.__checkAlwaysUIA()
         premUIA := premUIA_Values()
-        if !timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
+        if !ObjHasOwnProp(premUIA, 'timeline') || !timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
             return false
 
         ;// determine how much to account for the column left of the timeline based on premiere version
@@ -1262,8 +1273,9 @@ class Prem {
      * Trying to zoom in on the preview window can be really annoying when the hotkey only works while the window is focused
      * This function will ensure it happens regardless
      * @param {String} command the hotkey to send to premiere to zoom however you wish
+     * @param {Boolean} [zoomToFit=true] determine whether the hotkey you're trying to send is the `zoom to fit`. This hotkey was made a global hotkey in premiere versions >=25.2 so this function has code to end logic early if the user's prem ver is higher than that
     */
-    static zoomPreviewWindow(command) {
+    static zoomPreviewWindow(command, zoomToFit := false) {
         __sendOrig() {
             if A_ThisHotkey != "" {
                 hot := SubStr(A_ThisHotkey, 1, 1) = "$" ? SubStr(A_ThisHotkey, 2) : A_ThisHotkey
@@ -1273,6 +1285,14 @@ class Prem {
         title := WinGet.PremName()
         if WinGetTitle("A") != title.winTitle {
             __sendOrig()
+            return
+        }
+
+        hot := (SubStr(command, 1, 1) = "$" && StrLen(command) > 1) ? SubStr(command, 2) : command
+
+        ;// with prem 25.2 zoom to fit can be set as a global hotkey
+        if zoomToFit = true && VerCompare(ptf.premIMGver, "v25.2") >= 0 {
+            SendInput(command)
             return
         }
         premUIA := premUIA_Values()
@@ -1902,7 +1922,8 @@ class Prem {
             indexNum := (A_Index = 1) ? "" : A_Index
             if !FileExist(ptf.Premiere prefixTitle audOrVid indexNum ".png")
                 break
-            if !ImageSearch(&sourceX, &sourceY, sourceMonNN.x, sourceMonNN.y+(sourceMonNN.height*0.7), sourceMonNN.x+sourceMonNN.width, sourceMonNN.y+sourceMonNN.height, "*2 " ptf.Premiere prefixTitle audOrVid indexNum ".png")
+            heightNum := (A_Index = 1) ? 0.7 : Max(Round(0.7-Number(Format("0.{1}", indexNum-1)), 1), 0.1)
+            if !ImageSearch(&sourceX, &sourceY, sourceMonNN.x, sourceMonNN.y+(sourceMonNN.height*heightNum), sourceMonNN.x+sourceMonNN.width, sourceMonNN.y+sourceMonNN.height, "*2 " ptf.Premiere prefixTitle audOrVid indexNum ".png")
                 continue
             found := true
             break

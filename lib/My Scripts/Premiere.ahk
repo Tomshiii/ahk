@@ -107,15 +107,7 @@ $+c::
 
 $+1::
 $+2::prem.zoomPreviewWindow(A_ThisHotkey)
-$+3::
-{
-	;// shift+3 for me is zoom to fit, with prem 25.2 that hotkey can now be set globally
-	if VerCompare(ptf.premIMGver, "v25.2") >= 0 {
-		SendInput(A_ThisHotkey)
-		return
-	}
-	prem.zoomPreviewWindow(A_ThisHotkey)
-}
+$+3::prem.zoomPreviewWindow("+3", true)
 
 ^!f::prem.flattenAndColour(ksa.labelIris)
 $+d::

@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.0
  * @author tomshi, taranVH
- * @date 2025/02/26
- * @version 2.3.13
+ * @date 2025/04/29
+ * @version 2.3.14
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -306,6 +306,18 @@ class rbuttonPrem {
 		}
 	}
 
+	__checkActivationKey(activationKey) {
+		ignore := ["!", "+", "$", "#", "&", "^"]
+		for v in ignore {
+			if InStr(activationKey, v)
+				return
+		}
+		if !GetKeyState(activationKey, "P") {
+			checkstuck()
+			Exit()
+		}
+	}
+
 	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton1</kbd>).
 	 * This function has built in checks for <kbd>LButton</kbd> & <kbd>XButton2</kbd> during activation - check the wiki for more details.
@@ -351,7 +363,7 @@ class rbuttonPrem {
 			}
 		}
 
-		WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
+		WinEvent.Exist((*) => (prem.dismissWarning(), this.__checkActivationKey(A_ThisHotkey)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
 		try WinEvent.NotActive((*) => (checkstuck(), Exit()), gettitle.winTitle)
 		InstallMouseHook(1)
 		prem.RClickIsActive := true

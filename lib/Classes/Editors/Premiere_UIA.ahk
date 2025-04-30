@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/03/27
- * @version 2.0.15
+ * @date 2025/04/30
+ * @version 2.0.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -84,6 +84,8 @@ Class premUIA_Values {
      * This function turns the parsed json data into class variables so the user may call on them as an extension of the class object
      */
     __setClassVal() {
+        if !prem.__checkDialogueClass()
+            return
         if !this.allVals.HasOwnProp(this.currentVer) && this.allVals.HasOwnProp(this.baseVer)
             this.currentVer := this.baseVer
         if ObjOwnPropCount(this.allVals.%this.currentVer%) != this.windowHotkeys.Count {
@@ -103,6 +105,9 @@ Class premUIA_Values {
             Exit()
         }
         this.activeObj.isRunning := true
+
+        if !prem.__checkDialogueClass()
+            return
 
         premName := WinGet.PremName()
         ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
