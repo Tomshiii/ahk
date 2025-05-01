@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/04/28
- * @version 2.2.1
+ * @date 2025/05/01
+ * @version 2.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1839,8 +1839,10 @@ class Prem {
      * Premiere loves to spit stupid warning boxes at you, especially if it has even the smallest issue trying to playback audio. This function will detect that window and automatically click the x button to close the window. This is especially necessary when using other functions of mine like those in `Premiere_RightClick.ahk` as the error window messes with the active window and may confuse those scripts
      */
     static dismissWarning() {
-        if (!WinExist("DroverLord - Overlay Window") ||
-            GetKeyState("LButton", "P")) ;// can't drag panels unless we check
+        ;// we have to do a few checks
+        ;// can't drag panels unless we check `LButton` state & in premiere v25.3 the function sometimes causes the mouse to shoot near
+        ;// the program monitor unless we check the state of ctrl/alt
+        if (!WinExist("DroverLord - Overlay Window") || GetKeyState("LButton", "P")) || (GetKeyState("LCtrl", "P") || GetKeyState("LAlt", "P"))
             return
 
         block.On()
