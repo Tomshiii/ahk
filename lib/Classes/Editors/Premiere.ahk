@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/05/01
- * @version 2.2.2
+ * @date 2025/05/02
+ * @version 2.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1837,8 +1837,10 @@ class Prem {
 
     /**
      * Premiere loves to spit stupid warning boxes at you, especially if it has even the smallest issue trying to playback audio. This function will detect that window and automatically click the x button to close the window. This is especially necessary when using other functions of mine like those in `Premiere_RightClick.ahk` as the error window messes with the active window and may confuse those scripts
+     * @param {boolean} [waitWinClose=true] determines whether to wait for the window to close or not
+     * @param {String} [window="DroverLord - Overlay Window ahk_class DroverLord - Window Class"] the window you wish to wait to close. This parameter is meaningless unless `waitWinClose` is set to `true`
      */
-    static dismissWarning() {
+    static dismissWarning(waitWinClose := true, window := "DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
         ;// we have to do a few checks
         ;// can't drag panels unless we check `LButton` state & in premiere v25.3 the function sometimes causes the mouse to shoot near
         ;// the program monitor unless we check the state of ctrl/alt
@@ -1848,11 +1850,14 @@ class Prem {
         block.On()
         coord.s()
         origMouse := obj.MousePos()
-        drover    := obj.WinPos("DroverLord - Overlay Window")
+        drover    := obj.WinPos("DroverLord - Overlay Window ahk_class DroverLord - Window Class")
         MouseMove((drover.x + drover.width)-15, drover.y+15, 2)
         SendInput("{Click}")
         MouseMove(origMouse.x, origMouse.y, 2)
         block.Off()
+        if !waitWinClose
+            return
+        WinWaitClose(window,, 5)
     }
 
     /**

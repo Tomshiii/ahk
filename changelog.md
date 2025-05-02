@@ -17,9 +17,12 @@
 - ✏️ Added `setScale()`
 - ✏️ Added `rippleCut()`
 - ✅ Fixed `save()` not actually getting a return value for the current sequence
-- ✅ Fixed `dismissWarning()` randomly moving to the program monitor while attempting to `Ripple/Rolling Edit` using `Ctrl/Alt` in premiere v25.3
 - 📋 `__remoteFunc()` will now return boolean `true`/`false` instead of a string
 - 📋 `zoomPreviewWindow()` now accepts parameter `zoomToFit` and internally handles versions of Premiere >=25.2 having a global hotkey to set the window to `fit`. (it ends logic early if the user's premiere version is set to >=25.2)
 - `numpadGain()`
     - Will now inform the user if it times out
     - Can now be cancelled by pressing <kbd>Escape</kbd>
+- `dismissWarning()`
+    - ✅ Fixed function randomly moving to the program monitor while attempting to `Ripple/Rolling Edit` using `Ctrl/Alt` in premiere v25.3
+    - 📋 Now accepts parameters `waitWinClose` & `window`
+        - `waitWinClose` defaults to `true` and will cause the function to wait `5s` to ensure the error message closes to hopefully stop instances where it can get stuck in a loop
