@@ -4,3 +4,6 @@
 [submodule "Backups/Wiki"]
 	path = Backups/Wiki
 	url = https://github.com/Tomshiii/ahk_wiki/
+[submodule "lib/Other/ThioJoe"]
+	path = lib/Other/ThioJoe
+	url = https://github.com/Tomshiii/ThioJoe-AHK-Scripts

@@ -92,6 +92,13 @@
       "false": "Currently selected Adobe versions will not be shown to the user during script startup"
     }
   },
+  "Use_Thio_MButton": {
+    "title": "Use Thio MButton",
+    "tooltip": {
+      "true": "MButton will activate extra functionality within Windows Explorer windows",
+      "false": "Thio's MButton script will not be used in Windows Explorer"
+    }
+  },
 
   "________newSection": " autosave",
 

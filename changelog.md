@@ -7,6 +7,10 @@
 - ✅ Fixed `startup.generate()` not always setting `MainScriptName`
 - ✅ Fixed `rbuttonPrem {` not ending early if the user simply taps a button, but the script has to use `dismissWarning()`
 - ✅ Fixed `premUIA_Values {` still attempting to set UIA values even if another window is obstructing its ability to do so
+- ✏️ Added `switchTo.Path()` to change the desired windows explorer tab to a new `path`
+- ✏️ Added `winget.getActiveExplorerTab()`
+- 📋 `obj.MousePos()` now additionally returns the `control` the cursor is hovering over
+- 📋 `startup.trayMen()` now has the ability to open the settings GUI for `Thio's Windows Explorer Script` mentioned down below
 
 `slack {`
 - `button()`
@@ -26,3 +30,8 @@
     - ✅ Fixed function randomly moving to the program monitor while attempting to `Ripple/Rolling Edit` using `Ctrl/Alt` in premiere v25.3
     - 📋 Now accepts parameters `waitWinClose` & `window`
         - `waitWinClose` defaults to `true` and will cause the function to wait `5s` to ensure the error message closes to hopefully stop instances where it can get stuck in a loop
+
+## Other Changes
+- Added a submodule for a fork of [`ThioJoe's`](https://github.com/ThioJoe/) [AHK Scripts](https://github.com/ThioJoe/ThioJoe-AHK-Scripts/tree/main) repo
+    - This brings my own modified `MButton` functionality to windows explorer windows. Mainly focused around navigating a Premiere Project. *(this functionality expects you to use my project folder layout)*  
+    <img src="https://github.com/user-attachments/assets/875278e5-f478-4a21-98a2-2d0615c948a1" width="275"/>

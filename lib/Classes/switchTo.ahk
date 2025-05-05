@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2024/12/04
- * @version 1.3.17
+ * @date 2025/05/05
+ * @version 1.3.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -705,5 +705,22 @@ class switchTo {
             SendInput(command)
             SendInput("{Enter}")
         }
+    }
+
+    /**
+    *
+    * @link https://www.autohotkey.com/boards/viewtopic.php?style=19&t=526&start=60
+    */
+    static Path(FullPath, hwnd :="") {
+        ; originally from Learning one (https://www.autohotkey.com/boards/viewtopic.php?p=4480#p4480)
+        ; adapted by JnLlnd for tabbed browsing new to Windows 11 version 22H2 (build 22621.675)
+        ; with code from ntepa (https://www.autohotkey.com/boards/viewtopic.php?p=488735#p488735)
+        ; also works with previous versions of Windows Explorer
+        hwnd := (hwnd="") ? WinExist("A") : hwnd ; if omitted, use active window
+        processName := WinGetProcessName("ahk_id " hwnd)
+        if (ProcessName != "explorer.exe")  ; not Windows explorer
+            return
+        getTab := WinGet.getActiveExplorerTab(hwnd)
+        getTab.comObj.Navigate("file:///" FullPath)
     }
 }

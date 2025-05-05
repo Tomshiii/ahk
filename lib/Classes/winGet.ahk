@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2024/06/02
- * @version 1.5.20
+ * @date 2025/05/05
+ * @version 1.5.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -371,14 +371,7 @@ class WinGet {
         }
     }
 
-    /**
-     * A function that returns the path of an open explorer window. Will work with win11 tabs
-     * @link Original code found here by lexikos: https://www.autohotkey.com/boards/viewtopic.php?f=83&t=109907
-     * @param {Integer} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
-     * @returns {String} the directory path of the explorer window
-     */
-    static ExplorerPath(hwnd := WinExist("A"))
-    {
+    static getActiveExplorerTab(hwnd := WinExist("A")) {
         activeTab := 0
         try activeTab := ControlGetHwnd("ShellTabWindowClass1", hwnd) ; File Explorer (Windows 11)
         catch
@@ -393,9 +386,19 @@ class WinGet {
                 if thisTab != activeTab
                     continue
             }
-            return w.Document.Folder.Self.Path
+            return {path: w.Document.Folder.Self.Path, hwnd: w.hwnd, comObj: w}
         }
-        return false
+    }
+
+    /**
+     * A function that returns the path of an open explorer window. Will work with win11 tabs
+     * @link Original code found here by lexikos: https://www.autohotkey.com/boards/viewtopic.php?f=83&t=109907
+     * @param {Integer} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
+     * @returns {String} the directory path of the explorer window
+     */
+    static ExplorerPath(hwnd := WinExist("A")) {
+        getTab := this.getActiveExplorerTab(hwnd)
+        return getTab.path
     }
 
     /**

@@ -11,7 +11,7 @@ SC03A & r::discord.button("reply") ;reply to the message you're hovering over ;t
 SC03A & a::discord.button("react") ;add a reaction to the message you're hovering over
 ;discdeleteHotkey;
 SC03A & d::discord.button("delete") ;delete the message you're hovering over. Also hold shift to skip the prompt
-^+t::Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
+^+t::try Run(ptf["DiscordTS"]) ;opens discord timestamp program [https://github.com/TimeTravelPenguin/DiscordTimeStamper]
 
 
 ;discitalicHotkey;

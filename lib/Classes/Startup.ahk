@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/04/26
- * @version 1.7.60
+ * @date 2025/05/05
+ * @version 1.7.61
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -834,6 +834,9 @@ class Startup {
         __addAndIncrement("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
         __addAndIncrement("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
         __addAndIncrement("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false).__setNewVal() : MsgBox("Premiere needs to be open for this option to function correctly!"))
+        __addAndIncrement("") ;adds a divider bar
+        __addAndIncrement("Open Thio's Windows Explorer Script Settings", (*) => ShowPathSelectorSettingsGUI())
+        __addAndIncrement("") ;adds a divider bar
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")

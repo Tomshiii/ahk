@@ -52,6 +52,7 @@
 #Include <GUIs\activeScripts>
 #Include <GUIs\hotkeysGUI>
 #Include <Other\ObjRegisterActive>
+#Include <Other\ThioJoe\Scripts\ExplorerDialogPathSelector>
 ;#Include Premiere_RightClick.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 

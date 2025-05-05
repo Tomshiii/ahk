@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2023/09/08
- * @version 1.1.6
+ * @date 2025/05/05
+ * @version 1.1.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -48,16 +48,17 @@ class obj {
      * `original.x`       ;passes back the mouse x coordinate
      * `original.y`       ;passes back the mouse y coordinate
      * `original.win`     ;passes back the window the mouse is hovering
+     * `original.cont`    ;passes back the control the mouse is hovering
      * ```
      */
     static MousePos(flags?) {
         try {
-            MouseGetPos(&x, &y, &win,, flags?)
+            MouseGetPos(&x, &y, &win, &cont, flags?)
         } catch {
             errorLog(UnsetError("Failed to grab all variables with MouseGetPos", -1),, 1)
             Exit()
         }
-        return {x: x, y: y, win: win}
+        return {x: x, y: y, win: win, control: cont}
     }
 
     /**

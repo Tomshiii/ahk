@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/04/03
- * @version 2.3.8
+ * @date 2025/05/05
+ * @version 2.3.9
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -221,6 +221,10 @@ settingsGUI()
     settingsGUI.AddCheckbox("vadobeVersStartup Checked" UserSettings.show_adobe_vers_startup " Y+5", setJSON.show_adobe_vers_startup.title).OnEvent("Click", toggle.Bind("show adobe vers startup", ""))
     settingsGUI["adobeVersStartup"].ToolTip := (UserSettings.show_adobe_vers_startup = true) ? setJSON.show_adobe_vers_startup.tooltip.true : setJSON.show_adobe_vers_startup.tooltip.false
 
+    ;// Use_Thio_MButton
+    settingsGUI.AddCheckbox("vUse_Thio_MButton Checked" UserSettings.Use_Thio_MButton " Y+5", setJSON.Use_Thio_MButton.title).OnEvent("Click", toggle.Bind("Use Thio MButton", ""))
+    settingsGUI["Use_Thio_MButton"].ToolTip := (UserSettings.Use_Thio_MButton = true) ? setJSON.Use_Thio_MButton.tooltip.true : setJSON.Use_Thio_MButton.tooltip.false
+
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! script checkboxes
 
@@ -297,7 +301,7 @@ settingsGUI()
     settingsGUI["alwaysCheckUIA"].ToolTip := (UserSettings.Always_Check_UIA = true) ? setJSON.alwaysCheckUIA.tooltip.true : setJSON.alwaysCheckUIA.tooltip.false
 
     ;// Set_UIA_LimitDaily
-    settingsGUI.AddCheckbox("vsetUIA_LimitDaily Checked" (UserSettings.Set_UIA_Limit_Daily != "disabled" ? UserSettings.Set_UIA_Limit_Daily : "0 +Disabled") " Y+5 x+-215", setJSON.setUIA_LimitDaily.title).OnEvent("Click", toggle.Bind("Set_UIA_Limit_Daily", ""))
+    settingsGUI.AddCheckbox("vsetUIA_LimitDaily Checked" (UserSettings.Set_UIA_Limit_Daily != "disabled" ? UserSettings.Set_UIA_Limit_Daily : "0 +Disabled") " Y+5 x+-215", setJSON.setUIA_LimitDaily.title).OnEvent("Click", toggle.Bind("Set UIA Limit Daily", ""))
     settingsGUI["setUIA_LimitDaily"].ToolTip := (UserSettings.Set_UIA_Limit_Daily = true) ? setJSON.setUIA_LimitDaily.tooltip.true : setJSON.setUIA_LimitDaily.tooltip.false
     (settingsGUI["alwaysCheckUIA"].Value = 0) ? settingsGUI["setUIA_LimitDaily"].Opt("+Disabled") : settingsGUI["setUIA_LimitDaily"].Opt("-Disabled")
 
