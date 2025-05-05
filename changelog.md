@@ -32,6 +32,8 @@
         - `waitWinClose` defaults to `true` and will cause the function to wait `5s` to ensure the error message closes to hopefully stop instances where it can get stuck in a loop
 
 ## Other Changes
-- Added a submodule for a fork of [`ThioJoe's`](https://github.com/ThioJoe/) [AHK Scripts](https://github.com/ThioJoe/ThioJoe-AHK-Scripts/tree/main) repo
-    - This brings my own modified `MButton` functionality to windows explorer windows. Mainly focused around navigating a Premiere Project. *(this functionality expects you to use my project folder layout)*  
+- ✏️ Added a submodule for a [fork](https://github.com/Tomshiii/ThioJoe-AHK-Scripts) of [`ThioJoe's`](https://github.com/ThioJoe/) [AHK Scripts](https://github.com/ThioJoe/ThioJoe-AHK-Scripts/tree/main) repo
+    - This brings [my own modified](https://github.com/Tomshiii/ahk/wiki/ExplorerDialogPathSelector.ahk) `MButton` functionality to windows explorer windows. Mainly focused around navigating a Premiere Project. *(this functionality expects you to use my project folder layout)*  
     <img src="https://github.com/user-attachments/assets/875278e5-f478-4a21-98a2-2d0615c948a1" width="275"/>
+- 📋 Renamed `move 1sec.ahk` => `move playhead 1sec.ahk`
+    - ✏️ Added `move 1sec.ahk`

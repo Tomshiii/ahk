@@ -283,6 +283,10 @@ deleting() {
 }
 deleting()
 
+;// removing favourites from ThioJoe .ini file
+if FileExist(A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini")
+    IniWrite("", A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini", "Settings", "favoritePaths")
+
 ;// zipping the temp repo
 zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 

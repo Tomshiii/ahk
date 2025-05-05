@@ -38,6 +38,15 @@ export class Utils {
       currentSequence.setPlayerPosition(String(newPlayhead));
     }
 
+    static moveClip(seconds: number) {
+      const currentSequence = app.project.activeSequence;
+      const selection = currentSequence.getSelection();
+
+      for (let i = 0; i < selection.length; i++) {
+        selection[i].move(seconds);
+      }
+    }
+
     static getVideoClip(trackIndex: number, clipIndex: number) {
       const currentSequence = app.project.activeSequence;
       return currentSequence.videoTracks[trackIndex].clips[clipIndex];

@@ -1309,6 +1309,8 @@ declare class ProjectManager {
 	 *
 	 */
 	unbind(eventName: string): void
+
+	move(Time): void
   }
 
   /**
