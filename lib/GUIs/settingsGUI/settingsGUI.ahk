@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/05/05
- * @version 2.3.9
+ * @date 2025/05/06
+ * @version 2.3.10
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -225,6 +225,10 @@ settingsGUI()
     settingsGUI.AddCheckbox("vUse_Thio_MButton Checked" UserSettings.Use_Thio_MButton " Y+5", setJSON.Use_Thio_MButton.title).OnEvent("Click", toggle.Bind("Use Thio MButton", ""))
     settingsGUI["Use_Thio_MButton"].ToolTip := (UserSettings.Use_Thio_MButton = true) ? setJSON.Use_Thio_MButton.tooltip.true : setJSON.Use_Thio_MButton.tooltip.false
 
+    ;// Use_MButton
+    settingsGUI.AddCheckbox("vUse_MButton Checked" ((UserSettings.Use_Thio_MButton = false) ? "-1" : UserSettings.Use_MButton) " Y+5", setJSON.Use_MButton.title).OnEvent("Click", toggle.Bind("Use MButton", ""))
+    settingsGUI["Use_MButton"].ToolTip := (UserSettings.Use_MButton = true) ? setJSON.Use_MButton.tooltip.true : setJSON.Use_MButton.tooltip.false
+
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! script checkboxes
 
@@ -281,6 +285,9 @@ settingsGUI()
             case "Always Check UIA":
                 (script.Value = 0) ? (settingsGUI["setUIA_LimitDaily"].Opt("+Disabled"), UserSettings.Set_UIA_Limit_Daily := "disabled")
                                    : (settingsGUI["setUIA_LimitDaily"].Opt("-Disabled"), UserSettings.Set_UIA_Limit_Daily := "false")
+            case "Use Thio MButton":
+                (script.Value = 0) ? (settingsGUI["Use_MButton"].Opt("+Disabled"), UserSettings.Use_MButton := "disabled")
+                                   : (settingsGUI["Use_MButton"].Opt("-Disabled"), UserSettings.Use_MButton := "false")
 
         }
         ;// changing requested value

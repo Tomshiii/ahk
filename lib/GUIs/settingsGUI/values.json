@@ -99,6 +99,13 @@
       "false": "Thio's MButton script will not be used in Windows Explorer"
     }
   },
+  "Use_MButton": {
+    "title": "Use MButton",
+    "tooltip": {
+      "true": "Thio's script will use MButton",
+      "false": "Thio's script will use F14 (by default, can be changed in settings.ini)"
+    }
+  },
 
   "________newSection": " autosave",
 
