@@ -5,13 +5,10 @@
 
 ## Functions
 - ✅ Fixed `premUIA_Values {` still attempting to set UIA values even if another window is obstructing its ability to do so
+- ✅ Fixed `rbuttonPrem {` hard crashing under certain circumstances
 - ✏️ Added `switchTo.Path()` to change the desired windows explorer tab to a new `path`
 - ✏️ Added `winget.getActiveExplorerTab()`
 - 📋 `obj.MousePos()` now additionally returns the `control` the cursor is hovering over
-
-⚠️ `rbuttonPrem {`
-- ✅ Fixed `movePlayhead()` not ending early if the user simply taps a button, but the script has to use `dismissWarning()`
-- ✅ Fixed script hard crashing under certain circumstances
 
 ⚠️ `prem {`
 - ✏️ Added `setScale()`
