@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.0
  * @author tomshi, taranVH
- * @date 2025/04/29
- * @version 2.3.14
+ * @date 2025/05/06
+ * @version 2.3.15
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -244,6 +244,7 @@ class rbuttonPrem {
 	__exit() {
 		PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
 		this.__resetClicks()
+		try WinEvent.Stop()
 		checkstuck()
 		try SetTimer(this.__ensureSeq, 0)
 		Exit()
@@ -361,10 +362,12 @@ class rbuttonPrem {
 				SendInput(this.sendHotkey)
 				return
 			}
+		} catch {
+			return
 		}
 
-		WinEvent.Exist((*) => (prem.dismissWarning(), this.__checkActivationKey(A_ThisHotkey)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
-		try WinEvent.NotActive((*) => (checkstuck(), Exit()), gettitle.winTitle)
+		try WinEvent.Exist((*) => (prem.dismissWarning(), this.__checkActivationKey(A_ThisHotkey)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
+		try WinEvent.NotActive((*) => (checkstuck(), Exit()), prem.exeTitle)
 		InstallMouseHook(1)
 		prem.RClickIsActive := true
 
