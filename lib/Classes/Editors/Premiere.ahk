@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/05/06
- * @version 2.2.4
+ * @version 2.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1817,6 +1817,13 @@ class Prem {
      * @param {String} [onFailure="{Escape}"] what the function will send in the event that the active window isn't defined
      */
     static escFxMenu(onFailure := "{Escape}") {
+        ;// excalibur window
+        if WinExist("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME") {
+            WinClose("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME")
+            sleep 200
+            this.__checkTimelineFocus()
+            return
+        }
 		windows := Map(
 			"Clip Fx Editor", true, "Track Fx Editor", true
 		)
