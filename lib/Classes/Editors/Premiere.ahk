@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/05/02
- * @version 2.2.3
+ * @date 2025/05/06
+ * @version 2.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1841,6 +1841,8 @@ class Prem {
      * @param {String} [window="DroverLord - Overlay Window ahk_class DroverLord - Window Class"] the window you wish to wait to close. This parameter is meaningless unless `waitWinClose` is set to `true`
      */
     static dismissWarning(waitWinClose := true, window := "DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
+        if !WinActive(this.winTitle)
+            return
         ;// we have to do a few checks
         ;// can't drag panels unless we check `LButton` state & in premiere v25.3 the function sometimes causes the mouse to shoot near
         ;// the program monitor unless we check the state of ctrl/alt
