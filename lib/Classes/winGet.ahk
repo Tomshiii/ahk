@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2025/05/05
- * @version 1.5.21.1
+ * @date 2025/05/07
+ * @version 1.5.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -338,7 +338,7 @@ class WinGet {
                 WinGet.AEName(&Name, &titlecheck)
         }
         ;// if the name returns blank
-        if (!titlecheck || titlecheck = -1) {
+        if !IsSet(titlecheck) || (!titlecheck || titlecheck = -1) {
             tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
             return false
         }

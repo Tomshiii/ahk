@@ -354,6 +354,12 @@ class rbuttonPrem {
 			return
 		}
 
+		if WinExist("DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
+			prem.dismissWarning()
+			if !GetKeyState(A_ThisHotkey)
+				return
+		}
+
 		try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
 		try WinEvent.NotActive((*) => (checkstuck(), Exit()), prem.exeTitle)
 		InstallMouseHook(1)
