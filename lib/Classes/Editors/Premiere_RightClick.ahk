@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.0
  * @author tomshi, taranVH
- * @date 2025/05/06
- * @version 2.3.15
+ * @date 2025/05/08
+ * @version 2.3.16
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -72,7 +72,7 @@ RButton::rbuttonPrem().movePlayhead(,, prem.currentSetVer)
 ;// beware if modifying this activation hotkey that code adjustments might be necessary
 XButton1::rbuttonPrem().movePlayhead(false,, prem.currentSetVer)
 
-OnExit(__OnExit())
+OnExit(__OnExit)
 __OnExit(*) {
 	try WinEvent.Stop()
 }

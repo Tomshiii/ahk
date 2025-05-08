@@ -12,7 +12,7 @@ KeyHistory(0)
 Persistent()
 TraySetIcon(ptf.Icons "\dismiss.ico")
 
-OnExit(__OnExit())
+OnExit(__OnExit)
 __OnExit(*) {
 	try WinEvent.Stop()
 }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/03/13
- * @version 2.1.33
+ * @date 2025/05/08
+ * @version 2.1.34
  ***********************************************************************/
 
 ; { \\ #Includes
