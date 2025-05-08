@@ -139,8 +139,6 @@ F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint,, true) ;goes
 ;nexteditHotkey;
 F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint,, true) ;goes to the next edit point towards the right
 
-;playstopHotkey;
-F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button
 ;mousedrag1Hotkey;
 LAlt & Xbutton2:: ;this is necessary for the below function to work
 ;mousedrag2Hotkey;

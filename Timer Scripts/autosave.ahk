@@ -46,13 +46,12 @@ OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 ;// defining exit func
 OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode) {
-    if (ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error") {
-        try {
-            autoSave.stop()
-        }
-        checkstuck()
-        block.Off()
+    try {
+        WinEvent.Stop()
+        autoSave.stop()
     }
+    checkstuck()
+    block.Off()
 }
 
 /**

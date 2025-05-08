@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.18
+;\\v2.34.19
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -263,6 +263,17 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 #Include <My Scripts\Premiere>
 
+;// I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
+#Include <Classes\Editors\Premiere_RightClick>
+
+;//? Attempts to stop adobe fs.ahk from freaking out at times
+;stopfullscreenpremHotkey;
+Ctrl & \::return
+;//! Premiere
+#HotIf WinActive(editors.Premiere.winTitle) && !WinExist("ahk_class #32770") && !GetKeyState("F24")
+;playstopHotkey;
+F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button
+
 ;=============================================================================================================================================
 ;
 ;		other - NOT an editor
@@ -272,20 +283,3 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 #HotIf not WinActive("ahk_group Editors") && !GetKeyState("F24") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 
 #Include <My Scripts\Not Editor>
-
-;---------------------------------------------------------------------------------------------------------------------------------------------
-;
-;		Premiere F14/position specific scripts
-;
-;---------------------------------------------------------------------------------------------------------------------------------------------
-;//! Further Premiere Mouse Scripts
-;//* having these scripts above with the other premiere scripts caused `wheelup` and `wheeldown` hotkeys to lag out and cause windows beeping
-;//* thanks ahk :)
-#HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
-
-;// I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
-#Include <Classes\Editors\Premiere_RightClick>
-
-;//? Attempts to stop adobe fs.ahk from freaking out at times
-;stopfullscreenpremHotkey;
-Ctrl & \::return

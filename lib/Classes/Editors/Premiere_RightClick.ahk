@@ -72,6 +72,10 @@ RButton::rbuttonPrem().movePlayhead(,, prem.currentSetVer)
 ;// beware if modifying this activation hotkey that code adjustments might be necessary
 XButton1::rbuttonPrem().movePlayhead(false,, prem.currentSetVer)
 
+OnExit(__OnExit())
+__OnExit(*) {
+	try WinEvent.Stop()
+}
 ;// a list of colours required for each UI version/theme of premiere I've encountered.
 ;// I only use the darkest themes, if you use a different theme you'll need to fill out your own and change the variable within `movePlayhead()`
 class timelineColours {

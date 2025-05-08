@@ -12,6 +12,11 @@ KeyHistory(0)
 Persistent()
 TraySetIcon(ptf.Icons "\dismiss.ico")
 
+OnExit(__OnExit())
+__OnExit(*) {
+	try WinEvent.Stop()
+}
+
 ; you know that extremely annoying dialouge box that says,
 ; "This action will delete existing keyframes. Do you want to continue?"
 ; Well, now you can auto-dismiss it. That's not as good as WIPING IT FROM THE FACE OF THE EARTH FOREVER, but it's at least a little better.

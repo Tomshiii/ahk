@@ -42,6 +42,7 @@
     - 📋 Now accepts parameter `replyInThread` to determine if `reply` will also enable the `Also send to...` checkbox when replying in a thread
 
 ## Other Changes
+- ✅ Fixed an issue causing `WinEvent` to throw across all scripts when reloaded
 - ✏️ Added a submodule for a [fork](https://github.com/Tomshiii/ThioJoe-AHK-Scripts) of [`ThioJoe's`](https://github.com/ThioJoe/) [AHK Scripts](https://github.com/ThioJoe/ThioJoe-AHK-Scripts/tree/main) repo
     - This brings [my own modified](https://github.com/Tomshiii/ahk/wiki/ExplorerDialogPathSelector.ahk) `MButton` functionality to windows explorer windows. Mainly focused around navigating a Premiere Project. *(this functionality expects you to use my project folder layout)*  
     <img src="https://github.com/user-attachments/assets/875278e5-f478-4a21-98a2-2d0615c948a1" width="275"/>
