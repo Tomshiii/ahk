@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/05/06
- * @version 2.3.10
+ * @date 2025/05/12
+ * @version 2.3.11
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -32,8 +32,9 @@ settingsGUI()
 
     readSet := FileRead(ptf.lib "\GUIs\settingsGUI\values.json")
     setJSON := JSON.parse(readSet,, false)
-
     UserSettings := UserPref()
+    initialSettings := FileRead(UserSettings.SettingsFile)
+
     ;// menubar
     FileMenu := Menu()
     FileMenu.Add("&Add Game to ``gameCheck.ahk```tCtrl+A", menu_AddGame)
@@ -51,11 +52,14 @@ settingsGUI()
     editorsMenu.Add("&Photoshop", menu_Adobe.bind("Photoshop")) ;// call a different gui
     editorsMenu.Add("&Premiere", menu_Adobe.bind("Premiere"))
     ; editorsMenu.Add("&Resolve", ) ;// call a different gui
+    othersMenu := Menu()
+    othersMenu.Add("&Thio MButton Script", menu_Thio.Bind())
     ;// define the entire menubar
     bar := MenuBar()
     bar.Add("&File", FileMenu)
     bar.Add("&Open", openMenu)
     bar.Add("&Editors", editorsMenu)
+    bar.Add("&Other Settings", OthersMenu)
 
     openWiki(which, *) {
         openWikiPage(title, link) {
@@ -221,14 +225,6 @@ settingsGUI()
     settingsGUI.AddCheckbox("vadobeVersStartup Checked" UserSettings.show_adobe_vers_startup " Y+5", setJSON.show_adobe_vers_startup.title).OnEvent("Click", toggle.Bind("show adobe vers startup", ""))
     settingsGUI["adobeVersStartup"].ToolTip := (UserSettings.show_adobe_vers_startup = true) ? setJSON.show_adobe_vers_startup.tooltip.true : setJSON.show_adobe_vers_startup.tooltip.false
 
-    ;// Use_Thio_MButton
-    settingsGUI.AddCheckbox("vUse_Thio_MButton Checked" UserSettings.Use_Thio_MButton " Y+5", setJSON.Use_Thio_MButton.title).OnEvent("Click", toggle.Bind("Use Thio MButton", ""))
-    settingsGUI["Use_Thio_MButton"].ToolTip := (UserSettings.Use_Thio_MButton = true) ? setJSON.Use_Thio_MButton.tooltip.true : setJSON.Use_Thio_MButton.tooltip.false
-
-    ;// Use_MButton
-    settingsGUI.AddCheckbox("vUse_MButton Checked" ((UserSettings.Use_Thio_MButton = false) ? "-1" : UserSettings.Use_MButton) " Y+5", setJSON.Use_MButton.title).OnEvent("Click", toggle.Bind("Use MButton", ""))
-    settingsGUI["Use_MButton"].ToolTip := (UserSettings.Use_MButton = true) ? setJSON.Use_MButton.tooltip.true : setJSON.Use_MButton.tooltip.false
-
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! script checkboxes
 
@@ -258,7 +254,7 @@ settingsGUI()
      * @param {string} objName used for `autosave` settings. must be either "autosave" or passed as ""
      * @param {any} script the name of the guiCtrl obj that gets auto fed into this function
      */
-    toggle(ini, objName := "", script?, unneeded?)
+    toggle(ini, objName := "", altGUI := unset, script?, *)
     {
         detect()
         ToolTip("")
@@ -286,8 +282,10 @@ settingsGUI()
                 (script.Value = 0) ? (settingsGUI["setUIA_LimitDaily"].Opt("+Disabled"), UserSettings.Set_UIA_Limit_Daily := "disabled")
                                    : (settingsGUI["setUIA_LimitDaily"].Opt("-Disabled"), UserSettings.Set_UIA_Limit_Daily := "false")
             case "Use Thio MButton":
-                (script.Value = 0) ? (settingsGUI["Use_MButton"].Opt("+Disabled"), UserSettings.Use_MButton := "disabled")
-                                   : (settingsGUI["Use_MButton"].Opt("-Disabled"), UserSettings.Use_MButton := "false")
+                (script.Value = 0) ? (altGUI["Use_MButton"].Opt("+Disabled"), UserSettings.Use_MButton := "disabled")
+                                   : (altGUI["Use_MButton"].Opt("-Disabled"), UserSettings.Use_MButton := "false")
+            case "Use MButton":
+                (script.Value = 1) ? altGUI["thioHotkey"].Opt("+Disabled") : altGUI["thioHotkey"].Opt("-Disabled")
 
         }
         ;// changing requested value
@@ -426,8 +424,11 @@ settingsGUI()
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         ToolTip("")
         ; tool.Tray({text: "Settings changes are being saved", title: "settingsGUI()", options: 20}, 2000)
-        Notify.Show("settingsGUI()", "Settings changes are being saved", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 Hide=Fade@250")
         UserSettings.__delAll() ;// close the settings instance
+        sleep 50
+        newSettings := FileRead(UserSettings.SettingsFile)
+        if newSettings != initialSettings
+            Notify.Show("settingsGUI()", "Settings changes are being saved", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 Hide=Fade@250")
         ToolTip("")
         if IsSet(butt) {
             switch butt {
@@ -512,9 +513,42 @@ settingsGUI()
             }
     }
 
-    /**
-     * This function is called to generate either the Premiere Pro or After Effects settings gui
-     */
+    /** This function is called to generate the Thio MButton Script Settings */
+    menu_Thio(*) {
+        thioGUITitle := "Thio MButton Script Settings"
+        if WinExist(thioGUITitle) {
+            WinActivate(thioGUITitle)
+            return
+        }
+        thioGUI := tomshiBasic(,, "AlwaysOnTop +MinSize275x Owner", thioGUITitle)
+        ;// Use_Thio_MButton
+        thioGUI.AddCheckbox("vUse_Thio_MButton Checked" UserSettings.Use_Thio_MButton " Y+5", setJSON.Use_Thio_MButton.title).OnEvent("Click", toggle.Bind("Use Thio MButton", "", thioGUI))
+        thioGUI["Use_Thio_MButton"].ToolTip := (UserSettings.Use_Thio_MButton = true) ? setJSON.Use_Thio_MButton.tooltip.true : setJSON.Use_Thio_MButton.tooltip.false
+
+        ;// Use_MButton
+        thioGUI.AddCheckbox("vUse_MButton Checked" UserSettings.Use_MButton " Y+5", setJSON.Use_MButton.title).OnEvent("Click", toggle.Bind("Use MButton", "", thioGUI))
+        thioGUI["Use_MButton"].ToolTip := (UserSettings.Use_MButton = true) ? setJSON.Use_MButton.tooltip.true : setJSON.Use_MButton.tooltip.false
+        thioGUI['Use_MButton'].Opt(((UserSettings.Use_Thio_MButton = false) ? "Disabled" : ""))
+
+        thioGUI.AddText(, "Change activation hotkey: ")
+        thioGUI.AddEdit("vthioHotkey x+10 y+-20 w150", UserSettings.alternate_MButton_Key).OnEvent('Change', (guiObj, *) => (UserSettings.alternate_MButton_Key := guiObj.value))
+        if thioGUI["Use_MButton"].value = true
+            thioGUI["thioHotkey"].Opt("Disabled")
+
+        thioGUI.AddButton("xp+98 y+10", "Close").OnEvent('Click', (*) => (WinClose(thioGUITitle)))
+
+
+        thioGUI.Show()
+        settingsGUI.Opt("Disabled")
+        ;// settingsgui
+        WinGetPos(&x, &y,,, "Settings " version)
+        thioGUI.GetPos(,, &width)
+        thioGUI.Move(x-width+5, y)
+        WinWaitClose(thioGUITitle)
+        settingsGUI.Opt("-Disabled")
+    }
+
+    /** This function is called to generate either the Premiere Pro or After Effects settings gui */
     menu_Adobe(program, *) {
         ;// setting values depending on which program settings the user wishes to change
         switch program {
@@ -568,7 +602,7 @@ settingsGUI()
             WinActivate(title)
             return
         }
-        adobeGui := tomshiBasic(,, "+MinSize275x", title)
+        adobeGui := tomshiBasic(,, "+MinSize275x AlwaysOnTop Owner", title)
         ctrlX := 100
 
         ;// start defining the gui
@@ -592,16 +626,16 @@ settingsGUI()
 
         ;// show
         adobeGui.Show()
-        ;// move gui
-        add := 0
+        settingsGUI.Opt("Disabled")
         ;// settingsgui
         WinGetPos(&x, &y,,, "Settings " version)
         if WinExist(otherTitle) {
             WinGetPos(,,, &yearHeight, otherTitle)
-            add := yearHeight
         }
         adobeGui.GetPos(,, &width)
-        adobeGui.Move(x-width+5, y+add)
+        adobeGui.Move(x-width+5, y)
+        WinWaitClose(title)
+        settingsGUI.Opt("-Disabled")
 
         /**
          * This function handles the logic for saving the adobe version number

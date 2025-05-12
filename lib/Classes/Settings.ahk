@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2025/05/07
- * @version 1.2.25.1
+ * @date 2025/05/12
+ * @version 1.2.26
  ***********************************************************************/
 
 class UserPref {
@@ -37,7 +37,7 @@ class UserPref {
         "checklist_hotkeys", "true", "checklist_tooltip", "true", "checklist_wait", "false",
         "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
         "Always_Check_UIA", "true", "Set_UIA_Limit_Daily", "disabled",
-        "Use_Thio_MButton", "false", "Use_MButton", "true", "alternate_MButton_Key", "~F18",
+        "Use_Thio_MButton", "false", "Use_MButton", "true",
 
         ;// [Adjust]
         "adobe_GB", 45, "adobe_FS", 2,
@@ -46,6 +46,7 @@ class UserPref {
         "premVer", "v25.0", "aeVer", "v25.0", "psVer", "25.5", "resolveVer", "v18.5",
         "premIsBeta", "false", "aeIsBeta", "false", "psIsBeta", "false",
         "premCache", A_AppData "\Adobe\Common", "aeCache", A_AppData "\Adobe\Common",
+        "alternate_MButton_Key", "~F18",
 
         ;// [Track]
         "adobe_temp", 0, "UIA_Daily_Limit_Day", 0, "working_dir", this.workingDir,
@@ -235,7 +236,6 @@ class UserPref {
                     Set UIA Limit Daily={}
                     Use Thio MButton={}
                     Use MButton={}
-                    alternate MButton Key={}
 
                     [Adjust]
                     adobe GB={}
@@ -255,6 +255,7 @@ class UserPref {
                     resolveVer={}
                     premCache={}
                     aeCache={}
+                    alternate MButton Key={}
 
                     [Track]
                     adobe temp={}

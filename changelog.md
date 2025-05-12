@@ -7,6 +7,7 @@
 - ✅ Fixed `premUIA_Values {` still attempting to set UIA values even if another window is obstructing its ability to do so
 - ✏️ Added `switchTo.Path()` to change the desired windows explorer tab to a new `path`
 - 📋 `obj.MousePos()` now additionally returns the `control` the cursor is hovering over
+- 📋 `settingsGUI()` Now only alerts the user that settings are being saved if the user actually changed something
 
 ⚠️ `prem {`
 - ✏️ Added `setScale()`
@@ -18,8 +19,8 @@
 - 📋 `zoomPreviewWindow()` now accepts parameter `zoomToFit` and internally handles versions of Premiere >=25.2 having a global hotkey to set the window to `fit`. (it ends logic early if the user's premiere version is set to >=25.2)
 - 📋 `escFxMenu()` now closes the `Excalibur` window
 - `numpadGain()`
-    - Will now inform the user if it times out
-    - Can now be cancelled by pressing <kbd>Escape</kbd>
+    - 📋 Will now inform the user if it times out
+    - 📋 Can now be cancelled by pressing <kbd>Escape</kbd>
 - `dismissWarning()`
     - ✅ Fixed function randomly moving to the program monitor while attempting to `Ripple/Rolling Edit` using `Ctrl/Alt` in premiere v25.3
     - 📋 Now accepts parameters `waitWinClose` & `window`
