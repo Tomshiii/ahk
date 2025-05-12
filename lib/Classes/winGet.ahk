@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2025/05/07
- * @version 1.5.22
+ * @date 2025/05/12
+ * @version 1.5.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -399,6 +399,7 @@ class WinGet {
             }
             return {path: w.Document.Folder.Self.Path, hwnd: w.hwnd, comObj: w}
         }
+        return false
     }
 
     /**
@@ -409,7 +410,7 @@ class WinGet {
      */
     static ExplorerPath(hwnd := WinExist("A")) {
         getTab := this.getActiveExplorerTab(hwnd)
-        return(ObjHasOwnProp(getTab, 'Path') ? getTab.path : false)
+        return(IsObject(getTab) && ObjHasOwnProp(getTab, 'Path') ? getTab.path : false)
     }
 
     /**
