@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/05/06
- * @version 2.2.5
+ * @date 2025/05/12
+ * @version 2.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1403,7 +1403,11 @@ class Prem {
         if !this.__checkTimeline()
 			return
         origMouse := obj.MousePos()
-        if !this.__checkCoords(origMouse)
+        withinTimeline := this.__checkCoords(origMouse)
+        SetStoreCapsLockMode(true)
+        if GetKeyState("SC03A", "P") && withinTimeline = true
+            return
+        if !withinTimeline
             scrollAmount := 1, altAmount := 1
         getDir := getHotkeys()
         switch getdir.first {
@@ -1969,26 +1973,25 @@ class Prem {
      * A function designed to allow you to quickly adjust the size of the layer the cursor is within. <kbd>LAlt</kbd> **MUST** be one of the activation hotkeys and is required to be held down for the duration of this function.
      */
     static layerSizeAdjust() {
+        if !this.__checkTimeline()
+			return
         storeHotkey := A_ThisHotkey
+        blocker := block_ext()
+        blocker.On()
         ;// avoid attempting to fire unless main window is active
-        getTitle := WinGet.PremName()
-        if WinGetTitle("A") != getTitle.winTitle
+        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() {
+            blocker.Off()
             return
-        if !this.timelineFocusStatus()
-            return
-
-        if !activationKey := getHotkeys()
-            return
-
+        }
+        blocker.Off()
         block.On()
         coord.client()
+        SetStoreCapsLockMode(true)
         origMouseCords := obj.MousePos()
         MouseMove(this.timelineRawX+10, origMouseCords.y, 2)
         KeyWait("LAlt", "L")
         MouseMove(origMouseCords.x, origMouseCords.y)
         checkStuck(["LAlt", "CapsLock"])
-        if InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")
-            SetCapsLockState('AlwaysOff')
         block.Off()
     }
 

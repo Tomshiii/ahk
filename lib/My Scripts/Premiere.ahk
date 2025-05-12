@@ -74,8 +74,6 @@ SC03A & v::prem.selectionTool()
 
 SC03A & d::prem.disableDirectManip()
 
-LAlt & SC03A::prem.layerSizeAdjust()
-
 LCtrl & 1::prem.toggleLayerButtons("mute")
 LCtrl & 2::prem.toggleLayerButtons("solo")
 LCtrl & 3::prem.toggleLayerButtons("lock")
@@ -154,6 +152,7 @@ F14 & F23::
 }
 
 #MaxThreadsBuffer true
+LAlt & SC03A::prem.layerSizeAdjust()
 Alt & WheelUp::
 Alt & WheelDown::
 Shift & WheelUp::

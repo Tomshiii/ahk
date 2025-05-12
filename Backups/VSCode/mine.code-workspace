@@ -23,7 +23,8 @@
 	],
 	"settings": {
 		"editor.formatOnPaste": false,
-		"editor.formatOnType": true
+		"editor.formatOnType": false,
+		"editor.autoIndent": "full"
 	},
 	"launch": {
 		"version": "0.2.0",
