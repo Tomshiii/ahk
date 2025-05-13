@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/05/13
- * @version 2.2.8
+ * @version 2.2.8.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1976,9 +1976,12 @@ class Prem {
 
     /**
      * A function designed to allow you to quickly adjust the size of the layer the cursor is within. <kbd>LAlt</kbd> **MUST** be one of the activation hotkeys and is required to be held down for the duration of this function.
+     * @param {Boolean} [capsLockDisable=true] (if the user does *NOT* use <kbd>CapsLock</kbd> to activate this function, they should set this value to `false`) because of the way this script is currently designed (terribly), it is getting activated more than once, which can sometimes cause <kbd>CapsLock</kbd> to leak back into being enabled, even if it was originally set to `AlwaysOff`. If this param is set to `true` it will be reset back to `AlwaysOff` at the end of the function.
+     * I'd like to remake this function at some point to ease these issues, amongst others, but that will take time.
      */
-    static layerSizeAdjust() {
+    static layerSizeAdjust(capsLockDisable := true) {
         SetStoreCapsLockMode(true)
+        capslockState := GetKeyState("CapsLock", "T")
         if !this.__checkTimeline()
 			return
         storeHotkey := A_ThisHotkey
@@ -2000,6 +2003,8 @@ class Prem {
         KeyWait("LAlt", "L")
         MouseMove(origMouseCords.x, origMouseCords.y)
         checkStuck(["LAlt", "CapsLock"])
+        if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
+            SetCapsLockState('AlwaysOff')
         block.Off()
     }
 
