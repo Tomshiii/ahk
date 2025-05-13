@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/05/12
- * @version 2.2.6
+ * @date 2025/05/13
+ * @version 2.2.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -624,13 +624,14 @@ class Prem {
 
     /**
      * Move back and forth between edit points from anywhere in premiere. Be careful that your `shuttle stop` keyframe doesn't have any additional keyboard shortcuts assigned with modifiers.
-     * ie. if `Shuttle Stop` is <kbd>k</kbd> don't have anything set to <kbd>Shift + k</kbd> or <kbd>Ctrl + k</kbd> etc. Otherwise if you activate this function consecutively, modifiers might "leak" when unintended causing that hotkey to be activated.
+     * ie. if `Shuttle Stop` is <kbd>k</kbd> don't have anything set to <kbd>Shift + k</kbd> or <kbd>Ctrl + k</kbd> etc. Otherwise if you activate this function consecutively, modifiers might "leak" when unintended causing that hotkey to be activated. By default `Play around` was set for me which was causing issues
      * @param {String} window the hotkey required to focus the desired window within premiere
      * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
      * @param {String} [keyswait="all"] a string you wish to pass to `keys.allWait()`'s first parameter
      * @param {Boolean/Object} [checkMButton=false] determine whether the function will wait to see if <kbd>MButton</kbd> is pressed shortly after (or is being held). This can be useful with panning around Premiere's `Program` monitor (assuming this function is activated using tilted scroll wheels, otherwise leave this param as false). This parameter can either be set to `true/false` or an object containing key `T` along with the timeout duration. Eg. `{T:"0.3"}`
+     * @param {String} [activationKeys="{Shift}{F21}{F23}"] the keys you use to activate this function so they can be passed to `block_ext()` (otherwise you may have issues activating this hotkey consecutively)
      */
-    static wheelEditPoint(window, direction, keyswait := "all", checkMButton := false) {
+    static wheelEditPoint(window, direction, keyswait := "all", checkMButton := false, activationKeys := "{Shift}{F21}{F23}") {
         SetKeyDelay(0)
         if Type(window) != "string" || Type(direction) != "string" || Type(keyswait) != "string" || (Type(checkMButton) != "integer" && Type(checkMButton) != "object") {
             ;// throw
@@ -644,8 +645,10 @@ class Prem {
             if KeyWait("MButton", timeoutVal " D")
                 return
         }
+        blocker := block_ext()
+        blocker.On(,, "{Shift}{F21}{F23}")
         SendInput(KSA.shuttleStop)
-        sleep 25
+        sleep 50
         premUIA := premUIA_Values()
         try premEl := prem.__createUIAelement(false)
 
@@ -669,6 +672,7 @@ class Prem {
                     premEl.AdobeEl.ElementFromPath(premUIA.programMonitor).SetFocus()
                     Sleep(25)
                     premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
+                    Sleep(50)
                     delaySI(20, "^a", ksa.deselectAll)
                 }
                 catch {
@@ -682,6 +686,7 @@ class Prem {
             case "first":  keys.allWait("first")
             default:       keys.allWait() ;prevents hotkey spam
         }
+        blocker.Off()
     }
 
     /** checks to see if there are any clips selected */
