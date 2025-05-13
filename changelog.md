@@ -20,6 +20,8 @@
 
 📍 `layerSizeAdjust()`
 - ✅ Fixed function causing zooming on the timeline if <kbd>LAlt</kbd> was held but the incorrect second activation key was pressed before holding the correct one
+- ✅ Fixed function rewarping the cursor to the the edge of the timeline once finished
+- 📋 Will now move the cursor to the top of the current layer so that shrinking its size will no longer cause the user to start adjusting the size of a layer below
 - 📋 Now accepts parameter `capsLockDisable` to determine if <kbd>CapsLock</kbd> should be set back to `AlwaysOff` at the end of the function
 
 📍 `wheelEditPoint()`

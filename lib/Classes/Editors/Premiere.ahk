@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/05/13
- * @version 2.2.8.2
+ * @date 2025/05/14
+ * @version 2.2.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1979,12 +1979,45 @@ class Prem {
     }
 
     /**
+     * determine if the current cursor position is hovering over a layer divider
+     * @param {Object} [coords] an object containing the `x`/`y` value of the current cursor coords
+     * @returns {Boolean}
+     */
+    static __layerDividerCheck(coords) {
+        dividerCheck := PixelGetColor(this.timelineRawX+5, coords.y)
+        if dividerCheck = this.layerDivider {
+            Notify.Show(, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+            return false
+        }
+        return true
+    }
+
+    /**
+     * Determines the top/bottom position of the layer the cursor is currently within. Will also optionally determine the position of the middle divider
+     * @param {Object} [coords] an object containing the `x`/`y` value of the current cursor coords
+     * @param {Boolean} [searchMid=true] determine whether to search for the middle divider
+     * @param {VarRef} [] x/y values of `top`/`bot`/`mid` in that order
+     * @returns {Boolean/Object} returns boolean `false` on failure or an object containing all coords on success
+     */
+    static __layerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?) {
+        topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineRawY, this.layerDivider)
+        botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineYControl, this.layerDivider)
+        mid := (searchMid = true) ? ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+15, this.timelineYControl,  "*2 " ptf.Premiere "divider.png") : true
+        if !topDiv || !botDiv || !mid {
+            Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+            return false
+        }
+        return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false}
+    }
+
+    /**
      * A function designed to allow you to quickly adjust the size of the layer the cursor is within. <kbd>LAlt</kbd> **MUST** be one of the activation hotkeys and is required to be held down for the duration of this function.
      * @param {Boolean} [capsLockDisable=true] (if the user does *NOT* use <kbd>CapsLock</kbd> to activate this function, they should set this value to `false`) because of the way this script is currently designed (terribly), it is getting activated more than once, which can sometimes cause <kbd>CapsLock</kbd> to leak back into being enabled, even if it was originally set to `AlwaysOff`. If this param is set to `true` it will be reset back to `AlwaysOff` at the end of the function.
      * I'd like to remake this function at some point to ease these issues, amongst others, but that will take time.
      */
     static layerSizeAdjust(capsLockDisable := true) {
         SetStoreCapsLockMode(true)
+        InstallKeybdHook(true, true)
         capslockState := GetKeyState("CapsLock", "T")
         if !this.__checkTimeline()
 			return
@@ -1992,20 +2025,28 @@ class Prem {
         blocker := block_ext()
         blocker.On()
         ;// avoid attempting to fire unless main window is active
-        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() {
+        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() || !GetKeyState("LAlt", "P") {
             blocker.Off()
             return
         }
-        blocker.Off()
-        block.On()
+
         coord.client()
         origMouseCords := obj.MousePos()
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true
             return
-        MouseMove(this.timelineRawX+10, origMouseCords.y, 2)
+
+        if !this.__layerDividerCheck(origMouseCords) || !this.__layerTopBottom(origMouseCords, false,, &topDivY) {
+            blocker.Off()
+            return
+        }
+
+        blocker.Off()
+        block.On()
+
+        MouseMove(this.timelineRawX+10, topDivY+4, 2)
         KeyWait("LAlt", "L")
-        MouseMove(origMouseCords.x, origMouseCords.y)
+        MouseMove(origMouseCords.x, topDivY+4)
         checkStuck(["LAlt", "CapsLock"])
         if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
             SetCapsLockState('AlwaysOff')
@@ -2040,19 +2081,7 @@ class Prem {
             return
         }
 
-        dividerCheck := PixelGetColor(this.timelineRawX+5, origMouseCords.y)
-        if dividerCheck = this.layerDivider {
-            Notify.Show(, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
-            block.Off()
-            return
-        }
-
-        topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+5, origMouseCords.y, this.timelineRawX+5, this.timelineRawY, this.layerDivider)
-        botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+5, origMouseCords.y, this.timelineRawX+5, this.timelineYControl, this.layerDivider)
-        midDivider := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+15, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
-
-        if !topDiv || !botDiv || !midDivider {
-            Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+        if !this.__layerDividerCheck(origMouseCords) || !this.__layerTopBottom(origMouseCords, true, &topDivX, &topDivY, &botDivX, &botDivY, &midDivX, &midDivY) {
             block.Off()
             return
         }
