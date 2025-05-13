@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/05/13
- * @version 2.2.8.1
+ * @version 2.2.8.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1890,9 +1890,12 @@ class Prem {
             errorLog(PropertyError("Incorrect value in Parameter #1", -1),,, true)
             return
         }
+        blocker := block_ext()
+        blocker.On()
         key := keys.allWait("second")
         if key.HasProp("first") {
             if key.first = "Shift" {
+                blocker.Off()
                 errorLog(ValueError("``Shift`` cannot be the first activation hotkey.", -1),,, true)
                 return
             }
@@ -1905,15 +1908,16 @@ class Prem {
                 try SendInput("{" Format("sc{:X}", GetKeySC(A_ThisHotkey)) "}")
             /* else
                 try SendInput(sendOnFailure) */
+            blocker.Off()
             return
         }
 
         if !this.__checkPremRemoteDir("sourceMonName") || !this.__checkPremRemoteFunc("sourceMonName") {
             ;// throw
+            blocker.Off()
             errorLog(MethodError("Some PremiereRemote functions are missing.", -1),,, true)
             return
         }
-        block.On()
         coord.client()
         origMouse := obj.MousePos()
         if specificFile != false && specificFile != "" {
@@ -1921,7 +1925,7 @@ class Prem {
             if getName != specificFile {
                 __exit() {
                     errorLog(TargetError("The requested file: " specificFile "`nisn't open in the Source Monitor", -1),, true)
-                    block.Off()
+                    blocker.Off()
                     Exit()
                 }
                 if specificFile = "Bars and Tone - Rec 709" {
@@ -1938,7 +1942,7 @@ class Prem {
 
         premUIA   := premUIA_Values()
         if !sourceMonNN := this.__uiaCtrlPos(premUIA.sourceMon,,, false) {
-            block.Off()
+            blocker.Off()
             return
         }
         prefixTitle := "sourceMon_"
@@ -1955,11 +1959,11 @@ class Prem {
         }
         if found = false {
             errorLog(TargetError("Image: ``" prefixTitle audOrVid ".png`` not found. Source monitor may not contain a file.", -1),, true)
-            block.Off()
+            blocker.Off()
             return
         }
         MouseClickDrag("Left", sourceX+4, sourceY+3, origMouse.x, origMouse.y, 1)
-        block.Off()
+        blocker.Off()
     }
 
     /**
