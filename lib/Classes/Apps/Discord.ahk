@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/04/16
- * @version 1.6.4
+ * @date 2025/05/13
+ * @version 1.6.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -84,19 +84,24 @@ class discord {
             blocker.Off()
             return
         }
+        if !IsObject(DiscordEl) {
+            errorLog(UnsetError("Failed to set UIA element", -1),, true)
+            blocker.Off()
+            return
+        }
 
         switch button {
             case "reply":
                 if dms = true || this.disableAutoReplyPing != true {
-                    DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick()
+                    try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick()
                     blocker.Off()
                     return
                 }
-                if !DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick() {
+                if !findReply := DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500) {
                     blocker.Off()
                     return
                 }
-                try DiscordEl.WaitElement({Name: "Mention ON", LocalizedType: "button" }, 1500).ControlClick()
+                try findReply.ControlClick()
             case "edit": DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-edit"}, 1500).ControlClick()
             case "react": DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-add-reaction"}, 1500).ControlClick()
             case "report": DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-report"}, 1500).ControlClick()
