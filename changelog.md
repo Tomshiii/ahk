@@ -13,21 +13,24 @@
 - ✏️ Added `setScale()`
 - ✏️ Added `rippleCut()`
 - ✅ Fixed `save()` not actually getting a return value for the current sequence
-- ✅ Fixed `dismissWarning()` firing when Premiere isn't the active window
 - ✅ Fixed `layerSizeAdjust()` causing zooming on the timeline if <kbd>LAlt</kbd> was held but the incorrect second activation key was pressed before holding the correct one
 - 📋 `__remoteFunc()` will now return boolean `true`/`false` instead of a string
 - 📋 `zoomPreviewWindow()` now accepts parameter `zoomToFit` and internally handles versions of Premiere >=25.2 having a global hotkey to set the window to `fit`. (it ends logic early if the user's premiere version is set to >=25.2)
 - 📋 `escFxMenu()` now closes the `Excalibur` window
-- 📍 `wheelEditPoint()`
-    - 📋 Now uses `block_ext {` to block all keys except the activation keys
-    - 📋 Now accepts parameter `activationKeys` to pass through the user's activation keys so they aren't blocked
-- 📍 `numpadGain()`
-    - 📋 Will now inform the user if it times out
-    - 📋 Can now be cancelled by pressing <kbd>Escape</kbd>
-- 📍 `dismissWarning()`
-    - ✅ Fixed function randomly moving to the program monitor while attempting to `Ripple/Rolling Edit` using `Ctrl/Alt` in premiere v25.3
-    - 📋 Now accepts parameters `waitWinClose` & `window`
-        - `waitWinClose` defaults to `true` and will cause the function to wait `5s` to ensure the error message closes to hopefully stop instances where it can get stuck in a loop
+
+📍 `wheelEditPoint()`
+- 📋 Now uses `block_ext {` to block all keys except the activation keys
+- 📋 Now accepts parameter `activationKeys` to pass through the user's activation keys so they aren't blocked  
+
+📍 `numpadGain()`
+- 📋 Will now inform the user if it times out
+- 📋 Can now be cancelled by pressing <kbd>Escape</kbd>  
+
+📍 `dismissWarning()`
+- ✅ Fixed function firing when Premiere isn't the active window
+- ✅ Fixed function randomly moving to the program monitor while attempting to `Ripple/Rolling Edit` using `Ctrl/Alt` in premiere v25.3
+- 📋 Now accepts parameters `waitWinClose` & `window`  
+    - `waitWinClose` defaults to `true` and will cause the function to wait `5s` to ensure the error message closes to hopefully stop instances where it can get stuck in a loop
 
 ⚠️ `rbuttonPrem {`
 - ✅ Fixed `movePlayhead()` not ending early if the user simply taps a button, but the script has to use `dismissWarning()`

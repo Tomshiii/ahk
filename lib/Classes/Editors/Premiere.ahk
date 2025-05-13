@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/05/13
- * @version 2.2.7
+ * @version 2.2.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1405,11 +1405,11 @@ class Prem {
      * @param {Integer} scrollAmount the amount of accelerated scrolling you want
      */
     static accelScroll(altAmount := 3, scrollAmount := 5) {
+        SetStoreCapsLockMode(true)
         if !this.__checkTimeline()
 			return
         origMouse := obj.MousePos()
         withinTimeline := this.__checkCoords(origMouse)
-        SetStoreCapsLockMode(true)
         if GetKeyState("SC03A", "P") && withinTimeline = true
             return
         if !withinTimeline
@@ -1978,6 +1978,7 @@ class Prem {
      * A function designed to allow you to quickly adjust the size of the layer the cursor is within. <kbd>LAlt</kbd> **MUST** be one of the activation hotkeys and is required to be held down for the duration of this function.
      */
     static layerSizeAdjust() {
+        SetStoreCapsLockMode(true)
         if !this.__checkTimeline()
 			return
         storeHotkey := A_ThisHotkey
@@ -1991,8 +1992,10 @@ class Prem {
         blocker.Off()
         block.On()
         coord.client()
-        SetStoreCapsLockMode(true)
         origMouseCords := obj.MousePos()
+        withinTimeline := this.__checkCoords(origMouseCords)
+        if withinTimeline != true
+            return
         MouseMove(this.timelineRawX+10, origMouseCords.y, 2)
         KeyWait("LAlt", "L")
         MouseMove(origMouseCords.x, origMouseCords.y)
