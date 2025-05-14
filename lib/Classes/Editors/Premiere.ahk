@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/05/14
- * @version 2.2.9
+ * @version 2.2.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2016,6 +2016,7 @@ class Prem {
      * I'd like to remake this function at some point to ease these issues, amongst others, but that will take time.
      */
     static layerSizeAdjust(capsLockDisable := true) {
+        SetDefaultMouseSpeed(0)
         SetStoreCapsLockMode(true)
         InstallKeybdHook(true, true)
         capslockState := GetKeyState("CapsLock", "T")
@@ -2046,7 +2047,11 @@ class Prem {
 
         MouseMove(this.timelineRawX+10, topDivY+4, 2)
         KeyWait("LAlt", "L")
-        MouseMove(origMouseCords.x, topDivY+4)
+        if !checkAgain := this.__layerTopBottom({x:0, y: topDivY+4}, false)
+            MouseMove(origMouseCords.x, topDivY+4)
+        else
+            MouseMove(origMouseCords.x, (checkAgain.topY+checkAgain.botY)/2)
+
         checkStuck(["LAlt", "CapsLock"])
         if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
             SetCapsLockState('AlwaysOff')
