@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/05/13
- * @version 1.6.5
+ * @date 2025/05/14
+ * @version 1.6.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -155,20 +155,20 @@ class discord {
 
         switch which {
             case "servers":
-                getServerName := (headerText = true || !InStr(currentTitle, "|") && SubStr(currentTitle, 1, 1) = "@") ? "Direct Messages" : SubStr(currentTitle, start := InStr(currentTitle, "|", , -1) + 1, StrLen(currentTitle) - (start + 9))
-                activeServer := DiscordEl.FindElement({LocalizedType: "tree item", Name: getServerName, matchmode:"Substring"})
+                getServerName := (headerText = true || !InStr(currentTitle, "|") && SubStr(currentTitle, 1, 1) = "@") ? "Direct Messages" : SubStr(currentTitle, start := InStr(currentTitle, "|", , -1) + 2, StrLen(currentTitle) - (start + 9))
+                activeServer := DiscordEl.FindElement({Type:"TreeItem", LocalizedType: "tree item", Name: getServerName, matchmode:"Substring"})
                 findFirstGrey := __findGrey(xpos, ypos, true)
                 if !findFirstGrey
                     return
-                serverY := (getServerName = "Direct Messages") ? activeServer.location.y + 3 : activeServer.location.y + 1
+                serverY := (getServerName = "Direct Messages") ? activeServer.location.y + 1 : activeServer.location.y + 1
                 if findFirstGrey.y != serverY {
                     __findGrey(xpos, ypos)
-                    try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}).ControlClick()
+                    try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}, 2000).ControlClick()
                     return
                 }
                 ypos := activeServer.location.y + activeServer.location.h + 2
                 __findGrey(xpos, ypos, height)
-                try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}).ControlClick()
+                try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}, 2000).ControlClick()
                 return
             case "channels":
                 if headerText = true {
@@ -178,7 +178,7 @@ class discord {
                 getLoc := DiscordEl.FindElement({LocalizedType: "group", AutomationId: "channels"})
 
                 __findGrey(getLoc.location.x, getLoc.location.y, getLoc.location.h)
-                try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}).ControlClick()
+                try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}, 2000).ControlClick()
                 return
         }
     }

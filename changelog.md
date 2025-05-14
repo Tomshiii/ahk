@@ -5,10 +5,9 @@
 
 ## Functions
 - ✅ Fixed `premUIA_Values {` still attempting to set UIA values even if another window is obstructing its ability to do so
-- ✅ Fixed `discord.button()` throwing if it can't find the `reply` button
 - ✏️ Added `switchTo.Path()` to change the desired windows explorer tab to a new `path`
 - 📋 `obj.MousePos()` now additionally returns the `control` the cursor is hovering over
-- 📋 `settingsGUI()` Now only alerts the user that settings are being saved if the user actually changed something
+- 📋 `settingsGUI()` will now only alert the user that settings are being saved if the user actually changed something
 
 ⚠️ `prem {`
 - ✏️ Added `setScale()`
@@ -51,6 +50,10 @@
 ⚠️ `winGet {`
 - ✅ Fixed `ProjPath()` throwing when Premiere is open but a project hasn't been opened yet
 - ✏️ Added `getActiveExplorerTab()`
+
+⚠️ `discord {`
+- ✅ Fixed `button()` throwing if it can't find the `reply` button
+- ✅ Fixed `Unread("servers")` failing and throwing in the process
 
 ⚠️ `slack {`
 - 📍 `button()`
