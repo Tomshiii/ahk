@@ -27,16 +27,17 @@
 
 📍 `wheelEditPoint()`
 - 📋 Now uses `block_ext {` to block all keys except the activation keys
-- 📋 Now accepts parameter `activationKeys` to pass through the user's activation keys so they aren't blocked  
+- 📋 Now accepts parameter `activationKeys` to pass through the user's activation keys so they aren't blocked
 
 📍 `numpadGain()`
+- ✅ Fixed function inexplicably failing if the `Effect Controls` window was active
 - 📋 Will now inform the user if it times out
-- 📋 Can now be cancelled by pressing <kbd>Escape</kbd>  
+- 📋 Can now be cancelled by pressing <kbd>Escape</kbd>
 
 📍 `dismissWarning()`
 - ✅ Fixed function firing when Premiere isn't the active window
 - ✅ Fixed function randomly moving to the program monitor while attempting to `Ripple/Rolling Edit` using `Ctrl/Alt` in premiere v25.3
-- 📋 Now accepts parameters `waitWinClose` & `window`  
+- 📋 Now accepts parameters `waitWinClose` & `window`
     - `waitWinClose` defaults to `true` and will cause the function to wait `5s` to ensure the error message closes to hopefully stop instances where it can get stuck in a loop
 
 ⚠️ `rbuttonPrem {`

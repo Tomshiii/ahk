@@ -5,7 +5,7 @@
  * @premVer 25.0
  * @author tomshi
  * @date 2025/05/14
- * @version 2.2.10
+ * @version 2.2.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -993,6 +993,11 @@ class Prem {
                         return
                     }
                     needsTimelineFocus := true
+                case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && createEl.activeElement == premUIA.programMon:
+                    star_ih.Stop()
+                    SendInput(sendOnFail star_ih.Input)
+                    return
+                case (currTimelineStatus != true): needsTimelineFocus := true
                 default:
                     star_ih.Stop()
                     SendInput(sendOnFail star_ih.Input)
