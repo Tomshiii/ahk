@@ -6,6 +6,7 @@
 ## Functions
 - ✅ Fixed `premUIA_Values {` still attempting to set UIA values even if another window is obstructing its ability to do so
 - ✏️ Added `switchTo.Path()` to change the desired windows explorer tab to a new `path`
+- ✏️ Added `isURL()`
 - 📋 `obj.MousePos()` now additionally returns the `control` the cursor is hovering over
 - 📋 `settingsGUI()` will now only alert the user that settings are being saved if the user actually changed something
 
@@ -68,3 +69,4 @@
     <img src="https://github.com/user-attachments/assets/875278e5-f478-4a21-98a2-2d0615c948a1" width="275"/>
 - 📋 Renamed `move 1sec.ahk` => `move playhead 1sec.ahk`
     - ✏️ Added `move 1sec.ahk`
+- 📋 `multi-dl` will now prefill URL if it determines one in the user's clipboard

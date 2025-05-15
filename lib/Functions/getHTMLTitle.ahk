@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <Classes\errorLog>
 #Include <Functions\getHTML>
+#Include <Functions\isURL>
 ; }
 
 /**
@@ -9,11 +10,10 @@
  * @param {Boolean} sanitise Whether you want the returned title to be stripped of illegal filename chars.
  * @param {String} replace What you want the chars to be replaced with
  * @param {Variadic} params If you wish to specify exactly what gets replaced, fill out any remaining paramaters. If any of these variables are set, `replace` acts as the FIRST replacement - the "first" `params` replacement will be the second replacement, etc. If you do not fill enough paramaters the function will default back to the value of `replace`.
- * @returns {String} the final title
+ * @returns {String/Boolean} boolean `false` on failure or the final title
  */
 getHTMLTitle(url, sanitise := true, replace := "_", params*) {
-    ;// checking to ensure a url was passed - found here: https://www.autohotkey.com/boards/viewtopic.php?style=17&t=101579
-    if !RegExMatch(url, "^(https?://)?[\w/?=%.-]+\.[\w/&?=%.-]+$")
+    if !isURL(url)
         return false
     var := getHTML(url)
     document := ComObject("HTMLfile")

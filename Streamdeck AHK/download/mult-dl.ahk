@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/04/19
+ * @date 2025/05/15
  ***********************************************************************/
-global currentVer := "1.1.2"
+global currentVer := "1.1.3"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -15,6 +15,7 @@ A_ScriptName := "multi-dl"
 #Include <Classes\ytdlp>
 #Include <GUIs\tomshiBasic>
 #Include <Functions\getLocalVer>
+#Include <Functions\isURL>
 
 try {
     if !A_IsCompiled && FileExist(ptf.Icons "\myscript.ico")
@@ -60,10 +61,12 @@ class multiDL extends tomshiBasic {
 
         this.tabs := this.AddTab3("+Theme -Background x9 y50", ["Single", "Multi", "Part"])
 
+        checkClipboard := isURL(A_Clipboard) ? A_Clipboard : ""
+
         ;// single
         ;// ================================================================
         this.AddText("Section x25 y85", "Paste URL: ")
-        this.AddEdit("x+5 y+-20 r1 vsingleURL w220 -Wrap", "")
+        this.AddEdit("x+5 y+-20 r1 vsingleURL w220 -Wrap", checkClipboard)
         this.AddButton("vDL_single xs", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise_single", " Avoid reencode`n (may result in lower quality)")
         this["DL_single"].GetPos(&x, &y, &wid, &height)
@@ -85,7 +88,7 @@ class multiDL extends tomshiBasic {
         ;// ================================================================
         this.tabs.UseTab("Part")
         this.AddText("Section x25 y85", "Paste URL: ")
-        this.AddEdit("x+5 y+-20 r1 vpartURL w220 -Wrap", "")
+        this.AddEdit("x+5 y+-20 r1 vpartURL w220 -Wrap", checkClipboard)
         this.AddText("xs Wrap w280", "Please provide the timecode that all content you wish to download sits within.")
 
         loop 2 {
