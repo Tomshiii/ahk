@@ -16,6 +16,7 @@
 - 📋 `__remoteFunc()` will now return boolean `true`/`false` instead of a string
 - 📋 `zoomPreviewWindow()` now accepts parameter `zoomToFit` and internally handles versions of Premiere >=25.2 having a global hotkey to set the window to `fit`. (it ends logic early if the user's premiere version is set to >=25.2)
 - 📋 `escFxMenu()` now closes the `Excalibur` window
+- 📋 `anchorToPosition()` will no longer begin if the user isn't within a text field
 
 📍 `layerSizeAdjust()`
 - ✅ Fixed function causing zooming on the timeline if <kbd>LAlt</kbd> was held but the incorrect second activation key was pressed before holding the correct one

@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/05/14
- * @version 2.2.11
+ * @date 2025/05/15
+ * @version 2.2.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1719,17 +1719,27 @@ class Prem {
 
     /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
     static anchorToPosition() {
+        ;// check to see if the user is in a text field
+        if !CaretGetPos(&carx, &cary) {
+            tool.Cust("The user is not currently within a text field")
+            return
+        }
         clipb := clip.clear()
         if !clip.copyWait(clipb.storedClip)
             return
+        blocker := block_ext()
+        blocker.On()
         anch1 := A_Clipboard
         clip.clear()
         SendEvent("{Tab}")
-        if !clip.copyWait(clipb.storedClip)
+        if !clip.copyWait(clipb.storedClip) {
+            blocker.Off()
             return
+        }
         anch2 := A_Clipboard
         delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
         clip.delayReturn(clipb.storedClip)
+        blocker.Off()
     }
 
     /**
