@@ -38,6 +38,16 @@ export class Utils {
       currentSequence.setPlayerPosition(String(newPlayhead));
     }
 
+    static toggleLinearColour() {
+      const currentSequence = app.project.activeSequence;
+      var currSettings = currentSequence.getSettings();
+      currSettings.compositeLinearColor = !currSettings.compositeLinearColor;
+      var setNewVal = currentSequence.setSettings(currSettings);
+      if(setNewVal = false)
+        return "failure"
+      return currSettings.compositeLinearColor
+    }
+
     static moveClip(seconds: number) {
       const currentSequence = app.project.activeSequence;
       const selection = currentSequence.getSelection();

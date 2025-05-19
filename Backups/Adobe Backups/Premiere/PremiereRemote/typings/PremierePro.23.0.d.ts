@@ -423,7 +423,7 @@ declare class Sequence {
 	 * Specifies the sequence settings to use.
 	 * @param newSettings New settings
 	 */
-	setSettings(newSettings): void
+	setSettings(newSettings): Boolean
 
 	/**
 	 *  @returns true if effect analysis is complete

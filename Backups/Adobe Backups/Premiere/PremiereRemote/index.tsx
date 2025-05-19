@@ -106,19 +106,23 @@ export const host = {
   },
 
   setZeroPoint: function(tick: string) {
-    app.project.activeSequence.setZeroPoint(tick)
+    app.project.activeSequence.setZeroPoint(tick);
   },
 
   movePlayhead: function(subtract: string, seconds: string) {
-    Utils.movePlayhead(subtract, parseInt(seconds))
+    Utils.movePlayhead(subtract, parseInt(seconds));
   },
 
   moveClip: function (seconds: string) {
-    Utils.moveClip(parseInt(seconds))
+    Utils.moveClip(parseInt(seconds));
   },
 
   isSelected: function () {
-    return Utils.isSelected()
+    return Utils.isSelected();
+  },
+
+  toggleLinearColour: function() {
+    Utils.toggleLinearColour();
   }
 };
 
