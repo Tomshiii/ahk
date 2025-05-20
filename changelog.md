@@ -58,9 +58,9 @@
 - ✅ Fixed `Unread("servers")` failing and throwing in the process
 
 ⚠️ `slack {`
-- 📍 `button()`
-    - ✅ Fixed function failing if attempting to be used in a reply thread
-    - 📋 Now accepts parameter `replyInThread` to determine if `reply` will also enable the `Also send to...` checkbox when replying in a thread
+📍 `button()`
+- ✅ Fixed function failing if attempting to be used in a reply thread
+- 📋 Now accepts parameter `replyInThread` to determine if `reply` will also enable the `Also send to...` checkbox when replying in a thread
 
 ## Other Changes
 - ✅ Fixed an issue causing `WinEvent` to throw across all scripts when reloaded

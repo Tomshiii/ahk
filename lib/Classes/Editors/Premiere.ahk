@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/05/15
- * @version 2.2.12
+ * @date 2025/05/20
+ * @version 2.2.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2027,8 +2027,7 @@ class Prem {
 
     /**
      * A function designed to allow you to quickly adjust the size of the layer the cursor is within. <kbd>LAlt</kbd> **MUST** be one of the activation hotkeys and is required to be held down for the duration of this function.
-     * @param {Boolean} [capsLockDisable=true] (if the user does *NOT* use <kbd>CapsLock</kbd> to activate this function, they should set this value to `false`) because of the way this script is currently designed (terribly), it is getting activated more than once, which can sometimes cause <kbd>CapsLock</kbd> to leak back into being enabled, even if it was originally set to `AlwaysOff`. If this param is set to `true` it will be reset back to `AlwaysOff` at the end of the function.
-     * I'd like to remake this function at some point to ease these issues, amongst others, but that will take time.
+     * @param {Boolean} [capsLockDisable=true] (if the user does *NOT* use <kbd>CapsLock</kbd> to activate this function, they should set this value to `false`) because I use capslock as the activation key (and also have it set to "AlwaysOff"), ahk is a bit quirky and will sometimes just not reset that even if I use `SetStoreCapsLockMode(true)` - so setting this parameter to `true` will cause the function to manually call `SetCapsLockState('AlwaysOff')` at the end of its logic
      */
     static layerSizeAdjust(capsLockDisable := true) {
         SetDefaultMouseSpeed(0)
@@ -2049,8 +2048,10 @@ class Prem {
         coord.client()
         origMouseCords := obj.MousePos()
         withinTimeline := this.__checkCoords(origMouseCords)
-        if withinTimeline != true
+        if withinTimeline != true {
+            blocker.Off()
             return
+        }
 
         if !this.__layerDividerCheck(origMouseCords) || !this.__layerTopBottom(origMouseCords, false,, &topDivY) {
             blocker.Off()
