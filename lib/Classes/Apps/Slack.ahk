@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/04/30
- * @version 1.1.4
+ * @date 2025/05/21
+ * @version 1.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -101,8 +101,13 @@ class Slack {
                 return
             }
             ;// otherwise we just search for the button
-            try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
-            if replyInThread = true && button = "Reply in thread" {
+            if button = "Reply in thread" {
+                try check := uiaObj.WaitElement({LocalizedType: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}, 1500).ControlClick()
+            } else {
+                uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
+                return
+            }
+            if IsSet(check) && replyInThread = true {
                 uiaObj.WaitElement({LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}, 2000)
                 try uiaObj.WaitElement({AutomationId:"p-thread_footer__broadcast_checkbox", matchmode: "Substring"}, 2000).ControlClick()
             }

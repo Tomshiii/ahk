@@ -60,6 +60,7 @@
 ⚠️ `slack {`
 📍 `button()`
 - ✅ Fixed function failing if attempting to be used in a reply thread
+- ✅ Fixed function failing to continue if the message already had a reply, or was a part of a thread
 - 📋 Now accepts parameter `replyInThread` to determine if `reply` will also enable the `Also send to...` checkbox when replying in a thread
 
 ## Other Changes
