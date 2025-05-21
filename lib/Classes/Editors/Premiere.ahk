@@ -2119,7 +2119,8 @@ class Prem {
             ;// versions greater than or equal to 25.2
             case (VerCompare(ptf.premIMGver, "v25.2") >= 0):
                 switch {
-                    case (diff <= 54): MouseMove(this.timelineRawX+this.layer%which%, topDivY+6, 1)
+                    case (diff <= 35): MouseMove(this.timelineRawX+this.layer%which%, topDivY+6, 1)
+                    case (diff > 35 && diff <= 54): MouseMove(this.timelineRawX+this.layer%which%, topDivY+15, 1)
                     case (diff > 54 && diff < 77): MouseMove(this.timelineRawX+this.layer%which%, topDivY+((diff/2)-doMinusSmall), 1)
                     case (diff >= 77): MouseMove(this.timelineRawX+this.layer%which%, topDivY+((diff/2)-doMinus), 1)
                 }

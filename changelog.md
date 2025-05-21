@@ -14,6 +14,7 @@
 - ✏️ Added `setScale()`
 - ✏️ Added `rippleCut()`
 - ✅ Fixed `save()` not actually getting a return value for the current sequence
+- ✅ Fixed `toggleLayerButtons()` missing the `Mute`/`Solo` buttons at some track heights
 - 📋 `__remoteFunc()` will now return boolean `true`/`false` instead of a string
 - 📋 `zoomPreviewWindow()` now accepts parameter `zoomToFit` and internally handles versions of Premiere >=25.2 having a global hotkey to set the window to `fit`. (it ends logic early if the user's premiere version is set to >=25.2)
 - 📋 `escFxMenu()` now closes the `Excalibur` window
@@ -58,9 +59,10 @@
 - ✅ Fixed `Unread("servers")` failing and throwing in the process
 
 ⚠️ `slack {`
+
 📍 `button()`
 - ✅ Fixed function failing if attempting to be used in a reply thread
-- ✅ Fixed function failing to continue if the message already had a reply, or was a part of a thread
+- ✅ Fixed `button("reply")` failing to continue if the message already had a reply, or was a part of a thread
 - 📋 Now accepts parameter `replyInThread` to determine if `reply` will also enable the `Also send to...` checkbox when replying in a thread
 
 ## Other Changes
@@ -68,7 +70,7 @@
 - ✏️ Added `toggleLinearColour.ahk`
 - ✏️ Added a submodule for a [fork](https://github.com/Tomshiii/ThioJoe-AHK-Scripts) of [`ThioJoe's`](https://github.com/ThioJoe/) [AHK Scripts](https://github.com/ThioJoe/ThioJoe-AHK-Scripts/tree/main) repo
     - This brings [my own modified](https://github.com/Tomshiii/ahk/wiki/ExplorerDialogPathSelector.ahk) `MButton` functionality to windows explorer windows. Mainly focused around navigating a Premiere Project. *(this functionality expects you to use my project folder layout)*  
-    <img src="https://github.com/user-attachments/assets/875278e5-f478-4a21-98a2-2d0615c948a1" width="275"/>
+    <img src="https://github.com/user-attachments/assets/a5c2ae63-9b39-4284-b73e-3fa8bba5bf41" width="275"/>
 - 📋 Renamed `move 1sec.ahk` => `move playhead 1sec.ahk`
     - ✏️ Added `move 1sec.ahk`
 - 📋 `multi-dl` will now prefill URL if it determines one in the user's clipboard
