@@ -48,14 +48,15 @@ export class Utils {
       return currSettings.compositeLinearColor
     }
 
-    static moveClip(seconds: number) {
+    // using this function breaks audio tracks & transitions (likely due to transition changes in the spectrum UI)
+    /* static moveClip(seconds: number) {
       const currentSequence = app.project.activeSequence;
       const selection = currentSequence.getSelection();
 
       for (let i = 0; i < selection.length; i++) {
         selection[i].move(seconds);
       }
-    }
+    } */
 
     static getVideoClip(trackIndex: number, clipIndex: number) {
       const currentSequence = app.project.activeSequence;
