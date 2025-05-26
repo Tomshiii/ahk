@@ -1,4 +1,4 @@
-# <> Release 2.15.x - 
+# <> Release 2.15.6 - Features & Stability
 
 > [!Caution]
 > If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated.

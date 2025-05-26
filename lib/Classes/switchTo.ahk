@@ -712,7 +712,9 @@ class switchTo {
     }
 
     /**
-    *
+    * A function to nagivate the desired explorer window to the desired path
+    * @param {String} [FullPath] the full path you wish to navigate to
+    * @param {String/Integer} [hwnd=""] the hwnd of the window you wish to operate on. Defaults to the active window
     * @link https://www.autohotkey.com/boards/viewtopic.php?style=19&t=526&start=60
     */
     static Path(FullPath, hwnd :="") {
