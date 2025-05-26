@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/05/05
- * @version 1.3.18
+ * @date 2025/05/26
+ * @version 1.3.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -345,6 +345,7 @@ class switchTo {
      * This function opens the current `Premiere Pro`/`After Effects` project filepath in windows explorer. If prem/ae isn't open it will attempt to open the `ptf.comms` folder.
      * Double pressing the activation hotkey for this function will instead copy the project path to the user's clipboard
      * @param {String} optionalPath allows the user to navigate to a directory beyond (or before) where the project file is located. See example #1 for more.
+     * @param {Boolean} [switchCurrentWindow=true] determines whether to change the current active window to the desired path, or whether to always open a new window
      * @returns {Boolean} `true/false` whether the function succeeded or failed
      * ```
      * ;// will open the folder before where the project file is located
@@ -354,7 +355,7 @@ class switchTo {
      * switchTo.adobeProject("\videos")
      * ```
      */
-    static adobeProject(optionalPath := "") {
+    static adobeProject(optionalPath := "", switchCurrentWindow := true) {
         this.adobeProjCount++
         ;// gives the user time to double press
         SetTimer(__action, -200)
@@ -422,7 +423,10 @@ class switchTo {
                 }
             }
             ;// run the path
-            RunWait(path.dir)
+            if (WinActive("ahk_exe explorer.exe") && switchCurrentWindow = true)
+                switchTo.Path(path.Dir)
+            else
+                RunWait(path.dir)
             if !WinWait(getFolderName " ahk_class CabinetWClass",, 2, "Adobe") {
                 tool.Cust("Waiting for project directory to open timed out")
                 return false
