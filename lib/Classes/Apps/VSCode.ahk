@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2025/03/22
- * @version 1.2.3.8
+ * @date 2025/06/03
+ * @version 1.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -128,6 +128,7 @@ class VSCode {
                 if StrCompare(A_Clipboard, "", 1)
                     amount := "2"
                 SendInput("{BackSpace " amount "}")
+                A_Clipboard := ""
                 A_Clipboard := orig ;restore the original clipboard - don't really know if this line makes a difference really
                 A_Clipboard := store ;add the cut content to the clipboard
                 return
@@ -144,6 +145,7 @@ class VSCode {
         if !ClipWait(0.1)
             {
                 this().__getLine(&store)
+                A_Clipboard := ""
                 A_Clipboard := orig ;restore the original clipboard - don't really know if this line makes a difference really
                 A_Clipboard := store ;add the cut content to the clipboard
                 tool.Cust("Current line copied to clipboard")

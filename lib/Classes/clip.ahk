@@ -1,12 +1,13 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard or interact with highlighted text
  * @author tomshi
- * @date 2024/10/13
- * @version 1.0.8
+ * @date 2025/06/03
+ * @version 1.0.9
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\errorLog>
+#Include <Classes\block>
 ; }
 
 class clip {
@@ -61,14 +62,19 @@ class clip {
      * This function returns the clipboard to the stored variable on a delay
      * @param {Var} returnClip is the variable you're storing the clipboard in.
      * @param {Integer} delay the delay in `ms` you want the function to wait before returning the clipboard
+     * @param {Boolean} [clearClipboard=true] determines whether to clear the clipboard before attempting to return its value
      */
-    static delayReturn(returnClip, delay := 1000) => SetTimer(() => this.returnClip(returnClip), -delay)
+    static delayReturn(returnClip, delay := 1000, clearClipboard := true) => SetTimer(() => this.returnClip(returnClip, clearClipboard), -delay)
 
     /**
      * This function returns the clipboard to the stored variable
      * @param {Var/Object} returnClip is the variable/object you're storing the clipboard in. If this parameter is an object it MUST have a parameter `clipObj.storedClip`
+     * @param {Boolean} [clearClipboard=true] determines whether to clear the clipboard before attempting to return its value
      */
-    static returnClip(returnClip) {
+    static returnClip(returnClip, clearClipboard := true) {
+        if clearClipboard = true {
+            A_Clipboard := ""
+        }
         if !IsObject(returnClip) {
             A_Clipboard := returnClip
             return

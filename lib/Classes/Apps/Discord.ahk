@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/05/14
- * @version 1.6.6
+ * @date 2025/06/03
+ * @version 1.6.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -102,9 +102,9 @@ class discord {
                     return
                 }
                 try findReply.ControlClick()
-            case "edit": DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-edit"}, 1500).ControlClick()
-            case "react": DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-add-reaction"}, 1500).ControlClick()
-            case "report": DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-report"}, 1500).ControlClick()
+            case "edit": try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-edit"}, 1500).ControlClick()
+            case "react": try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-add-reaction"}, 1500).ControlClick()
+            case "report": try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-report"}, 1500).ControlClick()
             case "delete":
                 shift := false
                 if (GetKeyState("Shift", "P")) {

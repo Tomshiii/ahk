@@ -15,12 +15,11 @@ SC03A & d::discord.button("delete") ;delete the message you're hovering over. Al
 
 
 ;discitalicHotkey;
-/* *::discord.surround("*")
+*::discord.surround("*")
 ;discBacktickHotkey;
 `::discord.surround("``")
 ;discParenthHotkey;
 (::discord.surround("()")
- */
 
 ;discserverHotkey;
 F1::discord.Unread("servers") ;will click any unread servers
