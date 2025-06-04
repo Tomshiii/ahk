@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/05/20
- * @version 2.2.13
+ * @date 2025/06/04
+ * @version 2.2.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2061,7 +2061,7 @@ class Prem {
         blocker.Off()
         block.On()
 
-        MouseMove(this.timelineRawX+10, topDivY+4, 2)
+        MouseMove(this.timelineRawX+10, topDivY+4)
         KeyWait("LAlt", "L")
         if !checkAgain := this.__layerTopBottom({x:0, y: topDivY+4}, false)
             MouseMove(origMouseCords.x, topDivY+4)
