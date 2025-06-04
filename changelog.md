@@ -2,6 +2,7 @@
 
 ## Functions
 - ✅ Fixed `disc.button("edit")` throwing if the user hovers over a message that isn't theirs
+- ✅ Fixed `prem.layerSizeAdjust()` not initially moving the mouse instantly
 - ✏️ Added `FormatWeekRange()`
 - ✏️ Added `getDaySuffix()`
 - 📋 `clip.returnClip()` & `clip.delayReturn()` now accept parameter `clearClipboard` to determine whether the clipboard should initially be cleared before attempting to return the stored clipboard. Defaults to `true`
