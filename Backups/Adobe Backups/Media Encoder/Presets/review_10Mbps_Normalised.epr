@@ -9,7 +9,7 @@
 	<ExporterFileType>1212503619</ExporterFileType>
 	<ExportParamContainer ObjectRef="1"/>
 	<CaptionParamContainer ObjectRef="278"/>
-	<PresetID>47772a80-4dba-47bf-af14-6a6a8570fa58</PresetID>
+	<PresetID>34a09162-5783-469e-a5a6-7936e5680e0d</PresetID>
 	<DoAudio>true</DoAudio>
 	<DoVideo>true</DoVideo>
 	<FolderDisplayPath></FolderDisplayPath>
@@ -872,7 +872,7 @@
 		<ParamType>3</ParamType>
 		<ParamOrdinalValue>3</ParamOrdinalValue>
 		<ParamMinValue>0.192000000000000003996803</ParamMinValue>
-		<ParamMaxValue>40.</ParamMaxValue>
+		<ParamMaxValue>20.</ParamMaxValue>
 		<ParamIsSlider>true</ParamIsSlider>
 		<ParamIdentifier>ADBEVideoTargetBitrate</ParamIdentifier>
 	</ExporterParam>
@@ -881,7 +881,7 @@
 		<ParamType>3</ParamType>
 		<ParamOrdinalValue>4</ParamOrdinalValue>
 		<ParamMinValue>0.192000000000000003996803</ParamMinValue>
-		<ParamMaxValue>40.</ParamMaxValue>
+		<ParamMaxValue>20.</ParamMaxValue>
 		<ParamIsSlider>true</ParamIsSlider>
 		<ParamIsHidden>true</ParamIsHidden>
 		<ParamIdentifier>ADBEVideoMaxBitrate</ParamIdentifier>
@@ -1009,10 +1009,10 @@
 		<FilterItem Index="9" ObjectRef="277"/>
 	</StandardFilterContainer>
 	<StandardFilterWrapperColorSpaceTransform ObjectID="136" ClassID="1631c0b1-163d-4fb8-a3c2-f179d431cdbb" Version="1">
+		<UiInstance>0</UiInstance>
 		<GamutCompressionMethod>0</GamutCompressionMethod>
 		<ToneMappingMethod>0</ToneMappingMethod>
 		<BaseStorageVersion>1</BaseStorageVersion>
-		<UiInstance>0</UiInstance>
 		<Enabled>false</Enabled>
 		<ToneMappingGain>1.</ToneMappingGain>
 		<ToneMappingDesaturation>1.</ToneMappingDesaturation>
@@ -1020,8 +1020,8 @@
 	</StandardFilterWrapperColorSpaceTransform>
 	<StandardFilterWrapperLumetri ObjectID="137" ClassID="a3da719f-5b68-4fbe-af95-d0c3e0127e5e" Version="1">
 		<LoadedEffectName></LoadedEffectName>
-		<BaseStorageVersion>1</BaseStorageVersion>
 		<UiInstance>0</UiInstance>
+		<BaseStorageVersion>1</BaseStorageVersion>
 		<FilterPreset ObjectRef="138"/>
 		<Enabled>false</Enabled>
 	</StandardFilterWrapperLumetri>
@@ -3237,94 +3237,100 @@
 		<Name>LookAsset</Name>
 	</ArbVideoComponentParam>
 	<StandardFilterWrapperSDRConform ObjectID="270" ClassID="1631c0b1-163d-4fb8-a3c2-f179d431cdba" Version="1">
-		<BaseStorageVersion>1</BaseStorageVersion>
 		<Contrast>0.</Contrast>
 		<SoftKnee>100.</SoftKnee>
 		<Brightness>10.</Brightness>
 		<UiInstance>0</UiInstance>
+		<BaseStorageVersion>1</BaseStorageVersion>
 		<Enabled>false</Enabled>
 	</StandardFilterWrapperSDRConform>
 	<StandardFilterWrapperOverlay ObjectID="271" ClassID="13830401-7ec6-45df-a2e1-d8f629e899b2" Version="1">
+		<AbsoluteSizing>false</AbsoluteSizing>
+		<Size>100.</Size>
 		<PositionY>0.</PositionY>
 		<PositionX>0.</PositionX>
 		<PositionIndex>4</PositionIndex>
 		<SourceFilePath></SourceFilePath>
+		<Opacity>100</Opacity>
+		<UiInstance>0</UiInstance>
 		<ReferencePixelAspectRatio>1.</ReferencePixelAspectRatio>
 		<ReferenceFrameHeight>0</ReferenceFrameHeight>
 		<ReferenceFrameWidth>0</ReferenceFrameWidth>
 		<PosSizeStorageVersion>1</PosSizeStorageVersion>
 		<BaseStorageVersion>1</BaseStorageVersion>
-		<AbsoluteSizing>false</AbsoluteSizing>
-		<Size>100.</Size>
-		<Opacity>100</Opacity>
-		<UiInstance>0</UiInstance>
 		<Enabled>false</Enabled>
 	</StandardFilterWrapperOverlay>
 	<StandardFilterWrapperAlphaAdjust ObjectID="272" ClassID="d3391303-f3a9-4932-a3b1-3a5fcb28dfb2" Version="1">
+		<UiInstance>0</UiInstance>
 		<AlphaAdjust_MaskOnly>false</AlphaAdjust_MaskOnly>
 		<AlphaAdjust_InvertAlpha>false</AlphaAdjust_InvertAlpha>
 		<AlphaAdjust_IgnoreAlpha>false</AlphaAdjust_IgnoreAlpha>
 		<AlphaAdjust_Opacity>100.</AlphaAdjust_Opacity>
 		<BaseStorageVersion>1</BaseStorageVersion>
-		<UiInstance>0</UiInstance>
 		<Enabled>false</Enabled>
 	</StandardFilterWrapperAlphaAdjust>
 	<StandardFilterWrapperClipName ObjectID="273" ClassID="2cf9288f-faea-4461-ad17-89705ab2b63a" Version="1">
+		<AbsoluteSizing>false</AbsoluteSizing>
+		<Size>15.</Size>
 		<PositionY>0.</PositionY>
 		<PositionX>0.</PositionX>
 		<PositionIndex>1</PositionIndex>
-		<ReferencePixelAspectRatio>1.</ReferencePixelAspectRatio>
-		<ReferenceFrameHeight>0</ReferenceFrameHeight>
-		<ReferenceFrameWidth>0</ReferenceFrameWidth>
-		<PosSizeStorageVersion>1</PosSizeStorageVersion>
-		<BaseStorageVersion>1</BaseStorageVersion>
-		<AbsoluteSizing>false</AbsoluteSizing>
-		<Size>15.</Size>
 		<Opacity>40</Opacity>
 		<Suffix></Suffix>
 		<TextType>1</TextType>
 		<Prefix></Prefix>
 		<UiInstance>0</UiInstance>
-		<Enabled>false</Enabled>
-	</StandardFilterWrapperClipName>
-	<StandardFilterWrapperTimecode ObjectID="274" ClassID="50810324-4cbd-4897-9eff-e328663a83c9" Version="1">
-		<Offset>0</Offset>
-		<PositionY>0.</PositionY>
-		<PositionX>0.</PositionX>
-		<PositionIndex>7</PositionIndex>
 		<ReferencePixelAspectRatio>1.</ReferencePixelAspectRatio>
 		<ReferenceFrameHeight>0</ReferenceFrameHeight>
 		<ReferenceFrameWidth>0</ReferenceFrameWidth>
 		<PosSizeStorageVersion>1</PosSizeStorageVersion>
 		<BaseStorageVersion>1</BaseStorageVersion>
+		<Enabled>false</Enabled>
+	</StandardFilterWrapperClipName>
+	<StandardFilterWrapperTimecode ObjectID="274" ClassID="50810324-4cbd-4897-9eff-e328663a83c9" Version="1">
+		<Offset>0</Offset>
 		<GenerateTimecode>0</GenerateTimecode>
 		<GenerateFormat>2</GenerateFormat>
 		<SourceTypeIndex>0</SourceTypeIndex>
 		<ParameterOpacity>40</ParameterOpacity>
 		<AbsoluteSizing>false</AbsoluteSizing>
 		<Size>15.</Size>
+		<PositionY>0.</PositionY>
+		<PositionX>0.</PositionX>
+		<PositionIndex>7</PositionIndex>
 		<UiInstance>0</UiInstance>
+		<ReferencePixelAspectRatio>1.</ReferencePixelAspectRatio>
+		<ReferenceFrameHeight>0</ReferenceFrameHeight>
+		<ReferenceFrameWidth>0</ReferenceFrameWidth>
+		<PosSizeStorageVersion>1</PosSizeStorageVersion>
+		<BaseStorageVersion>1</BaseStorageVersion>
 		<Enabled>false</Enabled>
 	</StandardFilterWrapperTimecode>
 	<StandardFilterWrapperTimeCarving ObjectID="275" ClassID="b468411d-5d5a-4900-ad11-cd34ab0622f9" Version="2">
-		<BaseStorageVersion>1</BaseStorageVersion>
 		<SkipSlates>false</SkipSlates>
 		<Mode>1</Mode>
-		<TargetDuration>14109756787526400</TargetDuration>
+		<TargetDuration>19349948217600</TargetDuration>
 		<CarveRatio>1.</CarveRatio>
 		<UiInstance>0</UiInstance>
+		<BaseStorageVersion>1</BaseStorageVersion>
 		<Enabled>false</Enabled>
 	</StandardFilterWrapperTimeCarving>
 	<StandardFilterWrapperVideoLimiter ObjectID="276" ClassID="767863e8-287f-4df8-b8fc-88af92dc789d" Version="2">
+		<ClipLevel>1</ClipLevel>
+		<UiInstance>0</UiInstance>
 		<GamutWarningColor>0</GamutWarningColor>
 		<EnableGamutWarning>false</EnableGamutWarning>
 		<CompressionBeforeClippingOption>0</CompressionBeforeClippingOption>
 		<BaseStorageVersion>1</BaseStorageVersion>
-		<ClipLevel>1</ClipLevel>
-		<UiInstance>0</UiInstance>
 		<Enabled>false</Enabled>
 	</StandardFilterWrapperVideoLimiter>
 	<StandardFilterWrapperLoudnessNormalization ObjectID="277" ClassID="39b71d0a-9f22-4b23-9f61-5600f10e7047" Version="1">
+		<ReleaseTime>200.</ReleaseTime>
+		<LookAheadTime>12.</LookAheadTime>
+		<TruePeakLevel>-1.</TruePeakLevel>
+		<TargetLoudness>-13.</TargetLoudness>
+		<LoudnessStandard>2</LoudnessStandard>
+		<UiInstance>0</UiInstance>
 		<LoudnessChannelGrouping Encoding="base64" Checksum="4018651919">eyJjdXN0b21EYXRhIjp7InVzZVNjZW5hcmlvIjoyfSwibUFsbG93ZWRDaGFubmVsTGF5b3V0VmVjdG9yIjpbW3siY2hhbm5lbGxhYmVsIjowfV0sW3siY2hhbm5lbGxhYmVsIjoxMDB9LHsiY2hhbm5lbGxhYmVsIjoxMDF9XSxbeyJjaGFubmVsbGFiZWwiOjEwMH0seyJjaGFubmVsbGFiZWwiOjEwMX0seyJjaGFubmVsbGFiZWwiOjEwMn0seyJjaGFubmVsbGFiZWwiOjEwM30seyJjaGFubmVsbGFiZWwiOjEwNH0seyJjaGFubmVsbGFiZWwiOjEwNX1dXSwibUNoYW5uZWxMYXlvdXRWZWN0b3IiOltdLCJtTWF4TnVtQXVkaW9DaGFubmVscyI6MiwibU1heE51bUF1ZGlvQ2hhbm5lbHNQZXJTdHJlYW0iOjIsIm1NYXhOdW1BdWRpb1N0cmVhbXMiOjMyLCJtVmVyc2lvbiI6MX0=</LoudnessChannelGrouping>
 		<CustomLoudnessReportLocation></CustomLoudnessReportLocation>
 		<UseCustomLoudnessReportLocation>false</UseCustomLoudnessReportLocation>
@@ -3332,12 +3338,6 @@
 		<UseCustomTruePeakLimiterSettings>false</UseCustomTruePeakLimiterSettings>
 		<LoudnessTolerance>0.5</LoudnessTolerance>
 		<BaseStorageVersion>1</BaseStorageVersion>
-		<ReleaseTime>200.</ReleaseTime>
-		<LookAheadTime>12.</LookAheadTime>
-		<TruePeakLevel>-0.100000000000000005551115</TruePeakLevel>
-		<TargetLoudness>-13.</TargetLoudness>
-		<LoudnessStandard>2</LoudnessStandard>
-		<UiInstance>0</UiInstance>
 		<Enabled>true</Enabled>
 	</StandardFilterWrapperLoudnessNormalization>
 	<ExporterParamContainer ObjectID="278" ClassID="5c20a4a5-5e7c-4032-85b8-26ad4531fe7b" Version="1">

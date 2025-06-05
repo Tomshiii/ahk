@@ -4,7 +4,7 @@
 ; }
 
 ^+c::clip.search("", "chrome.exe")
-^+t::SendText(FormatWeekRange("S"))
+^+t::SendText(FormatWeekRange())
 ^+y::SendText(FormatWeekRange("M", 1))
 
 ^+d::
