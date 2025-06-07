@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/04/30
- * @version 2.0.16
+ * @date 2025/06/06
+ * @version 2.0.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -79,6 +79,7 @@ Class premUIA_Values {
         "tools",            ksa.toolsWindow,
         "project",          ksa.projectsWindow
     )
+    successCount := 0
 
     /**
      * This function turns the parsed json data into class variables so the user may call on them as an extension of the class object
@@ -186,12 +187,15 @@ Class premUIA_Values {
                 }
             }
             currentVers.%this.currentVer%.%currentPanel% := currentEl
+            this.successCount += 1
         }
         block.Off()
         this.allVals := currentVers
         this.__setClassVal()
         ; tool.Cust("This process may have no effect until all scripts are reloaded!", 3.0)
         Notify.Show(, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
+        if this.successCount != this.windowHotkeys.Count
+            Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
         if JSON.stringify(currentVers) == originalVers
             return
 

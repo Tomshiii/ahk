@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/06/04
- * @version 2.2.14
+ * @date 2025/06/07
+ * @version 2.2.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -121,6 +121,7 @@ class Prem {
     static layerEmpty   := 0x1D1D1D
     static layerDivider := 0x303030
     static toggleWaiting := false
+    static toggleableButtons := Mip("source", true, "target", true, "sync", true, "mute", true, "solo", true, "lock", true)
 
     __fxPanel() => (delaySI(16, KSA.effectControls, ksa.programMonitor, KSA.effectControls))
 
@@ -2012,14 +2013,17 @@ class Prem {
      * @param {Object} [coords] an object containing the `x`/`y` value of the current cursor coords
      * @param {Boolean} [searchMid=true] determine whether to search for the middle divider
      * @param {VarRef} [] x/y values of `top`/`bot`/`mid` in that order
+     * @param {Boolean} [showError=true] determine whether to show the `Notify {` error on failure. May be useful to disable this if systematically trying to determine all layer positions as it will show the error once it runs out of tracks
      * @returns {Boolean/Object} returns boolean `false` on failure or an object containing all coords on success
      */
-    static __layerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?) {
+    static __layerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, showError?) {
+        doNotify := IsSet(showError) && (showError=true || showError=false) ? showError : true
         topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineRawY, this.layerDivider)
         botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineYControl, this.layerDivider)
         mid := (searchMid = true) ? ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+15, this.timelineYControl,  "*2 " ptf.Premiere "divider.png") : true
-        if !topDiv || !botDiv || !mid {
-            Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+        if (!topDiv || !botDiv || !mid) {
+            if doNotify = true
+                Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
             return false
         }
         return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false}
@@ -2075,13 +2079,46 @@ class Prem {
     }
 
     /**
+     * Determines the coordinates for where a specified button will be
+     * @param {String} [button] the button you wish to search for. Accepted buttons are found within the `toggleableButtons` map at the top of the class
+     * @param {Integer} [topDivY] the top divider line for the layer you're operating on
+     * @param {Integer} [botDivY] the bottom divider line for the layer you're operating on
+     * @returns {Object} {x, y} returns the coordinates for the designated button
+     */
+    static __determineButtonPos(button, topDivY, botDivY) {
+            if !this.toggleableButtons.Has(button) {
+            ;// throw
+            errorLog(MethodError("Incorrect Value in Parameter #1", -1, button),,, true)
+            return
+        }
+            doMinusSmall := (button != "lock") ? "15" : "0"
+            doMinus := (button != "lock") ? "32" : "0"
+            diff := botDivY-topDivY
+            xpos := this.timelineRawX+this.layer%button%
+            ypos := 0
+            switch {
+                ;// versions less than 25.2
+                case (VerCompare(ptf.premIMGver, "v25.2") < 0) && (button != "lock" || diff <= 54): ypos := topDivY+7
+                case (VerCompare(ptf.premIMGver, "v25.2") < 0) && (button = "lock" && diff > 54):   ypos := topDivY+((diff/2)-doMinus)
+
+                ;// versions greater than or equal to 25.2
+                case (VerCompare(ptf.premIMGver, "v25.2") >= 0):
+                    switch {
+                        case (diff <= 35):              ypos := topDivY+6
+                        case (diff > 35 && diff <= 54): ypos := topDivY+15
+                        case (diff > 54 && diff < 77):  ypos := topDivY+((diff/2)-doMinusSmall)
+                        case (diff >= 77):              ypos := topDivY+((diff/2)-doMinus)
+                    }
+            }
+            return {x: xpos, y: ypos}
+        }
+
+    /**
      * A function to quickly toggle the state of various layer settings for the layer the cursor is within. This funtion uses offset values of the `timelineRawX` value and as such the use of `PremiereUIA` is required.
      * @param {String} [which="target"] defines the button you wish to toggle. Accepted options are; `source`, `target`, `sync`, `mute`, `solo`, `lock`
      */
     static toggleLayerButtons(which := "target") {
-        allowedParams := Mip("source", true, "target", true, "sync", true,
-            "mute", true, "solo", true, "lock", true)
-        if !allowedParams.Has(which) {
+        if !this.toggleableButtons.Has(which) {
             ;// throw
             errorLog(MethodError("Incorrect Value in Parameter #1", -1, which),,, true)
             return
@@ -2106,25 +2143,9 @@ class Prem {
             block.Off()
             return
         }
-
-        doMinusSmall := (which != "lock") ? "15" : "0"
-        doMinus := (which != "lock") ? "32" : "0"
         midDivY += 2
-        diff := botDivY-topDivY
-        switch {
-            ;// versions less than 25.2
-            case (VerCompare(ptf.premIMGver, "v25.2") < 0) && (which != "lock" || diff <= 54): MouseMove(this.timelineRawX+this.layer%which%, topDivY+7, 1)
-            case (VerCompare(ptf.premIMGver, "v25.2") < 0) && (which = "lock" && diff > 54): MouseMove(this.timelineRawX+this.layer%which%, topDivY+((diff/2)-doMinus), 1)
-
-            ;// versions greater than or equal to 25.2
-            case (VerCompare(ptf.premIMGver, "v25.2") >= 0):
-                switch {
-                    case (diff <= 35): MouseMove(this.timelineRawX+this.layer%which%, topDivY+6, 1)
-                    case (diff > 35 && diff <= 54): MouseMove(this.timelineRawX+this.layer%which%, topDivY+15, 1)
-                    case (diff > 54 && diff < 77): MouseMove(this.timelineRawX+this.layer%which%, topDivY+((diff/2)-doMinusSmall), 1)
-                    case (diff >= 77): MouseMove(this.timelineRawX+this.layer%which%, topDivY+((diff/2)-doMinus), 1)
-                }
-        }
+        getMovePos := this.__determineButtonPos(which, topDivY, botDivY)
+        MouseMove(getMovePos.x, getMovePos.y, 1)
 
         if which = "solo" {
             ;// check to see if the user is hovering over a video track
@@ -2164,6 +2185,117 @@ class Prem {
         if !this.__remoteFunc('isSelected', true)
             return
         this.__remoteFunc('setScale',, "scale=" String(scaleVal))
+    }
+
+    /**
+     * determines the coordinates of all buttons for all audio layers
+     * @returns {Map} returns a map of all coordinates for all buttons
+     * ```
+     * audioLayers := prem.__getAllAudioLayerButtonPos()
+     * ;// audioLayers[1]["solo"].x
+{ 1: {
+    "lock":{
+    "x":456,
+    "y":1047
+    },
+    "mute":{
+    "x":527,
+    "y":1047
+    },
+    "solo":{
+    "x":550,
+    "y":1047
+    },
+    "source":{
+    "x":424,
+    "y":1047
+    },
+    "sync":{
+    "x":504,
+    "y":1047
+    },
+    "target":{
+    "x":479,
+    "y":1047
+    }
+}
+     * ```
+     */
+    static __getAllAudioLayerButtonPos() {
+        ;// avoid attempting to fire unless main window is active
+        getTitle := WinGet.PremName()
+        if WinGetTitle("A") != getTitle.winTitle
+            return
+
+        coord.client()
+        if !this.__checkTimelineValues()
+            return
+        if !mid := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
+            return
+        A := Map()
+        startPos := midDivY += 6
+        loop {
+            if !getLayerPos := this.__layerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,, false)
+                break
+            current := Map()
+            for k in this.toggleableButtons {
+                current[k] := this.__determineButtonPos(k, getLayerPos.topY, getLayerPos.botY)
+            }
+            A[A_index] := current
+            startPos := getLayerPos.botY + 1
+        }
+        return A
+    }
+
+    /**
+     * A function to disable all muted or solo'd tracks
+     * @param {String} [muteOrSolo="solo"] which you wish to operate on
+     */
+    static disableAllMuteSolo(muteOrSolo := "solo") {
+        if muteOrSolo != "solo" && muteOrSolo != "mute"
+            return
+        SetDefaultMouseSpeed(0)
+        coord.client()
+        if !this.__checkTimeline()
+			return
+
+        blocker := block_ext()
+        blocker.On()
+        ;// avoid attempting to fire unless main window is active
+        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() {
+            blocker.Off()
+            return
+        }
+
+        colour := 0
+        switch {
+            case (VerCompare(ptf.premIMGver, this.spectrumUI_Version) >= 0):
+                switch muteOrSolo {
+                    case "solo": colour := 0xE9C700
+                    case "mute": colour := 0x67DEA8
+                }
+        }
+
+        origMouseCords := obj.MousePos()
+        withinTimeline := this.__checkCoords(origMouseCords)
+        if withinTimeline != true {
+            blocker.Off()
+            return
+        }
+        allButtons := this.__getAllAudioLayerButtonPos()
+        arr := []
+        for k in allButtons {
+            getColour := PixelGetColor(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
+            ; MsgBox(getColour) ;// uncomment to determine the pixelcolour
+            if getColour = colour
+                arr.Push({x: allButtons[k][muteOrSolo].x-3, y: allButtons[k][muteOrSolo].y-3})
+        }
+        for i, v in arr {
+            MouseMove(v.x, v.y, 1)
+            SendInput("{Click}")
+        }
+        MouseMove(origMouseCords.x, origMouseCords.y, 1)
+        blocker.Off()
     }
 
     ;//! *** ===============================================
