@@ -10,3 +10,6 @@
 ⚠️ `prem {`
 - ✅ Fixed `layerSizeAdjust()` not initially moving the mouse instantly
 - ✏️ Added `disableAllMuteSolo()`
+
+## Other Changes
+- `ExplorerDialogPathSelector.ahk` will no longer add its own tray menu item
