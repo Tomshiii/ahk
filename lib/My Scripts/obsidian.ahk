@@ -1,11 +1,15 @@
 ; { \\ #Includes
 #Include <Classes\clip>
 #Include <Functions\FormatWeekRange>
+#Include <Functions\FormatWeekDay>
 ; }
 
 ^+c::clip.search("", "chrome.exe")
-^+t::SendText(FormatWeekRange())
-^+y::SendText(FormatWeekRange("M", 1))
+^+t::SendInput(A_YYYY "-" A_MM "-" A_DD)
+^1::SendText(FormatWeekRange())
+^2::SendText(FormatWeekRange(, 1))
+^3::SendText(FormatWeekDay())
+^4::SendText(FormatWeekDay(,, 1))
 
 ^+d::
 {

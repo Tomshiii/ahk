@@ -73,8 +73,9 @@ SC03A & v::prem.selectionTool()
 !+x::prem.rippleCut()
 
 SC03A & d::prem.disableDirectManip()
-SC03A & e::prem.disableAllMuteSolo("solo")
-SC03A & r::prem.disableAllMuteSolo("mute")
+
+LAlt & 1::prem.disableAllMuteSolo("mute")
+LAlt & 2::prem.disableAllMuteSolo("solo")
 
 LCtrl & 1::prem.toggleLayerButtons("mute")
 LCtrl & 2::prem.toggleLayerButtons("solo")
