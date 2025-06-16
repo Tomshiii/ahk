@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/06/16
- * @version 2.0.18
+ * @date 2025/06/17
+ * @version 2.0.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -92,6 +92,9 @@ Class premUIA_Values {
         if ObjOwnPropCount(this.allVals.%this.currentVer%) != this.windowHotkeys.Count {
             errorLog(Error("The user is currently missing UIA values. Please set new values to ensure proper function."))
             Notify.Show(, 'The user is currently missing UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400')
+        }
+        for k, v in this.allVals.%this.currentVer%.Ownprops() {
+            this.%k% := v
         }
     }
 
