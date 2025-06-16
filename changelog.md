@@ -6,7 +6,7 @@
 - ✏️ Added `FormatWeekDay()`
 - ✏️ Added `getDaySuffix()`
 - 📋 `clip.returnClip()` & `clip.delayReturn()` now accept parameter `clearClipboard` to determine whether the clipboard should initially be cleared before attempting to return the stored clipboard. Defaults to `true`
-- 📋 `premUIA_Values {` will now alert the user if it fails to create the same amount of controls as defined within the class
+
 
 ⚠️ `prem {`
 - ✅ Fixed `layerSizeAdjust()` not initially moving the mouse instantly
@@ -15,6 +15,10 @@
 📍 `prem.save()`
 - 📋 Now accepts parameter `continueOnBusy`
 - 📋 Will now return `"busy"` in the event that a window with a different class value has the current focus. *(parameter `continueOnBusy` must be set to `false`)*
+
+⚠️ `premUIA_Values {`
+- 📋 Will now alert the user if it fails to create the same amount of controls as defined within the class
+- 📋 Will now alert the user if it sets duplicate values
 
 ## Other Changes
 - ✏️ Added `generateProxies.ahk`

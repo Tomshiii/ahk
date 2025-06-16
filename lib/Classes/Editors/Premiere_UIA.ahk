@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/06/06
- * @version 2.0.17
+ * @date 2025/06/16
+ * @version 2.0.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -90,10 +90,8 @@ Class premUIA_Values {
         if !this.allVals.HasOwnProp(this.currentVer) && this.allVals.HasOwnProp(this.baseVer)
             this.currentVer := this.baseVer
         if ObjOwnPropCount(this.allVals.%this.currentVer%) != this.windowHotkeys.Count {
-            errorLog(Error("The user is currently missing UIA values. Please set new values to ensure proper function."),, true)
-        }
-        for k, v in this.allVals.%this.currentVer%.Ownprops() {
-            this.%k% := v
+            errorLog(Error("The user is currently missing UIA values. Please set new values to ensure proper function."))
+            Notify.Show(, 'The user is currently missing UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400')
         }
     }
 
@@ -162,6 +160,9 @@ Class premUIA_Values {
 
         attemptNotify := Notify.Show(, 'Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=3 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
         tool.Cust("Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled", 3.0,,, 9)
+
+        checkDupes := Map()
+        hasDupes   := false
         for currentPanel, currHotkey in this.windowHotkeys {
             SendInput(currHotkey)
             sleep 50
@@ -186,13 +187,20 @@ Class premUIA_Values {
                     }
                 }
             }
+            if checkDupes.Has(currentEl) {
+                hasDupes := true
+            }
+            checkDupes.Set(currentEl, true)
             currentVers.%this.currentVer%.%currentPanel% := currentEl
             this.successCount += 1
+        }
+        if hasDupes = true {
+            errorLog(Error("The function may have set duplicate UIA values. Please set new values to ensure proper function."))
+            Notify.Show(, 'The function may have set duplicate UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400')
         }
         block.Off()
         this.allVals := currentVers
         this.__setClassVal()
-        ; tool.Cust("This process may have no effect until all scripts are reloaded!", 3.0)
         Notify.Show(, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
         if this.successCount != this.windowHotkeys.Count
             Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
