@@ -22,7 +22,7 @@
     ### James
     - [ ] general checkin. where are you at?
     ### Everyone
-    - [ ]
+    - [ ] make sure we're uploading shorts if we haven't already
 
     ### Other
     - [ ] Any questions, queries, or things you want me to chase?

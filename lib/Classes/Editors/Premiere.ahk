@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.0
  * @author tomshi
- * @date 2025/06/07
- * @version 2.2.15
+ * @date 2025/06/16
+ * @version 2.2.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -283,14 +283,20 @@ class Prem {
     /**
      * Calls a `PremiereRemote` function to directly save the current project. This function will also double check to ensure the active sequence does not change after the save attempt
      * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close
-     *
+     * @param {Integer} [checkSeqTime=1000] the value you wish the function to sleep before checking if the active sequence was changed
+     * @param {Integer} [checkAmount=1] the amount of times you wish for the function to check (with a sleep delay of `checkSeqTime` inbetween each). Be aware that using a value higher than `1` may result in the function changing the sequence in the event that the user manually changes it after a save
+     * @param {Boolean} [continueOnBusy=false] determine whether to continue with a save attempt even if Premiere may be busy
      * @returns {Boolean/String}
-     * - `true`: successful
-     * - `false`: `PremiereRemote`/`saveProj` func/`projPath` func not found/save attempt fails (server not running)
-     * - `"timeout"`: waiting for the save project window to open/close timed out
-     * - `"noseq"` : `focusSequence`/`getActiveSequence` func not found
+     * - `true`      : successful
+     * - `false`     : `PremiereRemote`/`saveProj` func/`projPath` func not found/save attempt fails (server not running)
+     * - `"timeout"` : waiting for the save project window to open/close timed out
+     * - `"noseq"`   : `focusSequence`/`getActiveSequence` func not found
+     * - `"busy"`    : another window may be open in premiere that could cause saving to fail
      */
-    static save(andWait := true, checkSeqTime := 1000, checkAmount := 1) {
+    static save(andWait := true, checkSeqTime := 1000, checkAmount := 1, continueOnBusy := false) {
+        activeWin := WinActive("A"), procName := WinGetProcessName(activeWin), className := WinGetClass(activeWin)
+        if continueOnBusy = false && (procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (className != "Premiere Pro" || className != "Premiere Pro (Beta)")
+            return "busy"
         if !this.__checkPremRemoteDir("saveProj") || !this.__checkPremRemoteFunc("getActiveSequence")
             return false
         origSeq := this.__remoteFunc("getActiveSequence", true)
