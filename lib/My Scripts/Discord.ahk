@@ -15,11 +15,12 @@ SC03A & d::discord.button("delete") ;delete the message you're hovering over. Al
 
 
 ;discitalicHotkey;
-*::discord.surround("*")
+;// I honestly think the clipboard in modern windows is too slow/wonky sometimes it just refills with incorrect shit
+/* *::discord.surround("*")
 ;discBacktickHotkey;
 `::discord.surround("``")
 ;discParenthHotkey;
-(::discord.surround("()")
+(::discord.surround("()") */
 
 ;discserverHotkey;
 F1::discord.Unread("servers") ;will click any unread servers

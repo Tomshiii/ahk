@@ -2,6 +2,7 @@
 
 ## Functions
 - ✅ Fixed `disc.button("edit")` throwing if the user hovers over a message that isn't theirs
+- ✅ Fixed `ytdlp.download()` videos containing audio that `Premiere` can't open. (youtube seems to be moving to all `opus` or `webm` audio streams)
 - ✏️ Added `FormatWeekRange()`
 - ✏️ Added `FormatWeekDay()`
 - ✏️ Added `getDaySuffix()`

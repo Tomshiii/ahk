@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/03/23
- * @version 1.0.23
+ * @date 2025/06/17
+ * @version 1.0.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -30,7 +30,7 @@ class ytdlp {
     URL := ""
     defaultCommand      := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
     defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
-    defaultPostProcess  := 'ffmpeg -i "{2}\{3}" {1} -c:a copy "{2}\temp_{3}" && del /f /q "{2}\{3}" && move /y "{2}\temp_{3}" "{2}\{3}"'
+    defaultPostProcess  := 'ffmpeg -i "{2}\{3}" {1} -c:a aac -b:a 192k "{2}\temp_{3}" && del /f /q "{2}\{3}" && move /y "{2}\temp_{3}" "{2}\{3}"'
     defaultCPU          := "-c:v libx264 -crf 21 -preset medium"
     defaultGPU          := "-c:v h264_nvenc -preset 18 -cq 19"
     defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav --cookies-from-browser firefox'
@@ -257,7 +257,7 @@ class ytdlp {
                     Notify.Show(, 'Downloaded file is being reencoded to h264 for NLE compatibility', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=6 maxW=400 bdr=0x75AEDC')
                     cmd.run(,,, fixArgs)
                 }
-            case (isVideo = true && postArgs != false && postArgs !== this.defaultPostProcess): cmd.run(postArgs)
+            case (isVideo = true && postArgs != false && postArgs !== this.defaultPostProcess): cmd.run(,,, postArgs)
         }
         if openDirOnFinish = true
             this.__activateDir(folder)
