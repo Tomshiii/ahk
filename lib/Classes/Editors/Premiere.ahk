@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 code is maintained for the version of Premiere listed below
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 25.0
+ * @premVer 25.3
  * @author tomshi
- * @date 2025/06/16
- * @version 2.2.16
+ * @date 2025/06/19
+ * @version 2.2.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -540,6 +540,9 @@ class Prem {
     }
 
     /**
+     * ## Warning
+     * ##### The activation key for this function needs to be a *single* key without any modifiers.
+     *
      * A function to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
      * @param {String} control is which control you wish to adjust. This parameter is CASE SENSETIVE!!. Valids options; `Position`, `Scale`, `Rotation`, `Opacity`
      * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
@@ -605,8 +608,15 @@ class Prem {
         sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
         ToolTip("")
         if !GetKeyState(A_ThisHotkey, "P") {
+            switch {
+                ;// check version - pre Spectrum UI will need to start imagesearch higher
+                ;// spectrum ui
+                case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: startSegment := this.effCtrlSegment*.25, endSegment := this.effCtrlSegment*.75
+                ;// old ui
+			    case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0: startSegment := this.effCtrlSegment*.55, endSegment := this.effCtrlSegment*.55
+            }
             ;// searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
-            if !ImageSearch(&x2, &y2, startPos.x, startPos.y - (this.effCtrlSegment*.25), startPos.x + 1500, startPos.y + (this.effCtrlSegment*.75), "*2 " ptf.Premiere "reset.png") {
+            if !ImageSearch(&x2, &y2, startPos.x, startPos.y - startSegment, startPos.x + 1500, startPos.y + endSegment, "*2 " ptf.Premiere "reset.png") {
                 MouseMove(xpos, ypos)
                 block.Off()
                 errorLog(Error("Couldn't find the reset button", -1),, 1)

@@ -13,7 +13,12 @@
 - ✅ Fixed `layerSizeAdjust()` not initially moving the mouse instantly
 - ✏️ Added `disableAllMuteSolo()`
 
-📍 `prem.save()`
+📍 `valuehold()`
+- ✅ Fixed function being unable to progress because `effCtrlCollapse.png` is different in `v24.x`
+- ✅ Fixed function failing to find the `reset` button on `v24.x`
+- ❌ Removed images for the old version of this function from the `..\Support Files\ImageSearch\Premiere\` directories for versions pre `Spectrum UI`
+
+📍 `save()`
 - 📋 Now accepts parameter `continueOnBusy`
 - 📋 Will now return `"busy"` in the event that a window with a different class value has the current focus. *(parameter `continueOnBusy` must be set to `false`)*
 
