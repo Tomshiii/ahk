@@ -111,6 +111,7 @@ $+2::prem.zoomPreviewWindow(A_ThisHotkey)
 $+3::prem.zoomPreviewWindow("+3", true)
 
 ^!f::prem.flattenAndColour(ksa.labelIris)
+^!+f::prem.pseudoFS()
 $+d::
 {
 	if prem.timelineFocusStatus() != true {

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2025/02/01
- * @version 1.2.9
+ * @date 2025/06/21
+ * @version 1.2.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -97,6 +97,7 @@ class ptf {
         "Game List",       this.lib "\gameCheck\games.txt",
         "textreplace",     this.rootDir "\..\textreplace\textreplace.ahk",
         "textreplaceUser", this.SupportFiles "\textreplace\textreplace.ahk",
+        "HotkeylessAHK",   this.rootDir "\..\HotkeylessAHK-3.0.0\HotkeylessAHK.ahk",
 
         ;adobe stuff
         "premTemp",        this.Backups "\Adobe Backups\Premiere\Template\",

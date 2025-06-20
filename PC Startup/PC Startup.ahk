@@ -23,7 +23,9 @@ Run(ptf.TimerScripts "\gameCheck.ahk")
 Run(ptf.TimerScripts "\Multi-Instance Close.ahk")
 Run(ptf.TimerScripts "\premKeyCheck.ahk")
 ;// I keep text replace in a different place to anyone else who uses this repo
-if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TomPC" && DirExist(ptf.SongQueue) ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
+if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TomPC" && DirExist(ptf.SongQueue) { ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
     Run(ptf["textreplace"])
+    Run(ptf["HotkeylessAHK"])
+}
 else if FileExist(ptf["textreplaceUser"])
     Run(ptf["textreplaceUser"])

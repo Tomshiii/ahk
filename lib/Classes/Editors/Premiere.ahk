@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/06/19
- * @version 2.2.17
+ * @date 2025/06/21
+ * @version 2.2.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -561,9 +561,18 @@ class Prem {
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
-        if !this.checkNoClips(effCtrlNN, &x, &y) {
+        if !this.__checkPremRemoteDir("isSelected") {
+            if !this.checkNoClips(effCtrlNN, &x, &y) {
+                block.Off()
+                errorLog(Error("No clips are selected", -1),, 1)
+                keys.allWait()
+                return
+            }
+        }
+        else if !this.__remoteFunc('isSelected', true) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
+            keys.allWait()
             return
         }
         motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
@@ -733,9 +742,18 @@ class Prem {
         }
         this.__checkTimelineFocus() ;focuses the timeline
         sleep 25
-        if !this.checkNoClips(effCtrlNN, &x, &y) {
+        if !this.__checkPremRemoteDir("isSelected") {
+            if !this.checkNoClips(effCtrlNN, &x, &y) {
+                block.Off()
+                errorLog(Error("No clips are selected", -1),, 1)
+                keys.allWait()
+                return
+            }
+        }
+        else if !this.__remoteFunc('isSelected', true) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
+            keys.allWait()
             return
         }
         motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
@@ -832,9 +850,18 @@ class Prem {
             return
         }
         this.__checkTimelineFocus() ;focuses the timeline
-        if !this.checkNoClips(effCtrlNN, &x, &y) {
+        if !this.__checkPremRemoteDir("isSelected") {
+            if !this.checkNoClips(effCtrlNN, &x, &y) {
+                block.Off()
+                errorLog(Error("No clips are selected", -1),, 1)
+                keys.allWait()
+                return
+            }
+        }
+        else if !this.__remoteFunc('isSelected', true) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
+            keys.allWait()
             return
         }
         MouseGetPos(&xpos, &ypos)
@@ -867,11 +894,21 @@ class Prem {
             return
         }
         this.__checkTimelineFocus()
-        if !this.checkNoClips(effCtrlNN, &x, &y) {
+        if !this.__checkPremRemoteDir("isSelected") {
+            if !this.checkNoClips(effCtrlNN, &x, &y) {
+                block.Off()
+                errorLog(Error("No clips are selected", -1),, 1)
+                keys.allWait()
+                return
+            }
+        }
+        else if !this.__remoteFunc('isSelected', true) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
+            keys.allWait()
             return
         }
+
         ;// finds the scale value you want to adjust, then finds the value adjustment to the right of it
         if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &x, &y
             , ptf.Premiere property ".png"
@@ -930,12 +967,15 @@ class Prem {
         }
 
         try {
-            if ImageSearch(&x3, &y3, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png"){ ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
-                delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
-                this().__fxPanel()
-                if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y1: effCtrlNN.y + effCtrlNN.height},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
-                    block.Off() ;just incase
-                    return false
+            funcExist := this.__checkPremRemoteDir("isSelected")
+            if !funcExist && !this.__remoteFunc('isSelected', true) {
+                if !funcExist && ImageSearch(&x3, &y3, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") { ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+                    delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
+                    this().__fxPanel()
+                    if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y1: effCtrlNN.y + effCtrlNN.height},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
+                        block.Off() ;just incase
+                        return false
+                    }
                 }
             }
         } catch {
@@ -1607,8 +1647,13 @@ class Prem {
      * @link https://github.com/kristenmaxwell/KMAP/blob/master/premiere/inc_premiere_subroutines.ahk#L70
      */
     static rippleCut() {
-        if !this.__remoteFunc('isSelected', true)
+        checkForFunc := this.__checkPremRemoteDir("isSelected")
+        if !checkForFunc && !this.__remoteFunc('isSelected', true) {
+            if !checkForFunc {
+                    errorLog(MethodError('This function requires ``PremiereRemote``', -1),, true)
+                }
             return
+        }
         name := WinGet.PremName()
         MenuSelect(name.winTitle, , "Edit", "Copy")
         MenuSelect(name.winTitle, , "Edit", "Ripple Delete")
@@ -2312,6 +2357,69 @@ class Prem {
         }
         MouseMove(origMouseCords.x, origMouseCords.y, 1)
         blocker.Off()
+    }
+
+    /**
+     * This function is a wrapper function for changing the label colour of a clip; ensuring that the timeline is in focus and that a clip is selected. This function is designed to be called from a streamdeck using the `HotkeylessAHK` tool
+     * @link https://github.com/sebinside/HotkeylessAHK
+     * @param {String} [labelHotkey] the hotkey string that will be sent to `SendInput` to change the label colour to your desired choice
+     */
+    static changeLabel(labelHotkey) {
+        if !this.__checkTimeline()
+			return
+        this.__checkTimelineFocus()
+        checkForFunc := this.__checkPremRemoteDir("isSelected")
+        if !checkForFunc && !this.__remoteFunc('isSelected', true) {
+            if !checkForFunc {
+                errorLog(MethodError('This function requires ``PremiereRemote``', -1),, true)
+            }
+            return
+        }
+        SendInput(labelHotkey)
+    }
+
+    /**
+     * A function that attempts to hide the top/bottom bars as well as the titlebar to try and retrieve some screen real estate back.
+     *
+     * This function will store the class values of the bars that is hiding so that the function can be recalled to unhide them. This does however mean that if the script is reloaded while they are hidden,  you will no longer be able to unhide the top/bottom bars within premiere as it will not be able to find them.
+     *
+     * The function will still attempt to unhide the window Title bar, but to retrieve the navigation bars within Premiere, the program will need to be closed/reopened
+     * @link https://github.com/TaranVH/2nd-keyboard/blob/12ab6c7daf4f0b6a954245c9f82c2a6846b7f6a4/ALL_MULTIPLE_KEYBOARD_ASSIGNMENTS.ahk#L2229-L2262
+     * @param {Integer} [justTitleBar=false] determines whether to hide **just** the window title bar, or the navigation panels as well. Defaults to `true`
+     */
+    static pseudoFS(justTitleBar := false) {
+        if justTitleBar = true {
+            WinSetStyle("^0x800000", this.class)
+            __redraw()
+            return
+        }
+        topObjPath := {T:33,CN:"DroverLord - Window Class", i:13}
+        bottomObjPath := {T:33,CN:"DroverLord - Window Class", i:-1}, {T:33}
+        if !IsSet(bot) || !IsSet(top) {
+            try {
+                bottomObj := this.__uiaCtrlPos(bottomObjPath,,, false)
+                topObj    := this.__uiaCtrlPos(topObjPath,,, false)
+            } catch {
+                WinSetStyle("^0x800000", this.class)
+                __redraw()
+                return
+            }
+        }
+        static bot := bottomObj.classNN
+        static top := topObj.classNN
+
+        ;// hide Premiere Pro top navigation bar
+        ControlSetStyle("^0x10000000", top, this.class)
+        ;// hide Premiere Pro Bottom Bar
+        ControlSetStyle("^0x10000000", bot, this.class)
+        ;// hide Title Bar
+        WinSetStyle("^0x800000", this.class)
+        __redraw()
+
+        __redraw() {
+            WinRedraw(this.class)
+            WinShow(this.class)
+        }
     }
 
     ;//! *** ===============================================

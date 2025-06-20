@@ -2,7 +2,10 @@
 ;// not really useful for anyone else sorryyyyyyyyyyy
 #SingleInstance Force
 
-arr1 := ["Eating Out", "Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Health", "Amazon"]
+#Include <Classes\clip>
+#Include <Functions\delaySI>
+
+arr1 := ["Eating Out", "Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Health", "Amazon", "Friends/lover"]
 arr2 := ["Gift", "Salary", "Loan Repayments", "Other Repayments"]
 
 ;// this will assume the second pivot table is 3 cells to the right of the first pivot table
@@ -19,14 +22,24 @@ WinWaitClose("Income PivotTable Coords")
 if !WinActive("ahk_exe EXCEL.EXE")
     WinActivate("ahk_exe EXCEL.EXE")
 
+clipb := clip.clear()
 for v in arr1 {
-    SendInput(Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValExpenses.value, v))
-    SendInput("{Tab}")
+    clip.clear()
+    A_Clipboard := Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValExpenses.value, v)
+    if !ClipWait(2)
+        return
+    delaySI(50, "^v", "{Tab}")
 }
 
-SendInput("+{Tab}" "{Right}{Tab 2}")
+delaySI(25, "+{Tab}", "{Right}", "{Tab}")
 
 for v in arr2 {
-    SendInput(Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValIncome.value, v))
-    SendInput("{Tab}")
+    clip.clear()
+    A_Clipboard := Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValIncome.value, v)
+    if !ClipWait(2)
+        return
+    delaySI(50, "^v", "{Tab}")
 }
+
+clip.clear()
+A_Clipboard := clipb.storedClip

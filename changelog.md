@@ -12,6 +12,8 @@
 ⚠️ `prem {`
 - ✅ Fixed `layerSizeAdjust()` not initially moving the mouse instantly
 - ✏️ Added `disableAllMuteSolo()`
+- ✏️ Added `pseudoFS()`
+- ✏️ Added `changeLabel()`
 
 📍 `valuehold()`
 - ✅ Fixed function being unable to progress because `effCtrlCollapse.png` is different in `v24.x`
@@ -28,5 +30,5 @@
 
 ## Other Changes
 - ✏️ Added `generateProxies.ahk`
-- `ExplorerDialogPathSelector.ahk` will no longer add its own tray menu item
+- `ExplorerDialogPathSelector.ahk` will no longer add its own tray menu item to `My Scripts.ahk`
 - `autosave.ahk` will now no longer continue a `Premiere` save attempt when the `save` function determines Premiere may be busy to stop instances where saving may get stuck
