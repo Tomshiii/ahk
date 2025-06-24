@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/05/05
- * @version 1.7.61
+ * @date 2025/06/24
+ * @version 1.7.62
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,6 +34,7 @@
 #Include <Other\FileGetExtendedProp>
 #Include <Other\print>
 #Include <Other\Notify\Notify>
+#Include <Other\ThioJoe\Scripts\ExplorerDialogPathSelector>
 ; }
 
 class Startup {
@@ -108,15 +109,14 @@ class Startup {
     __checkDark() {
         if this.UserSettings.dark_mode != ""
             return this.UserSettings.dark_mode
-        if (VerCompare(A_OSVersion, "10.0.17763") < 0)
-            {
-                this.UserSettings.dark_mode := "disabled"
-                this.UserSettings.__delAll()
-                if !this.__checkForReloadAttempt("checkDark")
-                    return
-                reset.reset()
-                return "disabled"
-            }
+        if (VerCompare(A_OSVersion, "10.0.17763") < 0) {
+            this.UserSettings.dark_mode := "disabled"
+            this.UserSettings.__delAll()
+            if !this.__checkForReloadAttempt("checkDark")
+                return
+            reset.reset()
+            return "disabled"
+        }
         this.UserSettings.dark_mode := true
         this.UserSettings.__delAll()
         return "true"
@@ -206,12 +206,11 @@ class Startup {
                     if tempSett.Has(k)
                         tempSett.Delete(k)
                 }
-                if tempSett.Count > 0
-                    {
-                        for k, v in tempSett {
-                            IniWrite(userSettingsArr.Get(k), this.UserSettings.SettingsFile, iniSection, k)
-                        }
+                if tempSett.Count > 0 {
+                    for k, v in tempSett {
+                        IniWrite(userSettingsArr.Get(k), this.UserSettings.SettingsFile, iniSection, k)
                     }
+                }
             }
             switch track {
                 case true:
@@ -298,9 +297,9 @@ class Startup {
         else
             tool.Cust("You are currently up to date", 2000)
         switch this.UserSettings.update_check {
-            default:
-                errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, this.UserSettings.update_check),, 1)
-                return
+default:
+            errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, this.UserSettings.update_check),, 1)
+            return
             case false, "false":
                 if VerCompare(this.MyRelease, version) < 0 {
                     errorLog(Error("User is using an outdated version of these scripts", -1, version),, {time: 3.0})
@@ -324,12 +323,11 @@ class Startup {
                 viewClick(*) {
                     Run(ptf["updateCheckGUI"])
                     WinSetAlwaysOnTop(0, "Scripts Release " version)
-                    if WinWait("Latest Update - " version,, 3)
-                        {
-                            WinActivate("Latest Update - ")
-                            WinGetPos(&updx, &updy, &updwidth,, "Latest Update - " version)
-                            MyGui.Move(updx+updwidth+10, updy)
-                        }
+                    if WinWait("Latest Update - " version,, 3) {
+                        WinActivate("Latest Update - ")
+                        WinGetPos(&updx, &updy, &updwidth,, "Latest Update - " version)
+                        MyGui.Move(updx+updwidth+10, updy)
+                    }
                 }
 
                 ;set download button
@@ -343,8 +341,8 @@ class Startup {
                 MyGui.AddCheckbox("xs-175 Y+5", "Don't prompt again").OnEvent("Click", prompt.bind("prompt"))
                 ;set beta checkbox
                 betaCheck := (this.UserSettings.beta_update_check = true)
-                           ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Pre-Releases")
-                           : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Pre-Releases")
+                    ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Pre-Releases")
+                    : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Pre-Releases")
                 betaCheck.OnEvent("Click", prompt.bind("prerelease"))
 
                 MyGui.Show()
@@ -369,13 +367,12 @@ class Startup {
                     this.UserSettings.__delAll()
                     MyGui.Opt("Disabled -AlwaysOnTop")
                     yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
-                    if yousure = "Cancel"
-                        {
-                            MyGui.Opt("-Disabled")
-                            return
-                        }
+                    if yousure = "Cancel" {
+                        MyGui.Opt("-Disabled")
+                        return
+                    }
                     MyGui.Destroy()
-                    if !downloadLocation := FileSelect("D", , "Where do you wish to download Release " version)
+                    if !downloadLocation := FileSelect("D",, "Where do you wish to download Release " version)
                         return
 
                     if !type := this.__exeOrzip(version)
@@ -812,38 +809,64 @@ class Startup {
             startingVal++
         }
         A_TrayMenu.Delete("3&")
-        __addAndIncrement("") ;adds a divider bar
         startingVal++
-        __addAndIncrement("Reload All Scripts", (*) => reset.ext_reload())
-        __addAndIncrement("Hard Reset All Scripts", (*) => reset.reset())
-        ; A_TrayMenu.Insert("6&", "Reload All Scripts", (*) => reset.ext_reload())
-        ; A_TrayMenu.Insert("7&", "Hard Reset All Scripts", (*) => reset.reset())
         __addAndIncrement("") ;adds a divider bar
         __addAndIncrement("Settings", (*) => settingsGUI())
-        __addAndIncrement("keys.allUp()", (*) => keys.allUp())
-        __addAndIncrement("Active Scripts", (*) => activeScripts())
+        __addAndIncrement("") ;adds a divider bar
+
+
+        submenuSC := Menu()
+        submenuSC.Add("Reload All Scripts", (*) => reset.ext_reload())
+        submenuSC.Add("Hard Reset All Scripts", (*) => reset.reset())
+        submenuSC.Add("keys.allUp()", (*) => keys.allUp())
+        submenuSC.Add("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
+        submenuSC.Add("Close All Scripts", (*) => reset.ex_exit())
+        A_TrayMenu.Insert(startingVal "&", "Script Control", submenuSC)
+        startingVal++
+
+        submenuGUIS := Menu()
+        submenuGUIS.Add("Active Scripts", (*) => activeScripts())
+        submenuGUIS.Add("Notify Creator", (*) => Run(ptf.rootDir "\lib\Other\Notify\Notify Creator.ahk"))
+        submenuGUIS.Add("MsgBox Creator", (*) => Run(ptf.rootDir "\lib\Other\MsgBoxCreator.ahk"))
+        ; submenuGUIS.Add("Settings", (*) => settingsGUI())
+        submenuGUIS.Add("Thio's Windows Explorer Script Settings", (*) => ShowPathSelectorSettingsGUI())
+        A_TrayMenu.Insert(startingVal "&", "GUIs", submenuGUIS)
+        startingVal++
+
         startupTray(11)
         startingVal++
+
+        submenuUIA := Menu()
+        submenuUIA.Add("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
+        submenuUIA.Add("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
+        submenuUIA.Add("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false).__setNewVal() : MsgBox("Premiere needs to be open for this option to function correctly!"))
+        A_TrayMenu.Insert(startingVal "&", "UIA", submenuUIA)
+        startingVal++
+
+        submenuHotkeyless := Menu()
+        submenuHotkeyless.Add("Open HotkeylessAHK", __hotkeyless.Bind("open"))
+        submenuHotkeyless.Add("Close HotkeylessAHK", __hotkeyless.Bind("close"))
+        getDet := detect()
+        switch {
+            case (WinExist("HotkeylessAHK.ahk")) :
+                submenuHotkeyless.Disable("Open HotkeylessAHK")
+                submenuHotkeyless.Enable("Close HotkeylessAHK")
+            default:
+                submenuHotkeyless.Disable("Close HotkeylessAHK")
+                submenuHotkeyless.Enable("Open HotkeylessAHK")
+        }
+        resetOrigDetect(getDet)
+        A_TrayMenu.Insert(startingVal "&", "HotkeylessAHK", submenuHotkeyless)
+        startingVal++
+
+        __addAndIncrement("") ;adds a divider bar
         __addAndIncrement("Check for Updates", checkUp)
-        __addAndIncrement("") ;adds a divider bar
-        __addAndIncrement("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
-        __addAndIncrement("Close All Scripts", (*) => reset.ex_exit())
-        __addAndIncrement("Notify Creator", (*) => Run(ptf.rootDir "\lib\Other\Notify\Notify Creator.ahk"))
-        __addAndIncrement("MsgBox Creator", (*) => Run(ptf.rootDir "\lib\Other\MsgBoxCreator.ahk"))
-        __addAndIncrement("") ;adds a divider bar
-        __addAndIncrement("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
-        __addAndIncrement("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
-        __addAndIncrement("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false).__setNewVal() : MsgBox("Premiere needs to be open for this option to function correctly!"))
-        __addAndIncrement("") ;adds a divider bar
-        __addAndIncrement("Open Thio's Windows Explorer Script Settings", (*) => ShowPathSelectorSettingsGUI())
-        __addAndIncrement("") ;adds a divider bar
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")
-        if check =  true
+        if check = true
             A_TrayMenu.Check("Check for Updates")
-        checkUp(*)
-        {
+        checkUp(*) {
             check := this.UserSettings.update_check ;has to be checked everytime you wish to toggle
             switch check {
                 case true:
@@ -852,6 +875,25 @@ class Startup {
                 case false:
                     this.UserSettings.update_check := true
                     A_TrayMenu.Check("Check for Updates")
+            }
+        }
+        __hotkeyless(closeOrOpen, *) {
+            switch closeOrOpen {
+                case "close":
+                    getDet := detect()
+                    if WinExist("HotkeylessAHK.ahk")
+                        ProcessClose(WinGetPID("HotkeylessAHK.ahk",, browser.vscode.winTitle))
+                    resetOrigDetect(getDet)
+                    submenuHotkeyless.Disable("Close HotkeylessAHK")
+                    submenuHotkeyless.Enable("Open HotkeylessAHK")
+                case "open":
+                    if FileExist(ptf['HotkeylessAHK']) {
+                        Run(ptf['HotkeylessAHK'])
+                        submenuHotkeyless.Disable("Open HotkeylessAHK")
+                        submenuHotkeyless.Enable("Close HotkeylessAHK")
+                    }
+                    else
+                        MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
             }
         }
     }

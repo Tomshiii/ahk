@@ -98,7 +98,7 @@ NumpadAdd::prem.numpadGain()
 
 $+c::
 {
-	if prem.timelineFocusStatus() != true {
+	if prem.timelineFocusStatus() != true || !CaretGetPos(&carx, &cary) {
 		SendInput("+c")
 		return
 	}

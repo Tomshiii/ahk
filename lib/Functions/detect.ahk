@@ -14,3 +14,19 @@ detect(windows := true, title := 2) {
     DetectHiddenWindows(windows), SetTitleMatchMode(title)
     return {Windows: origWindows, Title: origTitle}
 }
+
+/**
+ * resets `A_DetectHiddenWindows` & `A_TitleMatchMode` to a state before using `detect()`
+ * @param {Object} [obj] An object containing `Windows` & `Title` (ideally from using `detect()`)
+ *
+ * <u>Example #1</u>
+ * ```
+ * {
+ *    dct := detect()
+ *    ...
+ *    ...
+ *    resetOrigDetect(dct)
+ * }
+ * ```
+ */
+resetOrigDetect(obj) => (A_DetectHiddenWindows := obj.Windows, A_TitleMatchMode := obj.Title)

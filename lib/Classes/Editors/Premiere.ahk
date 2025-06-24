@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/06/21
- * @version 2.2.18
+ * @date 2025/06/24
+ * @version 2.2.18.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1246,7 +1246,6 @@ class Prem {
         UserSettings.__delAll()
         UserSettings := ""
         orig := detect()
-        resetOrig(obj) => (A_DetectHiddenWindows := obj.Windows, A_TitleMatchMode := obj.Title)
 
         ;// this block is called if the function originates from a script that isn't `UserSettings.mainScriptName`
         if A_ScriptName != mainScriptName ".ahk" && WinExist(mainScriptName ".ahk") {
@@ -1261,13 +1260,13 @@ class Prem {
                     return true
                 }
             } catch {
-                resetOrig(orig)
+                resetOrigDetect(orig)
                 Notify.Show(, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 Exit()
             }
         }
-        resetOrig(orig)
+        resetOrigDetect(orig)
 
         this.__checkAlwaysUIA()
         premUIA := premUIA_Values()

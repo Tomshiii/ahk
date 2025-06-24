@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2025/01/01
- * @version 1.0.8
+ * @date 2025/06/24
+ * @version 1.0.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -25,7 +25,7 @@ class reset {
         UserSettings := UserPref()
         this.mainScript := UserSettings.MainScriptName
 
-        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, UserSettings.MainScriptName ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1)
+        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, UserSettings.MainScriptName ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "HotkeylessAHK.ahk", 1)
     }
 
     mainScript := ""
