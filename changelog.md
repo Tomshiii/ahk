@@ -1,4 +1,4 @@
-# <> Release 2.15.x - 
+# <> Release 2.15.7 - Features & Stability
 
 ## Functions
 - ✅ Fixed `disc.button("edit")` throwing if the user hovers over a message that isn't theirs
@@ -36,7 +36,7 @@
 - Reorganised entire tray menu, utilising submenus to clean everything up
 
 ## Other Changes
-- ✅ Fixed `Premiere` hotkey <kbd>$+c::</kbd> should no longer attempt to fire while the user is typing
+- ✅ Fixed `Premiere` hotkey <kbd>$+c::</kbd> attempting to fire while the user was typing
 - ✏️ Added `generateProxies.ahk`
-- `ExplorerDialogPathSelector.ahk` will no longer add its own tray menu item to `My Scripts.ahk`
-- `autosave.ahk` will now no longer continue a `Premiere` save attempt when the `save` function determines Premiere may be busy to stop instances where saving may get stuck
+- 📋 `ExplorerDialogPathSelector.ahk` will no longer add its own tray menu item to `My Scripts.ahk`
+- 📋 `autosave.ahk` will now no longer continue a `Premiere` save attempt when the `save` function determines Premiere may be busy to stop instances where saving may get stuck

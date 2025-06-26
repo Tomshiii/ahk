@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/06/24
- * @version 1.7.62
+ * @date 2025/06/26
+ * @version 1.7.62.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -811,7 +811,7 @@ default:
         A_TrayMenu.Delete("3&")
         startingVal++
         __addAndIncrement("") ;adds a divider bar
-        __addAndIncrement("Settings", (*) => settingsGUI())
+        __addAndIncrement("Settings (GUI)", (*) => settingsGUI())
         __addAndIncrement("") ;adds a divider bar
 
 

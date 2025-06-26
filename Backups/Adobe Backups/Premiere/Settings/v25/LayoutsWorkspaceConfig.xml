@@ -34,12 +34,12 @@
 <key>FilePaths</key>
 <array>
 <array.type><ustring/></array.type>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_4.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_2.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_4.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro (Beta)\25.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_1.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_3.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_3.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
 </array>
 </prop.pair>
 <prop.pair>
@@ -65,10 +65,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>258</int>
-<int type='signed' size='32'>107</int>
-<int type='signed' size='32'>2269</int>
-<int type='signed' size='32'>1527</int>
+<int type='signed' size='32'>6</int>
+<int type='signed' size='32'>44</int>
+<int type='signed' size='32'>3359</int>
+<int type='signed' size='32'>1464</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -81,20 +81,20 @@
 <key>ModifiedTimes</key>
 <array>
 <array.type><string/></array.type>
-<string>20250509T014200.527195</string>
-<string>20241129T004117.680741</string>
-<string>20250520T114118.712563</string>
-<string>20250526T091138.557333</string>
-<string>20250215T004808.031996</string>
-<string>20250302T222942.660189</string>
+<string>20250427T230448.185222</string>
+<string>20250621T060409.333979</string>
+<string>20250612T234012.137687</string>
+<string>20250624T125358.328450</string>
+<string>20250427T230623.728351</string>
+<string>20250404T133355.452228</string>
 </array>
 </prop.pair>
 <prop.pair>
 <key>UserNames</key>
 <array>
 <array.type><ustring/></array.type>
+<ustring>2023_work - multicam</ustring>
 <ustring>2025_work</ustring>
-<ustring>Untitled Workspace</ustring>
 <ustring>2023_work - multicam</ustring>
 <ustring>2025_work</ustring>
 <ustring>$$$/Premiere/FrontEnd/Editing=Editing</ustring>
