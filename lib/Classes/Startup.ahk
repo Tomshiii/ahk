@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/06/26
- * @version 1.7.62.1
+ * @date 2025/06/27
+ * @version 1.7.63
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -11,6 +11,7 @@
 #Include <GUIs\hotkeysGUI>
 #Include <GUIs\settingsGUI\settingsGUI>
 #Include <GUIs\activeScripts>
+#Include <GUIs\tomshiBasic>
 #Include <Classes\Settings>
 #Include <Classes\ptf>
 #Include <Classes\Editors\Premiere>
@@ -846,14 +847,17 @@ default:
         submenuHotkeyless := Menu()
         submenuHotkeyless.Add("Open HotkeylessAHK", __hotkeyless.Bind("open"))
         submenuHotkeyless.Add("Close HotkeylessAHK", __hotkeyless.Bind("close"))
+        submenuHotkeyless.Add("Reboot HotkeylessAHK", __hotkeyless.Bind("reboot"))
         getDet := detect()
         switch {
             case (WinExist("HotkeylessAHK.ahk")) :
                 submenuHotkeyless.Disable("Open HotkeylessAHK")
                 submenuHotkeyless.Enable("Close HotkeylessAHK")
+                submenuHotkeyless.Enable("Reboot HotkeylessAHK")
             default:
-                submenuHotkeyless.Disable("Close HotkeylessAHK")
                 submenuHotkeyless.Enable("Open HotkeylessAHK")
+                submenuHotkeyless.Disable("Close HotkeylessAHK")
+                submenuHotkeyless.Disable("Reboot HotkeylessAHK")
         }
         resetOrigDetect(getDet)
         A_TrayMenu.Insert(startingVal "&", "HotkeylessAHK", submenuHotkeyless)
@@ -878,22 +882,42 @@ default:
             }
         }
         __hotkeyless(closeOrOpen, *) {
+            canLaunch := (!FileExist(ptf['HotkeylessAHK'])) ? false : true
             switch closeOrOpen {
                 case "close":
                     getDet := detect()
-                    if WinExist("HotkeylessAHK.ahk")
+                    if WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle)
                         ProcessClose(WinGetPID("HotkeylessAHK.ahk",, browser.vscode.winTitle))
                     resetOrigDetect(getDet)
-                    submenuHotkeyless.Disable("Close HotkeylessAHK")
                     submenuHotkeyless.Enable("Open HotkeylessAHK")
+                    submenuHotkeyless.Disable("Close HotkeylessAHK")
+                    submenuHotkeyless.Disable("Reboot HotkeylessAHK")
                 case "open":
-                    if FileExist(ptf['HotkeylessAHK']) {
-                        Run(ptf['HotkeylessAHK'])
-                        submenuHotkeyless.Disable("Open HotkeylessAHK")
-                        submenuHotkeyless.Enable("Close HotkeylessAHK")
-                    }
-                    else
+                    if !canLaunch {
                         MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
+                        return
+                    }
+                    Run(ptf['HotkeylessAHK'])
+                    submenuHotkeyless.Disable("Open HotkeylessAHK")
+                    submenuHotkeyless.Enable("Close HotkeylessAHK")
+                    submenuHotkeyless.Enable("Reboot HotkeylessAHK")
+                case "reboot":
+                    getDet := detect()
+                    if WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle)
+                        ProcessClose(WinGetPID("HotkeylessAHK.ahk",, browser.vscode.winTitle))
+                    if WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle) {
+                        if !WinWaitClose("HotkeylessAHK.ahk",, 3, browser.vscode.winTitle) {
+                            MsgBox("HotkeylessAHK.ahk failed to close, it may have encountered an error", "Error")
+                            return
+                        }
+                    }
+                    resetOrigDetect(getDet)
+                    if !canLaunch {
+                        MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
+                        return
+                    }
+                    Run(ptf['HotkeylessAHK'])
+                    Notify.Show(, 'HotkeylessAHK has been rebooted', 'C:\Windows\System32\imageres.dll|icon253',,, 'theme=Dark dur=4 bdr=Gray show=Fade@250 hide=Fade@250 maxW=400')
             }
         }
     }
