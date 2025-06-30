@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2025/06/03
- * @version 1.2.4
+ * @date 2025/06/30
+ * @version 1.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -76,15 +76,17 @@ class VSCode {
         sleep 50
         delaySI(50, KSA.focusExplorerWin, KSA.focusExplorerWin, KSA.focusWork, KSA.collapseFold, KSA.collapseFold, "{Up 5}", "{Enter}")
         __closeOut(ttp) => (sleep(50), block.Off(), tool.Wait(), tool.Cust(ttp, 2.0))
-        switch A_ThisHotkey {
-            case KSA.functionHotkey:   ;// this opens my ..\lib\functions folder
-                delaySI(50, "{Down 2}{Enter}", "{Down 2}{Enter}", "{Down 2}{Enter}", "{Up 1}{Enter}")
-                __closeOut("The function folder has been expanded")
-                return
-            case KSA.testHotkey:       ;// I have a dummy test .ahk file I use constantly, this is simply navigating to it
-                delaySI(50, "{Down 5}{Enter}", "{Down 22}{Enter}")
-                __closeOut("The test file has been selected")
-                return
+        if script = 0 && A_ThisHotkey = KSA.testHotkey  || A_ThisHotkey = KSA.functionHotkey {
+            switch A_ThisHotkey {
+                case KSA.testHotkey:
+                    delaySI(50, "{Down 5}{Enter}", "{Down 22}{Enter}")
+                    __closeOut("The test file has been selected")
+                    return
+                case KSA.functionHotkey:
+                    delaySI(50, "{Down 5}{Enter}", "{Down 21}{Enter}")
+                    __closeOut("The emoji file has been selected")
+                    return
+            }
         }
         SendInput("{Down " script "}")
         sleep 25

@@ -18,7 +18,6 @@ Eval(Script) {
     return exec.StdOut.ReadAll()
 }
 
-
 if !selectedDir := FileSelect("D3",, "Select Footage Directory") {
     return
 }
@@ -29,7 +28,7 @@ baseFrameRate := "29.97"
 pal := ["25", "50", "100", "200"]
 ntsc := ["23.97", "24", "29.97", "30", "59.94", "60", "119.88", "120", "239.76", "240"]
 renderScale := 0.5
-normalCommand := 'ffmpeg -hwaccel none -i "{1}" -c:v prores -profile:v 0 -pix_fmt yuv422p10 -filter_complex "[0:v]scale={2}[out]" -map "[out]" -c:a copy -map a? -timecode "{3}" -sws_flags bicubic -vsync cfr -metadata:s "encoder=Apple ProRes Proxy" -vendor apl0 -flags bitexact -metadata creation_time="{4}" -y "{5}"'
+normalCommand := 'ffmpeg -hwaccel none -i "{1}" -c:v prores -profile:v 0 -pix_fmt yuv422p10 -filter_complex "[0:v]scale={2}[out]" -map "[out]" -c:a copy -map a? {3} -sws_flags bicubic -vsync cfr -metadata:s "encoder=Apple ProRes Proxy" -vendor apl0 -flags bitexact -metadata creation_time="{4}" -y "{5}"'
 
 
 if MsgBox("Would you like to recurse?", "Recurse?", "4132") = "Yes" {
@@ -59,14 +58,28 @@ loop files selectedDir "\*", recurse {
         continue
     }
 
-    try {
-        timecode       := allMetaData["streams"]["3"]["tags"]["timecode"]
-        width          := allMetaData["streams"]["1"]["width"] * renderScale
-        height         := allMetaData["streams"]["1"]["height"] * renderScale
-        newDemensions  := Round(width, 0) ":" Round(height, 0)
-        metadataCreate := allMetaData["streams"]["1"]["tags"]["creation_time"]
-    } catch {
-        continue
+    try timecode   := '-timecode "' allMetaData["streams"]["3"]["tags"]["timecode"] '"'
+    catch {
+        timecode   := ""
+    }
+    width          := allMetaData["streams"]["1"]["width"] * renderScale
+    height         := allMetaData["streams"]["1"]["height"] * renderScale
+    newDemensions  := Round(width, 0) ":" Round(height, 0)
+    try metadataCreate := allMetaData["streams"]["1"]["tags"]["creation_time"]
+    catch {
+        ; cmmd := '$creationTime = [string]::Format("{0:yyyy-MM-ddTHH:mm:ss}.{1:D9}Z", (Get-Date).ToUniversalTime(), ((Get-Date).Ticks % 10000000) * 100); Write-Output $creationTime'
+        ; to get encoded;
+        /**
+        $command = @'
+        $ct = [string]::Format("{0:yyyy-MM-ddTHH:mm:ss}.{1:D9}Z", (Get-Date).ToUniversalTime(), ((Get-Date).Ticks % 10000000) * 100)
+        Write-Output $ct
+        '@
+        $bytes = [Text.Encoding]::Unicode.GetBytes($command)
+        $encodedCommand = [Convert]::ToBase64String($bytes)
+        Write-Output $encodedCommand
+        */
+        encoded := "JABjAHQAIAA9ACAAWwBzAHQAcgBpAG4AZwBdADoAOgBGAG8AcgBtAGEAdAAoACIAewAwADoAeQB5AHkAeQAtAE0ATQAtAGQAZABUAEgASAA6AG0AbQA6AHMAcwB9AC4AewAxADoARAA5AH0AWgAiACwAIAAoAEcAZQB0AC0ARABhAHQAZQApAC4AVABvAFUAbgBpAHYAZQByAHMAYQBsAFQAaQBtAGUAKAApACwAIAAoACgARwBlAHQALQBEAGEAdABlACkALgBUAGkAYwBrAHMAIAAlACAAMQAwADAAMAAwADAAMAAwACkAIAAqACAAMQAwADAAKQAKAFcAcgBpAHQAZQAtAE8AdQB0AHAAdQB0ACAAJABjAHQA"
+        metadataCreate := cmd.result(Format('powershell -NoProfile -EncodedCommand "{}"', encoded),,, "c:\")
     }
 
     files.Push({name: inputPath.NameNoExt "_proxy.mov", path: A_LoopFileFullPath, newDemensions: newDemensions, timecode: timecode, metadataCreate: metadataCreate, baseOutputPath: baseOutputPath})

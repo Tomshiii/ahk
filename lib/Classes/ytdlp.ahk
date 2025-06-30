@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/06/17
- * @version 1.0.24
+ * @date 2025/06/30
+ * @version 1.0.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -229,7 +229,7 @@ class ytdlp {
             }
         }
         else {
-            args := Format(args, outputFileName)
+            args := Format(args, nameNoExt)
         }
         Notify.Destroy(mNotifyGUI_Prog['hwnd'])
 
