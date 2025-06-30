@@ -123,7 +123,11 @@ export const host = {
 
   toggleLinearColour: function() {
     Utils.toggleLinearColour();
-  }
+  },
+
+  toggleEnabled: function() {
+    Utils.toggleEnabled();
+  },
 };
 
 /**

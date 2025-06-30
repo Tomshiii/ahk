@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/06/24
- * @version 2.2.18.1
+ * @date 2025/07/01
+ * @version 2.2.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,7 +23,9 @@
 #Include <Classes\block>
 #Include <Classes\WM>
 #Include <Classes\cmd>
+#Include <Classes\Mip>
 #Include <Classes\Editors\Premiere_UIA>
+#Include <Classes\Editors\Premiere_TimelineColours>
 #Include <GUIs\tomshiBasic>
 #Include <Other\UIA\UIA>
 #Include <Functions\getHotkeys>
@@ -44,12 +46,14 @@ class Prem {
         switch {
             ;// spectrum ui
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
+                this.timelineCols := this.__setTimelineCol("Spectrum", "darkest", "mip") ;// expects darkest theme
                 ;// set timeline and playhead colours
                 this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
                 ;// set layer button offsets (these get added onto `timelineRawX`)
                 this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.layerEmpty := 0x1D1D1D, this.layerDivider := 0x303030, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21, this.iconHighlight := 0x6A6A6A
             ;// old ui
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
+                this.timelineCols := this.__setTimelineCol("oldUI", "darkest", "mip") ;// expects darkest theme
                 ;// set timeline and playhead colours
                 this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
@@ -57,6 +61,7 @@ class Prem {
 
     static currentSetVer := ""
     static spectrumUI_Version := "25.0"
+    static timelineCols := Mip()
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
@@ -2190,6 +2195,7 @@ class Prem {
         if WinGetTitle("A") != getTitle.winTitle
             return
 
+        keys.allWait("second")
         block.On()
         coord.client()
         origMouseCords := obj.MousePos()
@@ -2293,19 +2299,143 @@ class Prem {
         if !mid := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
             return
         A := Map()
-        startPos := midDivY += 6
-        loop {
-            if !getLayerPos := this.__layerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,, false)
-                break
+        allAudPos := this.__getAllLayerPos(midDivY, "aud")
+        for i, v in allAudPos {
             current := Map()
             for k in this.toggleableButtons {
-                current[k] := this.__determineButtonPos(k, getLayerPos.topY, getLayerPos.botY)
+                current[k] := this.__determineButtonPos(k, allAudPos[i]['top'], allAudPos[i]['bot'])
             }
             A[A_index] := current
-            startPos := getLayerPos.botY + 1
         }
         return A
     }
+
+    /**
+     * determines the coordinates of all layers currently visible in the timeline
+     * @param {Number} [midDivY=""] a parameter to pass in the middle divider `y` coordinate if it has already been located
+     * @param {String} [vidOrAud="aud"] whether to operate down on the audio layers or up on the video layers
+     * @param {Integer} [stopAt=false] a track number to stop at to cancel operation early. Leave as `false` to return all visible values
+     * @returns {Map} returns a map containing `["top"]`, `["bot"]`, `["mid"]`
+     */
+    static __getAllLayerPos(midDivY := "", vidOrAud := "aud", stopAt := false) {
+        ;// avoid attempting to fire unless main window is active
+        getTitle := WinGet.PremName()
+        if WinGetTitle("A") != getTitle.winTitle
+            return false
+
+        coord.client()
+        if !this.__checkTimelineValues()
+            return false
+        if !midDivY {
+            if !midCheck := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
+                return false
+        }
+        A := Map()
+        startPos := (vidOrAud = "aud") ? midDivY += 6 : midDivY -= 3
+        loop {
+            if IsInteger(stopAt) && stopAt != false && A_Index > stopAt
+                break
+            if !getLayerPos := this.__layerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,, false)
+                break
+            current := Map()
+            current["top"] := getLayerPos.topY, current["bot"] := getLayerPos.botY, current["mid"] := getLayerPos.topY+((getLayerPos.botY-getLayerPos.topY)/2)
+            A[A_index] := current
+            startPos := (vidOrAud = "aud") ? getLayerPos.botY + 1 : getLayerPos.topY - 1
+        }
+        return A
+    }
+
+    /**
+     * ### This function requires `PremiereRemote`
+     * A function to toggle the `enabled`/`disabled` state of a clip on the desired layer. This function will operate on either the audio/video tracks depending on whether the cursor is above or below the middle dividing line.
+     * @param {Integer} [track=A_ThisHotkey] The track you wish to operate on. If this parameter is not just an integer it will attempt to do a rudimentary check on the activation hotkey, expecting a number to be the final activation key in the chain
+     * @param {String} [audOrVid=false] determine whether to operate on the audio or video tracks. By default this value is set to `false` and it is determined purely by the user's cursor position. otherwise set to either `"vid"` or `"aud"`
+     */
+    static toggleEnabled(track := A_ThisHotkey, audOrVid := false) {
+        SetDefaultMouseSpeed(0)
+        coord.client()
+        if !this.__checkTimeline()
+            return
+        if !this.__checkPremRemoteDir() {
+            blocker.Off()
+            errorLog(MethodError('This function requires PremiereRemote functionality', -1))
+            return
+        }
+
+        check := keys.allWait("second")
+        blocker := block_ext()
+        blocker.On()
+
+        ;// avoid attempting to fire unless main window is active
+        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle {
+            blocker.Off()
+            return
+        }
+        origMouseCords := obj.MousePos()
+        withinTimeline := this.__checkCoords(origMouseCords)
+        if withinTimeline != true {
+            blocker.Off()
+            return
+        }
+        if !audOrVid {
+            middleDivider := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+7, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
+            aboveOrBelow := (origMouseCords.y < midDivY) ? true : false
+        } else {
+            midDivY := false
+            aboveOrBelow := (audOrVid = "vid") ? true : false
+        }
+        if track = A_ThisHotkey && (InStr(track, "&") || pos := InStr(track, "<") = 1) {
+            splitHotkey := getHotkeys()
+            track := splitHotkey.second
+        }
+        if !IsNumber(track) {
+            blocker.Off()
+            return
+        }
+        vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
+        allLayers := this.__getAllLayerPos(midDivY, vidOrAud, track)
+        if !allLayers {
+            blocker.Off()
+            return
+        }
+        layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(track)]["mid"])
+        if this.timelineCols.Has(layerColour) {
+            tool.Cust("No clips on selected track.", 1500)
+            blocker.Off()
+            return
+        }
+
+        MouseMove(origMouseCords.x, allLayers[Integer(track)]["mid"])
+        SendInput("{Click}")
+        if !this.__remoteFunc('isSelected', true) {
+            blocker.Off()
+            return
+        }
+        this.__remoteFunc('toggleEnabled')
+        MouseMove(origMouseCords.x, origMouseCords.y)
+        blocker.Off()
+    }
+
+    /**
+	 * Set internal colour variables based on the version of Premiere Pro the user currently has set within `settingsGUI()`
+	 * @param {String} UI which UI version should be used. Currently accepts `Spectrum` & `oldUI`
+	 * @param {String} theme which theme the user wishes to use. Currently accepts `darkest`
+     * @param {mapOrArr} [mapOrArr="arr"] determine whether to return an `array`, a `map` or a `mip`
+     * @returns {Map/Mip/Array}
+	 */
+	static __setTimelineCol(UI, theme, mapOrArr := "Arr") {
+        timelineCol := (mapOrArr = "Arr") ? [] : ((mapOrArr = "mip") ? Mip() : Map())
+		for k, v in timelineColours.%UI%.%theme% {
+			if Mod(A_Index, 2) != 0
+				continue
+			varName := timelineColours.%UI%.%theme%[k-1]
+            if mapOrArr= "Arr"
+                timelineCol.Push(Format("0x{:x}", v))
+            else
+                timelineCol.Set(Format("0x{:x}", v), true)
+		}
+        return timelineCol
+	}
 
     /**
      * A function to disable all muted or solo'd tracks
@@ -2319,8 +2449,11 @@ class Prem {
         if !this.__checkTimeline()
 			return
 
+        if IsInteger(SubStr(A_ThisHotkey, -1, 1))
+            KeyWait(SubStr(A_ThisHotkey, -1, 1))
         blocker := block_ext()
         blocker.On()
+            blocker.Off()
         ;// avoid attempting to fire unless main window is active
         if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() {
             blocker.Off()

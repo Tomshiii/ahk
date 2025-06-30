@@ -28,6 +28,15 @@ export class Utils {
       return true
     }
 
+    static toggleEnabled() {
+      var activeSequence = app.project.activeSequence;
+      var selection = activeSequence.getSelection();
+
+      for (let i = 0; i < selection.length; i++) {
+        selection[i].disabled = !selection[i].disabled;
+      }
+    }
+
     static movePlayhead(subtract: string, seconds: number) {
       const currentSequence = app.project.activeSequence;
       if(subtract == "false") {

@@ -74,13 +74,21 @@ SC03A & v::prem.selectionTool()
 
 SC03A & d::prem.disableDirectManip()
 
-LAlt & 1::prem.disableAllMuteSolo("mute")
-LAlt & 2::prem.disableAllMuteSolo("solo")
+<!1::
+<!2::
+<!3::
+<!4::
+<!5::
+<!6::
+<!7::prem.toggleEnabled()
 
-LCtrl & 1::prem.toggleLayerButtons("mute")
-LCtrl & 2::prem.toggleLayerButtons("solo")
-LCtrl & 3::prem.toggleLayerButtons("lock")
-LCtrl & 4::prem.toggleLayerButtons("target")
+^!1::prem.disableAllMuteSolo("mute")
+^!2::prem.disableAllMuteSolo("solo")
+
+<^1::prem.toggleLayerButtons("mute")
+<^2::prem.toggleLayerButtons("solo")
+<^3::prem.toggleLayerButtons("lock")
+<^4::prem.toggleLayerButtons("target")
 
 ;premrippleTrimHotkey;
 q::

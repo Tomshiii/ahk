@@ -2,8 +2,8 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2024/10/15
- * @version 1.0.4
+ * @date 2025/07/01
+ * @version 1.0.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,6 +20,7 @@ class keys {
         "&", 1,     "<", 1,
         ">", 1,     "*", 1,
         "~", 1,     "$", 1,
+        "<!", 1,    "<^", 1, "<+", 1,
     )
 
     /**
