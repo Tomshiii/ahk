@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/06/27
- * @version 1.7.63
+ * @date 2025/06/30
+ * @version 1.7.64
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1251,8 +1251,18 @@ default:
             cmd.run(,,, "git fetch", v, "Hide")
             sleep 1000
             getStatus := cmd.result("git status -uno",,, v)
-            if InStr(getStatus, "Your branch is up to date")
-                continue
+            currentBranch := cmd.result("git rev-parse --abbrev-ref --symbolic-full-name @{u}",,, v)
+            switch {
+                ;// we don't want to continue under certain circumstances or the user's git repo could get messed up
+                case (InStr(getStatus, "Your branch is up to date with '" currentBranch "'")):
+                    continue
+                case (!InStr(getStatus, "Your branch is behind '" currentBranch "' by") && InStr(getStatus, "Your branch is ahead of '" currentBranch "'")):
+                    continue
+                case (InStr(getStatus, "Your branch and '" currentBranch "' have diverged")):
+                    Notify.Show(, 'Branch ' currentBranch ' has diverged. Update checks will be skipped to avoid issues. Please manually fix your repo.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Gray maxW=400')
+                    continue
+                ; default: ;// else continue with logic
+            }
             SplitPath(v, &repo)
             getBranch := SubStr(getStatus, first := InStr(getStatus, "'",, 1, 1)+1, InStr(getStatus, "'",, first+1, 1)-first)
             userResponse := MsgBox("Branch: ``" getBranch "`` for repo: ``" repo "`` appears to have changes.`nWould you like to pull these changes? (this process will stash any uncommitted changes and then pop them once finished)", "Would you like to pull repo?", "4132")
