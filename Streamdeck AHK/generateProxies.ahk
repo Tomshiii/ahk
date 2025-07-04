@@ -18,9 +18,12 @@ Eval(Script) {
     return exec.StdOut.ReadAll()
 }
 
-if !selectedDir := FileSelect("D3",, "Select Footage Directory") {
+activeWin := WinGet.ExplorerPath()
+defaultDir := activeWin != false ? activeWin : ""
+selectedDir := FileSelect("D3", defaultDir,  "Select Footage Directory")
+if !selectedDir
     return
-}
+
 recurse := ""
 files := []
 names := []

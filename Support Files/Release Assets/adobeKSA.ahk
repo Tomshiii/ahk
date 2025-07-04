@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a function designed to parse through AE and Premiere Pro keyboard shortcut files to automatically assign KSA.ini values
  * @author tomshi
- * @date 2025/04/21
- * @version 1.0.4
+ * @date 2025/07/02
+ * @version 1.0.5
  ***********************************************************************/
 
 #Warn VarUnset, StdOut
@@ -20,6 +20,7 @@ The code for this script was also written a LONG time ago and by this point has 
 #Include <Classes\ptf>
 #Include <Classes\Mip>
 #Include <Classes\tool>
+#Include <Functions\loadXML>
 #Include <GUIs\tomshiBasic>
 ; }
 
@@ -408,7 +409,7 @@ xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.
  */
 class adobeXML {
     __New(file) {
-        this.xml := this.__loadXML(file)
+        this.xml := loadXML(file)
     }
     xml := ""
 
@@ -422,18 +423,6 @@ class adobeXML {
         "44",             "{Up}",
         "45",             "{Down}",
     )
-
-    /**
-     * takes an xml formatted string and returns a comobject
-     * @param {String} xml the fileread xml file (ie, premiere's keyboard shortcut file)
-     * @returns {Object} returns a comobject
-     */
-    __loadXML(xml) {
-        xmldoc := ComObject("MSXML2.DOMDocument.6.0")
-        xmldoc.async := false
-        xmldoc.loadXML(xml)
-        return xmldoc
-    }
 
     /**
      * takes premiere's virtual key value and returns they key

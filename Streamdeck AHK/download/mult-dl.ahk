@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/06/17
+ * @date 2025/07/03
  ***********************************************************************/
-global currentVer := "1.1.3.2"
+global currentVer := "1.1.4"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -167,7 +167,10 @@ class multiDL extends tomshiBasic {
 
     /** Allows the user to change the file to operate on */
     __selectFile(*) {
-        if !newFile := FileSelect("D2",, "Select download location")
+        activeWin := WinGet.ExplorerPath()
+        defaultDir := activeWin != false ? activeWin : ""
+        newFile := FileSelect("D3", defaultDir, "Select download location")
+        if !newFile
             return false
         this.getFile := newFile
         return true

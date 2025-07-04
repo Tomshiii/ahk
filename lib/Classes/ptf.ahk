@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2025/06/21
- * @version 1.2.10
+ * @date 2025/07/02
+ * @version 1.2.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -101,6 +101,7 @@ class ptf {
 
         ;adobe stuff
         "premTemp",        this.Backups "\Adobe Backups\Premiere\Template\",
+        "PremProfile",     A_MyDocuments "\Adobe\Premiere Pro\" this.trimAdobeYear("premiere") "\Profile-" A_UserName "\",
         "PremPresets",     A_MyDocuments "\Adobe\Premiere Pro\" this.trimAdobeYear("premiere") "\Profile-" A_UserName "\Effect Presets and Custom Items.prfpset", ;this could be named different for you depending on what your adobe username is!!
         "AdobeCC",         A_ProgramFiles "\Adobe\Adobe Creative Cloud\ACC\Creative Cloud.exe",
 

@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/01
- * @version 2.2.19
+ * @date 2025/07/02
+ * @version 2.2.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -31,7 +31,7 @@
 #Include <Functions\getHotkeys>
 #Include <Functions\delaySI>
 #Include <Functions\detect>
-#Include <Functions\checkStuck>
+#Include <Functions\loadXML>
 #Include <Other\Notify\Notify>
 ; }
 
@@ -40,28 +40,32 @@ class Prem {
     static __New() {
         UserSettings := UserPref()
         this.currentSetVer := SubStr(UserSettings.premVer, 2)
+        this.defaultTheme := UserSettings.premDefaultTheme
         UserSettings.__delAll()
         UserSettings := ""
 
         switch {
             ;// spectrum ui
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
-                this.timelineCols := this.__setTimelineCol("Spectrum", "darkest", "mip") ;// expects darkest theme
                 ;// set timeline and playhead colours
                 this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
                 ;// set layer button offsets (these get added onto `timelineRawX`)
                 this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.layerEmpty := 0x1D1D1D, this.layerDivider := 0x303030, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21, this.iconHighlight := 0x6A6A6A
+                this.__determineTheme()
             ;// old ui
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
-                this.timelineCols := this.__setTimelineCol("oldUI", "darkest", "mip") ;// expects darkest theme
                 ;// set timeline and playhead colours
                 this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
+        this.__determineTheme()
     }
 
     static currentSetVer := ""
     static spectrumUI_Version := "25.0"
     static timelineCols := Mip()
+    static timelineColArr := []
+    static theme := "darkest"
+    static defaultTheme := ""
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
@@ -127,6 +131,38 @@ class Prem {
     static layerDivider := 0x303030
     static toggleWaiting := false
     static toggleableButtons := Mip("source", true, "target", true, "sync", true, "mute", true, "solo", true, "lock", true)
+
+    /** Sets required class values for the user's premiere theme. Versions greater than the Spectrum UI update will have their theme determined automatically based off their premiere settings file */
+    static __determineTheme() {
+        switch {
+            ;// spectrum ui
+            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
+                if FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs") {
+                    loadSettings := loadXML(FileRead(ptf['PremProfile'] "Adobe Premiere Pro Prefs"))
+                    props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1").text
+                    switch props {
+                        case "7.9999998211860657": this.__setTimelineCol("Spectrum", "darkest")
+                        case "34.999999403953552": this.__setTimelineCol("Spectrum", "dark")
+                        case "80.000001192092896": this.__setTimelineCol("Spectrum", "light")
+                        default:
+                            sleep 50
+                            if !Notify.Exist('notDetermined') {
+                                Notify.Show(, 'Premiere theme could not be determined.`nDefaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=notDetermined')
+                            }
+                            this.__setTimelineCol("Spectrum", this.defaultTheme)
+                    }
+                } else {
+                    this.__setTimelineCol("Spectrum", "darkest") ;// defaults to darkest theme
+                }
+            ;// old ui
+			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
+                sleep 50
+                if !Notify.Exist('preSpectrum') {
+                    Notify.Show(, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=preSpectrum')
+                }
+                this.__setTimelineCol("oldUI", this.defaultTheme)
+        }
+    }
 
     __fxPanel() => (delaySI(16, KSA.effectControls, ksa.programMonitor, KSA.effectControls))
 
@@ -2424,17 +2460,23 @@ class Prem {
      * @returns {Map/Mip/Array}
 	 */
 	static __setTimelineCol(UI, theme, mapOrArr := "Arr") {
-        timelineCol := (mapOrArr = "Arr") ? [] : ((mapOrArr = "mip") ? Mip() : Map())
+        timelineCol := Mip()
+        timelineColArr := []
+        if !timelineColours.%UI%.HasProp(theme) {
+            sleep 50
+            if !Notify.Exist("timeline")
+                Notify.Show(, '``timelineColours {`` does not have values set for the requested theme. Reverting to "darkest" theme.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=timeline')
+            theme := "darkest"
+        }
 		for k, v in timelineColours.%UI%.%theme% {
 			if Mod(A_Index, 2) != 0
 				continue
 			varName := timelineColours.%UI%.%theme%[k-1]
-            if mapOrArr= "Arr"
-                timelineCol.Push(Format("0x{:x}", v))
-            else
-                timelineCol.Set(Format("0x{:x}", v), true)
+            timelineColArr.Push(Format("0x{:x}", v))
+            timelineCol.Set(Format("0x{:x}", v), true)
 		}
-        return timelineCol
+        this.timelineCol    := timelineCol
+        this.timelineColArr := timelineColArr
 	}
 
     /**

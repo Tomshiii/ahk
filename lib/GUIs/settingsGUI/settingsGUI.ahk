@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/05/12
- * @version 2.3.11
+ * @date 2025/07/02
+ * @version 2.3.12
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -603,7 +603,7 @@ settingsGUI()
             return
         }
         adobeGui := tomshiBasic(,, "+MinSize275x AlwaysOnTop Owner", title)
-        ctrlX := 100
+        ctrlX := 120
 
         ;// start defining the gui
         adobeGui.AddText("Section", "Year: ")
@@ -617,6 +617,12 @@ settingsGUI()
             cache := adobeGui.Add("Edit", "x" ctrlX " ys-3 r1 W150 ReadOnly", UserSettings.%cacheInit%)
             cacheSelect := adobeGui.Add("Button", "x+5 w60 h27", "select")
             cacheSelect.OnEvent("Click", __cacheslct.Bind(adobeFullName))
+        }
+        if program = "Premiere" {
+            defaults := Map("Light", "1", "Dark", "2", "Darkest", "3")
+            adobeGui.AddText("xs", "Theme Default: ")
+            adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose" defaults.Get(UserSettings.premDefaultTheme) " vthemeDefaultPrem", ["Light", "Dark", "Darkest"])
+            adobeGui['themeDefaultPrem'].OnEvent("change", (ctrl, *) => UserSettings.premDefaultTheme := ctrl.Text)
         }
 
         ;// warning & save button

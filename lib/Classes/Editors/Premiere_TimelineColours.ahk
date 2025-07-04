@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A list of colours required for each UI version/theme of premiere I've encountered. I only use the darkest themes, if you use a different theme you'll need to fill out your own
  * @author tomshi, taranVH
- * @date 2025/07/01
- * @version 1.0.0
+ * @date 2025/07/02
+ * @version 1.0.1
  ***********************************************************************/
 
 class timelineColours {
@@ -16,9 +16,9 @@ class timelineColours {
 			"timeline13", 0x3D3D3D, ;the timeline colour inside in/out points on a TARGETED track (additional)
 			"timeline14", 0x3F3F3F, ;the timeline colour inside in/out points on a TARGETED track (additional)
 			"timeline4",  0x1D1D1D, ;the colour of the bare timeline NOT inside the in out points (above any tracks)
-			"timeline8",  0x202020, ;the colour of the bare timeline NOT inside the in out points (v22.3.1+)
-			"timeline9",  0x1C1C1C, ;the colour of the bare timeline NOT inside the in out points (v23.1+)
-			"timeline10", 0x1D1D1D, ;the colour of the bare timeline NOT inside the in out points (v23.4+) (above any tracks)
+			"timeline8",  0x1D1D1D, ; same as above (not needed on new UI)
+			"timeline9",  0x1D1D1D, ; same as above (not needed on new UI)
+			"timeline10", 0x1D1D1D, ; same as above (not needed on new UI)
 			"timeline5",  0xE2E2E2, ;the colour of a SELECTED blank space on the timeline, NOT in the in/out points
 			"timeline6",  0xE7E7E7, ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on a TARGETED track
 			"timeline7",  0xC1C1C1, ;the colour of a SELECTED blank space on the timeline, IN the in/out points, on an UNTARGETED track

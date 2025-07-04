@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.3
  * @author tomshi, taranVH
- * @date 2025/07/01
- * @version 2.3.17
+ * @date 2025/07/02
+ * @version 2.3.18
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -66,12 +66,12 @@ There's probably some dumb hacky way to work around that but ultimately it's jus
 ;---------------------------------------------------------------------------------------
 
 ;// there may be code that EXPECTS the activation hotkey to be RButton
-RButton::rbuttonPrem().movePlayhead(,, prem.currentSetVer)
+RButton::rbuttonPrem().movePlayhead(, prem.currentSetVer)
 
 ;// there is code that EXPECTS the activation hotkey to be XButton1
 ;// including uses of `checkStuck()`
 ;// beware if modifying this activation hotkey that code adjustments might be necessary
-XButton1::rbuttonPrem().movePlayhead(false,, prem.currentSetVer)
+XButton1::rbuttonPrem().movePlayhead(false, prem.currentSetVer)
 
 OnExit(__OnExit)
 __OnExit(*) {
@@ -99,7 +99,7 @@ class rbuttonPrem {
 	 */
 	__checkForBlank(colour) {
 		;// these are the timelineCol colors of a selected clip or blank space, in or outside of in/out points.
-		if (colour = this.timelineCol[5] || colour = this.timelineCol[6] || colour = this.timelineCol[7])
+		if (colour = prem.timelineColArr[5] || colour = prem.timelineColArr[6] || colour = prem.timelineColArr[7])
 			return true
 		return false
 	}
@@ -111,11 +111,11 @@ class rbuttonPrem {
 	 */
 	__checkColour(colour) {
 		loop { ;// this loop is checking to see if `colour` is one of the predetermined colours
-			if A_Index > this.timelineCol.Length {
+			if A_Index > prem.timelineColArr.Length {
 				SendInput(this.sendHotkey) ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
 				return false
 			}
-			if colour = this.timelineCol[A_Index] || colour = prem.playhead
+			if colour = prem.timelineColArr[A_Index] || colour = prem.playhead
 				return true
 		}
 	}
@@ -127,11 +127,11 @@ class rbuttonPrem {
 	 */
 	__checkUnderCursor(colour) {
 		if (
-			colour != this.timelineCol[1] && colour != this.timelineCol[2] &&
-			colour != this.timelineCol[3] && colour != this.timelineCol[4] &&
-			colour != this.timelineCol[8] && colour != this.timelineCol[9] &&
-			colour != this.timelineCol[11] && colour != this.timelineCol[12] &&
-			colour != this.timelineCol[13] && colour != this.timelineCol[14]
+			colour != prem.timelineColArr[1] && colour != prem.timelineColArr[2] &&
+			colour != prem.timelineColArr[3] && colour != prem.timelineColArr[4] &&
+			colour != prem.timelineColArr[8] && colour != prem.timelineColArr[9] &&
+			colour != prem.timelineColArr[11] && colour != prem.timelineColArr[12] &&
+			colour != prem.timelineColArr[13] && colour != prem.timelineColArr[14]
 		) {
 			SendInput(this.sendHotkey)
 			return false
@@ -264,11 +264,10 @@ class rbuttonPrem {
 	 *
 	 * #### This function has code to exit early in the event that `A_ThisHotkey` gets set to something with `&` in it. If you want to do this on purpose, you will need to remove that block of code.
 	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like <kbd>RButton</kbd> as that removes the ability for the keys native function to operate
-	 * @param {String} [theme="darkest"] the desired theme the user uses and wishes to use for the required colour values. Currently only "darkest" has mapped values
 	 * @param {String} [version=unset] the currently selected version of premiere within `settingsGUI()`. This parameter can usually be filled in using `prem.currentSetVer`
 	 * @param {String} [sendOnFailure=unset] what you wish for the script to send in the event that it needs to fallback. What you set for this parameter will be sent to `SendInput()`. If left unset, sends `"{" A_ThisHotkey "}"`
 	 */
-	movePlayhead(allChecks := true, theme := "darkest", version := unset, sendOnFailure := unset) {
+	movePlayhead(allChecks := true, version := unset, sendOnFailure := unset) {
 		if !IsSet(version) {
 			;// throw
 			errorLog(UnsetError("User has not set Paramater #2"),,, true)
@@ -286,12 +285,6 @@ class rbuttonPrem {
 
 		if IsSet(sendOnFailure)
 			this.sendHotkey := sendOnFailure
-
-		;// setting which UI values to use
-		switch {
-			case VerCompare(version, prem.spectrumUI_Version) >= 0: this.timelineCol := prem.__setTimelineCol("Spectrum", theme)
-			case VerCompare(version, prem.spectrumUI_Version) < 0:  this.timelineCol := prem.__setTimelineCol("oldUI", theme)
-		}
 
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
