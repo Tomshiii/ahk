@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/03/15
- * @version 1.1.3
+ * @date 2025/07/05
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -438,6 +438,28 @@ class ffmpeg {
             FileDelete(filepath)
             FileMove(outputFile, filepath)
         }
+    }
+
+    /**
+     * determines if the given file is a video file or not
+     * @param {String} path the full filepath of the file you wish to check
+     */
+    isVideo(path) {
+        chkVid := cmd.result(Format('ffprobe -v error -select_streams v -show_entries stream=codec_type -of csv=p=0 "{1}"', path))
+        if chkVid != "video"
+            return false
+        chkDur := cmd.result(Format('ffprobe -v error -select_streams v -show_entries stream=nb_frames,duration -of default=noprint_wrappers=1 "{1}"', path))
+        chkResponse := StrSplit(chkDur, ["=", "`n"], '`r')
+        response := Mip()
+        for i, v in chkResponse {
+            if Mod(i, 2) = 0
+                continue
+            response.Set(v, chkResponse[i+1])
+        }
+        duration := response.get("duration")
+        if duration = "N/A" || duration = "0" || duration = 0
+            return false
+        return true
     }
 
     __Delete() {

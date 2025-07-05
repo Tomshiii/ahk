@@ -44,9 +44,12 @@ filecount := 0
 loop files selectedDir "\*", recurse " F"
     filecount+=1
 check := Notify.Show('Checking files in chosen directory', , 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' filecount)
+ffmpegInst := ffmpeg()
 
 loop files selectedDir "\*", recurse {
     check["prog"].value += 1
+    if !ffmpegInst.isVideo(A_LoopFileFullPath)
+        continue
     inputPath      := obj.SplitPath(A_LoopFileFullPath)
     baseOutputPath := inputPath.dir "\proxy\" inputPath.NameNoExt "_proxy.mov"
     if FileExist(baseOutputPath)

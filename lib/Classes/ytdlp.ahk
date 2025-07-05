@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/06/30
- * @version 1.0.25
+ * @date 2025/07/05
+ * @version 1.0.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -245,7 +245,7 @@ class ytdlp {
         ;// running command
         cmd.run(,,, this.command)
         ;// determine if the downloaded file is a video file
-        isVideo := (cmd.result(Format('ffprobe -v error -select_streams v -show_entries stream=codec_type -of csv=p=0 "{1}"', folderU "\" nameNoExt "." ext)) = "video") ? true : false
+        isVideo := ffmpeg().isVideo(folderU "\" nameNoExt "." ext)
         switch {
             ;// determining what post args to perform
             case (isVideo = true && postArgs != false && postArgs == this.defaultPostProcess):

@@ -7,6 +7,7 @@
 - ✅ Fixed `ytdlp.download()` incorrectly naming some files causing subsequent functionality to fail
 - ✅ `getHotkeys()` will now handle hotkeys similar to <kbd><!2</kbd>
 - 📋 Moved `timelineColours {` out of `Premiere_RightClick.ahk` and into its own file
+- ✏️ Added `ffmpeg().isVideo()`
 
 `prem {`
 - 📋 Theme selection is now determined automatically (for Premiere versions greater than `v25.0`) using the user's Premiere settings file, or through `settingsGUI()` for versions before `v25.0`
@@ -23,6 +24,9 @@
 - 📋 `gitBranchCheck()` will no longer continue if changes are waiting to be `pushed` to avoid issues
 
 ## Other Changes
-- ✅ Fixed `generateProxies.ahk` failing to generate some metadata causing it to outright fail
 - ✏️ Added `PremiereRemote` function `toggleEnabled()`
 - 📋 `generateProxies.ahk` & `multi-dl.ahk` will now default their fileselects to an active explorer window if one is present
+
+📍 `generateProxies.ahk`
+- ✅ Fixed script failing to generate some metadata causing it to outright fail
+- 📋 Will now skip non video files
