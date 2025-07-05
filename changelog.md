@@ -15,7 +15,8 @@
 > Keep in mind only the "darkest" theme has its colours set currently. If you use an alternative theme, please update `Premiere_TimelineColours.ahk` and consider submitting a pull request!
 - ✏️ Added `toggleEnabled()`
 - 📋 Moved `__setTimelineCol()` out of `Premiere_RightClick.ahk` and into `prem {`
-- 📋 `toggleLayerButtons()` & `disableAllMuteSolo()` will now wait for shome activation hotkeys to be released before continuing
+- 📋 `toggleLayerButtons()` & `disableAllMuteSolo()` will now wait for some activation hotkeys to be released before continuing
+- 📋 `changeLabel()` will no longer focus the timeline if the `Projects` window is the active panel so that the user may still assign labels to sequences
 
 ⚠️ `Startup {`
 - 📋 `HotkeylessAHK.ahk` can now be rebooted from `trayMen()`

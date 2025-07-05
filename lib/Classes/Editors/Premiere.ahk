@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/02
- * @version 2.2.20
+ * @date 2025/07/05
+ * @version 2.2.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2541,6 +2541,12 @@ class Prem {
     static changeLabel(labelHotkey) {
         if !this.__checkTimeline()
 			return
+        premEl := this.__createUIAelement()
+        premUIA := premUIA_Values()
+        if premEl.activeElement = premUIA.project {
+            SendInput(labelHotkey)
+            return
+        }
         this.__checkTimelineFocus()
         checkForFunc := this.__checkPremRemoteDir("isSelected")
         if !checkForFunc && !this.__remoteFunc('isSelected', true) {

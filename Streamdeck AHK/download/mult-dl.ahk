@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/07/03
+ * @date 2025/07/04
  ***********************************************************************/
-global currentVer := "1.1.4"
+global currentVer := "1.1.5"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -55,13 +55,13 @@ class multiDL extends tomshiBasic {
             }
             WinWaitClose(this.Title)
         }
+        checkClipboard := isURL(A_Clipboard) ? A_Clipboard : ""
+
         if !this.__selectFile(this)
             ExitApp()
         super.__New(,,, "Multi Download")
 
         this.tabs := this.AddTab3("+Theme -Background x9 y50", ["Single", "Multi", "Part"])
-
-        checkClipboard := isURL(A_Clipboard) ? A_Clipboard : ""
 
         ;// single
         ;// ================================================================

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2025/06/24
- * @version 1.0.9
+ * @date 2025/07/04
+ * @version 1.0.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -25,7 +25,7 @@ class reset {
         UserSettings := UserPref()
         this.mainScript := UserSettings.MainScriptName
 
-        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, UserSettings.MainScriptName ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "HotkeylessAHK.ahk", 1)
+        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, UserSettings.MainScriptName ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1)
     }
 
     mainScript := ""
@@ -123,6 +123,12 @@ class reset {
         for v in activeWindows {
             if !getInfo := this().__parseInfo(v, includeChecklist)
                 continue
+            if getInfo.scriptName = "HotkeylessAHK.ahk" {
+                ProcessClose(WinGetPID(getInfo.scriptName,, browser.vscode.winTitle))
+                if FileExist(ptf['HotkeylessAHK'])
+                    Run(ptf['HotkeylessAHK'])
+                continue
+            }
             PostMessage(0x0111, 65303,,, getInfo.scriptName " - AutoHotkey")
         }
         detect(false)
@@ -140,6 +146,12 @@ class reset {
         for v in activeWindows {
             if !getInfo := this().__parseInfo(v, includeChecklist)
                 continue
+            if getInfo.scriptName = "HotkeylessAHK.ahk" {
+                ProcessClose(WinGetPID(getInfo.scriptName,, browser.vscode.winTitle))
+                if FileExist(ptf['HotkeylessAHK'])
+                    Run(ptf['HotkeylessAHK'])
+                continue
+            }
             Run(getInfo.path)
         }
         detect(false)
