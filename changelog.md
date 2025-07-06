@@ -25,8 +25,14 @@
 
 ## Other Changes
 - ✏️ Added `PremiereRemote` function `toggleEnabled()`
-- 📋 `generateProxies.ahk` & `multi-dl.ahk` will now default their fileselects to an active explorer window if one is present
+- ❌ Removed `audPart.ahk`, `audSelect.ahk`, `projAudio.ahk`, `projVideo.ahk`, `sfx.ahk`, `thumbnail.ahk`, `vfx.ahk`, `video.ahk`, `vidPart.ahk`, and `vidSelect.ahk` as `mult-dl.ahk` encapsulates all of them
+
+📍 `mult-dl.ahk`
+- 📋 Will default its `FileSelect` to an active `Explorer` window if one is present
+- 📋 Will now properly limit the `Part` tabs `UpDwn` inputs to 2 values and only numbers
+- ✏️ Can now download thumbnails
 
 📍 `generateProxies.ahk`
+- ✏️ Will default its `FileSelect` to an active `Explorer` window if one is present
 - ✅ Fixed script failing to generate some metadata causing it to outright fail
 - 📋 Will now skip non video files

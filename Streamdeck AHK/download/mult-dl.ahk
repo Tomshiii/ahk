@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/07/04
+ * @date 2025/07/06
  ***********************************************************************/
-global currentVer := "1.1.5"
+global currentVer := "1.1.6"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -61,47 +61,51 @@ class multiDL extends tomshiBasic {
             ExitApp()
         super.__New(,,, "Multi Download")
 
-        this.tabs := this.AddTab3("+Theme -Background x9 y50", ["Single", "Multi", "Part"])
+        startY := 110
+        this.tabs := this.AddTab3("+Theme -Background x9 y" startY, ["Single", "Multi", "Part"])
 
         ;// single
         ;// ================================================================
-        this.AddText("Section x25 y85", "Paste URL: ")
+        but_width := 150
+        this.AddText("Section x25 y" startY+35, "Paste URL: ")
         this.AddEdit("x+5 y+-20 r1 vsingleURL w220 -Wrap", checkClipboard)
-        this.AddButton("vDL_single xs", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
+        this.AddButton("vDL_single xs w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise_single", " Avoid reencode`n (may result in lower quality)")
         this["DL_single"].GetPos(&x, &y, &wid, &height)
-        this.AddButton("vAud_single x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
+        this.AddButton("vAud_single x" x " y+7 w" but_width, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
+        this.AddButton("vthumb_single x" x " -Wrap y+7 w" but_width, "Download Thumbnail").OnEvent("Click", this.__download.Bind(this, "thumb"))
         ;// ================================================================
 
         ;// multi
         ;// ================================================================
         this.tabs.UseTab("Multi")
 
-        this.AddEdit("x25 y80 r10 vlist w320 Multi Wrap", this.defaultListText)
-        this.AddButton("vDL", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
+        this.AddEdit("x25 y" startY+30 " r10 vlist w320 Multi Wrap", this.defaultListText)
+        this.AddButton("vDL w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise", " Avoid reencode`n (may result in lower quality)")
         this["DL"].GetPos(&x, &y, &wid, &height)
-        this.AddButton("vAud x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
+        this.AddButton("vAud x" x " y+7 w" but_width, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
+        this.AddButton("vthumb x" x " y+7 w" but_width, "Download Thumbnail").OnEvent("Click", this.__download.Bind(this, "thumb"))
         ;// ================================================================
 
         ;// Part
         ;// ================================================================
         this.tabs.UseTab("Part")
-        this.AddText("Section x25 y85", "Paste URL: ")
+        this.AddText("Section x25 y" startY+35, "Paste URL: ")
         this.AddEdit("x+5 y+-20 r1 vpartURL w220 -Wrap", checkClipboard)
         this.AddText("xs Wrap w280", "Please provide the timecode that all content you wish to download sits within.")
 
         loop 2 {
             this.AddText(((A_Index = 1) ? "" : "xs y+15 ") "Section", (A_Index = 1) ? "Start Timecode:   H" : "End Timecode:    H")
-            this.AddEdit("xs+120 ys-3 w50")
+            this.AddEdit("xs+120 ys-3 w50 Number Limit2")
             this.AddUpDown("vH" A_Index " Range0-11 ", 0)
 
             this.AddText("x+10 ys", "M")
-            this.AddEdit("x+5 ys-3 w50")
+            this.AddEdit("x+5 ys-3 w50 Number Limit2")
             this.AddUpDown("vM" A_Index " Range0-59 ", 0)
 
             this.AddText("x+10 ys", "S")
-            this.AddEdit("x+5 ys-3 w50")
+            this.AddEdit("x+5 ys-3 w50 Number Limit2")
             this.AddUpDown("vS" A_Index " Range0-59 ", 0)
         }
         this.AddButton("vDL_part xs", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
@@ -110,20 +114,23 @@ class multiDL extends tomshiBasic {
         this.AddButton("vAud_part x" x " y+7 w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
         ;// ================================================================
 
-        ;// adding current folder path
         this["list"].GetPos(&listx, &listy, &listwid, &listheight)
         this.tabs.UseTab(0)
-        this.AddText("BackgroundTrans x9 y" listy + listheight + 95, "Current Download Path").SetFont("underline")
-        this.AddButton("x+15 w185 h20 y+-18", "Change Download Location").OnEvent("Click", this.__changeDlDir.bind(this))
-        this.AddText("vCurrDir BackgroundTrans x9 y+5 h50 w" listwid+10, this.getFile)
-        this["currDir"].SetFont("Bold s10")
+
         ;// Setting version text & Update Button to the top of the window
-        this.AddText("vVerText Right BackgroundTrans y55 x" listx " w" listwid, "v" currentVer)
+        this.AddText("vVerText Right BackgroundTrans y" startY+5 " x" listx " w" listwid, "v" currentVer)
         this["VerText"].GetPos(&verx, &very, &verwid, &verheight)
-        this["VerText"].Move(verx+(verwid*0.7), very, verwid/3, verheight)
+        this["VerText"].Move(verx+(verwid*0.77), very, verwid/3, verheight)
         this.AddButton("vupdates x9 y7", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
         this["updates"].Opt("Disabled")
         this.AddCheckbox("vcheckDev x+10 yp+7", "check dev branch")
+
+        ;// adding current folder path
+        this.AddText("BackgroundTrans x9 yp+35", "Current Download Path").SetFont("underline")
+        this.AddButton("x+15 w185 h20 y+-18", "Change Download Location").OnEvent("Click", this.__changeDlDir.bind(this))
+        showDir := this.__cullDirectory(this.getFile)
+        this.AddText("vCurrDir BackgroundTrans x9 y+5 h50 r1 w" listwid+10, showDir)
+        this["currDir"].SetFont("Bold s10")
 
         this.show(, {DarkColour: "F0F0F0"})
 
@@ -180,7 +187,7 @@ class multiDL extends tomshiBasic {
         if !newFile := FileSelect("D2",, "Select download location")
             return false
         this.getFile := newFile
-        this["currDir"].text := this.getFile
+        this["currDir"].text := this.__cullDirectory(this.getFile)
     }
 
     __buildUpdateCmd() {
@@ -196,9 +203,13 @@ class multiDL extends tomshiBasic {
         return buildStr
     }
 
+    __cullDirectory(Path) {
+        return cull := (stringLen := StrLen(Path) > 37) ? SubStr(Path, 1, 3) ".." SubStr(Path, InStr(Path, "\",, -1, -1)) : Path
+    }
+
     __download(vidOrAud, *) {
-        this["DL"].Enabled := false, this["Aud"].Enabled := false
-        this["DL_single"].Enabled := false, this["Aud_single"].Enabled := false
+        this["DL"].Enabled := false, this["Aud"].Enabled := false, this["thumb"].Enabled := false
+        this["DL_single"].Enabled := false, this["Aud_single"].Enabled := false, this["thumb_single"].Enabled := false
         this["DL_part"].Enabled := false, this["Aud_part"].Enabled := false
         this.Hide()
         yt := ytdlp()
@@ -215,6 +226,7 @@ class multiDL extends tomshiBasic {
                             altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
                             yt.download(altCommand, this.getFile, this["singleURL"].value, false)
                         case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, this["singleURL"].value, false)
+                        case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, this["singleURL"].value, false)
                     }
             case 2: ;// multi
                 if this["list"].value = "" || this['list'].value == this.defaultListText {
@@ -229,6 +241,7 @@ class multiDL extends tomshiBasic {
                             altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
                             yt.download(altCommand, this.getFile, v, false)
                         case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, v, false)
+                        case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, v, false)
                     }
                 }
             case 3: ;// part
@@ -247,11 +260,11 @@ class multiDL extends tomshiBasic {
                     }
         }
         break:
-        this.show()
-        this["DL"].Enabled := true, this["Aud"].Enabled := true
-        this["DL_single"].Enabled := true, this["Aud_single"].Enabled := true
+        this["DL"].Enabled := true, this["Aud"].Enabled := true, this["thumb"].Enabled := true
+        this["DL_single"].Enabled := true, this["Aud_single"].Enabled := true, this["thumb_single"].Enabled := true
         this["DL_part"].Enabled := true, this["Aud_part"].Enabled := true
 
+        this.show(, {DarkColour: "F0F0F0"})
         if showDir = true {
             yt.__activateDir(this.getFile)
         }
