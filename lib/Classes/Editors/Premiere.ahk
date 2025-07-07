@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/05
- * @version 2.2.21
+ * @date 2025/07/08
+ * @version 2.2.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -40,7 +40,10 @@ class Prem {
     static __New() {
         UserSettings := UserPref()
         this.currentSetVer := SubStr(UserSettings.premVer, 2)
-        this.defaultTheme := UserSettings.premDefaultTheme
+        try this.defaultTheme := UserSettings.premDefaultTheme
+        catch {
+            this.defaultTheme := this.theme
+        }
         UserSettings.__delAll()
         UserSettings := ""
 
