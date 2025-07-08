@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2024/06/16
- * @version 1.2.10
+ * @date 2025/06/16
+ * @version 1.2.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -415,15 +415,15 @@ class Move {
         }
         ;// I want vlc to be a size for 16:9 video to get rid of any letterboxing
         if InStr(title, "VLC media player") && IsSet(newHeight) && monitor.monitor = mainMon {
-            IsWav := InStr(title, ".wav")
+            IsWav := (InStr(title, ".wav") || InStr(title, ".mp3")) ? true : false
+            ;// honestly this is probably all resolution dependent but I cbf figuring out how to adjust the math for individual resolutions
             switch IsWav {
+                case true:
+                    newHeight := newHeight/4, newY := newY*3.5
+                    newWidth  := newWidth/4, newX := newX*2
                 case false:
-                    ;// the size & position of vlc may be a little weird on a non 16:9 resolution
-                    newHeight := 900
-                    newWidth  := 1416
-                default:
-                    newWidth  := 488
-                    newHeight := 367
+                    newHeight := newHeight/1.5 , newY := newY*2
+                    newWidth  := newWidth/1.5, newX := newX*1.5
             }
         }
         try{

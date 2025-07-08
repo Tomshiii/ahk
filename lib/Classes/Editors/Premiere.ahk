@@ -5,7 +5,7 @@
  * @premVer 25.3
  * @author tomshi
  * @date 2025/07/08
- * @version 2.2.22
+ * @version 2.2.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2389,8 +2389,9 @@ class Prem {
      * A function to toggle the `enabled`/`disabled` state of a clip on the desired layer. This function will operate on either the audio/video tracks depending on whether the cursor is above or below the middle dividing line.
      * @param {Integer} [track=A_ThisHotkey] The track you wish to operate on. If this parameter is not just an integer it will attempt to do a rudimentary check on the activation hotkey, expecting a number to be the final activation key in the chain
      * @param {String} [audOrVid=false] determine whether to operate on the audio or video tracks. By default this value is set to `false` and it is determined purely by the user's cursor position. otherwise set to either `"vid"` or `"aud"`
+     * @@param {Integer} [offset=0] Allows the user to offset the track number, ie. if their `track` number is `1` and offset is `1` the function will operate on track `2`. Useful to skip multicam tracks
      */
-    static toggleEnabled(track := A_ThisHotkey, audOrVid := false) {
+    static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0) {
         SetDefaultMouseSpeed(0)
         coord.client()
         if !this.__checkTimeline()
@@ -2410,6 +2411,7 @@ class Prem {
             blocker.Off()
             return
         }
+        SendInput(ksa.deselectAll)
         origMouseCords := obj.MousePos()
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
@@ -2427,8 +2429,14 @@ class Prem {
             splitHotkey := getHotkeys()
             track := splitHotkey.second
         }
-        if !IsNumber(track) {
+        if !IsInteger(track) {
             blocker.Off()
+            return
+        }
+        track += offset
+        if track < 1 {
+            Notify.Show('toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red width=400 pad=,,,,,,,0')
+            errorLog(ValueError("Desired track must be greater than 1", -1))
             return
         }
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
