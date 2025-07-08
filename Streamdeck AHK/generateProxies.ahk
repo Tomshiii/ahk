@@ -27,10 +27,7 @@ if !selectedDir
 recurse := ""
 files := []
 names := []
-baseFrameRate := "29.97"
-pal := ["25", "50", "100", "200"]
-ntsc := ["23.97", "24", "29.97", "30", "59.94", "60", "119.88", "120", "239.76", "240"]
-renderScale := 0.5
+renderScale := 0.25
 normalCommand := 'ffmpeg -hwaccel none -i "{1}" -c:v prores -profile:v 0 -pix_fmt yuv422p10 -filter_complex "[0:v]scale={2}[out]" -map "[out]" -c:a copy -map a? {3} -sws_flags bicubic -vsync cfr -metadata:s "encoder=Apple ProRes Proxy" -vendor apl0 -flags bitexact -metadata creation_time="{4}" -y "{5}"'
 
 

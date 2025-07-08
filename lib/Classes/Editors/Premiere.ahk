@@ -5,7 +5,7 @@
  * @premVer 25.3
  * @author tomshi
  * @date 2025/07/08
- * @version 2.2.23
+ * @version 2.2.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -339,10 +339,12 @@ class Prem {
      */
     static save(andWait := true, checkSeqTime := 1000, checkAmount := 1, continueOnBusy := false) {
         activeWin := WinActive("A"), procName := WinGetProcessName(activeWin), className := WinGetClass(activeWin)
-        if continueOnBusy = false && (procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (className != "Premiere Pro" || className != "Premiere Pro (Beta)")
+        if continueOnBusy = false && (procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (className != "Premiere Pro" && className != "Premiere Pro (Beta)")
             return "busy"
-        if !this.__checkPremRemoteDir("saveProj") || !this.__checkPremRemoteFunc("getActiveSequence")
+        if !this.__checkPremRemoteDir("saveProj")
             return false
+        if !this.__checkPremRemoteFunc("getActiveSequence") || !this.__checkPremRemoteFunc("focusSequence")
+            return "noseq"
         origSeq := this.__remoteFunc("getActiveSequence", true)
         if !this.__remoteFunc("saveProj")
             return false
@@ -355,9 +357,6 @@ class Prem {
             return "timeout_nosave"
         if !WinWaitClose("Save Project",, 3)
             return "timeout"
-
-        if !this.__checkPremRemoteFunc("focusSequence") || !this.__checkPremRemoteFunc("getActiveSequence")
-            return "noseq"
 
         sleep checkSeqTime
         loop checkAmount {

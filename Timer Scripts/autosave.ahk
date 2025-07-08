@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/06/16
- * @version 2.1.36
+ * @date 2025/07/08
+ * @version 2.1.37
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -463,7 +463,7 @@ class adobeAutoSave extends count {
 
         ;// attempts to save using `PremiereRemote`
         saveAttempt := prem.save()
-        if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy") {
+        if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy" || saveAttempt = "noseq") {
             sleep 500
             return
         }

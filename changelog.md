@@ -14,6 +14,7 @@
     - ❗ `rbuttonPrem().movePlayhead` no longer requires the user's theme to be passed in as a parameter
 > [!Warning]
 > Keep in mind only the "darkest" theme has its colours set currently. If you use an alternative theme, please update `Premiere_TimelineColours.ahk` and consider submitting a pull request!
+- ✅ Fixed `save()` using incorrect logic and incorrectly determining premiere as `busy`
 - ✏️ Added `toggleEnabled()`
 - 📋 Moved `__setTimelineCol()` out of `Premiere_RightClick.ahk` and into `prem {`
 - 📋 `toggleLayerButtons()` & `disableAllMuteSolo()` will now wait for some activation hotkeys to be released before continuing
