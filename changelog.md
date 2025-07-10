@@ -15,10 +15,15 @@
 > [!Warning]
 > Keep in mind only the "darkest" theme has its colours set currently. If you use an alternative theme, please update `Premiere_TimelineColours.ahk` and consider submitting a pull request!
 - ✅ Fixed `save()` using incorrect logic and incorrectly determining premiere as `busy`
+- ✅ Fixed `rippleTrim()` tracking incorrectly
 - ✏️ Added `toggleEnabled()`
 - 📋 Moved `__setTimelineCol()` out of `Premiere_RightClick.ahk` and into `prem {`
 - 📋 `toggleLayerButtons()` & `disableAllMuteSolo()` will now wait for some activation hotkeys to be released before continuing
 - 📋 `changeLabel()` will no longer focus the timeline if the `Projects` window is the active panel so that the user may still assign labels to sequences
+
+📍 `delayPlayback()`
+- ✅ Fixed function not delaying the <kbd>Space</kbd> input at all
+- ✅ Fixed function unnecessarily delaying the <kbd>Space</kbd> input if the user's PriorKey was a ripple trim, but more than the delay time has passed
 
 ⚠️ `Startup {`
 - 📋 `HotkeylessAHK.ahk` can now be rebooted from `trayMen()`
@@ -36,4 +41,4 @@
 📍 `generateProxies.ahk`
 - ✏️ Will default its `FileSelect` to an active `Explorer` window if one is present
 - ✅ Fixed script failing to generate some metadata causing it to outright fail
-- 📋 Will now skip non video files
+- ✅ Fixed script attempting to operate on non video files

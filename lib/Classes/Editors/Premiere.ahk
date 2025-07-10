@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/08
- * @version 2.2.24
+ * @date 2025/07/10
+ * @version 2.2.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -102,7 +102,7 @@ class Prem {
     static RClickIsActive      := false
 
     ;// variables for `delayPlayback()` && `rippleTrim()`
-    static defaultDelay := 325
+    static defaultDelay := 400
     static delayTime    := 0
 
     ;// screenshots
@@ -1655,22 +1655,40 @@ class Prem {
     }
 
     /**
-     * #### This function requires you to properly set your ripple trim previous/next keys correctly within `KSA` as well as requires you to make those same keys call `prem.rippleTrim()` in your main ahk script.
-     * If the user immediately attempts to resume playback after ripple trimming the playhead will sometimes not be placed at the new clip and will inadvertently begin playback where you might not expect it
+     * #### This function requires you to properly set your ripple trim previous/next keys correctly within `KSA` as well as requires you to make those same keys call `prem.rippleTrim()` in your main ahk script. This function must also then be called from the key you generally use to toggle playback (default is `Space`)
+     * If the user immediately attempts to resume playback after ripple trimming the playhead will sometimes either; not be placed at the beginning of the clip and will inadvertently begin playback where you might not expect it to, or will simply not resume playback if the user tries to resume playback immediately after ripple trimming
      * This function attempts to delay playback immediately after a trim to mitigate this behaviour. This function might require some adjustment from the user depending on how fast/slow their pc is
      * @param {Integer} delayMS the delay in `ms` that you want the function to wait before attempting to resume playback. Defaults to a value set within the class
      */
     static delayPlayback(delayMS?) {
         this.defaultDelay := IsSet(delayMS) ? delayMS : this.defaultDelay
         delayMS := IsSet(delayMS) ? delayMS : this.defaultDelay
-        __sendSpace() => (SendEvent(ksa.playStop), Exit())
-        if !this.timelineFocusStatus() || (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext)
-            __sendSpace()
-        SetTimer((*) => __sendSpace(), -(delayMS-this.delayTime))
+        __sendSpace() => (SendEvent(ksa.playStop))
+        if !this.timelineFocusStatus() || (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
+            ((A_PriorKey = ksa.premRipplePrev || A_PriorKey = ksa.premRippleNext) && (this.delayTime >= delayMS) || this.delayTime = 0) {
+                __sendSpace()
+                return
+            }
+        SetTimer(__sendSpace, -(delayMS-this.delayTime))
     }
 
-    /** Tracks how long it has been since the user used a ripple trim. This function is to provide proper functionality to `prem.delayPlayback()` */
-    static rippleTrim() {
+    /**
+     * Tracks how long it has been since the user used a ripple trim. This function is to provide proper functionality to `prem.delayPlayback()`
+     * @param {Boolean} [pauseFirst=true] determnines whether to stop playback before attempting to ripple trim (requires `ksa.shuttleStop` to be set correctly)
+     * @param {Integer} [delay=50] how long you wish for the function to stall after halting playback before attempting to ripple trim. This is necessary as premiere can be a little slow to receive inputs so spamming them back to back may result in some inputs being missed. If `pauseFirst` is set to false, this parameter is irrelevant
+     */
+    static rippleTrim(pauseFirst := true, delay := 50) {
+        Critical()
+        ;// ensure the user isn't typing
+        if CaretGetPos(&x, &y) || !this.timelineFocusStatus() {
+            SendInput(A_ThisHotkey)
+            return
+        }
+        this.delayTime += 1
+        if pauseFirst = true {
+            SendEvent(ksa.shuttleStop)
+            sleep(delay)
+        }
         SendEvent(A_ThisHotkey)
         SetTimer(__track.Bind(A_TickCount), 16)
         __track(initialTime) {
@@ -2386,11 +2404,14 @@ class Prem {
     /**
      * ### This function requires `PremiereRemote`
      * A function to toggle the `enabled`/`disabled` state of a clip on the desired layer. This function will operate on either the audio/video tracks depending on whether the cursor is above or below the middle dividing line.
+     *
+     * #### It is recommended you call this function after `#MaxThreadsBuffer true` for best results
      * @param {Integer} [track=A_ThisHotkey] The track you wish to operate on. If this parameter is not just an integer it will attempt to do a rudimentary check on the activation hotkey, expecting a number to be the final activation key in the chain
      * @param {String} [audOrVid=false] determine whether to operate on the audio or video tracks. By default this value is set to `false` and it is determined purely by the user's cursor position. otherwise set to either `"vid"` or `"aud"`
      * @@param {Integer} [offset=0] Allows the user to offset the track number, ie. if their `track` number is `1` and offset is `1` the function will operate on track `2`. Useful to skip multicam tracks
      */
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0) {
+        Critical()
         SetDefaultMouseSpeed(0)
         coord.client()
         if !this.__checkTimeline()
@@ -2400,6 +2421,7 @@ class Prem {
             errorLog(MethodError('This function requires PremiereRemote functionality', -1))
             return
         }
+        SendInput(ksa.shuttleStop)
 
         check := keys.allWait("second")
         blocker := block_ext()
@@ -2421,6 +2443,7 @@ class Prem {
             middleDivider := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+7, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
             aboveOrBelow := (origMouseCords.y < midDivY) ? true : false
         } else {
+            middleDivider := false
             midDivY := false
             aboveOrBelow := (audOrVid = "vid") ? true : false
         }
@@ -2434,6 +2457,7 @@ class Prem {
         }
         track += offset
         if track < 1 {
+            blocker.Off()
             Notify.Show('toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red width=400 pad=,,,,,,,0')
             errorLog(ValueError("Desired track must be greater than 1", -1))
             return
@@ -2447,18 +2471,30 @@ class Prem {
         layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(track)]["mid"])
         if this.timelineCols.Has(layerColour) {
             tool.Cust("No clips on selected track.", 1500)
+            errorLog(TargetError("Desired track must be greater than 1", -1))
             blocker.Off()
             return
         }
 
-        MouseMove(origMouseCords.x, allLayers[Integer(track)]["mid"])
+        MouseMove(origMouseCords.x, allLayers[Integer(track)]["mid"], 0)
         SendInput("{Click}")
+        sleep 25
         if !this.__remoteFunc('isSelected', true) {
-            blocker.Off()
-            return
+            ;// prem will sometimes just stop accepting inputs if it is fed them in rapid succession
+            SendInput("{MButton}")
+            SendInput("{Click}")
+            sleep 25
+            if !this.__remoteFunc('isSelected', true) {
+                MouseMove(origMouseCords.x, origMouseCords.y)
+                SendInput(ksa.deselectAll)
+                blocker.Off()
+                return
+            }
         }
         this.__remoteFunc('toggleEnabled')
-        MouseMove(origMouseCords.x, origMouseCords.y)
+        MouseMove(origMouseCords.x, origMouseCords.y, 0)
+        sleep 25
+        SendInput(ksa.deselectAll)
         blocker.Off()
     }
 

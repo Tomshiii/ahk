@@ -74,15 +74,6 @@ SC03A & v::prem.selectionTool()
 
 SC03A & d::prem.disableDirectManip()
 
-<!`::prem.toggleEnabled(1, "aud")
-<!1::
-<!2::
-<!3::
-<!4::
-<!5::
-<!6::
-<!7::prem.toggleEnabled(, "aud", 1)
-
 ^!1::prem.disableAllMuteSolo("mute")
 ^!2::prem.disableAllMuteSolo("solo")
 
@@ -170,4 +161,13 @@ Alt & WheelUp::
 Alt & WheelDown::
 Shift & WheelUp::
 Shift & WheelDown::prem.accelScroll(5, 25)
+
+<!`::prem.toggleEnabled(1, "aud")
+<!1::
+<!2::
+<!3::
+<!4::
+<!5::
+<!6::
+<!7::prem.toggleEnabled(, "aud", 1)
 #MaxThreadsBuffer false
