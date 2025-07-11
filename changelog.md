@@ -13,7 +13,7 @@
 - 📋 Theme selection is now determined automatically (for Premiere versions greater than `v25.0`) using the user's Premiere settings file, or through `settingsGUI()` for versions before `v25.0`
     - ❗ `rbuttonPrem().movePlayhead` no longer requires the user's theme to be passed in as a parameter
 > [!Warning]
-> Keep in mind only the "darkest" theme has its colours set currently. If you use an alternative theme, please update `Premiere_TimelineColours.ahk` and consider submitting a pull request!
+> Keep in mind only the `darkest` theme has its colours set currently & basically all `ImageSearch` screenshots across the repo are taken in the `darkest` theme (and with `Accessible Colour Contrast` disabled). If you use an alternative theme, please update `Premiere_TimelineColours.ahk`, and take fresh screenshots, then consider submitting a pull request!
 - ✅ Fixed `save()` using incorrect logic and incorrectly determining premiere as `busy`
 - ✅ Fixed `rippleTrim()` tracking incorrectly
 - ✏️ Added `toggleEnabled()`

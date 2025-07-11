@@ -6,7 +6,7 @@
 #Include <Functions\delaySI>
 
 arr1 := ["Eating Out", "Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Health", "Amazon", "Friends/lover"]
-arr2 := ["Gift", "Salary", "Loan Repayments", "Other Repayments"]
+arr2 := ["Salary", "Loan Repayments", "Other Repayments"]
 
 ;// this will assume the second pivot table is 3 cells to the right of the first pivot table
 getValExpenses := InputBox("Enter Coordinates for Expenses PivotTable`n`nExample: $N$323`n`nThis script assumes the second pivot table to be 3 cells to the right of this first one.", "Expenses PivotTable Coords", "H130", "$N$")
@@ -28,6 +28,7 @@ for v in arr1 {
     A_Clipboard := Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValExpenses.value, v)
     if !ClipWait(2)
         return
+    sleep 50
     delaySI(50, "^v", "{Tab}")
 }
 

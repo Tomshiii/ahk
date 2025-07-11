@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/10
- * @version 2.2.25
+ * @date 2025/07/11
+ * @version 2.2.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -144,9 +144,9 @@ class Prem {
                     loadSettings := loadXML(FileRead(ptf['PremProfile'] "Adobe Premiere Pro Prefs"))
                     props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1").text
                     switch props {
-                        case "7.9999998211860657": this.__setTimelineCol("Spectrum", "darkest")
-                        case "34.999999403953552": this.__setTimelineCol("Spectrum", "dark")
-                        case "80.000001192092896": this.__setTimelineCol("Spectrum", "light")
+                        case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
+                        case "34.999999403953552": this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
+                        case "80.000001192092896": this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
                         default:
                             sleep 50
                             if !Notify.Exist('notDetermined') {
@@ -155,7 +155,8 @@ class Prem {
                             this.__setTimelineCol("Spectrum", this.defaultTheme)
                     }
                 } else {
-                    this.__setTimelineCol("Spectrum", "darkest") ;// defaults to darkest theme
+                    this.theme := this.defaultTheme
+                    this.__setTimelineCol("Spectrum", this.theme) ;// defaults to this.defaultTheme
                 }
             ;// old ui
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
@@ -163,7 +164,8 @@ class Prem {
                 if !Notify.Exist('preSpectrum') {
                     Notify.Show(, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=preSpectrum')
                 }
-                this.__setTimelineCol("oldUI", this.defaultTheme)
+                this.theme := this.defaultTheme
+                this.__setTimelineCol("oldUI", this.theme)
         }
     }
 
@@ -2141,7 +2143,7 @@ class Prem {
         doNotify := IsSet(showError) && (showError=true || showError=false) ? showError : true
         topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineRawY, this.layerDivider)
         botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineYControl, this.layerDivider)
-        mid := (searchMid = true) ? ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+15, this.timelineYControl,  "*2 " ptf.Premiere "divider.png") : true
+        mid := (searchMid = true) ? ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+15, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png") : true
         if (!topDiv || !botDiv || !mid) {
             if doNotify = true
                 Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
@@ -2352,7 +2354,7 @@ class Prem {
         coord.client()
         if !this.__checkTimelineValues()
             return
-        if !mid := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
+        if !mid := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png")
             return
         A := Map()
         allAudPos := this.__getAllLayerPos(midDivY, "aud")
@@ -2383,7 +2385,7 @@ class Prem {
         if !this.__checkTimelineValues()
             return false
         if !midDivY {
-            if !midCheck := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
+            if !midCheck := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png")
                 return false
         }
         A := Map()
@@ -2440,7 +2442,7 @@ class Prem {
             return
         }
         if !audOrVid {
-            middleDivider := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+7, this.timelineYControl,  "*2 " ptf.Premiere "divider.png")
+            middleDivider := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+7, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png")
             aboveOrBelow := (origMouseCords.y < midDivY) ? true : false
         } else {
             middleDivider := false
@@ -2463,8 +2465,7 @@ class Prem {
             return
         }
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
-        allLayers := this.__getAllLayerPos(midDivY, vidOrAud, track)
-        if !allLayers {
+        if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, track) {
             blocker.Off()
             return
         }
@@ -2501,18 +2502,17 @@ class Prem {
     /**
 	 * Set internal colour variables based on the version of Premiere Pro the user currently has set within `settingsGUI()`
 	 * @param {String} UI which UI version should be used. Currently accepts `Spectrum` & `oldUI`
-	 * @param {String} theme which theme the user wishes to use. Currently accepts `darkest`
-     * @param {mapOrArr} [mapOrArr="arr"] determine whether to return an `array`, a `map` or a `mip`
+     * @param {String} theme which theme the user wishes to use. Currently accepts `darkest`
      * @returns {Map/Mip/Array}
 	 */
-	static __setTimelineCol(UI, theme, mapOrArr := "Arr") {
+	static __setTimelineCol(UI, theme) {
         timelineCol := Mip()
         timelineColArr := []
         if !timelineColours.%UI%.HasProp(theme) {
             sleep 50
             if !Notify.Exist("timeline")
-                Notify.Show(, '``timelineColours {`` does not have values set for the requested theme. Reverting to "darkest" theme.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=timeline')
-            theme := "darkest"
+                theme := (timelineColours.%UI%.has(this.defaultTheme)) ? this.defaultTheme : "darkest"
+                Notify.Show(, '``timelineColours {`` does not have values set for the requested theme. Reverting to "' theme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=timeline')
         }
 		for k, v in timelineColours.%UI%.%theme% {
 			if Mod(A_Index, 2) != 0
