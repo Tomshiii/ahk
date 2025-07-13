@@ -2,7 +2,7 @@
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
  * @date 2025/06/03
- * @version 1.6.7
+ * @version 1.6.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,8 +14,6 @@
 #Include <Classes\clip>
 #Include <Classes\keys>
 #Include <Classes\errorLog>
-#Include <Functions\checkImg>
-#Include <Functions\change_msgButton>
 #Include <Other\UIA\UIA>
 #Include <Classes\winGet>
 ; }

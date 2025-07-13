@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/11
- * @version 2.2.26
+ * @date 2025/07/14
+ * @version 2.2.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,6 +32,7 @@
 #Include <Functions\delaySI>
 #Include <Functions\detect>
 #Include <Functions\loadXML>
+#Include <Functions\change_msgButton>
 #Include <Other\Notify\Notify>
 ; }
 
@@ -40,6 +41,7 @@ class Prem {
     static __New() {
         UserSettings := UserPref()
         this.currentSetVer := SubStr(UserSettings.premVer, 2)
+        mainScriptName := (UserSettings.mainScriptName != "") ? UserSettings.mainScriptName : "My Scripts"
         try this.defaultTheme := UserSettings.premDefaultTheme
         catch {
             this.defaultTheme := this.theme
@@ -47,6 +49,19 @@ class Prem {
         UserSettings.__delAll()
         UserSettings := ""
 
+        orig := detect()
+        if A_ScriptName != mainScriptName ".ahk" && WinExist(mainScriptName ".ahk") {
+            try {
+                activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
+                this.timelineCol := activeObj.timelineCol, this.timelineColArr := activeObj.timelineColArr
+            } catch {
+                this.__determineTheme()
+            }
+        } else {
+            this.__determineTheme()
+        }
+        resetOrigDetect(orig)
         switch {
             ;// spectrum ui
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
@@ -54,13 +69,11 @@ class Prem {
                 this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
                 ;// set layer button offsets (these get added onto `timelineRawX`)
                 this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.layerEmpty := 0x1D1D1D, this.layerDivider := 0x303030, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21, this.iconHighlight := 0x6A6A6A
-                this.__determineTheme()
             ;// old ui
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
                 ;// set timeline and playhead colours
                 this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
-        this.__determineTheme()
     }
 
     static currentSetVer := ""
@@ -142,15 +155,42 @@ class Prem {
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
                 if FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs") {
                     loadSettings := loadXML(FileRead(ptf['PremProfile'] "Adobe Premiere Pro Prefs"))
-                    props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1").text
-                    switch props {
+                    props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
+                    switch props.text {
                         case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
                         case "34.999999403953552": this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
                         case "80.000001192092896": this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
+                        case "0":
+                            sleep 50
+                            if !Notify.Exist('notDeterminedIntZero') {
+                                Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=notDeterminedIntZero')
+                                errorLog(Error("Premiere theme could not be determined. Settings File int: " props.text, -1))
+
+                                title := "Fix settings file"
+                                SetTimer(change_msgButton.Bind(title, "darkest", "dark", "light"), 16)
+                                setTheme := MsgBox("Set your theme. Which theme are you using?", title, "0x2 0x1000")
+                                WinWaitClose(title)
+                                switch setTheme {
+                                    case "Abort": ;// darkest
+                                        props.text := "7.9999998211860657"
+                                        loadSettings.save(ptf['PremProfile'] "Adobe Premiere Pro Prefs")
+                                        this.theme := "darkest"
+                                    case "Retry": ;// dark
+                                        props.text := "34.999999403953552"
+                                        loadSettings.save(ptf['PremProfile'] "Adobe Premiere Pro Prefs")
+                                        this.theme := "dark"
+                                    case "Ignore": ;// light
+                                        props.text := "80.000001192092896"
+                                        loadSettings.save(ptf['PremProfile'] "Adobe Premiere Pro Prefs")
+                                        this.theme := "light"
+                                }
+                            }
+                            this.__setTimelineCol("Spectrum", this.defaultTheme)
                         default:
                             sleep 50
                             if !Notify.Exist('notDetermined') {
-                                Notify.Show(, 'Premiere theme could not be determined.`nDefaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=notDetermined')
+                                Notify.Show('Premiere theme could not be determined.', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=notDetermined')
+                                errorLog(Error("Premiere theme could not be determined.", -1))
                             }
                             this.__setTimelineCol("Spectrum", this.defaultTheme)
                     }

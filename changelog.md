@@ -26,8 +26,11 @@
 - ✅ Fixed function unnecessarily delaying the <kbd>Space</kbd> input if the user's PriorKey was a ripple trim, but more than the delay time has passed
 
 ⚠️ `Startup {`
-- 📋 `HotkeylessAHK.ahk` can now be rebooted from `trayMen()`
 - 📋 `gitBranchCheck()` will no longer continue if changes are waiting to be `pushed` to avoid issues
+
+📍 `HotkeylessAHK.ahk`
+- 📋 Can now be rebooted from `trayMen()`
+- 📋 The user will be alerted about whether script is open/closed on script reboot
 
 ## Other Changes
 - ✏️ Added `PremiereRemote` function `toggleEnabled()`

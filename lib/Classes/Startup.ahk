@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/06/30
- * @version 1.7.64
+ * @date 2025/07/14
+ * @version 1.7.65
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -850,11 +850,17 @@ default:
         submenuHotkeyless.Add("Reboot HotkeylessAHK", __hotkeyless.Bind("reboot"))
         getDet := detect()
         switch {
-            case (WinExist("HotkeylessAHK.ahk")) :
+            case (WinExist("HotkeylessAHK.ahk")):
+                Notify.Show(, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
                 submenuHotkeyless.Disable("Open HotkeylessAHK")
                 submenuHotkeyless.Enable("Close HotkeylessAHK")
                 submenuHotkeyless.Enable("Reboot HotkeylessAHK")
-            default:
+            case (!WinExist("HotkeylessAHK.ahk") && !FileExist(ptf['HotkeylessAHK'])):
+                submenuHotkeyless.Disable("Open HotkeylessAHK")
+                submenuHotkeyless.Disable("Close HotkeylessAHK")
+                submenuHotkeyless.Disable("Reboot HotkeylessAHK")
+            case (!WinExist("HotkeylessAHK.ahk") && FileExist(ptf['HotkeylessAHK'])):
+                Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=4 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
                 submenuHotkeyless.Enable("Open HotkeylessAHK")
                 submenuHotkeyless.Disable("Close HotkeylessAHK")
                 submenuHotkeyless.Disable("Reboot HotkeylessAHK")
