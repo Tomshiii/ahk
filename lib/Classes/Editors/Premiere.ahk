@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/14
- * @version 2.2.27
+ * @date 2025/07/15
+ * @version 2.2.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2561,7 +2561,7 @@ class Prem {
             timelineColArr.Push(Format("0x{:x}", v))
             timelineCol.Set(Format("0x{:x}", v), true)
 		}
-        this.timelineCol    := timelineCol
+        this.timelineCols   := timelineCol
         this.timelineColArr := timelineColArr
 	}
 
