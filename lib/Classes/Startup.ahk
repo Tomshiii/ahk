@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2025/07/15
- * @version 1.7.66
+ * @version 1.7.67
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -491,7 +491,7 @@ default:
         switch packageManager {
             case "choco":
                 packages_count := RegExReplace(SubStr(outDated, InStr(outDated, "has determined ",,, 1)), "[^0-9]")
-                omitString := "Output is package name | current version | available version | pinned?"
+                omitString := "Output is Id | Version | Available Version | Pinned"
                 newResponse := SubStr(outDated, InStr(outDated, omitString, 1, 1, 1)+StrLen(omitString)+2)
                 splt := StrSplit(newResponse, ["`n", "`r"])
 
