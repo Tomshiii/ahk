@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/07/14
- * @version 1.7.65
+ * @date 2025/07/15
+ * @version 1.7.66
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -720,7 +720,7 @@ default:
             notify_premBeta := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? " (Beta)" : ""
             notify_aeBeta := (this.UserSettings.aeIsBeta = true || this.UserSettings.aeIsBeta = "true") ? " (Beta)" : ""
             notify_psBeta := (this.UserSettings.psIsBeta = true || this.UserSettings.psIsBeta = "true") ? " (Beta)" : ""
-            try Notify.Show('Currently Set Adobe Versions',"Adobe Versions:`nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer "`nPhotoshop" notify_psBeta ": " this.UserSettings.psVer, 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=5 pos=TR bdr=0xD50000')
+            try Notify.Show('Currently Set Adobe Versions',"Adobe Versions - `nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`n   🖌️ Theme: " prem.theme "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer "`nPhotoshop" notify_psBeta ": " this.UserSettings.psVer, 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=7 pos=TR bdr=0xD50000')
         }
         if !this.UserSettings.adobeExeOverride
             return

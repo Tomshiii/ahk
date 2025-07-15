@@ -79,8 +79,8 @@ SC03A & d::prem.disableDirectManip()
 
 <^1::prem.toggleLayerButtons("mute")
 <^2::prem.toggleLayerButtons("solo")
-<^3::prem.toggleLayerButtons("lock")
-<^4::prem.toggleLayerButtons("target")
+<^3::prem.toggleLayerButtons("target")
+<^4::prem.toggleLayerButtons("lock")
 
 ;premrippleTrimHotkey;
 q::

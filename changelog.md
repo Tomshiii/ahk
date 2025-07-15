@@ -27,6 +27,7 @@
 
 ⚠️ `Startup {`
 - 📋 `gitBranchCheck()` will no longer continue if changes are waiting to be `pushed` to avoid issues
+- 📋 `adobeVerOverride()` will now show the user's selected Premiere `theme` during its selected version `Notify {`
 
 📍 `HotkeylessAHK.ahk`
 - 📋 Can now be rebooted from `trayMen()`
