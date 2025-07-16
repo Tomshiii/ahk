@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/07/02
- * @version 2.3.12
+ * @date 2025/07/16
+ * @version 2.3.13
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -34,6 +34,8 @@ settingsGUI()
     setJSON := JSON.parse(readSet,, false)
     UserSettings := UserPref()
     initialSettings := FileRead(UserSettings.SettingsFile)
+
+    A_Clipboard := initialSettings
 
     ;// menubar
     FileMenu := Menu()
@@ -180,12 +182,12 @@ settingsGUI()
     settingsGUI["VersCheck"].ToolTip := (UserSettings.update_adobe_verAHK = true) ? setJSON.versUpdate.tooltip.true : setJSON.versUpdate.tooltip.false
 
     ;// git update check
-    settingsGUI.AddCheckbox("vgitCheck Checked" UserSettings.update_git " Y+5", setJSON.gitUpdate.title).OnEvent("Click", toggle.Bind("update git", ""))
+    settingsGUI.AddCheckbox("vgitCheck Checked" UserSettings.update_git " Y+5", setJSON.gitUpdate.title).OnEvent("Click", toggle.Bind("update git", "", ""))
     settingsGUI["gitCheck"].ToolTip := (UserSettings.update_git = true) ? setJSON.gitUpdate.tooltip.true : setJSON.gitUpdate.tooltip.false
 
 
     ;// adobe version override
-    settingsGUI.AddCheckbox("vadobeExeOverride Checked" UserSettings.adobeExeOverride " Y+15", setJSON.adobeExeOverride.title).OnEvent("Click", toggle.Bind("adobeExeOverride", ""))
+    settingsGUI.AddCheckbox("vadobeExeOverride Checked" UserSettings.adobeExeOverride " Y+15", setJSON.adobeExeOverride.title).OnEvent("Click", toggle.Bind("adobeExeOverride", "", ""))
     settingsGUI["adobeExeOverride"].ToolTip := (UserSettings.adobeExeOverride = true) ? setJSON.adobeExeOverride.tooltip.true : setJSON.adobeExeOverride.tooltip.false
 
     ;// dark mode toggle
@@ -214,38 +216,38 @@ settingsGUI()
     }
 
     ;// disc disable autoreply
-    settingsGUI.AddCheckbox("vdiscAutoReply Checked" UserSettings.disc_disable_autoreply " Y+5", setJSON.discAutoReply.title).OnEvent("Click", toggle.Bind("disc disable autoreply", ""))
+    settingsGUI.AddCheckbox("vdiscAutoReply Checked" UserSettings.disc_disable_autoreply " Y+5", setJSON.discAutoReply.title).OnEvent("Click", toggle.Bind("disc disable autoreply", "", ""))
     settingsGUI["discAutoReply"].ToolTip := (UserSettings.disc_disable_autoreply = true) ? setJSON.discAutoReply.tooltip.true : setJSON.discAutoReply.tooltip.false
 
     ;// run at startup
-    settingsGUI.AddCheckbox("vstartup Checked" UserSettings.run_at_startup " Y+5", setJSON.startup.title).OnEvent("Click", toggle.Bind("run at startup", ""))
+    settingsGUI.AddCheckbox("vstartup Checked" UserSettings.run_at_startup " Y+5", setJSON.startup.title).OnEvent("Click", toggle.Bind("run at startup", "", ""))
     settingsGUI["startup"].ToolTip := (UserSettings.run_at_startup = true) ? setJSON.startup.tooltip.true : setJSON.startup.tooltip.false
 
     ;// show adobe vers on startup
-    settingsGUI.AddCheckbox("vadobeVersStartup Checked" UserSettings.show_adobe_vers_startup " Y+5", setJSON.show_adobe_vers_startup.title).OnEvent("Click", toggle.Bind("show adobe vers startup", ""))
+    settingsGUI.AddCheckbox("vadobeVersStartup Checked" UserSettings.show_adobe_vers_startup " Y+5", setJSON.show_adobe_vers_startup.title).OnEvent("Click", toggle.Bind("show adobe vers startup", "", ""))
     settingsGUI["adobeVersStartup"].ToolTip := (UserSettings.show_adobe_vers_startup = true) ? setJSON.show_adobe_vers_startup.tooltip.true : setJSON.show_adobe_vers_startup.tooltip.false
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! script checkboxes
 
     ;// autosave always save
-    settingsGUI.AddCheckbox("vautosaveAlwaysSave Checked" UserSettings.autosave_always_save " xs+223 ys Section", setJSON.autosaveAlwaysSave.title).OnEvent("Click", toggle.Bind("autosave always save", "autosave"))
+    settingsGUI.AddCheckbox("vautosaveAlwaysSave Checked" UserSettings.autosave_always_save " xs+223 ys Section", setJSON.autosaveAlwaysSave.title).OnEvent("Click", toggle.Bind("autosave always save", "autosave", ""))
     settingsGUI["autosaveAlwaysSave"].ToolTip := (UserSettings.autosave_always_save = true) ? setJSON.autosaveAlwaysSave.tooltip.true : setJSON.autosaveAlwaysSave.tooltip.false
 
     ;// autosave beep
-    settingsGUI.AddCheckbox("vautosaveBeep Checked" UserSettings.autosave_beep " Y+5", setJSON.autosaveBeep.title).OnEvent("Click", toggle.Bind("autosave beep", "autosave"))
+    settingsGUI.AddCheckbox("vautosaveBeep Checked" UserSettings.autosave_beep " Y+5", setJSON.autosaveBeep.title).OnEvent("Click", toggle.Bind("autosave beep", "autosave", ""))
     settingsGUI["autosaveBeep"].ToolTip := (UserSettings.autosave_beep = true) ? setJSON.autosaveBeep.tooltip.true : setJSON.autosaveBeep.tooltip.false
 
     ;// autosave check mouse
-    settingsGUI.AddCheckbox("vautosaveMouse Checked" UserSettings.autosave_check_mouse " Y+5", setJSON.autosaveMouse.title).OnEvent("Click", toggle.Bind("autosave check mouse", "autosave"))
+    settingsGUI.AddCheckbox("vautosaveMouse Checked" UserSettings.autosave_check_mouse " Y+5", setJSON.autosaveMouse.title).OnEvent("Click", toggle.Bind("autosave check mouse", "autosave", ""))
     settingsGUI["autosaveMouse"].ToolTip := (UserSettings.autosave_check_mouse = true) ? setJSON.autosaveMouse.tooltip.true : setJSON.autosaveMouse.tooltip.false
 
     ;// autosave restart playback
-    settingsGUI.AddCheckbox("vautosaveRestartPlayback Checked" UserSettings.autosave_restart_playback " Y+5", setJSON.autosaveRestartPlayback.title).OnEvent("Click", toggle.Bind("autosave restart playback", "autosave"))
+    settingsGUI.AddCheckbox("vautosaveRestartPlayback Checked" UserSettings.autosave_restart_playback " Y+5", setJSON.autosaveRestartPlayback.title).OnEvent("Click", toggle.Bind("autosave restart playback", "autosave", ""))
     settingsGUI["autosaveRestartPlayback"].ToolTip := (UserSettings.autosave_restart_playback = true) ? setJSON.autosaveRestartPlayback.tooltip.true : setJSON.autosaveRestartPlayback.tooltip.false
 
     ;// autosave save override
-    settingsGUI.AddCheckbox("vautosaveOverride Checked" UserSettings.autosave_save_override " Y+5", setJSON.autosaveOverride.title).OnEvent("Click", toggle.Bind("autosave save override", "autosave"))
+    settingsGUI.AddCheckbox("vautosaveOverride Checked" UserSettings.autosave_save_override " Y+5", setJSON.autosaveOverride.title).OnEvent("Click", toggle.Bind("autosave save override", "autosave", ""))
     settingsGUI["autosaveOverride"].ToolTip := (UserSettings.autosave_save_override = true) ? setJSON.autosaveOverride.tooltip.true : setJSON.autosaveOverride.tooltip.false
 
     /**
@@ -302,11 +304,11 @@ settingsGUI()
     settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
 
     ;// getTimeline() - Always Check UIA
-    settingsGUI.AddCheckbox("valwaysCheckUIA Checked" UserSettings.Always_Check_UIA " Y+5", setJSON.alwaysCheckUIA.title).OnEvent("Click", toggle.Bind("Always Check UIA", ""))
+    settingsGUI.AddCheckbox("valwaysCheckUIA Checked" UserSettings.Always_Check_UIA " Y+5", setJSON.alwaysCheckUIA.title).OnEvent("Click", toggle.Bind("Always Check UIA", unset))
     settingsGUI["alwaysCheckUIA"].ToolTip := (UserSettings.Always_Check_UIA = true) ? setJSON.alwaysCheckUIA.tooltip.true : setJSON.alwaysCheckUIA.tooltip.false
 
     ;// Set_UIA_LimitDaily
-    settingsGUI.AddCheckbox("vsetUIA_LimitDaily Checked" (UserSettings.Set_UIA_Limit_Daily != "disabled" ? UserSettings.Set_UIA_Limit_Daily : "0 +Disabled") " Y+5 x+-215", setJSON.setUIA_LimitDaily.title).OnEvent("Click", toggle.Bind("Set UIA Limit Daily", ""))
+    settingsGUI.AddCheckbox("vsetUIA_LimitDaily Checked" (UserSettings.Set_UIA_Limit_Daily != "disabled" ? UserSettings.Set_UIA_Limit_Daily : "0 +Disabled") " Y+5 x+-215", setJSON.setUIA_LimitDaily.title).OnEvent("Click", toggle.Bind("Set UIA Limit Daily", unset))
     settingsGUI["setUIA_LimitDaily"].ToolTip := (UserSettings.Set_UIA_Limit_Daily = true) ? setJSON.setUIA_LimitDaily.tooltip.true : setJSON.setUIA_LimitDaily.tooltip.false
     (settingsGUI["alwaysCheckUIA"].Value = 0) ? settingsGUI["setUIA_LimitDaily"].Opt("+Disabled") : settingsGUI["setUIA_LimitDaily"].Opt("-Disabled")
 

@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/07/15
- * @version 1.7.67
+ * @date 2025/07/16
+ * @version 1.7.67.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -851,7 +851,7 @@ default:
         getDet := detect()
         switch {
             case (WinExist("HotkeylessAHK.ahk")):
-                Notify.Show(, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
+                Notify.Show(, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
                 submenuHotkeyless.Disable("Open HotkeylessAHK")
                 submenuHotkeyless.Enable("Close HotkeylessAHK")
                 submenuHotkeyless.Enable("Reboot HotkeylessAHK")
@@ -860,7 +860,7 @@ default:
                 submenuHotkeyless.Disable("Close HotkeylessAHK")
                 submenuHotkeyless.Disable("Reboot HotkeylessAHK")
             case (!WinExist("HotkeylessAHK.ahk") && FileExist(ptf['HotkeylessAHK'])):
-                Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=4 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
+                Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
                 submenuHotkeyless.Enable("Open HotkeylessAHK")
                 submenuHotkeyless.Disable("Close HotkeylessAHK")
                 submenuHotkeyless.Disable("Reboot HotkeylessAHK")

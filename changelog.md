@@ -6,6 +6,7 @@
 ## Functions
 - ✅ Fixed `ytdlp.download()` incorrectly naming some files causing subsequent functionality to fail
 - ✅ `getHotkeys()` will now handle hotkeys similar to <kbd><!2</kbd>
+- ✅ Fixed `settingsGUI()` throwing when trying to adjust some checkboxes
 - ✏️ Added `ffmpeg().isVideo()`
 - 📋 Moved `timelineColours {` out of `Premiere_RightClick.ahk` and into its own file
 
