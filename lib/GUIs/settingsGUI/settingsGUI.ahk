@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/07/16
- * @version 2.3.13
+ * @date 2025/07/17
+ * @version 2.3.13.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -34,8 +34,6 @@ settingsGUI()
     setJSON := JSON.parse(readSet,, false)
     UserSettings := UserPref()
     initialSettings := FileRead(UserSettings.SettingsFile)
-
-    A_Clipboard := initialSettings
 
     ;// menubar
     FileMenu := Menu()
@@ -254,6 +252,7 @@ settingsGUI()
      * This function handles the logic for a few checkboxes
      * @param {any} ini is the name of the ini `Key` you wish to be toggles
      * @param {string} objName used for `autosave` settings. must be either "autosave" or passed as ""
+     * @param {Gui} altGUI pass in an alternate GUI to operate on instead
      * @param {any} script the name of the guiCtrl obj that gets auto fed into this function
      */
     toggle(ini, objName := "", altGUI := unset, script?, *)

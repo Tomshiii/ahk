@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/15
- * @version 2.2.28
+ * @date 2025/07/17
+ * @version 2.2.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2454,20 +2454,21 @@ class Prem {
      */
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0) {
         Critical()
+        check := keys.allWait("second")
+        blocker := block_ext()
+        blocker.On()
         SetDefaultMouseSpeed(0)
         coord.client()
-        if !this.__checkTimeline()
+        if !this.__checkTimeline() {
+            blocker.Off()
             return
+        }
         if !this.__checkPremRemoteDir() {
             blocker.Off()
             errorLog(MethodError('This function requires PremiereRemote functionality', -1))
             return
         }
-        SendInput(ksa.shuttleStop)
-
-        check := keys.allWait("second")
-        blocker := block_ext()
-        blocker.On()
+        ; SendInput(ksa.shuttleStop)
 
         ;// avoid attempting to fire unless main window is active
         if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle {
@@ -2511,9 +2512,9 @@ class Prem {
         }
         layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(track)]["mid"])
         if this.timelineCols.Has(layerColour) {
+            blocker.Off()
             tool.Cust("No clips on selected track.", 1500)
             errorLog(TargetError("Desired track must be greater than 1", -1))
-            blocker.Off()
             return
         }
 
@@ -2536,6 +2537,7 @@ class Prem {
         MouseMove(origMouseCords.x, origMouseCords.y, 0)
         sleep 25
         SendInput(ksa.deselectAll)
+        sleep 25
         blocker.Off()
     }
 
