@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/17
- * @version 2.2.29
+ * @date 2025/07/18
+ * @version 2.2.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1090,7 +1090,8 @@ class Prem {
     }
 
     /**
-     * This function once bound to <kbd>NumpadMult::</kbd>/<kbd>NumpadAdd::</kbd> allows the user to quickly adjust the gain of a selected track by simply pressing <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd> then their desired value followed by <kbd>NumpadEnter</kbd>. Alternatively, if the user presses <kbd>NumpadMult</kbd> after pressing the activation hotkey, the audio `level` will be changed to the desired value instead (however the user needs `PremiereRemote` installed for this feature to work). This function can be canceled by pressing <kbd>Escape</kbd>.
+     * #### This function requires `PremiereRemote`
+     * This function once bound to <kbd>NumpadMult::</kbd>/<kbd>NumpadAdd::</kbd> allows the user to quickly adjust the gain of a selected track by simply pressing <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd> then their desired value followed by <kbd>NumpadEnter</kbd>. Alternatively, if the user presses <kbd>NumpadMult</kbd> after pressing the activation hotkey, the audio `level` will be changed to the desired value instead. This function can be canceled by pressing <kbd>Escape</kbd>.
      * @param {String} [which=A_ThisHotkey] whether the user wishes to add or subtract the desired value. If the user is using either <kbd>NumpadSub</kbd>/<kbd>NumpadAdd</kbd> or <kbd>-</kbd>/<kbd>+</kbd> as the activation hotkey this value can be left blank, otherwise the user should set it as either <kbd>-</kbd>/<kbd>+</kbd>
      * @param {String} [sendOnFail="{" A_ThisHotkey "}"] what the function will send to `SendInput` in the event that the timeline isn't the active panel
      */
@@ -1108,6 +1109,13 @@ class Prem {
             this.__checkTimeline()
             return
         }
+        if !this.__checkPremRemoteDir('isSelected') {
+            ;// throw
+            errorLog(MethodError('This function requires PremiereRemote'),,, true)
+            return
+        }
+
+        checkSelected := this.__remoteFunc('isSelected', true)
         needsTimelineFocus := false
 		title := WinGet.Title(, false)
         descernTitle := (title = "Audio Gain" || title = "") ? true : false
@@ -1151,6 +1159,11 @@ class Prem {
         ih.Start()
         ih.Wait()
         star_ih.Stop()
+
+        if !checkSelected {
+            errorLog(TargetError("No clip selected. Cancelling"),, {time: 2000})
+            return
+        }
 
         switch {
             case ih.EndReason = "Timeout":

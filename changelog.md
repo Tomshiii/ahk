@@ -10,17 +10,22 @@
 - ✏️ Added `ffmpeg().isVideo()`
 - 📋 Moved `timelineColours {` out of `Premiere_RightClick.ahk` and into its own file
 
-`prem {`
-- 📋 Theme selection is now determined automatically (for Premiere versions greater than `v25.0`) using the user's Premiere settings file, or through `settingsGUI()` for versions before `v25.0`
-    - ❗ `rbuttonPrem().movePlayhead` no longer requires the user's theme to be passed in as a parameter
-> [!Warning]
-> Keep in mind only the `darkest` theme has its colours set currently & basically all `ImageSearch` screenshots across the repo are taken in the `darkest` theme (and with `Accessible Colour Contrast` disabled). If you use an alternative theme, please update `Premiere_TimelineColours.ahk`, and take fresh screenshots, then consider submitting a pull request!
+⚠️ `prem {`
 - ✅ Fixed `save()` using incorrect logic and incorrectly determining premiere as `busy`
 - ✅ Fixed `rippleTrim()` tracking incorrectly
 - ✏️ Added `toggleEnabled()`
 - 📋 Moved `__setTimelineCol()` out of `Premiere_RightClick.ahk` and into `prem {`
 - 📋 `toggleLayerButtons()` & `disableAllMuteSolo()` will now wait for some activation hotkeys to be released before continuing
 - 📋 `changeLabel()` will no longer focus the timeline if the `Projects` window is the active panel so that the user may still assign labels to sequences
+- 📋 Theme selection is now determined automatically (for Premiere versions greater than `v25.0`) using the user's Premiere settings file, or through `settingsGUI()` for versions before `v25.0`
+    - ❗ `rbuttonPrem().movePlayhead` no longer requires the user's theme to be passed in as a parameter
+> [!Warning]
+> Keep in mind only the `darkest` theme has its colours set currently & basically all `ImageSearch` screenshots across the repo are taken in the `darkest` theme (and with `Accessible Colour Contrast` disabled).  
+> If you use an alternative theme, please update `Premiere_TimelineColours.ahk`, and take fresh screenshots, then consider submitting a pull request!
+
+📍 `numpadGain()`
+- 📋 Will now exit early if no clip is selected instead of needing to timeout
+- ❗ `PremiereRemote` is now required
 
 📍 `delayPlayback()`
 - ✅ Fixed function not delaying the <kbd>Space</kbd> input at all
