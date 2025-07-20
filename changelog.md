@@ -14,9 +14,11 @@
 - ✅ Fixed `save()` using incorrect logic and incorrectly determining premiere as `busy`
 - ✅ Fixed `rippleTrim()` tracking incorrectly
 - ✏️ Added `toggleEnabled()`
+- ✏️ Added `soloVideo()`
 - 📋 Moved `__setTimelineCol()` out of `Premiere_RightClick.ahk` and into `prem {`
 - 📋 `toggleLayerButtons()` will now wait for some activation hotkeys to be released before continuing
 - 📋 `changeLabel()` will no longer focus the timeline if the `Projects` window is the active panel so that the user may still assign labels to sequences
+- 📋 `block_ext {` now allows <kbd>Escape</kbd> by default so that <kbd>Ctrl + Shift + Escape</kbd> is accessible even while inputs are blocked
 - 📋 Theme selection is now determined automatically (for Premiere versions greater than `v25.0`) using the user's Premiere settings file, or through `settingsGUI()` for versions before `v25.0`
     - ❗ `rbuttonPrem().movePlayhead` no longer requires the user's theme to be passed in as a parameter
 > [!Warning]

@@ -82,6 +82,9 @@ SC03A & d::prem.disableDirectManip()
 <^3::prem.toggleLayerButtons("target")
 <^4::prem.toggleLayerButtons("lock")
 
+>!1::prem.soloVideo()
+>!2::prem.soloVideo("disable")
+
 ;premrippleTrimHotkey;
 q::
 w::prem.rippleTrim()

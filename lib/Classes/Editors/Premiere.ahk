@@ -5,7 +5,7 @@
  * @premVer 25.3
  * @author tomshi
  * @date 2025/07/20
- * @version 2.2.31
+ * @version 2.2.32
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2365,43 +2365,46 @@ class Prem {
     }
 
     /**
-     * determines the coordinates of all buttons for all audio layers
+     * determines the coordinates of all buttons for all audio/video layers
+     * @param {String} [audOrVid="aud"] whether you wish to return the locations for audio layers or video layers
      * @returns {Map} returns a map of all coordinates for all buttons
      * ```
-     * audioLayers := prem.__getAllAudioLayerButtonPos()
-     * ;// audioLayers[1]["solo"].x
-{ 1: {
+     * layers := prem.__getAllLayerButtonPos("aud")
+     * ;// layers[1]["solo"].x
+{ 1:{
     "lock":{
-    "x":456,
-    "y":1047
+      "x":456,
+      "y":919
     },
+    "mouseLayer":"false",
     "mute":{
-    "x":527,
-    "y":1047
+      "x":527,
+      "y":919
     },
     "solo":{
-    "x":550,
-    "y":1047
+      "x":550,
+      "y":919
     },
     "source":{
-    "x":424,
-    "y":1047
+      "x":424,
+      "y":919
     },
     "sync":{
-    "x":504,
-    "y":1047
+      "x":504,
+      "y":919
     },
     "target":{
-    "x":479,
-    "y":1047
+      "x":479,
+      "y":919
     }
+  }
 }
      * ```
      */
-    static __getAllAudioLayerButtonPos() {
+    static __getAllLayerButtonPos(audOrVid := "aud", mouseCoords?) {
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
-        if WinGetTitle("A") != getTitle.winTitle
+        if WinGetTitle("A") != getTitle.winTitle || (audOrVid != "aud" && audOrVid != "vid")
             return
 
         coord.client()
@@ -2409,13 +2412,17 @@ class Prem {
             return
         if !mid := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png")
             return
+        if !IsSet(mouseCoords) {
+            mouseCoords := obj.MousePos()
+        }
         A := Map()
-        allAudPos := this.__getAllLayerPos(midDivY, "aud")
-        for i, v in allAudPos {
+        allPos := this.__getAllLayerPos(midDivY, audOrVid)
+        for i, v in allPos {
             current := Map()
             for k in this.toggleableButtons {
-                current[k] := this.__determineButtonPos(k, allAudPos[i]['top'], allAudPos[i]['bot'])
+                current[k] := this.__determineButtonPos(k, allPos[i]['top'], allPos[i]['bot'])
             }
+            current["mouseLayer"] := (mouseCoords.y > allPos[i]['top'] && mouseCoords.y < allPos[i]['bot']) ? "true" : "false"
             A[A_index] := current
         }
         return A
@@ -2596,7 +2603,7 @@ class Prem {
             KeyWait(SubStr(A_ThisHotkey, -1, 1))
         blocker := block_ext()
         blocker.On()
-            blocker.Off()
+
         ;// avoid attempting to fire unless main window is active
         if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() {
             blocker.Off()
@@ -2618,7 +2625,7 @@ class Prem {
             blocker.Off()
             return
         }
-        allButtons := this.__getAllAudioLayerButtonPos()
+        allButtons := this.__getAllLayerButtonPos()
         arr := []
         for k in allButtons {
             getColour := PixelGetColor(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
@@ -2626,6 +2633,64 @@ class Prem {
             ; MsgBox(getColour) ;// uncomment to determine the pixelcolour
             if getColour = colour && getColourOffset = colour
                 arr.Push({x: allButtons[k][muteOrSolo].x-3, y: allButtons[k][muteOrSolo].y-3})
+        }
+        for i, v in arr {
+            MouseMove(v.x, v.y, 1)
+            SendInput("{Click}")
+        }
+        MouseMove(origMouseCords.x, origMouseCords.y, 1)
+        blocker.Off()
+    }
+
+    /**
+     * This function allows quick manipulation of a sequences video track visability
+     * @param {String} [soloInverseDisable="solo"] determines whether to hide all visable tracks other than the track the cursor is hovering within (`solo`), whether to unhide all other visible tracks other than the track the cursor is within (`Inverse`), or whether to unhide all visible tracks (`disable`).
+     */
+    static soloVideo(soloInverseDisable := "solo") {
+        SetDefaultMouseSpeed(0)
+        coord.client()
+        if !this.__checkTimeline()
+			return
+        if soloInverseDisable != "solo" && soloInverseDisable != "inverse" && soloInverseDisable != "disable" {
+            ;// throw
+            errorLog(Error("Incorrect value in Parameter #1", -1),,, true)
+            return
+        }
+        blocker := block_ext()
+        blocker.On()
+
+        ;// avoid attempting to fire unless main window is active
+        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() {
+            blocker.Off()
+            return
+        }
+
+        disabled := 0x4B4B4B
+
+        origMouseCords := obj.MousePos()
+        withinTimeline := this.__checkCoords(origMouseCords)
+        if withinTimeline != true {
+            blocker.Off()
+            return
+        }
+
+        allButtons := this.__getAllLayerButtonPos("vid", origMouseCords)
+        arr := []
+        for k in allButtons {
+            getColour := PixelGetColor(allButtons[k]["mute"].x+7, allButtons[k]["mute"].y)
+            switch soloInverseDisable {
+                case "solo":
+                    if (allButtons[k]["mouseLayer"] = "true" && getColour = disabled) || (allButtons[k]["mouseLayer"] != "true" && getColour != disabled) {
+                        arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
+                    }
+                case "inverse":
+                    if (allButtons[k]["mouseLayer"] = "true" && getColour != disabled) || (allButtons[k]["mouseLayer"] != "true" && getColour = disabled) {
+                        arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
+                    }
+                case "disable":
+                    if getColour = disabled
+                        arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
+            }
         }
         for i, v in arr {
             MouseMove(v.x, v.y, 1)

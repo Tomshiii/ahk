@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2025/04/11
- * @version 1.3.7
+ * @date 2025/07/20
+ * @version 1.3.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -84,14 +84,12 @@ class block {
 class block_ext {
     blocker := {}
     modifiers := "{LCtrl}{RCtrl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}"
-    defaultAdditional := "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}"
+    defaultAdditional := "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}"
 
     /**
      * @param [blockMouse=true] Determine whether to also block mouse input. Defaults to `true`
      * @param [allowModifiers=true] Determines whether to allow certain modifiers to pass through. It is recommended to leave this enabled so the user still has *some* inputs available to them in the event of failed logic leaving inputs blocked. You may optionally provide your own list of allowed modifiers. Simply pass one long string containing all modifiers.
-     * @param [additionalKeys=this.defaultAdditional] Determines any additional keys that are allowed to pass through. By default the following are set; `"{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}"`. If the user wishes to change this list, simply pass your own string to this parameter, although it is recommended to also include these as a miniumum.
-     *
-     * #### It should be noted that the user should still be able to use <kbd>win + shift + r</kbd> to reload scripts
+     * @param [additionalKeys=this.defaultAdditional] Determines any additional keys that are allowed to pass through. By default the following are set; `"{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}"`. If the user wishes to change this list, simply pass your own string to this parameter, although it is recommended to also include these as a miniumum.
      */
     On(blockMouse := true, allowModifiers := true, additionalKeys := this.defaultAdditional) {
         this.blocker := InputHook("L0 I")
