@@ -26,7 +26,7 @@ getHotkeys(&first?, &second?) {
         return {first: unset, second: unset}
     getHotkey := A_ThisHotkey
     length := StrLen(getHotkey)
-    if length = 3 && pos := InStr(getHotkey, "<") = 1 {
+    if length = 3 && (pos := InStr(getHotkey, "<") = 1 || pos := InStr(getHotkey, ">") = 1) {
         first := SubStr(getHotkey, 1, 2)
         second := SubStr(getHotkey, 3, 1)
         check1 := vk(first)
@@ -57,13 +57,18 @@ getHotkeys(&first?, &second?) {
 
     vk(variable) {
         switch variable {
-            case "<!":   variable := "LAlt"
             case "#":    variable := "Win"
+            case "<#":   variable := "LWin"
+            case ">#":   variable := "RWin"
             case "!":    variable := "Alt"
+            case "<!":   variable := "LAlt"
+            case ">!":   variable := "RAlt"
             case "^":    variable := "Ctrl"
             case "<^":   variable := "LCtrl"
+            case ">^":   variable := "RCtrl"
             case "+":    variable := "Shift"
             case "<+":   variable := "LShift"
+            case ">+":   variable := "RShift"
             case "<^>!": variable := "AltGr"
             default:     return false
         }
