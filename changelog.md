@@ -15,7 +15,7 @@
 - ✅ Fixed `rippleTrim()` tracking incorrectly
 - ✏️ Added `toggleEnabled()`
 - 📋 Moved `__setTimelineCol()` out of `Premiere_RightClick.ahk` and into `prem {`
-- 📋 `toggleLayerButtons()` & `disableAllMuteSolo()` will now wait for some activation hotkeys to be released before continuing
+- 📋 `toggleLayerButtons()` will now wait for some activation hotkeys to be released before continuing
 - 📋 `changeLabel()` will no longer focus the timeline if the `Projects` window is the active panel so that the user may still assign labels to sequences
 - 📋 Theme selection is now determined automatically (for Premiere versions greater than `v25.0`) using the user's Premiere settings file, or through `settingsGUI()` for versions before `v25.0`
     - ❗ `rbuttonPrem().movePlayhead` no longer requires the user's theme to be passed in as a parameter
@@ -30,6 +30,10 @@
 📍 `delayPlayback()`
 - ✅ Fixed function not delaying the <kbd>Space</kbd> input at all
 - ✅ Fixed function unnecessarily delaying the <kbd>Space</kbd> input if the user's PriorKey was a ripple trim, but more than the delay time has passed
+
+`disableAllMuteSolo()`
+- ✅ Fixed function sometimes activating some `Mute` icons
+- 📋 Will now wait for some activation hotkeys to be released before continuing
 
 ⚠️ `Startup {`
 - ✅ Fixed `updatePackages()` using incorrect string for newer versions of `chocolatey` causing the update process to fail

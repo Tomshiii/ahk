@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/18
- * @version 2.2.30
+ * @date 2025/07/20
+ * @version 2.2.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2622,8 +2622,9 @@ class Prem {
         arr := []
         for k in allButtons {
             getColour := PixelGetColor(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
+            getColourOffset := PixelGetColor(allButtons[k][muteOrSolo].x-5, allButtons[k][muteOrSolo].y) ;// required to stop `Mute` false positives
             ; MsgBox(getColour) ;// uncomment to determine the pixelcolour
-            if getColour = colour
+            if getColour = colour && getColourOffset = colour
                 arr.Push({x: allButtons[k][muteOrSolo].x-3, y: allButtons[k][muteOrSolo].y-3})
         }
         for i, v in arr {
