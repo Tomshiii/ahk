@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/07/05
- * @version 1.0.26
+ * @date 2025/07/21
+ * @version 1.0.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,10 +15,13 @@
 #Include <Classes\Streamdeck_opt>
 #Include <Other\Notify\Notify>
 #Include <Functions\getHTMLTitle>
+#Include <Functions\selectFileInOpenWindow>
 ; }
 
 
 class ytdlp {
+
+    doAlert := true
 
     links := [
         "https://www.youtube.com/",  "https://youtu.be/",
@@ -38,9 +41,10 @@ class ytdlp {
     command := ""
     check := false
     checkClipState := false
+    currentName := ""
 
     /** generates a tooltip to alert the user the process has completed */
-    __finished() => tool.tray({text: "yt-dlp process has finished", title: "yt-dlp process has completed!", options: 1}, 2000)
+    __finished() => (this.doAlert = true) ? tool.tray({text: "yt-dlp process has finished", title: "yt-dlp process has completed!", options: 1}, 2000) : ""
 
     /**
      * checks the clipboard for a valid download link
@@ -74,9 +78,9 @@ class ytdlp {
     /**
      * Activates the directory
      */
-    __activateDir(folder) {
-        SplitPath(folder, &name,,,, &drive)
-        __determineFolder(path, name, drive) {
+    __activateDir(folder, name) {
+        SplitPath(folder, &splitName,,,, &drive)
+        __determineFolder(path, splitName, drive) {
             ;// handle if the chosen directory is the root of a drive
             if (StrLen(path) = 4 && SubStr(path, -3, 3) = ":\\") || (StrLen(path) = 3 && SubStr(path, -2, 2) = ":\") {
                 getDriveName := DriveGetLabel(drive)
@@ -87,7 +91,7 @@ class ytdlp {
             }
 
             hasPath := WinExist(path " ahk_exe explorer.exe")
-            noPath  := WinExist(name " ahk_exe explorer.exe")
+            noPath  := WinExist(splitName " ahk_exe explorer.exe")
             if !hasPath && !noPath
                 return false
 
@@ -95,16 +99,19 @@ class ytdlp {
             pathStr := WinGet.ExplorerPath(hwnd)
             if pathStr == path {
                 WinActivate(hwnd)
+                if !WinWait(hwnd,, 2)
+                    return true
+                selectFileInOpenWindow(folder "\" name, true)
                 return true
             }
             return false
         }
 
-        if WinExist(folder " ahk_exe explorer.exe") || WinExist(name " ahk_exe explorer.exe") {
-            if __determineFolder(folder, name, drive)
+        if WinExist(folder " ahk_exe explorer.exe") || WinExist(splitName " ahk_exe explorer.exe") {
+            if __determineFolder(folder, splitName, drive)
                 return
         }
-        RunWait("explore " folder)
+        cmd.exploreAndHighlight(folder "\" name, true, true)
     }
 
     /**
@@ -213,7 +220,7 @@ class ytdlp {
         outputFileName := Format(this.defaultFilename, fileNameLengthLimit)
         nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" --cookies-from-browser firefox', outputFileName, this.URL))
         SplitPath(nameOutput,,, &ext, &nameNoExt)
-        ext := (ext = "webm") ? "mp4" : ext
+        ext := (ext = "webm" || ext = "mkv") ? "mp4" : ext
         checkPath1 := WinGet.pathU(folder "\" nameOutput)
         checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
         if FileExist(checkPath1) || FileExist(checkPath2) {
@@ -223,8 +230,8 @@ class ytdlp {
                     index++
                     continue
                 }
-                args := Format(args, nameNoExt index)
                 nameNoExt := nameNoExt String(index)
+                args := Format(args, nameNoExt)
                 break
             }
         }
@@ -232,6 +239,8 @@ class ytdlp {
             args := Format(args, nameNoExt)
         }
         Notify.Destroy(mNotifyGUI_Prog['hwnd'])
+
+        this.currentName := nameNoExt "." ext
 
         ;// building rest of command
         if this.checkClipState = true {
@@ -245,7 +254,9 @@ class ytdlp {
         ;// running command
         cmd.run(,,, this.command)
         ;// determine if the downloaded file is a video file
-        isVideo := ffmpeg().isVideo(folderU "\" nameNoExt "." ext)
+        fmpg := ffmpeg()
+        fmpg.doAlert := false ;// stops the traytip
+        isVideo := fmpg.isVideo(folderU "\" nameNoExt "." ext)
         switch {
             ;// determining what post args to perform
             case (isVideo = true && postArgs != false && postArgs == this.defaultPostProcess):
@@ -260,7 +271,7 @@ class ytdlp {
             case (isVideo = true && postArgs != false && postArgs !== this.defaultPostProcess): cmd.run(,,, postArgs)
         }
         if openDirOnFinish = true
-            this.__activateDir(folder)
+            this.__activateDir(folder, nameNoExt "." ext)
         if !IsSet(URL)
             clip.returnClip(oldClip)
         return this.URL

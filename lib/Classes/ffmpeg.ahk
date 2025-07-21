@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/07/05
- * @version 1.1.4
+ * @date 2025/07/21
+ * @version 1.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,9 +16,10 @@
 ; }
 
 class ffmpeg {
+    doAlert := true
 
     /** generates a tooltip to alert the user the process has completed */
-    __finished() => tool.tray({text: "ffmpeg process has finished", title: "ffmpeg process has completed!", options: 1}, 2000)
+    __finished() => (this.doAlert=true) ? tool.tray({text: "ffmpeg process has finished", title: "ffmpeg process has completed!", options: 1}, 2000) : ""
 
     /**
      * Retrieves the path of an active windows explorer process

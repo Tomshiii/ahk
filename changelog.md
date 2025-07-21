@@ -4,11 +4,23 @@
 > If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated.
 
 ## Functions
-- ✅ Fixed `ytdlp.download()` incorrectly naming some files causing subsequent functionality to fail
 - ✅ Fixed `getHotkeys()` not handling hotkeys that discern either the left or right pair (eg. <kbd><!2</kbd>)
 - ✅ Fixed `settingsGUI()` throwing when trying to adjust some checkboxes
-- ✏️ Added `ffmpeg().isVideo()`
+- ✏️ Added `cmd.exploreAndHighlight()`
+- ✏️ Added `selectFileInOpenWindow()`
 - 📋 Moved `timelineColours {` out of `Premiere_RightClick.ahk` and into its own file
+
+⚠️ `ffmpeg {`
+- ✏️ Added `isVideo()`
+- 📋 Alert tooltip on completion can now be silenced by setting `doAlert` to `false`
+
+⚠️ `ytdlp {`
+- 📋 Alert tooltip on completion can now be silenced by setting `doAlert` to `false`
+
+📍 `download()`
+- ✅ Fixed function incorrectly naming some files causing subsequent functionality to fail
+- ✅ Fixed function sometimes failing to index correctly causing duplicate downloads to cancel
+- 📋 Will attempt to select the downloaded file in the `explorer` window if `openDirOnFinish` is set to `true`
 
 ⚠️ `prem {`
 - ✅ Fixed `save()` using incorrect logic and incorrectly determining premiere as `busy`
@@ -54,6 +66,7 @@
 - ✏️ Can now download thumbnails
 - 📋 Will default its `FileSelect` to an active `Explorer` window if one is present
 - 📋 Will now properly limit the `Part` tabs `UpDwn` inputs to 2 values and only numbers
+- 📋 Will attempt to select the downloaded file in the `explorer` window
 
 📍 `generateProxies.ahk`
 - ✅ Fixed script failing to generate some metadata causing it to outright fail

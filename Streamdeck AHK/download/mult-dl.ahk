@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/07/06
+ * @date 2025/07/21
  ***********************************************************************/
-global currentVer := "1.1.6"
+global currentVer := "1.1.7"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -11,9 +11,9 @@ A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetDescription GUI to download multiple video files at once
 
 #Requires AutoHotkey v2.0
-#Include <Functions\useNVENC>
 #Include <Classes\ytdlp>
 #Include <GUIs\tomshiBasic>
+#Include <Functions\useNVENC>
 #Include <Functions\getLocalVer>
 #Include <Functions\isURL>
 
@@ -266,7 +266,10 @@ class multiDL extends tomshiBasic {
 
         this.show(, {DarkColour: "F0F0F0"})
         if showDir = true {
-            yt.__activateDir(this.getFile)
+            setFile := yt.currentName
+            yt.__activateDir(this.getFile, setFile)
+            yt := ""
+            return
         }
         yt := ""
     }

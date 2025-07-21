@@ -2,12 +2,14 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2024/02/30
- * @version 1.1.5
+ * @date 2025/07/21
+ * @version 1.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\errorLog>
+#Include <Classes\obj>
+#Include <Functions\selectFileInOpenWindow>
 #Include <Other\pipeCommand>
 ; }
 
@@ -112,5 +114,24 @@ class cmd {
             drives.Set(letter, path)
         }
         return drives
+    }
+
+    /**
+     * runs windows explorer and selects the requested file. If the requested file doesn't exist, but the directory does, the function will fallback to just opening the directory
+     * @param {String} [fullPath] the full path of the file you wish to select
+     * @param {Boolean} [wait=false] determine whether to use `Run` or `RunWait`. Defaults to `false` (`Run`)
+     */
+    static exploreAndHighlight(fullpath, wait := false, doubleCheck := false) {
+        if !FileExist(fullpath) {
+            split := obj.SplitPath(fullpath)
+            if DirExist(split.Dir) {
+                (wait = false) ? Run("explore " split.Dir) : RunWait("explore " split.Dir)
+                return
+            }
+        }
+        (wait = false) ? Run(A_ComSpec ' /c explorer.exe /select, ' fullpath,, "Hide") : RunWait(A_ComSpec ' /c explorer.exe /select, ' fullpath,, "Hide")
+        if doubleCheck = true {
+            SetTimer((*) => selectFileInOpenWindow.Bind(fullpath, false), -1500)
+        }
     }
 }
