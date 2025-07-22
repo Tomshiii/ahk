@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/20
- * @version 2.2.32
+ * @date 2025/07/22
+ * @version 2.2.32.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2467,6 +2467,8 @@ class Prem {
      * ### This function requires `PremiereRemote`
      * A function to toggle the `enabled`/`disabled` state of a clip on the desired layer. This function will operate on either the audio/video tracks depending on whether the cursor is above or below the middle dividing line.
      *
+     * This function is a slight bit erratic/unpredictable in how premiere reacts to it - and is still in development. Use at your own risk
+     *
      * #### It is recommended you call this function after `#MaxThreadsBuffer true` for best results
      * @param {Integer} [track=A_ThisHotkey] The track you wish to operate on. If this parameter is not just an integer it will attempt to do a rudimentary check on the activation hotkey, expecting a number to be the final activation key in the chain
      * @param {String} [audOrVid=false] determine whether to operate on the audio or video tracks. By default this value is set to `false` and it is determined purely by the user's cursor position. otherwise set to either `"vid"` or `"aud"`
@@ -2558,6 +2560,7 @@ class Prem {
         sleep 25
         SendInput(ksa.deselectAll)
         sleep 25
+        checkStuck()
         blocker.Off()
     }
 

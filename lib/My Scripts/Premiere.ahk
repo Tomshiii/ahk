@@ -62,6 +62,9 @@ Enter::
 	}
 }
 
+NumpadDot::NumpadDot
+NumpadDot & NumpadSub::BackSpace
+
 Escape::prem.escFxMenu()
 
 ;prem^DeleteHotkey;
