@@ -71,4 +71,5 @@
 📍 `generateProxies.ahk`
 - ✅ Fixed script failing to generate some metadata causing it to outright fail
 - ✅ Fixed script attempting to operate on non video files
+- ✅ Fixed script failing to recurse correctly
 - 📋 Will default its `FileSelect` to an active `Explorer` window if one is present
