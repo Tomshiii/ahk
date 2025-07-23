@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/07/21
- * @version 1.1.5
+ * @date 2025/07/23
+ * @version 1.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -458,7 +458,8 @@ class ffmpeg {
             response.Set(v, chkResponse[i+1])
         }
         duration := response.get("duration")
-        if duration = "N/A" || duration = "0" || duration = 0
+        nbframes := response.get("nb_frames")
+        if duration = "N/A" || duration = "0" || duration = 0 || nbframes = "N/A" || nbframes < 1
             return false
         return true
     }
