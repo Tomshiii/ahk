@@ -8,6 +8,7 @@
 - ✅ Fixed `settingsGUI()` throwing when trying to adjust some checkboxes
 - ✏️ Added `cmd.exploreAndHighlight()`
 - ✏️ Added `selectFileInOpenWindow()`
+- ✏️ Added [`nItemsInDir()`](<https://www.autohotkey.com/boards/viewtopic.php?p=494290#p494290>)
 - 📋 Moved `timelineColours {` out of `Premiere_RightClick.ahk` and into its own file
 
 ⚠️ `ffmpeg {`

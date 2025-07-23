@@ -32,16 +32,15 @@ selectFileInOpenWindow(fullPath, checkAgain := false) {
             if window.hWnd != hWnd
                 continue
             try {
-                if (window.Document.Folder.Self.Path = targetPath) {
-                    folderView := window.Document
-                    itemPath := targetPath "\" fileToSelect
-                    folderItem := folderView.Folder.ParseName(fileToSelect)
-                    if folderItem {
-                        didSelection := true
-                        folderView.SelectItem(folderItem, flags)
-                        break
-                    }
+                if (window.Document.Folder.Self.Path != targetPath)
                     continue
+                folderView := window.Document
+                itemPath := targetPath "\" fileToSelect
+                folderItem := folderView.Folder.ParseName(fileToSelect)
+                if folderItem {
+                    didSelection := true
+                    folderView.SelectItem(folderItem, flags)
+                    break
                 }
             } catch {
                 continue

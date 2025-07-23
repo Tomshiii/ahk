@@ -2,6 +2,7 @@
 #Include <Classes\ffmpeg>
 #Include <Classes\cmd>
 #Include <Classes\obj>
+#Include <Functions\nItemsInDir>
 #Include <Other\JSON>
 #Include <Other\Notify\Notify>
 ; }
@@ -35,18 +36,14 @@ if MsgBox("Would you like to recurse?", "Recurse?", "4132") = "Yes" {
 	recurse := "R"
 }
 ffmpegInst := ffmpeg()
-filecount := 0
-loop files selectedDir "\*", recurse " F" {
-    inputDir  := obj.SplitPath(A_LoopFileDir)
-    if inputDir.name = "_proxy" || inputDir.name = "proxy"
-        continue
-    if !ffmpegInst.isVideo(A_LoopFileFullPath)
-        continue
-    filecount+=1
-}
+
+getFileCount := nItemsInDir(selectedDir, (recurse = "R" ? true : false))
+filecount := getFileCount.files
+
 check := Notify.Show('Checking files in chosen directory', , 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' filecount)
 
 loop files selectedDir "\*", recurse " F" {
+    check["prog"].value += 1
     inputDir  := obj.SplitPath(A_LoopFileDir)
     inputPath := obj.SplitPath(A_LoopFileFullPath)
     if inputDir.name = "_proxy" || inputDir.name = "proxy"
@@ -55,7 +52,6 @@ loop files selectedDir "\*", recurse " F" {
         continue
     if !DirExist(inputPath.dir "\proxy")
         DirCreate(inputPath.dir "\proxy")
-    check["prog"].value += 1
     baseOutputPath := inputPath.dir "\proxy\" inputPath.NameNoExt "_proxy.mov"
     if FileExist(baseOutputPath)
         continue
