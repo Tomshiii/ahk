@@ -1,7 +1,9 @@
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\Editors\Premiere>
+#Include <Classes\keys>
 #Include <Functions\isDoubleClick>
+#Include <Functions\delaySI>
 ; }
 
 ;stopTabHotkey;
