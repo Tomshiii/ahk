@@ -28,6 +28,7 @@
 - ✅ Fixed `rippleTrim()` tracking incorrectly
 - ✏️ Added `toggleEnabled()`
 - ✏️ Added `soloVideo()`
+- ✏️ Added `swapPreviousSequence()`
 - 📋 Moved `__setTimelineCol()` out of `Premiere_RightClick.ahk` and into `prem {`
 - 📋 `toggleLayerButtons()` will now wait for some activation hotkeys to be released before continuing
 - 📋 `changeLabel()` will no longer focus the timeline if the `Projects` window is the active panel so that the user may still assign labels to sequences

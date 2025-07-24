@@ -23,7 +23,14 @@ Up::switchTo.Explorer()
 o::unassigned()
 l::unassigned()
 .::unassigned()
-Down::switchTo.Premiere(, true)
+Down::
+{
+	if WinExist(prem.winTitle) && WinActive(prem.winTitle) && !(WinExist("ahk_exe Adobe Premiere Pro.exe") && WinExist("ahk_exe Adobe Premiere Pro (Beta).exe")) {
+        prem.swapPreviousSequence()
+		return
+	}
+	switchTo.Premiere(, true)
+}
 
 i::unassigned()
 k::unassigned()

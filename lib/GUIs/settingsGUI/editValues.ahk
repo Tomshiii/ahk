@@ -40,6 +40,14 @@ class set_Edit_Val {
         textControl: "gameCheckText",          Bind: "gameCheck.ahk",
         objName: "--",                         UpDownOpt: "Range1-999"
     }
+    premPrev := {
+        control: "premPrev",                       EditPos: "xs Y+10",
+        scriptText: "``swapPreviousSequence()``",  textPos: "X+5 Y+-20",
+        otherText: " check rate (sec)",            otherTextPos: "X+1",
+        iniInput: "premPrevSeqDelay",              colour: "c753288",
+        textControl: "premPrevText",               Bind: "",
+        objName: "--",                             UpDownOpt: "Range1-60"
+    }
     MIC := {
         control: "MIC",                                 EditPos: "xs Y+12",
         scriptText: "``Multi-Instance Close.ahk``",     textPos: "X+5 Y+-28",
@@ -49,7 +57,7 @@ class set_Edit_Val {
         objName: "--",                                  UpDownOpt: "Range1-999"
     }
 
-    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.MIC]
+    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.premPrev, this.MIC]
     static control := []
     static EditPos := []
     static scriptText := []

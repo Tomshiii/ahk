@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/07/17
- * @version 2.3.13.1
+ * @date 2025/07/24
+ * @version 2.3.14
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -352,6 +352,12 @@ settingsGUI()
         detect()
         iniVar := StrReplace(ini, A_Space, "_")
         UserSettings.%iniVar% := ctrl.text
+        switch ini {
+            case "premPrevSeqDelay":
+                prem.resetSeqTimer := true
+                prem.prevSeqDelay := (ctrl.text*1000)
+                return
+        }
         if WinExist(script " - AutoHotkey") && script != "" {
             WM.Send_WM_COPYDATA(iniVar "," ctrl.text "," objName, script)
         }

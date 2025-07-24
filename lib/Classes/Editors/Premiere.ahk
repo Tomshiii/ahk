@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/22
- * @version 2.2.32.1
+ * @date 2025/07/24
+ * @version 2.2.33
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,20 +41,23 @@ class Prem {
     static __New() {
         UserSettings := UserPref()
         this.currentSetVer := SubStr(UserSettings.premVer, 2)
-        mainScriptName := (UserSettings.mainScriptName != "") ? UserSettings.mainScriptName : "My Scripts"
+        this.mainScriptName := (UserSettings.mainScriptName != "") ? UserSettings.mainScriptName : this.mainScriptName
         try this.defaultTheme := UserSettings.premDefaultTheme
-        catch {
+        try {
+            this.prevSeqDelay := UserSettings.premthis.PrevSeqDelay * 1000
+        } catch {
             this.defaultTheme := this.theme
         }
         UserSettings.__delAll()
         UserSettings := ""
 
         orig := detect()
-        if A_ScriptName != mainScriptName ".ahk" && WinExist(mainScriptName ".ahk") {
+        if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") {
             try {
                 activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
                 this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
                 this.timelineCol := activeObj.timelineCol, this.timelineColArr := activeObj.timelineColArr
+                this.currentSeq := activeObj.currentSeq, this.previousSeq := activeObj.previousSeq
             } catch {
                 this.__determineTheme()
             }
@@ -74,14 +77,22 @@ class Prem {
                 ;// set timeline and playhead colours
                 this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
+
+        if A_ScriptName = this.mainScriptName ".ahk"
+            SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
     }
 
+    static mainScriptName := "My Scripts"
     static currentSetVer := ""
     static spectrumUI_Version := "25.0"
     static timelineCols := Mip()
     static timelineColArr := []
     static theme := "darkest"
     static defaultTheme := ""
+    static currentSeq := 0
+    static previousSeq := 0
+    static resetSeqTimer := false
+    static prevSeqDelay := 1500
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
@@ -349,13 +360,11 @@ class Prem {
         }
         else {
             if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
-                tool.cust("Unable to connect to localhost server. PremiereRemote Extension may not be running.")
                 errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
                 return false
             }
             try parse := JSON.parse(getResp)
             catch {
-                tool.cust("Unable to connect to localhost server. PremiereRemote Extension may not be running.")
                 errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
                 return false
             }
@@ -2770,6 +2779,71 @@ class Prem {
             WinRedraw(this.class)
             WinShow(this.class)
         }
+    }
+
+    /** handles setting a timer to check the user's current open sequence. This timer provides functionality to `swapPreviousSequence()` */
+    static __setCurrSeq(*) {
+        if this.resetSeqTimer = true {
+            this.resetSeqTimer := false
+            SetTimer(, this.prevSeqDelay)
+            return
+        }
+        if !WinExist(this.winTitle) || !WinActive(this.winTitle)
+            return
+        premWindow := WinGet.PremName(,,, false)
+        if !premWindow || Type(premWindow) != "Object" || (premWindow.winTitle = "" || !premWindow.wintitle) || !this.__checkDialogueClass()
+            return
+        if !this.__checkPremRemoteDir("getActiveSequence")
+            SetTimer(, 0)
+        seq := this.__remoteFunc("getActiveSequence", true)
+        if !seq
+            return
+        if !this.currentSeq && !this.previousSeq {
+            this.previousSeq := seq
+            this.currentSeq := seq
+            return
+        }
+        if seq = this.currentSeq
+            return
+        this.previousSeq := this.currentSeq
+        this.currentSeq := seq
+    }
+
+    /**
+     * swaps to the previous sequence the user had open.
+     *
+     * requires the use of `__setCurrSeq` which requires `PremiereRemote`
+     */
+    static swapPreviousSequence() {
+        orig := detect()
+        if !this.__checkPremRemoteDir("focusSequence") {
+            ;// throw
+            errorLog(MethodError("swapPreviousSequence() requires PremiereRemote to be installed"),,, true)
+            return false
+        }
+        if A_ScriptName != this.mainScriptName ".ahk" {
+            if !WinExist(this.mainScriptName ".ahk")
+                return false
+            resetOrigDetect(orig)
+            try {
+                activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                this.currentSeq := activeObj.currentSeq
+                this.previousSeq := activeObj.previousSeq
+                if this.currentSeq != this.previousSeq
+                    this.__remoteFunc("focusSequence",, "ID=" String(this.previousSeq))
+                activeObj.currentSeq  := this.previousSeq
+                activeObj.previousSeq := this.currentSeq
+            } catch {
+                return false
+            }
+            return true
+        }
+        resetOrigDetect(orig)
+        if this.currentSeq != this.previousSeq
+            this.__remoteFunc("focusSequence",, "ID=" String(this.previousSeq))
+        this.currentSeq  := this.previousSeq
+        this.previousSeq := this.currentSeq
+        return true
     }
 
     ;//! *** ===============================================
