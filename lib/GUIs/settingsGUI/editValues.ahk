@@ -34,25 +34,25 @@ class set_Edit_Val {
     }
     gameCk := {
         control: "gameCheck",                  EditPos: "xs Y+10",
-        scriptText: "``gameCheck.ahk``",       textPos: "X+5 Y+-20",
+        scriptText: "``gameCheck.ahk``",       textPos: "X+5 Y+-24",
         otherText: " check rate (sec)",        otherTextPos: "X+1",
         iniInput: "game SEC",                  colour: "c328832",
         textControl: "gameCheckText",          Bind: "gameCheck.ahk",
         objName: "--",                         UpDownOpt: "Range1-999"
     }
     premPrev := {
-        control: "premPrev",                       EditPos: "xs Y+10",
-        scriptText: "``swapPreviousSequence()``",  textPos: "X+5 Y+-20",
-        otherText: " check rate (sec)",            otherTextPos: "X+1",
+        control: "premPrev",                       EditPos: "xs Y+14",
+        scriptText: "``swapPreviousSequence()``",  textPos: "X+5 Y+-28",
+        otherText: " check rate (sec)",            otherTextPos: "Y+-1",
         iniInput: "premPrevSeqDelay",              colour: "c753288",
         textControl: "premPrevText",               Bind: "",
         objName: "--",                             UpDownOpt: "Range1-60"
     }
     MIC := {
-        control: "MIC",                                 EditPos: "xs Y+12",
+        control: "MIC",                                 EditPos: "xs Y+4",
         scriptText: "``Multi-Instance Close.ahk``",     textPos: "X+5 Y+-28",
         otherText: " check rate (sec)",                 otherTextPos: "Y+-1",
-        iniInput: "multi SEC",                          colour: "c983d98",
+        iniInput: "multi SEC",                          colour: "cc742c7",
         textControl: "MICText",                         Bind: "Multi-Instance Close.ahk",
         objName: "--",                                  UpDownOpt: "Range1-999"
     }

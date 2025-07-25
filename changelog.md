@@ -29,6 +29,7 @@
 - ✏️ Added `toggleEnabled()`
 - ✏️ Added `soloVideo()`
 - ✏️ Added `swapPreviousSequence()`
+- ✏️ Added `closeActiveSequence()`
 - 📋 Moved `__setTimelineCol()` out of `Premiere_RightClick.ahk` and into `prem {`
 - 📋 `toggleLayerButtons()` will now wait for some activation hotkeys to be released before continuing
 - 📋 `changeLabel()` will no longer focus the timeline if the `Projects` window is the active panel so that the user may still assign labels to sequences
@@ -61,7 +62,7 @@
 - 📋 The user will be alerted about whether script is open/closed on script reboot
 
 ## Other Changes
-- ✏️ Added `PremiereRemote` function `toggleEnabled()`
+- ✏️ Added `PremiereRemote` function `toggleEnabled()` & `closeActiveSequence()`
 - ❌ Removed `audPart.ahk`, `audSelect.ahk`, `projAudio.ahk`, `projVideo.ahk`, `sfx.ahk`, `thumbnail.ahk`, `vfx.ahk`, `video.ahk`, `vidPart.ahk`, and `vidSelect.ahk` as `mult-dl.ahk` encapsulates all of them
 
 📍 `mult-dl.ahk`

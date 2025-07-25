@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/24
- * @version 2.2.33
+ * @date 2025/07/25
+ * @version 2.2.34
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2846,6 +2846,18 @@ class Prem {
         return true
     }
 
+    /** A function to close the currently active sequence within premiere. This function **requires** `PremiereRemote` */
+    static closeActiveSequence() {
+        if !this.__checkPremRemoteDir("closeActiveSequence") {
+            ;// throw
+            errorLog(MethodError("closeActiveSequence() requires PremiereRemote to be installed"),,, true)
+            return false
+        }
+        if !this.__remoteFunc('closeActiveSequence', true) {
+            Notify.Show(, 'Failed to determine the active sequence', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=5 bdr=Red maxW=400')
+            return
+        }
+    }
     ;//! *** ===============================================
 
     class Excalibur {

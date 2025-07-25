@@ -128,7 +128,11 @@ export const host = {
   toggleEnabled: function() {
     Utils.toggleEnabled();
   },
-};
+
+  closeActiveSequence: function() {
+    return Utils.closeActiveSequence();
+  }
+}
 
 /**
  * These functions are only used internally.
