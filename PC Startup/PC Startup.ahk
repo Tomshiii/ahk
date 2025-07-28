@@ -28,7 +28,11 @@ if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TomP
     Run(ptf["textreplace"])
     Run(ptf["HotkeylessAHK"])
     syncDirectories()
-    OnMessage(0x0219, "WM_DEVICECHANGE")
+    Run(ptf.TimerScripts "\syncOnConnect.ahk")
+    return
 }
 else if FileExist(ptf["textreplaceUser"])
     Run(ptf["textreplaceUser"])
+
+if FileExist(ptf["HotkeylessAHK"])
+    Run(ptf["HotkeylessAHK"])

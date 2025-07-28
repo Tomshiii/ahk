@@ -35,4 +35,4 @@ FileCopy(ptf.rootDir "\lib\QMK\Work\Prem.ahk", ptf.rootDir "\Backups\Work\QMK\Wo
 
 deleteDotUnderscore("N:\")
 syncDirectories()
-OnMessage(0x0219, "WM_DEVICECHANGE")
+Run(ptf.TimerScripts "\syncOnConnect.ahk")
