@@ -1,5 +1,5 @@
 /**
- * returns the number of files & subdirectories of the given directory
+ * returns the number of files & subdirectories in the given directory
  * @param {String} [dir] the directory you wish to check
  * @param {Boolean} [recurse=false] determines whether you wish to recurse in the chosen directory or not
  * @link https://www.autohotkey.com/boards/viewtopic.php?p=494290#p494290

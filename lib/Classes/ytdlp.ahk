@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/07/21
- * @version 1.0.27
+ * @date 2025/07/28
+ * @version 1.0.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,6 +12,7 @@
 #Include <Classes\clip>
 #Include <Classes\obj>
 #Include <Classes\errorLog>
+#Include <Classes\switchTo>
 #Include <Classes\Streamdeck_opt>
 #Include <Other\Notify\Notify>
 #Include <Functions\getHTMLTitle>
@@ -73,45 +74,6 @@ class ytdlp {
         this.command := Format(this.defaultCommand, formatVars[1], formatVars[2], clip)
         this.checkClipState := "run"
         return true
-    }
-
-    /**
-     * Activates the directory
-     */
-    __activateDir(folder, name) {
-        SplitPath(folder, &splitName,,,, &drive)
-        __determineFolder(path, splitName, drive) {
-            ;// handle if the chosen directory is the root of a drive
-            if (StrLen(path) = 4 && SubStr(path, -3, 3) = ":\\") || (StrLen(path) = 3 && SubStr(path, -2, 2) = ":\") {
-                getDriveName := DriveGetLabel(drive)
-                if WinExist(getDriveName " (" drive ")") {
-                    WinActivate()
-                    return true
-                }
-            }
-
-            hasPath := WinExist(path " ahk_exe explorer.exe")
-            noPath  := WinExist(splitName " ahk_exe explorer.exe")
-            if !hasPath && !noPath
-                return false
-
-            hwnd := (hasPath != 0) ? hasPath : noPath
-            pathStr := WinGet.ExplorerPath(hwnd)
-            if pathStr == path {
-                WinActivate(hwnd)
-                if !WinWait(hwnd,, 2)
-                    return true
-                selectFileInOpenWindow(folder "\" name, true)
-                return true
-            }
-            return false
-        }
-
-        if WinExist(folder " ahk_exe explorer.exe") || WinExist(splitName " ahk_exe explorer.exe") {
-            if __determineFolder(folder, splitName, drive)
-                return
-        }
-        cmd.exploreAndHighlight(folder "\" name, true, true)
     }
 
     /**
@@ -271,7 +233,7 @@ class ytdlp {
             case (isVideo = true && postArgs != false && postArgs !== this.defaultPostProcess): cmd.run(,,, postArgs)
         }
         if openDirOnFinish = true
-            this.__activateDir(folder, nameNoExt "." ext)
+            switchTo.explorerHighlightFile(folder "\" nameNoExt "." ext)
         if !IsSet(URL)
             clip.returnClip(oldClip)
         return this.URL

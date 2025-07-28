@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2025/07/21
- * @version 1.1.6
+ * @date 2025/07/28
+ * @version 1.1.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -120,14 +120,18 @@ class cmd {
      * runs windows explorer and selects the requested file. If the requested file doesn't exist, but the directory does, the function will fallback to just opening the directory
      * @param {String} [fullPath] the full path of the file you wish to select
      * @param {Boolean} [wait=false] determine whether to use `Run` or `RunWait`. Defaults to `false` (`Run`)
+     * @param {Boolean} [doubleCheck=false] determines whether to double check that the requested file has been selected after a `1.5s` delay. This can be helpful for processes like `ffmpeg` that may not completely release the file until the operation is completed. Defautls to `false`
+     * @returns {Boolean}
      */
     static exploreAndHighlight(fullpath, wait := false, doubleCheck := false) {
-        if !FileExist(fullpath) {
+        checkFile := FileExist(fullpath)
+        if !checkFile || InStr(checkFile, "D") {
             split := obj.SplitPath(fullpath)
             if DirExist(split.Dir) {
                 (wait = false) ? Run("explore " split.Dir) : RunWait("explore " split.Dir)
-                return
+                return true
             }
+            return false
         }
         (wait = false) ? Run(A_ComSpec ' /c explorer.exe /select, ' fullpath,, "Hide") : RunWait(A_ComSpec ' /c explorer.exe /select, ' fullpath,, "Hide")
         if doubleCheck = true {

@@ -3,6 +3,7 @@
 #Include *i <Classes\Settings>
 #Include *i <Classes\ptf>
 #Include *i <Functions\deleteDotUnderscore>
+#Include *i <Functions\syncDirectories>
 
 ;// if the user has not generated the symlink yet this script will return
 try {
@@ -33,3 +34,5 @@ FileCopy(ptf.rootDir "\lib\Classes\move.ahk", ptf.rootDir "\Backups\Work\move.ah
 FileCopy(ptf.rootDir "\lib\QMK\Work\Prem.ahk", ptf.rootDir "\Backups\Work\QMK\Work\Prem.ahk", 1)
 
 deleteDotUnderscore("N:\")
+syncDirectories()
+OnMessage(0x0219, "WM_DEVICECHANGE")

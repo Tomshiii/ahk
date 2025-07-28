@@ -9,7 +9,8 @@
 - ✏️ Added `cmd.exploreAndHighlight()`
 - ✏️ Added `selectFileInOpenWindow()`
 - ✏️ Added [`nItemsInDir()`](<https://www.autohotkey.com/boards/viewtopic.php?p=494290#p494290>)
-- 📋 Moved `timelineColours {` out of `Premiere_RightClick.ahk` and into its own file
+- ✏️ Added `syncDirectories()`
+- 📋 Moved `timelineColours {` out of `Premiere_RightClick.ahk` and into its own file `Premiere_TimelineColours.ahk`
 
 ⚠️ `ffmpeg {`
 - ✏️ Added `isVideo()`
@@ -17,6 +18,7 @@
 
 ⚠️ `ytdlp {`
 - 📋 Alert tooltip on completion can now be silenced by setting `doAlert` to `false`
+- 📋 Moved `__activateDir()` => `switchTo.explorerHighlightFile()`
 
 📍 `download()`
 - ✅ Fixed function incorrectly naming some files causing subsequent functionality to fail
@@ -62,6 +64,7 @@
 - 📋 The user will be alerted about whether script is open/closed on script reboot
 
 ## Other Changes
+- ✅ Fixed `reencodeGUI()` not respecting the set `bitrate` value
 - ✏️ Added `PremiereRemote` function `toggleEnabled()` & `closeActiveSequence()`
 - ❌ Removed `audPart.ahk`, `audSelect.ahk`, `projAudio.ahk`, `projVideo.ahk`, `sfx.ahk`, `thumbnail.ahk`, `vfx.ahk`, `video.ahk`, `vidPart.ahk`, and `vidSelect.ahk` as `mult-dl.ahk` encapsulates all of them
 

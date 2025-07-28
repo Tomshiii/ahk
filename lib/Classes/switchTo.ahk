@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/05/26
- * @version 1.3.19
+ * @date 2025/07/28
+ * @version 1.3.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -728,5 +728,52 @@ class switchTo {
             return
         getTab := WinGet.getActiveExplorerTab(hwnd)
         getTab.comObj.Navigate("file:///" FullPath)
+    }
+
+    /**
+     * Activates/runs the desired directory & focuses the desired file
+     * @param {String} [filepath] the full filepath of the desired file/directory you wish to open and select
+     * @returns {boolean}
+     */
+    static explorerHighlightFile(filepath) {
+        SplitPath(filepath, &fileName, &Dir)
+        SplitPath(Dir, &dirName,,,, &drive)
+        __determineFolder(path, dirName, fileName, drive) {
+            ;// handle if the chosen directory is the root of a drive
+            if (StrLen(path) = 4 && SubStr(path, -3, 3) = ":\\") || (StrLen(path) = 3 && SubStr(path, -2, 2) = ":\") {
+                getDriveName := DriveGetLabel(drive)
+                if WinExist(getDriveName " (" drive ")") {
+                    WinActivate()
+                    selectFileInOpenWindow(filepath, true)
+                    return true
+                }
+                Run(filepath,,, &pid)
+                WinWait("ahk_pid " pid)
+                WinActivate("ahk_pid " pid)
+                return
+            }
+
+            hasPath := WinExist(path " ahk_exe explorer.exe")
+            noPath  := WinExist(dirName " ahk_exe explorer.exe")
+            if !hasPath && !noPath
+                return false
+
+            hwnd := (hasPath != 0) ? hasPath : noPath
+            pathStr := WinGet.ExplorerPath(hwnd)
+            if pathStr == path {
+                WinActivate(hwnd)
+                if !WinWait(hwnd,, 2)
+                    return true
+                selectFileInOpenWindow(filepath, true)
+                return true
+            }
+            return false
+        }
+
+        if WinExist(dir " ahk_exe explorer.exe") || WinExist(dirName " ahk_exe explorer.exe") {
+            if __determineFolder(filepath, dirName, fileName, drive)
+                return true
+        }
+        cmd.exploreAndHighlight(filepath, true, true)
     }
 }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2024/06/20
- * @version 1.2.4
+ * @date 2025/07/28
+ * @version 1.2.5
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -12,6 +12,7 @@
 #Include <Classes\obj>
 #Include <Classes\ffmpeg>
 #Include <Classes\winGet>
+#Include <Classes\switchTo>
 #Include <Classes\cmd>
 #Include <Functions\useNVENC>
 ; }
@@ -48,7 +49,7 @@ class encodeGUI extends tomshiBasic {
             this.AddUpDown("Range0-51", 17).OnEvent("Change", (guiObj, *) => this.crf := guiObj.value)
             ;// bitrate
             this.AddText("xs", "bitrate: ")
-            this.AddEdit("x" this.secMarg " yp-3 limit5 Number w75 vBitrateEdit Disabled", this.bitrate)
+            this.AddEdit("x" this.secMarg " yp-3 limit5 Number w75 vBitrateEdit Disabled", this.bitrate).OnEvent("Change", (guiObj, *) => this.bitrate := guiObj.text)
             this.AddText("x+5 yp+3", "kb/s")
         }
 
@@ -130,17 +131,6 @@ class encodeGUI extends tomshiBasic {
         }
     }
 
-    /**
-     * Run the dir
-     * @param {Object} obj the splitpath object that contains the path of the file being worked on
-     */
-    __runDir(obj) {
-        if WinExist(obj.NameNoExt)
-            WinActivate(obj.NameNoExt)
-        else
-            Run(obj.dir)
-    }
-
     /** cleanse an input of .mkv/.mp4 and replaces whitespace/- with _ */
     __cleanse(input) {
         output := StrReplace(input, ".mkv", "")
@@ -183,7 +173,7 @@ class encodeGUI extends tomshiBasic {
         encoder := (this.useNVENC = true) ? "h26" this.h26 "_nvenc" : "libx26" this.h26
         presetVal := (this.useNVENC = true) ? this["pres"].value + 11 : this.preset
         this.ffmpegInstance.reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, encoder, presetVal, crfVal, bitrateVal, this.useNVENC, this.forceGPU)
-        this.__runDir(pathObj.fileObj)
+        switchTo.explorerHighlightFile(pathObj.fileObjOrig.dir "\" pathObj.fileObj.nameNoExt "." pathObj.fileObj.ext)
         ;// calls the traytip
         this.ffmpegInstance.__Delete()
     }

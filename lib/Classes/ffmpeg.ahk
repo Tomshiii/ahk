@@ -1,7 +1,7 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/07/23
+ * @date 2025/07/24
  * @version 1.1.6
  ***********************************************************************/
 
@@ -11,6 +11,7 @@
 #Include <Classes\obj>
 #Include <Classes\winGet>
 #Include <Classes\errorLog>
+#Include <Classes\switchTo>
 #Include <Functions\useNVENC>
 #Include <Other\JSON>
 ; }
@@ -298,7 +299,7 @@ class ffmpeg {
         }
         if !runDir
             return
-        this.__runDir(pathobj)
+        switchTo.explorerHighlightFile(pathobj.path)
     }
 
     /**

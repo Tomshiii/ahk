@@ -2,6 +2,7 @@
 #Requires AutoHotkey v2.0
 #Include *i <Classes\Settings>
 #Include *i <Classes\ptf>
+#Include *i <Functions\syncDirectories>
 
 ;// if the user has not generated the symlink yet this script will return
 try {
@@ -26,6 +27,8 @@ Run(ptf.TimerScripts "\premKeyCheck.ahk")
 if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TomPC" && DirExist(ptf.SongQueue) { ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
     Run(ptf["textreplace"])
     Run(ptf["HotkeylessAHK"])
+    syncDirectories()
+    OnMessage(0x0219, "WM_DEVICECHANGE")
 }
 else if FileExist(ptf["textreplaceUser"])
     Run(ptf["textreplaceUser"])
