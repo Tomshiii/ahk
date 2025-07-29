@@ -6,6 +6,8 @@
 #Include <Functions\delaySI>
 ; }
 
+isIn(title) => InStr(WinGetTitle("A"), title)
+
 ;stopTabHotkey;
 LCtrl & Tab::
 Shift & Tab::
@@ -25,8 +27,6 @@ $Tab::
 ;spaceDelayHotkey;
 Space::
 {
-	getTitle := WinGetTitle("A")
-	isIn(title) => InStr(getTitle, title)
 	switch {
 		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"):
 			SendInput("{Enter}")
@@ -49,17 +49,27 @@ Space::
 NumpadEnter::
 Enter::
 {
-	getTitle := WinGetTitle("A")
-	isIn(title) => InStr(getTitle, title)
 	switch {
 		case isIn("Clip Fx Editor"), isIn("Track Fx Editor"):
 			delaySI(75, "{Tab}", "+{Tab}") ;// ensures the enter doesn't toggle enable/disabling
 			if IsSet(A_PriorKey) && isDoubleClick(750, "key")
 				prem.escFxMenu()
 			return
-		case getTitle == "Save Project": return
+		case (WinGetTitle("A") == "Save Project"): return
 		default:
 			SendInput("{" A_ThisHotkey "}")
+			return
+	}
+}
+
+*`::
+{
+	switch {
+		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"), isIn("Clip Fx Editor - DeNoise"), isIn("Clip Fx Editor"), isIn("Track Fx Editor"), isIn("Color Picker"), isIn("Add Tracks"):
+			(GetKeyState("LWin", "P") = true) ? SendInput("-")  : SendInput("{BackSpace}")
+			return
+		default:
+			SendInput("{``}")
 			return
 	}
 }
