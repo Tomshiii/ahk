@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/07/16
- * @version 1.7.67.1
+ * @date 2025/07/29
+ * @version 1.7.68
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -298,9 +298,9 @@ class Startup {
         else
             tool.Cust("You are currently up to date", 2000)
         switch this.UserSettings.update_check {
-default:
-            errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, this.UserSettings.update_check),, 1)
-            return
+            default:
+                errorLog(ValueError("Incorrect value input in ``settings.ini``", -1, this.UserSettings.update_check),, 1)
+                return
             case false, "false":
                 if VerCompare(this.MyRelease, version) < 0 {
                     errorLog(Error("User is using an outdated version of these scripts", -1, version),, {time: 3.0})
@@ -1029,6 +1029,26 @@ default:
         }
         ;// begin loop
         loop allLibs.name.Length {
+            if allLibs.name[A_Index] = "Icons" {
+                if !DirExist(A_Temp "\tomshi")
+                    DirCreate(A_Temp "\tomshi")
+                dlPath    := A_Temp "\tomshi\" allLibs.name[A_Index] allLibs.ext[A_Index]
+                localPath := allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] allLibs.ext[A_Index]
+                if FileExist(A_Temp "\tomshi\" allLibs.name[A_Index] allLibs.ext[A_Index])
+                    FileDelete(A_Temp "\tomshi\" allLibs.name[A_Index] allLibs.ext[A_Index])
+                Download(allLibs.url[A_Index], dlPath)
+                getDlHash := cmd.result(Format('CertUtil -hashfile "{1}" {2}', dlPath, "SHA256"))
+                splitDl := StrSplit(getDlHash, "`r")
+                getLocalHash := cmd.result(Format('CertUtil -hashfile "{1}" {2}', localPath, "SHA256"))
+                splitLocal := StrSplit(getLocalHash, "`r")
+                if (LTrim(splitDl[2], "`n") == LTrim(splitLocal[2], "`n")) {
+                    FileDelete(A_Temp "\tomshi\" allLibs.name[A_Index] allLibs.ext[A_Index])
+                    continue
+                }
+                FileMove(dlPath, localPath, true)
+                Notify.Show(, allLibs.name[A_Index] ".dll file updated", 'iconi',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
+                continue
+            }
             fileExt := (allLibs.ext[A_Index] = "unset") ? ".ahk" : allLibs.ext[A_Index]
             localVersion := getLocalVer(, StrReplace(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] fileExt, ptf.rootDir "\", ""),,, true) ;localVer(allLibs.scriptPos[A_Index] "\" allLibs.name[A_Index] ".ahk")
             latestVer := getString(allLibs.url[A_Index], allLibs.name[A_Index] fileExt)

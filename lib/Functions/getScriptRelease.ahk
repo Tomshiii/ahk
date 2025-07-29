@@ -18,27 +18,30 @@ getScriptRelease(beta := false, &changeVer := "", user := "Tomshiii", repo := "a
     if !checkInternet()
         {
             errorLog(Error("Couldn't confirm a connection to the internet", -1),, 1)
-            return 0
+            return false
         }
     if !html := getHTML("https://github.com/" user "/" repo "/releases.atom")
-        return 0
+        return false
     loop {
         getrightURL := InStr(html, 'href="https://github.com/' user '/' repo '/releases/tag/', 1, 1, A_Index)
+        if !getrightURL {
+            errorLog(Error("No url determined in returned html - may be rate limited", -1), "html has been added to the clipboard for inspection", 1)
+            A_Clipboard := html
+            return false
+        }
         foundpos := InStr(html, 'v2', 1, getrightURL, 1)
         endpos := InStr(html, '"', , foundpos, 1)
         ver := Trim(SubStr(html, foundpos, endpos - foundpos))
-        if InStr(ver, "<",, 1, 1)
-            ver := SubStr(ver, 1, InStr(ver, "<",, 1, 1)-1)
-        if !InStr(ver, "pre") && !InStr(ver, "beta") && !InStr(ver, "alpha")
-            {
+        switch {
+            case (InStr(ver, "<",, 1, 1)):
+                ver := SubStr(ver, 1, InStr(ver, "<",, 1, 1)-1)
+            case (!InStr(ver, "pre") && !InStr(ver, "beta") && !InStr(ver, "alpha")):
                 changeVer := "main"
                 break
-            }
-        else if beta = true
-            {
-                changeVer := "beta"
-                break
-            }
+            case (beta = true):
+            changeVer := "beta"
+            break
+        }
     }
     return ver
 }

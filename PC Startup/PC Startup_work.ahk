@@ -27,6 +27,19 @@ Run(ptf.TimerScripts "\premKeyCheck.ahk")
 Run(ptf["textreplace"])
 Run(ptf["HotkeylessAHK"])
 
+;// run kleopatra
+runKleopatra()
+runKleopatra() {
+    path := "C:\Program Files (x86)\Gpg4win\bin\kleopatra.exe"
+    if !FileExist(path)
+        return
+    orig := detect()
+    if WinExist("ahk_exe kleopatra.exe")
+        ProcessClose(WinGetPID("ahk_exe kleopatra.exe"))
+    Run(path,, "Hide")
+    resetOrigDetect(orig)
+}
+
 ;//backups
 FileCopy(ptf.rootDir "\Support Files\Streamdeck Files\options.ini", ptf.rootDir "\Backups\Work\options.ini", 1)
 FileCopy(ptf.rootDir "\lib\My Scripts\Windows.ahk", ptf.rootDir "\Backups\Work\Windows.ahk", 1)

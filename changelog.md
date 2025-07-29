@@ -5,7 +5,7 @@
 
 ## Functions
 - ✅ Fixed `getHotkeys()` not handling hotkeys that discern either the left or right pair (eg. <kbd><!2</kbd>)
-- ✅ Fixed `settingsGUI()` throwing when trying to adjust some checkboxes
+- ✅ Fixed `getScriptRelease()` throwing if no URL is determined in some html
 - ✏️ Added `cmd.exploreAndHighlight()`
 - ✏️ Added `selectFileInOpenWindow()`
 - ✏️ Added [`nItemsInDir()`](<https://www.autohotkey.com/boards/viewtopic.php?p=494290#p494290>)
@@ -56,12 +56,17 @@
 
 ⚠️ `Startup {`
 - ✅ Fixed `updatePackages()` using incorrect string for newer versions of `chocolatey` causing the update process to fail
+- ✅ Fixed `libUpdateCheck()` updating the `Icons.dll` file when it wasn't necessary causing false diffs in git
 - 📋 `gitBranchCheck()` will no longer continue if changes are waiting to be `pushed` to avoid issues
 - 📋 `adobeVerOverride()` will now show the user's selected Premiere `theme` during its selected version `Notify {`
 
 📍 `HotkeylessAHK.ahk`
 - 📋 Can now be rebooted from `trayMen()`
 - 📋 The user will be alerted about whether script is open/closed on script reboot
+
+⚠️ `settingsGUI()`
+- ✅ Fixed function throwing when trying to adjust some checkboxes
+- ✏️ Added ability to adjust `swapPreviousSequence()` check rate
 
 ## Other Changes
 - ✅ Fixed `reencodeGUI()` not respecting the set `bitrate` value
