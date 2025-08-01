@@ -131,7 +131,6 @@ class errorLog extends log {
             For ComputerSystem in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_ComputerSystem") {
                 Logical  := ComputerSystem.NumberOfLogicalProcessors
                 Response := ComputerSystem.TotalPhysicalMemory / "1073741824"
-
             }
 
             Memory      := Round(Response, 2)

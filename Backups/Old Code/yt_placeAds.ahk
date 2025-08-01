@@ -5,10 +5,9 @@
 
 #HotIf WinActive("ahk_exe chrome.exe")
 
-title1 := "Video monetization - YouTube Studio - Google Chrome"
-title2 := "Channel content - YouTube Studio - Google Chrome"
+titles := Map("Channel dashboard - YouTube Studio - Google Chrome", true, "Video monetization - YouTube Studio - Google Chrome", true, "Channel content - YouTube Studio - Google Chrome", true)
 __howMany(UIAElement, amount) {
-    newEl := UIAElement.FindElement({A:"skip-forward-10"})
+    newEl := UIAElement.FindElement({Name: "Skip forward 10 seconds", LocalizedType: "button", AutomationId: "skip-forward-10"})
     loop amount {
         newEl.ControlClick()
     }
@@ -19,36 +18,33 @@ __howMany(UIAElement, amount) {
 F1::
 {
     currTitle := WinGetTitle("A")
-    if currTitle == title1 || currTitle == title2 {
-        title := (currTitle == title1) ? title1 : title2
-        chromeEl := UIA.ElementFromHandle(title " ahk_exe chrome.exe")
+    if titles.has(currTitle) {
+        chromeEl := UIA.ElementFromHandle(currTitle " ahk_exe chrome.exe")
         __howMany(chromeEl, 3)
     }
 }
 F2::
 {
     currTitle := WinGetTitle("A")
-    if currTitle == title1 || currTitle == title2 {
-        title := (currTitle == title1) ? title1 : title2
-        chromeEl := UIA.ElementFromHandle(title " ahk_exe chrome.exe")
+    if titles.has(currTitle) {
+        chromeEl := UIA.ElementFromHandle(currTitle " ahk_exe chrome.exe")
         __howMany(chromeEl, 9)
     }
 }
 F3::
 {
     currTitle := WinGetTitle("A")
-    if currTitle == title1 || currTitle == title2 {
-        title := (currTitle == title1) ? title1 : title2
-        chromeEl := UIA.ElementFromHandle(title " ahk_exe chrome.exe")
+    if titles.has(currTitle) {
+        chromeEl := UIA.ElementFromHandle(currTitle " ahk_exe chrome.exe")
         __howMany(chromeEl, 15)
     }
 }
 
 `:: {
     currTitle := WinGetTitle("A")
-    if currTitle == title1 || currTitle == title2 {
-        title := (currTitle == title1) ? title1 : title2
-        chromeEl := UIA.ElementFromHandle(title " ahk_exe chrome.exe")
+    if titles.has(currTitle) {
+        chromeEl := UIA.ElementFromHandle(currTitle " ahk_exe chrome.exe")
         try chromeEl.FindElement({Name:"Insert ad slot"}).ControlClick()
+        try chromeEl.FindElement({Type: "50000 (Button)", Name: "Play", LocalizedType: "button", AutomationId: "play-button"}).SetFocus()
     }
 }

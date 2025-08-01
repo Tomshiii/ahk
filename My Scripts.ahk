@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.19
+;\\v2.34.20
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -130,13 +130,13 @@ start.generate()
 SD_Opt().checkCount()
 start.gitBranchCheck([ptf.rootDir, WinGet.pathU(ptf.rootDir "\..\textreplace")])
 start.updateChecker()
-start.updateAdobeVerAHK()
 start.updatePackages(,,,, ["vcredist"])
 start.trayMen()
 start.firstCheck()
 start.oldLogs()
 start.adobeTemp()
 start.adobeVerOverride()
+start.checkVersJSON()
 start.libUpdateCheck()
 start.updateAHK()
 start.monitorAlert()

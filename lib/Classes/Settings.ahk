@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2025/07/24
- * @version 1.2.28
+ * @date 2025/08/01
+ * @version 1.2.30
  ***********************************************************************/
 
 class UserPref {
@@ -29,7 +29,7 @@ class UserPref {
     workingDir := A_WorkingDir
     defaults := Map(
         ;// [Settings]
-        "update_check", "true", "beta_update_check", "false", "package_update_check", "true", "lib_update_check", "true", "ahk_update_check", "true", "update_adobe_verAHK", "true", "update_git", "false",
+        "update_check", "true", "beta_update_check", "false", "package_update_check", "true", "lib_update_check", "true", "ahk_update_check", "true", "update_adobe_vers", "true", "update_git", "false",
         "dark_mode", "",
         "run_at_startup", "false", "show_adobe_vers_startup", "true",
         "autosave_beep", "true", "autosave_check_checklist", "true", "autosave_save_override", "true", "autosave_check_mouse", "true",
@@ -38,6 +38,7 @@ class UserPref {
         "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
         "Always_Check_UIA", "true", "Set_UIA_Limit_Daily", "disabled",
         "Use_Thio_MButton", "false", "Use_MButton", "true",
+        "Use_swapSequences", "true",
 
         ;// [Adjust]
         "adobe_GB", 45, "adobe_FS", 2,
@@ -214,7 +215,7 @@ class UserPref {
                     update check={}
                     beta update check={}
                     ahk update check={}
-                    update adobe verAHK={}
+                    update adobe vers={}
                     update git={}
                     package update check={}
                     lib update check={}
@@ -237,6 +238,7 @@ class UserPref {
                     Set UIA Limit Daily={}
                     Use Thio MButton={}
                     Use MButton={}
+                    Use swapSequences={}
 
                     [Adjust]
                     adobe GB={}

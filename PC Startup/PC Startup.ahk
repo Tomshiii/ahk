@@ -2,6 +2,7 @@
 #Requires AutoHotkey v2.0
 #Include *i <Classes\Settings>
 #Include *i <Classes\ptf>
+#Include *i <Other\Notify\Notify>
 #Include *i <Functions\syncDirectories>
 
 ;// if the user has not generated the symlink yet this script will return
@@ -41,8 +42,19 @@ runKleopatra() {
 if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TomPC" && DirExist(ptf.SongQueue) { ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
     Run(ptf["textreplace"])
     Run(ptf["HotkeylessAHK"])
+    Run(ptf.TimerScripts "\setMicVolume.ahk")
     syncDirectories()
     Run(ptf.TimerScripts "\syncOnConnect.ahk")
+
+    try {
+        for memory in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_PhysicalMemory") {
+            mt := memory.speed
+        }
+        if mt != "5600" {
+            Notify.Show(, 'XMP is currently NOT enabled. Ram is running at ' mt 'MT/s', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark pos=CT dur=5 bdr=Red maxW=400')
+        }
+    }
+
     return
 }
 else if FileExist(ptf["textreplaceUser"])

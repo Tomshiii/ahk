@@ -8,7 +8,6 @@
 
 isIn(title) => InStr(WinGetTitle("A"), title)
 
-;stopTabHotkey;
 LCtrl & Tab::
 Shift & Tab::
 $Tab::
@@ -24,7 +23,6 @@ $Tab::
 	SendInput(sendMod "{Tab}")
 }
 
-;spaceDelayHotkey;
 Space::
 {
 	switch {
@@ -68,21 +66,40 @@ Enter::
 		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"), isIn("Clip Fx Editor - DeNoise"), isIn("Clip Fx Editor"), isIn("Track Fx Editor"), isIn("Color Picker"), isIn("Add Tracks"):
 			(GetKeyState("LWin", "P") = true) ? SendInput("-")  : SendInput("{BackSpace}")
 			return
+		case (GetKeyState("Ctrl") || GetKeyState("Shift")):
+			ctrl := (GetKeyState("Ctrl") != false) ? "^" : ""
+			shft := (GetKeyState("Shift") != false) ? "+" : ""
+			SendInput(ctrl shft "``")
+			return
 		default:
+			KeyWait("``")
 			SendInput("{``}")
+
 			return
 	}
 }
+
+;// left hand gain adjust
+` & 1::
+` & 2::
+` & 3::
+` & 4::
+` & 5::
+` & 6::prem.gain("-" SubStr(A_ThisHotkey, -1, 1))
+<#1::
+<#2::
+<#3::
+<#4::
+<#5::
+<#6::prem.gain(SubStr(A_ThisHotkey, -1, 1))
+
+
 
 NumpadDot::NumpadDot
 NumpadDot & NumpadSub::BackSpace
 
 Escape::prem.escFxMenu()
 
-;prem^DeleteHotkey;
-; Ctrl & BackSpace::prem.wordBackspace()
-
-;premselecttoolHotkey;
 SC03A & v::prem.selectionTool()
 
 !+x::prem.rippleCut()
@@ -100,17 +117,13 @@ SC03A & d::prem.disableDirectManip()
 >!1::prem.soloVideo()
 >!2::prem.soloVideo("disable")
 
-;premrippleTrimHotkey;
 q::
 w::prem.rippleTrim()
 
-;thumbScrollHotkey;
 F12::prem.thumbScroll()
 
-;premresetHotkey;
 F5::prem.reset()
 
-;premnumpadGainHotkey;
 NumpadSub::
 NumpadAdd::prem.numpadGain()
 
@@ -147,28 +160,24 @@ $+d::
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-;previouspremkeyframeHotkey;
+;// next/previous frame hotkeys
 Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "second", true) ;goes to the next keyframe point towards the left
-;nextpremkeyframeHotkey;
 Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second", true) ;goes to the next keyframe towards the right
 
 F20::prem.dragSourceMon("video", "{F20}")
 F19::prem.dragSourceMon(, "{F19}", "Bars and Tone - Rec 709")
 F14 & F19::prem.dragSourceMon(, "")
 
-;previouseditHotkey;
+;// next/previous edit point hotkeys
 F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint,, true) ;goes to the next edit point towards the left
-;nexteditHotkey;
 F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint,, true) ;goes to the next edit point towards the right
 
-;mousedrag1Hotkey;
+;// mousedrag hotkeys
 LAlt & Xbutton2:: ;this is necessary for the below function to work
-;mousedrag2Hotkey;
 Xbutton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
-;slowDownHotkey;
+;// playback speed change hotkeys
 F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
-;speedUpHotkey;
 F14 & F23::
 {
 	delaySI(16, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement) ;alternate way to speed up playback on the timeline with mouse buttons

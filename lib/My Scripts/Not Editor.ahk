@@ -2,6 +2,7 @@
 #Include <Classes\ptf>
 #Include <Classes\clip>
 #Include <Classes\Move>
+#Include <Classes\clipStorage>
 #Include <Functions\fastWheel>
 #Include <Functions\youMouse>
 #Include <Functions\alwaysOnTop>
@@ -55,6 +56,34 @@ SC03A & c::clip.capitilise()
 
 ;extraEnterHotkey;
 PgDn::Enter ;// I use a TKL keyboard and miss my NumpadEnter key
+
+^#`::clipStorage.clearAll()
+LWin & Escape::clipStorage.open()
+
+#1::
+#2::
+#3::
+#4::
+#5::clipStorage.send()
+
+^#1::
+^#2::
+^#3::
+^#4::
+^#5::clipStorage.store()
+
+;centreHotkey;
+#c::move.winCenter(1.25)
+#+c::move.winCenterWide()
+
+;fullscreenHotkey;
+#f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen
+{
+	if !winget.isFullscreen(&title)
+		WinMaximize(title)
+	else
+		WinRestore(title) ;winrestore will unmaximise it
+}
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

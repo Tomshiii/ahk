@@ -3,7 +3,6 @@
 #Include <Classes\Move>
 #Include <Classes\winget>
 #Include <Classes\switchTo>
-#Include <Classes\clipStorage>
 #Include <Functions\jumpChar>
 #Include <Functions\refreshWin>
 #Include <Functions\isDoubleClick>
@@ -21,19 +20,6 @@ SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We nee
 		case false: SoundBeep(700, 100), SoundBeep(700, 100)
 	}
 	SoundSetVolume(currentVolume,, soundName)
-}
-
-;centreHotkey;
-#c::move.winCenter(1.25)
-#+c::move.winCenterWide()
-
-;fullscreenHotkey;
-#f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen
-{
-	if !winget.isFullscreen(&title)
-		WinMaximize(title)
-	else
-		WinRestore(title) ;winrestore will unmaximise it
 }
 
 ;jump10charLeftHotkey;
@@ -80,18 +66,3 @@ SC03A & MButton::prem.dismissWarning()
 
 ;SubUnderHotkey;
 +NumpadSub::_
-
-^#`::clipStorage.clearAll()
-LWin & Escape::clipStorage.open()
-
-#1::
-#2::
-#3::
-#4::
-#5::clipStorage.send()
-
-^#1::
-^#2::
-^#3::
-^#4::
-^#5::clipStorage.store()

@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/07/24
- * @version 2.3.14
+ * @date 2025/07/31
+ * @version 2.3.15
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -29,6 +29,14 @@ settingsGUI()
 {
     ;this function is needed to reload some scripts
     detect()
+    ;// stop script from opening if the notify window still exists to give it a chance to save previous changes
+    if Notify.Exist('settingsGUI') {
+        loop 80 {
+            if !Notify.Exist('settingsGUI')
+                break
+            sleep 25
+        }
+    }
 
     readSet := FileRead(ptf.lib "\GUIs\settingsGUI\values.json")
     setJSON := JSON.parse(readSet,, false)
@@ -110,7 +118,7 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! Top Titles
     settingsGUI.AddText("W100 H20 xs Y7", "✔️ Toggle").SetFont("S13 Bold")
-    settingsGUI.AddText("W100 H20 x+355", "↩ Adjust").SetFont("S13 Bold")
+    settingsGUI.AddText("W100 H20 x+361", "↩ Adjust").SetFont("S13 Bold")
     settingsGUI.AddButton("W23 H22 x+125", "❓").OnEvent("Click", (*) => (Run("https://github.com/Tomshiii/ahk/wiki/settingsGUI()")))
 
     ;----------------------------------------------------------------------------------------------------------------------------------
@@ -175,9 +183,9 @@ settingsGUI()
     settingsGUI.AddCheckbox("vpackageCheck Checked" UserSettings.package_update_check " Y+5", setJSON.packageUpdate.title).OnEvent("Click", toggle.Bind("package update check", ""))
     settingsGUI["packageCheck"].ToolTip := (UserSettings.package_update_check = true) ? setJSON.packageUpdate.tooltip.true : setJSON.packageUpdate.tooltip.false
 
-    ;// vers.ahk update check
-    settingsGUI.AddCheckbox("vVersCheck Checked" UserSettings.update_adobe_verAHK " Y+5", setJSON.versUpdate.title).OnEvent("Click", toggle.Bind("update adobe verAHK", ""))
-    settingsGUI["VersCheck"].ToolTip := (UserSettings.update_adobe_verAHK = true) ? setJSON.versUpdate.tooltip.true : setJSON.versUpdate.tooltip.false
+    ;// adobe vers check
+    settingsGUI.AddCheckbox("vVersCheck Checked" UserSettings.update_adobe_vers " Y+5", setJSON.versUpdate.title).OnEvent("Click", toggle.Bind("update adobe vers", ""))
+    settingsGUI["VersCheck"].ToolTip := (UserSettings.update_adobe_vers = true) ? setJSON.versUpdate.tooltip.true : setJSON.versUpdate.tooltip.false
 
     ;// git update check
     settingsGUI.AddCheckbox("vgitCheck Checked" UserSettings.update_git " Y+5", setJSON.gitUpdate.title).OnEvent("Click", toggle.Bind("update git", "", ""))
@@ -229,7 +237,7 @@ settingsGUI()
     ;//! script checkboxes
 
     ;// autosave always save
-    settingsGUI.AddCheckbox("vautosaveAlwaysSave Checked" UserSettings.autosave_always_save " xs+223 ys Section", setJSON.autosaveAlwaysSave.title).OnEvent("Click", toggle.Bind("autosave always save", "autosave", ""))
+    settingsGUI.AddCheckbox("vautosaveAlwaysSave Checked" UserSettings.autosave_always_save " xs+230 ys Section", setJSON.autosaveAlwaysSave.title).OnEvent("Click", toggle.Bind("autosave always save", "autosave", ""))
     settingsGUI["autosaveAlwaysSave"].ToolTip := (UserSettings.autosave_always_save = true) ? setJSON.autosaveAlwaysSave.tooltip.true : setJSON.autosaveAlwaysSave.tooltip.false
 
     ;// autosave beep
@@ -287,7 +295,26 @@ settingsGUI()
                                    : (altGUI["Use_MButton"].Opt("-Disabled"), UserSettings.Use_MButton := "false")
             case "Use MButton":
                 (script.Value = 1) ? altGUI["thioHotkey"].Opt("+Disabled") : altGUI["thioHotkey"].Opt("-Disabled")
-
+            case "Use swapSequences":
+                (script.Value = 0) ? settingsGUI["premPrev"].Opt("+Disabled")
+                                   : settingsGUI["premPrev"].Opt("-Disabled")
+            origDetect := detect()
+            if WinExist(UserSettings.mainScriptName ".ahk") {
+                try {
+                    activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                    switch script.Value {
+                        case 0:
+                            activeObj.useSwapSequences := false
+                            activeObj.resetSeqTimer    := true
+                        case 1:
+                            activeObj.useSwapSequences := true
+                            SetTimer(activeObj.__setCurrSeq.Bind(activeObj), activeObj.prevSeqDelay)
+                    }
+                } catch {
+                    Notify.Show("settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
+                }
+            }
+            resetOrigDetect(origDetect)
         }
         ;// changing requested value
         if InStr(script.text, "autosave") && WinExist("autosave.ahk - AutoHotkey")
@@ -303,11 +330,11 @@ settingsGUI()
     settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
 
     ;// getTimeline() - Always Check UIA
-    settingsGUI.AddCheckbox("valwaysCheckUIA Checked" UserSettings.Always_Check_UIA " Y+5", setJSON.alwaysCheckUIA.title).OnEvent("Click", toggle.Bind("Always Check UIA", unset))
+    settingsGUI.AddCheckbox("valwaysCheckUIA Checked" UserSettings.Always_Check_UIA " Y+5", setJSON.alwaysCheckUIA.title).OnEvent("Click", toggle.Bind("Always Check UIA", "", ""))
     settingsGUI["alwaysCheckUIA"].ToolTip := (UserSettings.Always_Check_UIA = true) ? setJSON.alwaysCheckUIA.tooltip.true : setJSON.alwaysCheckUIA.tooltip.false
 
     ;// Set_UIA_LimitDaily
-    settingsGUI.AddCheckbox("vsetUIA_LimitDaily Checked" (UserSettings.Set_UIA_Limit_Daily != "disabled" ? UserSettings.Set_UIA_Limit_Daily : "0 +Disabled") " Y+5 x+-215", setJSON.setUIA_LimitDaily.title).OnEvent("Click", toggle.Bind("Set UIA Limit Daily", unset))
+    settingsGUI.AddCheckbox("vsetUIA_LimitDaily Checked" (UserSettings.Set_UIA_Limit_Daily != "disabled" ? UserSettings.Set_UIA_Limit_Daily : "0 +Disabled") " Y+5 xs+10", setJSON.setUIA_LimitDaily.title).OnEvent("Click", toggle.Bind("Set UIA Limit Daily", "", ""))
     settingsGUI["setUIA_LimitDaily"].ToolTip := (UserSettings.Set_UIA_Limit_Daily = true) ? setJSON.setUIA_LimitDaily.tooltip.true : setJSON.setUIA_LimitDaily.tooltip.false
     (settingsGUI["alwaysCheckUIA"].Value = 0) ? settingsGUI["setUIA_LimitDaily"].Opt("+Disabled") : settingsGUI["setUIA_LimitDaily"].Opt("-Disabled")
 
@@ -341,6 +368,11 @@ settingsGUI()
         initVal := UserSettings.%initValVar%
         settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 -E0200 Number v" set_Edit_Val.control[A_Index])
         settingsGUI.Add("UpDown", set_Edit_Val.UpDownOpt[A_Index], initVal)
+        switch set_Edit_Val.control[A_Index] {
+            case "premPrev":
+                (UserSettings.use_swapSequences = false || UserSettings.use_swapSequences = "false") ? settingsGUI[set_Edit_Val.control[A_Index]].Opt("+Disabled")
+                                                                                                     : settingsGUI[set_Edit_Val.control[A_Index]].Opt("-Disabled")
+        }
         settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
         settingsGUI[set_Edit_Val.textControl[A_Index]].SetFont(set_Edit_Val.colour[A_Index])
         settingsGUI.Add("Text", set_Edit_Val.otherTextPos[A_Index], set_Edit_Val.otherText[A_Index])
@@ -354,8 +386,17 @@ settingsGUI()
         UserSettings.%iniVar% := ctrl.text
         switch ini {
             case "premPrevSeqDelay":
-                prem.resetSeqTimer := true
-                prem.prevSeqDelay := (ctrl.text*1000)
+                origDetect := detect()
+                if WinExist(UserSettings.mainScriptName ".ahk") {
+                    try {
+                        activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                        activeObj.prevSeqDelay := (ctrl.text*1000)
+                        activeObj.resetSeqTimer    := true
+                    } catch {
+                        Notify.Show("settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
+                    }
+                }
+                resetOrigDetect(origDetect)
                 return
         }
         if WinExist(script " - AutoHotkey") && script != "" {
@@ -435,7 +476,7 @@ settingsGUI()
         sleep 50
         newSettings := FileRead(UserSettings.SettingsFile)
         if newSettings != initialSettings
-            Notify.Show("settingsGUI()", "Settings changes are being saved", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 Hide=Fade@250")
+            Notify.Show("settingsGUI()", "Settings changes are being saved`nGUI cannot be reopened until this window disappears...", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
         ToolTip("")
         if IsSet(butt) {
             switch butt {
@@ -622,19 +663,27 @@ settingsGUI()
             adobeGui.AddText("xs y+12 Section", "Cache Dir: ")
             cacheInit := short "cache"
             cache := adobeGui.Add("Edit", "x" ctrlX " ys-3 r1 W150 ReadOnly", UserSettings.%cacheInit%)
-            cacheSelect := adobeGui.Add("Button", "x+5 w60 h27", "select")
+            cacheSelect := adobeGui.Add("Button", "vcacheBut x+5 w60 h27", "select")
             cacheSelect.OnEvent("Click", __cacheslct.Bind(adobeFullName))
+            adobeGui["cacheBut"].GetPos(&cacheButX)
         }
         if program = "Premiere" {
+            ;// themes
             defaults := Map("Light", "1", "Dark", "2", "Darkest", "3")
             adobeGui.AddText("xs", "Theme Default: ")
             adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose" defaults.Get(UserSettings.premDefaultTheme) " vthemeDefaultPrem", ["Light", "Dark", "Darkest"])
             adobeGui['themeDefaultPrem'].OnEvent("change", (ctrl, *) => UserSettings.premDefaultTheme := ctrl.Text)
+
+            ;// swapSequences()
+            adobeGui.AddCheckbox("vuseSwapSequences Checked" UserSettings.use_swapSequences " xs Y+15", setJSON.useSwapSequences.title).OnEvent("Click", toggle.Bind("Use swapSequences", "", ""))
+            adobeGui["useSwapSequences"].ToolTip := (UserSettings.use_swapSequences = true) ? setJSON.useSwapSequences.tooltip.true : setJSON.useSwapSequences.tooltip.false
         }
 
         ;// warning & save button
-        adobeGui.AddText("xs+50 y+15", "*some settings will require`na full reload to take effect").SetFont("s9 italic")
-        saveBut := adobeGui.Add("Button", "x+-10", "close")
+        adobeGui["IsBeta"].GetPos(&isBetaX)
+        closeX := IsSet(cacheButX) ? cacheButX : isBetaX
+        saveBut := adobeGui.Add("Button", "x" closeX, "close")
+        adobeGui.AddText("x" closeX-175 " y+-30 Right BackgroundTrans", "*some settings will require`na full reload to take effect").SetFont("s9 italic")
         saveBut.OnEvent("Click", __saveVer)
 
         ;// show

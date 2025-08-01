@@ -15,10 +15,10 @@
     }
   },
   "versUpdate": {
-    "title": "Check for Vers.ahk Updates",
+    "title": "Check for Adobe Version Updates",
     "tooltip": {
-      "true": "Scripts will check to see if any updates for the `Vers.ahk`/`adobeVers.ahk` files",
-      "false": "Scripts will not check to see if any updates for the `Vers.ahk`/`adobeVers.ahk` files"
+      "true": "Scripts will check to see if you have a version of `Premiere`, `After Effects`, or `Photoshop` installed\nthat isn't already accounted for and attempt to update some internal files",
+      "false": "Scripts will not check to see if you have a version of `Premiere`, `After Effects`, or `Photoshop` installed\nthat isn't already accounted for."
     }
   },
   "gitUpdate": {
@@ -104,6 +104,13 @@
     "tooltip": {
       "true": "Thio's script will use MButton",
       "false": "Thio's script will use F14 (by default, can be changed in settings.ini)"
+    }
+  },
+  "useSwapSequences": {
+    "title": "Use `prem.swapSequences()`",
+    "tooltip": {
+      "true": "The `prem {` class will monitor your currently active sequence and your previously active sequence\nso that you may swap between them",
+      "false": "The `prem {` class will not monitor your active sequences"
     }
   },
 

@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/07/29
- * @version 1.7.68
+ * @date 2025/08/01
+ * @version 1.7.69
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -162,21 +162,34 @@ class Startup {
             if name != "doStartup.ahk"
                 this.UserSettings.MainScriptName := name
 
-            ;// this check ensures that the function will prematurely return if the release version in the settings.ini is the same as the current release AND
-            ;// that the amount of settings all line up, otherwise the function will continue so that it may add missing settings values
-            if (this.UserSettings.defaults.Count != (allSettings.Count + allAdjust.Count + allTrack.Count)) || (VerCompare(this.MyRelease, this.UserSettings.version) > 0) {
-                tempFile := A_MyDocuments "\tomshi\settings_temp.ini"
-                UserPref().__createIni(tempFile)
-                tempSettings := genNewMap(), tempAdjust := genNewMap(), tempTrack  := genNewMap()
-                for v in StrSplit(IniRead(tempFile), "`n") {
-                    for k, v2 in valArr := StrSplit(IniRead(tempFile, v), ["=", "`n", "`r"]) {
-                        if Mod(k, 2) = 0
-                            continue
+            tempDir := A_Temp "\tomshi"
+            tempSettingsPath := tempDir "\temp_settings.ini"
+            if !DirExist(tempDir)
+                DirCreate(tempDir)
+            if FileExist(tempSettingsPath)
+                FileDelete(tempSettingsPath)
+            this.UserSettings.__createIni(tempSettingsPath)
+            tempSettings := genNewMap(), tempAdjust := genNewMap(), tempTrack  := genNewMap()
+            tempCountSettings := genNewMap(), tempCountAdjust := genNewMap(), tempCountTrack  := genNewMap()
+            for v in StrSplit(IniRead(tempSettingsPath), "`n") {
+                for k, v2 in valArr := StrSplit(IniRead(tempSettingsPath, v), ["=", "`n", "`r"]) {
+                    if Mod(k, 2) = 0
+                        continue
+                    if !all%v%.has(ensureSpaces(v2)) {
                         temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
+                        continue
                     }
+                    temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
+                    tempCount%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
                 }
+            }
+
+            ;// this check ensures that the function will prematurely return if the release version in the settings.ini is the same as the current release AND
+            ;// that the amount of settings all line up, AND
+            ;// that the settings names all line up -- otherwise the function will continue so that it may add/adjust missing settings values
+            if (this.UserSettings.defaults.Count != (allSettings.Count + allAdjust.Count + allTrack.Count) || this.UserSettings.defaults.Count != (tempCountSettings.Count + tempCountAdjust.Count + tempCountTrack.Count)) || (VerCompare(this.MyRelease, this.UserSettings.version) > 0) {
                 FileDelete(this.UserSettings.SettingsFile)
-                FileMove(tempFile, this.UserSettings.SettingsFile)
+                FileMove(tempSettingsPath, this.UserSettings.SettingsFile)
                 setSection(tempSettings, allSettings, "Settings")
                 setSection(tempAdjust, allAdjust, "Adjust")
                 setSection(tempTrack, allTrack, "Track", true)
@@ -191,6 +204,8 @@ class Startup {
                 Sleep(5000)
                 return
             }
+            if FileExist(tempSettingsPath)
+                FileDelete(tempSettingsPath)
         }
 
         ;// generate new settings
@@ -422,51 +437,6 @@ class Startup {
         }
     }
 
-    /** Updates a user's adobe `vers.ahk` file & `adobeVers.ahk` file */
-    updateAdobeVerAHK() {
-        if this.isReload != false || this.UserSettings.update_adobe_verAHK = false ;checks if script was reloaded
-            return
-        if !DirExist(A_Temp "\tomshi")
-            DirCreate(A_Temp "\tomshi")
-
-        installedVers      := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers.ahk"
-        latestVers         := A_Temp "\tomshi\Vers.ahk"
-        installedAdobe     := ptf.SupportFiles "\Release Assets\Adobe SymVers\adobeVers.ahk"
-        latestAdobe        := A_Temp "\tomshi\adobeVers.ahk"
-        genSymLinks        := ptf.SupportFiles "\Release Assets\Adobe SymVers\generateAdobeSym.ahk"
-        symDir             := ptf.SupportFiles "\Release Assets\Adobe SymVers"
-
-        if !FileExist(installedVers) {
-            errorLog(TargetError("Could not determine Vers.ahk file", -1),, true)
-            return
-        }
-        readInstalledVers := FileRead(installedVers)
-        ;// downloads
-        __dld(url, path, filename) {
-            try Download(url, path)
-            catch {
-                errorLog(MethodError(Format("Failed to download latest {}.ahk file", filename), -1),,, true)
-                return
-            }
-        }
-        __dld("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/dev/Support%20Files/Release%20Assets/Adobe%20SymVers/Vers.ahk", latestVers, "Vers")
-        readLatestVers := FileRead(latestVers)
-        __dld("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/dev/Support%20Files/Release%20Assets/Adobe%20SymVers/adobeVers.ahk", latestAdobe, "adobeVers")
-        readLatestAdobe    := FileRead(latestAdobe)
-        readInstalledAdobe := FileRead(installedAdobe)
-
-        if (readInstalledVers == readLatestVers) && (readInstalledAdobe == readLatestAdobe)
-            return
-
-        promptUser := MsgBox("The user's adobe Vers.ahk file appears to be outdated.`nDo you wish to update it?`n`n(note: This will regenerate symlinks and as such will require an admin prompt)", "Update Vers.ahk?", "4148")
-        if promptUser = "No"
-            return
-
-        FileMove(latestVers, installedVers, true)
-        FileMove(latestAdobe, installedAdobe, true)
-        Run(genSymLinks, symDir)
-    }
-
     /**
      * This function will check for any updates in the user's package manager. If any are available they will be prompted asking if they wish to update.
      * ### _Please note_; the code for this function is designed around `chocolatey` and may not function with other package managers. The code to send the upgrade command specifically is also choco specific
@@ -552,7 +522,7 @@ class Startup {
      */
     firstCheck() {
         ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
-        if this.isReload != false ;checks if script was reloaded
+        if this.isReload != false
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if WinExist("Scripts Release ")
@@ -718,20 +688,17 @@ class Startup {
     adobeVerOverride() {
         __notifyVers() {
             notify_premBeta := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? " (Beta)" : ""
-            notify_aeBeta := (this.UserSettings.aeIsBeta = true || this.UserSettings.aeIsBeta = "true") ? " (Beta)" : ""
-            notify_psBeta := (this.UserSettings.psIsBeta = true || this.UserSettings.psIsBeta = "true") ? " (Beta)" : ""
+            notify_aeBeta   := (this.UserSettings.aeIsBeta = true   || this.UserSettings.aeIsBeta = "true")   ? " (Beta)"   : ""
+            notify_psBeta   := (this.UserSettings.psIsBeta = true   || this.UserSettings.psIsBeta = "true")   ? " (Beta)"   : ""
             try Notify.Show('Currently Set Adobe Versions',"Adobe Versions - `nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`n   🖌️ Theme: " prem.theme "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer "`nPhotoshop" notify_psBeta ": " this.UserSettings.psVer, 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=7 pos=TR bdr=0xD50000')
         }
         if !this.UserSettings.adobeExeOverride
             return
-        if this.isReload != false {
-            if this.UserSettings.show_adobe_vers_startup = true
-                __notifyVers()
-            return
-        }
+        if this.UserSettings.show_adobe_vers_startup = true
+            __notifyVers()
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
 
-        premNotFound := false, aeNotFound   := false
+        premNotFound := false, aeNotFound := false
 
         __determineYear(dir, which, default) {
             if !DirExist(dir)
@@ -794,6 +761,61 @@ class Startup {
             Sleep(5000)
             return
         }
+    }
+
+    checkVersJSON() {
+        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
+        if !this.UserSettings.update_adobe_vers
+            return
+
+        basePath := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers"
+        adobeProgs := ["ae", "prem", "ps"]
+        needsRefresh := false
+        for v in adobeProgs {
+            currVer := SubStr(this.UserSettings.%v%Ver, 1, 3)
+            currentFile := basePath "\" v "\" currVer ".json"
+            previousFile := basePath "\" v "\v" (Number(SubStr(currVer, 2, 2))-1) ".json"
+            needsNewFile := false
+            if !FileExist(currentFile) {
+                needsNewFile := true
+                FileAppend("", currentFile)
+                if !FileExist(previousFile)
+                    continue
+            }
+            currFileMap := JSON.parse(FileRead(currentFile))
+            if currFileMap.Has(this.UserSettings.%v%Ver) {
+                continue
+            }
+            previousFolder := ""
+            fileToCheck := (needsNewFile = false) ? currFileMap : JSON.parse(FileRead(previousFile))
+            for k, v in fileToCheck {
+                if A_Index != fileToCheck.Count
+                    continue
+                previousFolder := v
+            }
+            currFileMap[this.UserSettings.%v%Ver] := previousFolder
+            FileDelete(currentFile)
+            FileAppend(JSON.stringify(currFileMap), currentFile)
+            needsRefresh := true
+        }
+
+        if needsRefresh = false
+            return
+        if !this.__checkForReloadAttempt("checkVersJSON")
+            return
+        if !FileExist(ptf.SupportFiles "\Release Assets\Adobe SymVers\generateAdobeSym.ahk") {
+            ;// throw
+            errorLog(TargetError("Cannot find generateAdobeSym.ahk"),,, true)
+            return
+        }
+        Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Adobe versions have been updated, symlinks must be regenerated.', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+        userResponse := MsgBox("The current version list for adobe programs has been updated based off the version you have installed. However some of my scripts will require fresh symlinks to be generated for these changes to take effect.`nWould you like to generate these symlinks now?`n`nYou will be asked multiple times for elevated privileges.", "Adobe Versions Updated", "4132")
+        if userResponse != "Yes"
+            return
+        RunWait(ptf.SupportFiles "\Release Assets\Adobe SymVers\generateAdobeSym.ahk")
+        SetTimer((*) => reset.reset(), -3000)
+        Sleep(5000)
+        return
     }
 
     /**

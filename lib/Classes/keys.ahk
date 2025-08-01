@@ -2,8 +2,8 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2025/07/01
- * @version 1.0.5
+ * @date 2025/07/31
+ * @version 1.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -21,6 +21,7 @@ class keys {
         ">", 1,     "*", 1,
         "~", 1,     "$", 1,
         "<!", 1,    "<^", 1, "<+", 1,
+        ">!", 1,    ">^", 1, ">+", 1,
     )
 
     /**
@@ -101,7 +102,7 @@ class keys {
 
     /**
      * This function is designed to remove the hassle that can sometimes occur by using `KeyWait`. If a function is launched via something like a streamdeck `A_ThisHotkey` will be blank, if you design a function to only be activated with one button but then another user tries to launch it from two an error will be thrown. This function will automatically determine what's required and stop errors occuring
-     * @param {String} which determines which hotkey should be waited for in the event that the user tries to activate with two hotkeys
+     * @param {String} which determines which hotkey should be waited for in the event that the user tries to activate with two hotkeys. Must be either `"both"`, `"first"`, or `"second"`
      * @returns {Object} this function will attempt to return the two hotkeys as an object the same way that `getHotkeys()` would
      * ```
      * RAlt & p::
@@ -149,9 +150,19 @@ class keys {
                             key := ""
                             switch k {
                                 case "!":    key := "Alt"
+                                case "<!":   key := "LAlt"
+                                case ">!":   key := "RAlt"
                                 case "^":    key := "Ctrl"
+                                case "^":    key := "Ctrl"
+                                case "<^":   key := "LCtrl"
+                                case ">^":   key := "RCtrl"
                                 case "+":    key := "Shift"
-                                case "#":    key := "LWin"
+                                case "+":    key := "Shift"
+                                case "<+":   key := "LShift"
+                                case ">+":   key := "RShift"
+                                case "#":    key := "Win"
+                                case "<#":   key := "LWin"
+                                case ">#":   key := "RWin"
                                 case "<^>!": key := "AltGr"
                                 default: key := k
                             }

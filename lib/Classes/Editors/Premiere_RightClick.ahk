@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.3
  * @author tomshi, taranVH
- * @date 2025/07/02
- * @version 2.3.18
+ * @date 2025/07/30
+ * @version 2.3.19
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -85,7 +85,7 @@ class rbuttonPrem {
 	colour  := ""
 	colour2 := ""
 
-	sendHotkey := "{" A_ThisHotkey "}"
+	sendHotkey := ""
 
 	premUIA := false
 	origSeq := ""
@@ -274,17 +274,18 @@ class rbuttonPrem {
 		}
 		;// sometimes ahk can be a bit slow off the mark if the user clicks multiple buttons at the same time
 		;// as their activation hotkey (and those other buttons are setup with other functions)
-		;// which can cause A_ThisHotkey to become something else other than RButton (ie. F14 & F23)
+		;// which can cause A_ThisHotkey to become something else other than RButton (ie. <!3)
 		;// If this happens, some code later on will throw because GetKeyState doesn't know how to handle
-		;// a hotkey that has `&` in it
-		if InStr(A_ThisHotkey, "&") {
+		;// a hotkey that has modifiers in it; eg. `&`/`<`/`!` etc
+		try (chkVar := GetKeyState(A_ThisHotkey), chkVar := GetKeyState(A_ThisHotkey, "P"))
+		catch {
 			if IsSet(sendOnFailure)
 				SendInput(sendOnFailure)
 			return
 		}
 
-		if IsSet(sendOnFailure)
-			this.sendHotkey := sendOnFailure
+		this.sendHotkey := (IsSet(sendOnFailure)) ? sendOnFailure : "{" A_ThisHotkey "}"
+		currHotkey := A_ThisHotkey
 
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
@@ -299,12 +300,12 @@ class rbuttonPrem {
 
 		if WinExist("DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
 			prem.dismissWarning()
-			if !GetKeyState(A_ThisHotkey)
+			if !GetKeyState(currHotkey)
 				return
 		}
 
 		try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
-		try WinEvent.NotActive((*) => (checkstuck(), Exit()), prem.exeTitle)
+		try WinEvent.NotActive((*) => (checkstuck(), this.__exit()), prem.exeTitle)
 		InstallMouseHook(1)
 		prem.RClickIsActive := true
 
@@ -363,7 +364,7 @@ class rbuttonPrem {
 			}
 		}
 		this.__checkForPlayhead(origMouse, allChecks)
-		if !this.__checkForTap(A_ThisHotkey) {
+		if !this.__checkForTap(currHotkey) {
 			SendInput(KSA.playheadtoCursor)
 			this.__exit()
 		}
@@ -401,7 +402,7 @@ class rbuttonPrem {
 		}
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
-		while GetKeyState(A_ThisHotkey, "P") {
+		while GetKeyState(currHotkey, "P") {
 			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
 				if allChecks = true
 					checkstuck()

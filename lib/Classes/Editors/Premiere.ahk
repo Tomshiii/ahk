@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/25
- * @version 2.2.34
+ * @date 2025/07/31
+ * @version 2.2.35
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -42,7 +42,8 @@ class Prem {
         UserSettings := UserPref()
         this.currentSetVer := SubStr(UserSettings.premVer, 2)
         this.mainScriptName := (UserSettings.mainScriptName != "") ? UserSettings.mainScriptName : this.mainScriptName
-        try this.defaultTheme := UserSettings.premDefaultTheme
+        try this.defaultTheme     := UserSettings.premDefaultTheme
+        try this.useSwapSequences := UserSettings.use_swapSequences
         try {
             this.prevSeqDelay := UserSettings.premthis.PrevSeqDelay * 1000
         } catch {
@@ -78,7 +79,7 @@ class Prem {
                 this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
 
-        if A_ScriptName = this.mainScriptName ".ahk"
+        if (this.useSwapSequences = true || this.useSwapSequences = "true") && A_ScriptName = this.mainScriptName ".ahk"
             SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
     }
 
@@ -93,6 +94,7 @@ class Prem {
     static previousSeq := 0
     static resetSeqTimer := false
     static prevSeqDelay := 1500
+    static useSwapSequences := true
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
@@ -174,7 +176,7 @@ class Prem {
                         case "0":
                             sleep 50
                             if !Notify.Exist('notDeterminedIntZero') {
-                                Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=notDeterminedIntZero')
+                                Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDeterminedIntZero')
                                 errorLog(Error("Premiere theme could not be determined. Settings File int: " props.text, -1))
 
                                 title := "Fix settings file"
@@ -200,7 +202,7 @@ class Prem {
                         default:
                             sleep 50
                             if !Notify.Exist('notDetermined') {
-                                Notify.Show('Premiere theme could not be determined.', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=notDetermined')
+                                Notify.Show('Premiere theme could not be determined.', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
                                 errorLog(Error("Premiere theme could not be determined.", -1))
                             }
                             this.__setTimelineCol("Spectrum", this.defaultTheme)
@@ -213,7 +215,7 @@ class Prem {
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
                 sleep 50
                 if !Notify.Exist('preSpectrum') {
-                    Notify.Show(, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=preSpectrum')
+                    Notify.Show(, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=preSpectrum')
                 }
                 this.theme := this.defaultTheme
                 this.__setTimelineCol("oldUI", this.theme)
@@ -621,14 +623,15 @@ class Prem {
         block.On()
         premUIA := premUIA_Values()
         if !progNN := this.__uiaCtrlPos(premUIA.programMon,,, false) {
+            errorLog(TargetError("Could not determine UIA object", -1))
             block.Off()
             return
         }
-        if PixelGetColor(progNN.x+15, progNN.y+(progNN.height-10)) != this.iconHighlight
+        if PixelGetColor(progNN.x+15, progNN.y+(progNN.height-10)) != this.iconHighlight {
+            block.Off()
             return
-
+        }
         delaySI(25, toggleKey, toggleKey)
-
         block.Off()
         return
     }
@@ -1093,7 +1096,7 @@ class Prem {
         ;// the below sendinput use to begin with a simple +{Tab} but it appears that since either v24.0/v24.1 doing so will
         ;// instead focus the cancel button
         SendInput("{Tab 3}{Up 3}{Down}{Tab}" amount "{Enter}")
-        WinWaitClose("Audio Gain")
+        WinWaitClose("Audio Gain",, 1.5)
         block.Off()
         return true
     }
@@ -2532,7 +2535,7 @@ class Prem {
         track += offset
         if track < 1 {
             blocker.Off()
-            Notify.Show('toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red width=400 pad=,,,,,,,0')
+            Notify.Show('toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
             errorLog(ValueError("Desired track must be greater than 1", -1))
             return
         }
@@ -2586,7 +2589,7 @@ class Prem {
             sleep 50
             if !Notify.Exist("timeline")
                 theme := (timelineColours.%UI%.has(this.defaultTheme)) ? this.defaultTheme : "darkest"
-                Notify.Show(, '``timelineColours {`` does not have values set for the requested theme. Reverting to "' theme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 width=400 tag=timeline')
+                Notify.Show(, '``timelineColours {`` does not have values set for the requested theme. Reverting to "' theme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=timeline')
         }
 		for k, v in timelineColours.%UI%.%theme% {
 			if Mod(A_Index, 2) != 0
@@ -2785,7 +2788,12 @@ class Prem {
     static __setCurrSeq(*) {
         if this.resetSeqTimer = true {
             this.resetSeqTimer := false
-            SetTimer(, this.prevSeqDelay)
+            newDelay := (this.useSwapSequences = "true" || this.useSwapSequences = true) ? this.prevSeqDelay : 0
+            if !newDelay {
+                this.currentSeq  := false
+                this.previousSeq := false
+            }
+            SetTimer(, newDelay)
             return
         }
         if !WinExist(this.winTitle) || !WinActive(this.winTitle)

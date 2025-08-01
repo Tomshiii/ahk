@@ -2,6 +2,7 @@
 #Requires AutoHotkey v2.0
 #Include *i <Classes\Settings>
 #Include *i <Classes\ptf>
+#Include *i <Other\Notify\Notify>
 #Include *i <Functions\deleteDotUnderscore>
 #Include *i <Functions\syncDirectories>
 
@@ -38,6 +39,15 @@ runKleopatra() {
         ProcessClose(WinGetPID("ahk_exe kleopatra.exe"))
     Run(path,, "Hide")
     resetOrigDetect(orig)
+}
+
+try {
+    for memory in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_PhysicalMemory") {
+        mt := memory.speed
+    }
+    if mt != "5600" {
+        Notify.Show(, 'XMP is currently NOT enabled. Ram is running at ' mt 'MT/s', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark pos=CT dur=5 bdr=Red maxW=400')
+    }
 }
 
 ;//backups

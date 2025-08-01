@@ -1,25 +1,35 @@
 ; { \\ #Includes
-#Include Vers.ahk
+#Include <Other\JSON>
 ; }
 
 /**
  * Values of adobe versions that share their images with each other.
  * Versions being listed here do NOT ensure they are completely compatible with my scripts, I do not have the manpower to extensively test versions I do not use consistently.
  * The only versions that are actively tested against are the versions listed at the top of the respective class libraries in this repo
- * @param firstvalue is the NEW version
- * @param secondvalue is the version it's copying (so the ACTUAL folder)
  */
 class adobeVers {
+
+    dirFolder {
+        get {
+            SplitPath(A_LineFile,, &outDir)
+            return outDir
+        }
+    }
+    setVerMap[filepath] {
+        get {
+            return JSON.parse(FileRead(filepath))
+        }
+    }
     Premiere := {
-        22: premVers.v22,
-        23: premVers.v23,
-        24: premVers.v24,
-        25: premVers.v25
+        22: this.setVerMap[this.dirFolder "\Vers\Prem\v22.json"],
+        23: this.setVerMap[this.dirFolder "\Vers\Prem\v23.json"],
+        24: this.setVerMap[this.dirFolder "\Vers\Prem\v24.json"],
+        25: this.setVerMap[this.dirFolder "\Vers\Prem\v25.json"],
     }
     AE := {
-        23: aeVers.v23,
-        24: aeVers.v24,
-        25: aeVers.v25
+        23: this.setVerMap[this.dirFolder "\Vers\AE\v23.json"],
+        24: this.setVerMap[this.dirFolder "\Vers\AE\v24.json"],
+        25: this.setVerMap[this.dirFolder "\Vers\AE\v25.json"],
     }
     PS := {
         ;// to keep the version list short I'll periodically reduce the amount of versions it creates.
@@ -27,9 +37,9 @@ class adobeVers {
         ;// however, a note: the `deleteAdobeSyms.ahk` script will now similarly no longer delete these symlink folders
         ;// so if you've already installed my repo before, you'll need to manually delete them
 
-        ; 24: psVers.v24,
-        25: psVers.v25,
-        26: psVers.v26
+        ; 24: this.setVerMap[this.dirFolder "\Vers\Ps\v24.json"],
+        25: this.setVerMap[this.dirFolder "\Vers\Ps\v25.json"],
+        26: this.setVerMap[this.dirFolder "\Vers\Ps\v26.json"]
     }
 
     static maps := [this().Premiere, this().AE, this().PS]
