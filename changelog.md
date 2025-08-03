@@ -1,4 +1,5 @@
-# <> Release 2.15.x - 
+# <> Release 2.16 - Features & Fixes
+This update lays the groundwork for any `Premiere` theme to be supported; not just the `darkest` theme. While actual full support is unlikely to ever be a priority in the development of this repo, this update makes it possible in the future to at least offer it as a basic feature if it is ever desired.
 
 > [!Caution]
 > If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated.
@@ -13,11 +14,11 @@
 - ✏️ Added `switchTo.explorerHighlightFile()`
 - 📋 `block_ext {` now allows <kbd>Escape</kbd> by default so that <kbd>Ctrl + Shift + Escape</kbd> is accessible even while inputs are blocked
 
-⚠️ `ffmpeg {`
+### ⚠️ `ffmpeg {`
 - ✏️ Added `isVideo()`
 - 📋 Alert tooltip on completion can now be silenced by setting `doAlert` to `false`
 
-⚠️ `ytdlp {`
+### ⚠️ `ytdlp {`
 - 📋 Alert tooltip on completion can now be silenced by setting `doAlert` to `false`
 
 📍 `download()`
@@ -25,7 +26,7 @@
 - ✅ Fixed function sometimes failing to index correctly causing duplicate downloads to cancel
 - 📋 Will attempt to select the downloaded file in the `explorer` window if `openDirOnFinish` is set to `true`
 
-⚠️ `prem {`
+### ⚠️ `prem {`
 - ✅ Fixed `save()` using incorrect logic and incorrectly determining premiere as `busy`
 - ✅ Fixed `rippleTrim()` tracking incorrectly
 - ✅ Fixed `disableDirectManip()` not unblocking inputs in some scenarios
@@ -55,7 +56,7 @@
 - ✅ Fixed function sometimes activating some `Mute` icons
 - 📋 Will now wait for some activation hotkeys to be released before continuing
 
-⚠️ `Startup {`
+### ⚠️ `Startup {`
 - ✅ Fixed `updatePackages()` using incorrect string for newer versions of `chocolatey` causing the update process to fail
 - ✅ Fixed `libUpdateCheck()` updating the `Icons.dll` file when it wasn't necessary causing false diffs in git
 - ✅ Fixed `generate()` not fixing the `settings.ini` file in the event that; a setting had been renamed, or one setting had been removed and a new one added at the same time
@@ -68,7 +69,7 @@
 - 📋 Can now be rebooted from `trayMen()`
 - 📋 The user will be alerted about whether script is open/closed on script reboot
 
-⚠️ `settingsGUI()`
+### ⚠️ `settingsGUI()`
 - ✅ Fixed function throwing when trying to adjust some checkboxes
 - ✏️ Added ability to adjust `swapPreviousSequence()` check rate
 - ✏️ Added ability to enable/disable `swapPreviousSequence()` check rate
@@ -79,18 +80,18 @@
 - ✏️ Added `PremiereRemote` function `toggleEnabled()` & `closeActiveSequence()`
 - ❌ Removed `audPart.ahk`, `audSelect.ahk`, `projAudio.ahk`, `projVideo.ahk`, `sfx.ahk`, `thumbnail.ahk`, `vfx.ahk`, `video.ahk`, `vidPart.ahk`, and `vidSelect.ahk` as `mult-dl.ahk` encapsulates all of them
 
-📍 `Premiere_RightClick.ahk`
+🔗 `Premiere_RightClick.ahk`
 - ✅ Fixed script throwing due to `GetKeyState` in some scenarios
 - 📋 Moved `timelineColours {` out of `Premiere_RightClick.ahk` and into its own file `Premiere_TimelineColours.ahk`
 - 📋 Moved `__setTimelineCol()` out of `Premiere_RightClick.ahk` and into `prem {`
 
-📍 `mult-dl.ahk`
+🔗 `mult-dl.ahk`
 - ✏️ Can now download thumbnails
 - 📋 Will default its `FileSelect` to an active `Explorer` window if one is present
 - 📋 Will now properly limit the `Part` tabs `UpDwn` inputs to 2 values and only numbers
 - 📋 Will attempt to select the downloaded file in the `explorer` window
 
-📍 `generateProxies.ahk`
+🔗 `generateProxies.ahk`
 - ✅ Fixed script failing to generate some metadata causing it to outright fail
 - ✅ Fixed script attempting to operate on non video files
 - ✅ Fixed script failing to recurse correctly

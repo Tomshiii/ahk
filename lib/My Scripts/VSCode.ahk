@@ -6,9 +6,9 @@
 ; }
 
 ;vscodemsHotkey;
-!a::VSCode.script(15) ;clicks on the `my scripts` script in vscode
+!a::VSCode.script(14) ;clicks on the `my scripts` script in vscode
 ;vscodechangeHotkey;
-!c::VSCode.script(12) ;clicks on my `changelog` file in vscode
+!c::VSCode.script(11) ;clicks on my `changelog` file in vscode
 ;vscodeTestHotkey;
 !t::VSCode.script()
 

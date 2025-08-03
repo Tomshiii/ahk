@@ -276,7 +276,7 @@ deleting() {
     ;// deleting the full res images
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\og")
     ;// deleting folder I store in repo that isn't needed
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Stream\TomSongQueueue")
+    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Old Code\Stream\TomSongQueueue")
     ;// resetting `values.ini` file so it's empty for the user
     checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\UIA\values.ini")
     FileAppend("", A_WorkingDir "\release\" yes.Value "\Support Files\UIA\values.ini")

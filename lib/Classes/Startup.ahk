@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/08/01
- * @version 1.7.69
+ * @date 2025/08/03
+ * @version 1.7.69.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -763,6 +763,11 @@ class Startup {
         }
     }
 
+    /**
+     * A function that will attempt to update a user's adobe version files automatically based of the versions in use by the user. The purpose of this is to allow the user to easier use my scripts inbetween releases (as they can often be delayed months at a time) so that they don't encounter errors if, say for example, a new version of `Premiere` releases soon after a release of my scripts.
+     *
+     * > *While this function will aim to ease any potential errors with adobe releasing new versions of their software, it doesn't guarantee that functions of my script will remain error free. Any version specifc bugfixes - or more likely - version specific `..\Support Files\ImageSearch\` images, may still cause issues and the user will still be required to wait for a new release or to manually take their own screenshots.*
+     */
     checkVersJSON() {
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if !this.UserSettings.update_adobe_vers
@@ -805,7 +810,7 @@ class Startup {
             return
         if !FileExist(ptf.SupportFiles "\Release Assets\Adobe SymVers\generateAdobeSym.ahk") {
             ;// throw
-            errorLog(TargetError("Cannot find generateAdobeSym.ahk"),,, true)
+            errorLog(TargetError("Cannot find generateAdobeSym.ahk"), "The user will need to manually run the script to regenerate symlinks",, true)
             return
         }
         Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Adobe versions have been updated, symlinks must be regenerated.', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')

@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Other\JSON>
+#Include "%A_LineFile%"
+#Include _Assets\JSON.ahk
 ; }
 
 /**

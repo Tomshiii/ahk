@@ -223,27 +223,4 @@ export class Utils {
       }
       return false;
     }
-
-    static closeActiveSequence() {
-      const activeSequence = app.project.activeSequence;
-
-      if (!activeSequence) {
-          return false;
-      }
-
-      const activeID = activeSequence.sequenceID;
-      const allSequences = app.project.sequences;
-      const numSequences = allSequences.numSequences;
-
-      for (let i = 0; i < numSequences; i++) {
-          const seq = allSequences[i];
-          if (seq.sequenceID === activeID) {
-              const success = seq.close();
-              if (!success) {
-                  return false;
-              }
-              return true;
-          }
-      }
-    }
   }

@@ -28,7 +28,7 @@ class newGUI extends Gui {
         this.AddButton("ys+20 xs+350 w65 vDoneButton", "Done").OnEvent("Click", (*) => ExitApp())
 
         this.AddCheckbox("xs+25 ys+20 Section vPremRemote", "Install/Update Premiere Remote").OnEvent("Click", (guiObj, *) => (this.__checkboxes(guiObj, "PremRemote")))
-        this.AddText("xs y+5", "*note: NodeJS must already be installed").SetFont("S9 Italic")
+        this.AddText("xs y+5", "*note: NodeJS must already be installed for all of the above").SetFont("S9 Italic")
 
     }
     TitleBack  := 'BackgroundWhite'
@@ -36,16 +36,12 @@ class newGUI extends Gui {
     TotalWidth := 430
     InstallDir := A_WorkingDir
 
-    PremRemote := 0
-
     __checkboxes(guiObj, name) {
-        guiObj.value := (guiObj.value = 1) ? 1 : 0
-        this.%name% := guiObj.value
         this["_"].focus()
         this.__swap()
     }
     __swap(whichOverride := "unset") {
-        which := (this.PremRemote = 0) ? 0 : 1
+        which := (this["PremRemote"].Value = 0) ? 0 : 1
         if whichOverride !== "unset"
             which := whichOverride
         switch which {
@@ -58,9 +54,9 @@ class newGUI extends Gui {
         }
     }
 
-    __premRemote() {
+    __installPackage(filename) {
         try {
-            RunWait(A_WorkingDir "\Install Packages\installPremRemote.ahk")
+            RunWait(A_WorkingDir "\Install Packages\" filename)
             sleep 100
         } catch {
             throw TargetError("Unable to determine requested file.", -1)
@@ -71,8 +67,8 @@ class newGUI extends Gui {
         this["_"].focus()
         this.Opt("Disabled")
         ;// do installations
-        if this.PremRemote = 1
-            this.__premRemote()
+        if this["PremRemote"].value = 1
+            this.__installPackage("installPremRemote.ahk")
 
         ;//end
         this.Opt("-Disabled")

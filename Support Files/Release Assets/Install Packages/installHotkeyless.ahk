@@ -1,12 +1,31 @@
 #Include <Classes\ptf>
 #Include <Functions\unzip>
-#Include <Classes\winGet>
+; #Include <Classes\winGet>
+#Include <Classes\errorLog>
+#Include <Classes\cmd>
 
 ;// downloads and installs; https://github.com/sebinside/HotkeylessAHK
 
+;//! This script will NOT complete without NodeJS already being installed
+
+;// this script must be called AFTER symlinks have been generated
+;// it requires cmd { & unzip()
+SplitPath(A_LineFile,, &workDir)
+SetWorkingDir(workDir "\..\..\..\")
+
+getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+if !getNPM {
+    ;// throw
+    errorLog(TargetError("NodeJS is not currently installed. Please install NodeJS before continuing.", -1),,, 1)
+    return
+}
+
 downloadURl      := "https://github.com/sebinside/HotkeylessAHK/archive/refs/heads/main.zip"
 streamdeckPlugin := A_AppData "\Elgato\StreamDeck\Plugins\"
-dlLocation := WinGet.pathU(ptf.rootDir "\..\")
+; dlLocation := WinGet.pathU(ptf.rootDir "\..\")
+dlLocation := FileSelect("D3", A_WorkingDir, "Select Install Location for HotkeylessAHK")
+if !dlLocation
+    return
 
 Download(downloadURl, dlLocation "hotkeylessExtract.zip")
 ;// unzip

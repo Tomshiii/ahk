@@ -36,10 +36,13 @@
 <array.type><ustring/></array.type>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_1.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_3.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_3.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_4.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_5.xml</ustring>
 </array>
 </prop.pair>
 <prop.pair>
@@ -57,18 +60,18 @@
 <key>MinPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-1</int>
-<int type='signed' size='32'>-1</int>
+<int type='signed' size='32'>-32067</int>
+<int type='signed' size='32'>-32000</int>
 </array>
 </prop.pair>
 <prop.pair>
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>6</int>
-<int type='signed' size='32'>44</int>
-<int type='signed' size='32'>3359</int>
-<int type='signed' size='32'>1464</int>
+<int type='signed' size='32'>-8</int>
+<int type='signed' size='32'>-31</int>
+<int type='signed' size='32'>3381</int>
+<int type='signed' size='32'>1448</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -82,11 +85,14 @@
 <array>
 <array.type><string/></array.type>
 <string>20250427T230448.185222</string>
-<string>20250621T060409.333979</string>
+<string>20250725T031359.840093</string>
+<string>20250724T233533.585158</string>
 <string>20250612T234012.137687</string>
-<string>20250624T125358.328450</string>
+<string>20250731T084709.657428</string>
 <string>20250427T230623.728351</string>
+<string>20250724T233504.530425</string>
 <string>20250404T133355.452228</string>
+<string>20250724T233805.260128</string>
 </array>
 </prop.pair>
 <prop.pair>
@@ -95,10 +101,13 @@
 <array.type><ustring/></array.type>
 <ustring>2023_work - multicam</ustring>
 <ustring>2025_work</ustring>
+<ustring>blah</ustring>
 <ustring>2023_work - multicam</ustring>
 <ustring>2025_work</ustring>
 <ustring>$$$/Premiere/FrontEnd/Editing=Editing</ustring>
+<ustring>$$$/Premiere/FrontEnd/Effects=Effects</ustring>
 <ustring>$$$/Premiere/FrontEnd/Learning=Learning</ustring>
+<ustring>blah</ustring>
 </array>
 </prop.pair>
 <prop.pair>
@@ -111,6 +120,9 @@
 <array.type><int type='signed' size='32'/></array.type>
 <int type='signed' size='32'>0</int>
 <int type='signed' size='32'>0</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>1</int>
+<int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>

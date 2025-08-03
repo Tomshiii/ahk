@@ -1,0 +1,1 @@
+The files in `Release Assets` are often required to be able to function BEFORE any symlinks have been created. As such we unfortunately need to duplicate some classes/functions to ensure they're usable before the symlink process has taken place. This folder will be the (hopefully) short collection of those scripts

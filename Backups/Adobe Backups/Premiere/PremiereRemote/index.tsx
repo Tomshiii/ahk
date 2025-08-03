@@ -130,9 +130,32 @@ export const host = {
   },
 
   closeActiveSequence: function() {
-    return Utils.closeActiveSequence();
+    const activeSequence = app.project.activeSequence;
+
+    if (!activeSequence) {
+        // alert("No active sequence is open.");
+        return;
+    }
+
+    const activeID = activeSequence.sequenceID;
+    const allSequences = app.project.sequences;
+    const numSequences = allSequences.numSequences;
+
+    for (let i = 0; i < numSequences; i++) {
+        const seq = allSequences[i];
+        if (seq.sequenceID === activeID) {
+            const success = seq.close(); // Close the sequence tab
+            if (!success) {
+                // alert(`Failed to close sequence: ${seq.name}`);
+                return;
+            }
+            return;
+        }
+    }
+
+    // alert("Active sequence not found in project.sequences list.");
   }
-}
+};
 
 /**
  * These functions are only used internally.

@@ -684,6 +684,7 @@
 	"Orientation" = "(Ctrl+Alt+Shift+R)"
 	"Paste" = "(Ctrl+V)"
 	"PasteReversedKeyframes" = "(Ctrl+Shift+V)"
+	"PasteTextMatchFormatting" = "(Ctrl+Shift+B)"
 	"PrefsGeneral" = "(Ctrl+Alt+;)"
 	"PrevXferMode" = "(Shift+-)"
 	"ProjectSettings" = "(Ctrl+Alt+Shift+K)"
