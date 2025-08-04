@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2025/07/29
- * @version 1.0.11
+ * @date 2025/08/04
+ * @version 1.0.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -45,6 +45,7 @@ class reset {
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
     __parseInfo(value, includeChecklist) {
+        getDetect := detect()
         try {
             name := WinGettitle(value,, browser.vscode.winTitle)
             path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
@@ -52,8 +53,10 @@ class reset {
             if (includeChecklist = false && (script.Name = "checklist.ahk" || script.Name = "test.ahk")) || this.ignoreScript.Has(script.Name)
                 return false
             PID := WinGetPID(script.Name)
+            resetOrigDetect(getDetect)
             return {scriptName: script.name, PID: PID, path: path}
         }
+        resetOrigDetect(getDetect)
     }
 
     /**
@@ -113,20 +116,34 @@ class reset {
         }
     }
 
+    /** a func to reset `HotkeylessAHK` to cut repeat code */
+    static __resetHotkeyless() {
+        getDet := detect()
+        if WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle)
+            ProcessClose(WinGetPID("HotkeylessAHK.ahk",, browser.vscode.winTitle))
+        if WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle) {
+            if !WinWaitClose("HotkeylessAHK.ahk",, 3, browser.vscode.winTitle) {
+                MsgBox("HotkeylessAHK.ahk failed to close, it may have encountered an error", "Error")
+                return
+            }
+        }
+        Run(ptf['HotkeylessAHK'])
+        resetOrigDetect(getDet)
+    }
+
     /**
      * Reloads all active ahk scripts
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
     static ext_reload(includeChecklist := false) {
+        getDetect := detect()
         tool.Cust("All active ahk scripts reloading")
         activeWindows := this().__getList()
         for v in activeWindows {
             if !getInfo := this().__parseInfo(v, includeChecklist)
                 continue
             if getInfo.scriptName = "HotkeylessAHK.ahk" {
-                ProcessClose(WinGetPID(getInfo.scriptName,, browser.vscode.winTitle))
-                if FileExist(ptf['HotkeylessAHK'])
-                    Run(ptf['HotkeylessAHK'])
+                this.__resetHotkeyless()
                 continue
             }
             PostMessage(0x0111, 65303,,, getInfo.scriptName " - AutoHotkey")
@@ -141,15 +158,14 @@ class reset {
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
     static reset(includeChecklist := false) {
+        getDetect := detect()
         tool.Cust("All active ahk scripts are being rerun")
         activeWindows := this().__getList()
         for v in activeWindows {
             if !getInfo := this().__parseInfo(v, includeChecklist)
                 continue
             if getInfo.scriptName = "HotkeylessAHK.ahk" {
-                ProcessClose(WinGetPID(getInfo.scriptName,, browser.vscode.winTitle))
-                if FileExist(ptf['HotkeylessAHK'])
-                    Run(ptf['HotkeylessAHK'])
+                this.__resetHotkeyless()
                 continue
             }
             Run(getInfo.path)
@@ -164,6 +180,7 @@ class reset {
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
     static ex_exit(includeChecklist := false) {
+        getDetect := detect()
         tool.Cust("All active ahk scripts are being CLOSED")
         activeWindows := this().__getList()
         for v in activeWindows {
@@ -174,7 +191,8 @@ class reset {
         detect(false)
         tool.Wait()
         detect()
-        if WinExist(this().mainScript ".ahk")
+        if WinExist(this().mainScript ".ahk",, browser.vscode.winTitle)
             ProcessClose(WinGetPID(this().mainScript ".ahk",, browser.vscode.winTitle))
+        resetOrigDetect(getDetect)
     }
 }

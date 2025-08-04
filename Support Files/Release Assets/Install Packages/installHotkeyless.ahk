@@ -40,6 +40,11 @@ loop files dlLocation "\.hotkeylessExtract\*", "D" {
 FileDelete(dlLocation "hotkeylessExtract.zip")
 DirDelete(dlLocation ".hotkeylessExtract", 1)
 
+try {
+    if FileExist(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\replaceHotkeyless.ahk")
+        RunWait(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\replaceHotkeyless.ahk")
+}
+
 cmd.run(,,, "npm i", dlLocation dirName "\files")
 
 DirMove(dlLocation dirName "\stream-deck-plugin\de.sebinside.hotkeylessahk.sdPlugin", streamdeckPlugin "de.sebinside.hotkeylessahk.sdPlugin", 1)

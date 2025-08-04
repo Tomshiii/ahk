@@ -26,17 +26,16 @@ Run(ptf.TimerScripts "\gameCheck.ahk")
 Run(ptf.TimerScripts "\Multi-Instance Close.ahk")
 Run(ptf.TimerScripts "\premKeyCheck.ahk")
 Run(ptf["textreplace"])
-Run(ptf["HotkeylessAHK"])
+runApp(ptf["HotkeylessAHK"], "HotkeylessAHK.ahk")
 
 ;// run kleopatra
-runKleopatra()
-runKleopatra() {
-    path := "C:\Program Files (x86)\Gpg4win\bin\kleopatra.exe"
+runApp("C:\Program Files (x86)\Gpg4win\bin\kleopatra.exe", "ahk_exe kleopatra.exe")
+runApp(path, name) {
     if !FileExist(path)
         return
     orig := detect()
-    if WinExist("ahk_exe kleopatra.exe")
-        ProcessClose(WinGetPID("ahk_exe kleopatra.exe"))
+    if WinExist(name,, browser.vscode.winTitle)
+        ProcessClose(WinGetPID(name,, browser.vscode.winTitle))
     Run(path,, "Hide")
     resetOrigDetect(orig)
 }

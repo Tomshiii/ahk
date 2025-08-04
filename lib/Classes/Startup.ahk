@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/08/03
- * @version 1.7.69.1
+ * @date 2025/08/04
+ * @version 1.7.70
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -31,6 +31,7 @@
 #Include <Functions\trayShortcut>
 #Include <Functions\editScript>
 #Include <Functions\checkInternet>
+#Include <Functions\detect>
 #Include <Other\SystemThemeAwareToolTip>
 #Include <Other\FileGetExtendedProp>
 #Include <Other\print>
@@ -40,6 +41,8 @@
 
 class Startup {
     __New() {
+        OnExit(this.__Delete.Bind(this))
+        tool.Cust("",,,, this.alertTtipNum)
         ;// alert that startup functions are running
         this.alertTimer := true
         this.__alertTooltip()
@@ -694,8 +697,6 @@ class Startup {
         }
         if !this.UserSettings.adobeExeOverride
             return
-        if this.UserSettings.show_adobe_vers_startup = true
-            __notifyVers()
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
 
         premNotFound := false, aeNotFound := false
@@ -876,21 +877,24 @@ class Startup {
         submenuHotkeyless.Add("Close HotkeylessAHK", __hotkeyless.Bind("close"))
         submenuHotkeyless.Add("Reboot HotkeylessAHK", __hotkeyless.Bind("reboot"))
         getDet := detect()
+        __enableHotkeyless() => (submenuHotkeyless.Disable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK"))
+        __disableHotkeyless() => (submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Disable("Close HotkeylessAHK"), submenuHotkeyless.Disable("Reboot HotkeylessAHK"))
         switch {
             case (WinExist("HotkeylessAHK.ahk")):
                 Notify.Show(, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
-                submenuHotkeyless.Disable("Open HotkeylessAHK")
-                submenuHotkeyless.Enable("Close HotkeylessAHK")
-                submenuHotkeyless.Enable("Reboot HotkeylessAHK")
+                __enableHotkeyless()
             case (!WinExist("HotkeylessAHK.ahk") && !FileExist(ptf['HotkeylessAHK'])):
                 submenuHotkeyless.Disable("Open HotkeylessAHK")
                 submenuHotkeyless.Disable("Close HotkeylessAHK")
                 submenuHotkeyless.Disable("Reboot HotkeylessAHK")
             case (!WinExist("HotkeylessAHK.ahk") && FileExist(ptf['HotkeylessAHK'])):
-                Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
-                submenuHotkeyless.Enable("Open HotkeylessAHK")
-                submenuHotkeyless.Disable("Close HotkeylessAHK")
-                submenuHotkeyless.Disable("Reboot HotkeylessAHK")
+                try RunWait(Run(ptf['HotkeylessAHK']))
+                if !WinWait("HotkeylessAHK.ahk",, 2) {
+                    Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
+                    __disableHotkeyless()
+                }
+                Notify.Show(, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
+                __enableHotkeyless()
         }
         resetOrigDetect(getDet)
         A_TrayMenu.Insert(startingVal "&", "HotkeylessAHK", submenuHotkeyless)
@@ -916,24 +920,23 @@ class Startup {
         }
         __hotkeyless(closeOrOpen, *) {
             canLaunch := (!FileExist(ptf['HotkeylessAHK'])) ? false : true
+            exists := false
+            submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK")
+            getDet := detect()
+            if WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle)
+                exists := true
+            resetOrigDetect(getDet)
             switch closeOrOpen {
                 case "close":
-                    getDet := detect()
-                    if WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle)
                         ProcessClose(WinGetPID("HotkeylessAHK.ahk",, browser.vscode.winTitle))
-                    resetOrigDetect(getDet)
-                    submenuHotkeyless.Enable("Open HotkeylessAHK")
-                    submenuHotkeyless.Disable("Close HotkeylessAHK")
-                    submenuHotkeyless.Disable("Reboot HotkeylessAHK")
                 case "open":
+                    if exists = true
+                        return
                     if !canLaunch {
                         MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
                         return
                     }
                     Run(ptf['HotkeylessAHK'])
-                    submenuHotkeyless.Disable("Open HotkeylessAHK")
-                    submenuHotkeyless.Enable("Close HotkeylessAHK")
-                    submenuHotkeyless.Enable("Reboot HotkeylessAHK")
                 case "reboot":
                     getDet := detect()
                     if WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle)
@@ -949,7 +952,6 @@ class Startup {
                         MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
                         return
                     }
-                    Run(ptf['HotkeylessAHK'])
                     Notify.Show(, 'HotkeylessAHK has been rebooted', 'C:\Windows\System32\imageres.dll|icon253',,, 'theme=Dark dur=4 bdr=Gray show=Fade@250 hide=Fade@250 maxW=400')
             }
         }
@@ -1395,13 +1397,15 @@ class Startup {
             IniWrite("false",  this.trackReloadsIni, "Track", v)
         }
     }
-    __Delete() {
-        if !FileExist(this.trackReloadsIni)
-            this.__createTrackReloads()
-        this.__resetReloadTracking()
-        this.UserSettings.__delAll()
-        this.alertTimer := false
-        this.activeFunc := ""
-        tool.Cust("",,,, this.alertTtipNum) ;// just incase
+    __Delete(*) {
+        try {
+            if !FileExist(this.trackReloadsIni)
+                this.__createTrackReloads()
+            this.__resetReloadTracking()
+            this.UserSettings.__delAll()
+            this.alertTimer := false
+            this.activeFunc := ""
+            tool.Cust("",,,, this.alertTtipNum) ;// just incase
+        }
     }
 }

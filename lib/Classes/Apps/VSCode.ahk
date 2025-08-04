@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2025/06/30
- * @version 1.2.5
+ * @date 2025/08/04
+ * @version 1.2.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -79,11 +79,11 @@ class VSCode {
         if script = 0 && A_ThisHotkey = KSA.testHotkey  || A_ThisHotkey = KSA.functionHotkey {
             switch A_ThisHotkey {
                 case KSA.testHotkey:
-                    delaySI(50, "{Down 5}{Enter}", "{Down 22}{Enter}")
+                    delaySI(50, "{Down 5}{Enter}", "{Down 23}{Enter}")
                     __closeOut("The test file has been selected")
                     return
                 case KSA.functionHotkey:
-                    delaySI(50, "{Down 5}{Enter}", "{Down 21}{Enter}")
+                    delaySI(50, "{Down 5}{Enter}", "{Down 22}{Enter}")
                     __closeOut("The emoji file has been selected")
                     return
             }

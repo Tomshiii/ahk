@@ -26,27 +26,29 @@ getHotkeys(&first?, &second?) {
         return {first: unset, second: unset}
     getHotkey := A_ThisHotkey
     length := StrLen(getHotkey)
-    if length = 3 && (pos := InStr(getHotkey, "<") = 1 || pos := InStr(getHotkey, ">") = 1) {
-        first := SubStr(getHotkey, 1, 2)
-        second := SubStr(getHotkey, 3, 1)
-        check1 := vk(first)
-        check2 := vk(second)
-        if check1 != false
-            first := check1
-        if check2 != false
-            second := check2
-        return {first: first, second: second}
-    }
-    if length = 2 {
-        first := SubStr(getHotkey, 1, 1)
-        second := SubStr(getHotkey, 2, 1)
-        check1 := vk(first)
-        check2 := vk(second)
-        if check1 != false
-            first := check1
-        if check2 != false
-            second := check2
-        return {first: first, second: second}
+    switch {
+        case length = 3 && (pos := InStr(getHotkey, "<") = 1 || pos := InStr(getHotkey, ">") = 1):
+            first := SubStr(getHotkey, 1, 2)
+            second := SubStr(getHotkey, 3, 1)
+            check1 := vk(first)
+            check2 := vk(second)
+            if check1 != false
+                first := check1
+            if check2 != false
+                second := check2
+            return {first: first, second: second}
+        case length = 2 && SubStr(getHotkey, 1, 1) != "F":
+            first := SubStr(getHotkey, 1, 1)
+            second := SubStr(getHotkey, 2, 1)
+            check1 := vk(first)
+            check2 := vk(second)
+            if check1 != false
+                first := check1
+            if check2 != false
+                second := check2
+            return {first: first, second: second}
+        case length = 2 && SubStr(getHotkey, 1, 1) = "F":
+            return {first: getHotkey, second: "vkE8"}
     }
     andValue := InStr(getHotkey, "&",, 1, 1)
     if !andValue

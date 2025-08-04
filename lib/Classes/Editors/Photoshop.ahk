@@ -1,10 +1,10 @@
 /************************************************************************
  * @description A library of useful Photoshop functions to speed up common tasks
  * Last tested in the version of Photoshop listed below
- * @psVer 25.1
+ * @psVer 26.9
  * @author tomshi
- * @date 2023/08/14
- * @version 1.2.1.2
+ * @date 2025/08/04
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include <Classes\tool>
 #Include <Classes\keys>
 #Include <Classes\errorLog>
+#Include <Other\UIA\UIA>
 ; }
 
 class PS {
@@ -48,9 +49,8 @@ class PS {
         else
             {
                 SendInput(KSA.freeTransform) ;if you aren't in the free transform it'll simply press your hotkey to get you into it. check the ini file to adjust this hotkey
-                ToolTip("we must wait for photoshop`nbecause it's slow as hell")
+                tool.Cust("we must wait for photoshop`nbecause it's slow as hell")
                 sleep 300 ;photoshop is slow
-                ToolTip("")
                 if !ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " ptf.Photoshop image)
                     {
                         MouseMove(xpos, ypos)
@@ -67,7 +67,7 @@ class PS {
             {
                 Click("{Click Up}")
                 MouseMove(xpos, ypos)
-                SendInput("{Enter 2}")
+                SendInput("{Esc}")
                 block.Off()
                 return
             }
@@ -78,122 +78,32 @@ class PS {
     }
 
     /**
-     * This function is to speed through the twitch emote saving process within photoshop. Doing this manually is incredibly tedious and annoying, so why do it manually?
-     */
-    static Save()
-    ;This script will require the latest (or at least the version containing the "save as copy" window) version of photoshop to function
-    ;PHOTOSHOP IS SLOW AS ALL HELL
-    ;if things in this script don't work or get stuck, consider increasing the living hell out of the sleeps along the way
-    {
-        save(size)
-        {
-            WinActivate(editors.Photoshop.winTitle)
-            block.On()
-            SendInput(KSA.imageSize) ;check the keyboard shortcut ini file
-            WinWait("Image Size")
-            SendInput(size "{tab 2}" size "{Enter}")
-            sleep 1000
-            SendInput(KSA.saveasCopy) ;check the keyboard shortcut ini file
-            WinWait("Save a Copy")
-        }
-        image()
-        {
-            sleep 500
-            Send("{TAB}{RIGHT}")
-            coord.w()
-            sleep 1000
-            if !ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop "png.png")
-                {
-                    if !ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop "png2.png")
-                        {
-                            MouseMove(0, 0)
-                            block.Off()
-                            errorLog(Error("Was unable to find the png option", -1),, 1)
-                            return
-                        }
-                    MouseMove(xpng, ypng)
-                    SendInput("{Click}")
-                    sleep 50
-                    MouseMove(0, 0)
-                    SendInput("{Enter}")
-                    return
-                }
-            MouseMove(0, 0)
-            SendInput("{Enter 2}")
-        }
-
-        Emote := InputBox("Please enter an Emote Name.", "Emote Name", "w100 h100")
-            if Emote.Result = "Cancel"
-                return
-            else
-                goto dir
-        dir:
-        dir := DirSelect("*::{20D04FE0-3AEA-1069-A2D8-08002B30309D}", 3, "Pick the destination folder you wish everything to save to.")
-            if dir = ""
-                return
-        next:
-        ;=============================112x112
-        save("112")
-        sleep 1000
-        SendInput("{F4}" "^a")
-        SendInput(Dir "{Enter}")
-        sleep 1000
-        SendInput("+{Tab 9}")
-        sleep 100
-        SendInput(Emote.Value "_112")
-        image()
-        WinWait("PNG Format Options")
-        SendInput("{Enter}")
-        ;=============================56x56
-        save("56")
-        SendInput("{F4}" "^a")
-        SendInput(Dir "{Enter}")
-        sleep 1000
-        SendInput("+{Tab 9}")
-        SendInput(Emote.Value "_56")
-        image()
-        WinWait("PNG Format Options")
-        SendInput("{Enter}")
-        ;=============================28x28
-        save("28")
-        SendInput("{F4}" "^a")
-        SendInput(Dir "{Enter}")
-        sleep 1000
-        SendInput("+{Tab 9}")
-        SendInput(Emote.Value "_28")
-        image()
-        WinWait("PNG Format Options")
-        SendInput("{Enter}")
-        block.Off()
-    }
-
-    /**
-     * When you try and save a copy of something in photoshop, it defaults to psd, this is a function to instantly pick the actual filetype you want
-     * @param {String} filetype is the name of the image you save to pick which filetype you want this function to click on
+     * When you try and save a copy of something in photoshop, it defaults to psd, this is a function to instantly pick the actual filetype you want.
+     *
+     * ### This function *requires* UIA
+     * @param {String} filetype is the name of the ext of the filetype you wish to set your file to. eg. `png`/`jpg`
      */
     static Type(filetype)
     {
-        MouseGetPos(&x, &y)
-        Send("{TAB}{RIGHT}") ;make sure you don't click anywhere before using this function OR put the caret back in the filename box
+        if !WinExist("Save a Copy" A_Space "ahk_class #32770")
+            return false
+        AdobeEl := UIA.ElementFromHandle("Save a Copy" A_Space "ahk_class #32770",, false)
         coord.w()
         sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
-        if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop filetype ".png")
-            {
-                SendInput("{Enter}")
-                SendInput("+{Tab}")
+        fileComboBox := {Type: "50003 (ComboBox)", Name: "Save as type:", LocalizedType: "combo box", AutomationId: "FileTypeControlHost", ClassName: "AppControlHost"}
+        try {
+            switch filetype {
+                case "png": __doSwap(AdobeEl, "PNG (*.PNG;*.PNG)")
+                case "jpg", "jpeg": __doSwap(AdobeEl, "JPEG (*.JPG;*.JPEG;*.JPE)")
             }
-        else if ImageSearch(&xpng, &ypng, 0, 0, 1574, 1045, "*5 " ptf.Photoshop filetype "2.png")
-            {
-                MouseMove(xpng, ypng)
-                SendInput("{Click}")
-                SendInput("+{Tab}")
-            }
-        else
-            {
-                block.Off()
-                errorLog(Error("Was unable to find the filetype option", -1),, 1)
-                return
-            }
-        MouseMove(x, y)
+        } catch {
+            Notify.Show(, 'Failed to set the correct filetype. Try again later.', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Balloon',, 'theme=Dark bdr=Red maxW=400')
+            return false
+        }
+
+        __doSwap(el, value) {
+            el.WaitElement(fileComboBox, 1500).Expand()
+            el.WaitElement({Type: '50007 (ListItem)', Name: value, LocalizedType: "list item"}, 1500).ControlClick()
+        }
     }
 }
