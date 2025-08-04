@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/06/03
- * @version 1.6.7.1
+ * @date 2025/08/05
+ * @version 1.6.7.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -64,7 +64,7 @@ class discord {
      */
     static button(button)
     {
-        keys.allWait("second")
+        keys.allWait(2)
         MouseGetPos(&x, &y, &win)
         if WinGetProcessName(win) != WinGetProcessName(this.winTitle)
             return

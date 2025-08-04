@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Last tested on Davinci Resolve v18.6.4
  * @author tomshi
- * @date 2023/07/23
- * @version 1.5.1
+ * @date 2025/08/05
+ * @version 1.5.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -102,7 +102,7 @@ class Resolve {
      */
     static scale(value, property, plus := 0)
     {
-        keys.allWait("second")
+        keys.allWait(2)
         coord.w()
         block.On()
         SendInput(KSA.resolveSelectPlayhead)
@@ -164,7 +164,7 @@ class Resolve {
     ;Open or close/reopen the search bar
     ;Search for your effect of choice, then drag back to the click you were hovering over originally
     {
-        keys.allWait("second")
+        keys.allWait(2)
         if !winget.isFullscreen(&title, this.winTitle)
         {
             SplitPath(A_LineFile, &filename)

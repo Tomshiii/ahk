@@ -2,27 +2,42 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2025/07/31
- * @version 1.0.6
+ * @date 2025/08/05
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\tool>
 #Include <Classes\errorLog>
 #Include <Functions\getHotkeys>
+#Include <Functions\getHotkeysArr>
 ; }
 
 class keys {
 
-    static modifiers := Map(
-        "#", 1,     "!", 1,
-        "^", 1,     "+", 1,
-        "&", 1,     "<", 1,
-        ">", 1,     "*", 1,
-        "~", 1,     "$", 1,
-        "<!", 1,    "<^", 1, "<+", 1,
-        ">!", 1,    ">^", 1, ">+", 1,
-    )
+    /**
+     * A helper function to convert string representations of hotkeys to their vk counterpart for use with ahk functions like `KeyWait()`
+     */
+    static vk(variable) {
+        switch variable {
+            case "#":    variable := "Win"
+            case "<#":   variable := "LWin"
+            case ">#":   variable := "RWin"
+            case "!":    variable := "Alt"
+            case "<!":   variable := "LAlt"
+            case ">!":   variable := "RAlt"
+            case "^":    variable := "Ctrl"
+            case "<^":   variable := "LCtrl"
+            case ">^":   variable := "RCtrl"
+            case "+":    variable := "Shift"
+            case "<+":   variable := "LShift"
+            case ">+":   variable := "RShift"
+            case "<^>!": variable := "AltGr"
+            default: return false
+        }
+        check := GetKeyVK(variable)
+        return Format("vk{:X}", check)
+    }
 
     /**
      * This function is a wrapper function for the loops in `keys.allUp()` and is to cut repeat code
@@ -102,77 +117,29 @@ class keys {
 
     /**
      * This function is designed to remove the hassle that can sometimes occur by using `KeyWait`. If a function is launched via something like a streamdeck `A_ThisHotkey` will be blank, if you design a function to only be activated with one button but then another user tries to launch it from two an error will be thrown. This function will automatically determine what's required and stop errors occuring
-     * @param {String} which determines which hotkey should be waited for in the event that the user tries to activate with two hotkeys. Must be either `"both"`, `"first"`, or `"second"`
-     * @returns {Object} this function will attempt to return the two hotkeys as an object the same way that `getHotkeys()` would
-     * ```
-     * RAlt & p::
-     * {
-     *    hotkeys := getHotkeys()
-     *    MsgBox(hotkeys.first)  ; returns "RAlt"
-     *    MsgBox(hotkeys.second) ; returns "p"
-     * }
-     *
-     * !p::
-     * {
-     *    getHotkeys(&first, &second)
-     *    MsgBox(first)  ; returns "vk12"
-     *    MsgBox(second) ; returns "p"
-     * }
-     * ```
+     * @param {Integer} [which=1] determines which hotkey should be waited for in the event that the user tries to activate with two hotkeys. This integer is the index of the array returned from `getHotkeysArr()`. ie; if the user is using the activation hotkey `!p::` - `!` is [1], `p` is [2]. So if the user puts `2` as this parameter, the function will move forward after `p` is released
+     * @returns {Array} this function will attempt to return the array received from `getHotkeysArr()`
      */
-    static allWait(which := "both") {
-        if Type(which) != "string" {
+    static allWait(which := 1) {
+        if A_ThisHotkey = ""
+            return false
+        if Type(which) != "Integer" {
             ;// throw
             errorLog(TypeError("Incorrect Type in Parameter #1", -1, which),,, 1)
         }
-        if (which != "both" && which != "first" && which != "second") {
-            ;// throw
-            errorLog(ValueError("Incorrect Value in Parameter #1", -1, which),,, 1)
+        getKeys := getHotkeysArr()
+        for i, v in getKeys {
+            if A_Index > getKeys.Length
+                break
+            currentIndex := (getKeys.Length+1)-A_Index
+            if currentIndex < which
+                break
+            try keyState := (GetKeyState(getKeys[currentIndex], "P")) ? true : false
+            if !keyState
+                continue
+            try KeyWait(getKeys[currentIndex])
         }
-        if ((A_ThisHotkey != "" && !InStr(A_ThisHotkey, "&")) &&
-            (StrLen(A_ThisHotkey) != 2 && (!this.modifiers.Has(SubStr(A_ThisHotkey, 1, 1)) && !this.modifiers.Has(SubStr(A_ThisHotkey, 2, 1))))
-        )
-            KeyWait(A_ThisHotkey)
-        else if A_ThisHotkey != ""
-            {
-                keys := getHotkeys()
-                switch which {
-                    case "first":  KeyWait(keys.first)
-                    case "second": KeyWait(keys.second)
-                    default:
-                        if keys != false {
-                            KeyWait(keys.second)
-                            KeyWait(keys.first)
-                            return {first: keys.first, second: keys.second}
-                        }
-                        ;// when the activation hotkey is multiple modifiers (ie. ^!f::)
-                        for k, v in this.modifiers {
-                            key := ""
-                            switch k {
-                                case "!":    key := "Alt"
-                                case "<!":   key := "LAlt"
-                                case ">!":   key := "RAlt"
-                                case "^":    key := "Ctrl"
-                                case "^":    key := "Ctrl"
-                                case "<^":   key := "LCtrl"
-                                case ">^":   key := "RCtrl"
-                                case "+":    key := "Shift"
-                                case "+":    key := "Shift"
-                                case "<+":   key := "LShift"
-                                case ">+":   key := "RShift"
-                                case "#":    key := "Win"
-                                case "<#":   key := "LWin"
-                                case ">#":   key := "RWin"
-                                case "<^>!": key := "AltGr"
-                                default: key := k
-                            }
-                            try keyState := (GetKeyState(key, "P")) ? true : false
-                            if InStr(A_ThisHotkey, k) && keyState = true
-                                KeyWait(key)
-                        }
-                        return false
-                }
-            }
+        return getKeys
     }
 
     /**

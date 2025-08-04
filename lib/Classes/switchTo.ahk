@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/07/28
- * @version 1.3.20
+ * @date 2025/08/05
+ * @version 1.3.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -150,7 +150,7 @@ class switchTo {
      */
     static newWin(classorexe, activate, runval, toggleFullscreen := false)
     {
-        keys.allWait("second")
+        keys.allWait(2)
         if !WinExist("ahk_" classorexe . activate) {
             Run(runval)
             if WinWait("ahk_" classorexe . activate,, 2) {

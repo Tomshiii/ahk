@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include <Classes\keys>
+; }
+
 /**
  * This function will return the name of the first & second hotkeys pressed when two are required for a macro to fire.
  *
@@ -28,27 +32,17 @@ getHotkeys(&first?, &second?) {
     length := StrLen(getHotkey)
     switch {
         case length = 3 && (pos := InStr(getHotkey, "<") = 1 || pos := InStr(getHotkey, ">") = 1):
-            first := SubStr(getHotkey, 1, 2)
-            second := SubStr(getHotkey, 3, 1)
-            check1 := vk(first)
-            check2 := vk(second)
-            if check1 != false
-                first := check1
-            if check2 != false
-                second := check2
-            return {first: first, second: second}
-        case length = 2 && SubStr(getHotkey, 1, 1) != "F":
-            first := SubStr(getHotkey, 1, 1)
-            second := SubStr(getHotkey, 2, 1)
-            check1 := vk(first)
-            check2 := vk(second)
-            if check1 != false
-                first := check1
-            if check2 != false
-                second := check2
-            return {first: first, second: second}
-        case length = 2 && SubStr(getHotkey, 1, 1) = "F":
+            first := SubStr(getHotkey, 1, 2), second := SubStr(getHotkey, 3, 1)
+            check1 := keys.vk(first), check2 := keys.vk(second)
+            return {first: check1 ?? first, second: check2 ?? second}
+        case length = 2 && !RegExMatch(getHotkey, "^F([1-9]|1[0-9]|2[0-4])$"):
+            first := SubStr(getHotkey, 1, 1), second := SubStr(getHotkey, 2, 1)
+            check1 := keys.vk(first), check2 := keys.vk(second)
+            return {first: check1 ?? first, second: check2 ?? second}
+        case length <= 3 && RegExMatch(getHotkey, "^F([1-9]|1[0-9]|2[0-4])$"): ;// F keys. ie. F22
             return {first: getHotkey, second: "vkE8"}
+        case length >= 3 && RegExMatch(getHotkey, "^(#|<\#|>\#|!|<!|>!|\^|<\^|>\^|\+|<\+|>\+|<\^>!)F([1-9]|1[0-9]|2[0-4])$", &FKeyModifiers):
+            return {first: FKeyModifiers[1], second: FKeyModifiers[2]}
     }
     andValue := InStr(getHotkey, "&",, 1, 1)
     if !andValue
@@ -56,26 +50,4 @@ getHotkeys(&first?, &second?) {
     first := SubStr(getHotkey, 1, length - (length - andValue) - 2)
     second := SubStr(getHotkey, andValue + 2, length - andValue + 2)
     return {first: first, second: second}
-
-    vk(variable) {
-        switch variable {
-            case "#":    variable := "Win"
-            case "<#":   variable := "LWin"
-            case ">#":   variable := "RWin"
-            case "!":    variable := "Alt"
-            case "<!":   variable := "LAlt"
-            case ">!":   variable := "RAlt"
-            case "^":    variable := "Ctrl"
-            case "<^":   variable := "LCtrl"
-            case ">^":   variable := "RCtrl"
-            case "+":    variable := "Shift"
-            case "<+":   variable := "LShift"
-            case ">+":   variable := "RShift"
-            case "<^>!": variable := "AltGr"
-            default:     return false
-        }
-        check := GetKeyVK(variable)
-        vkReturn := Format("vk{:X}", check)
-        return vkReturn
-    }
 }

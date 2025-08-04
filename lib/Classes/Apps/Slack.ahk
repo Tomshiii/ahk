@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/05/21
- * @version 1.1.5
+ * @date 2025/08/05
+ * @version 1.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -58,7 +58,7 @@ class Slack {
      * @param {Boolean} [replyInThread=false] determine whether `reply` will also enable the `Also send to...` checkbox when replying in a thread. Defaults to `false`
      */
     static button(button, replyInThread := false) {
-        keys.allWait("second")
+        keys.allWait(2)
         origMousePos := obj.MousePos()
         if WinGetProcessName(origMousePos.win) != WinGetProcessName(this.winTitle)
             return

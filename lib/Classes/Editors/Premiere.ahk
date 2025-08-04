@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/07/31
- * @version 2.2.35
+ * @date 2025/08/05
+ * @version 2.2.36
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -750,11 +750,11 @@ class Prem {
      * ie. if `Shuttle Stop` is <kbd>k</kbd> don't have anything set to <kbd>Shift + k</kbd> or <kbd>Ctrl + k</kbd> etc. Otherwise if you activate this function consecutively, modifiers might "leak" when unintended causing that hotkey to be activated. By default `Play around` was set for me which was causing issues
      * @param {String} window the hotkey required to focus the desired window within premiere
      * @param {String} direction is the hotkey within premiere for the direction you want it to go in relation to "edit points"
-     * @param {String} [keyswait="all"] a string you wish to pass to `keys.allWait()`'s first parameter
+     * @param {String} [keyswait=1] an integer you wish to pass to `keys.allWait()`'s first parameter
      * @param {Boolean/Object} [checkMButton=false] determine whether the function will wait to see if <kbd>MButton</kbd> is pressed shortly after (or is being held). This can be useful with panning around Premiere's `Program` monitor (assuming this function is activated using tilted scroll wheels, otherwise leave this param as false). This parameter can either be set to `true/false` or an object containing key `T` along with the timeout duration. Eg. `{T:"0.3"}`
      * @param {String} [activationKeys="{Shift}{F21}{F23}"] the keys you use to activate this function so they can be passed to `block_ext()` (otherwise you may have issues activating this hotkey consecutively)
      */
-    static wheelEditPoint(window, direction, keyswait := "all", checkMButton := false, activationKeys := "{Shift}{F21}{F23}") {
+    static wheelEditPoint(window, direction, keyswait := 1, checkMButton := false, activationKeys := "{Shift}{F21}{F23}") {
         SetKeyDelay(0)
         if Type(window) != "string" || Type(direction) != "string" || Type(keyswait) != "string" || (Type(checkMButton) != "integer" && Type(checkMButton) != "object") {
             ;// throw
@@ -804,11 +804,7 @@ class Prem {
             default: SendInput(window) ;focuses the timeline/desired window
         }
         SendInput(direction)
-        switch keyswait {
-            case "second": keys.allWait("second")
-            case "first":  keys.allWait("first")
-            default:       keys.allWait() ;prevents hotkey spam
-        }
+        keys.allWait(keyswait) ;prevents hotkey spam
         blocker.Off()
     }
 
@@ -2096,13 +2092,11 @@ class Prem {
         }
         blocker := block_ext()
         blocker.On()
-        key := keys.allWait("second")
-        if key.HasProp("first") {
-            if key.first = "Shift" {
-                blocker.Off()
-                errorLog(ValueError("``Shift`` cannot be the first activation hotkey.", -1),,, true)
-                return
-            }
+        key := keys.allWait(2)
+        if key[1] = "Shift" {
+            blocker.Off()
+            errorLog(ValueError("``Shift`` cannot be the first activation hotkey.", -1),,, true)
+            return
         }
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
@@ -2318,7 +2312,7 @@ class Prem {
         if WinGetTitle("A") != getTitle.winTitle
             return
 
-        keys.allWait("second")
+        keys.allWait(2)
         block.On()
         coord.client()
         origMouseCords := obj.MousePos()
@@ -2488,7 +2482,7 @@ class Prem {
      */
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0) {
         Critical()
-        check := keys.allWait("second")
+        keys.allWait(2)
         blocker := block_ext()
         blocker.On()
         SetDefaultMouseSpeed(0)

@@ -1,7 +1,14 @@
 # <> Release 2.16.x - 
 
 ## Functions
+- ✅ Fixed `getHotkeys()` failing to return `Fxx` keys
+- ✏️ Added `getHotkeysArr()`
 - 📋 `reset {` functions should now more reliably handle `HotkeylessAHK` causing the script to hang less often
+
+`keys {`
+📍 `allWait()`
+- 📋 Now uses `getHotkeysArr()` instead of heavy string manipulation
+- 📋 Parameter `which` is now an `Integer` instead of a string
 
 ⚠️ `startup {`
 - ✅ Fixed `adobeVerOverride()` showing the currently set adobe versions twice
