@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2025/06/16
- * @version 1.2.11
+ * @date 2025/08/05
+ * @version 1.2.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -317,7 +317,7 @@ class Move {
      * @param {String} window the title of the window you wish to adjust
      */
     static Adjust(xORy := "x", window := "A") {
-        keys.allWait("second")
+        keys.allWait(2)
         WinGetPos(&x, &y, &w, &h, title := (window = "A") ? WinGetTitle(window) : title)
         hotkeys := getHotkeys()
         switch xORy {

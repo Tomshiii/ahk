@@ -161,8 +161,8 @@ $+d::
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;// next/previous frame hotkeys
-Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, "second", true) ;goes to the next keyframe point towards the left
-Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, "second", true) ;goes to the next keyframe towards the right
+Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, 2, true) ;goes to the next keyframe point towards the left
+Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, 2, true) ;goes to the next keyframe towards the right
 
 F20::prem.dragSourceMon("video", "{F20}")
 F19::prem.dragSourceMon(, "{F19}", "Bars and Tone - Rec 709")

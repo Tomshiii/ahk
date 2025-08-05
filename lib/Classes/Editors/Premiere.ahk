@@ -5,7 +5,7 @@
  * @premVer 25.3
  * @author tomshi
  * @date 2025/08/05
- * @version 2.2.36
+ * @version 2.2.37
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -756,7 +756,7 @@ class Prem {
      */
     static wheelEditPoint(window, direction, keyswait := 1, checkMButton := false, activationKeys := "{Shift}{F21}{F23}") {
         SetKeyDelay(0)
-        if Type(window) != "string" || Type(direction) != "string" || Type(keyswait) != "string" || (Type(checkMButton) != "integer" && Type(checkMButton) != "object") {
+        if Type(window) != "string" || Type(direction) != "string" || Type(keyswait) != "integer" || (Type(checkMButton) != "integer" && Type(checkMButton) != "object") {
             ;// throw
             errorLog(TypeError("Incorrect Parameter type passed to function", -1),,, true)
             return

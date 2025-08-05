@@ -3,7 +3,7 @@
  * @file key.ahk
  * @author tomshi
  * @date 2025/08/05
- * @version 1.1.0
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -132,7 +132,7 @@ class keys {
             if A_Index > getKeys.Length
                 break
             currentIndex := (getKeys.Length+1)-A_Index
-            if currentIndex < which
+            if (currentIndex-1) < which
                 break
             try keyState := (GetKeyState(getKeys[currentIndex], "P")) ? true : false
             if !keyState

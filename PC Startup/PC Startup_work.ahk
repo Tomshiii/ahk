@@ -42,7 +42,9 @@ runApp(path, name) {
 
 try {
     for memory in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_PhysicalMemory") {
-        mt := memory.speed
+        mt := memory.ConfiguredClockSpeed
+        if mt != ""
+            break
     }
     if mt != "5600" {
         Notify.Show(, 'XMP is currently NOT enabled. Ram is running at ' mt 'MT/s', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark pos=CT dur=5 bdr=Red maxW=400')
@@ -51,7 +53,7 @@ try {
 
 ;//backups
 FileCopy(ptf.rootDir "\Support Files\Streamdeck Files\options.ini", ptf.rootDir "\Backups\Work\options.ini", 1)
-FileCopy(ptf.rootDir "\lib\My Scripts\Windows.ahk", ptf.rootDir "\Backups\Work\Windows.ahk", 1)
+FileCopy(ptf.rootDir "\lib\My Scripts\Not Editor.ahk", ptf.rootDir "\Backups\Work\Not Editor.ahk", 1)
 FileCopy(ptf.rootDir "\lib\Classes\move.ahk", ptf.rootDir "\Backups\Work\move.ahk", 1)
 FileCopy(ptf.rootDir "\lib\QMK\Work\Prem.ahk", ptf.rootDir "\Backups\Work\QMK\Work\Prem.ahk", 1)
 
