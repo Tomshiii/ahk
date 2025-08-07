@@ -1,4 +1,4 @@
-# <> Release 2.16.x - 
+# <> Release 2.16.1 - Hotfix
 
 ## Functions
 - ✅ Fixed `getHotkeys()` failing to return `Fxx` keys
@@ -21,7 +21,7 @@
 - ✅ Fixed `isVideo()` incorrectly labelling some video files as non videos
 - 📋 Process completed alert now uses `Notify {`
 
-`ytdlp {`
+⚠️ `ytdlp {`
 - ✅ Fixed `download()` setting `currentName` incorrectly if the user is using the default audio command
 - 📋 Process completed alert now uses `Notify {`
 

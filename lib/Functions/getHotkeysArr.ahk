@@ -10,7 +10,7 @@
  * RAlt & p::
  * {
  *    hotkeys := getHotkeysArr()
- *    hotkeys[1] ; returns "RAlt" (actually returns "vkA5")
+ *    hotkeys[1] ; returns "vkA5" ("RAlt")
  *    hotkeys[2] ; returns "p"
  * }
  * ```
