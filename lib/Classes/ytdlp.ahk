@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/07/28
- * @version 1.0.28
+ * @date 2025/08/07
+ * @version 1.0.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -45,7 +45,7 @@ class ytdlp {
     currentName := ""
 
     /** generates a tooltip to alert the user the process has completed */
-    __finished() => (this.doAlert = true) ? tool.tray({text: "yt-dlp process has finished", title: "yt-dlp process has completed!", options: 1}, 2000) : ""
+    __finished() => (this.doAlert = true) ? Notify.Show(, 'yt-dlp process has completed!', 'C:\Windows\System32\imageres.dll|icon56', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
 
     /**
      * checks the clipboard for a valid download link

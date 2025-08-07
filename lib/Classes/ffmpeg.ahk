@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/07/24
- * @version 1.1.6
+ * @date 2025/08/07
+ * @version 1.1.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,13 +14,14 @@
 #Include <Classes\switchTo>
 #Include <Functions\useNVENC>
 #Include <Other\JSON>
+#Include <Other\Notify\Notify>
 ; }
 
 class ffmpeg {
     doAlert := true
 
     /** generates a tooltip to alert the user the process has completed */
-    __finished() => (this.doAlert=true) ? tool.tray({text: "ffmpeg process has finished", title: "ffmpeg process has completed!", options: 1}, 2000) : ""
+    __finished() => (this.doAlert=true) ? Notify.Show(, 'ffmpeg process has completed!', 'C:\Windows\System32\imageres.dll|icon19', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
 
     /**
      * Retrieves the path of an active windows explorer process
@@ -448,7 +449,7 @@ class ffmpeg {
      */
     isVideo(path) {
         chkVid := cmd.result(Format('ffprobe -v error -select_streams v -show_entries stream=codec_type -of csv=p=0 "{1}"', path))
-        if chkVid != "video"
+        if chkVid != "video" && !InStr(chkVid, "video")
             return false
         chkDur := cmd.result(Format('ffprobe -v error -select_streams v -show_entries stream=nb_frames,duration -of default=noprint_wrappers=1 "{1}"', path))
         chkResponse := StrSplit(chkDur, ["=", "`n"], '`r')
@@ -460,7 +461,7 @@ class ffmpeg {
         }
         duration := response.get("duration")
         nbframes := response.get("nb_frames")
-        if duration = "N/A" || duration = "0" || duration = 0 || nbframes = "N/A" || nbframes < 1
+        if ((duration = "N/A" || duration = "0" || duration = 0) || (duration < 1 && (nbframes = "N/A" || nbframes < 1)))
             return false
         return true
     }

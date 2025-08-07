@@ -4,6 +4,7 @@
 #Include <Classes\obj>
 #Include <Functions\nItemsInDir>
 #Include <Other\JSON>
+#Include <Other\print>
 #Include <Other\Notify\Notify>
 ; }
 
@@ -42,7 +43,7 @@ filecount := getFileCount.files
 
 check := Notify.Show('Checking files in chosen directory', , 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' filecount)
 
-loop files selectedDir "\*", recurse " F" {
+loop files selectedDir "\*", recurse "F" {
     check["prog"].value += 1
     inputDir  := obj.SplitPath(A_LoopFileDir)
     inputPath := obj.SplitPath(A_LoopFileFullPath)
@@ -55,7 +56,6 @@ loop files selectedDir "\*", recurse " F" {
     baseOutputPath := inputPath.dir "\proxy\" inputPath.NameNoExt "_proxy.mov"
     if FileExist(baseOutputPath)
         continue
-
     try {
         allMetaData := JSON.parse(cmd.result(Format('ffprobe -v error -print_format json -show_format -show_streams "{}"', A_LoopFileFullPath)))
         if allMetaData["streams"]["1"]["r_frame_rate"] = "0/0" || InStr(allMetaData["streams"]["1"]["r_frame_rate"], "/0")
@@ -71,7 +71,7 @@ loop files selectedDir "\*", recurse " F" {
     }
     width          := allMetaData["streams"]["1"]["width"] * renderScale
     height         := allMetaData["streams"]["1"]["height"] * renderScale
-    newDemensions  := Round(width, 0) ":" Round(height, 0)
+    newDimensions  := Round(width, 0) ":" Round(height, 0)
     try metadataCreate := allMetaData["streams"]["1"]["tags"]["creation_time"]
     catch {
         ; cmmd := '$creationTime = [string]::Format("{0:yyyy-MM-ddTHH:mm:ss}.{1:D9}Z", (Get-Date).ToUniversalTime(), ((Get-Date).Ticks % 10000000) * 100); Write-Output $creationTime'
@@ -88,8 +88,7 @@ loop files selectedDir "\*", recurse " F" {
         encoded := "JABjAHQAIAA9ACAAWwBzAHQAcgBpAG4AZwBdADoAOgBGAG8AcgBtAGEAdAAoACIAewAwADoAeQB5AHkAeQAtAE0ATQAtAGQAZABUAEgASAA6AG0AbQA6AHMAcwB9AC4AewAxADoARAA5AH0AWgAiACwAIAAoAEcAZQB0AC0ARABhAHQAZQApAC4AVABvAFUAbgBpAHYAZQByAHMAYQBsAFQAaQBtAGUAKAApACwAIAAoACgARwBlAHQALQBEAGEAdABlACkALgBUAGkAYwBrAHMAIAAlACAAMQAwADAAMAAwADAAMAAwACkAIAAqACAAMQAwADAAKQAKAFcAcgBpAHQAZQAtAE8AdQB0AHAAdQB0ACAAJABjAHQA"
         metadataCreate := cmd.result(Format('powershell -NoProfile -EncodedCommand "{}"', encoded),,, "c:\")
     }
-
-    files.Push({name: inputPath.NameNoExt "_proxy.mov", path: A_LoopFileFullPath, newDemensions: newDemensions, timecode: timecode, metadataCreate: metadataCreate, baseOutputPath: baseOutputPath})
+    files.Push({name: inputPath.NameNoExt "_proxy.mov", path: A_LoopFileFullPath, newDimensions: newDimensions, timecode: timecode, metadataCreate: metadataCreate, baseOutputPath: baseOutputPath})
 }
 Notify.Destroy(check["hwnd"], true)
 if files.Length = 0 {
@@ -100,7 +99,7 @@ if files.Length = 0 {
 rendering := Notify.Show('Rendering files...',, 'C:\Windows\System32\shell32.dll|icon323', 'Speech Misrecognition',, 'theme=Dark dur=0 ts=12 tfo=norm show=Fade@250 hide=Fade@250 maxW=400 prog=h15 w240 Range0-' files.length)
 for v in files {
     currentFile := Notify.Show('current file (' A_Index '/' files.length '):', v.name, 'C:\Windows\System32\imageres.dll|icon361',,, 'theme=Dark dur=0 ts=12 tfo=norm mfo=norm Bold show=Fade@250 hide=Fade@250 maxW=400 pad=,,,,,,,1')
-    command := Format(normalCommand, v.path, v.newDemensions, v.timecode, v.metadataCreate, v.baseOutputPath)
+    command := Format(normalCommand, v.path, v.newDimensions, v.timecode, v.metadataCreate, v.baseOutputPath)
     cmd.run(,,, command,, "Min")
     rendering["prog"].value += 1
     Notify.Destroy(currentFile["hwnd"], true)
