@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/08/05
- * @version 1.3.21
+ * @date 2025/08/07
+ * @version 1.3.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -769,9 +769,8 @@ class switchTo {
             }
             return false
         }
-
         if WinExist(dir " ahk_exe explorer.exe") || WinExist(dirName " ahk_exe explorer.exe") {
-            if __determineFolder(filepath, dirName, fileName, drive)
+            if __determineFolder(dir, dirName, fileName, drive)
                 return true
         }
         cmd.exploreAndHighlight(filepath, true, true)

@@ -2,6 +2,7 @@
 
 ## Functions
 - ✅ Fixed `getHotkeys()` failing to return `Fxx` keys
+- ✅ Fixed `switchTo.explorerHighlightFile()` failing to focus a directory if a window already existed, causing it to open a new instance
 - ✏️ Added `getHotkeysArr()`
 - 📋 `reset {` functions should now more reliably handle `HotkeylessAHK` causing the script to hang less often
 

@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2025/08/07
  ***********************************************************************/
-global currentVer := "1.1.8.1"
+global currentVer := "1.1.8.2"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
