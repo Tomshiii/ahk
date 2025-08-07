@@ -25,4 +25,5 @@
 - 📋 `Type()` now uses UIA to set the correct filetype making it vastly more reliable
 
 ## Other Changes
-- 📋 This repos version of `HotkeylessAHK` is now stored in `..\Backups\Adobe Backups\Premiere\HotkeylessAHK\HotkeylessAHK.ahk`
+- ✅ Fixed `mult-dl.ahk` throwing when attempting to highlight the output file
+- 📋 This repo's version of `HotkeylessAHK` is now stored in `..\Backups\Adobe Backups\Premiere\HotkeylessAHK\HotkeylessAHK.ahk`
