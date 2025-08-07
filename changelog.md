@@ -4,13 +4,12 @@
 - ✅ Fixed `getHotkeys()` failing to return `Fxx` keys
 - ✏️ Added `getHotkeysArr()`
 - 📋 `reset {` functions should now more reliably handle `HotkeylessAHK` causing the script to hang less often
-- 📋 `ytdlp {` process completed alert now uses `Notify {`
 
 ⚠️ `keys {`
 
 📍 `allWait()`
 - 📋 Now uses `getHotkeysArr()` instead of heavy string manipulation
-- 📋 Parameter `which` is now an `Integer` instead of a string
+- 📋 Parameter `which` is now an `Integer` instead of a `String`
 
 ⚠️ `startup {`
 - ✅ Fixed `adobeVerOverride()` showing the currently set adobe versions twice
@@ -18,6 +17,10 @@
 
 ⚠️ `ffmpeg {`
 - ✅ Fixed `isVideo()` incorrectly labelling some video files as non videos
+- 📋 Process completed alert now uses `Notify {`
+
+`ytdlp {`
+- ✅ Fixed `download()` setting `currentName` incorrectly if the user is using the default audio command
 - 📋 Process completed alert now uses `Notify {`
 
 ⚠️ `ps {`

@@ -2,7 +2,7 @@
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
  * @date 2025/08/07
- * @version 1.0.29
+ * @version 1.0.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -37,7 +37,7 @@ class ytdlp {
     defaultPostProcess  := 'ffmpeg -i "{2}\{3}" {1} -c:a aac -b:a 192k "{2}\temp_{3}" && del /f /q "{2}\{3}" && move /y "{2}\temp_{3}" "{2}\{3}"'
     defaultCPU          := "-c:v libx264 -crf 21 -preset medium"
     defaultGPU          := "-c:v h264_nvenc -preset 18 -cq 19"
-    defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav --cookies-from-browser firefox'
+    defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav --cookies-from-browser firefox --print after_move:filepath'
     defaultFilename := "%(title).{1}s [%(id)s].%(ext)s"
     command := ""
     check := false
@@ -182,7 +182,7 @@ class ytdlp {
         outputFileName := Format(this.defaultFilename, fileNameLengthLimit)
         nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" --cookies-from-browser firefox', outputFileName, this.URL))
         SplitPath(nameOutput,,, &ext, &nameNoExt)
-        ext := (ext = "webm" || ext = "mkv") ? "mp4" : ext
+        ext := (args != this.defaultAudioCommand) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
         checkPath1 := WinGet.pathU(folder "\" nameOutput)
         checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
         if FileExist(checkPath1) || FileExist(checkPath2) {
@@ -214,7 +214,11 @@ class ytdlp {
         this.command := Format(this.defaultCommand, args, folder, this.URL)
 
         ;// running command
-        cmd.run(,,, this.command)
+        (ext = "wav") ? path := cmd.result(this.command) : cmd.run(,,, this.command)
+        if IsSet(path) && path != "" {
+            SplitPath(path, &outname)
+            this.currentName := outname
+        }
         ;// determine if the downloaded file is a video file
         fmpg := ffmpeg()
         fmpg.doAlert := false ;// stops the traytip
