@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2025/08/04
- * @version 1.0.12
+ * @date 2025/08/07
+ * @version 1.0.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -45,7 +45,6 @@ class reset {
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
     __parseInfo(value, includeChecklist) {
-        getDetect := detect()
         try {
             name := WinGettitle(value,, browser.vscode.winTitle)
             path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
@@ -53,10 +52,8 @@ class reset {
             if (includeChecklist = false && (script.Name = "checklist.ahk" || script.Name = "test.ahk")) || this.ignoreScript.Has(script.Name)
                 return false
             PID := WinGetPID(script.Name)
-            resetOrigDetect(getDetect)
             return {scriptName: script.name, PID: PID, path: path}
         }
-        resetOrigDetect(getDetect)
     }
 
     /**
@@ -135,8 +132,7 @@ class reset {
      * Reloads all active ahk scripts
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
-    static ext_reload(includeChecklist := false) {
-        getDetect := detect()
+    static ext_reload(includeChecklist := false, ignoreWinTitle := "") {
         tool.Cust("All active ahk scripts reloading")
         activeWindows := this().__getList()
         for v in activeWindows {
@@ -158,7 +154,6 @@ class reset {
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
     static reset(includeChecklist := false) {
-        getDetect := detect()
         tool.Cust("All active ahk scripts are being rerun")
         activeWindows := this().__getList()
         for v in activeWindows {
@@ -180,7 +175,6 @@ class reset {
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
     static ex_exit(includeChecklist := false) {
-        getDetect := detect()
         tool.Cust("All active ahk scripts are being CLOSED")
         activeWindows := this().__getList()
         for v in activeWindows {
@@ -193,6 +187,5 @@ class reset {
         detect()
         if WinExist(this().mainScript ".ahk",, browser.vscode.winTitle)
             ProcessClose(WinGetPID(this().mainScript ".ahk",, browser.vscode.winTitle))
-        resetOrigDetect(getDetect)
     }
 }

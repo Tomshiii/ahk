@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/07/31
- * @version 2.3.15
+ * @date 2025/08/07
+ * @version 2.3.16
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -172,19 +172,19 @@ settingsGUI()
     }
 
     ;// lib update check
-    settingsGUI.AddCheckbox("vahkCheck Checked" UserSettings.ahk_update_check " Y+5", setJSON.ahkUpdate.title).OnEvent("Click", toggle.Bind("ahk update check", ""))
+    settingsGUI.AddCheckbox("vahkCheck Checked" UserSettings.ahk_update_check " Y+5", setJSON.ahkUpdate.title).OnEvent("Click", toggle.Bind("ahk update check", "", ""))
     settingsGUI["ahkCheck"].ToolTip := (UserSettings.ahk_update_check = true) ? setJSON.ahkUpdate.tooltip.true : setJSON.ahkUpdate.tooltip.false
 
     ;// lib update check
-    settingsGUI.AddCheckbox("vlibCheck Checked" UserSettings.lib_update_check " Y+5", setJSON.libUpdate.title).OnEvent("Click", toggle.Bind("lib update check", ""))
+    settingsGUI.AddCheckbox("vlibCheck Checked" UserSettings.lib_update_check " Y+5", setJSON.libUpdate.title).OnEvent("Click", toggle.Bind("lib update check", "", ""))
     settingsGUI["libCheck"].ToolTip := (UserSettings.lib_update_check = true) ? setJSON.libUpdate.tooltip.true : setJSON.libUpdate.tooltip.false
 
     ;// package update check
-    settingsGUI.AddCheckbox("vpackageCheck Checked" UserSettings.package_update_check " Y+5", setJSON.packageUpdate.title).OnEvent("Click", toggle.Bind("package update check", ""))
+    settingsGUI.AddCheckbox("vpackageCheck Checked" UserSettings.package_update_check " Y+5", setJSON.packageUpdate.title).OnEvent("Click", toggle.Bind("package update check", "", ""))
     settingsGUI["packageCheck"].ToolTip := (UserSettings.package_update_check = true) ? setJSON.packageUpdate.tooltip.true : setJSON.packageUpdate.tooltip.false
 
     ;// adobe vers check
-    settingsGUI.AddCheckbox("vVersCheck Checked" UserSettings.update_adobe_vers " Y+5", setJSON.versUpdate.title).OnEvent("Click", toggle.Bind("update adobe vers", ""))
+    settingsGUI.AddCheckbox("vVersCheck Checked" UserSettings.update_adobe_vers " Y+5", setJSON.versUpdate.title).OnEvent("Click", toggle.Bind("update adobe vers", "", ""))
     settingsGUI["VersCheck"].ToolTip := (UserSettings.update_adobe_vers = true) ? setJSON.versUpdate.tooltip.true : setJSON.versUpdate.tooltip.false
 
     ;// git update check
@@ -298,23 +298,25 @@ settingsGUI()
             case "Use swapSequences":
                 (script.Value = 0) ? settingsGUI["premPrev"].Opt("+Disabled")
                                    : settingsGUI["premPrev"].Opt("-Disabled")
-            origDetect := detect()
-            if WinExist(UserSettings.mainScriptName ".ahk") {
-                try {
-                    activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
-                    switch script.Value {
-                        case 0:
-                            activeObj.useSwapSequences := false
-                            activeObj.resetSeqTimer    := true
-                        case 1:
-                            activeObj.useSwapSequences := true
-                            SetTimer(activeObj.__setCurrSeq.Bind(activeObj), activeObj.prevSeqDelay)
+                origDetect := detect()
+                if WinExist(UserSettings.mainScriptName ".ahk") {
+                    try {
+                        activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                        switch script.Value {
+                            case 0:
+                                activeObj.useSwapSequences := false
+                                activeObj.resetSeqTimer    := true
+                            case 1:
+                                activeObj.useSwapSequences := true
+                                SetTimer(activeObj.__setCurrSeq.Bind(activeObj), activeObj.prevSeqDelay)
+                        }
+                        activeObj := ""
+                    } catch {
+                        activeObj := ""
+                        Notify.Show("settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
                     }
-                } catch {
-                    Notify.Show("settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
                 }
-            }
-            resetOrigDetect(origDetect)
+                resetOrigDetect(origDetect)
         }
         ;// changing requested value
         if InStr(script.text, "autosave") && WinExist("autosave.ahk - AutoHotkey")
@@ -392,7 +394,9 @@ settingsGUI()
                         activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
                         activeObj.prevSeqDelay := (ctrl.text*1000)
                         activeObj.resetSeqTimer    := true
+                        activeObj := ""
                     } catch {
+                        activeObj := ""
                         Notify.Show("settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
                     }
                 }
@@ -475,15 +479,24 @@ settingsGUI()
         UserSettings.__delAll() ;// close the settings instance
         sleep 50
         newSettings := FileRead(UserSettings.SettingsFile)
+        UserSettings := ""
         if newSettings != initialSettings
             Notify.Show("settingsGUI()", "Settings changes are being saved`nGUI cannot be reopened until this window disappears...", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
-        ToolTip("")
         if IsSet(butt) {
             switch butt {
                 case "hard":
+                    settingsGUI.Destroy()
                     reset.reset()
                     return ;// this is necessary
                 case "reload":
+                    settingsGUI.Destroy()
+                    if Notify.Exist('settingsGUI') {
+                        loop 80 {
+                            if !Notify.Exist('settingsGUI')
+                                break
+                            sleep 25
+                        }
+                    }
                     reset.ext_reload()
                     return ;// this is necessary
             }

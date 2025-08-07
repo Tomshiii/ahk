@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2025/08/01
- * @version 1.2.30
+ * @date 2025/08/07
+ * @version 1.2.31
  ***********************************************************************/
 
 class UserPref {
@@ -113,11 +113,11 @@ class UserPref {
     __del(arr, section) {
         for v in arr {
             try {
-                writeVal := ((this.%v% = 1 || this.%v% = 0) && (section != "Adjust") )? RTrim(this.__convertToStr(this.%v%), " ") : this.%v%
+                writeVal := ((this.%v% = 1 || this.%v% = 0) && (section != "Adjust")) ? RTrim(this.__convertToStr(this.%v%), " ") : this.%v%
                 ;// Don't want a default value here, if something errors out during the deletion of the class, we don't want it
                 ;// returning back to the default value instead of leaving it how it currently is
                 prior_value := IniRead(this.SettingsFile, section, this.__convertToKey(v))
-                if this.%v% != prior_value
+                if writeVal != prior_value
                     IniWrite(writeVal, this.SettingsFile, section, this.__convertToKey(v))
             }
         }

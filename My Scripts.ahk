@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.20
+;\\v2.34.21
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -142,6 +142,7 @@ start.updateAHK()
 start.monitorAlert()
 start.checkShortcuts()
 start.__Delete()
+start := ""
 errorLog({state:"empty"})
 
 ;// so streamdeck scripts can receive premiere timeline coords

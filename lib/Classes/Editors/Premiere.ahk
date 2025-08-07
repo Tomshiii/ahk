@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/05
- * @version 2.2.37
+ * @date 2025/08/07
+ * @version 2.2.38
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -59,7 +59,9 @@ class Prem {
                 this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
                 this.timelineCol := activeObj.timelineCol, this.timelineColArr := activeObj.timelineColArr
                 this.currentSeq := activeObj.currentSeq, this.previousSeq := activeObj.previousSeq
+                activeObj := ""
             } catch {
+                activeObj := ""
                 this.__determineTheme()
             }
         } else {
@@ -1363,9 +1365,11 @@ class Prem {
                     this.timelineXValue   := activeObj.timelineXValue,   this.timelineYValue   := activeObj.timelineYValue
                     this.timelineXControl := activeObj.timelineXControl, this.timelineYControl := activeObj.timelineYControl
                     this.timelineVals     := true
+                    activeObj := ""
                     return true
                 }
             } catch {
+                activeObj := ""
                 resetOrigDetect(orig)
                 Notify.Show(, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
@@ -2835,7 +2839,9 @@ class Prem {
                     this.__remoteFunc("focusSequence",, "ID=" String(this.previousSeq))
                 activeObj.currentSeq  := this.previousSeq
                 activeObj.previousSeq := this.currentSeq
+                activeObj := ""
             } catch {
+                activeObj := ""
                 return false
             }
             return true
