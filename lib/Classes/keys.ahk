@@ -2,8 +2,8 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2025/08/05
- * @version 1.1.1
+ * @date 2025/08/08
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -132,7 +132,7 @@ class keys {
             if A_Index > getKeys.Length
                 break
             currentIndex := (getKeys.Length+1)-A_Index
-            if (currentIndex-1) < which
+            if (currentIndex) < which
                 break
             try keyState := (GetKeyState(getKeys[currentIndex], "P")) ? true : false
             if !keyState

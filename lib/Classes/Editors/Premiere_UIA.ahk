@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/06/17
- * @version 2.0.19
+ * @date 2025/08/08
+ * @version 2.0.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -189,6 +189,14 @@ Class premUIA_Values {
                         return
                     }
                 }
+            }
+            if !IsSet(currentEl) {
+                this.activeObj.isRunning := false
+                block.Off()
+                errorLog(Error("UIA Values could not be determined. Please try again later"))
+                Notify.Destroy(attemptNotify['hwnd'])
+                Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
+                return
             }
             if checkDupes.Has(currentEl) {
                 hasDupes := true
