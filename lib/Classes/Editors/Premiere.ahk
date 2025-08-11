@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/11
- * @version 2.2.39
+ * @date 2025/08/12
+ * @version 2.2.40
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2477,17 +2477,72 @@ class Prem {
      * ### This function requires `PremiereRemote`
      * A function to toggle the `enabled`/`disabled` state of a clip on the desired layer. This function will operate on either the audio/video tracks depending on whether the cursor is above or below the middle dividing line.
      *
-     * This function is a slight bit erratic/unpredictable in how premiere reacts to it - and is still in development. Use at your own risk
+     * If you want this function to work at full speed you **CANNOT** place it under a `#HotIf`. If you do, any subsequent activations of the function will act as
+     * individual activations and the `inputhook` simply will not do its job. I don't know why, it hurts my brain. You also **CANNOT** activate this function with a <kbd><!</kbd> you **MUST** simply use <kbd>!</kbd>. ahk is weird. Misplacing these activation keys may result in slow performance with this function due to autohotkey
      *
-     * #### It is generally recommended you call this function after `#MaxThreadsBuffer true` when `allExcept` is set to `false` for best results
+     * I recommend activating this function like so;
+     * ```
+!1::
+!2::
+!3::
+!4::
+!5::
+!6::
+!7::
+!8::
+!9::prem.toggleEnabled(, "aud", 1)
+     * ```
      * @param {Integer} [track=A_ThisHotkey] The track you wish to operate on. If this parameter is not just an integer it will attempt to do a rudimentary check on the activation hotkey, expecting a number to be the final activation key in the chain
      * @param {String} [audOrVid=false] determine whether to operate on the audio or video tracks. By default this value is set to `false` and it is determined purely by the user's cursor position. otherwise set to either `"vid"` or `"aud"`
      * @param {Integer} [offset=0] Allows the user to offset the track number, ie. if their `track` number is `1` and offset is `1` the function will operate on track `2`. Useful to skip multicam tracks
      * @param {Boolean} [allExcept=false] Defaults to `false`. Setting this value to `true` will toggle the status of every track *except* the desired track, otherwise, leaving this value as `false` will only toggle the desired track.
      */
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false) {
-        Critical()
-        keys.allWait(2)
+        ;// avoid attempting to fire unless main window is active
+        if !WinActive(editors.Premiere.winTitle) || !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle {
+            SendInput(A_ThisHotkey)
+            return
+        }
+        if !allExcept {
+            which := []
+            currHotkey := getHotkeysArr()
+            if IsInteger(GetKeyName(currHotkey[currHotkey.Length])) && (track = A_ThisHotkey && !IsDigit(track))
+                which.Push(GetKeyName(currHotkey[currHotkey.Length])+offset)
+            else if (track != A_ThisHotkey && IsDigit(track))
+                which.Push(track+offset)
+            ih := InputHook("T1 L0", "{Esc}{" GetKeyName(currHotkey[1]) " Up}")
+            ih.OnChar := __onInp
+            ih.OnKeyDown := __onDown.Bind(which)
+            ih.OnKeyUp := __onUp
+            ih.KeyOpt("{All}", "SNI")
+            ih.Start()
+            ih.Wait()
+
+            __onInp(ih, char) {
+                ih.Timeout := 1
+                has := false
+                for v in which {
+                    if char+offset = v {
+                        has := true
+                        break
+                    }
+                }
+                if has = false
+                    which.Push(char+offset)
+            }
+            __onDown(which, ih, vk, sc) {
+                hotkeyName := GetKeyName(Format("vk{:X}", vk))
+                if IsNumber(hotkeyName) && hotkeyName >= 1 && hotkeyName <= 9
+                    __onInp(ih, GetKeyName(Format("vk{:X}", vk)))
+            }
+            __onUp(ih, vk, sc) {
+                hotkeyName := GetKeyName(Format("vk{:X}", vk))
+                if hotkeyName = GetKeyName(currHotkey[1]) || hotkeyName = "L" GetKeyName(currHotkey[1]) || hotkeyName = "R" GetKeyName(currHotkey[1])
+                    ih.stop()
+            }
+
+            track := "queue"
+        }
         blocker := block_ext()
         blocker.On(, "{LCtrl}{RCtrl}{LAlt}{RAlt}{LWin}{RWin}", "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}")
         SetDefaultMouseSpeed(0)
@@ -2501,13 +2556,7 @@ class Prem {
             errorLog(MethodError('This function requires PremiereRemote functionality', -1))
             return
         }
-        ; SendInput(ksa.shuttleStop)
 
-        ;// avoid attempting to fire unless main window is active
-        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle {
-            blocker.Off()
-            return
-        }
         SendInput(ksa.deselectAll)
         SendInput(ksa.selectionPrem)
         origMouseCords := obj.MousePos()
@@ -2516,6 +2565,7 @@ class Prem {
             blocker.Off()
             return
         }
+
         if !audOrVid {
             middleDivider := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+7, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png")
             aboveOrBelow := (origMouseCords.y < midDivY) ? true : false
@@ -2524,7 +2574,7 @@ class Prem {
             midDivY := false
             aboveOrBelow := (audOrVid = "vid") ? true : false
         }
-        if track = A_ThisHotkey && (StrLen(A_ThisHotkey) > 1) && !IsInteger(A_ThisHotkey) {
+        if !IsSet(splitHotkey) && track != "queue" && track = A_ThisHotkey && (StrLen(A_ThisHotkey) > 1) && !IsInteger(A_ThisHotkey) {
             splitHotkey := getHotkeysArr()
             if !IsInteger(GetKeyName(splitHotkey[splitHotkey.Length])) {
                 ;// throw
@@ -2534,48 +2584,47 @@ class Prem {
             }
             track := GetKeyName(splitHotkey[splitHotkey.Length])
         }
-        if !IsInteger(track) {
-            blocker.Off()
-            return
-        }
-        track += offset
-        if track < 1 {
-            blocker.Off()
-            Notify.Show('toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
-            errorLog(ValueError("Desired track must be greater than 1", -1))
-            return
+        if track != "queue" {
+            if !IsInteger(track) {
+                blocker.Off()
+                return
+            }
+            if track+offset < 1 {
+                blocker.Off()
+                Notify.Show('toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
+                errorLog(ValueError("Desired track must be greater than 1", -1))
+                return
+            }
         }
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
 
         switch allExcept {
             case false:
-                if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, track) {
+                if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud) {
                     blocker.Off()
                     errorLog(UnsetError("Couldn't determine layers"))
                     return
                 }
-                layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(track)]["mid"])
-                if this.timelineCols.Has(layerColour) {
-                    blocker.Off()
-                    errorLog(TargetError("No clips on selected track.", -1))
-                    return
+                whichTracks := []
+                hasMap := Map()
+                for i, v in which {
+                    hasMap.Set(v, true)
                 }
-
-                MouseMove(origMouseCords.x, allLayers[Integer(track)]["mid"], 0)
-                SendInput("!{LButton}")
-                sleep 25
-                if !this.__remoteFunc('isSelected', true) {
-                    ;// prem will sometimes just stop accepting inputs if it is fed them in rapid succession
-                    SendInput("{MButton}")
-                    SendInput("{Click}")
-                    sleep 25
-                    if !this.__remoteFunc('isSelected', true) {
-                        MouseMove(origMouseCords.x, origMouseCords.y)
-                        SendInput(ksa.deselectAll)
-                        blocker.Off()
-                        return
-                    }
+                for k, v in allLayers {
+                    if A_Index = track || (offset != 0 && A_Index <= offset)
+                        continue
+                    layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
+                    if !hasMap.Has(A_Index) || this.timelineCols.Has(layerColour)
+                        continue
+                    whichTracks.Push(A_Index)
                 }
+                SendInput("{LAlt Down}{LShift Down}")
+                for v in whichTracks {
+                    MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
+                    SendInput("{LButton}")
+                    sleep 0
+                }
+                SendInput("{LAlt Up}{LShift Up}")
             case true:
                 if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud) {
                     blocker.Off()

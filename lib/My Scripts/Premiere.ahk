@@ -190,24 +190,12 @@ F14 & F23::
 	keys.allWait()
 }
 
-#MaxThreadsBuffer true
 LAlt & SC03A::prem.layerSizeAdjust()
 Alt & WheelUp::
 Alt & WheelDown::
 Shift & WheelUp::
 Shift & WheelDown::prem.accelScroll(5, 25)
 
-<!`::prem.toggleEnabled(1, "aud")
-<!1::
-<!2::
-<!3::
-<!4::
-<!5::
-<!6::
-<!7::
-<!8::
-<!9::prem.toggleEnabled(, "aud", 1)
-#MaxThreadsBuffer false
 
 ;// allExcept
 <!+1::
@@ -219,5 +207,3 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 <!+7::
 <!+8::
 <!+9::prem.toggleEnabled(, "aud", 1, true)
-
-

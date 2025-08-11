@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.21
+;\\v2.34.22
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -155,6 +155,10 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;=============================================================================================================================================
 ;//! code below here (until the next #HotIf) will work anywhere
 #HotIf
+
+;//! these scripts are placed here to avoid ANY #HotIf criteria. For some reason placing them under any causes issues
+#Include <My Scripts\misc>
+
 ;// these scripts need to be separated out because if any of them are under a hotif with the `GetKeyState` conditional, they lag out because the getkeystate check can't keep up
 ;// this is only really necessary because the `fastwheel()` functions rapidly fire inputs, any other F14 hotkeys are then only in here because if they are split into other #HotIf's
 ;// and those hotif's have conditionals that are slow, ahk has to check all of those conditionals and thus drags `fastwheel()` down with it
