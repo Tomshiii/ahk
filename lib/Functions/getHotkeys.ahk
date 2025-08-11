@@ -31,14 +31,14 @@ getHotkeys(&first?, &second?) {
     getHotkey := A_ThisHotkey
     length := StrLen(getHotkey)
     switch {
-        case length = 3 && (pos := InStr(getHotkey, "<") = 1 || pos := InStr(getHotkey, ">") = 1):
+        case length = 3 && (pos := InStr(getHotkey, "<") = 1 || pos := InStr(getHotkey, ">") = 1) && keys.modMap.Has(SubStr(getHotkey, 1, 2)):
             first := SubStr(getHotkey, 1, 2), second := SubStr(getHotkey, 3, 1)
             check1 := keys.vk(first), check2 := keys.vk(second)
-            return {first: check1 ?? first, second: check2 ?? second}
+            return {first: (check1 != false) ? check1 : first, second: (check2 != false) ? check2 : second}
         case length = 2 && !RegExMatch(getHotkey, "^F([1-9]|1[0-9]|2[0-4])$"):
             first := SubStr(getHotkey, 1, 1), second := SubStr(getHotkey, 2, 1)
             check1 := keys.vk(first), check2 := keys.vk(second)
-            return {first: check1 ?? first, second: check2 ?? second}
+            return {first: (check1 != false) ? check1 : first, second: (check2 != false) ? check2 : second}
         case length <= 3 && RegExMatch(getHotkey, "^F([1-9]|1[0-9]|2[0-4])$"): ;// F keys. ie. F22
             return {first: getHotkey, second: "vkE8"}
         case length >= 3 && RegExMatch(getHotkey, "^(#|<\#|>\#|!|<!|>!|\^|<\^|>\^|\+|<\+|>\+|<\^>!)F([1-9]|1[0-9]|2[0-4])$", &FKeyModifiers):
