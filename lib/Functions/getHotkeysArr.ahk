@@ -55,7 +55,7 @@ getHotkeysArr(hk := A_ThisHotkey) {
 
     pos := 1
     while pos <= StrLen(hk) {
-        if !RegExMatch(SubStr(hk, pos), "^" . pattern, &m) {
+        if !RegExMatch(SubStr(hk, pos), "i)^" . pattern, &m) {
             break
         }
 
@@ -95,7 +95,7 @@ getHotkeysArr(hk := A_ThisHotkey) {
         ; Add key name - convert to VK using GetKeyVK for safety
         if m[4] {
             ; Check if it's already a VK code
-            if RegExMatch(m[4], "^vk[0-9A-Fa-f]+$") {
+            if RegExMatch(m[4], "i)^vk[0-9A-Fa-f]+$") {
                 components.Push(m[4])
             } else {
                 ; Use GetKeyVK for system-safe conversion

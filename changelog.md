@@ -7,4 +7,5 @@
 
 ⚠️ `getHotkeysArr()`
 - ✅ Fixed function returning <kbd><!</kbd> as `<` & `!` instead of as one hotkey
+- ✅ Fixed function being case sensitive when it shouldn't have been
 - 📋 Will now return all hotkeys as `vk` values instead of a mix of `vk` and regular strings

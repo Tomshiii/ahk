@@ -106,8 +106,12 @@ F4::resolve.valhold("rotation", 240, 0) ;press then hold F4 and drag to increase
 ;		better timeline movement
 ;
 ;=========================================================
+
+;// this function recreation is technically now redundant as resolve has added the ability to move the playhead to the cursor
+;// the default shortcut for this action is <kbd>c</kbd>
+
 ;set colours
-timeline1 := 0x3E3E42 ;timeline color inside the in/out points ON a targeted track
+/* timeline1 := 0x3E3E42 ;timeline color inside the in/out points ON a targeted track
 timeline2 := 0x39393E ;timeline color of the separating LINES between targeted AND non targeted tracks inside the in/out points
 timeline3 := 0x28282E ;the timeline color inside in/out points on a NON targeted track
 timeline4 := 0x1E1E22 ;the color of the bare timeline NOT inside the in out points
@@ -157,9 +161,8 @@ Rbutton:: ;ports the functionality of "Premiere_RightClick.ahk" as best as possi
             return
         }
     Color := PixelGetColor(xpos, ypos)
-    /* if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
-        SendInput(resolveDeselect)
-        */
+    ;if (Color = timeline5 || Color = timeline6 || Color = timeline7) ;these are the timeline colors of a selected clip or blank space, in or outside of in/out points.
+        ;SendInput(resolveDeselect)
         ;not sure if the above is really needed within resolve. I'm not entirely sure their purpose within premiere and as I don't use resolve I'm unsure of the edge case scenarios you'd run into where this may be necessary
     if (Color = timelineVal[1] || Color = timelineVal[2] || Color = timelineVal[3] || Color = timelineVal[4] || Color = timelineVal[5] || Color = timelineVal[6] || Color = timelineVal[7] || Color = playheadVal[1]|| Color = playheadVal[2])
         {
@@ -179,7 +182,7 @@ Rbutton:: ;ports the functionality of "Premiere_RightClick.ahk" as best as possi
         }
     sendinput("{Rbutton}") ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were NOT met.
     block.Off()
-}
+} */
 ;=========================================================
 ;
 ;		gain
