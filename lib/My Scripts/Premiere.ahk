@@ -85,13 +85,19 @@ Enter::
 ` & 3::
 ` & 4::
 ` & 5::
-` & 6::prem.gain("-" SubStr(A_ThisHotkey, -1, 1))
+` & 6::
+` & 7::
+` & 8::
+` & 9::prem.gain("-" SubStr(A_ThisHotkey, -1, 1))
 <#1::
 <#2::
 <#3::
 <#4::
 <#5::
-<#6::prem.gain(SubStr(A_ThisHotkey, -1, 1))
+<#6::
+<#7::
+<#8::
+<#9::prem.gain(SubStr(A_ThisHotkey, -1, 1))
 
 
 
@@ -102,7 +108,7 @@ Escape::prem.escFxMenu()
 
 SC03A & v::prem.selectionTool()
 
-!+x::prem.rippleCut()
+^!x::prem.rippleCut()
 
 SC03A & d::prem.disableDirectManip()
 
@@ -198,5 +204,20 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 <!4::
 <!5::
 <!6::
-<!7::prem.toggleEnabled(, "aud", 1)
+<!7::
+<!8::
+<!9::prem.toggleEnabled(, "aud", 1)
 #MaxThreadsBuffer false
+
+;// allExcept
+<!+1::
+<!+2::
+<!+3::
+<!+4::
+<!+5::
+<!+6::
+<!+7::
+<!+8::
+<!+9::prem.toggleEnabled(, "aud", 1, true)
+
+

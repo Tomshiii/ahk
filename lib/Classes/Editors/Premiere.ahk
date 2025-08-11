@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/07
- * @version 2.2.38
+ * @date 2025/08/11
+ * @version 2.2.39
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2479,16 +2479,17 @@ class Prem {
      *
      * This function is a slight bit erratic/unpredictable in how premiere reacts to it - and is still in development. Use at your own risk
      *
-     * #### It is recommended you call this function after `#MaxThreadsBuffer true` for best results
+     * #### It is generally recommended you call this function after `#MaxThreadsBuffer true` when `allExcept` is set to `false` for best results
      * @param {Integer} [track=A_ThisHotkey] The track you wish to operate on. If this parameter is not just an integer it will attempt to do a rudimentary check on the activation hotkey, expecting a number to be the final activation key in the chain
      * @param {String} [audOrVid=false] determine whether to operate on the audio or video tracks. By default this value is set to `false` and it is determined purely by the user's cursor position. otherwise set to either `"vid"` or `"aud"`
-     * @@param {Integer} [offset=0] Allows the user to offset the track number, ie. if their `track` number is `1` and offset is `1` the function will operate on track `2`. Useful to skip multicam tracks
+     * @param {Integer} [offset=0] Allows the user to offset the track number, ie. if their `track` number is `1` and offset is `1` the function will operate on track `2`. Useful to skip multicam tracks
+     * @param {Boolean} [allExcept=false] Defaults to `false`. Setting this value to `true` will toggle the status of every track *except* the desired track, otherwise, leaving this value as `false` will only toggle the desired track.
      */
-    static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0) {
+    static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false) {
         Critical()
         keys.allWait(2)
         blocker := block_ext()
-        blocker.On()
+        blocker.On(, "{LCtrl}{RCtrl}{LAlt}{RAlt}{LWin}{RWin}", "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}")
         SetDefaultMouseSpeed(0)
         coord.client()
         if !this.__checkTimeline() {
@@ -2508,6 +2509,7 @@ class Prem {
             return
         }
         SendInput(ksa.deselectAll)
+        SendInput(ksa.selectionPrem)
         origMouseCords := obj.MousePos()
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
@@ -2522,9 +2524,15 @@ class Prem {
             midDivY := false
             aboveOrBelow := (audOrVid = "vid") ? true : false
         }
-        if track = A_ThisHotkey && (InStr(track, "&") || pos := InStr(track, "<") = 1) {
-            splitHotkey := getHotkeys()
-            track := splitHotkey.second
+        if track = A_ThisHotkey && (StrLen(A_ThisHotkey) > 1) && !IsInteger(A_ThisHotkey) {
+            splitHotkey := getHotkeysArr()
+            if !IsInteger(GetKeyName(splitHotkey[splitHotkey.Length])) {
+                ;// throw
+                blocker.Off()
+                errorLog(PropertyError("No track provided and final hotkey isn't a number"),,, true)
+                return
+            }
+            track := GetKeyName(splitHotkey[splitHotkey.Length])
         }
         if !IsInteger(track) {
             blocker.Off()
@@ -2538,37 +2546,64 @@ class Prem {
             return
         }
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
-        if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, track) {
-            blocker.Off()
-            return
-        }
-        layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(track)]["mid"])
-        if this.timelineCols.Has(layerColour) {
-            blocker.Off()
-            tool.Cust("No clips on selected track.", 1500)
-            errorLog(TargetError("Desired track must be greater than 1", -1))
-            return
-        }
 
-        MouseMove(origMouseCords.x, allLayers[Integer(track)]["mid"], 0)
-        SendInput("{Click}")
-        sleep 25
-        if !this.__remoteFunc('isSelected', true) {
-            ;// prem will sometimes just stop accepting inputs if it is fed them in rapid succession
-            SendInput("{MButton}")
-            SendInput("{Click}")
-            sleep 25
-            if !this.__remoteFunc('isSelected', true) {
-                MouseMove(origMouseCords.x, origMouseCords.y)
-                SendInput(ksa.deselectAll)
-                blocker.Off()
-                return
-            }
+        switch allExcept {
+            case false:
+                if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, track) {
+                    blocker.Off()
+                    errorLog(UnsetError("Couldn't determine layers"))
+                    return
+                }
+                layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(track)]["mid"])
+                if this.timelineCols.Has(layerColour) {
+                    blocker.Off()
+                    errorLog(TargetError("No clips on selected track.", -1))
+                    return
+                }
+
+                MouseMove(origMouseCords.x, allLayers[Integer(track)]["mid"], 0)
+                SendInput("!{LButton}")
+                sleep 25
+                if !this.__remoteFunc('isSelected', true) {
+                    ;// prem will sometimes just stop accepting inputs if it is fed them in rapid succession
+                    SendInput("{MButton}")
+                    SendInput("{Click}")
+                    sleep 25
+                    if !this.__remoteFunc('isSelected', true) {
+                        MouseMove(origMouseCords.x, origMouseCords.y)
+                        SendInput(ksa.deselectAll)
+                        blocker.Off()
+                        return
+                    }
+                }
+            case true:
+                if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud) {
+                    blocker.Off()
+                    errorLog(UnsetError("Couldn't determine layers"))
+                    return
+                }
+                whichTracks := []
+                for k, v in allLayers {
+                    if A_Index = track || (offset != 0 && A_Index <= offset)
+                        continue
+                    layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
+                    if this.timelineCols.Has(layerColour)
+                        continue
+                    whichTracks.Push(A_Index)
+                }
+                SendInput("{LAlt Down}{LShift Down}")
+                for v in whichTracks {
+                    MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
+                    SendInput("{LButton}")
+                    sleep 0
+                }
+                SendInput("{LAlt Up}{LShift Up}")
         }
         this.__remoteFunc('toggleEnabled')
         MouseMove(origMouseCords.x, origMouseCords.y, 0)
         sleep 25
-        SendInput(ksa.deselectAll)
+        if this.__remoteFunc('isSelected', true)
+            SendInput(ksa.deselectAll)
         sleep 25
         checkStuck()
         blocker.Off()
