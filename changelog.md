@@ -13,5 +13,6 @@
 - ✏️ Added `changeDupeFrameMarkers()`
 
 📍 `toggleEnabled()`
+- ✅ Fixed function sometimes not deselecting clips
 - ✏️ Now accepts parameter `allExcept` to toggle all tracks *except* the desired track
 - 📋 Can now instantly change multiple tracks if the user places the activation hotkeys correctly. (see the [wiki for more info](<https://github.com/Tomshiii/ahk/wiki/Adobe-Functions#premtoggleenabled>))

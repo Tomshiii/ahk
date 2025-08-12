@@ -2570,8 +2570,22 @@ class Prem {
             return
         }
 
-        SendInput(ksa.deselectAll)
+        ;// prem is dumb and sometimes ignores inputs if you're too fast
+        if this.__remoteFunc('isSelected', true) {
+            SendInput(ksa.deselectAll)
+            if this.__remoteFunc('isSelected', true) {
+                sleep 50
+                SendInput(ksa.deselectAll)
+                sleep 25
+                if this.__remoteFunc('isSelected', true) {
+                    errorLog(MethodError("Deselecting failed. Please try again"))
+                    blocker.Off()
+                    return
+                }
+            }
+        }
         SendInput(ksa.selectionPrem)
+        sleep 16
         origMouseCords := obj.MousePos()
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
