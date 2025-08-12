@@ -12,6 +12,7 @@
 ;// #HotIf then the InputHook just doesn't seem to do its job and any keys fire off their own
 ;// instance of the function. Maybe there's a way to mess with the keyboard hook to stop it from doing that
 ;// but I already ripped my hair out enough getting this to work, I don't want to spend another 4 hours troubleshooting
+!`::prem.toggleEnabled(1, "aud")
 !1::
 !2::
 !3::

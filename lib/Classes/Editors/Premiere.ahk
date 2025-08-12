@@ -5,7 +5,7 @@
  * @premVer 25.3
  * @author tomshi
  * @date 2025/08/12
- * @version 2.2.41
+ * @version 2.2.42
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2521,7 +2521,7 @@ class Prem {
             currHotkey := getHotkeysArr()
             if IsInteger(GetKeyName(currHotkey[currHotkey.Length])) && (track = A_ThisHotkey && !IsDigit(track))
                 which.Push(GetKeyName(currHotkey[currHotkey.Length])+offset)
-            else if (track != A_ThisHotkey && IsDigit(track))
+            else if (track != A_ThisHotkey && IsDigit(String(track)))
                 which.Push(track+offset)
             ih := InputHook("T1 L0", "{Esc}{" GetKeyName(currHotkey[1]) " Up}")
             ih.OnChar := __onInp
@@ -2813,6 +2813,18 @@ class Prem {
         }
         MouseMove(origMouseCords.x, origMouseCords.y, 1)
         blocker.Off()
+    }
+
+    /**
+     * This function is a wrapper function to toggle `Show Duplicate Frame Markers` and is intended to be used with `HotkeylessAHK` (although isn't necessary)
+     * @link https://github.com/sebinside/HotkeylessAHK
+     * @param {String} toggleHotkey the hotkey string that will be sent to `SendInput` to toggle the setting
+     */
+    static changeDupeFrameMarkers(toggleHotkey) {
+        if !this.__checkTimeline()
+			return
+        this.__checkTimelineFocus()
+        SendInput(toggleHotkey)
     }
 
     /**

@@ -10,6 +10,7 @@
 - 📋 Will now return all hotkeys as `vk` values instead of a mix of `vk` and regular strings
 
 ⚠️ `prem {`
+- ✏️ Added `changeDupeFrameMarkers()`
 
 📍 `toggleEnabled()`
 - ✏️ Now accepts parameter `allExcept` to toggle all tracks *except* the desired track

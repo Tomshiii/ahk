@@ -1,7 +1,15 @@
-﻿#Requires AutoHotkey v2.0
+﻿/************************************************************************
+ * @description my version of the `HotkeylessAHK` file
+ * @link https://github.com/sebinside/HotkeylessAHK
+ * @author sebinside
+ * @date 2025/08/12
+ * @version 1.1.0
+ ***********************************************************************/
+
+#Requires AutoHotkey v2.0
 SetWorkingDir(A_ScriptDir)
 A_IconTip := "HotkeylessAHK"
-#SingleInstance off
+#SingleInstance Force
 #Include files\lib.ahk
 #Include <Classes\Editors\Premiere>
 #Include <Functions\detect>
@@ -27,5 +35,6 @@ RunClient(serverPort, functionClassNames)
 ; The function name "kill" is reserved.
 
 Class CustomFunctions {
-    changeLabel(label) => (prem.changeLabel(label))
+    changeLabel(label)       => (prem.changeLabel(label))
+    changeDupe(toggleHotkey) => (prem.changeDupeFrameMarkers(toggleHotkey))
 }
