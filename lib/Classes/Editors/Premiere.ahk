@@ -5,7 +5,7 @@
  * @premVer 25.3
  * @author tomshi
  * @date 2025/08/12
- * @version 2.2.40
+ * @version 2.2.41
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2473,6 +2473,8 @@ class Prem {
         return A
     }
 
+    static ignoreToggleEnabledKey := false
+
     /**
      * ### This function requires `PremiereRemote`
      * A function to toggle the `enabled`/`disabled` state of a clip on the desired layer. This function will operate on either the audio/video tracks depending on whether the cursor is above or below the middle dividing line.
@@ -2500,7 +2502,18 @@ class Prem {
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false) {
         ;// avoid attempting to fire unless main window is active
         if !WinActive(editors.Premiere.winTitle) || !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle {
-            SendInput(A_ThisHotkey)
+            ;// why does the sendinput no longer do anything in this block
+            ;// but if you pull it out it works (but kills itself)
+            ;// ahk is weird (or I'm dumb idk)
+            if !this.ignoreToggleEnabledKey {
+                this.ignoreToggleEnabledKey := true
+                SetTimer(__resetIgnore.Bind(this), -100)
+                SendInput(A_ThisHotkey) ;// you can't do this for this func, it'll constantly loop itself to death if you do
+            }
+            __resetIgnore(*) {
+                this.ignoreToggleEnabledKey := false
+            }
+
             return
         }
         if !allExcept {
@@ -2611,7 +2624,7 @@ class Prem {
                     hasMap.Set(v, true)
                 }
                 for k, v in allLayers {
-                    if A_Index = track || (offset != 0 && A_Index <= offset)
+                    if (track != "queue" && A_Index = track+offset) || (offset != 0 && A_Index <= offset)
                         continue
                     layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
                     if !hasMap.Has(A_Index) || this.timelineCols.Has(layerColour)
@@ -2621,10 +2634,12 @@ class Prem {
                 SendInput("{LAlt Down}{LShift Down}")
                 for v in whichTracks {
                     MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
+                    sleep 0
                     SendInput("{LButton}")
                     sleep 0
                 }
                 SendInput("{LAlt Up}{LShift Up}")
+                sleep 16
             case true:
                 if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud) {
                     blocker.Off()
@@ -2633,7 +2648,7 @@ class Prem {
                 }
                 whichTracks := []
                 for k, v in allLayers {
-                    if A_Index = track || (offset != 0 && A_Index <= offset)
+                    if A_Index = track+offset || (offset != 0 && A_Index <= offset)
                         continue
                     layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
                     if this.timelineCols.Has(layerColour)
@@ -2643,10 +2658,12 @@ class Prem {
                 SendInput("{LAlt Down}{LShift Down}")
                 for v in whichTracks {
                     MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
+                    sleep 0
                     SendInput("{LButton}")
                     sleep 0
                 }
                 SendInput("{LAlt Up}{LShift Up}")
+                sleep 16
         }
         this.__remoteFunc('toggleEnabled')
         MouseMove(origMouseCords.x, origMouseCords.y, 0)
@@ -2656,6 +2673,7 @@ class Prem {
         sleep 25
         checkStuck()
         blocker.Off()
+        this.ignoreKey := false
     }
 
     /**
