@@ -129,6 +129,10 @@ export const host = {
     Utils.toggleEnabled();
   },
 
+  isClipEnabled: function() {
+    return Utils.isClipEnabled();
+  },
+
   closeActiveSequence: function() {
     const activeSequence = app.project.activeSequence;
 

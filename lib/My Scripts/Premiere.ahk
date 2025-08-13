@@ -198,6 +198,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 
 
 ;// allExcept
+^!+`::prem.toggleEnabled(1, "aud", 1, "all")
 <!+`::prem.toggleEnabled(1, "aud",, true)
 <!+1::
 <!+2::

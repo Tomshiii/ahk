@@ -28,6 +28,16 @@ export class Utils {
       return true
     }
 
+    static isClipEnabled() {
+      var activeSequence = app.project.activeSequence;
+      var selection = activeSequence.getSelection();
+
+      if(selection[0].disabled == false)
+        return true;
+      return false;
+
+    }
+
     static toggleEnabled() {
       var activeSequence = app.project.activeSequence;
       var selection = activeSequence.getSelection();

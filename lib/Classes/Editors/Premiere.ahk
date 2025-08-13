@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/12
- * @version 2.2.42
+ * @date 2025/08/13
+ * @version 2.2.43
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2497,7 +2497,7 @@ class Prem {
      * @param {Integer} [track=A_ThisHotkey] The track you wish to operate on. If this parameter is not just an integer it will attempt to do a rudimentary check on the activation hotkey, expecting a number to be the final activation key in the chain
      * @param {String} [audOrVid=false] determine whether to operate on the audio or video tracks. By default this value is set to `false` and it is determined purely by the user's cursor position. otherwise set to either `"vid"` or `"aud"`
      * @param {Integer} [offset=0] Allows the user to offset the track number, ie. if their `track` number is `1` and offset is `1` the function will operate on track `2`. Useful to skip multicam tracks
-     * @param {Boolean} [allExcept=false] Defaults to `false`. Setting this value to `true` will toggle the status of every track *except* the desired track, otherwise, leaving this value as `false` will only toggle the desired track.
+     * @param {Boolean/String} [allExcept=false] This value may be `true`, `false` OR `"all"`. Setting this value to `true` will toggle the status of every track *except* the desired track. Leaving this value as `false` will only toggle the desired track(s). Setting this value to `"all"` will toggle all tracks beyond the user's `offset`. Defaults to `false`.
      */
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false) {
         ;// avoid attempting to fire unless main window is active
@@ -2514,6 +2514,11 @@ class Prem {
                 this.ignoreToggleEnabledKey := false
             }
 
+            return
+        }
+        if allExcept != true && allExcept != false && allExcept != "all" {
+            ;// throw
+            errorLog(PropertyError("Parameter allExcept unaccepted value", allExcept),,, true)
             return
         }
         if !allExcept {
@@ -2624,16 +2629,72 @@ class Prem {
             }
         }
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
+        if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud) {
+            blocker.Off()
+            errorLog(UnsetError("Couldn't determine layers"))
+            return
+        }
+
+        __determineEnabled() {
+            checkVal := this.__remoteFunc('isClipEnabled', true)
+            if checkVal != "EvalScript error."
+                return checkVal
+            loop 10 {
+                sleep 30
+                checkVal := this.__remoteFunc('isClipEnabled', true)
+                if checkVal != "EvalScript error."
+                    return checkVal
+                errorLog(TargetError("Checking enabled state returned an error. #" A_Index),, true)
+            }
+            errorLog(TargetError("Couldn't determine state of selection"),, true)
+            blocker.Off()
+            Exit()
+        }
+
+        __doToggle(isAll := false) {
+            SendInput("{LAlt Down}{LShift Down}")
+            for v in whichTracks {
+                MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
+                sleep 0
+                SendInput("{LButton}")
+                sleep 0
+            }
+            enabledState := __determineEnabled()
+            SendInput("{LAlt Up}{LShift Up}")
+            sleep 30
+            this.__remoteFunc('toggleEnabled')
+            sleep 30
+            stateCheck := __determineEnabled()
+            if stateCheck = enabledState {
+                errorLog(MethodError("Toggling failed."), "enabledState: " enabledState " stateCheck: " stateCheck)
+                loop 10 {
+                    sleep 30
+                    this.__remoteFunc('toggleEnabled')
+                    sleep 30
+                    stateCheck := __determineEnabled()
+                    if stateCheck != enabledState
+                        break
+                    errorLog(MethodError("Toggling reattempt #" A_Index " failed"), "enabledState: " enabledState " stateCheck: " stateCheck)
+                }
+            }
+        }
+
+        whichTracks := []
+        hasMap := Map()
+        enabledState := unset
 
         switch allExcept {
-            case false:
-                if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud) {
-                    blocker.Off()
-                    errorLog(UnsetError("Couldn't determine layers"))
-                    return
+            case "all":
+                for k, v in allLayers {
+                    if (offset != 0 && A_Index <= offset)
+                        continue
+                    layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
+                    if this.timelineCols.Has(layerColour)
+                        continue
+                    whichTracks.Push(A_Index)
                 }
-                whichTracks := []
-                hasMap := Map()
+                __doToggle()
+            case false:
                 for i, v in which {
                     hasMap.Set(v, true)
                 }
@@ -2645,22 +2706,8 @@ class Prem {
                         continue
                     whichTracks.Push(A_Index)
                 }
-                SendInput("{LAlt Down}{LShift Down}")
-                for v in whichTracks {
-                    MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
-                    sleep 0
-                    SendInput("{LButton}")
-                    sleep 0
-                }
-                SendInput("{LAlt Up}{LShift Up}")
-                sleep 16
+                __doToggle()
             case true:
-                if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud) {
-                    blocker.Off()
-                    errorLog(UnsetError("Couldn't determine layers"))
-                    return
-                }
-                whichTracks := []
                 for k, v in allLayers {
                     if A_Index = track+offset || (offset != 0 && A_Index <= offset)
                         continue
@@ -2669,17 +2716,9 @@ class Prem {
                         continue
                     whichTracks.Push(A_Index)
                 }
-                SendInput("{LAlt Down}{LShift Down}")
-                for v in whichTracks {
-                    MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
-                    sleep 0
-                    SendInput("{LButton}")
-                    sleep 0
-                }
-                SendInput("{LAlt Up}{LShift Up}")
-                sleep 16
+                __doToggle()
         }
-        this.__remoteFunc('toggleEnabled')
+
         MouseMove(origMouseCords.x, origMouseCords.y, 0)
         sleep 25
         if this.__remoteFunc('isSelected', true)
