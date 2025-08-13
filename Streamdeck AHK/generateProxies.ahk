@@ -29,8 +29,12 @@ if !selectedDir
 recurse := ""
 files := []
 names := []
-renderScale := 0.25
+renderScale := 0.125
 normalCommand := 'ffmpeg -hwaccel none -i "{1}" -c:v prores -profile:v 0 -pix_fmt yuv422p10 -filter_complex "[0:v]scale={2}[out]" -map "[out]" -c:a copy -map a? {3} -sws_flags bicubic -vsync cfr -metadata:s "encoder=Apple ProRes Proxy" -vendor apl0 -flags bitexact -metadata creation_time="{4}" -y "{5}"'
+;// watermark
+watermarkDir := "W:\_Assets\Plugins & Presets\watermarks"
+wCommand := 'ffmpeg -hwaccel none -i "{1}" -i "{6}" -c:v prores -profile:v 0 -pix_fmt yuv422p10 -filter_complex "[0:v]scale={2}[scaled];[1:v]scale={2},format=rgba,colorchannelmixer=aa=0.7[watermark];[scaled][watermark]overlay=0:H/2-h+30[out]" -map "[out]" -c:a copy -map a? {3} -sws_flags bicubic -vsync cfr -metadata:s "encoder=Apple ProRes Proxy" -vendor apl0 -flags bitexact -metadata creation_time="{4}" -y "{5}"'
+
 
 
 if MsgBox("Would you like to recurse?", "Recurse?", "4132") = "Yes" {
@@ -56,6 +60,7 @@ loop files selectedDir "\*", recurse "F" {
     baseOutputPath := inputPath.dir "\proxy\" inputPath.NameNoExt "_proxy.mov"
     if FileExist(baseOutputPath)
         continue
+    wMark := (FileExist(watermarkDir "\watermark_" inputDir.name ".png")) ? watermarkDir "\watermark_" inputDir.name ".png" : ""
     try {
         allMetaData := JSON.parse(cmd.result(Format('ffprobe -v error -print_format json -show_format -show_streams "{}"', A_LoopFileFullPath)))
         if allMetaData["streams"]["1"]["r_frame_rate"] = "0/0" || InStr(allMetaData["streams"]["1"]["r_frame_rate"], "/0")
@@ -88,7 +93,7 @@ loop files selectedDir "\*", recurse "F" {
         encoded := "JABjAHQAIAA9ACAAWwBzAHQAcgBpAG4AZwBdADoAOgBGAG8AcgBtAGEAdAAoACIAewAwADoAeQB5AHkAeQAtAE0ATQAtAGQAZABUAEgASAA6AG0AbQA6AHMAcwB9AC4AewAxADoARAA5AH0AWgAiACwAIAAoAEcAZQB0AC0ARABhAHQAZQApAC4AVABvAFUAbgBpAHYAZQByAHMAYQBsAFQAaQBtAGUAKAApACwAIAAoACgARwBlAHQALQBEAGEAdABlACkALgBUAGkAYwBrAHMAIAAlACAAMQAwADAAMAAwADAAMAAwACkAIAAqACAAMQAwADAAKQAKAFcAcgBpAHQAZQAtAE8AdQB0AHAAdQB0ACAAJABjAHQA"
         metadataCreate := cmd.result(Format('powershell -NoProfile -EncodedCommand "{}"', encoded),,, "c:\")
     }
-    files.Push({name: inputPath.NameNoExt "_proxy.mov", path: A_LoopFileFullPath, newDimensions: newDimensions, timecode: timecode, metadataCreate: metadataCreate, baseOutputPath: baseOutputPath})
+    files.Push({name: inputPath.NameNoExt "_proxy.mov", path: A_LoopFileFullPath, newDimensions: newDimensions, timecode: timecode, metadataCreate: metadataCreate, baseOutputPath: baseOutputPath, watermark: wMark })
 }
 Notify.Destroy(check["hwnd"], true)
 if files.Length = 0 {
@@ -99,7 +104,8 @@ if files.Length = 0 {
 rendering := Notify.Show('Rendering files...',, 'C:\Windows\System32\shell32.dll|icon323', 'Speech Misrecognition',, 'theme=Dark dur=0 ts=12 tfo=norm show=Fade@250 hide=Fade@250 maxW=400 prog=h15 w240 Range0-' files.length)
 for v in files {
     currentFile := Notify.Show('current file (' A_Index '/' files.length '):', v.name, 'C:\Windows\System32\imageres.dll|icon361',,, 'theme=Dark dur=0 ts=12 tfo=norm mfo=norm Bold show=Fade@250 hide=Fade@250 maxW=400 pad=,,,,,,,1')
-    command := Format(normalCommand, v.path, v.newDimensions, v.timecode, v.metadataCreate, v.baseOutputPath)
+    command := (v.watermark != "") ? Format(wCommand, v.path, v.newDimensions, v.timecode, v.metadataCreate, v.baseOutputPath, v.watermark)
+                            : Format(normalCommand, v.path, v.newDimensions, v.timecode, v.metadataCreate, v.baseOutputPath)
     cmd.run(,,, command,, "Min")
     rendering["prog"].value += 1
     Notify.Destroy(currentFile["hwnd"], true)
