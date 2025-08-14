@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/13
- * @version 2.2.43
+ * @date 2025/08/14
+ * @version 2.2.44
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2639,8 +2639,8 @@ class Prem {
             checkVal := this.__remoteFunc('isClipEnabled', true)
             if checkVal != "EvalScript error."
                 return checkVal
-            loop 10 {
-                sleep 30
+            loop 5 {
+                sleep 50*A_Index
                 checkVal := this.__remoteFunc('isClipEnabled', true)
                 if checkVal != "EvalScript error."
                     return checkVal
@@ -2652,6 +2652,7 @@ class Prem {
         }
 
         __doToggle(isAll := false) {
+            checkStuck()
             SendInput("{LAlt Down}{LShift Down}")
             for v in whichTracks {
                 MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
@@ -2659,8 +2660,9 @@ class Prem {
                 SendInput("{LButton}")
                 sleep 0
             }
-            enabledState := __determineEnabled()
             SendInput("{LAlt Up}{LShift Up}")
+            sleep 30
+            enabledState := __determineEnabled()
             sleep 30
             this.__remoteFunc('toggleEnabled')
             sleep 30
