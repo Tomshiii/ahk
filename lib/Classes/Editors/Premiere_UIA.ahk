@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/08/08
- * @version 2.0.20
+ * @date 2025/08/15
+ * @version 2.0.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -209,6 +209,7 @@ Class premUIA_Values {
             errorLog(Error("The function may have set duplicate UIA values. Please set new values to ensure proper function."))
             Notify.Show(, 'The function may have set duplicate UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400')
         }
+        checkStuck(["XButton1", "XButton2", "Ctrl", "Shift", "Alt", "RButton", "LButton"])
         block.Off()
         this.allVals := currentVers
         this.__setClassVal()

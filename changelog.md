@@ -5,6 +5,7 @@
 ## Functions
 - ✅ Fixed `keys.allWait()` stopping a hotkey too early
 - ✅ Fixed `getHotkeys()` incorrectly returning boolean `false` in some circumstances
+- 📋 `premUIA_Values {` will now check for stuck keys after completion 
 
 ⚠️ `getHotkeysArr()`
 - ✅ Fixed function returning <kbd><!</kbd> as `<` & `!` instead of as one hotkey

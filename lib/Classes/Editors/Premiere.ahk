@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/14
- * @version 2.2.44
+ * @date 2025/08/18
+ * @version 2.2.44.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1205,7 +1205,7 @@ class Prem {
         else {
             levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
             if levels != true && levels != "true" {
-                errorLog(MethodError("Unexpected response", -1), "Response: " levels " - Type: " Type(levels))
+                errorLog(MethodError("Unexpected response", -1), "sent value: " String(which sendGain) " Response: " levels " - Type: " Type(levels))
                 Notify.Show('prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
                 block.Off()
                 return
