@@ -20,14 +20,14 @@ Eval(Script) {
     return exec.StdOut.ReadAll()
 }
 
+;// one day would like to add a GUI to add folders to a list - ie a queuing system
+operatePaths := []
 activeWin := WinGet.ExplorerPath()
 defaultDir := activeWin != false ? activeWin : ""
-selectedDir := FileSelect("D3 M", defaultDir,  "Select Footage Directory")
+selectedDir := FileSelect("D3", defaultDir,  "Select Footage Directory")
 if !selectedDir
     return
-
-;// one day would like to add a GUI to add folders to a list - ie a queuing system
-/* selectedDir := [] */
+(Type(selectedDir) != "array") ? operatePaths.Push(selectedDir) : operatePaths := selectedDir
 
 recurse := ""
 files := []
@@ -45,12 +45,14 @@ if MsgBox("Would you like to recurse?", "Recurse?", "4132") = "Yes" {
 }
 ffmpegInst := ffmpeg()
 
-for v in selectedDir {
-    recurse := "R"
-    getFileCount := nItemsInDir(v, (recurse = "R" ? true : false))
-    filecount := getFileCount.files
-
-    check := Notify.Show('Checking files in chosen directory', , 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' filecount)
+;// get total files
+fileCount := 0
+for v in operatePaths {
+    getFilecount := nItemsInDir(v, (recurse = "R" ? true : false))
+    fileCount += getfileCount.files
+}
+for v in operatePaths {
+    check := Notify.Show('Checking files in chosen directory', , 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' fileCount)
 
     loop files v "\*", recurse "F" {
         check["prog"].value += 1
@@ -60,11 +62,12 @@ for v in selectedDir {
             continue
         if !ffmpegInst.isVideo(A_LoopFileFullPath)
             continue
+        baseOutputPath  := inputPath.dir "\proxy\" inputPath.NameNoExt "_proxy.mov"
+        baseOutputPath2 := inputPath.dir "\_proxy\" inputPath.NameNoExt "_proxy.mov"
+        if FileExist(baseOutputPath) || FileExist(baseOutputPath2)
+            continue
         if !DirExist(inputPath.dir "\proxy")
             DirCreate(inputPath.dir "\proxy")
-        baseOutputPath := inputPath.dir "\proxy\" inputPath.NameNoExt "_proxy.mov"
-        if FileExist(baseOutputPath)
-            continue
         wMark := (FileExist(watermarkDir "\watermark_" inputDir.name ".png")) ? watermarkDir "\watermark_" inputDir.name ".png" : ""
         try {
             allMetaData := JSON.parse(cmd.result(Format('ffprobe -v error -print_format json -show_format -show_streams "{}"', A_LoopFileFullPath)))

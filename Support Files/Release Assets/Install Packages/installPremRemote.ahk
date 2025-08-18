@@ -25,7 +25,7 @@ remotePath     := extensionsPath "\PremiereRemote"
 if DirExist(remotePath) {
     if MsgBox("PremiereRemote appears to already be installed!`nWould you like to update .tsx files?`n`n(keep in mind this may override any custom functions you've created, but not updating may result in errors with my scripts.)`nIt is recommended you make a backup of the following directory:`n" A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src\",, 'YesNo Icon?') = "No"
         return
-    Run(A_WorkingDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk")
+    Run(A_WorkingDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replaceAndReset.ahk")
     return
 }
 
