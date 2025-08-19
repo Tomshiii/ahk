@@ -15,6 +15,10 @@
 ⚠️ `prem {`
 - ✏️ Added `changeDupeFrameMarkers()`
 
+📍 `changeLabel()`
+- ✅ Fixed function throwing if activated with `HotkeylessAHK` while `Premiere` was not the active window
+- ✅ Fixed function sending hotkeys even if a clip was not selected
+
 📍 `toggleEnabled()`
 - ✅ Fixed function sometimes not deselecting clips
 - ✏️ Now accepts parameter `allExcept` to toggle all tracks *except* the desired track *or* all tracks beyond the `offset` value

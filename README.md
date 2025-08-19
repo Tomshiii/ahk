@@ -40,7 +40,7 @@ An ini file/ahk script combo for defining all keyboard shortcuts for programs th
 #### [My Scripts.ahk](https://github.com/Tomshiii/ahk/blob/main/My%20Scripts.ahk)
 This script is the "central" script if you will. A lot of my windows scripts are here (and a hand full of scripts I use for editing).
 
-This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional. These `startup` functions are contained within a class `startup {` and are as follows;
+This script will also go through a lot of important functions on boot. Some go through their function every boot of the script while some are more conditional. These `startup` functions are contained within a class `startup {` and some of them are as follows;
 - `generate()` - Handles creating a new `settings.ini` file each new release. The `settings.ini` file will be located in `A_MyDocuments \tomshi\`. These settings can be adjusted by right clicking on `My Scripts.ahk` and clicking `Settings` or by pulling up `settingsGUI()` (default hotkey is <kbd>win + F1</kbd>)
 - `updateChecker()` - Checks github to see if there is a new version of my scripts available and can automatically download it for you as well as backup your current script directory
 - `updateAdobeVerAHK()` - Updates a user's adobe `vers.ahk` file & `adobeVers.ahk` file

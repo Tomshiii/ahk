@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/18
- * @version 2.2.44.1
+ * @date 2025/08/19
+ * @version 2.2.45
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2876,6 +2876,8 @@ class Prem {
      * @param {String} toggleHotkey the hotkey string that will be sent to `SendInput` to toggle the setting
      */
     static changeDupeFrameMarkers(toggleHotkey) {
+        if !WinActive(this.winTitle) ;// this is here in the event the user calls this func from `HotkeylessAHK` - otherwise it'll throw an error if prem isn't active
+            return
         if !this.__checkTimeline()
 			return
         this.__checkTimelineFocus()
@@ -2884,10 +2886,14 @@ class Prem {
 
     /**
      * This function is a wrapper function for changing the label colour of a clip; ensuring that the timeline is in focus and that a clip is selected. This function is designed to be called from a streamdeck using the `HotkeylessAHK` tool
+     *
+     * #### This function requires `PremiereRemote` to adjust label colours on the timeline
      * @link https://github.com/sebinside/HotkeylessAHK
      * @param {String} [labelHotkey] the hotkey string that will be sent to `SendInput` to change the label colour to your desired choice
      */
     static changeLabel(labelHotkey) {
+        if !WinActive(this.winTitle) ;// this is here in the event the user calls this func from `HotkeylessAHK` - otherwise it'll throw an error if prem isn't active
+            return
         if !this.__checkTimeline()
 			return
         premEl := this.__createUIAelement()
@@ -2896,14 +2902,14 @@ class Prem {
             SendInput(labelHotkey)
             return
         }
-        this.__checkTimelineFocus()
-        checkForFunc := this.__checkPremRemoteDir("isSelected")
-        if !checkForFunc && !this.__remoteFunc('isSelected', true) {
-            if !checkForFunc {
-                errorLog(MethodError('This function requires ``PremiereRemote``', -1),, true)
-            }
+        if !this.__checkPremRemoteDir("isSelected") {
+            ;// throw
+            errorLog(MethodError('This function requires ``PremiereRemote`` to adjust labels on the timeline', -1),, true)
             return
         }
+        this.__checkTimelineFocus()
+        if !this.__remoteFunc('isSelected', true)
+            return
         SendInput(labelHotkey)
     }
 
