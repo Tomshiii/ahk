@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/07/08
- * @version 2.1.37
+ * @date 2025/08/19
+ * @version 2.1.38
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,10 +55,10 @@ ExitFunc(ExitReason, ExitCode) {
 }
 
 /**
-     * @param {String} [rClickPrem=RButton] what the user has `rbuttonPrem().movePlayhead()` bound to
-     * @param {String} [rClickMove=XButton1] what the user has `rbuttonPrem().movePlayhead(false)` bound to
-     * it is recommended to have both of these set to a key as passing nothing will throw an error
-     */
+ * @param {String} [rClickPrem=RButton] what the user has `rbuttonPrem().movePlayhead()` bound to
+ * @param {String} [rClickMove=XButton1] what the user has `rbuttonPrem().movePlayhead(false)` bound to
+ * it is recommended to have both of these set to a key as passing nothing will throw an error
+ */
 class adobeAutoSave extends count {
 
     __New(rClickPrem := "RButton", rClickMove := "XButton1") {
@@ -109,6 +109,7 @@ class adobeAutoSave extends count {
     resetingSave  := false
     mainScript    := "My Scripts"
     restartPlayback := false
+    premRemoteSave := true
 
     rClickPrem    := ""
     rClickMove    := ""
@@ -357,7 +358,9 @@ class adobeAutoSave extends count {
                 case "ahk_class CabinetWClass": WinActivate("ahk_class CabinetWClass")
                 case "Adobe After Effects.exe", "Adobe After Effects (Beta).exe": switchTo.AE()
                 case "Adobe Premiere Pro.exe", "Adobe Premiere Pro (Beta).exe":
-                    if !WinActive(prem.winTitle)
+                    if this.premRemoteSave = true && !WinActive(this.origWindow)
+                        return
+                    if !WinActive(this.origWindow)
                         switchTo.Premiere()
                     if this.restartPlayback = false || this.userPlayback = false
                         return
@@ -396,7 +399,9 @@ class adobeAutoSave extends count {
                         break
                     }
                     try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
-                default: WinActivate("ahk_exe " this.origWindow)
+                default:
+                    if this.premRemoteSave = false
+                        WinActivate("ahk_exe " this.origWindow)
             }
         } catch {
             errorLog(TargetError("Couldn't determine the active window"),, 1)
@@ -436,8 +441,9 @@ class adobeAutoSave extends count {
         }
 
         ;// this should cover occurrences where another window is open within premiere
-        if (currentProg := WinGet.ID() = prem.winTitle && ((name := WinGetTitle("A")) != "" && name != this.premWindow.wintitle) && (ActClass := WinGetTitle(this.premWindow.wintitle)) != "ahk_class #32770") {
-            errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1),, 1)
+        if (currentProg := WinGet.ID() = prem.winTitle && ((name := WinGetTitle("A")) != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
+            errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1))
+            Notify.Show(, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
 
@@ -470,6 +476,7 @@ class adobeAutoSave extends count {
 
         try {
             block.On()
+            this.premRemoteSave := false
 
             ;// this script will attempt to NOT fire if Premiere_RightClick.ahk is active
             if this.__checkRClick() = true {
@@ -617,6 +624,7 @@ class adobeAutoSave extends count {
 
         this.origPanelFocus := ""
         this.premUIAEl      := false
+        this.premRemoteSave := true
         checkstuck()
         block.Off()
     }

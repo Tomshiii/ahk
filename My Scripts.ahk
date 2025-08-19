@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.22
+;\\v2.34.23
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -277,7 +277,7 @@ Ctrl & \::return
 ;//! Premiere
 #HotIf WinActive(editors.Premiere.winTitle) && !WinExist("ahk_class #32770") && !GetKeyState("F24")
 ;playstopHotkey;
-F18::SendInput(KSA.playStop) ;alternate way to play/stop the timeline with a mouse button
+F18::prem.delayPlayback()
 
 ;=============================================================================================================================================
 ;

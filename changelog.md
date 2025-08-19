@@ -13,6 +13,7 @@
 - 📋 Will now return all hotkeys as `vk` values instead of a mix of `vk` and regular strings
 
 ⚠️ `prem {`
+- ✅ Fixed `save()` not properly determining if `Premiere` may be busy
 - ✏️ Added `changeDupeFrameMarkers()`
 
 📍 `changeLabel()`
@@ -29,3 +30,7 @@
 
 ## Other Changes
 - ✏️ Added `replaceAndReset.ahk` `PremiereRemote` script
+
+⚠️ `autosave.ahk`
+- ✅ Fixed `__savePrem()` not properly determining when `Premiere` may be busy
+- 📋 `__reactivateWindow()` will no longer reactivate `Premiere` if it was the original window but `PremiereRemote` was used to save

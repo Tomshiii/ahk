@@ -5,7 +5,7 @@
  * @premVer 25.3
  * @author tomshi
  * @date 2025/08/19
- * @version 2.2.45
+ * @version 2.2.46
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -393,8 +393,15 @@ class Prem {
      * - `"busy"`    : another window may be open in premiere that could cause saving to fail
      */
     static save(andWait := true, checkSeqTime := 1000, checkAmount := 1, continueOnBusy := false) {
-        activeWin := WinActive("A"), procName := WinGetProcessName(activeWin), className := WinGetClass(activeWin)
-        if continueOnBusy = false && (procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (className != "Premiere Pro" && className != "Premiere Pro (Beta)")
+        premWindow := WinGet.PremName()
+        if !premWindow || Type(premWindow) != "Object" ||
+            ((premWindow.winTitle = "" || !premWindow.wintitle) &&
+            premWindow.titleCheck = -1 && premWindow.saveCheck = -1) {
+            errorLog(UnsetError("prem.save() was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
+            return
+        }
+        procName := WinGetProcessName(premWindow.winTitle), procClass := WinGetClass(premWindow.wintitle)
+        if continueOnBusy = false && (procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (procClass != "Premiere Pro" && procClass != "Premiere Pro (Beta)")
             return "busy"
         if !this.__checkPremRemoteDir("saveProj")
             return false
