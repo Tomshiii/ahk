@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/19
- * @version 2.2.46
+ * @date 2025/08/21
+ * @version 2.2.47
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2692,6 +2692,7 @@ class Prem {
         hasMap := Map()
         enabledState := unset
 
+        MouseMove(origMouseCords.x-10, origMouseCords.y, 0)
         switch allExcept {
             case "all":
                 for k, v in allLayers {
