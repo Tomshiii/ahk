@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/08/07
- * @version 1.0.30
+ * @date 2025/08/22
+ * @version 1.0.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,11 +33,11 @@ class ytdlp {
     ]
     URL := ""
     defaultCommand      := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
-    defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --cookies-from-browser firefox'
+    defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 {2}'
     defaultPostProcess  := 'ffmpeg -i "{2}\{3}" {1} -c:a aac -b:a 192k "{2}\temp_{3}" && del /f /q "{2}\{3}" && move /y "{2}\temp_{3}" "{2}\{3}"'
     defaultCPU          := "-c:v libx264 -crf 21 -preset medium"
     defaultGPU          := "-c:v h264_nvenc -preset 18 -cq 19"
-    defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav --cookies-from-browser firefox --print after_move:filepath'
+    defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav {2} --print after_move:filepath'
     defaultFilename := "%(title).{1}s [%(id)s].%(ext)s"
     command := ""
     check := false
@@ -130,6 +130,7 @@ class ytdlp {
      * @param {String} [URL?] pass through a URL instead of using the user's clipboard
      * @param {Boolean} [openDirOnFinish=true] determines whether the destination directory will be opened once the download process is complete. Defaults to `true`
      * @param {String/boolean} [postArgs=this.defaultPostProcess] any cmdline args you wish to execute after the initial download. By default this process will determine the codec of the downloaded file and if it isn't `h264` or `h265` it will reencode the file to `h264`. *Please note:* If you pass custom arguments to this parameter the prementioned codec check will **no longer** occur. You may also pass `false` to prevent any post download execution.
+     * @param {String} [cookies="--cookies-from-browser firefox"] determines whether to pass cookies to various yt-dlp commands. Generally either the default or `""` is recommended. Pulling cookies from chrome can be a lot more challenging
      * @returns the url
      * ```
      * ytdlp().download("", "download\path")
@@ -137,7 +138,7 @@ class ytdlp {
      * ;// yt-dlp -P "link\to\path" "URL"
      * ```
      */
-    download(args := "", folder := A_ScriptDir, URL?, openDirOnFinish := true, postArgs := this.defaultPostProcess) {
+    download(args := "", folder := A_ScriptDir, URL?, openDirOnFinish := true, postArgs := this.defaultPostProcess, cookies := "--cookies-from-browser firefox") {
         if (Type(args) != "string" || Type(folder) != "string") {
                 ;// throw
                 errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
@@ -180,7 +181,9 @@ class ytdlp {
         try SDopt := SD_Opt()
         fileNameLengthLimit := IsSet(SDopt) ? SDopt.filenameLengthLimit : 50
         outputFileName := Format(this.defaultFilename, fileNameLengthLimit)
-        nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" --cookies-from-browser firefox', outputFileName, this.URL))
+        if args = this.defaultAudioCommand || args = this.defaultVideoCommand
+            args := Format(args, "{}", cookies)
+        nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" {3}', outputFileName, this.URL, cookies))
         SplitPath(nameOutput,,, &ext, &nameNoExt)
         ext := (args != this.defaultAudioCommand) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
         checkPath1 := WinGet.pathU(folder "\" nameOutput)

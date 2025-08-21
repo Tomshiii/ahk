@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/08/19
- * @version 2.1.38
+ * @date 2025/08/20
+ * @version 2.1.39
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -181,6 +181,7 @@ class adobeAutoSave extends count {
         ;// grab originally active window
         if !this.__getOrigWindow() {
             this.__reset()
+            block.Off()
             return
         }
 
@@ -358,12 +359,17 @@ class adobeAutoSave extends count {
                 case "ahk_class CabinetWClass": WinActivate("ahk_class CabinetWClass")
                 case "Adobe After Effects.exe", "Adobe After Effects (Beta).exe": switchTo.AE()
                 case "Adobe Premiere Pro.exe", "Adobe Premiere Pro (Beta).exe":
-                    if this.premRemoteSave = true && !WinActive(this.origWindow)
+                    if this.restartPlayback = false && this.userPlayback = false && this.premRemoteSave = true && !WinActive(this.origWindow)
                         return
                     if !WinActive(this.origWindow)
                         switchTo.Premiere()
                     if this.restartPlayback = false || this.userPlayback = false
                         return
+                    if WinExist("Save Project ahk_exe " this.origWindow) {
+                        if !WinWaitClose("Save Project ahk_exe " this.origWindow,, 5)
+                            return
+                        sleep 150
+                    }
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
                     try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
@@ -474,8 +480,11 @@ class adobeAutoSave extends count {
             return
         }
 
+        Notify.Show(, 'PremiereRemote failed to save, falling back`nto a manual save attempt.', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark dur=5 bdr=0xE96969 show=Fade@250 hide=Fade@250')
+
         try {
             block.On()
+            checkStuck()
             this.premRemoteSave := false
 
             ;// this script will attempt to NOT fire if Premiere_RightClick.ahk is active
@@ -525,10 +534,12 @@ class adobeAutoSave extends count {
             return
         }
 
-        ;// checking idle status
+         ;// checking idle status
         this.__checkIdle()
         if this.idleAttempt = false
             return
+
+        checkStuck()
 
         ;// if AE is the active window, a normal save will be fine
         if this.origWindow = WinGetProcessName(editors.AE.winTitle) {
@@ -561,6 +572,7 @@ class adobeAutoSave extends count {
         }
 
         try {
+            checkStuck()
             WinSetTransparent(0, editors.AE.winTitle)
             ;// attempt to send save
             if GetKeyState("Shift") || GetKeyState("Shift", "P")
@@ -626,7 +638,6 @@ class adobeAutoSave extends count {
         this.premUIAEl      := false
         this.premRemoteSave := true
         checkstuck()
-        block.Off()
     }
 
     __Delete() {

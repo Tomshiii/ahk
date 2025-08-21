@@ -6,6 +6,7 @@
 - ✅ Fixed `keys.allWait()` stopping a hotkey too early
 - ✅ Fixed `getHotkeys()` incorrectly returning boolean `false` in some circumstances
 - 📋 `premUIA_Values {` will now check for stuck keys after completion 
+- 📋 `yt-dlp().download()` now accepts parameter `cookies`
 
 ⚠️ `getHotkeysArr()`
 - ✅ Fixed function returning <kbd><!</kbd> as `<` & `!` instead of as one hotkey
@@ -30,6 +31,11 @@
 
 ## Other Changes
 - ✏️ Added `replaceAndReset.ahk` `PremiereRemote` script
+
+⚠️ `mult-dl.ahk`
+- ✏️ Added new icon
+- 📋 Downloads will now simply default to `..\Downloads\tomshi`
+- 📋 Use of cookies can now be toggled
 
 ⚠️ `autosave.ahk`
 - ✅ Fixed `__savePrem()` not properly determining when `Premiere` may be busy
