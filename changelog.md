@@ -30,6 +30,7 @@
 > This function requires updated `PremiereRemote` functions.
 
 ## Other Changes
+- ✅ Fixed `backupProj.ahk` operating on the incorrect folder if a Premiere project is open, but another project is selected
 - ✏️ Added `replaceAndReset.ahk` `PremiereRemote` script
 
 ⚠️ `mult-dl.ahk`

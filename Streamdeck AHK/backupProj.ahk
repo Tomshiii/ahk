@@ -29,7 +29,7 @@ else
 
 additionalDir := []
 nonFootage := []
-videosFolder := WinGet.pathU(defaultDir "\..\videos")
+videosFolder := WinGet.pathU(projectFolder "\..\videos")
 loop files videosFolder "\*", "D" {
     if A_LoopFileName != "footage"
         nonFootage.Push(A_LoopFileName)
