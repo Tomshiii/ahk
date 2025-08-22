@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/21
- * @version 2.2.47
+ * @date 2025/08/22
+ * @version 2.2.48
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1053,7 +1053,6 @@ class Prem {
         }
         keys.allWait()
         Critical
-        tool.Cust("Adjusting Gain", 0.5)
         block.On()
         coord.s()
         check := winget.Title()
@@ -1070,30 +1069,37 @@ class Prem {
 
         try {
             funcExist := this.__checkPremRemoteDir("isSelected")
-            if !funcExist && !this.__remoteFunc('isSelected', true) {
-                if !funcExist && ImageSearch(&x3, &y3, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") { ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+            switch funcExist {
+                case false:
+                    if !funcExist && ImageSearch(&x3, &y3, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") { ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                     delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                     this().__fxPanel()
                     if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y1: effCtrlNN.y + effCtrlNN.height},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
-                        block.Off() ;just incase
+                        block.Off()
+                        Notify.Show(, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
                 }
+                case true:
+                    if !this.__remoteFunc('isSelected', true) {
+                        block.Off()
+                        Notify.Show(, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                        return false
+                    }
+
             }
         } catch {
             block.Off()
-            errorLog(UnsetError("ClassNN wasn't given a value", -1),, 1)
+            errorLog(UnsetError("ClassNN wasn't given a value", -1))
+            Notify.Show(, "ClassNN wasn't given a value",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return
         }
         sleep 100
-        if IsSet(premUIAEl)
-            effCtrlNN.uiaVar.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
-        else
-            this.__checkTimelineFocus()
+        this.__checkTimelineFocus()
         sleep 100
         SendInput(KSA.gainAdjust)
         if !WinWait("Audio Gain",, 3) {
-            tool.Cust("Waiting for gain window timed out")
+            errorLog(TimeoutError("Waiting for gain window timed out"),, true)
             block.Off()
             return false
         }

@@ -15,6 +15,7 @@
 
 ⚠️ `prem {`
 - ✅ Fixed `save()` not properly determining if `Premiere` may be busy
+- ✅ Fixed `gain()` attempting to continue even if a clip is not selected
 - ✏️ Added `changeDupeFrameMarkers()`
 
 📍 `changeLabel()`
