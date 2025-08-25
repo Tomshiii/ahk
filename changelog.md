@@ -6,7 +6,7 @@
 - ✅ Fixed `keys.allWait()` stopping a hotkey too early
 - ✅ Fixed `getHotkeys()` incorrectly returning boolean `false` in some circumstances
 - 📋 `premUIA_Values {` will now check for stuck keys after completion 
-- 📋 `yt-dlp().download()` now accepts parameter `cookies`
+- 📋 `ytdlp().download()` now accepts parameter `cookies`
 
 ⚠️ `getHotkeysArr()`
 - ✅ Fixed function returning <kbd><!</kbd> as `<` & `!` instead of as one hotkey
@@ -32,6 +32,7 @@
 
 ## Other Changes
 - ✅ Fixed `backupProj.ahk` operating on the incorrect folder if a Premiere project is open, but another project is selected
+- ✅ Fixed `zip prem proj.ahk` not copying extra directories the user agrees to copying
 - ✏️ Added `replaceAndReset.ahk` `PremiereRemote` script
 
 ⚠️ `mult-dl.ahk`
