@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/08/20
- * @version 2.1.39
+ * @date 2025/08/25
+ * @version 2.1.40
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -234,9 +234,17 @@ class adobeAutoSave extends count {
     __checkIdle() {
         if this.idleAttempt = true
             return
-        loop 5 {
+        loopTotal := 5
+        loop loopTotal {
+            __destroyNotify() {
+                if Notify.Exist("delay")
+                    Notify.Destroy("delay", true)
+                if Notify.Exist("nextAttempt")
+                    __waitAndCheckAttempt()
+            }
             if this.resetingSave = true || WinExist("Save Project") {
                 this.resetingSave := true
+                __destroyNotify()
                 break
             }
             ;// if the user has interacted with the keyboard recently
@@ -247,15 +255,56 @@ class adobeAutoSave extends count {
                 || this.__checkRClick() {
                 if A_Index > 1 && this.beep = true
                     this.__playBeep()
-                errorLog(Error(A_ScriptName " tried to save but you interacted with the keyboard/mouse in the last 0.5s autosave will try again in 2.5s"),, {time: 2.0})
-                sleep 2500
-                continue
+                if !Notify.Exist("delay") {
+                    Notify.Show(A_ScriptName, "Script tried to save but the user interacted with the keyboard/mouse in the last 0.5s.`nPlease wait for the next save attempt:", 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 hide=Fade@250 maxW=400 tag=delay')
+                }
+
+                __waitAndCheckAttempt() {
+                    loop 3 {
+                        sleep 75
+                        if !Notify.Exist("nextAttempt")
+                            break
+                    }
+                    if Notify.Exist("nextAttempt")
+                        Notify.Destroy(Notify["nextAttempt"], true)
+                }
+                __doAttemptNotify(*) {
+                    nextAttempt := Notify.Show("Next Attempt:",, 'iconi',,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-3000 tag=nextAttempt')
+                    loop 188 {
+                        if nextAttempt["prog"].value >= 3000
+                            break
+                        ;// sleep isn't accurate so we add a little extra to compensate
+                        nextAttempt["prog"].value += 20
+                        sleep 15
+                    }
+                    if nextAttempt["prog"].value != 3000 {
+                        nextAttempt["prog"].value := 3000
+                        sleep 15
+                    }
+                    try Notify.Destroy(nextAttempt["hwnd"], true)
+                    SetTimer(, 0)
+                    return
+                }
+                ;// ---
+                if Notify.Exist("nextAttempt")
+                    __waitAndCheckAttempt()
+                if A_Index != loopTotal {
+                    SetTimer(__doAttemptNotify, -16)
+                    sleep 3000
+                    continue
+                }
+                errorLog(Error(A_ScriptName " tried to save but the user kept interacting with the keyboard/mouse"))
+                break
             }
             this.idleAttempt := true
+            __destroyNotify()
             break
         }
-        if this.resetingSave = true
+        if this.resetingSave = true {
+            __destroyNotify()
             return false
+        }
+        __destroyNotify()
     }
 
     /** @returns {Boolean} true/false on whether it can grab the active window */

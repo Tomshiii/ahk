@@ -43,3 +43,4 @@
 ⚠️ `autosave.ahk`
 - ✅ Fixed `__savePrem()` not properly determining when `Premiere` may be busy
 - 📋 `__reactivateWindow()` will no longer reactivate `Premiere` if it was the original window but `PremiereRemote` was used to save
+- 📋 Will now show visually when the next save attempt will occur
