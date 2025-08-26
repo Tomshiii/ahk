@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/08/25
- * @version 2.1.40
+ * @date 2025/08/26
+ * @version 2.1.42
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,6 +23,7 @@
 #Include <Functions\detect>
 #Include <Other\Notify\Notify>
 #Include <Other\WinEvent>
+#Include <Other\HighPrecisionSleep>
 ; }
 
 #SingleInstance force ;only one instance of this script may run at a time!
@@ -260,28 +261,25 @@ class adobeAutoSave extends count {
                 }
 
                 __waitAndCheckAttempt() {
-                    loop 3 {
-                        sleep 75
+                    loop 50 {
                         if !Notify.Exist("nextAttempt")
                             break
+                        HighPrecisionSleep(10)
                     }
                     if Notify.Exist("nextAttempt")
-                        Notify.Destroy(Notify["nextAttempt"], true)
+                        try Notify.Destroy("nextAttempt", true)
                 }
-                __doAttemptNotify(*) {
-                    nextAttempt := Notify.Show("Next Attempt:",, 'iconi',,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-3000 tag=nextAttempt')
-                    loop 188 {
-                        if nextAttempt["prog"].value >= 3000
-                            break
-                        ;// sleep isn't accurate so we add a little extra to compensate
-                        nextAttempt["prog"].value += 20
-                        sleep 15
+                __doAttemptNotify(index, loopTotal, *) {
+                    range := 2750 ;// ms
+                    nextAttempt := Notify.Show(index "/" loopTotal " - Next Attempt:",, 'iconi',,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' range ' Smooth tag=nextAttempt')
+                    loop range {
+                        nextAttempt["prog"].value := A_Index
+                        HighPrecisionSleep(1)
                     }
-                    if nextAttempt["prog"].value != 3000 {
-                        nextAttempt["prog"].value := 3000
-                        sleep 15
-                    }
-                    try Notify.Destroy(nextAttempt["hwnd"], true)
+                    if nextAttempt["prog"].value < range
+                        nextAttempt["prog"].value := range
+                    HighPrecisionSleep(500)
+                    try Notify.Destroy("nextAttempt", true)
                     SetTimer(, 0)
                     return
                 }
@@ -289,8 +287,9 @@ class adobeAutoSave extends count {
                 if Notify.Exist("nextAttempt")
                     __waitAndCheckAttempt()
                 if A_Index != loopTotal {
-                    SetTimer(__doAttemptNotify, -16)
+                    SetTimer(__doAttemptNotify.Bind(A_Index, loopTotal), -1)
                     sleep 3000
+                    __waitAndCheckAttempt()
                     continue
                 }
                 errorLog(Error(A_ScriptName " tried to save but the user kept interacting with the keyboard/mouse"))

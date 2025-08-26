@@ -26,14 +26,15 @@
 - ✅ Fixed function sometimes not deselecting clips
 - ✏️ Now accepts parameter `allExcept` to toggle all tracks *except* the desired track *or* all tracks beyond the `offset` value
 - 📋 Can now instantly change multiple tracks if the user places the activation hotkeys correctly. (see the [wiki for more info](<https://github.com/Tomshiii/ahk/wiki/Adobe-Functions#premtoggleenabled>))
-- 📋 Will now check the initial state of the selection and reattempt any failed toggles
+- 📋 Will now check the initial state of the selection and reattempt a failed toggle
 > [!Caution]
 > This function requires updated `PremiereRemote` functions.
 
 ## Other Changes
-- ✅ Fixed `backupProj.ahk` operating on the incorrect folder if a Premiere project is open, but another project is selected
+- ✅ Fixed `backupProj.ahk` operating on the incorrect folder if; a Premiere project is open, but another project is selected
 - ✅ Fixed `zip prem proj.ahk` not copying extra directories the user agrees to copying
 - ✏️ Added `replaceAndReset.ahk` `PremiereRemote` script
+- ✏️ Added `HighPrecisionSleep` by [thqby](<https://github.com/thqby/ahk2_lib/blob/master/HighPrecisionSleep.ahk>)
 
 ⚠️ `mult-dl.ahk`
 - ✏️ Added new icon

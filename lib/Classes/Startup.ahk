@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/08/07
- * @version 1.7.71
+ * @date 2025/08/26
+ * @version 1.7.72
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1010,8 +1010,12 @@ class Startup {
             name: "Icons",                           url: "https://github.com/XMCQCX/NotifyClass-NotifyCreator/raw/refs/heads/main/Icons.dll",
             scriptPos: ptf.lib "\Other\Notify",      ext: ".dll"
         }
+        HighPrecision := {
+            name: "HighPrecisionSleep",              url: "https://raw.githubusercontent.com/thqby/ahk2_lib/refs/heads/master/HighPrecisionSleep.ahk",
+            scriptPos: ptf.lib "\Other",             ext: "unset"
+        }
 
-        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator, this.NotifyIcons]
+        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator, this.NotifyIcons, this.HighPrecision]
         name        := []
         url         := []
         scriptPos   := []
