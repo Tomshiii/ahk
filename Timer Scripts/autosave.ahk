@@ -2,7 +2,7 @@
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
  * @date 2025/08/26
- * @version 2.1.42
+ * @version 2.1.43
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -67,8 +67,8 @@ class adobeAutoSave extends count {
             this.premUIA := premUIA_Values()
             ;// attempt to grab user settings
             this.UserSettings := UserPref()
-            this.ms   := (this.UserSettings.autosave_MIN * 60000)
-            this.beep := this.UserSettings.autosave_beep
+            this.ms              := (this.UserSettings.autosave_MIN * 60000)
+            this.beep            := this.UserSettings.autosave_beep
             this.checkMouse      := this.UserSettings.autosave_check_mouse
             this.saveOverride    := this.UserSettings.autosave_save_override
             this.alwaysSave      := this.UserSettings.autosave_always_save
@@ -270,7 +270,7 @@ class adobeAutoSave extends count {
                         try Notify.Destroy("nextAttempt", true)
                 }
                 __doAttemptNotify(index, loopTotal, *) {
-                    range := 2750 ;// ms
+                    range := 1500 ;// ms (500ms extra is waited afterwards)
                     nextAttempt := Notify.Show(index "/" loopTotal " - Next Attempt:",, 'iconi',,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' range ' Smooth tag=nextAttempt')
                     loop range {
                         nextAttempt["prog"].value := A_Index
