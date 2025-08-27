@@ -88,7 +88,7 @@ Enter::
 ` & 6::
 ` & 7::
 ` & 8::
-` & 9::prem.gain("-" SubStr(A_ThisHotkey, -1, 1))
+` & 9::prem.gain(SubStr(A_ThisHotkey, -1, 1))
 <#1::
 <#2::
 <#3::
@@ -97,7 +97,7 @@ Enter::
 <#6::
 <#7::
 <#8::
-<#9::prem.gain(SubStr(A_ThisHotkey, -1, 1))
+<#9::prem.gain("-" SubStr(A_ThisHotkey, -1, 1))
 
 
 

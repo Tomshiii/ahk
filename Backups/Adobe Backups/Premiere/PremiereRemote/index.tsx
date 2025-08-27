@@ -113,6 +113,10 @@ export const host = {
     Utils.movePlayhead(subtract, parseInt(seconds));
   },
 
+  movePlayheadFrames: function(subtract: string, frames: string) {
+    Utils.movePlayheadFrames(subtract, parseInt(frames));
+  },
+
   moveClip: function (seconds: string) {
     Utils.moveClip(parseInt(seconds));
   },

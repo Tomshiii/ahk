@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/22
- * @version 2.2.48
+ * @date 2025/08/27
+ * @version 2.2.49
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2587,6 +2587,11 @@ class Prem {
             errorLog(MethodError('This function requires PremiereRemote functionality', -1))
             return
         }
+        if !this.__checkPremRemoteFunc('isSelected') || !this.__checkPremRemoteFunc('movePlayheadFrames') || !this.__checkPremRemoteFunc('isClipEnabled') || !this.__checkPremRemoteFunc('toggleEnabled') {
+            blocker.Off()
+            errorLog(MethodError('This function requires additional PremiereRemote functions for proper functionality', -1))
+            return
+        }
 
         ;// prem is dumb and sometimes ignores inputs if you're too fast
         if this.__remoteFunc('isSelected', true) {
@@ -2605,6 +2610,11 @@ class Prem {
         SendInput(ksa.selectionPrem)
         sleep 16
         origMouseCords := obj.MousePos()
+        movedPlayhead  := false
+        if PixelGetColor(origMouseCords.x, origMouseCords.y) = this.playhead {
+            this.__remoteFunc('movePlayheadFrames',, "subtract=true", "frames=3")
+            movedPlayhead := true
+        }
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
             blocker.Off()
@@ -2734,7 +2744,9 @@ class Prem {
                 }
                 __doToggle()
         }
-
+        if movedPlayhead = true {
+            this.__remoteFunc('movePlayheadFrames',, "subtract=false", "frames=3")
+        }
         MouseMove(origMouseCords.x, origMouseCords.y, 0)
         sleep 25
         if this.__remoteFunc('isSelected', true)

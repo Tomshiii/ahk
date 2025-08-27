@@ -47,6 +47,17 @@ export class Utils {
       }
     }
 
+    static movePlayheadFrames(subtract: string, frames: number) {
+      const currentSequence = app.project.activeSequence;
+      const timebase = parseInt(currentSequence.timebase)
+      if(subtract == "false") {
+        var newPlayhead = parseInt(currentSequence.getPlayerPosition().ticks) + (timebase*frames);
+      } else {
+        var newPlayhead = parseInt(currentSequence.getPlayerPosition().ticks) - (timebase*frames);
+      }
+      currentSequence.setPlayerPosition(String(newPlayhead));
+    }
+
     static movePlayhead(subtract: string, seconds: number) {
       const currentSequence = app.project.activeSequence;
       if(subtract == "false") {

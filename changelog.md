@@ -26,6 +26,7 @@
 - ✅ Fixed function sometimes not deselecting clips
 - ✏️ Now accepts parameter `allExcept` to toggle all tracks *except* the desired track *or* all tracks beyond the `offset` value
 - 📋 Can now instantly change multiple tracks if the user places the activation hotkeys correctly. (see the [wiki for more info](<https://github.com/Tomshiii/ahk/wiki/Adobe-Functions#premtoggleenabled>))
+- 📋 Will now move the playhead out of the way if the cursor is hovering over it
 - 📋 Will now check the initial state of the selection and reattempt a failed toggle
 > [!Caution]
 > This function requires updated `PremiereRemote` functions.
