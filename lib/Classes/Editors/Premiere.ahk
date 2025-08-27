@@ -5,7 +5,7 @@
  * @premVer 25.3
  * @author tomshi
  * @date 2025/08/27
- * @version 2.2.49
+ * @version 2.2.50
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -488,7 +488,8 @@ class Prem {
         block.On()
         MouseGetPos(&xpos, &ypos)
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        if !IsSet(effCtrlNN) {
             block.Off()
             return
         }
@@ -631,7 +632,8 @@ class Prem {
         coord.client()
         block.On()
         premUIA := premUIA_Values()
-        if !progNN := this.__uiaCtrlPos(premUIA.programMon,,, false) {
+        try progNN := this.__uiaCtrlPos(premUIA.programMon,,, false)
+        if !IsSet(progNN) {
             errorLog(TargetError("Could not determine UIA object", -1))
             block.Off()
             return
@@ -662,7 +664,8 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         block.On()
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        if !IsSet(effCtrlNN) {
             block.Off()
             return
         }
@@ -838,7 +841,8 @@ class Prem {
         block.On()
         MouseGetPos(&xpos, &ypos)
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        if !IsSet(effCtrlNN) {
             block.Off()
             return
         }
@@ -947,7 +951,8 @@ class Prem {
         coord.client()
         block.On()
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        if !IsSet(effCtrlNN) {
             block.Off()
             return
         }
@@ -991,7 +996,8 @@ class Prem {
         coord.s()
         block.On()
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        if !IsSet(effCtrlNN) {
             block.Off()
             return
         }
@@ -1062,7 +1068,8 @@ class Prem {
             return -1
         }
         premUIA := premUIA_Values()
-        if !effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false) {
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        if !IsSet(effCtrlNN) {
             block.Off()
             return false
         }
@@ -1153,8 +1160,12 @@ class Prem {
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
 		if descernTitle || currTimelineStatus != 1 {
             premUIA    := premUIA_Values()
-            createEl   := this.__createUIAelement(true)
-            toolsNN    := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
+            try createEl   := this.__createUIAelement(true)
+            try toolsNN    := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
+            if !IsSet(createEl) || !IsSet(toolsNN) {
+                errorLog(TargetError('Creating UIA element failed'))
+                return
+            }
             textStatus := ImageSearch(&xx, &yy, toolsNN.x+200, toolsNN.y, toolsNN.x+200 + 200, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
 
             switch {
@@ -1393,7 +1404,8 @@ class Prem {
 
         this.__checkAlwaysUIA()
         premUIA := premUIA_Values()
-        if !ObjHasOwnProp(premUIA, 'timeline') || !timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
+        try timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
+        if !ObjHasOwnProp(premUIA, 'timeline') || !IsSet(timelineNN)
             return false
 
         ;// determine how much to account for the column left of the timeline based on premiere version
@@ -1430,7 +1442,8 @@ class Prem {
         sleep 50
         block.On()
         premUIA := premUIA_Values()
-        if !toolsNN := this.__uiaCtrlPos(premUIA.tools,,, false) {
+        try toolsNN := this.__uiaCtrlPos(premUIA.tools,,, false)
+        if !IsSet(toolsNN) {
             block.Off()
             return
         }
@@ -1485,8 +1498,12 @@ class Prem {
             return
         }
         premUIA := premUIA_Values()
-        createEl := this.__createUIAelement(false)
-        toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
+        try createEl := this.__createUIAelement(false)
+        try toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
+        if !IsSet(createEl) || !IsSet(toolsNN) {
+            errorLog(TargetError('Creating UIA element failed'))
+            return
+        }
         if !toolsNN || SubStr(createEl.activeElement, 1, StrLen(createEl.activeElement)-3) = premUIA.project ||
             ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png") {
             __sendOrig()
@@ -1843,7 +1860,8 @@ class Prem {
         sleep 50
         scrshtTitle := "Export Frame"
         premUIA := premUIA_Values()
-        if !progMonNN := this.__uiaCtrlPos(premUIA.programMon,,, false) {
+        try progMonNN := this.__uiaCtrlPos(premUIA.programMon,,, false)
+        if !IsSet(progMonNN) {
             block.Off()
             return
         }
@@ -2156,7 +2174,8 @@ class Prem {
         }
 
         premUIA   := premUIA_Values()
-        if !sourceMonNN := this.__uiaCtrlPos(premUIA.sourceMon,,, false) {
+        try sourceMonNN := this.__uiaCtrlPos(premUIA.sourceMon,,, false)
+        if !IsSet(sourceMonNN) {
             blocker.Off()
             return
         }
@@ -2587,7 +2606,9 @@ class Prem {
             errorLog(MethodError('This function requires PremiereRemote functionality', -1))
             return
         }
-        if !this.__checkPremRemoteFunc('isSelected') || !this.__checkPremRemoteFunc('movePlayheadFrames') || !this.__checkPremRemoteFunc('isClipEnabled') || !this.__checkPremRemoteFunc('toggleEnabled') {
+        if !this.__checkPremRemoteFunc('isSelected')         || !this.__checkPremRemoteFunc('movePlayheadFrames')
+            || !this.__checkPremRemoteFunc('isClipEnabled')  || !this.__checkPremRemoteFunc('toggleEnabled')
+            || !this.__checkPremRemoteFunc('getAudioTracks') || !this.__checkPremRemoteFunc('getVideoTracks') {
             blocker.Off()
             errorLog(MethodError('This function requires additional PremiereRemote functions for proper functionality', -1))
             return
@@ -2629,6 +2650,7 @@ class Prem {
             midDivY := false
             aboveOrBelow := (audOrVid = "vid") ? true : false
         }
+        maxTracks := (aboveOrBelow = true) ? this.__remoteFunc('getVideoTracks', true) : this.__remoteFunc('getAudioTracks', true)
         if !IsSet(splitHotkey) && track != "queue" && track = A_ThisHotkey && (StrLen(A_ThisHotkey) > 1) && !IsInteger(A_ThisHotkey) {
             splitHotkey := getHotkeysArr()
             if !IsInteger(GetKeyName(splitHotkey[splitHotkey.Length])) {
@@ -2652,7 +2674,7 @@ class Prem {
             }
         }
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
-        if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud) {
+        if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, maxTracks-offset) {
             blocker.Off()
             errorLog(UnsetError("Couldn't determine layers"))
             return

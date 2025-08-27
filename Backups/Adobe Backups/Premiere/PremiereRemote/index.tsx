@@ -137,6 +137,14 @@ export const host = {
     return Utils.isClipEnabled();
   },
 
+  getAudioTracks: function() {
+    return Utils.getAudioTracks();
+  },
+
+  getVideoTracks: function() {
+    return Utils.getVideoTracks();
+  },
+
   closeActiveSequence: function() {
     const activeSequence = app.project.activeSequence;
 

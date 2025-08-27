@@ -244,4 +244,18 @@ export class Utils {
       }
       return false;
     }
+
+    static getAudioTracks() {
+      var activeSequence = app.project.activeSequence;
+      var audioTracks = activeSequence.audioTracks;
+      var trackNum = String(audioTracks.numTracks)
+      return trackNum
+    }
+
+    static getVideoTracks() {
+      var activeSequence = app.project.activeSequence;
+      var videoTracks = activeSequence.videoTracks;
+      var trackNum = String(videoTracks.numTracks)
+      return trackNum
+    }
   }

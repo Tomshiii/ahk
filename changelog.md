@@ -16,6 +16,7 @@
 ⚠️ `prem {`
 - ✅ Fixed `save()` not properly determining if `Premiere` may be busy
 - ✅ Fixed `gain()` attempting to continue even if a clip is not selected
+- ✅ Fixed failed attempts to create a UIA object causing the script to throw
 - ✏️ Added `changeDupeFrameMarkers()`
 
 📍 `changeLabel()`
@@ -28,6 +29,7 @@
 - 📋 Can now instantly change multiple tracks if the user places the activation hotkeys correctly. (see the [wiki for more info](<https://github.com/Tomshiii/ahk/wiki/Adobe-Functions#premtoggleenabled>))
 - 📋 Will now move the playhead out of the way if the cursor is hovering over it
 - 📋 Will now check the initial state of the selection and reattempt a failed toggle
+- 📋 Will now use `PremiereRemote` to determine the max clip length to check for
 > [!Caution]
 > This function requires updated `PremiereRemote` functions.
 
@@ -46,3 +48,8 @@
 - ✅ Fixed `__savePrem()` not properly determining when `Premiere` may be busy
 - 📋 `__reactivateWindow()` will no longer reactivate `Premiere` if it was the original window but `PremiereRemote` was used to save
 - 📋 Will now show visually when the next save attempt will occur
+
+⚠️ `PremiereRemote`
+- ✏️ Added `isClipEnabled()`
+- ✏️ Added `movePlayheadFrames()`
+- ✏️ Added `getAudioTracks()`/`getVideoTracks()`

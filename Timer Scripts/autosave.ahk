@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/08/26
- * @version 2.1.43
+ * @date 2025/08/27
+ * @version 2.1.44
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -345,7 +345,8 @@ class adobeAutoSave extends count {
      */
     __checkPremPlayback() {
         if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
-            if !progMon := prem.__uiaCtrlPos(this.premUIA.programMon,,, false)
+            try progMon := prem.__uiaCtrlPos(this.premUIA.programMon,,, false)
+            if !IsSet(progMon)
                 return false
             this.programMonX1 := progMon.x+100, this.programMonX2 := progMon.x + progMon.width-100, this.programMonY1 := (progMon.y+progMon.height)*0.7,  this.programMonY2 := progMon.y + progMon.height + 150
         }
