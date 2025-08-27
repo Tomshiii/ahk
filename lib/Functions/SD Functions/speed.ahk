@@ -30,7 +30,7 @@ speed(amount)
         errorLog(e)
         return
     }
-    prem.__checkTimelineFocus() ;focuses the timeline
+    prem.__focusTimeline() ;focuses the timeline
     if !prem.checkNoClips(effCtrlNN, &x, &y) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)

@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.3
  * @author tomshi, taranVH
- * @date 2025/07/30
- * @version 2.3.19
+ * @date 2025/08/27
+ * @version 2.3.20
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -322,7 +322,7 @@ class rbuttonPrem {
 		this.__HotkeySet(["LButton", "XButton2"])
 
 		;// checks to see whether the timeline position has been located
-		if !prem.__checkTimeline() {
+		if !prem.__setTimelineValues() {
 			SendInput(this.sendHotkey)
 			this.__exit()
 		}
@@ -398,7 +398,7 @@ class rbuttonPrem {
 		;// focuses the timeline
 		try premEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
 		catch {
-			prem.__checkTimelineFocus()
+			prem.__focusTimeline()
 		}
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down

@@ -18,6 +18,8 @@
 - ✅ Fixed `gain()` attempting to continue even if a clip is not selected
 - ✅ Fixed failed attempts to create a UIA object causing the script to throw
 - ✏️ Added `changeDupeFrameMarkers()`
+- 📋 Renamed `__checkTimeline()` => `__setTimelineValues()`
+- 📋 Renamed `__checkTimelineFocus()` => `this.__focusTimeline()`
 
 📍 `changeLabel()`
 - ✅ Fixed function throwing if activated with `HotkeylessAHK` while `Premiere` was not the active window

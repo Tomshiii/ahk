@@ -12,7 +12,7 @@ premTimeline() {
 	block.On()
 	UserSettings := UserPref()
 	__fallback() {
-		if !prem.__checkTimeline(false) {
+		if !prem.__setTimelineValues(false) {
 			block.Off()
 			return
 		}
@@ -26,7 +26,7 @@ premTimeline() {
 			return
 		}
 	}
-	; prem.__checkTimelineFocus()
+	; prem.__focusTimeline()
 	block.Off()
 	Exit()
 }

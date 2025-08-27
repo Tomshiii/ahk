@@ -5,7 +5,7 @@
  * @premVer 25.3
  * @author tomshi
  * @date 2025/08/27
- * @version 2.2.50
+ * @version 2.2.51
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -534,7 +534,7 @@ class Prem {
                 MouseMove(eyeX, eyeY - "5")
                 SendInput("{Click Up}")
                 effectbox()
-                this.__checkTimelineFocus()
+                this.__focusTimeline()
                 MouseMove(xpos, ypos)
                 block.Off()
                 return
@@ -542,7 +542,7 @@ class Prem {
         MouseMove(xpos, ypos) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
         SendInput("{Click Up}")
         effectbox() ;this will delete whatever preset it had typed into the find box
-        this.__checkTimelineFocus()
+        this.__focusTimeline()
         block.Off()
         ToolTip("")
     }
@@ -669,7 +669,7 @@ class Prem {
             block.Off()
             return
         }
-        this.__checkTimelineFocus() ;focuses the timeline
+        this.__focusTimeline() ;focuses the timeline
         if !this.__checkPremRemoteDir("isSelected") {
             if !this.checkNoClips(effCtrlNN, &x, &y) {
                 block.Off()
@@ -790,7 +790,7 @@ class Prem {
         switch window {
             ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a multicam nest for whatever reason. Doing it this way however, is unfortunately slower.
             ;// hopefully one day adobe fixes this bug @link https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
-            ;// if you do not use the multiview window simply replace the below line with `this.__checkTimelineFocus()` or `premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()`
+            ;// if you do not use the multiview window simply replace the below line with `this.__focusTimeline()` or `premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()`
             case ksa.timelineWindow:
                 try {
                     premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
@@ -798,7 +798,7 @@ class Prem {
                 } catch {
                     SendEvent(ksa.effectControls)
                     Sleep(50)
-                    this.__checkTimelineFocus()
+                    this.__focusTimeline()
                 }
             case ksa.effectControls:
                 try {
@@ -846,7 +846,7 @@ class Prem {
             block.Off()
             return
         }
-        this.__checkTimelineFocus() ;focuses the timeline
+        this.__focusTimeline() ;focuses the timeline
         sleep 25
         if !this.__checkPremRemoteDir("isSelected") {
             if !this.checkNoClips(effCtrlNN, &x, &y) {
@@ -956,7 +956,7 @@ class Prem {
             block.Off()
             return
         }
-        this.__checkTimelineFocus() ;focuses the timeline
+        this.__focusTimeline() ;focuses the timeline
         if !this.__checkPremRemoteDir("isSelected") {
             if !this.checkNoClips(effCtrlNN, &x, &y) {
                 block.Off()
@@ -1001,7 +1001,7 @@ class Prem {
             block.Off()
             return
         }
-        this.__checkTimelineFocus()
+        this.__focusTimeline()
         if !this.__checkPremRemoteDir("isSelected") {
             if !this.checkNoClips(effCtrlNN, &x, &y) {
                 block.Off()
@@ -1102,7 +1102,7 @@ class Prem {
             return
         }
         sleep 100
-        this.__checkTimelineFocus()
+        this.__focusTimeline()
         sleep 100
         SendInput(KSA.gainAdjust)
         if !WinWait("Audio Gain",, 3) {
@@ -1136,7 +1136,7 @@ class Prem {
         }
 
         if this.timelineVals = false {
-            this.__checkTimeline()
+            this.__setTimelineValues()
             return
         }
         if !this.__checkPremRemoteDir('isSelected') {
@@ -1223,7 +1223,7 @@ class Prem {
         block.On()
         ;// otherwise we proceed
         if needsTimelineFocus = true
-            this.__checkTimelineFocus()
+            this.__focusTimeline()
         if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels")
             this.gain(which sendGain)
         else {
@@ -1238,8 +1238,8 @@ class Prem {
         block.Off()
     }
 
-    /** This function checks the state of an internal variable to determine if the user wishes for the timeline to be specifically focused. If they do, it will then check to see if the timeline is already focused by calling `prem.timelineFocusStatus()` */
-	static __checkTimelineFocus() {
+    /** This function will determine if the timeline is already focused or not. If it isn't, it will focus it. */
+	static __focusTimeline() {
         check := this.timelineFocusStatus()
         if check != false
             return
@@ -1272,7 +1272,7 @@ class Prem {
 
         coordObj := obj.MousePos()
         ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
-        if !this.__checkTimeline() {
+        if !this.__setTimelineValues() {
             return
         }
 
@@ -1312,7 +1312,7 @@ class Prem {
                     sleep 400 ;// if you don't sleep here premiere will not properly let go of lbutton until the timer fires up to 400ms later
                 }
                 else
-                    this.__checkTimelineFocus()
+                    this.__focusTimeline()
             }
             SendInput(premtool "{LButton Down}")
             if A_ThisHotkey = KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
@@ -1330,7 +1330,7 @@ class Prem {
      * @returns {Trilean} true/false/-1. `-1` indicates that the timeline coordinates could not be determined.
      */
     static timelineFocusStatus() {
-        if !this.__checkTimeline()
+        if !this.__setTimelineValues()
             return -1
         origcoord := A_CoordModePixel, returnCoord() => A_CoordModePixel := origcoord
         coord.client(, false)
@@ -1564,7 +1564,7 @@ class Prem {
     static __waitForTimeline(timeout := 5) {
         loop timeout {
             if this.timelineFocusStatus() != true {
-                this.__checkTimelineFocus()
+                this.__focusTimeline()
                 sleep 1000
                 continue
             }
@@ -1578,7 +1578,7 @@ class Prem {
      * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values
      * @returns {Boolean} if the timeline cannot be determined, returns `false`. Else returns `true`
      */
-	static __checkTimeline(tools := true) {
+	static __setTimelineValues(tools := true) {
 		if !this.__checkTimelineValues() {
 			if !this.getTimeline(tools)
 				return false
@@ -1607,7 +1607,7 @@ class Prem {
      */
     static accelScroll(altAmount := 3, scrollAmount := 5) {
         SetStoreCapsLockMode(true)
-        if !this.__checkTimeline()
+        if !this.__setTimelineValues()
 			return
         origMouse := obj.MousePos()
         withinTimeline := this.__checkCoords(origMouse)
@@ -1709,7 +1709,7 @@ class Prem {
 		origMouse := obj.MousePos()
         originalSpeed := this.scrollSpeed
         ;// checks to see whether the timeline position has been located
-        if !this.__checkTimeline() {
+        if !this.__setTimelineValues() {
             block.Off()
             keys.allWait()
 			return
@@ -1722,7 +1722,7 @@ class Prem {
 			return
         }
         ;// check whether the timeline is already in focus & focuses it if it isn't
-		this.__checkTimelineFocus()
+		this.__focusTimeline()
         ;// determines the position of the playhead
         if !playhead := this.searchPlayhead({x1: this.timelineXValue, y1: origMouse.y, x2: this.timelineXControl, y2: origMouse.y}) {
             block.Off()
@@ -1883,7 +1883,7 @@ class Prem {
         if IsSet(premUIAEl)
             premUIAEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
         else
-            this.__checkTimelineFocus()
+            this.__focusTimeline()
         sleep 50
         usePremRemote := false
         if !this.__checkPremRemoteDir('getProxyToggle') || !this.__checkPremRemoteFunc('setProxies') {
@@ -2065,7 +2065,7 @@ class Prem {
         if WinExist("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME") {
             WinClose("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME")
             sleep 200
-            this.__checkTimelineFocus()
+            this.__focusTimeline()
             return
         }
 		windows := Map(
@@ -2083,7 +2083,7 @@ class Prem {
         (inList = true && WinGetTitle("A") == activeWin) ? SendEvent("{Click " ((winObj.x+winObj.width)-19) A_Space winObj.y+16 "}") : (SendInput(onFailure), Exit())
 		MouseMove(mousePos.x, mousePos.y)
 		sleep 200
-		this.__checkTimelineFocus()
+		this.__focusTimeline()
 	}
 
     /**
@@ -2207,7 +2207,7 @@ class Prem {
     static flattenAndColour(colour) {
         keys.allWait()
         block.On()
-        this.__checkTimelineFocus()
+        this.__focusTimeline()
         delaySI(100, ksa.flattenMulti, colour)
         block.Off()
     }
@@ -2256,7 +2256,7 @@ class Prem {
         SetStoreCapsLockMode(true)
         InstallKeybdHook(true, true)
         capslockState := GetKeyState("CapsLock", "T")
-        if !this.__checkTimeline()
+        if !this.__setTimelineValues()
 			return
         storeHotkey := A_ThisHotkey
         blocker := block_ext()
@@ -2597,7 +2597,7 @@ class Prem {
         blocker.On(, "{LCtrl}{RCtrl}{LAlt}{RAlt}{LWin}{RWin}", "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}")
         SetDefaultMouseSpeed(0)
         coord.client()
-        if !this.__checkTimeline() {
+        if !this.__setTimelineValues() {
             blocker.Off()
             return
         }
@@ -2674,7 +2674,7 @@ class Prem {
             }
         }
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
-        if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, maxTracks-offset) {
+        if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, maxTracks) {
             blocker.Off()
             errorLog(UnsetError("Couldn't determine layers"))
             return
@@ -2814,7 +2814,7 @@ class Prem {
             return
         SetDefaultMouseSpeed(0)
         coord.client()
-        if !this.__checkTimeline()
+        if !this.__setTimelineValues()
 			return
 
         if IsInteger(SubStr(A_ThisHotkey, -1, 1))
@@ -2867,7 +2867,7 @@ class Prem {
     static soloVideo(soloInverseDisable := "solo") {
         SetDefaultMouseSpeed(0)
         coord.client()
-        if !this.__checkTimeline()
+        if !this.__setTimelineValues()
 			return
         if soloInverseDisable != "solo" && soloInverseDisable != "inverse" && soloInverseDisable != "disable" {
             ;// throw
@@ -2926,9 +2926,9 @@ class Prem {
     static changeDupeFrameMarkers(toggleHotkey) {
         if !WinActive(this.winTitle) ;// this is here in the event the user calls this func from `HotkeylessAHK` - otherwise it'll throw an error if prem isn't active
             return
-        if !this.__checkTimeline()
+        if !this.__setTimelineValues()
 			return
-        this.__checkTimelineFocus()
+        this.__focusTimeline()
         SendInput(toggleHotkey)
     }
 
@@ -2942,7 +2942,7 @@ class Prem {
     static changeLabel(labelHotkey) {
         if !WinActive(this.winTitle) ;// this is here in the event the user calls this func from `HotkeylessAHK` - otherwise it'll throw an error if prem isn't active
             return
-        if !this.__checkTimeline()
+        if !this.__setTimelineValues()
 			return
         premEl := this.__createUIAelement()
         premUIA := premUIA_Values()
@@ -2955,7 +2955,7 @@ class Prem {
             errorLog(MethodError('This function requires ``PremiereRemote`` to adjust labels on the timeline', -1),, true)
             return
         }
-        this.__checkTimelineFocus()
+        this.__focusTimeline()
         if !this.__remoteFunc('isSelected', true)
             return
         SendInput(labelHotkey)

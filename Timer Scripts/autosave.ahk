@@ -2,7 +2,7 @@
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
  * @date 2025/08/27
- * @version 2.1.44
+ * @version 2.1.45
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -376,11 +376,11 @@ class adobeAutoSave extends count {
      * @param {Boolean} needFocus pass into the function whether it needs to initially check for timeline focus. This is usually done by checking the original active panel against the user's saved UIA timeline value. If they match, pass `false` into this function
      */
     __fallback(needFocus := true) {
-        if !prem.__checkTimeline()
+        if !prem.__setTimelineValues()
             return
         sleep 100
         if needFocus = true {
-            prem.__checkTimelineFocus()
+            prem.__focusTimeline()
             sleep 250
         }
         SendEvent(KSA.playStop)
@@ -388,14 +388,14 @@ class adobeAutoSave extends count {
         loop 3 {
             ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
             if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
-                prem.__checkTimelineFocus()
+                prem.__focusTimeline()
                 sleep 1500
                 SendEvent(KSA.playStop)
                 continue
             }
             return
         }
-        prem.__checkTimelineFocus()
+        prem.__focusTimeline()
     }
 
     /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
