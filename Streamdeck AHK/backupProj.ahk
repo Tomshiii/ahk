@@ -44,29 +44,41 @@ if nonFootage.Length >= 1 {
 }
 
 ;// folders to backup
-backFolders := ["AC Footage", "Adobe After Effects Auto-Save", "Adobe After Effects Auto-Save  (Beta)", "Adobe Premiere Pro Auto-Save", "Adobe Premiere Pro Auto-Save (Beta)", "Motion Graphics Template Media", "Premiere Composer Files"]
+autoSaves := ["Adobe After Effects Auto-Save", "Adobe After Effects Auto-Save (Beta)", "Adobe Premiere Pro Auto-Save", "Adobe Premiere Pro Auto-Save (Beta)"]
+backFolders := ["AC Footage", "Motion Graphics Template Media", "Premiere Composer Files"]
 
 rootDir := SubStr(folder := WinGet.pathU(projectFolder "\..\"), -1, 1) = "\" ? SubStr(folder, 1, StrLen(folder)-1) : folder
 proj := obj.SplitPath(rootDir)
 
 __doBackup(backupFolder, additionalDir) {
     ;// creating necessary destination folders
-    if !DirExist(backupFolder "\" proj.Name)
-        DirCreate(backupFolder "\" proj.Name)
+    __existCreate(dir) {
+        if !DirExist(dir)
+            DirCreate(dir)
+    }
+    __existCreate(backupFolder "\" proj.Name)
     backupFolder := backupFolder "\" proj.Name
-    if !DirExist(backupFolder "\_Additional Assets\videos")
-        DirCreate(backupFolder "\_Additional Assets\videos")
-    if !DirExist(backupFolder "\_Additional Assets\audio\music")
-        DirCreate(backupFolder "\_Additional Assets\audio\music")
-    if !DirExist(backupFolder "\_Additional Assets\audio\sfx")
-        DirCreate(backupFolder "\_Additional Assets\audio\sfx")
-    if !DirExist(backupFolder "\" A_YYYY "-" A_MM "-" A_DD)
-        DirCreate(backupFolder "\" A_YYYY "-" A_MM "-" A_DD)
+    __existCreate(backupFolder "\_Additional Assets\auto save")
+
+    __existCreate(backupFolder "\_Additional Assets\videos")
+    __existCreate(backupFolder "\_Additional Assets\audio\music")
+    __existCreate(backupFolder "\_Additional Assets\audio\sfx")
+    __existCreate(backupFolder "\" A_YYYY "-" A_MM "-" A_DD)
 
 
     ;// copying project
     loop files projectFolder "\*", 'F' {
         try FileCopy(A_LoopFileFullPath, backupFolder "\" A_YYYY "-" A_MM "-" A_DD "\*.*", true)
+    }
+
+    for v in autoSaves {
+        __existCreate(backupFolder "\_Additional Assets\auto save\" v)
+        if !DirExist(projectFolder "\" v)
+            continue
+        loop files projectFolder "\" v "\*", "F" {
+            if !FileExist(backupFolder "\_Additional Assets\auto save\" v "\" A_LoopFileName)
+                FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\auto save\" v "\" A_LoopFileName, false)
+        }
     }
 
     for _, v in backFolders {
