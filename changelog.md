@@ -21,7 +21,7 @@
 - ✏️ Added `changeDupeFrameMarkers()`
 - ✏️ Added `isEditTabActive()`
 - 📋 Renamed `__checkTimeline()` => `__setTimelineValues()`
-- 📋 Renamed `__checkTimelineFocus()` => `this.__focusTimeline()`
+- 📋 Renamed `__checkTimelineFocus()` => `__focusTimeline()`
 
 📍 `changeLabel()`
 - ✅ Fixed function throwing if activated with `HotkeylessAHK` while `Premiere` was not the active window

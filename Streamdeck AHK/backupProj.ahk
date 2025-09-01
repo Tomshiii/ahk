@@ -35,11 +35,30 @@ loop files videosFolder "\*", "D" {
         nonFootage.Push(A_LoopFileName)
 }
 if nonFootage.Length >= 1 {
-    loop {
-        userResponse := MsgBox("Would you like to backup an additional video folder?`n`n*note: Already backed up files will NOT be overriden.`nThis function also assumes the selected directory is in the VIDEOS folder.", "Additional Video Folders?", "292")
-        if (userResponse != "Yes")
-            break
-        additionalDir.Push(FileSelect("D3", videosFolder))
+    extraTitle := "Backup Extra Directories"
+    extraGUI := tomshiBasic(,, "+resize +MinSize200x150", extraTitle)
+    extraGUI.AddText("Section", "Select the video directories you wish to`nadditionally backup.")
+    bottomY := ""
+    for v in nonFootage {
+        xpos := (Mod(A_Index, 9) != 0) ? "xs" : "xs+150" " ys Section"
+        onFirst := (A_Index = 1) ? "Section" : ""
+        extraGUI.AddCheckbox(xpos " v" StrReplace(v, A_Space, "_") " " onFirst, " \" v)
+        if xpos != "xs"
+            bottomY := "v" StrReplace(v, A_Space, "_")
+    }
+
+    extraGUI.AddButton("xs y+25", "Backup").OnEvent("Click", __doBackupButt)
+    extraGUI.AddButton("x+5", "Ignore All").OnEvent("Click", (*) => extraGUI.Destroy())
+    extraGUI.Show()
+    extraGUI.Opt("-Resize")
+    WinWaitClose(extraTitle)
+    __doBackupButt(*) {
+        NamedCtrlValues := extraGUI.Submit()
+        for k, v in NamedCtrlValues.OwnProps() {
+            if !v
+                continue
+            additionalDir.Push(videosFolder "\" k)
+        }
     }
 }
 
