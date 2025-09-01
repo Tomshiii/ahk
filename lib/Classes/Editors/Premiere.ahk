@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/08/27
- * @version 2.2.51
+ * @date 2025/09/01
+ * @version 2.2.52
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,6 +34,7 @@
 #Include <Functions\loadXML>
 #Include <Functions\change_msgButton>
 #Include <Other\Notify\Notify>
+#Include <Other\ShinsImageScanClass>
 ; }
 
 class Prem {
@@ -125,6 +126,9 @@ class Prem {
     static timelineXControl := 0
     static timelineYControl := 0
     static focusColour      := 0x4096F3
+    static editTabX         := 154
+    static editTabY         := 35
+    static editTabCol       := 0xD0D0D0
 
     ;// rbuttonPrem
     static RClickIsActive      := false
@@ -165,6 +169,7 @@ class Prem {
 
     /** Sets required class values for the user's premiere theme. Versions greater than the Spectrum UI update will have their theme determined automatically based off their premiere settings file */
     static __determineTheme() {
+        ;// timeline colours + themes
         switch {
             ;// spectrum ui
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
@@ -221,6 +226,14 @@ class Prem {
                 }
                 this.theme := this.defaultTheme
                 this.__setTimelineCol("oldUI", this.theme)
+        }
+
+        ;// edit tab
+        switch  {
+            ;// spectrum ui
+            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
+                editTabX := 154, editTabY := 35
+                editTabCol := 0xD0D0D0
         }
     }
 
@@ -380,6 +393,21 @@ class Prem {
     }
 
     /**
+     * Checks the active Premiere window to see whether the `Edit` tab is currently active
+     * @returns {Boolean}
+     */
+    static isEditTabActive() {
+        if !WinExist(this.exeTitle) {
+            ;// throw
+            errorLog(TargetError("Premiere is currently not open."),,, true)
+            return
+        }
+        gettitle := WinGet.PremName()
+        scan := ShinsImageScanClass(gettitle.winTitle)
+        return (scan.PixelPosition(prem.editTabCol, prem.editTabX, prem.editTabY, 3))
+    }
+
+    /**
      * Calls a `PremiereRemote` function to directly save the current project. This function will also double check to ensure the active sequence does not change after the save attempt
      * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close
      * @param {Integer} [checkSeqTime=1000] the value you wish the function to sleep before checking if the active sequence was changed
@@ -401,7 +429,7 @@ class Prem {
             return
         }
         procName := WinGetProcessName(premWindow.winTitle), procClass := WinGetClass(premWindow.wintitle)
-        if continueOnBusy = false && (procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (procClass != "Premiere Pro" && procClass != "Premiere Pro (Beta)")
+        if continueOnBusy = false && ((procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (procClass != "Premiere Pro" && procClass != "Premiere Pro (Beta)")) || this.isEditTabActive() = false
             return "busy"
         if !this.__checkPremRemoteDir("saveProj")
             return false

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/08/27
- * @version 2.1.45
+ * @date 2025/09/01
+ * @version 2.1.46
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -495,6 +495,12 @@ class adobeAutoSave extends count {
             return
         }
 
+        if !prem.isEditTabActive() {
+            errorLog(TargetError("The Premiere 'Edit' tab is not currently selected, the save attempt was aborted", -1))
+            Notify.Show(, "The Premiere 'Edit' tab is not currently selected, the save attempt was aborted", 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            return
+        }
+
         ;// this should cover occurrences where another window is open within premiere
         if (currentProg := WinGet.ID() = prem.winTitle && ((name := WinGetTitle("A")) != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1))
@@ -583,7 +589,22 @@ class adobeAutoSave extends count {
             return
         }
 
-         ;// checking idle status
+        ;// getting window title/information
+        this.aeWindow := WinGet.AEName()
+        if !this.aeWindow || Type(this.aeWindow) != "Object" ||
+            ((this.aeWindow.winTitle = "" || !this.aeWindow.wintitle) &&
+            this.aeWindow.titleCheck = -1 && this.aeWindow.saveCheck = -1) {
+            errorLog(UnsetError("autosave.ahk was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
+            return
+        }
+
+        ;// if save NOT required, exit early
+        if !this.aeWindow.saveCheck {
+            Notify.Show(, 'AE save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            return
+        }
+
+        ;// checking idle status
         this.__checkIdle()
         if this.idleAttempt = false
             return
@@ -603,22 +624,6 @@ class adobeAutoSave extends count {
 
         ;// if AE ISN'T the active window, attempting to save it in the background will force it into the foreground which can be super disorienting/annoying
         ;// so we have to work around that
-
-        ;// getting window title/information
-        this.aeWindow := WinGet.AEName()
-        if !this.aeWindow || Type(this.aeWindow) != "Object" ||
-            ((this.aeWindow.winTitle = "" || !this.aeWindow.wintitle) &&
-            this.aeWindow.titleCheck = -1 && this.aeWindow.saveCheck = -1) {
-            errorLog(UnsetError("autosave.ahk was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
-            return
-        }
-
-        ;// if save NOT required, exit early
-        if !this.aeWindow.saveCheck {
-            Notify.Show(, 'AE save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
-            ; tool.Cust("AE save not required, cancelling")
-            return
-        }
 
         try {
             checkStuck()

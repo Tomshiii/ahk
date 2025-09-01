@@ -45,7 +45,7 @@ if nonFootage.Length >= 1 {
 
 ;// folders to backup
 autoSaves := ["Adobe After Effects Auto-Save", "Adobe After Effects Auto-Save (Beta)", "Adobe Premiere Pro Auto-Save", "Adobe Premiere Pro Auto-Save (Beta)"]
-backFolders := ["AC Footage", "Motion Graphics Template Media", "Premiere Composer Files"]
+backFolders := ["Adobe Premiere Pro Audio Previews", "Adobe Premiere Pro Captured and Generated", "AC Footage", "Motion Graphics Template Media", "Premiere Composer Files"]
 
 rootDir := SubStr(folder := WinGet.pathU(projectFolder "\..\"), -1, 1) = "\" ? SubStr(folder, 1, StrLen(folder)-1) : folder
 proj := obj.SplitPath(rootDir)
@@ -59,6 +59,7 @@ __doBackup(backupFolder, additionalDir) {
     __existCreate(backupFolder "\" proj.Name)
     backupFolder := backupFolder "\" proj.Name
     __existCreate(backupFolder "\_Additional Assets\auto save")
+    __existCreate(backupFolder "\_Additional Assets\proj dirs")
 
     __existCreate(backupFolder "\_Additional Assets\videos")
     __existCreate(backupFolder "\_Additional Assets\audio\music")
@@ -72,17 +73,12 @@ __doBackup(backupFolder, additionalDir) {
     }
 
     for v in autoSaves {
-        __existCreate(backupFolder "\_Additional Assets\auto save\" v)
-        if !DirExist(projectFolder "\" v)
-            continue
-        loop files projectFolder "\" v "\*", "F" {
-            if !FileExist(backupFolder "\_Additional Assets\auto save\" v "\" A_LoopFileName)
-                FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\auto save\" v "\" A_LoopFileName, false)
-        }
+         if DirExist(projectFolder "\" v)
+            try cmd.run(,,, Format('Robocopy "{1}" "{2}" *.* /MIR /R:1', projectFolder "\" v, backupFolder "\_Additional Assets\auto save\" v),, "hide")
     }
-
-    for _, v in backFolders {
-        try DirCopy(projectFolder "\" v, backupFolder "\" A_YYYY "-" A_MM "-" A_DD "\" v, false)
+    for v in backFolders {
+        if DirExist(projectFolder "\" v)
+            try cmd.run(,,, Format('Robocopy "{1}" "{2}" *.* /MIR /R:1', projectFolder "\" v, backupFolder "\_Additional Assets\proj dirs\" v),, "hide")
     }
 
     loop files rootDir "\videos\*", 'F' {
@@ -107,7 +103,7 @@ __doBackup(backupFolder, additionalDir) {
 
     for v in additionalDir {
         SplitPath(v, &dirName)
-        try DirCopy(v, backupFolder "\_Additional Assets\videos\" dirName)
+        try cmd.run(,,, Format('Robocopy "{1}" "{2}" *.* /MIR /R:1', v, backupFolder "\_Additional Assets\videos\" dirName),, "hide")
     }
 }
 

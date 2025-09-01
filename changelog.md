@@ -5,6 +5,7 @@
 ## Functions
 - ✅ Fixed `keys.allWait()` stopping a hotkey too early
 - ✅ Fixed `getHotkeys()` incorrectly returning boolean `false` in some circumstances
+- ✅ Fixed `ffmpeg.isVideo()` throwing if the file does not exist
 - 📋 `premUIA_Values {` will now check for stuck keys after completion 
 - 📋 `ytdlp().download()` now accepts parameter `cookies`
 
@@ -18,6 +19,7 @@
 - ✅ Fixed `gain()` attempting to continue even if a clip is not selected
 - ✅ Fixed failed attempts to create a UIA object causing the script to throw
 - ✏️ Added `changeDupeFrameMarkers()`
+- ✏️ Added `isEditTabActive()`
 - 📋 Renamed `__checkTimeline()` => `__setTimelineValues()`
 - 📋 Renamed `__checkTimelineFocus()` => `this.__focusTimeline()`
 
@@ -40,16 +42,20 @@
 - ✅ Fixed `zip prem proj.ahk` not copying extra directories the user agrees to copying
 - ✏️ Added `replaceAndReset.ahk` `PremiereRemote` script
 - ✏️ Added `HighPrecisionSleep` by [thqby](<https://github.com/thqby/ahk2_lib/blob/master/HighPrecisionSleep.ahk>)
+- ✏️ Added `ShinsImageScanClass` by [Spawnova](<https://github.com/Spawnova/ShinsImageScanClass/blob/main/AHK%20V2/ShinsImageScanClass.ahk>)
 
 ⚠️ `mult-dl.ahk`
+- ✅ Fixed script throwing while attempting to download thumbnails
 - ✏️ Added new icon
 - 📋 Downloads will now simply default to `..\Downloads\tomshi`
 - 📋 Use of cookies can now be toggled
 
 ⚠️ `autosave.ahk`
 - ✅ Fixed `__savePrem()` not properly determining when `Premiere` may be busy
+- ✅ Fixed `__saveAE()` causing an idle check even if a save wasn't required
 - 📋 `__reactivateWindow()` will no longer reactivate `Premiere` if it was the original window but `PremiereRemote` was used to save
 - 📋 Will now show visually when the next save attempt will occur
+- 📋 Will now check if `Premiere` is on the edit tab and cancel the save attempt if it isn't
 
 ⚠️ `PremiereRemote`
 - ✏️ Added `isClipEnabled()`

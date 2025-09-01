@@ -32,3 +32,6 @@
 
 `boiler`
 `MsgBoxCreator.ahk` => : https://www.autohotkey.com/boards/viewtopic.php?t=78253
+
+`Spawnova`
+`ShinsImageScanClass` => : https://github.com/Spawnova/ShinsImageScanClass/blob/main/AHK%20V2/ShinsImageScanClass.ahk

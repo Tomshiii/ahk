@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/08/07
- * @version 1.1.7
+ * @date 2025/09/01
+ * @version 1.1.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -446,8 +446,11 @@ class ffmpeg {
     /**
      * determines if the given file is a video file or not
      * @param {String} path the full filepath of the file you wish to check
+     * @returns {Boolean}
      */
     isVideo(path) {
+        if !FileExist(path)
+            return false
         chkVid := cmd.result(Format('ffprobe -v error -select_streams v -show_entries stream=codec_type -of csv=p=0 "{1}"', path))
         if chkVid != "video" && !InStr(chkVid, "video")
             return false
@@ -455,12 +458,16 @@ class ffmpeg {
         chkResponse := StrSplit(chkDur, ["=", "`n"], '`r')
         response := Mip()
         for i, v in chkResponse {
-            if Mod(i, 2) = 0
+            if Mod(i, 2) = 0 || i = chkResponse.Length
                 continue
             response.Set(v, chkResponse[i+1])
         }
-        duration := response.get("duration")
-        nbframes := response.get("nb_frames")
+        try {
+            duration := response.get("duration")
+            nbframes := response.get("nb_frames")
+        } catch {
+            return false
+        }
         if ((duration = "N/A" || duration = "0" || duration = 0) || (duration < 1 && (nbframes = "N/A" || nbframes < 1)))
             return false
         return true
