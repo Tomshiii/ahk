@@ -6,6 +6,7 @@
 - ✅ Fixed `keys.allWait()` stopping a hotkey too early
 - ✅ Fixed `getHotkeys()` incorrectly returning boolean `false` in some circumstances
 - ✅ Fixed `ffmpeg.isVideo()` throwing if the file does not exist
+- ✅ Fixed `startup().trayMen()` throwing if the user tries to close `HotkeylessAHK` while it isn't open
 - 📋 `premUIA_Values {` will now check for stuck keys after completion 
 - 📋 `ytdlp().download()` now accepts parameter `cookies`
 

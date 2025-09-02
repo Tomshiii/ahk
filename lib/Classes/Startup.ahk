@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/09/01
- * @version 1.7.73
+ * @date 2025/09/02
+ * @version 1.7.74
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -879,16 +879,16 @@ class Startup {
         __enableHotkeyless() => (submenuHotkeyless.Disable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK"))
         __disableHotkeyless() => (submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Disable("Close HotkeylessAHK"), submenuHotkeyless.Disable("Reboot HotkeylessAHK"))
         switch {
-            case (WinExist("HotkeylessAHK.ahk")):
+            case (WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle)):
                 Notify.Show(, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
                 __enableHotkeyless()
-            case (!WinExist("HotkeylessAHK.ahk") && !FileExist(ptf['HotkeylessAHK'])):
+            case (!WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle) && !FileExist(ptf['HotkeylessAHK'])):
                 submenuHotkeyless.Disable("Open HotkeylessAHK")
                 submenuHotkeyless.Disable("Close HotkeylessAHK")
                 submenuHotkeyless.Disable("Reboot HotkeylessAHK")
-            case (!WinExist("HotkeylessAHK.ahk") && FileExist(ptf['HotkeylessAHK'])):
+            case (!WinExist("HotkeylessAHK.ahk",, browser.vscode.winTitle) && FileExist(ptf['HotkeylessAHK'])):
                 try RunWait(Run(ptf['HotkeylessAHK']))
-                if !WinWait("HotkeylessAHK.ahk",, 2) {
+                if !WinWait("HotkeylessAHK.ahk",, 2, browser.vscode.winTitle) {
                     Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
                     __disableHotkeyless()
                 }
@@ -929,7 +929,9 @@ class Startup {
             resetOrigDetect(getDet)
             switch closeOrOpen {
                 case "close":
-                        ProcessClose(WinGetPID("HotkeylessAHK.ahk",, browser.vscode.winTitle))
+                    if exists = false
+                        return
+                    ProcessClose(WinGetPID("HotkeylessAHK.ahk",, browser.vscode.winTitle))
                 case "open":
                     if exists = true
                         return
