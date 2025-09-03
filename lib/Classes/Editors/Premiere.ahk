@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/09/01
- * @version 2.2.52
+ * @date 2025/09/03
+ * @version 2.2.53
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -428,7 +428,11 @@ class Prem {
             errorLog(UnsetError("prem.save() was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
             return
         }
-        procName := WinGetProcessName(premWindow.winTitle), procClass := WinGetClass(premWindow.wintitle)
+        try procName := WinGetProcessName(premWindow.winTitle), procClass := WinGetClass(premWindow.wintitle)
+        catch {
+            ;// prem may have crashed
+            return false
+        }
         if continueOnBusy = false && ((procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (procClass != "Premiere Pro" && procClass != "Premiere Pro (Beta)")) || this.isEditTabActive() = false
             return "busy"
         if !this.__checkPremRemoteDir("saveProj")

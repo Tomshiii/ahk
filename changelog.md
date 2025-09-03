@@ -16,13 +16,16 @@
 - 📋 Will now return all hotkeys as `vk` values instead of a mix of `vk` and regular strings
 
 ⚠️ `prem {`
-- ✅ Fixed `save()` not properly determining if `Premiere` may be busy
 - ✅ Fixed `gain()` attempting to continue even if a clip is not selected
 - ✅ Fixed failed attempts to create a UIA object causing the script to throw
 - ✏️ Added `changeDupeFrameMarkers()`
 - ✏️ Added `isEditTabActive()`
 - 📋 Renamed `__checkTimeline()` => `__setTimelineValues()`
 - 📋 Renamed `__checkTimelineFocus()` => `__focusTimeline()`
+
+📍 `save()`
+- ✅ Fixed function not properly determining if `Premiere` may be busy
+- ✅ Fixed function throwing if it makes an attempt while `Premiere` has crashed
 
 📍 `changeLabel()`
 - ✅ Fixed function throwing if activated with `HotkeylessAHK` while `Premiere` was not the active window
