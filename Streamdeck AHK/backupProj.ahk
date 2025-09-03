@@ -35,6 +35,7 @@ loop files videosFolder "\*", "D" {
         nonFootage.Push(A_LoopFileName)
 }
 if nonFootage.Length >= 1 {
+    ignoreExit := false
     extraTitle := "Backup Extra Directories"
     extraGUI := tomshiBasic(,, "+resize +MinSize200x150", extraTitle)
     extraGUI.AddText("Section", "Select the video directories you wish to`nadditionally backup.")
@@ -47,18 +48,35 @@ if nonFootage.Length >= 1 {
             bottomY := "v" StrReplace(v, A_Space, "_")
     }
 
-    extraGUI.AddButton("xs y+25", "Backup").OnEvent("Click", __doBackupButt)
+    extraGUI.AddButton("xs y+25", "Backup").OnEvent("Click", __doBackupButt.Bind("backup"))
+    extraGUI.AddButton("x+5", "Ignore").OnEvent("Click", __doBackupButt.Bind("ignore"))
+    extraGUI.AddButton("xs y+5", "Backup All").OnEvent("Click", __doBackupButt.Bind("backupall"))
     extraGUI.AddButton("x+5", "Ignore All").OnEvent("Click", (*) => extraGUI.Destroy())
     extraGUI.Show()
+    extraGUI.OnEvent('Close', __determineExit)
     extraGUI.Opt("-Resize")
     WinWaitClose(extraTitle)
-    __doBackupButt(*) {
+    ignoreExit := true
+    __doBackupButt(which, *) {
         NamedCtrlValues := extraGUI.Submit()
         for k, v in NamedCtrlValues.OwnProps() {
-            if !v
-                continue
-            additionalDir.Push(videosFolder "\" k)
+            switch which {
+                case "backup":
+                    if !v
+                        continue
+                    additionalDir.Push(videosFolder "\" k)
+                case "ignore":
+                    if v
+                        continue
+                    additionalDir.Push(videosFolder "\" k)
+                case "backupall": additionalDir.Push(videosFolder "\" k)
+            }
         }
+    }
+    __determineExit(*) {
+        if ignoreExit
+            return
+        ExitApp()
     }
 }
 
