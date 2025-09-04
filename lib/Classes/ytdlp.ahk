@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/08/22
- * @version 1.0.31
+ * @date 2025/09/04
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -46,35 +46,6 @@ class ytdlp {
 
     /** generates a tooltip to alert the user the process has completed */
     __finished() => (this.doAlert = true) ? Notify.Show(, 'yt-dlp process has completed!', 'C:\Windows\System32\imageres.dll|icon56', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
-
-    /**
-     * checks the clipboard for a valid download link
-     * @param {Object} clip the clipboard you wish to check
-     * @param {Object} stored the stored clipboard
-     * @param {Varadic} formatVars variables to pass to the command
-     */
-    __checkClipboard(clip, stored, formatVars*) {
-        for v in this.links {
-            if InStr(clip, v) {
-                this.check := true
-                this.URL := clip
-                break
-            }
-            if stored != false && InStr(stored, v) {
-                this.URL := stored
-                this.checkClipState := "attempt"
-                return true
-            }
-        }
-        if !this.check && !this.checkClipState {
-                tool.Cust("Clipboard doesn't contain a downloadable link")
-                this.URL := clip ;// the user may still wish to attempt a download
-                return false
-            }
-        this.command := Format(this.defaultCommand, formatVars[1], formatVars[2], clip)
-        this.checkClipState := "run"
-        return true
-    }
 
     /**
      * Checks the desired filepath to see if a file of the desired name already exists
@@ -123,11 +94,10 @@ class ytdlp {
     /**
      * ## This function requires [yt-dlp](https://github.com/yt-dlp/yt-dlp) to be installed correctly on the users system
      * ### If this function is called more than once and before the previous instance is able to begin downloading, both instances may error out.
-     * This function will either downloaded the value passed into parameter `URL` or will attempt to read the user's clipboard in the event that parameter has not been set.
      *
-     * @param {String} [args=""] is any arguments you wish to pass to yt-dlp
-     * @param {String} [folder=A_ScriptDir] is the folder you wish the files to save. By default it's this scripts directory
-     * @param {String} [URL?] pass through a URL instead of using the user's clipboard
+     * @param {String} [args] is any arguments you wish to pass to yt-dlp
+     * @param {String} [folder] is the folder you wish the files to save. If not provided, it will default to `\Downloads\tomshi`
+     * @param {String} [URL] pass through a URL instead of using the user's clipboard
      * @param {Boolean} [openDirOnFinish=true] determines whether the destination directory will be opened once the download process is complete. Defaults to `true`
      * @param {String/boolean} [postArgs=this.defaultPostProcess] any cmdline args you wish to execute after the initial download. By default this process will determine the codec of the downloaded file and if it isn't `h264` or `h265` it will reencode the file to `h264`. *Please note:* If you pass custom arguments to this parameter the prementioned codec check will **no longer** occur. You may also pass `false` to prevent any post download execution.
      * @param {String} [cookies="--cookies-from-browser firefox"] determines whether to pass cookies to various yt-dlp commands. Generally either the default or `""` is recommended. Pulling cookies from chrome can be a lot more challenging
@@ -138,42 +108,37 @@ class ytdlp {
      * ;// yt-dlp -P "link\to\path" "URL"
      * ```
      */
-    download(args := "", folder := A_ScriptDir, URL?, openDirOnFinish := true, postArgs := this.defaultPostProcess, cookies := "--cookies-from-browser firefox") {
+    download(args, folder, URL, openDirOnFinish := true, postArgs := this.defaultPostProcess, cookies := "--cookies-from-browser firefox") {
         if (Type(args) != "string" || Type(folder) != "string") {
                 ;// throw
                 errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
             }
+        if !IsSet(folder) {
+            dlFolder := RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", EnvGet("USERPROFILE") "\Downloads")
+            if !DirExist(dlFolder "\tomshi")
+                DirCreate(dlFolder "\tomshi")
+            folder := dlFolder "\tomshi"
+        }
         check := false
         origFold := folder
         if (StrLen(folder) = 2 && SubStr(folder, 2, 1) = ":") || (StrLen(folder) = 3 && SubStr(folder, 2, 2) =":\")
             folder := SubStr(folder, 1, 1) ":\\"
         if !DirExist(folder) ;saftey check
             folder := A_ScriptDir
-        if !IsSet(URL) {
-            oldClip := clip.clear()
-            SendInput("^c")
-            sleep 300
-            if !this.__checkClipboard(A_Clipboard, oldClip.storedClip, args, folder) {
-                if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nClipboard: " A_Clipboard "`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No" {
-                    clip.returnClip(oldClip)
-                    return this.URL
-                }
+
+        ;// verify links
+        for v in this.links {
+            if InStr(URL, v) {
+                this.check := true
+                this.URL := URL
+                break
             }
         }
-        else {
-            for v in this.links {
-                if InStr(URL, v) {
-                    this.check := true
-                    this.URL := URL
-                    break
-                }
+        if !this.check {
+            if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No" {
+                return URL
             }
-            if !this.check {
-                if response := MsgBox("The clipboard may not contain a URL verified to work with yt-dlp.`n`nDo you wish to attempt the download anyway?", "Attempt Download?", "4 16 256 4096") = "No" {
-                    return URL
-                }
-                this.URL := URL
-            }
+            this.URL := URL
         }
 
         ;// checking if filename already exists
@@ -181,11 +146,12 @@ class ytdlp {
         try SDopt := SD_Opt()
         fileNameLengthLimit := IsSet(SDopt) ? SDopt.filenameLengthLimit : 50
         outputFileName := Format(this.defaultFilename, fileNameLengthLimit)
+        isAud := (args = this.defaultAudioCommand) ? true : false
         if args = this.defaultAudioCommand || args = this.defaultVideoCommand
             args := Format(args, "{}", cookies)
         nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" {3}', outputFileName, this.URL, cookies))
         SplitPath(nameOutput,,, &ext, &nameNoExt)
-        ext := (args != this.defaultAudioCommand) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
+        ext := (isAud = true) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
         checkPath1 := WinGet.pathU(folder "\" nameOutput)
         checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
         if FileExist(checkPath1) || FileExist(checkPath2) {
@@ -206,18 +172,12 @@ class ytdlp {
         Notify.Destroy(mNotifyGUI_Prog['hwnd'])
 
         this.currentName := nameNoExt "." ext
-
-        ;// building rest of command
-        if this.checkClipState = true {
-            this.command := Format(this.defaultCommand, args, folder, oldClip.storedClip)
-            clip.returnClip(oldClip)
-        }
         folderU := WinGet.pathU(origFold)
         folderU := (SubStr(folderU, -1, 1) = "\") ? SubStr(folderU, 1, StrLen(folderU)-1) : folderU
         this.command := Format(this.defaultCommand, args, folder, this.URL)
 
         ;// running command
-        (ext = "wav") ? path := cmd.result(this.command) : cmd.run(,,, this.command)
+        (isAud = true) ? path := cmd.result(this.command) : cmd.run(,,, this.command)
         if IsSet(path) && path != "" {
             SplitPath(path, &outname)
             this.currentName := outname
@@ -241,43 +201,7 @@ class ytdlp {
         }
         if openDirOnFinish = true
             switchTo.explorerHighlightFile(folder "\" nameNoExt "." ext)
-        if !IsSet(URL)
-            clip.returnClip(oldClip)
         return this.URL
-    }
-
-    /**
-     * This function determines what a script should do once it has downloaded a file from certain websites
-     * @param {String} url the url you downloaded
-     * @param {String} dir the directory you downloaded to
-     * @param {String} filename what you called the file when you downloaded it
-     * @param {Integer} index the current index value for the current filename, in the current directory
-     */
-    handleDownload(url, dir, filename, index) {
-        switch {
-            case InStr(url, "twitch.tv"): ytdlp().reencode(dir "\" filename index, getHTMLTitle(url))
-            case InStr(url, "tiktok.com"):
-                newName := SubStr(url, atSymbol := InStr(url, "@",, 1, 1), InStr(url, "/",, atSymbol, 1) - atSymbol)
-                getind := ytdlp().__getIndex(newName ".mp4", dir)
-                newIndex := (getind = 0 || getind = "") ? "" : getind
-                try FileMove(dir "\" filename index, dir "\" newName newIndex ".mp4", 1)
-                return
-            case InStr(url, "youtube.com"), InStr(url, "youtu.be"):
-                newName := getHTMLTitle(url)
-                ;// if yt-dlp needs to download an .mp4 as the highest qual video and a .webm as the highest qual audio, it'll merge them into a .mkv file
-                extension := FileExist(dir "\" filename ".mkv") ? ".mkv" : ".webm"
-                getind := ytdlp().__getIndex(newName extension, dir)
-                newIndex := (getind = 0 || getind = "") ? "" : getind
-                try FileMove(dir "\" filename index extension, dir "\" newName newIndex extension)
-                ytdlp().reencode(dir "\" newName newIndex extension, getHTMLTitle(url))
-                return
-            default:
-                newName := getHTMLTitle(url)
-                getind := ytdlp().__getIndex(newName, dir)
-                newIndex := (getind = 0 || getind = "") ? "" : getind
-                try FileMove(dir "\" filename index, dir "\" newName newIndex ".mp4")
-                return
-        }
     }
 
     __Delete() {

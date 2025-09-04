@@ -15,6 +15,14 @@
 - ✅ Fixed function being case sensitive when it shouldn't have been
 - 📋 Will now return all hotkeys as `vk` values instead of a mix of `vk` and regular strings
 
+⚠️ `ytdlp {`
+- ❌ Removed `handleDownload()` as it was unused
+
+📍 `download()`
+- ✅ Fixed function failing to download audio when `ytdlp.defaultAudioCommand` is passed
+- ❌ Removed functionality that checks the `Clipboard` for a URL
+- 📋 If parameter `folder` is not passed, will now default to `\Downloads\Tomshi`
+
 ⚠️ `prem {`
 - ✅ Fixed `gain()` attempting to continue even if a clip is not selected
 - ✅ Fixed failed attempts to create a UIA object causing the script to throw
