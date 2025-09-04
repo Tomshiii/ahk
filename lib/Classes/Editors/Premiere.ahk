@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.3
  * @author tomshi
- * @date 2025/09/03
- * @version 2.2.53
+ * @date 2025/09/04
+ * @version 2.2.54
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1517,7 +1517,8 @@ class Prem {
             }
         }
         title := WinGet.PremName()
-        if WinGetTitle("A") != title.winTitle {
+        CaretGetPos(&carx, &carY)
+        if WinGetTitle("A") != title.winTitle || CaretGetPos(&carx, &carY) {
             __sendOrig()
             return
         }

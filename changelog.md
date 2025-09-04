@@ -26,6 +26,7 @@
 ⚠️ `prem {`
 - ✅ Fixed `gain()` attempting to continue even if a clip is not selected
 - ✅ Fixed failed attempts to create a UIA object causing the script to throw
+- ✅ Fixed `zoomPreviewWindow()` firing while the user is typing
 - ✏️ Added `changeDupeFrameMarkers()`
 - ✏️ Added `isEditTabActive()`
 - 📋 Renamed `__checkTimeline()` => `__setTimelineValues()`
