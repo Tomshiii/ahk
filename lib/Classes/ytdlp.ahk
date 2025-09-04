@@ -38,7 +38,7 @@ class ytdlp {
     defaultCPU          := "-c:v libx264 -crf 21 -preset medium"
     defaultGPU          := "-c:v h264_nvenc -preset 18 -cq 19"
     defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav {2} --print after_move:filepath'
-    defaultFilename := "%(title).{1}s [%(id)s].%(ext)s"
+    defaultFilename := "%(title).50s [%(id)s].%(ext)s"
     command := ""
     check := false
     checkClipState := false
@@ -98,17 +98,12 @@ class ytdlp {
      * @param {String} [args] is any arguments you wish to pass to yt-dlp
      * @param {String} [folder] is the folder you wish the files to save. If not provided, it will default to `\Downloads\tomshi`
      * @param {String} [URL] pass through a URL instead of using the user's clipboard
+     * @param {String} [filename=this.defaultFileName] sets the filename of the downloaded file. Defaults to `this.defaultFilename`
      * @param {Boolean} [openDirOnFinish=true] determines whether the destination directory will be opened once the download process is complete. Defaults to `true`
      * @param {String/boolean} [postArgs=this.defaultPostProcess] any cmdline args you wish to execute after the initial download. By default this process will determine the codec of the downloaded file and if it isn't `h264` or `h265` it will reencode the file to `h264`. *Please note:* If you pass custom arguments to this parameter the prementioned codec check will **no longer** occur. You may also pass `false` to prevent any post download execution.
      * @param {String} [cookies="--cookies-from-browser firefox"] determines whether to pass cookies to various yt-dlp commands. Generally either the default or `""` is recommended. Pulling cookies from chrome can be a lot more challenging
-     * @returns the url
-     * ```
-     * ytdlp().download("", "download\path")
-     * ;// default command with no passed args;
-     * ;// yt-dlp -P "link\to\path" "URL"
-     * ```
      */
-    download(args, folder, URL, openDirOnFinish := true, postArgs := this.defaultPostProcess, cookies := "--cookies-from-browser firefox") {
+    download(args, folder, URL, filename := this.defaultFilename, openDirOnFinish := true, postArgs := this.defaultPostProcess, cookies := "--cookies-from-browser firefox") {
         if (Type(args) != "string" || Type(folder) != "string") {
                 ;// throw
                 errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
@@ -141,17 +136,15 @@ class ytdlp {
             this.URL := URL
         }
 
+        isAud := (args = this.defaultAudioCommand) ? true : false
         ;// checking if filename already exists
         mNotifyGUI_Prog := Notify.Show(, 'Determining name of the output file...', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=6 maxW=400 bdr=0x75AEDC')
-        try SDopt := SD_Opt()
-        fileNameLengthLimit := IsSet(SDopt) ? SDopt.filenameLengthLimit : 50
-        outputFileName := Format(this.defaultFilename, fileNameLengthLimit)
-        isAud := (args = this.defaultAudioCommand) ? true : false
+        outputFileName := (filename = this.defaultFilename) ? this.defaultFilename : RegExReplace(filename, '[<>:"/\\|?*\x00-\x1F]') . ".%(ext)s"
         if args = this.defaultAudioCommand || args = this.defaultVideoCommand
             args := Format(args, "{}", cookies)
         nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" {3}', outputFileName, this.URL, cookies))
         SplitPath(nameOutput,,, &ext, &nameNoExt)
-        ext := (isAud = true) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
+        ext := (isAud = false) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
         checkPath1 := WinGet.pathU(folder "\" nameOutput)
         checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
         if FileExist(checkPath1) || FileExist(checkPath2) {
@@ -201,7 +194,7 @@ class ytdlp {
         }
         if openDirOnFinish = true
             switchTo.explorerHighlightFile(folder "\" nameNoExt "." ext)
-        return this.URL
+        return
     }
 
     __Delete() {

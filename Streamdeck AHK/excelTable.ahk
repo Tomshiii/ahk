@@ -5,7 +5,7 @@
 #Include <Classes\clip>
 #Include <Functions\delaySI>
 
-arr1 := ["Eating Out", "Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Health", "Amazon", "Friends/lover"]
+arr1 := ["Eating Out", "Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Rent", "Health", "Amazon", "Friends/lover"]
 arr2 := ["Salary", "Loan Repayments", "Other Repayments"]
 
 ;// this will assume the second pivot table is 3 cells to the right of the first pivot table

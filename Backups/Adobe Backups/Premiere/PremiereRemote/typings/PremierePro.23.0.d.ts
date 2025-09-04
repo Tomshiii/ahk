@@ -1994,7 +1994,7 @@ declare class ProjectManager {
 	/**
 	 *
 	 */
-	setProperty(propertyKey: string, propertyValue: any, permanenceValue: number, allowCreateNewProperty: boolean): void
+	setProperty(propertyKey: string, propertyValue: any, permanenceValue: boolean, allowCreateNewProperty: boolean): void
 
 	/**
 	 *
