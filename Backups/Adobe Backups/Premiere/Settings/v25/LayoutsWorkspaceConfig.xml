@@ -60,7 +60,7 @@
 <key>MinPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-68</int>
+<int type='signed' size='32'>-1</int>
 <int type='signed' size='32'>-1</int>
 </array>
 </prop.pair>
@@ -68,10 +68,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>-31</int>
-<int type='signed' size='32'>3381</int>
-<int type='signed' size='32'>1448</int>
+<int type='signed' size='32'>-6</int>
+<int type='signed' size='32'>20</int>
+<int type='signed' size='32'>3365</int>
+<int type='signed' size='32'>1458</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -84,11 +84,11 @@
 <key>ModifiedTimes</key>
 <array>
 <array.type><string/></array.type>
-<string>20250427T230448.185222</string>
+<string>20250815T013955.243628</string>
 <string>20250725T031359.840093</string>
 <string>20250724T233533.585158</string>
-<string>20250612T234012.137687</string>
-<string>20250801T081507.264939</string>
+<string>20250908T052309.451715</string>
+<string>20250811T074521.423931</string>
 <string>20250427T230623.728351</string>
 <string>20250724T233504.530425</string>
 <string>20250404T133355.452228</string>

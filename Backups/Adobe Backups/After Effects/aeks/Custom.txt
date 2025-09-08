@@ -221,7 +221,7 @@
 	"AddMarker" = "(PadMultiply)"
 	"CenterAnchorToBounds" = "(Ctrl+Alt+HOME)"
 	"CenterLayerInView" = "(Ctrl+HOME)"
-	"Clear" = "(Delete)(FwdDel)"
+	"Clear" = "(Shift+F)(Shift+F)(Delete)(FwdDel)"
 	"ClearMask" = "(Alt+Delete)(Alt+FwdDel)"
 	"FlipHorizontal" = "()"
 	"FlipVertical" = "()"
@@ -259,7 +259,7 @@
 	"CompToggleEffects" = "(E)"
 	"CompToggleEffectsAddState" = "(Shift+E)"
 	"CompToggleMaskFeathers" = "(F)"
-	"CompToggleMaskFeathersAddState" = "(Shift+F)"
+	"CompToggleMaskFeathersAddState" = "()"
 	"CompToggleMaskFeathersAddStateNewKF" = "(Alt+Shift+F)"
 	"CompToggleMaskFeathersNewKF" = "()"
 	"CompToggleMaskShapes" = "(M)"
@@ -514,7 +514,7 @@
 	"TitleActionSafeToggle" = "(Shift+SingleQuote)"
 
 ["COutline"]
-	"Clear" = "(Delete)(FwdDel)"
+	"Clear" = "(Shift+F)(Shift+F)(Delete)(FwdDel)"
 	"Rename" = "(Return)"
 
 ["CPanoECOutline"]
@@ -557,7 +557,7 @@
 	"ZoomOutResize" = "(Alt+Comma)(Ctrl+-)"
 
 ["CPanoProjLayer"]
-	"Clear" = "(Delete)(FwdDel)"
+	"Clear" = "(Shift+F)(Shift+F)(Delete)(FwdDel)"
 	"ClearMask" = "(Alt+Delete)(Alt+FwdDel)"
 	"OpenComp" = "()"
 	"TimeSetIn" = "([)"
@@ -684,6 +684,7 @@
 	"Orientation" = "(Ctrl+Alt+Shift+R)"
 	"Paste" = "(Ctrl+V)"
 	"PasteReversedKeyframes" = "(Ctrl+Shift+V)"
+	"PasteTextFormattingOnly" = "(Ctrl+Alt+Shift+B)"
 	"PasteTextMatchFormatting" = "(Ctrl+Shift+B)"
 	"PrefsGeneral" = "(Ctrl+Alt+;)"
 	"PrevXferMode" = "(Shift+-)"
@@ -754,7 +755,7 @@
 	"WireframeQualityRecurse" = "()"
 
 ["CSwitchboardModal"]
-	"Clear" = "(PadClear)"
+	"Clear" = "(Shift+F)(PadClear)"
 	"Copy" = "(Ctrl+C)"
 	"Cut" = "(Ctrl+X)"
 	"Paste" = "(Ctrl+V)"
@@ -773,7 +774,7 @@
 	"LookAtSelected" = "(F)"
 
 ["FloPano"]
-	"Clear" = "(Delete)(FwdDel)"
+	"Clear" = "(Shift+F)(Shift+F)(Delete)(FwdDel)"
 	"ClearWithoutWarning" = "(Ctrl+Delete)"
 	"OpenComp" = "()"
 	"Zoom100Percent" = "()"
