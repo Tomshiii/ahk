@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/08/05
- * @version 1.1.6
+ * @date 2025/09/09
+ * @version 1.1.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -104,12 +104,14 @@ class Slack {
             if button = "Reply in thread" {
                 try check := uiaObj.WaitElement({LocalizedType: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}, 1500).ControlClick()
             } else {
-                uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
+                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
                 return
             }
             if IsSet(check) && replyInThread = true {
-                uiaObj.WaitElement({LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}, 2000)
-                try uiaObj.WaitElement({AutomationId:"p-thread_footer__broadcast_checkbox", matchmode: "Substring"}, 2000).ControlClick()
+                try {
+                    uiaObj.WaitElement({LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}, 2000)
+                    uiaObj.WaitElement({AutomationId:"p-thread_footer__broadcast_checkbox", matchmode: "Substring"}, 2000).ControlClick()
+                }
             }
         }
 
