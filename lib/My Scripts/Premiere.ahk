@@ -6,7 +6,13 @@
 #Include <Functions\delaySI>
 ; }
 
-isIn(title) => InStr(WinGetTitle("A"), title)
+isIn(title) {
+	try getTitle := WinGetTitle("A")
+	catch {
+		Exit()
+	}
+	return InStr(getTitle, title)
+}
 
 LCtrl & Tab::
 Shift & Tab::

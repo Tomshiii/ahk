@@ -2,7 +2,7 @@
  * @description A library of useful After Effects functions to speed up common tasks
  * Originally tested on and designed for v22.6 of After Effects. As of 2023/06/30 code is maintained for the version of After Effects listed below
  * Any code after that date is no longer guaranteed to function on previous versions of AE.
- * @aeVer 25.1
+ * @aeVer 25.4
  * @author tomshi
  * @date 2024/09/06
  * @version 1.2.7

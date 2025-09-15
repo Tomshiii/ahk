@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 code is maintained for the version of Premiere listed below
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 25.3
+ * @premVer 25.5
  * @author tomshi
  * @date 2025/09/04
- * @version 2.2.54
+ * @version 2.2.55
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1990,7 +1990,13 @@ class Prem {
             return
         }
         anch2 := A_Clipboard
-        delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
+        switch {
+            ;// versions 25.4 and greater. They now focus the reset button when you tab
+            case VerCompare(this.currentSetVer, "25.5") >= 0: delaySI(50, "{Tab 2}", anch1, "{Tab}", anch2, "{Enter}")
+            ;// versions below 25.4
+            case VerCompare(this.currentSetVer, "25.4") < 0: delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
+        }
+
         clip.delayReturn(clipb.storedClip)
         blocker.Off()
     }
@@ -3040,6 +3046,7 @@ class Prem {
 
     /** handles setting a timer to check the user's current open sequence. This timer provides functionality to `swapPreviousSequence()` */
     static __setCurrSeq(*) {
+        ListLines(0)
         if this.resetSeqTimer = true {
             this.resetSeqTimer := false
             newDelay := (this.useSwapSequences = "true" || this.useSwapSequences = true) ? this.prevSeqDelay : 0
