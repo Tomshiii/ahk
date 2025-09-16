@@ -4,7 +4,7 @@
 ; }
 
 /**
- * This function uses the built in windows command `Robocopy "{}" "{}" *.* /MIR /R:1` to mirrow two directories
+ * This function uses the built in windows command `Robocopy "{}" "{}" /MIR /R:1` to mirrow two directories
  * @param {Map} [dirsMap?] a map containing all the required information. Must be in the following style; `Map("path", {label: "", serial: , dirPath: ""}, "dest", {label: "", serial: , dirPath: ""})` where;
  * @param `"path"` acts as the source directory, `"dest"` acts as the destination directory
  * @param {String} [label] The name of the drive
@@ -19,7 +19,7 @@ syncDirectories(dirsMap?) {
 		: dirsMap
 	path := obj.SplitPath(myDirsMap["path"].dirPath)
 	dest := obj.SplitPath(myDirsMap["dest"].dirPath)
-	cmnd := 'Robocopy "{1}" "{2}" *.* /MIR /R:1'
+	cmnd := 'Robocopy "{1}" "{2}" /MIR /R:1'
 	if !DirExist(path.path) || !DirExist(dest.path)
 		return false
 

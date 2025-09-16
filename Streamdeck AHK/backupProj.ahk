@@ -144,9 +144,12 @@ __doBackup(backupFolder, additionalDir) {
     }
 }
 
-Notify.Show(, 'Your project is being backed up!', 'C:\Windows\System32\imageres.dll|icon249', 'Windows Battery Critical',, 'dur=5 bc=Black show=Fade@250 hide=None bdr=Yellow')
+Notify.Show(, 'Your project is being backed up!', 'C:\Windows\System32\imageres.dll|icon249', 'Windows Battery Critical',, 'dur=5 bc=Black show=Fade@250 hide=None bdr=Yellow tag=backupProjPreAlert maxW=400')
 __doBackup(backupFolder, additionalDir)
 if !DirExist(sd.backupFolderWork)
     return
 backupFolder := sd.backupFolderWork
 __doBackup(backupFolder, additionalDir)
+if Notify.Exist("backupProjPreAlert")
+    Notify.Destroy("backupProjPreAlert")
+Notify.Show(, 'Your project has finished backing up!', 'C:\Windows\System32\imageres.dll|icon281', 'Windows Print complete',, 'dur=3 bc=Black show=Fade@250 hide=None bdr=Green maxW=400')
