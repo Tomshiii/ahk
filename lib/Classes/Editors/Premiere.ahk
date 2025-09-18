@@ -5,7 +5,7 @@
  * @premVer 25.5
  * @author tomshi
  * @date 2025/09/18
- * @version 2.2.56
+ * @version 2.2.57
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2136,20 +2136,36 @@ class Prem {
         ;// we have to do a few checks
         ;// can't drag panels unless we check `LButton` state & in premiere v25.3 the function sometimes causes the mouse to shoot near
         ;// the program monitor unless we check the state of ctrl/alt
-        if (!WinExist("DroverLord - Overlay Window") || GetKeyState("LButton", "P")) || (GetKeyState("LCtrl", "P") || GetKeyState("LAlt", "P"))
+        if (!hwnd := WinExist(window) || GetKeyState("LButton", "P")) || (GetKeyState("LCtrl", "P") || GetKeyState("LAlt", "P"))
             return
 
         block.On()
         coord.s()
         origMouse := obj.MousePos()
-        drover    := obj.WinPos("DroverLord - Overlay Window ahk_class DroverLord - Window Class")
-        MouseMove((drover.x + drover.width)-15, drover.y+15, 2)
-        SendInput("{Click}")
-        MouseMove(origMouse.x, origMouse.y, 2)
-        block.Off()
-        if !waitWinClose
+
+        try WinClose(hwnd)
+        catch {
+            __manualMethod()
             return
-        WinWaitClose(window,, 5)
+        }
+        if !WinExist(hwnd) {
+            if !waitWinClose
+                return
+            WinWaitClose(window,, 5)
+            return
+        }
+        __manualMethod()
+
+        __manualMethod() {
+            drover := obj.WinPos(window)
+            MouseMove((drover.x + drover.width)-15, drover.y+15, 2)
+            SendInput("{Click}")
+            MouseMove(origMouse.x, origMouse.y, 2)
+            block.Off()
+            if !waitWinClose
+                return
+            WinWaitClose(window,, 5)
+        }
     }
 
     /**
@@ -2334,7 +2350,9 @@ class Prem {
                 checkStuck(["LAlt", "CapsLock"])
             case true:
                 MouseMove(origMouseCords.x, midDivY+2)
+                tool.Cust("Move the mouse to the desired height,`nThen let go of LAlt.", 3000,,, 9)
                 KeyWait("LAlt", "L")
+                tool.Cust("",,,, 9)
                 newCoords := obj.MousePos()
                 MouseClickDrag("Left", this.timelineRawX+10, midDivY+2, this.timelineRawX+10, newCoords.y)
                 MouseMove(origMouseCords.x, newCoords.y)
