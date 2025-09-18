@@ -37,4 +37,5 @@ RunClient(serverPort, functionClassNames)
 Class CustomFunctions {
     changeLabel(label)       => (prem.changeLabel(label))
     changeDupe(toggleHotkey) => (prem.changeDupeFrameMarkers(toggleHotkey))
+    organiseProj()           => (prem.__remoteFunc('organiseProj'))
 }

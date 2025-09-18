@@ -197,6 +197,7 @@ F14 & F23::
 }
 
 LAlt & SC03A::prem.layerSizeAdjust()
+LAlt & MButton::prem.layerSizeAdjust(, true)
 Alt & WheelUp::
 Alt & WheelDown::
 Shift & WheelUp::

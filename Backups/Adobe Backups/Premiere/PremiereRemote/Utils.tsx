@@ -258,4 +258,74 @@ export class Utils {
       var trackNum = String(videoTracks.numTracks)
       return trackNum
     }
+
+    static organiseProject() {
+      var project = app.project;
+      var projectItem = project.rootItem;
+
+      for (let i = 0; i < projectItem.children.numItems; i++) {
+        switch (app.project.rootItem.children[i].name) {
+          case "_Assets":
+          if (app.project.rootItem.children[i].type !== 2)
+            continue;
+          const assetFolder = app.project.rootItem.children[i]
+          for (let j = 0; j < assetFolder.children.numItems; j++) {
+              switch (assetFolder.children[j].name) {
+                case "Images":
+                case "02_Images":
+                  var imageFolder = assetFolder.children[j];
+                  break;
+                case "Videos":
+                case "06_Videos":
+                  var videoFolder = assetFolder.children[j];
+              }
+            }
+          case "_linked comps & renders":
+            var linkedCompsFolder = app.project.rootItem.children[i]
+        }
+      }
+
+        if (typeof imageFolder == 'undefined') {
+          var imageFolder = projectItem.createBin("Images");
+        }
+        var images = [];
+        if (typeof imageFolder == 'undefined') {
+          var videoFolder = projectItem.createBin("Video");
+        }
+        var videos = [];
+        if (typeof linkedCompsFolder == 'undefined') {
+          var videoFolder = projectItem.createBin("_linked comps & renders");
+        }
+        var linkedComps = [];
+
+
+        var thisName;
+        for(var i = 0; i < projectItem.children.numItems; i++) {
+          thisName = projectItem.children[i].name;
+
+          if((thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "aep" && (thisName.indexOf("linked comp") !== -1 || thisName.indexOf("Linked Comp") !== -1)) || thisName.substring(thisName.length - 17, thisName.length).toLowerCase() == ".aep_rendered.mov" || thisName.substring(0, 15).toLowerCase() == "nested sequence") {
+            linkedComps.push(projectItem.children[i]);
+          }
+
+          // images
+          if(thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "jpg" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "jpeg" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "png" || thisName.substring(thisName.length - 4, thisName.length).toLowerCase() == "webp") {
+            images.push(projectItem.children[i]);
+          }
+
+          // video
+          if(thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "mp4" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "mov" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "avi") {
+            videos.push(projectItem.children[i]);
+          }
+        }
+
+        Utils.moveToFolder(images, imageFolder);
+        Utils.moveToFolder(videos, videoFolder);
+        Utils.moveToFolder(linkedComps, linkedCompsFolder);
+    }
+
+    static moveToFolder(items: any, folder: any) {
+      for(var i = 0; i < items.length; i++) {
+        items[i].moveBin(folder);
+      }
+    }
   }

@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/09/04
- * @version 2.2.55
+ * @date 2025/09/18
+ * @version 2.2.56
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,7 +20,6 @@
 #Include <Classes\switchTo>
 #Include <Classes\clip>
 #Include <Classes\errorLog>
-#Include <Classes\block>
 #Include <Classes\WM>
 #Include <Classes\cmd>
 #Include <Classes\Mip>
@@ -33,6 +32,7 @@
 #Include <Functions\detect>
 #Include <Functions\loadXML>
 #Include <Functions\change_msgButton>
+#Include <Functions\checkStuck>
 #Include <Other\Notify\Notify>
 #Include <Other\ShinsImageScanClass>
 ; }
@@ -2289,8 +2289,9 @@ class Prem {
     /**
      * A function designed to allow you to quickly adjust the size of the layer the cursor is within. <kbd>LAlt</kbd> **MUST** be one of the activation hotkeys and is required to be held down for the duration of this function.
      * @param {Boolean} [capsLockDisable=true] (if the user does *NOT* use <kbd>CapsLock</kbd> to activate this function, they should set this value to `false`) because I use capslock as the activation key (and also have it set to "AlwaysOff"), ahk is a bit quirky and will sometimes just not reset that even if I use `SetStoreCapsLockMode(true)` - so setting this parameter to `true` will cause the function to manually call `SetCapsLockState('AlwaysOff')` at the end of its logic
+     * @param {Boolean} [middle=false] determine whether you wish to adjust the middle divider instead of the current track. Be aware that due to windows/ahk issues when it comes to tracking whether keys are still held down; this function will not move the divider to the desired location until the user has let go of <kbd>LAlt</kbd>
      */
-    static layerSizeAdjust(capsLockDisable := true) {
+    static layerSizeAdjust(capsLockDisable := true, middle := false) {
         SetDefaultMouseSpeed(0)
         SetStoreCapsLockMode(true)
         InstallKeybdHook(true, true)
@@ -2314,22 +2315,32 @@ class Prem {
             return
         }
 
-        if !this.__layerDividerCheck(origMouseCords) || !this.__layerTopBottom(origMouseCords, false,, &topDivY) {
+        if (middle = false && !this.__layerDividerCheck(origMouseCords)) || !this.__layerTopBottom(origMouseCords, middle,, &topDivY,,,, &midDivY) {
             blocker.Off()
             return
         }
 
         blocker.Off()
-        block.On()
 
-        MouseMove(this.timelineRawX+10, topDivY+4)
-        KeyWait("LAlt", "L")
-        if !checkAgain := this.__layerTopBottom({x:0, y: topDivY+4}, false)
-            MouseMove(origMouseCords.x, topDivY+4)
-        else
-            MouseMove(origMouseCords.x, (checkAgain.topY+checkAgain.botY)/2)
-
-        checkStuck(["LAlt", "CapsLock"])
+        switch middle {
+            case false:
+                block.On()
+                MouseMove(this.timelineRawX+10, topDivY+4)
+                KeyWait("LAlt", "L")
+                if !checkAgain := this.__layerTopBottom({x:0, y: topDivY+4}, false)
+                    MouseMove(origMouseCords.x, topDivY+4)
+                else
+                    MouseMove(origMouseCords.x, (checkAgain.topY+checkAgain.botY)/2)
+                checkStuck(["LAlt", "CapsLock"])
+            case true:
+                MouseMove(origMouseCords.x, midDivY+2)
+                KeyWait("LAlt", "L")
+                newCoords := obj.MousePos()
+                MouseClickDrag("Left", this.timelineRawX+10, midDivY+2, this.timelineRawX+10, newCoords.y)
+                MouseMove(origMouseCords.x, newCoords.y)
+                keyss := getHotkeysArr()
+                checkStuck(["LAlt", GetKeyName(keyss[-1])])
+        }
         if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
             SetCapsLockState('AlwaysOff')
         block.Off()

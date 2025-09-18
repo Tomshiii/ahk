@@ -64,6 +64,10 @@ export const host = {
     }
   },
 
+  organiseProj: function() {
+    Utils.organiseProject();
+  },
+
   /**
    * @swagger
    * /deselectAll:
