@@ -176,6 +176,9 @@ $+d::
 Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, 2, true) ;goes to the next keyframe point towards the left
 Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, 2, true) ;goes to the next keyframe towards the right
 
+<!F21::prem.wheelEditPoint(ksa.timelineWindow, ksa.selectedClipStart, 2, true, "{LAlt}{F21}")
+<!F23::prem.wheelEditPoint(ksa.timelineWindow, ksa.selectedClipEnd, 2, true, "{LAlt}{F23}")
+
 F20::prem.dragSourceMon("video", "{F20}")
 F19::prem.dragSourceMon(, "{F19}", "Bars and Tone - Rec 709")
 F14 & F19::prem.dragSourceMon(, "")
