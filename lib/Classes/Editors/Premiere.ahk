@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/09/18
- * @version 2.2.57
+ * @date 2025/09/21
+ * @version 2.2.58
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1095,7 +1095,20 @@ class Prem {
         coord.s()
         check := winget.Title()
         if check = "Audio Gain" {
-            SendInput(amount "{Enter}")
+            ;// if the gain window is already open, then all we want to do is ensure the caret is visible, then highlight the gain textbox and input our value
+            if !CaretGetPos(&xcar, &ycar) {
+                loop {
+                    SendInput("{Tab}")
+                    sleep 25
+                    if !CaretGetPos(&xcar, &ycar) {
+                        continue
+                    }
+                    sleep 25
+                    break
+                }
+            }
+            SendInput("{Tab 3}{Up 3}{Down}{Tab}" amount "{Enter}")
+            WinWaitClose("Audio Gain",, 1.5)
             block.Off()
             return -1
         }
@@ -1180,7 +1193,7 @@ class Prem {
         checkSelected := this.__remoteFunc('isSelected', true)
         needsTimelineFocus := false
 		title := WinGet.Title(, false)
-        descernTitle := (title = "Audio Gain" || title = "") ? true : false
+        descernTitle := (title = "") ? true : false
         currTimelineStatus := this.timelineFocusStatus()
 
         ;// because getting the UIA element of the active window is slow, we need to start an initial inputhook here for the sole purpose
@@ -1190,11 +1203,12 @@ class Prem {
         star_ih.Start()
 
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
-		if descernTitle || currTimelineStatus != 1 {
+		if (descernTitle || currTimelineStatus != 1) && title != "Audio Gain" {
             premUIA    := premUIA_Values()
             try createEl   := this.__createUIAelement(true)
             try toolsNN    := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
-            if !IsSet(createEl) || !IsSet(toolsNN) {
+            if (!IsSet(createEl) || !IsSet(toolsNN)) {
+                star_ih.Stop()
                 errorLog(TargetError('Creating UIA element failed'))
                 return
             }
@@ -1226,7 +1240,8 @@ class Prem {
         ih.Wait()
         star_ih.Stop()
 
-        if !checkSelected {
+        if !checkSelected && title != "Audio Gain" {
+            ih.Stop()
             errorLog(TargetError("No clip selected. Cancelling"),, {time: 2000})
             return
         }
@@ -1245,6 +1260,7 @@ class Prem {
             sendAsLevel := true
         }
 
+        orig := sendGain
         ;// removes anything that isn't a digit or `+`/`-`
         sendGain := RegExReplace(sendGain, "[^\d.]")
         if !IsNumber(sendGain) {
@@ -1259,6 +1275,12 @@ class Prem {
         if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels")
             this.gain(which sendGain)
         else {
+            if title = "Audio Gain" {
+                errorLog(MethodError("Levels cannot be adjusted while the gain window is open", -1))
+                Notify.Show('prem.numpadGain()', 'Levels cannot be adjusted while the gain window is open.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
+                block.Off()
+                return
+            }
             levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
             if levels != true && levels != "true" {
                 errorLog(MethodError("Unexpected response", -1), "sent value: " String(which sendGain) " Response: " levels " - Type: " Type(levels))

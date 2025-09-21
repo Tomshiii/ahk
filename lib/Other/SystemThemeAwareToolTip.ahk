@@ -8,6 +8,7 @@ class SystemThemeAwareToolTip
 
     static __New()
     {
+        ListLines(0)
         if this.HasOwnProp("HTT") || !this.IsDarkMode
             return
 
@@ -19,6 +20,7 @@ class SystemThemeAwareToolTip
 
         TT_WNDPROC(hWnd, uMsg, wParam, lParam)
         {
+            ListLines(0)
             static WM_CREATE := 0x0001
 
             if (this.IsDarkMode && uMsg = WM_CREATE)
