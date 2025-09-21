@@ -2,7 +2,7 @@
 #Include <Classes\ffmpeg>
 #Include <Classes\cmd>
 #Include <Classes\obj>
-#Include <Functions\nItemsInDir>
+#Include <Classes\explorer>
 #Include <Other\JSON>
 #Include <Other\print>
 #Include <Other\Notify\Notify>
@@ -32,7 +32,9 @@ if !selectedDir
 recurse := ""
 files := []
 names := []
-renderScale := 0.125
+ignoreArr := []
+ignoreMap := Map()
+renderScale := 0.25
 normalCommand := 'ffmpeg -hwaccel none -i "{1}" -c:v prores -profile:v 0 -pix_fmt yuv422p10 -filter_complex "[0:v]scale={2}[out]" -map "[out]" -c:a copy -map a? {3} -sws_flags bicubic -vsync cfr -metadata:s "encoder=Apple ProRes Proxy" -vendor apl0 -flags bitexact -metadata creation_time="{4}" -y "{5}"'
 ;// watermark
 watermarkDir := "W:\_Assets\Plugins & Presets\watermarks"
@@ -45,11 +47,15 @@ if MsgBox("Would you like to recurse?", "Recurse?", "4132") = "Yes" {
 }
 ffmpegInst := ffmpeg()
 
+
 ;// get total files
 fileCount := 0
 for v in operatePaths {
-    getFilecount := nItemsInDir(v, (recurse = "R" ? true : false))
+    getFilecount := explorer.nItemsInDir(v, (recurse = "R" ? true : false))
     fileCount += getfileCount.files
+}
+for v in ignoreArr {
+    ignoreMap.Set(v, true)
 }
 for v in operatePaths {
     check := Notify.Show('Checking files in chosen directory', , 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' fileCount)
@@ -58,6 +64,8 @@ for v in operatePaths {
         check["prog"].value += 1
         inputDir  := obj.SplitPath(A_LoopFileDir)
         inputPath := obj.SplitPath(A_LoopFileFullPath)
+        if ignoreMap.Has(A_LoopFileFullPath) || ignoreMap.Has(A_LoopFileDir)
+            continue
         if inputDir.name = "_proxy" || inputDir.name = "proxy"
             continue
         if !ffmpegInst.isVideo(A_LoopFileFullPath)
