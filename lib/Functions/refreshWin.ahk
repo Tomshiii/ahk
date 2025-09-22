@@ -1,8 +1,8 @@
 ; { \\ #Includes
 #Include <Classes\coord>
 #Include <Classes\tool>
-#Include <Classes\winget>
 #Include <Classes\errorLog>
+#Include <Classes\explorer>
 ; }
 
 /**
@@ -23,7 +23,7 @@ refreshWin(window, runTarget, RunAs := false)
                         runTarget := process.CommandLine
                 case "explorer.exe":
                     hwnd := WinExist(window)
-                    path := winget.ExplorerPath(hwnd)
+                    path := explorer.getPath(hwnd)
                     if !path
                         {
                             errorLog(Error("Couldn't determine the path of the explorer window", -1),, 1)

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/09/01
- * @version 1.1.8
+ * @date 2025/09/22
+ * @version 1.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,6 +12,7 @@
 #Include <Classes\winGet>
 #Include <Classes\errorLog>
 #Include <Classes\switchTo>
+#Include <Classes\explorer>
 #Include <Functions\useNVENC>
 #Include <Other\JSON>
 #Include <Other\Notify\Notify>
@@ -28,7 +29,7 @@ class ffmpeg {
      */
     __getPath() {
         hwnd := WinExist("A")
-        return {path: WinGet.ExplorerPath(hwnd), hwnd: hwnd}
+        return {path: explorer.getPath(hwnd), hwnd: hwnd}
     }
 
     /**
@@ -300,7 +301,7 @@ class ffmpeg {
         }
         if !runDir
             return
-        switchTo.explorerHighlightFile(pathobj.path)
+        explorer.highlightFile(pathobj.path)
     }
 
     /**

@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/09/04
+ * @date 2025/09/22
  ***********************************************************************/
-global currentVer := "1.2.3"
+global currentVer := "1.2.3.1"
 A_ScriptName := "multi-dl"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
@@ -13,6 +13,7 @@ A_ScriptName := "multi-dl"
 #Requires AutoHotkey v2.0
 #Include <Classes\ytdlp>
 #Include <Classes\switchTo>
+#Include <Classes\explorer>
 #Include <GUIs\tomshiBasic>
 #Include <Functions\useNVENC>
 #Include <Functions\getLocalVer>
@@ -184,7 +185,7 @@ class multiDL extends tomshiBasic {
 
     /** Allows the user to change the file to operate on */
     __selectFile(*) {
-        activeWin := WinGet.ExplorerPath()
+        activeWin := explorer.getPath()
         defaultDir := activeWin != false ? activeWin : ""
         newFile := FileSelect("D3", defaultDir, "Select download location")
         if !newFile
@@ -282,7 +283,7 @@ class multiDL extends tomshiBasic {
         this.show(, {DarkColour: "F0F0F0"})
         if showDir = true {
             setFile := yt.currentName
-            switchTo.explorerHighlightFile(this.getFile "\" setFile)
+            explorer.highlightFile(this.getFile "\" setFile)
             yt := ""
             return
         }

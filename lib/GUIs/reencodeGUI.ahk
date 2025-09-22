@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2025/07/28
- * @version 1.2.5
+ * @date 2025/09/22
+ * @version 1.2.6
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -11,9 +11,9 @@
 #Include <GUIs\tomshiBasic>
 #Include <Classes\obj>
 #Include <Classes\ffmpeg>
-#Include <Classes\winGet>
 #Include <Classes\switchTo>
 #Include <Classes\cmd>
+#Include <Classes\explorer>
 #Include <Functions\useNVENC>
 ; }
 
@@ -173,7 +173,7 @@ class encodeGUI extends tomshiBasic {
         encoder := (this.useNVENC = true) ? "h26" this.h26 "_nvenc" : "libx26" this.h26
         presetVal := (this.useNVENC = true) ? this["pres"].value + 11 : this.preset
         this.ffmpegInstance.reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, encoder, presetVal, crfVal, bitrateVal, this.useNVENC, this.forceGPU)
-        switchTo.explorerHighlightFile(pathObj.fileObjOrig.dir "\" pathObj.fileObj.nameNoExt "." pathObj.fileObj.ext)
+        explorer.highlightFile(pathObj.fileObjOrig.dir "\" pathObj.fileObj.nameNoExt "." pathObj.fileObj.ext)
         ;// calls the traytip
         this.ffmpegInstance.__Delete()
     }
@@ -185,7 +185,7 @@ class encodeGUI extends tomshiBasic {
     __selectFile(fileOrDir, *) {
         selection := (fileOrDir = "dir") ? "D " : ""
         selectionTitle := (fileOrDir = "dir") ? "directory" : "file"
-        currentDir := WinGet.ExplorerPath()
+        currentDir := explorer.getPath()
         defaultDir := currentDir != false ? currentDir : ""
         newFile := FileSelect(selection 3, defaultDir, "Select " selectionTitle " to Reencode")
         if newFile = ""

@@ -2,6 +2,7 @@
 #Include <Classes\winget>
 #Include <Classes\Streamdeck_opt>
 #Include <Classes\obj>
+#Include <Classes\explorer>
 #Include <Classes\Editors\Premiere>
 #Include <Other\Notify\Notify>
 ;
@@ -11,11 +12,11 @@ if WinExist(prem.winTitle) {
         defaultDir := path.dir
     } catch {
         ;// same as below
-        defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+        defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
     }
 }
 else
-    defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+    defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
 if !projectFolder := FileSelect("D 3", defaultDir, "Select Folder Containing Project Files")
     return
 sd := SD_Opt()

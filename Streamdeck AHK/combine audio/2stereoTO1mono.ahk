@@ -4,7 +4,7 @@
 #Include <Classes\cmd>
 #Include <Classes\tool>
 #Include <Classes\obj>
-#Include <Classes\winGet>
+#Include <Classes\explorer>
 ; }
 
 ;//! THIS SCRIPT IS NOT MEANT FOR GENERAL PURPOSE
@@ -13,7 +13,7 @@
 ;//! THIS CODE WILL NOT WORK UNLESS THAT CONDITION IS MET
 
 
-defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
 if !selectedFile := FileSelect("D 3", defaultDir, "Select directory that contains the LAV files you wish to combine.")
     return
 

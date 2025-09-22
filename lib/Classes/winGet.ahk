@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2025/05/12
- * @version 1.5.23
+ * @date 2025/09/22
+ * @version 1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -369,48 +369,6 @@ class WinGet {
             errorLog(TargetError("Couldn't grab information about the active window", -1),, 1)
             return false
         }
-    }
-
-    /**
-    * This function returns an object containing some information about the desired windows explorer tab
-    * @param {Integer} [hwnd=WinExist("A")] the hwnd of the tab you wish to check
-    * @returns {Object}
-    * ```
-    * getTab := winget.getActiveExplorerTab() ;// W:\work
-    * getTab.path   ;// returns W:\work
-    * getTab.hwnd   ;// returns the hwnd of the tab
-    * getTab.comObj ;// returns the ComObject object for the tab so that it can be interacted with further
-    * ```
-    */
-    static getActiveExplorerTab(hwnd := WinExist("A")) {
-        activeTab := 0
-        try activeTab := ControlGetHwnd("ShellTabWindowClass1", hwnd) ; File Explorer (Windows 11)
-        catch
-            return false
-        for w in ComObject("Shell.Application").Windows {
-            if w.hwnd != hwnd
-                continue
-            if activeTab { ; The window has tabs, so make sure this is the right one.
-                static IID_IShellBrowser := "{000214E2-0000-0000-C000-000000000046}"
-                shellBrowser := ComObjQuery(w, IID_IShellBrowser, IID_IShellBrowser)
-                ComCall(3, shellBrowser, "uint*", &thisTab:=0)
-                if thisTab != activeTab
-                    continue
-            }
-            return {path: w.Document.Folder.Self.Path, hwnd: w.hwnd, comObj: w}
-        }
-        return false
-    }
-
-    /**
-     * A function that returns the path of an open explorer window. Will work with win11 tabs
-     * @link Original code found here by lexikos: https://www.autohotkey.com/boards/viewtopic.php?f=83&t=109907
-     * @param {Integer} hwnd You can pass in the hwnd of the window you wish to focus, else this parameter can be omitted and it will use the active window
-     * @returns {String/Boolean} the directory path of the explorer window or boolean `false` if a path cannot be determined
-     */
-    static ExplorerPath(hwnd := WinExist("A")) {
-        getTab := this.getActiveExplorerTab(hwnd)
-        return(IsObject(getTab) && ObjHasOwnProp(getTab, 'Path') ? getTab.path : false)
     }
 
     /**

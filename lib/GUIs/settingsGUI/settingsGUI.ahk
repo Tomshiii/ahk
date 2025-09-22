@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/08/07
- * @version 2.3.16
+ * @date 2025/09/22
+ * @version 2.3.17
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -409,23 +409,6 @@ settingsGUI()
     }
 
     ;----------------------------------------------------------------------------------------------------------------------------------
-    ;//! BOTTOM TEXT
-    resetText := settingsGUI.Add("Text", "Section W100 H20 Xs Y+15", "⭮ Reset")
-    resetText.SetFont("S13 Bold")
-
-    ;----------------------------------------------------------------------------------------------------------------------------------
-    ;//! BUTTON TOGGLES
-
-    settingsGUI.Add("Button", "vadobeToggle w100 h30 Y+5", "adobeTemp()").OnEvent("Click", buttons.bind("adobe"))
-    settingsGUI.Add("Button", "vfirstToggle w100 h30 X+15", "firstCheck()").OnEvent("Click", buttons.bind("first"))
-
-    buttons(which, button, *)
-    {
-        buttonTitle := (which = "adobe") ? "adobeTemp()" : "firstCheck()"
-        button.Text := (button.Text = buttonTitle) ? "undo?" : buttonTitle
-    }
-
-    ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! STATUS BAR
 
     workDir := UserSettings.working_dir
@@ -453,7 +436,7 @@ settingsGUI()
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! GROUP EXIT BUTTONS
-    exitText := settingsGUI.Add("Text", "W150 H20 Xs Y+15", "💾 Save && Exit")
+    exitText := settingsGUI.Add("Text", "Section W150 H20 Xs Y+15", "💾 Save && Exit")
     exitText.SetFont("S13 Bold")
     settingsGUI.AddButton("w100 h30 Y+5", "Hard Reset").OnEvent("Click", close.bind("hard"))
     settingsGUI.AddButton("w100 h30 X+15", "Reload").OnEvent("Click", close.bind("reload"))
@@ -465,17 +448,10 @@ settingsGUI()
     {
         SetTimer(statecheck, 0)
         SetTimer(iniWait, 0)
-        ;check to see if the user wants to reset adobeTemp()
-        if settingsGUI["adobeToggle"].Text = "undo?"
-            UserSettings.adobe_temp := 0
-        ;check to see if the user wants to reset firstCheck()
-        if settingsGUI["firstToggle"].Text = "undo?"
-            UserSettings.first_check := 0
         ;a check incase this settings gui was launched from firstCheck()
         if WinExist("Scripts Release " version)
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         ToolTip("")
-        ; tool.Tray({text: "Settings changes are being saved", title: "settingsGUI()", options: 20}, 2000)
         UserSettings.__delAll() ;// close the settings instance
         sleep 50
         newSettings := FileRead(UserSettings.SettingsFile)

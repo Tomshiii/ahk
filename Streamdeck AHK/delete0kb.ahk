@@ -1,6 +1,7 @@
 #Include <Classes\Editors\Premiere>
 #Include <Classes\winget>
 #Include <Classes\Mip>
+#Include <Classes\explorer>
 
 ;// sometimes when dl'ing from frameio if it errors out or a file wasn't fully uploaded yet it'll leave an empty file behind which makes it difficult to then properlly download it later
 ;// this script will recurse a directory and delete any 0kb files.
@@ -12,11 +13,11 @@ if WinExist(prem.winTitle) {
         defaultDir := path.dir
     } catch {
         ;// same as below
-        defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+        defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
     }
 }
 else
-    defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+    defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
 
 if !selectedDir := FileSelect("D", defaultDir, "Select Directory to recurse")
     return

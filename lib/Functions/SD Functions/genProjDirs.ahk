@@ -1,7 +1,7 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
-#Include <Classes\winGet>
 #Include <Classes\errorLog>
+#Include <Classes\explorer>
 ; }
 
 /**
@@ -9,7 +9,7 @@
  * @param {Array} dirs an array of custom folder paths the user wishes to generate if they do no wish to use the default
  */
 genProjDirs(dirs?) {
-    activeWin := WinGet.ExplorerPath()
+    activeWin := explorer.getPath()
     defaultDir := activeWin != false ? activeWin : ptf.MyDir "\"
     SelectedFolder := FileSelect("D2", defaultDir, "Select your desired Folder. This Script will create the necessary sub folders")
     if SelectedFolder = ""

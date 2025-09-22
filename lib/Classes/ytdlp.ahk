@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/09/04
- * @version 1.1.0
+ * @date 2025/09/22
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,9 +14,9 @@
 #Include <Classes\errorLog>
 #Include <Classes\switchTo>
 #Include <Classes\Streamdeck_opt>
+#Include <Classes\explorer>
 #Include <Other\Notify\Notify>
 #Include <Functions\getHTMLTitle>
-#Include <Functions\selectFileInOpenWindow>
 ; }
 
 
@@ -193,7 +193,7 @@ class ytdlp {
             case (isVideo = true && postArgs != false && postArgs !== this.defaultPostProcess): cmd.run(,,, postArgs)
         }
         if openDirOnFinish = true
-            switchTo.explorerHighlightFile(folder "\" nameNoExt "." ext)
+            explorer.highlightFile(folder "\" nameNoExt "." ext)
         return
     }
 

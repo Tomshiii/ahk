@@ -1,11 +1,11 @@
 ; { \\ #Includes
-#Include <Classes\winget>
+#Include <Classes\explorer>
 #Include <Other\7zip\SevenZip>
 ; }
 
 ;// this script is very much just for my own work related workflow and won't really help anyone else sorryyy
 
-activeWin := WinGet.ExplorerPath()
+activeWin := explorer.getPath()
 defaultDir := activeWin != false ? activeWin : ""
 SelectedFolder := FileSelect("D2", defaultDir, "Select your desired project Folder.")
 if SelectedFolder = ""

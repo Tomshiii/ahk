@@ -22,7 +22,7 @@ Eval(Script) {
 
 ;// one day would like to add a GUI to add folders to a list - ie a queuing system
 operatePaths := []
-activeWin := WinGet.ExplorerPath()
+activeWin := explorer.getPath()
 defaultDir := activeWin != false ? activeWin : ""
 selectedDir := FileSelect("D3", defaultDir,  "Select Footage Directory")
 if !selectedDir

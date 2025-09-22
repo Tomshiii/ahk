@@ -4,9 +4,10 @@
 #Include <Classes\cmd>
 #Include <Classes\tool>
 #Include <Classes\winGet>
+#Include <Classes\explorer>
 ; }
 
-defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
 if !selectedFile := FileSelect("D 3", defaultDir, "Select file to extract audio.")
     return
 

@@ -2,14 +2,14 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2025/07/28
- * @version 1.1.7
+ * @date 2025/09/22
+ * @version 1.1.8
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include <Classes\errorLog>
 #Include <Classes\obj>
-#Include <Functions\selectFileInOpenWindow>
+#Include <Classes\explorer>
 #Include <Other\pipeCommand>
 ; }
 
@@ -135,7 +135,7 @@ class cmd {
         }
         (wait = false) ? Run(A_ComSpec ' /c explorer.exe /select, ' fullpath,, "Hide") : RunWait(A_ComSpec ' /c explorer.exe /select, ' fullpath,, "Hide")
         if doubleCheck = true {
-            SetTimer((*) => selectFileInOpenWindow.Bind(fullpath, false), -1500)
+            SetTimer((*) => explorer.selectFileInOpenWindow.Bind(fullpath, false), -1500)
         }
     }
 }

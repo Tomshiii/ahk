@@ -1,10 +1,10 @@
 #SingleInstance Off
 ; { \\ #Includes
 #Include <Classes\ffmpeg>
-#Include <Classes\winget>
+#Include <Classes\explorer>
 ; }
 
-defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? WinGet.ExplorerPath(WinExist("A")) : ""
+defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
 if !selectedFile := FileSelect(3, defaultDir, "Select file to extract audio.")
     return
 
