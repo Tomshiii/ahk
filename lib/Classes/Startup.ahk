@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/09/22
- * @version 1.7.75
+ * @date 2025/09/23
+ * @version 1.7.76
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -878,17 +878,19 @@ class Startup {
         getDet := detect()
         __enableHotkeyless() => (submenuHotkeyless.Disable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK"))
         __disableHotkeyless() => (submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Disable("Close HotkeylessAHK"), submenuHotkeyless.Disable("Reboot HotkeylessAHK"))
+        hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+        hotkeyHWND := WinExist(hotkeylessTitle,, browser.vscode.winTitle)
         switch {
-            case (WinExist("HotkeylessAHK.ahk",, "- Visual Studio Code " browser.vscode.winTitle)):
+            case hotkeyHWND:
                 Notify.Show(, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
                 __enableHotkeyless()
-            case (!WinExist("HotkeylessAHK.ahk",, "- Visual Studio Code " browser.vscode.winTitle) && !FileExist(ptf['HotkeylessAHK'])):
+            case !hotkeyHWND && !FileExist(ptf['HotkeylessAHK']):
                 submenuHotkeyless.Disable("Open HotkeylessAHK")
                 submenuHotkeyless.Disable("Close HotkeylessAHK")
                 submenuHotkeyless.Disable("Reboot HotkeylessAHK")
-            case (!WinExist("HotkeylessAHK.ahk",, "- Visual Studio Code " browser.vscode.winTitle) && FileExist(ptf['HotkeylessAHK'])):
+            case !hotkeyHWND && FileExist(ptf['HotkeylessAHK']):
                 try RunWait(Run(ptf['HotkeylessAHK']))
-                if !WinWait("HotkeylessAHK.ahk",, 2, "- Visual Studio Code " browser.vscode.winTitle) {
+                if !WinWait(hotkeylessTitle,, 2, browser.vscode.winTitle) {
                     Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
                     __disableHotkeyless()
                 }
@@ -924,14 +926,14 @@ class Startup {
             exists := false
             submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK")
             getDet := detect()
-            if WinExist("HotkeylessAHK.ahk",, "- Visual Studio Code " browser.vscode.winTitle)
+            if hotkeyHWND := WinExist("HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",, browser.vscode.winTitle)
                 exists := true
             resetOrigDetect(getDet)
             switch closeOrOpen {
                 case "close":
                     if exists = false
                         return
-                    ProcessClose(WinGetPID("HotkeylessAHK.ahk",, "- Visual Studio Code " browser.vscode.winTitle))
+                    ProcessClose(WinGetPID(hotkeyHWND))
                 case "open":
                     if exists = true
                         return
@@ -942,10 +944,10 @@ class Startup {
                     Run(ptf['HotkeylessAHK'])
                 case "reboot":
                     getDet := detect()
-                    if WinExist("HotkeylessAHK.ahk",, "- Visual Studio Code " browser.vscode.winTitle)
-                        ProcessClose(WinGetPID("HotkeylessAHK.ahk",, "- Visual Studio Code " browser.vscode.winTitle))
-                    if WinExist("HotkeylessAHK.ahk",, "- Visual Studio Code " browser.vscode.winTitle) {
-                        if !WinWaitClose("HotkeylessAHK.ahk",, 3, "- Visual Studio Code " browser.vscode.winTitle) {
+                    if WinExist(hotkeyHWND)
+                        ProcessClose(WinGetPID(hotkeyHWND))
+                    if WinExist(hotkeyHWND) {
+                        if !WinWaitClose(hotkeyHWND,, 3) {
                             MsgBox("HotkeylessAHK.ahk failed to close, it may have encountered an error", "Error")
                             return
                         }

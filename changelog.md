@@ -18,3 +18,6 @@
 - 📋 Moved `selectFileInOpenWindow()`
 - 📋 Moved `winget.getActiveExplorerTab()` => `getTab()`
 - 📋 Moved `winget.ExplorerPath()` => `getPath()`
+
+## Other Changes
+- ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
