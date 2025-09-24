@@ -34,7 +34,12 @@ files := []
 names := []
 ignoreArr := []
 ignoreMap := Map()
+
 renderScale := 0.25
+largerRenderScale := renderScale*2
+widthMin  := 2560
+heightMin := 1440
+
 normalCommand := 'ffmpeg -hwaccel none -i "{1}" -c:v prores -profile:v 0 -pix_fmt yuv422p10 -filter_complex "[0:v]scale={2}[out]" -map "[out]" -c:a copy -map a? {3} -sws_flags bicubic -vsync cfr -metadata:s "encoder=Apple ProRes Proxy" -vendor apl0 -flags bitexact -metadata creation_time="{4}" -y "{5}"'
 ;// watermark
 watermarkDir := "W:\_Assets\Plugins & Presets\watermarks"
@@ -90,8 +95,8 @@ for v in operatePaths {
         catch {
             timecode   := ""
         }
-        width          := allMetaData["streams"]["1"]["width"] * renderScale
-        height         := allMetaData["streams"]["1"]["height"] * renderScale
+        width          := ((currWidth  := allMetaData["streams"]["1"]["width"]) > widthMin)   ? currWidth * renderScale  : currWidth * largerRenderScale
+        height         := ((currHeight := allMetaData["streams"]["1"]["height"]) > heightMin) ? currHeight * renderScale : currHeight * largerRenderScale
         newDimensions  := Round(width, 0) ":" Round(height, 0)
         try metadataCreate := allMetaData["streams"]["1"]["tags"]["creation_time"]
         catch {

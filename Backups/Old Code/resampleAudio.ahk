@@ -1,17 +1,17 @@
 ; { \\ #Includes
 #Include <Classes\cmd>
 #Include <Classes\ffmpeg>
-#Include <Functions\nItemsInDir>
+#Include <Classes\explorer>
 #Include <Other\Notify\Notify>
 ; }
 
 dir := "W:\_Assets\sfx"
 sampleRate := "48000"
-totalFIles := nItemsInDir(dir)
+totalFIles := explorer.nItemsInDir(dir)
 ffmp := ffmpeg()
 ffmp.doAlert := false
 
-check := Notify.Show('Checking files in chosen directory', , 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' totalFIles.files)
+check := Notify.Show('Resampling files in chosen directory', , 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' totalFIles.files)
 loop files dir "\*.*", "F" {
     SplitPath(A_LoopFileFullPath, &outname, &outDir, &ext, &nameNoExt)
     check["prog"].value += 1
