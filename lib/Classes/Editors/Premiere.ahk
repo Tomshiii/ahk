@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/09/21
- * @version 2.2.58
+ * @date 2025/09/24
+ * @version 2.2.59
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,18 +69,6 @@ class Prem {
             this.__determineTheme()
         }
         resetOrigDetect(orig)
-        switch {
-            ;// spectrum ui
-            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
-                ;// set timeline and playhead colours
-                this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
-                ;// set layer button offsets (these get added onto `timelineRawX`)
-                this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.layerEmpty := 0x1D1D1D, this.layerDivider := 0x303030, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21, this.iconHighlight := 0x6A6A6A
-            ;// old ui
-			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
-                ;// set timeline and playhead colours
-                this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
-        }
 
         if (this.useSwapSequences = true || this.useSwapSequences = "true") && A_ScriptName = this.mainScriptName ".ahk"
             SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
@@ -107,8 +95,11 @@ class Prem {
     ;// colour of playhead
     static playhead  := 0x4096F3
 
-    ;// colour of highlighted icons
+    ;// colour of various icons
     static iconHighlight := 0x6A6A6A
+    static eyeDisabled   := 0x4B4B4B
+    static soloColour    := 0xE9C700
+    static muteColour    := 0xE9C700
 
     ;// valuehold()
     static valueBlue      := 0x4096f3
@@ -162,7 +153,6 @@ class Prem {
     static layerSync   := 96
     static layerMute   := 119
     static layerSolo   := 142
-    static layerEmpty   := 0x1D1D1D
     static layerDivider := 0x303030
     static toggleWaiting := false
     static toggleableButtons := Mip("source", true, "target", true, "sync", true, "mute", true, "solo", true, "lock", true)
@@ -228,12 +218,20 @@ class Prem {
                 this.__setTimelineCol("oldUI", this.theme)
         }
 
-        ;// edit tab
+        ;// other values
         switch  {
             ;// spectrum ui
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
-                editTabX := 154, editTabY := 35
-                editTabCol := 0xD0D0D0
+                ;// set timeline and playhead colours
+                this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
+                ;// set layer button offsets (these get added onto `timelineRawX`)
+                this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21
+                ;// edit tab
+                this.editTabX := 154, this.editTabY := 35
+            ;// old ui
+			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
+                ;// set timeline and playhead colours
+                this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
     }
 
@@ -404,7 +402,7 @@ class Prem {
         }
         gettitle := WinGet.PremName()
         scan := ShinsImageScanClass(gettitle.winTitle)
-        return (scan.PixelPosition(prem.editTabCol, prem.editTabX, prem.editTabY, 3))
+        return (scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3))
     }
 
     /**
@@ -817,7 +815,7 @@ class Prem {
         SendInput(KSA.shuttleStop)
         sleep 50
         premUIA := premUIA_Values()
-        try premEl := prem.__createUIAelement(false)
+        try premEl := this.__createUIAelement(false)
 
         switch window {
             ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a multicam nest for whatever reason. Doing it this way however, is unfortunately slower.
@@ -1061,7 +1059,7 @@ class Prem {
                 errorLog(Error("Couldn't find the property requested.", -1, property),, 1)
                 return
             }
-        if !PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", 0x205cce, 2) ;searches for the blue text to the right of the scale value
+        if !PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", this.valueBlue, 2) ;searches for the blue text to the right of the scale value
             {
                 block.Off()
                 errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
@@ -2499,7 +2497,9 @@ class Prem {
     /**
      * determines the coordinates of all buttons for all audio/video layers
      * @param {String} [audOrVid="aud"] whether you wish to return the locations for audio layers or video layers
-     * @returns {Map} returns a map of all coordinates for all buttons
+     * @returns {Map/false/-1} if the window title cannot be determined, or `audOrVid` != "aud" or "vid" - returns `false` ||
+     * if the middle divider line cannot be determined - returns `-1` ||
+     * else returns a map of all coordinates for all buttons
      * ```
      * layers := prem.__getAllLayerButtonPos("aud")
      * ;// layers[1]["solo"].x
@@ -2537,13 +2537,12 @@ class Prem {
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
         if WinGetTitle("A") != getTitle.winTitle || (audOrVid != "aud" && audOrVid != "vid")
-            return
-
+            return false
         coord.client()
         if !this.__checkTimelineValues()
-            return
-        if !mid := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png")
-            return
+            return false
+        if !mid := obj.imgSrchMulti({x1: this.timelineRawX+5, y1: this.timelineYValue, x2: this.timelineRawX+8, y2: this.timelineYControl},, &midDivX, &midDivY, ptf.Premiere "divider_" this.theme ".png", ptf.Premiere "divider_" this.theme "2.png")
+            return -1
         if !IsSet(mouseCoords) {
             mouseCoords := obj.MousePos()
         }
@@ -2893,6 +2892,21 @@ class Prem {
 		}
         this.timelineCols   := timelineCol
         this.timelineColArr := timelineColArr
+
+        switch {
+            case (VerCompare(ptf.premIMGver, this.spectrumUI_Version) >= 0):
+                switch this.theme {
+                    ;// these colours may change in future versions
+                    ;// but should work between 25.0->25.5 at a minimum
+                    case "darkest":
+                        this.eyeDisabled := 0x4B4B4B, this.iconHighlight := 0x6A6A6A, this.layerDivider := 0x303030, this.editTabCol := 0xD0D0D0, this.soloColour := 0xE9C700, this.muteColour := 0x67DEA8
+                    case "dark":
+                        this.eyeDisabled := 0x545454, this.iconHighlight := 0x3F3F3F, this.layerDivider := 0x3F3F3F, this.editTabCol := 0xD1D1D1, this.soloColour := 0xF4D500, this.muteColour := 0x81E9B8
+                    case "light":
+                        this.eyeDisabled := 0xD5D5D5, this.iconHighlight := 0xE6E6E6, this.layerDivider := 0xE6E6E6, this.editTabCol := 0x464646, this.soloColour := 0xF8D904, this.muteColour := 0x67DEA8
+                }
+            ;// may change over time
+        }
 	}
 
     /**
@@ -2920,10 +2934,10 @@ class Prem {
 
         colour := 0
         switch {
+            case "solo": colour := this.soloColour
+            case "mute": colour := this.muteColour
             case (VerCompare(ptf.premIMGver, this.spectrumUI_Version) >= 0):
                 switch muteOrSolo {
-                    case "solo": colour := 0xE9C700
-                    case "mute": colour := 0x67DEA8
                 }
         }
 
@@ -2934,6 +2948,14 @@ class Prem {
             return
         }
         allButtons := this.__getAllLayerButtonPos()
+        if !allButtons || allButtons = -1 {
+            blocker.Off()
+            switch allButtons {
+                case false: Notify.Show('prem.soloVideo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case -1: Notify.Show('prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+            }
+            return
+        }
         arr := []
         for k in allButtons {
             getColour := PixelGetColor(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
@@ -2973,8 +2995,6 @@ class Prem {
             return
         }
 
-        disabled := 0x4B4B4B
-
         origMouseCords := obj.MousePos()
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
@@ -2983,20 +3003,28 @@ class Prem {
         }
 
         allButtons := this.__getAllLayerButtonPos("vid", origMouseCords)
+        if !allButtons || allButtons = -1 {
+            blocker.Off()
+            switch allButtons {
+                case false: Notify.Show('prem.soloVideo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case -1: Notify.Show('prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+            }
+            return
+        }
         arr := []
         for k in allButtons {
             getColour := PixelGetColor(allButtons[k]["mute"].x+7, allButtons[k]["mute"].y)
             switch soloInverseDisable {
                 case "solo":
-                    if (allButtons[k]["mouseLayer"] = "true" && getColour = disabled) || (allButtons[k]["mouseLayer"] != "true" && getColour != disabled) {
+                    if (allButtons[k]["mouseLayer"] = "true" && getColour = this.eyeDisabled) || (allButtons[k]["mouseLayer"] != "true" && getColour != this.eyeDisabled) {
                         arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
                     }
                 case "inverse":
-                    if (allButtons[k]["mouseLayer"] = "true" && getColour != disabled) || (allButtons[k]["mouseLayer"] != "true" && getColour = disabled) {
+                    if (allButtons[k]["mouseLayer"] = "true" && getColour != this.eyeDisabled) || (allButtons[k]["mouseLayer"] != "true" && getColour = this.eyeDisabled) {
                         arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
                     }
                 case "disable":
-                    if getColour = disabled
+                    if getColour = this.eyeDisabled
                         arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
             }
         }

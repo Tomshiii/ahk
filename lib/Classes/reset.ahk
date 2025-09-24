@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2025/09/23
- * @version 1.0.14
+ * @date 2025/09/24
+ * @version 1.0.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -117,7 +117,7 @@ class reset {
     static __resetHotkeyless() {
         getDet := detect()
         if hotkeyHWND := WinExist("HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",, browser.vscode.winTitle)
-            ProcessClose(hotkeyHWND)
+            ProcessClose(WinGetPID(hotkeyHWND))
         if hotkeyHWND := WinExist("HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",, browser.vscode.winTitle) {
             if !WinWaitClose(hotkeyHWND,, 3) {
                 MsgBox("HotkeylessAHK.ahk failed to close, it may have encountered an error", "Error")
