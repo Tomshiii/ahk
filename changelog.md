@@ -23,9 +23,13 @@
 
 ## Other Changes
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
+- ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
 
 🔗 `mult-dl.ahk`
-###### *(v1.2.3 -> v1.2.4)*
+###### *(v1.2.3 -> v1.2.5)*
 - ✅ Fixed script not properly loading after installing all required packages
-- ✅ Will no longer loop trying to get the user to reinstall required packages if they haven't rebooted their pc
+- ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
+- ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL
 - 📋 Now checks for `deno` to prepare for continued `yt-dlp` support ([see here for more info](<https://github.com/yt-dlp/yt-dlp/issues/14404>))
+- 📋 Now activates the GUI if the user tries to reopen the script/exe while it is already open
+- 📋 `Multi` tab now uses a `ListView` to input URLs instead of an `Edit` box

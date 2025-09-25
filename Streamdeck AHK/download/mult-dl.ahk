@@ -3,12 +3,13 @@
  * @author tomshi
  * @date 2025/09/25
  ***********************************************************************/
-global currentVer := "1.2.4"
-A_ScriptName := "multi-dl"
+global currentVer := "1.2.5"
+A_ScriptName := "Multi Download"
+preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
 ;@Ahk2Exe-SetCompanyName Tomshi
 ;@Ahk2Exe-SetCopyright Copyright (C) 2025
-;@Ahk2Exe-SetDescription GUI to download multiple video files at once
+;@Ahk2Exe-SetDescription GUI to interact with yt-dlp in different ways
 
 #Requires AutoHotkey v2.0
 #Include <Classes\ytdlp>
@@ -18,6 +19,13 @@ A_ScriptName := "multi-dl"
 #Include <Functions\useNVENC>
 #Include <Functions\getLocalVer>
 #Include <Functions\isURL>
+#Include <Other\LVICE_XXS>
+
+#SingleInstance Off
+if win := WinExist(A_ScriptName) || win := WinExist(preReqTitle) {
+    WinActivate(win)
+    ExitApp()
+}
 
 try {
     if !A_IsCompiled && FileExist(ptf.Icons "\myscript.ico")
@@ -43,7 +51,7 @@ class multiDL extends tomshiBasic {
                 deno   := cmd.result('powershell -c refreshenv; "Get-Command -Name deno -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
                 if !ffmpeg || !ytdlp || !deno {
                     ;// incase the user hasn't reloaded since installation
-                    super.__New(,,, "Prerequisites Required")
+                    super.__New(,,, preReqTitle)
                     this.AddText(, "Installing these prerequisites will require admin permissions. `nYou may also need to reboot after installation.")
                     for v in this.arr {
                         if v = "yt-dlp"
@@ -77,7 +85,7 @@ class multiDL extends tomshiBasic {
         if !DirExist(dlFolder "\tomshi")
             DirCreate(dlFolder "\tomshi")
         this.getFile := dlFolder "\tomshi"
-        super.__New(,,, "Multi Download")
+        super.__New(,,, A_ScriptName)
 
         startY := 110
         this.tabs := this.AddTab3("+Theme -Background x9 y" startY, ["Single", "Multi", "Part"])
@@ -101,7 +109,21 @@ class multiDL extends tomshiBasic {
         ;// ================================================================
         this.tabs.UseTab("Multi")
 
-        this.AddEdit("x25 y" startY+30 " r10 vlist w320 Multi Wrap", this.defaultListText)
+        this.AddText("Section x25 y" startY+35, "URL: ")
+        this.AddEdit("x+12 y+-20 r1 vlistURL w165 -Wrap", checkClipboard)
+        this.AddButton("x+10 y+-27", "Add").OnEvent("Click", this.__addListURL.Bind(this))
+        this.AddListView("x25 y+5 r5 vlist w340 Grid -Multi NoSort -ReadOnly -Hdr", ["URL"])
+        this["list"].OnEvent("ContextMenu", listContextMenu.Bind(this))
+        ContextMenu := Menu()
+        ContextMenu.Add("Remove", listRemove)
+        listContextMenu(self, LV, Item, IsRightClick, X, Y) {
+            if item = 0
+                return
+            ContextMenu.Show(X, Y)
+        }
+        listRemove(*) {
+            this["list"].Delete(this["list"].GetNext(, "F"))
+        }
         this.AddButton("vDL w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise", " Avoid reencode`n (may result in lower quality)")
         this.AddCheckbox("yp+40 vcookies_multi Checked1", " Use cookies (firefox)")
@@ -145,7 +167,7 @@ class multiDL extends tomshiBasic {
         ;// Setting version text & Update Button to the top of the window
         this.AddText("vVerText Right BackgroundTrans y" startY+5 " x" listx " w" listwid, "v" currentVer)
         this["VerText"].GetPos(&verx, &very, &verwid, &verheight)
-        this["VerText"].Move(verx+(verwid*0.77), very, verwid/3, verheight)
+        this["VerText"].Move(verx+(verwid*0.725), very, verwid/3, verheight)
         this.AddButton("vupdates x9 y7", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
         this["updates"].Opt("Disabled")
         this.AddCheckbox("vcheckDev x+10 yp+7", "check dev branch")
@@ -158,6 +180,7 @@ class multiDL extends tomshiBasic {
         this["currDir"].SetFont("Bold s10")
 
         this.show(, {DarkColour: "F0F0F0"})
+        LVICE := LVICE_XXS(this["list"])
 
         ;// attempt check package updates
         ;// ================================================================
@@ -216,6 +239,18 @@ class multiDL extends tomshiBasic {
         this["currDir"].text := this.__cullDirectory(this.getFile)
     }
 
+    __addListURL(*) {
+        if this["listURL"].text = ""
+            return
+        if !isURL(this["listURL"].text) {
+            MsgBox("Value is not a valid URL string",, "4112")
+            return
+        }
+        this["list"].Add("", this["listURL"].text)
+        this["listURL"].text := ""
+        this["listURL"].Focus()
+    }
+
     __buildUpdateCmd() {
         buildStr := ""
         newArr := this.arr.Clone()
@@ -242,15 +277,16 @@ class multiDL extends tomshiBasic {
         cookiesPart    := ((this["cookies_part"].value = 1)   ? "--cookies-from-browser firefox" : "")
         custFileSingle := (this["custFileSingle"].value = "") ? "" : this["custFileSingle"].value
         custFilePart   := (this["custFilePart"].value = "")   ? "" : this["custFilePart"].value
-        this.Hide()
         yt := ytdlp()
         showDir := true
         switch this.tabs.value {
             case 1: ;// single
                 if this["singleURL"].value = "" {
                     showDir := false
+                    yt.doAlert := false
                     goto break
                 }
+                this.Hide()
                 switch {
                         case (vidOrAud = "vid" && this["deprioritise_single"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, this["singleURL"].value, custFileSingle, false,, cookiesSingle)
                         case (vidOrAud = "vid" && this["deprioritise_single"].value = true):
@@ -260,11 +296,17 @@ class multiDL extends tomshiBasic {
                         case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, this["singleURL"].value, custFileSingle, false,, cookiesSingle)
                     }
             case 2: ;// multi
-                if this["list"].value = "" || this['list'].value == this.defaultListText {
+                values := this["list"].GetCount()
+                if values = 0 {
                     showDir := false
+                    yt.doAlert := false
                     goto break
                 }
-                list := StrSplit(this["list"].value, [","], " `r`n")
+                this.Hide()
+                list := []
+                loop values {
+                    list.Push(this["list"].GetText(A_Index))
+                }
                 for v in list {
                     switch {
                         case (vidOrAud = "vid" && this["deprioritise"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, v,, false,, cookiesMulti)
@@ -274,13 +316,17 @@ class multiDL extends tomshiBasic {
                         case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, v,, false,, cookiesMulti)
                         case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, v,, false,, cookiesMulti)
                     }
+                    ;// prevent youtube thinking you're a bot
+                    sleep 8000
                 }
             case 3: ;// part
                 this.timecodeValue := (Format("{:02}", this["H1"].value) ":" Format("{:02}", this["M1"].value) ":" Format("{:02}", this["S1"].value) "-" Format("{:02}", this["H2"].value) ":" Format("{:02}", this["M2"].value) ":" Format("{:02}", this["S2"].value))
                 if this.timecodeValue == "00:00:00-00:00:00" || this["partURL"].value = "" {
                     showDir := false
+                    yt.doAlert := false
                     goto break
                 }
+                this.Hide()
                 partCommand := Format('-N 8 -o "{1}" --download-sections "*{2}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 ' cookiesPart, "{}", this.timecodeValue)
                 switch {
                         case (vidOrAud = "vid" && this["deprioritise_part"].value = false): yt.download(partCommand, this.getFile, this["partURL"].value, custFilePart, false)

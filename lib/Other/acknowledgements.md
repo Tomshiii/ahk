@@ -35,3 +35,6 @@
 
 `Spawnova`
 `ShinsImageScanClass` => : https://github.com/Spawnova/ShinsImageScanClass/blob/main/AHK%20V2/ShinsImageScanClass.ahk
+
+`AHK-just-me`
+`AHK2_LVICE_XXS` => : https://github.com/AHK-just-me/AHK2_LVICE_XXS/tree/main
