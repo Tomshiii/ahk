@@ -5,7 +5,8 @@
 #Include <Other\Notify\Notify>
 ; }
 
-dir := "W:\_Assets\sfx"
+if !dir := FileSelect("D2",, "Select Folder to Resample (this process will recurse to all subdirs)")
+    ExitApp()
 sampleRate := "48000"
 totalFIles := explorer.nItemsInDir(dir)
 ffmp := ffmpeg()

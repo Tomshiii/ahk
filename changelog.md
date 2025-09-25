@@ -23,3 +23,9 @@
 
 ## Other Changes
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
+
+🔗 `mult-dl.ahk`
+###### *(v1.2.3 -> v1.2.4)*
+- ✅ Fixed script not properly loading after installing all required packages
+- ✅ Will no longer loop trying to get the user to reinstall required packages if they haven't rebooted their pc
+- 📋 Now checks for `deno` to prepare for continued `yt-dlp` support ([see here for more info](<https://github.com/yt-dlp/yt-dlp/issues/14404>))
