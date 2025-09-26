@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/09/24
- * @version 2.2.59
+ * @date 2025/09/26
+ * @version 2.2.60
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2302,6 +2302,17 @@ class Prem {
     }
 
     /**
+     * Determines the x/y pos of the middle divider for the current theme (if screenshots of the current theme exist)
+     * @param {VarRef} [] x/y values of middle divider
+     * @returns {boolean/VarRef} returns true/false for success of the imagesearch - if true will also return the x/y value of the middle divider
+     */
+    static __getlayerMid(&midDivX?, &midDivY?) {
+        if !obj.imgSrchMulti({x1: this.timelineRawX+5, y1: this.timelineYValue, x2: this.timelineRawX+8, y2: this.timelineYControl},, &midDivX, &midDivY, ptf.Premiere "divider_" this.theme ".png", ptf.Premiere "divider_" this.theme "2.png")
+            return false
+        return true
+    }
+
+    /**
      * Determines the top/bottom position of the layer the cursor is currently within. Will also optionally determine the position of the middle divider
      * @param {Object} [coords] an object containing the `x`/`y` value of the current cursor coords
      * @param {Boolean} [searchMid=true] determine whether to search for the middle divider
@@ -2309,11 +2320,11 @@ class Prem {
      * @param {Boolean} [showError=true] determine whether to show the `Notify {` error on failure. May be useful to disable this if systematically trying to determine all layer positions as it will show the error once it runs out of tracks
      * @returns {Boolean/Object} returns boolean `false` on failure or an object containing all coords on success
      */
-    static __layerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, showError?) {
+    static __getlayerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, showError?) {
         doNotify := IsSet(showError) && (showError=true || showError=false) ? showError : true
         topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineRawY, this.layerDivider)
         botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineYControl, this.layerDivider)
-        mid := (searchMid = true) ? ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+15, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png") : true
+        mid := (searchMid = true) ? this.__getlayerMid(&midDivX, &midDivY) : true
         if (!topDiv || !botDiv || !mid) {
             if doNotify = true
                 Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
@@ -2350,25 +2361,29 @@ class Prem {
             blocker.Off()
             return
         }
-
-        if (middle = false && !this.__layerDividerCheck(origMouseCords)) || !this.__layerTopBottom(origMouseCords, middle,, &topDivY,,,, &midDivY) {
-            blocker.Off()
-            return
-        }
-
         blocker.Off()
 
         switch middle {
+            ;// adjust layers
             case false:
+                if !this.__layerDividerCheck(origMouseCords) || !this.__getlayerTopBottom(origMouseCords, middle,, &topDivY,,,, &midDivY) {
+                    blocker.Off()
+                    return
+                }
                 block.On()
                 MouseMove(this.timelineRawX+10, topDivY+4)
                 KeyWait("LAlt", "L")
-                if !checkAgain := this.__layerTopBottom({x:0, y: topDivY+4}, false)
+                if !checkAgain := this.__getlayerTopBottom({x:0, y: topDivY+4}, false)
                     MouseMove(origMouseCords.x, topDivY+4)
                 else
                     MouseMove(origMouseCords.x, (checkAgain.topY+checkAgain.botY)/2)
                 checkStuck(["LAlt", "CapsLock"])
             case true:
+                ;// adjust middle divider
+                if !this.__getlayerMid(, &midDivY) {
+                    blocker.Off()
+                    return
+                }
                 MouseMove(origMouseCords.x, midDivY+2)
                 tool.Cust("Move the mouse to the desired height,`nThen let go of LAlt.", 3000,,, 9)
                 KeyWait("LAlt", "L")
@@ -2446,7 +2461,7 @@ class Prem {
             return
         }
 
-        if !this.__layerDividerCheck(origMouseCords) || !this.__layerTopBottom(origMouseCords, true, &topDivX, &topDivY, &botDivX, &botDivY, &midDivX, &midDivY) {
+        if !this.__layerDividerCheck(origMouseCords) || !this.__getlayerTopBottom(origMouseCords, true, &topDivX, &topDivY, &botDivX, &botDivY, &midDivX, &midDivY) {
             block.Off()
             return
         }
@@ -2541,7 +2556,7 @@ class Prem {
         coord.client()
         if !this.__checkTimelineValues()
             return false
-        if !mid := obj.imgSrchMulti({x1: this.timelineRawX+5, y1: this.timelineYValue, x2: this.timelineRawX+8, y2: this.timelineYControl},, &midDivX, &midDivY, ptf.Premiere "divider_" this.theme ".png", ptf.Premiere "divider_" this.theme "2.png")
+        if !mid := this.__getlayerMid(, &midDivY)
             return -1
         if !IsSet(mouseCoords) {
             mouseCoords := obj.MousePos()
@@ -2576,7 +2591,7 @@ class Prem {
         if !this.__checkTimelineValues()
             return false
         if !midDivY {
-            if !midCheck := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineYValue, this.timelineRawX+8, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png")
+            if !this.__getlayerMid(, &midDivY)
                 return false
         }
         A := Map()
@@ -2584,7 +2599,7 @@ class Prem {
         loop {
             if IsInteger(stopAt) && stopAt != false && A_Index > stopAt
                 break
-            if !getLayerPos := this.__layerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,, false)
+            if !getLayerPos := this.__getlayerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,, false)
                 break
             current := Map()
             current["top"] := getLayerPos.topY, current["bot"] := getLayerPos.botY, current["mid"] := getLayerPos.topY+((getLayerPos.botY-getLayerPos.topY)/2)
@@ -2732,7 +2747,7 @@ class Prem {
         }
 
         if !audOrVid {
-            middleDivider := ImageSearch(&midDivX, &midDivY, this.timelineRawX+5, this.timelineRawY, this.timelineRawX+7, this.timelineYControl,  "*2 " ptf.Premiere "divider_" this.theme ".png")
+            middleDivider := this.__getlayerMid(&midDivX, &midDivY)
             aboveOrBelow := (origMouseCords.y < midDivY) ? true : false
         } else {
             middleDivider := false
