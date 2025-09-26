@@ -23,6 +23,10 @@ getHotkeysArr(hk := A_ThisHotkey) {
 
     ; Build comprehensive key name pattern
     keyNames := "(?:"
+        ; VK codes (vk followed by hex digits)
+        . "vk[0-9A-Fa-f]+|"
+        ; SC codes (sc followed by hex digits)
+        . "sc[0-9A-Fa-f]+|"
         ; Function keys F1-F24
         . "F(?:[1-9]|1\d|2[0-4])|"
         ; Modifier keys as regular keys (LShift, RShift, etc.)
@@ -92,18 +96,43 @@ getHotkeysArr(hk := A_ThisHotkey) {
             }
         }
 
-        ; Add key name - convert to VK using GetKeyVK for safety
+        ; Add key name - handle VK codes, SC codes, and regular keys
         if m[4] {
             ; Check if it's already a VK code
             if RegExMatch(m[4], "i)^vk[0-9A-Fa-f]+$") {
                 components.Push(m[4])
-            } else {
-                ; Use GetKeyVK for system-safe conversion
+            }
+            ; Check if it's a SC code
+            else if RegExMatch(m[4], "i)^sc[0-9A-Fa-f]+$") {
+                ; Try to get the key name first, then convert to VK
+                keyName := GetKeyName(m[4])
+                if keyName != "" {
+                    vkCode := GetKeyVK(keyName)
+                    if vkCode {
+                        components.Push("vk" . Format("{:X}", vkCode))
+                    } else {
+                        ; If VK conversion fails, keep the original SC code
+                        components.Push(m[4])
+                    }
+                } else {
+                    ; If GetKeyName fails, keep the original SC code
+                    components.Push(m[4])
+                }
+            }
+            else {
+                ; Regular key name - use GetKeyVK for system-safe conversion
                 vkCode := GetKeyVK(m[4])
                 if !vkCode {
-                    ;// throw
-                    errorLog(ValueError("Couldn't determine Key", vkCode),,, true)
-                    return
+                    ; If GetKeyVK fails, try to use GetKeyName to normalize first
+                    normalizedName := GetKeyName(m[4])
+                    if normalizedName != "" && normalizedName != m[4] {
+                        vkCode := GetKeyVK(normalizedName)
+                    }
+
+                    if !vkCode {
+                        errorLog(ValueError("Couldn't determine Key", m[4]),,, true)
+                        return
+                    }
                 }
                 components.Push("vk" . Format("{:X}", vkCode))
             }

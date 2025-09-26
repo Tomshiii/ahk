@@ -2,6 +2,8 @@
 
 ## Functions
 - ✅ Fixed `slack.button()` throwing in certain circumstances
+- ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
+- ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific

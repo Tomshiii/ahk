@@ -5,7 +5,7 @@
  * @premVer 25.5
  * @author tomshi
  * @date 2025/09/26
- * @version 2.2.60
+ * @version 2.2.61
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,6 +23,7 @@
 #Include <Classes\WM>
 #Include <Classes\cmd>
 #Include <Classes\Mip>
+#Include <Classes\Move>
 #Include <Classes\Editors\Premiere_UIA>
 #Include <Classes\Editors\Premiere_TimelineColours>
 #Include <GUIs\tomshiBasic>
@@ -2385,9 +2386,12 @@ class Prem {
                     return
                 }
                 MouseMove(origMouseCords.x, midDivY+2)
+                move.clipMouse("y", false)
                 tool.Cust("Move the mouse to the desired height,`nThen let go of LAlt.", 3000,,, 9)
                 KeyWait("LAlt", "L")
                 tool.Cust("",,,, 9)
+                move.setMouseClip()
+                coord.client() ;// clipMouse changes the coordmode to "mouse"
                 newCoords := obj.MousePos()
                 MouseClickDrag("Left", this.timelineRawX+10, midDivY+2, this.timelineRawX+10, newCoords.y)
                 MouseMove(origMouseCords.x, newCoords.y)

@@ -58,9 +58,9 @@ RShift & RCtrl::switchTo.ahkDocs()
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;move mouse along one axis
 ;moveXhotkey;
-SC03A & XButton2::
+SC03A & XButton2::move.clipMouse("x")
 ;moveYhotkey;
-SC03A & XButton1::move.XorY()
+SC03A & XButton1::move.clipMouse("y")
 
 ;SubUnderHotkey;
 +NumpadSub::_
