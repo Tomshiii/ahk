@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/09/23
- * @version 1.7.76
+ * @date 2025/09/27
+ * @version 1.7.77
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -889,7 +889,7 @@ class Startup {
                 submenuHotkeyless.Disable("Close HotkeylessAHK")
                 submenuHotkeyless.Disable("Reboot HotkeylessAHK")
             case !hotkeyHWND && FileExist(ptf['HotkeylessAHK']):
-                try RunWait(Run(ptf['HotkeylessAHK']))
+                try RunWait(ptf['HotkeylessAHK'])
                 if !WinWait(hotkeylessTitle,, 2, browser.vscode.winTitle) {
                     Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
                     __disableHotkeyless()
@@ -943,6 +943,10 @@ class Startup {
                     }
                     Run(ptf['HotkeylessAHK'])
                 case "reboot":
+                    if exists != true {
+                        try RunWait(ptf['HotkeylessAHK'])
+                        return
+                    }
                     getDet := detect()
                     if WinExist(hotkeyHWND)
                         ProcessClose(WinGetPID(hotkeyHWND))
@@ -957,6 +961,7 @@ class Startup {
                         MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
                         return
                     }
+                    try RunWait(ptf['HotkeylessAHK'])
                     Notify.Show(, 'HotkeylessAHK has been rebooted', 'C:\Windows\System32\imageres.dll|icon253',,, 'theme=Dark dur=4 bdr=Gray show=Fade@250 hide=Fade@250 maxW=400')
             }
         }
