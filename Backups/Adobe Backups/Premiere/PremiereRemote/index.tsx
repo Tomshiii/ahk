@@ -174,6 +174,10 @@ export const host = {
     }
 
     // alert("Active sequence not found in project.sequences list.");
+  },
+
+  setMarker: function(colour: string) {
+    return MarkerUtils.setMarker(colour);
   }
 };
 

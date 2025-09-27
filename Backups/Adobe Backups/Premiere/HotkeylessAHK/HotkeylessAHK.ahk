@@ -13,7 +13,7 @@ A_IconTip := "HotkeylessAHK"
 #Include files\lib.ahk
 #Include <Classes\Editors\Premiere>
 #Include <Functions\detect>
-#NoTrayIcon
+; #NoTrayIcon
 
 ; HotkeylessAHK by sebinside
 ; ALL INFORMATION: https://github.com/sebinside/HotkeylessAHK
@@ -38,4 +38,5 @@ Class CustomFunctions {
     changeLabel(label)       => (prem.changeLabel(label))
     changeDupe(toggleHotkey) => (prem.changeDupeFrameMarkers(toggleHotkey))
     organiseProj()           => (prem.__remoteFunc('organiseProj'))
+    setMarker(colour)        => (prem.__remoteFunc('setMarker',, "colour=" colour))
 }

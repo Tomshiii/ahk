@@ -12,7 +12,7 @@ if !DirExist(dir) {
     return
 }
 
-cmd.run(,,1, command, dir)
+cmd.run(, false, true, command, dir)
 if WinExist(Editors.Premiere.winTitle) {
-    MsgBox("The PremiereRemote extension will need to be closed and reopened within Premiere")
+    MsgBox("The PremiereRemote extension will need to be closed and reopened within Premiere",, "T1.5")
 }

@@ -28,6 +28,9 @@
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
 
+🔗 `PremiereRemote`
+- ✏️ Added `setMarker()`
+
 🔗 `mult-dl.ahk`
 ###### *(v1.2.3 -> v1.2.5)*
 - ✅ Fixed script not properly loading after installing all required packages
