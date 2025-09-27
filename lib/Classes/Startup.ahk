@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2025/09/27
- * @version 1.7.77
+ * @version 1.7.78
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -875,11 +875,13 @@ class Startup {
         submenuHotkeyless.Add("Open HotkeylessAHK", __hotkeyless.Bind("open"))
         submenuHotkeyless.Add("Close HotkeylessAHK", __hotkeyless.Bind("close"))
         submenuHotkeyless.Add("Reboot HotkeylessAHK", __hotkeyless.Bind("reboot"))
-        getDet := detect()
         __enableHotkeyless() => (submenuHotkeyless.Disable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK"))
         __disableHotkeyless() => (submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Disable("Close HotkeylessAHK"), submenuHotkeyless.Disable("Reboot HotkeylessAHK"))
+
+        getDet := detect(, "RegEx")
         hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
-        hotkeyHWND := WinExist(hotkeylessTitle,, browser.vscode.winTitle)
+        ignore := browser.vscode.winTitle "|" A_ScriptName
+        hotkeyHWND := WinExist(hotkeylessTitle,, ignore)
         switch {
             case hotkeyHWND:
                 Notify.Show(, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
@@ -890,7 +892,7 @@ class Startup {
                 submenuHotkeyless.Disable("Reboot HotkeylessAHK")
             case !hotkeyHWND && FileExist(ptf['HotkeylessAHK']):
                 try RunWait(ptf['HotkeylessAHK'])
-                if !WinWait(hotkeylessTitle,, 2, browser.vscode.winTitle) {
+                if !WinWait(hotkeylessTitle,, 2, ignore) {
                     Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
                     __disableHotkeyless()
                 }
@@ -925,45 +927,53 @@ class Startup {
             canLaunch := (!FileExist(ptf['HotkeylessAHK'])) ? false : true
             exists := false
             submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK")
-            getDet := detect()
-            if hotkeyHWND := WinExist("HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",, browser.vscode.winTitle)
+            getorig := detect(, "RegEx")
+            hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+            ignore := browser.vscode.winTitle "|" A_ScriptName
+            if hotkeyHWND := WinExist(hotkeylessTitle,, ignore)
                 exists := true
-            resetOrigDetect(getDet)
             switch closeOrOpen {
                 case "close":
-                    if exists = false
+                    if exists = false {
+                        resetOrigDetect(getDet)
                         return
-                    ProcessClose(WinGetPID(hotkeyHWND))
+                    }
+                    ProcessClose(WinGetPID(hotkeyHWND,, ignore))
                 case "open":
-                    if exists = true
+                    if exists = true {
+                        resetOrigDetect(getDet)
                         return
+                    }
                     if !canLaunch {
                         MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
+                        resetOrigDetect(getDet)
                         return
                     }
                     Run(ptf['HotkeylessAHK'])
                 case "reboot":
                     if exists != true {
                         try RunWait(ptf['HotkeylessAHK'])
+                        resetOrigDetect(getDet)
                         return
                     }
-                    getDet := detect()
-                    if WinExist(hotkeyHWND)
-                        ProcessClose(WinGetPID(hotkeyHWND))
-                    if WinExist(hotkeyHWND) {
-                        if !WinWaitClose(hotkeyHWND,, 3) {
+                    if WinExist(hotkeyHWND,, ignore)
+                        ProcessClose(WinGetPID(hotkeyHWND,, ignore))
+                    if WinExist(hotkeyHWND,, ignore) {
+                        if !WinWaitClose(hotkeyHWND,, 3, ignore) {
                             MsgBox("HotkeylessAHK.ahk failed to close, it may have encountered an error", "Error")
+                            resetOrigDetect(getDet)
                             return
                         }
                     }
-                    resetOrigDetect(getDet)
                     if !canLaunch {
                         MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
+                        resetOrigDetect(getDet)
                         return
                     }
                     try RunWait(ptf['HotkeylessAHK'])
                     Notify.Show(, 'HotkeylessAHK has been rebooted', 'C:\Windows\System32\imageres.dll|icon253',,, 'theme=Dark dur=4 bdr=Gray show=Fade@250 hide=Fade@250 maxW=400')
             }
+            resetOrigDetect(getDet)
         }
     }
 
