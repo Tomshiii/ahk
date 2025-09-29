@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/08/15
- * @version 2.0.21
+ * @date 2025/09/29
+ * @version 2.0.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -106,15 +106,18 @@ Class premUIA_Values {
             Notify.Show(, "Attempting to set UIA values is already in process.`nPlease wait.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
             Exit()
         }
+        detect(false, 2) ;// incase the user is midreload while attempting to set values
         this.activeObj.isRunning := true
 
         if !prem.__checkDialogueClass()
             return
 
         premName := WinGet.PremName()
+        if !premName.winTitle
+            return
         ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
 
-        AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space prem.winTitle)
+        AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space prem.winTitle,, false)
         try {
             currentVers  := JSON.parse(FileRead(ptf.SupportFiles "\UIA\values.ini"),, false)
             originalVers := JSON.stringify(currentVers)

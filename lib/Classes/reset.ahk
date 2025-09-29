@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2025/09/24
- * @version 1.0.15
+ * @date 2025/09/29
+ * @version 1.0.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -115,11 +115,16 @@ class reset {
 
     /** a func to reset `HotkeylessAHK` to cut repeat code */
     static __resetHotkeyless() {
-        getDet := detect()
-        if hotkeyHWND := WinExist("HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",, browser.vscode.winTitle)
-            ProcessClose(WinGetPID(hotkeyHWND))
-        if hotkeyHWND := WinExist("HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",, browser.vscode.winTitle) {
-            if !WinWaitClose(hotkeyHWND,, 3) {
+        getDet := detect(, "RegEx")
+        hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+        ignore := browser.vscode.winTitle "|" A_ScriptName
+        hotkeyHWND := WinExist(hotkeylessTitle,, ignore)
+        if hotkeyHWND
+            ProcessClose(WinGetPID(hotkeyHWND,, ignore))
+        hotkeyHWNDAgain := WinExist(hotkeylessTitle,, ignore)
+        if hotkeyHWNDAgain {
+            if !WinWaitClose(hotkeyHWNDAgain,, 3, ignore) {
+                resetOrigDetect(getDet)
                 MsgBox("HotkeylessAHK.ahk failed to close, it may have encountered an error", "Error")
                 return
             }
@@ -187,5 +192,9 @@ class reset {
         detect()
         if hwnd := WinExist(this().mainScript ".ahk ahk_class AutoHotkey",, browser.vscode.winTitle)
             ProcessClose(WinGetPID(hwnd))
+    }
+
+    __Delete() {
+        detect(false, 2)
     }
 }

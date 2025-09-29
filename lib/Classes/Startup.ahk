@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/09/27
- * @version 1.7.78
+ * @date 2025/09/29
+ * @version 1.7.79
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -611,7 +611,7 @@ class Startup {
      * ```
      */
     adobeTemp() {
-        if (isReload() || (WinExist(Editors.Premiere.winTitle) || WinExist(Editors.AE.winTitle)))
+        if (this.isReload != false || (WinExist(Editors.Premiere.winTitle) || WinExist(Editors.AE.winTitle)))
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if WinExist("Scripts Release " this.MyRelease) ;checks to make sure firstCheck() isn't still running
@@ -1426,6 +1426,7 @@ class Startup {
         }
     }
     __Delete(*) {
+        detect(false, 2)
         try {
             if !FileExist(this.trackReloadsIni)
                 this.__createTrackReloads()
