@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/09/01
- * @version 2.1.46
+ * @date 2025/09/29
+ * @version 2.1.47
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -122,6 +122,7 @@ class adobeAutoSave extends count {
 
     origPanelFocus := ""
     premUIAEl      := false
+    resetAlreadyWaited := false
 
     /** This function is called every increment */
     Tick() {
@@ -195,14 +196,27 @@ class adobeAutoSave extends count {
             this.__saveAE()
     }
 
-    __stopAndReset(*) {
-        if !WinActive(prem.winTitle) && !WinActive(AE.winTitle) {
-            return
+    closeNotifys() {
+        notifyArr := ["premDelay", "premNextAttempt", "premPlayback", "premBusy", "premSaveCheck", "premEdit", "premBusier", "premSaveAttempt", "premFailed", "aeBusy", "aeSaveCheck"]
+        anyExist := false
+        for v in notifyArr {
+            if notify.Exist(v) {
+                anyExist := true
+                break
+            }
         }
+        if !anyExist
+            return
+        loop notifyArr.Length {
+            try Notify.Destroy(notifyArr[A_Index])
+        }
+    }
+
+    __stopAndReset(*) {
         this.Stop()
         this.resetingSave := true, this.idleAttempt := true
         ; sleep 5000
-        SetTimer((*) => (this.__reset(), this.Start()), -4500)
+        SetTimer((*) => (this.resetAlreadyWaited := true, this.__reset(), this.Start()), -4500)
     }
 
     /** This function handles changing the timer frequency when the user adjusts it within `settingsGUI()` */
@@ -238,9 +252,9 @@ class adobeAutoSave extends count {
         loopTotal := 5
         loop loopTotal {
             __destroyNotify() {
-                if Notify.Exist("delay")
-                    Notify.Destroy("delay", true)
-                if Notify.Exist("nextAttempt")
+                if Notify.Exist("premDelay")
+                    Notify.Destroy("premDelay", true)
+                if Notify.Exist("premNextAttempt")
                     __waitAndCheckAttempt()
             }
             if this.resetingSave = true || WinExist("Save Project") {
@@ -256,35 +270,41 @@ class adobeAutoSave extends count {
                 || this.__checkRClick() {
                 if A_Index > 1 && this.beep = true
                     this.__playBeep()
-                if !Notify.Exist("delay") {
-                    Notify.Show(A_ScriptName, "Script tried to save but the user interacted with the keyboard/mouse in the last 0.5s.`nPlease wait for the next save attempt:", 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 hide=Fade@250 maxW=400 tag=delay')
+                if !Notify.Exist("premDelay") {
+                    Notify.Show(A_ScriptName, "Script tried to save but the user interacted with the keyboard/mouse in the last 0.5s.`nPlease wait for the next save attempt:", 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 hide=Fade@250 maxW=400 tag=premDelay')
                 }
 
                 __waitAndCheckAttempt() {
                     loop 50 {
-                        if !Notify.Exist("nextAttempt")
+                        if !Notify.Exist("premNextAttempt")
                             break
                         HighPrecisionSleep(10)
                     }
-                    if Notify.Exist("nextAttempt")
-                        try Notify.Destroy("nextAttempt", true)
+                    if Notify.Exist("premNextAttempt")
+                        try Notify.Destroy("premNextAttempt", true)
                 }
                 __doAttemptNotify(index, loopTotal, *) {
                     range := 1500 ;// ms (500ms extra is waited afterwards)
-                    nextAttempt := Notify.Show(index "/" loopTotal " - Next Attempt:",, 'iconi',,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' range ' Smooth tag=nextAttempt')
+                    nextAttempt := Notify.Show(index "/" loopTotal " - Next Attempt:",, 'iconi',,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' range ' Smooth tag=premNextAttempt')
                     loop range {
-                        nextAttempt["prog"].value := A_Index
+                        if !Notify.Exist('premNextAttempt') ;// might get deleted if the user manually saves
+                            break
+                        try nextAttempt["prog"].value := A_Index
                         HighPrecisionSleep(1)
+                    }
+                    if !Notify.Exist('premNextAttempt') {
+                        SetTimer(, 0)
+                        return
                     }
                     if nextAttempt["prog"].value < range
                         nextAttempt["prog"].value := range
                     HighPrecisionSleep(500)
-                    try Notify.Destroy("nextAttempt", true)
+                    try Notify.Destroy("premNextAttempt", true)
                     SetTimer(, 0)
                     return
                 }
                 ;// ---
-                if Notify.Exist("nextAttempt")
+                if Notify.Exist("premNextAttempt")
                     __waitAndCheckAttempt()
                 if A_Index != loopTotal {
                     SetTimer(__doAttemptNotify.Bind(A_Index, loopTotal), -1)
@@ -353,7 +373,7 @@ class adobeAutoSave extends count {
         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
         if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
             return
-        Notify.Show(, 'If you were playing back anything, this function should attempt to resume it', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
+        Notify.Show(, 'If you were playing back anything, this function should attempt to resume it', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC tag=premPlayback')
         ; tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
         this.userPlayback := true
     }
@@ -475,7 +495,7 @@ class adobeAutoSave extends count {
 
         ;// checking for save dialogue box
         if !this.__checkDialogueClass() {
-            Notify.Show(, 'Premiere appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            Notify.Show(, 'Premiere appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc tag=premBusy')
             return
         }
 
@@ -490,21 +510,21 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.premWindow.saveCheck {
-            Notify.Show(, 'Premiere save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            Notify.Show(, 'Premiere save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc tag=premSaveCheck')
             ; tool.Cust("Premiere save not required, cancelling")
             return
         }
 
         if !prem.isEditTabActive() {
             errorLog(TargetError("The Premiere 'Edit' tab is not currently selected, the save attempt was aborted", -1))
-            Notify.Show(, "The Premiere 'Edit' tab is not currently selected, the save attempt was aborted", 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            Notify.Show(, "The Premiere 'Edit' tab is not currently selected, the save attempt was aborted", 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc tag=premEdit')
             return
         }
 
         ;// this should cover occurrences where another window is open within premiere
         if (currentProg := WinGet.ID() = prem.winTitle && ((name := WinGetTitle("A")) != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1))
-            Notify.Show(, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            Notify.Show(, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc tag=premBusier')
             return
         }
 
@@ -525,7 +545,7 @@ class adobeAutoSave extends count {
         if (this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe") && this.restartPlayback = true
             this.__checkPremPlayback()
 
-        Notify.Show(, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
+        Notify.Show(, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75 tag=premSaveAttempt')
         ; tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
 
         ;// attempts to save using `PremiereRemote`
@@ -535,7 +555,7 @@ class adobeAutoSave extends count {
             return
         }
 
-        Notify.Show(, 'PremiereRemote failed to save, falling back`nto a manual save attempt.', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark dur=5 bdr=0xE96969 show=Fade@250 hide=Fade@250')
+        Notify.Show(, 'PremiereRemote failed to save, falling back`nto a manual save attempt.', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark dur=5 bdr=0xE96969 show=Fade@250 hide=Fade@250 tag=premFailed')
 
         try {
             block.On()
@@ -585,7 +605,7 @@ class adobeAutoSave extends count {
 
         ;// checking for save dialogue box
         if !this.__checkDialogueClass("AfterFX") {
-            Notify.Show(, 'AE appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            Notify.Show(, 'AE appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc tag=aeBusy')
             return
         }
 
@@ -600,7 +620,7 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.aeWindow.saveCheck {
-            Notify.Show(, 'AE save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            Notify.Show(, 'AE save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc tag=aeSaveCheck')
             return
         }
 
@@ -692,6 +712,8 @@ class adobeAutoSave extends count {
         this.premUIAEl      := false
         this.premRemoteSave := true
         checkstuck()
+        (this.resetAlreadyWaited = true) ? this.closeNotifys() : SetTimer((*) => (this.closeNotifys()), -4500)
+        this.resetAlreadyWaited := false
     }
 
     __Delete() {
@@ -699,6 +721,7 @@ class adobeAutoSave extends count {
             super.stop()
             WinEvent.Stop()
         }
+        this.closeNotifys()
         checkstuck()
         block.Off()
     }

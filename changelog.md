@@ -27,6 +27,7 @@
 ## Other Changes
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
+- 📋 `autosave.ahk` `Notify` windows will now be destroyed if the user manually saves during a save attempt
 
 🔗 `PremiereRemote`
 - ✏️ Added `setMarker()`
