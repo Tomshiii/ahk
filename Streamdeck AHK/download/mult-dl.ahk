@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/09/25
+ * @date 2025/09/30
  ***********************************************************************/
-global currentVer := "1.2.5"
+global currentVer := "1.2.6"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -34,21 +34,25 @@ try {
 
 class multiDL extends tomshiBasic {
     __New() {
-        ffmpeg := cmd.result('powershell -c refreshenv; "Get-Command -Name ffmpeg -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
-        ytdlp  := cmd.result('powershell -c refreshenv; "Get-Command -Name yt-dlp -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
-        deno   := cmd.result('powershell -c refreshenv; "Get-Command -Name deno -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+        __checkInstalls(refresh, &ffmpeg, &ytdlp, &deno) {
+            if refresh != true && refresh != false
+                refresh := false
+            doRefresh := (refresh = true) ? "refreshenv; " : ""
+            ffmpeg := cmd.result('powershell -c ' doRefresh '"Get-Command -Name ffmpeg -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+            ytdlp  := cmd.result('powershell -c ' doRefresh '"Get-Command -Name yt-dlp -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+            deno   := cmd.result('powershell -c ' doRefresh '"Get-Command -Name deno -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+        }
+        __checkInstalls(false, &ffmpeg, &ytdlp, &deno)
 
         ffmpeg := (!InStr(ffmpeg, "is not recognized") && ffmpeg != "")  ? true : false
-        ytdlp := (!InStr(ytdlp, "is not recognized")   && ytdlp != "")   ? true : false
-        deno := (!InStr(deno, "is not recognized")     && deno != "")    ? true : false
+        ytdlp  := (!InStr(ytdlp, "is not recognized")  && ytdlp != "")   ? true : false
+        deno   := (!InStr(deno, "is not recognized")   && deno != "")    ? true : false
 
         if !ffmpeg || !ytdlp || !deno {
             choco := cmd.result('powershell -c refreshenv; "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
             choco := (!InStr(choco, "is not recognized") && choco != "") ? true : false
             if choco = true {
-                ffmpeg := cmd.result('powershell -c refreshenv; "Get-Command -Name ffmpeg -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
-                ytdlp  := cmd.result('powershell -c refreshenv; "Get-Command -Name yt-dlp -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
-                deno   := cmd.result('powershell -c refreshenv; "Get-Command -Name deno -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+                __checkInstalls(true, &ffmpeg, &ytdlp, &deno)
                 if !ffmpeg || !ytdlp || !deno {
                     ;// incase the user hasn't reloaded since installation
                     super.__New(,,, preReqTitle)
@@ -99,7 +103,7 @@ class multiDL extends tomshiBasic {
         this.AddEdit("x+5 y+-20 r1 vcustFileSingle w220 -Wrap")
         this.AddButton("vDL_single xs w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise_single", " Avoid reencode`n (may result in lower quality)")
-        this.AddCheckbox("yp+40 vcookies_single Checked1", " Use cookies (firefox)")
+        this.AddCheckbox("yp+40 vcookies_single Checked0", " Use cookies (firefox)")
         this["DL_single"].GetPos(&x, &y, &wid, &height)
         this.AddButton("vAud_single x" x " y" y+37 " w" but_width, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
         this.AddButton("vthumb_single x" x " -Wrap y+7 w" but_width, "Download Thumbnail").OnEvent("Click", this.__download.Bind(this, "thumb"))
@@ -126,7 +130,7 @@ class multiDL extends tomshiBasic {
         }
         this.AddButton("vDL w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise", " Avoid reencode`n (may result in lower quality)")
-        this.AddCheckbox("yp+40 vcookies_multi Checked1", " Use cookies (firefox)")
+        this.AddCheckbox("yp+40 vcookies_multi Checked0", " Use cookies (firefox)")
         this["DL"].GetPos(&x, &y, &wid, &height)
         this.AddButton("vAud x" x " y" y+37 " w" but_width, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
         this.AddButton("vthumb x" x " y+7 w" but_width, "Download Thumbnail").OnEvent("Click", this.__download.Bind(this, "thumb"))
@@ -156,7 +160,7 @@ class multiDL extends tomshiBasic {
         }
         this.AddButton("vDL_part xs", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise_part", " Avoid reencode`n (may result in lower quality)")
-        this.AddCheckbox("yp+40 vcookies_part Checked1", " Use cookies (firefox)")
+        this.AddCheckbox("yp+40 vcookies_part Checked0", " Use cookies (firefox)")
         this["DL_part"].GetPos(&x, &y, &wid, &height)
         this.AddButton("vAud_part x" x " y" y+37 " w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
         ;// ================================================================
@@ -200,11 +204,11 @@ class multiDL extends tomshiBasic {
                 this.Opt("Disabled")
                 cmd.run(true,,, buildStr)
                 this.Opt("-Disabled")
+                try WinActivate(this.title)
             }
         }
         this["updates"].Opt("-Disabled")
         this.__checkingButton("reset")
-        WinActivate(this.title)
         ;// ================================================================
     }
 
