@@ -11,7 +11,10 @@
 #Include <Classes\switchTo>
 #Include <Classes\errorLog>
 #Include <Classes\settings>
+#Include <Classes\Editors\Premiere>
+#Include <Classes\tool>
 #Include <Functions\checkStuck>
+#Include <functions\detect>
 #Include <Other\UIA\UIA>
 #Include <Other\JSON>
 #Include <Other\Notify\Notify>
@@ -170,6 +173,10 @@ Class premUIA_Values {
         checkDupes := Map()
         hasDupes   := false
         for currentPanel, currHotkey in this.windowHotkeys {
+            if WinExist("Save Project " prem.winTitle) {
+                Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
+                return
+            }
             SendInput(currHotkey)
             sleep 50
             try currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
@@ -187,7 +194,7 @@ Class premUIA_Values {
                         this.activeObj.isRunning := false
                         block.Off()
                         errorLog(Error("UIA Values could not be determined. Please try again later"))
-                        Notify.Destroy(attemptNotify['hwnd'])
+                        try Notify.Destroy(attemptNotify['hwnd'])
                         Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                         return
                     }
@@ -197,7 +204,7 @@ Class premUIA_Values {
                 this.activeObj.isRunning := false
                 block.Off()
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
-                Notify.Destroy(attemptNotify['hwnd'])
+                try Notify.Destroy(attemptNotify['hwnd'])
                 Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                 return
             }

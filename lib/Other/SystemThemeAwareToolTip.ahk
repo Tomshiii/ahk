@@ -8,9 +8,10 @@ class SystemThemeAwareToolTip
 
     static __New()
     {
-        ListLines(0)
+        lines := A_ListLines
         if this.HasOwnProp("HTT") || !this.IsDarkMode
             return
+        ListLines(0)
 
         GroupAdd("tooltips_class32", "ahk_class tooltips_class32")
 
@@ -30,13 +31,14 @@ class SystemThemeAwareToolTip
                 if (VerCompare(A_OSVersion, "10.0.22000") > 0)
                     SetRoundedCornor(hWnd, 3)
             }
-
-            return DllCall(This.OriWndProc, "Ptr", hWnd, "UInt", uMsg, "Ptr", wParam, "Ptr", lParam, "UInt")
+            ListLines(1)
+            return (DllCall(This.OriWndProc, "Ptr", hWnd, "UInt", uMsg, "Ptr", wParam, "Ptr", lParam, "UInt"))
         }
 
         SetDarkToolTip(hWnd) => DllCall("UxTheme\SetWindowTheme", "Ptr", hWnd, "Ptr", StrPtr("DarkMode_Explorer"), "Ptr", StrPtr("ToolTip"))
 
         SetRoundedCornor(hwnd, level:= 3) => DllCall("Dwmapi\DwmSetWindowAttribute", "Ptr" , hwnd, "UInt", 33, "Ptr*", level, "UInt", 4)
+        ListLines(lines)
     }
 
     static __Delete() => (this.HTT && WinKill("ahk_group tooltips_class32"))

@@ -5,6 +5,7 @@
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
 - ✅ Fixed `startup().trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
+- 📋 `premUIA_Values.__setNewVal()` will now abort if the `Save Project` window appears
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific

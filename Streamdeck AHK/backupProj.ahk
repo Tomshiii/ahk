@@ -32,7 +32,7 @@ additionalDir := []
 nonFootage := []
 videosFolder := WinGet.pathU(projectFolder "\..\videos")
 loop files videosFolder "\*", "D" {
-    if A_LoopFileName != "footage"
+    if A_LoopFileName != "footage" && A_LoopFileName != "proxies" && A_LoopFileName != "_proxies"
         nonFootage.Push(A_LoopFileName)
 }
 if nonFootage.Length >= 1 {

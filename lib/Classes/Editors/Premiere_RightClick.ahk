@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.5
  * @author tomshi, taranVH
- * @date 2025/08/27
- * @version 2.3.20
+ * @date 2025/10/02
+ * @version 2.3.21
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -75,7 +75,8 @@ XButton1::rbuttonPrem().movePlayhead(false, prem.currentSetVer)
 
 OnExit(__OnExit)
 __OnExit(*) {
-	try WinEvent.Stop()
+	; try WinEvent.Stop("Exist")
+	try WinEvent.Stop("NotActive", prem.exeTitle)
 }
 
 class rbuttonPrem {
@@ -208,9 +209,10 @@ class rbuttonPrem {
 	__exit() {
 		PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
 		this.__resetClicks()
-		try WinEvent.Stop()
 		checkstuck()
 		try SetTimer(this.__ensureSeq, 0)
+		; try WinEvent.Stop("Exist")
+		try WinEvent.Stop("NotActive")
 		Exit()
 	}
 
@@ -304,7 +306,7 @@ class rbuttonPrem {
 				return
 		}
 
-		try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
+		/* try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class") */ ;// prem has fixed the issue of it spamming the error... for now
 		try WinEvent.NotActive((*) => (checkstuck(), this.__exit()), prem.exeTitle)
 		InstallMouseHook(1)
 		prem.RClickIsActive := true
@@ -449,7 +451,6 @@ class rbuttonPrem {
 	}
 
 	__Delete() {
-		try WinEvent.Stop()
 		this.__exit()
 	}
 }

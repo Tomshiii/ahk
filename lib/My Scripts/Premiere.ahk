@@ -219,3 +219,50 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 <!+7::
 <!+8::
 <!+9::prem.toggleEnabled(, "aud", 1, true)
+
+MButton:: ;// use MButton to Ctrl click (adjust edit points with mouse if left hand isn't on keyboard)
+{
+	try (chkVar := GetKeyState(A_ThisHotkey), chkVar := GetKeyState(A_ThisHotkey, "P"))
+	catch {
+		return
+	}
+
+	;// ensure the main prem window is active before attempting to fire
+	getTitle := WinGet.PremName()
+	try {
+		if WinGetTitle("A") != gettitle.winTitle {
+			SendInput("{" A_ThisHotkey " Down}")
+			KeyWait(A_ThisHotkey)
+			SendInput("{" A_ThisHotkey " Up}")
+			return
+		}
+	} catch {
+		return
+	}
+
+	;// checks to see whether the timeline position has been located
+	if !prem.__setTimelineValues() {
+		SendInput("{" A_ThisHotkey " Down}")
+		KeyWait(A_ThisHotkey)
+		SendInput("{" A_ThisHotkey " Up}")
+		return
+	}
+
+	;// set coord mode and grab the cursor position
+	coord.client()
+	origMouse := obj.MousePos()
+
+	;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
+	;// only continues if the cursor is within the timeline
+	if !prem.__checkCoords(origMouse) {
+		SendInput("{" A_ThisHotkey " Down}")
+		KeyWait(A_ThisHotkey)
+		SendInput("{" A_ThisHotkey " Up}")
+		return
+	}
+
+	SendInput("{Ctrl Down}{LButton Down}")
+	KeyWait(A_ThisHotkey)
+	SendInput("{LButton Up}{Ctrl Up}")
+	checkStuck()
+}

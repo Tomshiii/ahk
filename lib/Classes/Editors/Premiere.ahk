@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/09/26
- * @version 2.2.61
+ * @date 2025/10/02
+ * @version 2.2.62
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2952,12 +2952,9 @@ class Prem {
         }
 
         colour := 0
-        switch {
+        switch muteOrSolo {
             case "solo": colour := this.soloColour
             case "mute": colour := this.muteColour
-            case (VerCompare(ptf.premIMGver, this.spectrumUI_Version) >= 0):
-                switch muteOrSolo {
-                }
         }
 
         origMouseCords := obj.MousePos()
@@ -2979,6 +2976,8 @@ class Prem {
         for k in allButtons {
             getColour := PixelGetColor(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
             getColourOffset := PixelGetColor(allButtons[k][muteOrSolo].x-5, allButtons[k][muteOrSolo].y) ;// required to stop `Mute` false positives
+            ; MouseMove(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
+            ; MsgBox("col: " getColour "`noffset: " getColourOffset "`ncompare: " colour "`nsolo: " Format("0x{:x}", this.soloColour) "`nmute: " Format("0x{:x}", this.muteColour) "`ntheme: " this.theme)
             ; MsgBox(getColour) ;// uncomment to determine the pixelcolour
             if getColour = colour && getColourOffset = colour
                 arr.Push({x: allButtons[k][muteOrSolo].x-3, y: allButtons[k][muteOrSolo].y-3})

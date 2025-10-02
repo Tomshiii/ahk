@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/09/29
- * @version 2.1.47
+ * @date 2025/10/02
+ * @version 2.1.48
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -48,7 +48,7 @@ OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode) {
     try {
-        WinEvent.Stop()
+        WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
         autoSave.stop()
     }
     checkstuck()
@@ -153,7 +153,7 @@ class adobeAutoSave extends count {
     Stop() {
         try {
             super.stop()
-            WinEvent.Stop()
+            WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
         }
         checkstuck()
         block.Off()
@@ -719,7 +719,7 @@ class adobeAutoSave extends count {
     __Delete() {
         try {
             super.stop()
-            WinEvent.Stop()
+            WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
         }
         this.closeNotifys()
         checkstuck()
