@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/10/02
- * @version 2.2.62
+ * @date 2025/10/03
+ * @version 2.2.63
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -157,6 +157,9 @@ class Prem {
     static layerDivider := 0x303030
     static toggleWaiting := false
     static toggleableButtons := Mip("source", true, "target", true, "sync", true, "mute", true, "solo", true, "lock", true)
+
+    ;// MButton
+    static MButtonPanning := false
 
     /** Sets required class values for the user's premiere theme. Versions greater than the Spectrum UI update will have their theme determined automatically based off their premiere settings file */
     static __determineTheme() {
@@ -1346,35 +1349,48 @@ class Prem {
         SetTimer(again.Bind(timeout, useUIA, premUIAEl), -400)
         again(timeout, useUIA, premUIAEl)
         again(timeout, useUIA, el) {
-            ;// we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
-            if !GetKeyState(KSA.DragKeywait, "P") {
+            ;// we check for the defined value `ksa.DragKeywait` here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
+            isKey := false
+            i := 0
+            hot := getHotkeysArr()
+            for _, v in hot {
+                if GetKeyname(hot[(hot.Length+1)-A_Index]) = ksa.DragKeywait {
+                    isKey := true
+                    i := _
+                    break
+                }
+            }
+            if !isKey || (i != 0 && !GetKeyState(activationKey := GetKeyName(hot[i]), "P")) {
                 SetTimer(rdisable, 0)
                 return
             }
-            if A_ThisHotkey = KSA.DragKeywait {
-                ;// this is here so it doesn't reactivate if you quickly let go before the timer comes back around
-                if !GetKeyState(A_ThisHotkey, "P") {
-                    SetTimer(rdisable, 0)
-                    return
-                }
-            }
+
             status := this.timelineFocusStatus()
             if status != true {
                 if useUIA = true && premUIAEl != false {
                     try premUIAEl.ElementFromPath(premUIA.timeline).SetFocus()
-                    sleep 400 ;// if you don't sleep here premiere will not properly let go of lbutton until the timer fires up to 400ms later
+                    catch {
+                        this.__focusTimeline()
+                        __finish()
+                        return
+                    }
+                    sleep 500 ;// if you don't sleep here premiere will not properly let go of lbutton until the timer fires up to 400ms later
                 }
                 else
                     this.__focusTimeline()
             }
-            SendInput(premtool "{LButton Down}")
-            if A_ThisHotkey = KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P") ;we check for the defined value here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
-                KeyWait(A_ThisHotkey, "T" timeout)
-            else if A_ThisHotkey != KSA.DragKeywait && GetKeyState(KSA.DragKeywait, "P")
-                KeyWait(KSA.DragKeywait, "T" timeout) ;A_ThisHotkey won't work here as the assumption is that LAlt & Xbutton2 will be pressed and ahk hates that
-            SendInput("{LButton Up}")
-            SendInput(toolorig)
-            SetTimer(rdisable, 0)
+
+            __finish()
+
+            __finish() {
+                if GetKeyState(activationKey, "P") {
+                    SendInput(premtool "{LButton Down}")
+                    KeyWait(activationKey, "T" timeout)
+                }
+                SendInput("{LButton Up}")
+                SendInput(toolorig)
+                SetTimer(rdisable, 0)
+            }
         }
     }
 
@@ -2516,6 +2532,7 @@ class Prem {
     /**
      * determines the coordinates of all buttons for all audio/video layers
      * @param {String} [audOrVid="aud"] whether you wish to return the locations for audio layers or video layers
+     * @param {Object} [mouseCoords?] pass in an `obj.MousePos()` mouse coordinates. If not provided, they will be retrieved within this function
      * @returns {Map/false/-1} if the window title cannot be determined, or `audOrVid` != "aud" or "vid" - returns `false` ||
      * if the middle divider line cannot be determined - returns `-1` ||
      * else returns a map of all coordinates for all buttons
@@ -2638,8 +2655,9 @@ class Prem {
      * @param {String} [audOrVid=false] determine whether to operate on the audio or video tracks. By default this value is set to `false` and it is determined purely by the user's cursor position. otherwise set to either `"vid"` or `"aud"`
      * @param {Integer} [offset=0] Allows the user to offset the track number, ie. if their `track` number is `1` and offset is `1` the function will operate on track `2`. Useful to skip multicam tracks
      * @param {Boolean/String} [allExcept=false] This value may be `true`, `false` OR `"all"`. Setting this value to `true` will toggle the status of every track *except* the desired track. Leaving this value as `false` will only toggle the desired track(s). Setting this value to `"all"` will toggle all tracks beyond the user's `offset`. Defaults to `false`.
+     * @param {Integer} [ignore=false] This parameter will determine if `allExcept - "all"` or `allExcept - true` will ignore any tracks. If provided with an integer, any tracks greater than that value (plus your offset) will be ignored. eg. if `offset` is set to `1` and `ignore` is set to `8` tracks `9` and beyond will be ignored
      */
-    static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false) {
+    static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false, ignore := false) {
         ;// avoid attempting to fire unless main window is active
         if !WinActive(editors.Premiere.winTitle) || !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle {
             ;// why does the sendinput no longer do anything in this block
@@ -2844,6 +2862,15 @@ class Prem {
                 for k, v in allLayers {
                     if (offset != 0 && A_Index <= offset)
                         continue
+                    if ignore != false && offset+1 >= ignore {
+                        checkStuck()
+                        blocker.Off()
+                        this.ignoreKey := false
+                        Notify.Show('prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                        return
+                    }
+                    if ignore != false && A_Index-offset >= ignore
+                        break
                     layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
                     if this.timelineCols.Has(layerColour)
                         continue
@@ -2867,6 +2894,15 @@ class Prem {
                 for k, v in allLayers {
                     if A_Index = track+offset || (offset != 0 && A_Index <= offset)
                         continue
+                    if ignore != false && offset+1 >= ignore {
+                        checkStuck()
+                        blocker.Off()
+                        this.ignoreKey := false
+                        Notify.Show('prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                        return
+                    }
+                    if ignore != false && A_Index-offset >= ignore
+                        break
                     layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
                     if this.timelineCols.Has(layerColour)
                         continue
@@ -2940,13 +2976,14 @@ class Prem {
         if !this.__setTimelineValues()
 			return
 
-        if IsInteger(SubStr(A_ThisHotkey, -1, 1))
-            KeyWait(SubStr(A_ThisHotkey, -1, 1))
+        getKeys := getHotkeysArr()
+        if IsInteger(GetKeyName(getKeys[-1]))
+            KeyWait(getKeys[-1])
         blocker := block_ext()
         blocker.On()
 
         ;// avoid attempting to fire unless main window is active
-        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() {
+        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle {
             blocker.Off()
             return
         }
@@ -2963,7 +3000,7 @@ class Prem {
             blocker.Off()
             return
         }
-        allButtons := this.__getAllLayerButtonPos()
+        allButtons := this.__getAllLayerButtonPos(, origMouseCords)
         if !allButtons || allButtons = -1 {
             blocker.Off()
             switch allButtons {

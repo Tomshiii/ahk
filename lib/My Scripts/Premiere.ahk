@@ -208,7 +208,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 
 
 ;// allExcept
-^!+`::prem.toggleEnabled(1, "aud", 1, "all")
+^!+`::prem.toggleEnabled(1, "aud",, "all")
 <!+`::prem.toggleEnabled(1, "aud",, true)
 <!+1::
 <!+2::
@@ -218,33 +218,39 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 <!+6::
 <!+7::
 <!+8::
-<!+9::prem.toggleEnabled(, "aud", 1, true)
+<!+9::prem.toggleEnabled(, "aud", 1, true, 8)
 
-MButton:: ;// use MButton to Ctrl click (adjust edit points with mouse if left hand isn't on keyboard)
+~MButton:: ;// use MButton to Ctrl click (adjust edit points with mouse if left hand isn't on keyboard)
 {
 	try (chkVar := GetKeyState(A_ThisHotkey), chkVar := GetKeyState(A_ThisHotkey, "P"))
 	catch {
 		return
 	}
 
+	__cleanup() => (checkStuck(["Ctrl", "MButton", "LButton", "WheelUp", "WheelDown"]), prem.MButtonPanning := false)
+	if prem.MButtonPanning = true {
+		__cleanup()
+		return
+	}
+	prem.MButtonPanning := true
+
 	;// ensure the main prem window is active before attempting to fire
 	getTitle := WinGet.PremName()
 	try {
 		if WinGetTitle("A") != gettitle.winTitle {
-			SendInput("{" A_ThisHotkey " Down}")
 			KeyWait(A_ThisHotkey)
-			SendInput("{" A_ThisHotkey " Up}")
+			__cleanup()
 			return
 		}
 	} catch {
+		__cleanup()
 		return
 	}
 
 	;// checks to see whether the timeline position has been located
 	if !prem.__setTimelineValues() {
-		SendInput("{" A_ThisHotkey " Down}")
 		KeyWait(A_ThisHotkey)
-		SendInput("{" A_ThisHotkey " Up}")
+		__cleanup()
 		return
 	}
 
@@ -255,14 +261,23 @@ MButton:: ;// use MButton to Ctrl click (adjust edit points with mouse if left h
 	;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
 	;// only continues if the cursor is within the timeline
 	if !prem.__checkCoords(origMouse) {
-		SendInput("{" A_ThisHotkey " Down}")
 		KeyWait(A_ThisHotkey)
-		SendInput("{" A_ThisHotkey " Up}")
+		__cleanup()
 		return
 	}
 
 	SendInput("{Ctrl Down}{LButton Down}")
 	KeyWait(A_ThisHotkey)
 	SendInput("{LButton Up}{Ctrl Up}")
-	checkStuck()
+	__cleanup()
+}
+
+WheelUp::
+WheelDown::
+{
+	if prem.MButtonPanning = true {
+		checkStuck(["Ctrl", "MButton", "LButton", "WheelUp", "WheelDown"])
+		return
+	}
+	SendInput("{" A_ThisHotkey "}")
 }

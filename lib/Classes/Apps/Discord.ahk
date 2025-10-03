@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/08/05
- * @version 1.6.7.2
+ * @date 2025/10/03
+ * @version 1.6.7.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -135,7 +135,7 @@ class discord {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             return
         }
-        header := DiscordEl.FindElement({Type: "50026 (Group)", Name: "Channel header", LocalizedType: "region"})
+        try header := DiscordEl.FindElement({Type: "50026 (Group)", Name: "Channel header", LocalizedType: "region"})
         try directM := header.FindElement({LocalizedType: "text", Name: "Direct Message"})
         try groupDM := header.FindElement({LocalizedType: "text", Name: "Group DM"})
         headerText := (IsSet(directM) || IsSet(groupDM)) ? true : false

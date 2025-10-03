@@ -20,13 +20,6 @@ F12::KeyHistory  ;debugging
 ;hardresetHotkey;
 #+^r::reset.reset() ;this will hard rerun all active ahk scripts
 
-;unstickKeysHotkey;
-#F11::keys.allUp() ;this function will attempt to unstick as many keys as possible
-;panicExitHotkey;
-#F12::reset.ex_exit() ;this is a panic button and will shutdown all active ahk scripts
-;panicExitALLHotkey;
-#+F12::reset.ex_exit(true) ;this is a panic button and will shutdown all active ahk scripts INCLUDING the checklist.ahk script
-
 ;settingsHotkey;
 #F1::settingsGUI() ;This hotkey will pull up the hotkey GUI
 

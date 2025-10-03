@@ -2,7 +2,7 @@
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
  * @date 2025/10/02
- * @version 1.0.17
+ * @version 1.0.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -35,8 +35,10 @@ class reset {
 
     /** @returns a list of open ahk windows */
     __getList() {
-        detect()
-        return WinGetList("ahk_class AutoHotkey")
+        getDetect := detect()
+        list := WinGetList("ahk_class AutoHotkey")
+        resetOrigDetect(getDetect)
+        return list
     }
 
     /**
@@ -50,8 +52,10 @@ class reset {
             name := WinGettitle(value,, browser.vscode.winTitle)
             path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
             script := obj.SplitPath(path)
-            if (includeChecklist = false && (script.Name = "checklist.ahk" || script.Name = "test.ahk")) || this.ignoreScript.Has(script.Name)
+            if (includeChecklist = false && (script.Name = "checklist.ahk" || script.Name = "test.ahk")) || this.ignoreScript.Has(script.Name) {
+                resetOrigDetect(getDetect)
                 return false
+            }
             PID := WinGetPID(script.Name)
             resetOrigDetect(getDetect)
             return {scriptName: script.name, PID: PID, path: path}
