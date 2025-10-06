@@ -2,8 +2,8 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2025/08/11
- * @version 1.1.3
+ * @date 2025/10/06
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,6 +29,14 @@ class keys {
         "!", "Alt",
         "+", "Shift",
         "#", "LWin"
+    )
+
+    static modifiers := Map(
+        "Shift", true, "LShift", true, "RShift", true,
+        "Ctrl", true, "LCtrl", true, "RCtrl", true,
+        "Alt", true, "LAlt", true, "RAlt", true,
+        "LCtrl&RAlt", true, "LShift&RAlt", true,
+        "Win", true, "LWin", true, "RWin", true
     )
 
     /**

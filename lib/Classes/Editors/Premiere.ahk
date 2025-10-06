@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/10/03
- * @version 2.2.63
+ * @date 2025/10/06
+ * @version 2.2.64
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2686,16 +2686,16 @@ class Prem {
                 which.Push(GetKeyName(currHotkey[currHotkey.Length])+offset)
             else if (track != A_ThisHotkey && IsDigit(String(track)))
                 which.Push(track+offset)
-            ih := InputHook("T1 L0", "{Esc}{" GetKeyName(currHotkey[1]) " Up}")
-            ih.OnChar := __onInp
+            ih := InputHook("L0", "{Escape}{LAlt Up}")
+            ; ih.OnChar := __onInp
             ih.OnKeyDown := __onDown.Bind(which)
             ih.OnKeyUp := __onUp
             ih.KeyOpt("{All}", "SNI")
+            ih.KeyOpt("{Escape}{LAlt Up}", "E")
             ih.Start()
             ih.Wait()
 
             __onInp(ih, char) {
-                ih.Timeout := 1
                 has := false
                 for v in which {
                     if char+offset = v {
@@ -2799,6 +2799,25 @@ class Prem {
                 return
             }
         }
+
+        ;// we need to avoid any modifiers potentially messing with the function if the user
+        ;// happens to let go at the perfect time
+        if allExcept != false {
+            __timerTooltip(*) => (tool.Cust("Please release modifier keys...", 10.0,,, 17))
+            if !IsSet(splitHotkey)
+                splitHotkey := getHotkeysArr()
+            SetTimer(__timerTooltip, -500)
+            loop splitHotkey.length {
+                if keys.modifiers.has(currentKey := GetKeyName(splitHotkey[splitHotkey.length+1-A_Index])) {
+                    if GetKeyState(currentKey, "P") {
+                        KeyWait(GetKeyName(splitHotkey[splitHotkey.length+1-A_Index]))
+                    }
+                }
+            }
+            try SetTimer(__timerTooltip, 0)
+            tool.Cust("", 0,,, 17)
+        }
+
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
         if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, maxTracks) {
             blocker.Off()

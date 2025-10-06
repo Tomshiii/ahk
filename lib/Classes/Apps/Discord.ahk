@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/10/03
- * @version 1.6.7.3
+ * @date 2025/10/06
+ * @version 1.6.7.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,14 +38,14 @@ class discord {
 
     ;// position you keep it
     static x := -1080
-    static y := 10
+    static y := -115
     static width  := 1080
     static height := 1600
 
-    static slackX := -1068
-    static slackY := 10
-    static slackWidth  := 1058
-    static slackHeight := 840
+    static slackX := -1075
+    static slackY := -114
+    static slackWidth  := 1070
+    static slackHeight := 953
 
     ;// other
     static exeTitle := "ahk_exe Discord.exe"

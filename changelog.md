@@ -14,9 +14,12 @@
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
-- 📋 `toggleEnabled()` now accepts param `ignore`
 - 📋 `__setCurrSeq()` should no longer flood the line execution
 - 📋 `gain()` will now highlight the text input field in the event the gain window is already open, but a text field is not selected
+
+🔗 `toggleEnabled()`
+- ✅ Fixed function failing to select the correct clips if the user released modifier keys too late
+- 📋 Now accepts param `ignore`
 
 ### 📝 `explorer {`
 - ✏️ Added class `explorer {`
