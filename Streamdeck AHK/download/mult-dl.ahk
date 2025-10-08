@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/09/30
+ * @date 2025/10/08
  ***********************************************************************/
-global currentVer := "1.2.6"
+global currentVer := "1.2.7"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -292,17 +292,16 @@ class multiDL extends tomshiBasic {
                 }
                 this.Hide()
                 switch {
-                        case (vidOrAud = "vid" && this["deprioritise_single"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, this["singleURL"].value, custFileSingle, false,, cookiesSingle)
+                        case (vidOrAud = "vid" && this["deprioritise_single"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle)
                         case (vidOrAud = "vid" && this["deprioritise_single"].value = true):
                             altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesSingle
-                            yt.download(altCommand, this.getFile, this["singleURL"].value, custFileSingle,  false)
-                        case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, this["singleURL"].value, custFileSingle, false,, cookiesSingle)
-                        case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, this["singleURL"].value, custFileSingle, false,, cookiesSingle)
+                            yt.download(altCommand, this.getFile, this["singleURL"].value, custFileSingle,  showDir)
+                        case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle)
+                        case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle)
                     }
             case 2: ;// multi
                 values := this["list"].GetCount()
                 if values = 0 {
-                    showDir := false
                     yt.doAlert := false
                     goto break
                 }
@@ -333,11 +332,11 @@ class multiDL extends tomshiBasic {
                 this.Hide()
                 partCommand := Format('-N 8 -o "{1}" --download-sections "*{2}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 ' cookiesPart, "{}", this.timecodeValue)
                 switch {
-                        case (vidOrAud = "vid" && this["deprioritise_part"].value = false): yt.download(partCommand, this.getFile, this["partURL"].value, custFilePart, false)
+                        case (vidOrAud = "vid" && this["deprioritise_part"].value = false): yt.download(partCommand, this.getFile, this["partURL"].value, custFilePart, showDir)
                         case (vidOrAud = "vid" && this["deprioritise_part"].value = true):
                             altCommand := Format('-N 8 -o "{1}" --download-sections "*{2}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesPart, "{}", this.timecodeValue)
-                            yt.download(altCommand, this.getFile, this["partURL"].value, custFilePart, false)
-                        case (vidOrAud = "aud"): yt.download(Format('-N 8 -o "{1}" --download-sections "*{2}" --verbose --windows-filenames --extract-audio --audio-format wav ' cookiesPart, "{}", this.timecodeValue), this.getFile, this["partURL"].value, custFilePart, false)
+                            yt.download(altCommand, this.getFile, this["partURL"].value, custFilePart, showDir)
+                        case (vidOrAud = "aud"): yt.download(Format('-N 8 -o "{1}" --download-sections "*{2}" --verbose --windows-filenames --extract-audio --audio-format wav ' cookiesPart, "{}", this.timecodeValue), this.getFile, this["partURL"].value, custFilePart, showDir)
                     }
         }
         break:
@@ -346,12 +345,6 @@ class multiDL extends tomshiBasic {
         this["DL_part"].Enabled := true, this["Aud_part"].Enabled := true
 
         this.show(, {DarkColour: "F0F0F0"})
-        if showDir = true {
-            setFile := yt.currentName
-            explorer.highlightFile(this.getFile "\" setFile)
-            yt := ""
-            return
-        }
         yt := ""
     }
 
