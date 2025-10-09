@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/10/06
- * @version 1.6.7.4
+ * @date 2025/10/09
+ * @version 1.6.7.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -109,7 +109,7 @@ class discord {
                     shift := true
                     SendInput("{Shift Down}")
                 }
-                DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-delete"}, 1500).ControlClick()
+                try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-delete"}, 1500).ControlClick()
                 if shift = true
                     SendInput("{Shift Up}")
         }
