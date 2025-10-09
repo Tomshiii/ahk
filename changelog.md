@@ -5,7 +5,6 @@
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
 - ✅ Fixed `startup().trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
 - ✅ Fixed `reset {` scripts not affecting all scripts
-- ✅ Fixed `discord.button()` throwing if not hovering a message
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
 - 📋 `premUIA_Values.__setNewVal()` will now abort if the `Save Project` window appears
 
@@ -26,6 +25,14 @@
 - ✅ Fixed function failing to select the correct clips if the user released modifier keys too late
 - 📋 Now accepts param `ignore`
 - 📋 Now alerts the user if it attempted to interact with a transition handle (not perfect)
+
+### 📝 `discord {`
+- ✅ Fixed `Unread()` sometimes throwing due to not finding the header
+
+🔗 `button()`
+- ✅ Function should now be 2-3x faster
+- ✅ Fixed function throwing if not hovering a message
+- ✅ Fixed `reply` not disabling the `@` ping when setting is enabled
 
 ### 📝 `explorer {`
 - ✏️ Added class `explorer {`

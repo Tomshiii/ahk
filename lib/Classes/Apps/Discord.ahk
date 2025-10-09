@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/10/09
- * @version 1.6.7.5
+ * @date 2025/10/10
+ * @version 1.6.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,19 +22,6 @@
  * Please be aware that automating the discord client in any way is technically against TOS. While none of these scripts are likely to cause any issues, use this class at your own risk - I do not take any responsibility for anything that may happen to your account.
 */
 class discord {
-
-    static __New() {
-        try {
-            ;// attempt to grab user settings
-            this.UserSettings := UserPref()
-            this.disableAutoReplyPing := this.UserSettings.disc_disable_autoreply
-            this.UserSettings := ""
-        }
-    }
-    UserSettings := unset
-
-    ;// set to false if you want discord to replies to leave the @ping enabled by default
-    static disableAutoReplyPing := true
 
     ;// position you keep it
     static x := -1080
@@ -71,46 +58,58 @@ class discord {
 
         blocker := block_ext()
         blocker.On()
-        SendInput("{RButton}") ;// this opens the right click context menu on the message you're hovering over
+
         currentTitle := WinGet.Title()
-        dms := true
-        if InStr(currentTitle, "|") ;// determines if we're in dm's or a server
-            dms := false
         try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
-        catch {
+        if !IsSet(DiscordEl) || !IsObject(DiscordEl) || !DiscordEl {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             blocker.Off()
             return
         }
-        if !IsObject(DiscordEl) {
-            errorLog(UnsetError("Failed to set UIA element", -1),, true)
+        SendInput("{RButton}") ;// this opens the right click context menu on the message you're hovering over
+        try discMenu := DiscordEl.WaitElement({LocalizedType:"menu", AutomationId:"message"}, 800)
+        if !IsSet(discMenu) || !IsObject(discMenu) || !discMenu {
+            icon := (FileExist(EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico")) ? EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico" : ""
+            errorLog(TargetError("Could not determine discord right click menu", -1))
+            Notify.Show(, 'Could not determine discord right click menu.`nAborting...', icon, 'Windows Startup',, 'theme=Dark dur=5 bdr=Red show=Fade@250 mon=Mouse hide=Fade@250 maxW=400')
             blocker.Off()
             return
         }
+        dms := InStr(currentTitle, "|") ? true : false ;// determines if we're in dm's or a server
 
         switch button {
             case "reply":
-                if dms = true || this.disableAutoReplyPing != true {
-                    try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick()
+                UserSettings := UserPref()
+                disableAutoReplyPing := UserSettings.disc_disable_autoreply
+                UserSettings := ""
+                if dms = true || disableAutoReplyPing != true {
+                    try discMenu.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick()
                     blocker.Off()
                     return
                 }
-                if !findReply := DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500) {
+                try findReply := discMenu.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500)
+                if !IsSet(findReply) || !IsObject(findReply) || !findReply {
                     blocker.Off()
                     return
                 }
                 try findReply.ControlClick()
-            case "edit": try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-edit"}, 1500).ControlClick()
-            case "react": try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-add-reaction"}, 1500).ControlClick()
-            case "report": try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-report"}, 1500).ControlClick()
-            case "delete":
-                shift := false
-                if (GetKeyState("Shift", "P")) {
-                    shift := true
-                    SendInput("{Shift Down}")
+                catch {
+                    blocker.Off()
+                    return
                 }
-                try DiscordEl.WaitElement({LocalizedType: "menu item", A: "message-delete"}, 1500).ControlClick()
-                if shift = true
+                try DiscordEl.WaitElement({LocalizedType:"button", Name:"Mention ON"}, 1500).ControlClick()
+                ;// get rid of the annoying popup window
+                MouseMove(2, 2, 1, "R")
+                MouseMove(-2, -2, 1, "R")
+            case "edit": try discMenu.WaitElement({LocalizedType: "menu item", A: "message-edit"}, 1500).ControlClick()
+            case "react": try discMenu.WaitElement({LocalizedType: "menu item", A: "message-add-reaction"}, 1500).ControlClick()
+            case "report": try discMenu.WaitElement({LocalizedType: "menu item", A: "message-report"}, 1500).ControlClick()
+            case "delete":
+                shift := GetKeyState("Shift", "P") ? true : false
+                if shift
+                    SendInput("{Shift Down}")
+                try discMenu.WaitElement({LocalizedType: "menu item", A: "message-delete"}, 1500).ControlClick()
+                if shift
                     SendInput("{Shift Up}")
         }
         blocker.Off()
@@ -131,14 +130,14 @@ class discord {
         saveY := ypos
         currentTitle := WinGet.Title()
         try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
-        catch {
+        if !IsSet(DiscordEl) || !IsObject(DiscordEl) || !DiscordEl {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             return
         }
-        try header := DiscordEl.FindElement({Type: "50026 (Group)", Name: "Channel header", LocalizedType: "region"})
+        try header  := DiscordEl.FindElement({Type: "50026 (Group)", Name: "Channel header", LocalizedType: "region"})
         try directM := header.FindElement({LocalizedType: "text", Name: "Direct Message"})
         try groupDM := header.FindElement({LocalizedType: "text", Name: "Group DM"})
-        headerText := (IsSet(directM) || IsSet(groupDM)) ? true : false
+        headerText := ((IsSet(directM) && IsObject(directM)) || (IsSet(groupDM) && IsObject(groupDM))) ? true : false
 
         __findGrey(x, y, returnVals := false) {
             coord.s()
