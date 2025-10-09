@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/09/29
- * @version 1.7.79
+ * @date 2025/10/09
+ * @version 1.7.80
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1037,8 +1037,12 @@ class Startup {
             name: "ShinsImageScanClass",             url: "https://raw.githubusercontent.com/Spawnova/ShinsImageScanClass/refs/heads/main/AHK%20V2/ShinsImageScanClass.ahk",
             scriptPos: ptf.lib "\Other",             ext: "unset"
         }
+        arrayExt := {
+            name: "Array",                           url: "https://raw.githubusercontent.com/Descolada/AHK-v2-libraries/refs/heads/main/Lib/Array.ahk",
+            scriptPos: ptf.lib "\Other",             ext: "unset"
+        }
 
-        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator, this.NotifyIcons, this.HighPrecision, this.ShinsImageScanClass]
+        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator, this.NotifyIcons, this.HighPrecision, this.ShinsImageScanClass, this.arrayExt]
         name        := []
         url         := []
         scriptPos   := []

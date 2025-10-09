@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.5
  * @author tomshi, taranVH
- * @date 2025/10/02
- * @version 2.3.21
+ * @date 2025/10/09
+ * @version 2.3.22
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -299,6 +299,11 @@ class rbuttonPrem {
 		} catch {
 			return
 		}
+
+		if prem.__OSwindow() && WinActive(prem.winTitle) {
+            SendInput("{Escape}")
+			return
+        }
 
 		if WinExist("DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
 			prem.dismissWarning()

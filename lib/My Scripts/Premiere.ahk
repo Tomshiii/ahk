@@ -220,7 +220,11 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 <!+8::
 <!+9::prem.toggleEnabled(, "aud", 1, true, 8)
 
-~MButton:: ;// use MButton to Ctrl click (adjust edit points with mouse if left hand isn't on keyboard)
+;// while cursor is within timeline;
+; use MButton to Ctrl click (adjust edit points with mouse if left hand isn't on keyboard)
+;// while cursor is within program monitor;
+; ensure that panning activates even if immediately after a `WheelUp`/`WheelDown` (prem force delays you after a scroll)
+~MButton::
 {
 	try (chkVar := GetKeyState(A_ThisHotkey), chkVar := GetKeyState(A_ThisHotkey, "P"))
 	catch {
@@ -257,6 +261,33 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 	;// set coord mode and grab the cursor position
 	coord.client()
 	origMouse := obj.MousePos()
+	prior := false
+	if A_PriorKey = "WheelUp" || A_PriorKey = "WheelDown" {
+		premUIA   := premUIA_Values()
+		__within(coordObj, progmon) {
+			if ((coordObj.x > progmon.x) && (coordObj.x < progmon.x+progmon.width) && (coordObj.y < progmon.y) && (coordObj.y > progmon.y+progmon.height))
+				return false
+			return true
+		}
+		try progmon := prem.__uiaCtrlPos(premUIA.programMon, false)
+		if !IsSet(progmon) || !IsObject(progmon) {
+			KeyWait(A_ThisHotkey)
+			__cleanup()
+			return
+		}
+		if __within(origMouse, progmon) {
+			if A_Cursor != "Unknown" {
+				block.On()
+				tool.Cust("Waiting for Premiere to enable panning...",,,, 12)
+				while (A_Cursor != "Unknown" && GetKeyState("MButton", "P") = true) {
+					delaySI(25, "{MButton Up}", "{MButton Down}")
+				}
+				block.Off()
+				tool.Cust("",,,, 12)
+			}
+			prior := true
+		}
+	}
 
 	;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
 	;// only continues if the cursor is within the timeline
@@ -265,11 +296,19 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 		__cleanup()
 		return
 	}
-
-	SendInput("{Ctrl Down}{LButton Down}")
-	KeyWait(A_ThisHotkey)
-	SendInput("{LButton Up}{Ctrl Up}")
-	__cleanup()
+	getCol := PixelGetColor(origMouse.x, origMouse.y)
+	switch getCol {
+		case prem.keyframeGrey, prem.keyframeBlue:
+			delaySI(16, "{LButton Down}", "{Ctrl Down}")
+			KeyWait(A_ThisHotkey)
+			delaySI(16, "{LButton Up}", "{Ctrl Up}")
+			__cleanup()
+		default:
+			SendInput("{Ctrl Down}{LButton Down}")
+			KeyWait(A_ThisHotkey)
+			SendInput("{LButton Up}{Ctrl Up}")
+			__cleanup()
+	}
 }
 
 WheelUp::

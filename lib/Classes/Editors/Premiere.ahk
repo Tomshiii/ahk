@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/10/06
- * @version 2.2.64
+ * @date 2025/10/09
+ * @version 2.2.65
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -36,6 +36,7 @@
 #Include <Functions\checkStuck>
 #Include <Other\Notify\Notify>
 #Include <Other\ShinsImageScanClass>
+#Include <Other\Array>
 ; }
 
 class Prem {
@@ -60,7 +61,7 @@ class Prem {
                 activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
                 this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
                 this.timelineCol := activeObj.timelineCol, this.timelineColArr := activeObj.timelineColArr
-                this.currentSeq := activeObj.currentSeq, this.previousSeq := activeObj.previousSeq
+                this.sequenceArr := activeObj.sequenceArr
                 activeObj := ""
             } catch {
                 activeObj := ""
@@ -82,8 +83,7 @@ class Prem {
     static timelineColArr := []
     static theme := "darkest"
     static defaultTheme := ""
-    static currentSeq := 0
-    static previousSeq := 0
+    static sequenceArr := []
     static resetSeqTimer := false
     static prevSeqDelay := 1500
     static useSwapSequences := true
@@ -101,6 +101,14 @@ class Prem {
     static eyeDisabled   := 0x4B4B4B
     static soloColour    := 0xE9C700
     static muteColour    := 0xE9C700
+
+    ;// transition handles
+    static transitionHandleInsideSquare := 0xB0B0B0
+    static transitionHandleHalfSquare := 0x6A6A6A
+
+    ;// track keyframes
+    static keyframeGrey := 0xb0b0b0
+    static keyframeBlue := 0x4096f3
 
     ;// valuehold()
     static valueBlue      := 0x4096f3
@@ -160,6 +168,8 @@ class Prem {
 
     ;// MButton
     static MButtonPanning := false
+
+    static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
     /** Sets required class values for the user's premiere theme. Versions greater than the Spectrum UI update will have their theme determined automatically based off their premiere settings file */
     static __determineTheme() {
@@ -232,6 +242,8 @@ class Prem {
                 this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21
                 ;// edit tab
                 this.editTabX := 154, this.editTabY := 35
+                ;// keyframes
+                this.keyframeGrey := 0xb0b0b0, this.keyframeBlue := 0x4096f3
             ;// old ui
 			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
                 ;// set timeline and playhead colours
@@ -313,6 +325,7 @@ class Prem {
      * effCtrl.height
      * effCtrl.classNN
      * effCtrl.uiaVar ;// returns -> uiaVar := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId())
+     * effCtrl.activeElement
      * ```
      */
     static __uiaCtrlPos(UIA_Element, tooltip := true, passIn?, getActive := true) {
@@ -327,7 +340,7 @@ class Prem {
             errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, tooltip)
             return false
         }
-        return {x: toolx, y: tooly, width: width, height: height, classNN: ClassNN, uiaVar: UIAel.AdobeEl}
+        return {x: toolx, y: tooly, width: width, height: height, classNN: ClassNN, uiaVar: UIAel.AdobeEl, activeElement: (getActive = true) ? UIAel.activeElement : false}
     }
 
     /**
@@ -1326,6 +1339,11 @@ class Prem {
         }
         useUIA := false
 
+        if this.__OSwindow() && WinActive(this.winTitle) {
+            SendInput("{Escape}")
+            this.__focusTimeline()
+        }
+
         coordObj := obj.MousePos()
         ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
         if !this.__setTimelineValues() {
@@ -1362,6 +1380,8 @@ class Prem {
             }
             if !isKey || (i != 0 && !GetKeyState(activationKey := GetKeyName(hot[i]), "P")) {
                 SetTimer(rdisable, 0)
+                this.__focusTimeline()
+                __finish()
                 return
             }
 
@@ -1374,7 +1394,7 @@ class Prem {
                         __finish()
                         return
                     }
-                    sleep 500 ;// if you don't sleep here premiere will not properly let go of lbutton until the timer fires up to 400ms later
+                    sleep 400 ;// if you don't sleep here premiere will not properly let go of lbutton until the timer fires up to 400ms later
                 }
                 else
                     this.__focusTimeline()
@@ -1383,6 +1403,9 @@ class Prem {
             __finish()
 
             __finish() {
+                ;// bc we're in a timer here, it's possible for another hotkey to start before this timer begins
+                ;// this check here avoids that scenario causing issues
+                activationKey := IsSet(activationKey) ? activationKey : ((i != 0) ? GetKeyName(hot[i]) : ksa.DragKeywait)
                 if GetKeyState(activationKey, "P") {
                     SendInput(premtool "{LButton Down}")
                     KeyWait(activationKey, "T" timeout)
@@ -2844,30 +2867,24 @@ class Prem {
         __doToggle(isAll := false) {
             checkStuck()
             SendInput("{LAlt Down}{LShift Down}")
+            handles := false
             for v in whichTracks {
                 MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
                 sleep 0
+                getPixelCol := PixelGetColor(origMouseCords.x, allLayers[Integer(v)]["mid"])
+                if getPixelCol = this.transitionHandleInsideSquare || getPixelCol = this.transitionHandleHalfSquare {
+                    handles := true
+                }
                 SendInput("{LButton}")
                 sleep 0
             }
             SendInput("{LAlt Up}{LShift Up}")
             sleep 30
-            enabledState := __determineEnabled()
-            sleep 30
             this.__remoteFunc('toggleEnabled')
             sleep 30
-            stateCheck := __determineEnabled()
-            if stateCheck = enabledState {
-                errorLog(MethodError("Toggling failed."), "enabledState: " enabledState " stateCheck: " stateCheck)
-                loop 10 {
-                    sleep 30
-                    this.__remoteFunc('toggleEnabled')
-                    sleep 30
-                    stateCheck := __determineEnabled()
-                    if stateCheck != enabledState
-                        break
-                    errorLog(MethodError("Toggling reattempt #" A_Index " failed"), "enabledState: " enabledState " stateCheck: " stateCheck)
-                }
+
+            if handles = true {
+                Notify.Show(, 'Some layers may have had the transition handle visible causing selection to fail.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'theme=Dark dur=5 bdr=Gray maxW=400')
             }
         }
 
@@ -2934,8 +2951,7 @@ class Prem {
         }
         MouseMove(origMouseCords.x, origMouseCords.y, 0)
         sleep 25
-        if this.__remoteFunc('isSelected', true)
-            SendInput(ksa.deselectAll)
+        SendInput(ksa.deselectAll)
         sleep 25
         checkStuck()
         blocker.Off()
@@ -2974,10 +2990,16 @@ class Prem {
                     ;// but should work between 25.0->25.5 at a minimum
                     case "darkest":
                         this.eyeDisabled := 0x4B4B4B, this.iconHighlight := 0x6A6A6A, this.layerDivider := 0x303030, this.editTabCol := 0xD0D0D0, this.soloColour := 0xE9C700, this.muteColour := 0x67DEA8
+                        this.transitionHandleInsideSquare := 0xB0B0B0
+                        this.transitionHandleHalfSquare := 0x6A6A6A
                     case "dark":
                         this.eyeDisabled := 0x545454, this.iconHighlight := 0x3F3F3F, this.layerDivider := 0x3F3F3F, this.editTabCol := 0xD1D1D1, this.soloColour := 0xF4D500, this.muteColour := 0x81E9B8
+                        this.transitionHandleInsideSquare := 0xB2B2B2
+                        this.transitionHandleHalfSquare := 0x707070
                     case "light":
                         this.eyeDisabled := 0xD5D5D5, this.iconHighlight := 0xE6E6E6, this.layerDivider := 0xE6E6E6, this.editTabCol := 0x464646, this.soloColour := 0xF8D904, this.muteColour := 0x67DEA8
+                        this.transitionHandleInsideSquare := 0x6D6D6D
+                        this.transitionHandleHalfSquare := 0x000000
                 }
             ;// may change over time
         }
@@ -3204,8 +3226,7 @@ class Prem {
             this.resetSeqTimer := false
             newDelay := (this.useSwapSequences = "true" || this.useSwapSequences = true) ? this.prevSeqDelay : 0
             if !newDelay {
-                this.currentSeq  := false
-                this.previousSeq := false
+                this.sequenceArr := []
             }
             SetTimer(, newDelay)
             return
@@ -3220,15 +3241,25 @@ class Prem {
         seq := this.__remoteFunc("getActiveSequence", true)
         if !seq
             return
-        if !this.currentSeq && !this.previousSeq {
-            this.previousSeq := seq
-            this.currentSeq := seq
+
+        UserSettings := UserPref()
+        toggleLimit  := UserSettings.premSwapSequencesLimit
+        UserSettings := ""
+        if this.sequenceArr.Length = 0 {
+            this.sequenceArr.Push(seq)
+            this.sequenceArr.Capacity := toggleLimit
             return
         }
-        if seq = this.currentSeq
+
+        if seq = this.sequenceArr[1]
             return
-        this.previousSeq := this.currentSeq
-        this.currentSeq := seq
+        this.sequenceArr.InsertAt(1, seq)
+        if !ind := this.sequenceArr.IndexOf(seq, 2) {
+            this.sequenceArr.Capacity := toggleLimit
+            return
+        }
+        this.sequenceArr.RemoveAt(ind)
+        this.sequenceArr.Capacity := toggleLimit
     }
 
     /**
@@ -3243,30 +3274,36 @@ class Prem {
             errorLog(MethodError("swapPreviousSequence() requires PremiereRemote to be installed"),,, true)
             return false
         }
+        __pushToEnd() {
+            UserSettings := UserPref()
+            toggleLimit := UserSettings.premSwapSequencesLimit
+            UserSettings := ""
+            this.__remoteFunc("focusSequence",, "ID=" String(this.sequenceArr[2]))
+            this.sequenceArr.Push(this.sequenceArr[1])
+            this.sequenceArr.RemoveAt(1)
+            this.sequenceArr.Capacity := toggleLimit
+        }
         if A_ScriptName != this.mainScriptName ".ahk" {
             if !WinExist(this.mainScriptName ".ahk")
                 return false
             resetOrigDetect(orig)
             try {
                 activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
-                this.currentSeq := activeObj.currentSeq
-                this.previousSeq := activeObj.previousSeq
-                if this.currentSeq != this.previousSeq
-                    this.__remoteFunc("focusSequence",, "ID=" String(this.previousSeq))
-                activeObj.currentSeq  := this.previousSeq
-                activeObj.previousSeq := this.currentSeq
+                this.sequenceArr := activeObj.sequenceArr
+                if this.sequenceArr.Length != 0
+                    __pushToEnd()
+                activeObj.sequenceArr := this.sequenceArr
                 activeObj := ""
+                return true
             } catch {
                 activeObj := ""
                 return false
             }
-            return true
+            return false
         }
         resetOrigDetect(orig)
-        if this.currentSeq != this.previousSeq
-            this.__remoteFunc("focusSequence",, "ID=" String(this.previousSeq))
-        this.currentSeq  := this.previousSeq
-        this.previousSeq := this.currentSeq
+        if this.sequenceArr.Length != 0
+            __pushToEnd()
         return true
     }
 

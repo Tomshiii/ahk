@@ -14,12 +14,17 @@
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
-- 📋 `__setCurrSeq()` should no longer flood the line execution
 - 📋 `gain()` will now highlight the text input field in the event the gain window is already open, but a text field is not selected
+
+🔗 `__setCurrSeq()`
+- 📋 Should no longer flood the line execution
+- 📋 Function (alongside `swapPreviousSequence()`) now store sequence values in an array, allowing more than 2 sequences to be toggled between
+    - Limit can be set within `settingsGUI()`
 
 🔗 `toggleEnabled()`
 - ✅ Fixed function failing to select the correct clips if the user released modifier keys too late
 - 📋 Now accepts param `ignore`
+- 📋 Now alerts the user if it attempted to interact with a transition handle (not perfect)
 
 ### 📝 `explorer {`
 - ✏️ Added class `explorer {`
@@ -33,13 +38,14 @@
 ## Other Changes
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
+- ✏️ Added [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>)
 - 📋 `autosave.ahk` `Notify` windows will now be destroyed if the user manually saves during a save attempt
 
 🔗 `PremiereRemote`
 - ✏️ Added `setMarker()`
 
 🔗 `mult-dl.ahk`
-###### *(v1.2.3 -> v1.2.6.1)*
+###### *(v1.2.3 -> v1.2.7)*
 - ✅ Fixed script not properly loading after installing all required packages
 - ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
 - ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL

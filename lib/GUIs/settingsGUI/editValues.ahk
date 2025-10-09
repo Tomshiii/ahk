@@ -25,7 +25,7 @@ class set_Edit_Val {
         objName: "adobeCheck",                           UpDownOpt: "Range1-999"
     }
     autoSave := {
-        control: "autoSave",                  EditPos: "xs Y+2",
+        control: "autoSave",                  EditPos: "xs Y+3",
         scriptText: "``autosave.ahk``",       textPos: "X+5 Y+-20",
         otherText: " save rate (min)",        otherTextPos: "X+1",
         iniInput: "autosave MIN",             colour: "c4141d5",
@@ -34,7 +34,7 @@ class set_Edit_Val {
     }
     gameCk := {
         control: "gameCheck",                  EditPos: "xs Y+10",
-        scriptText: "``gameCheck.ahk``",       textPos: "X+5 Y+-24",
+        scriptText: "``gameCheck.ahk``",       textPos: "X+5 Y+-20",
         otherText: " check rate (sec)",        otherTextPos: "X+1",
         iniInput: "game SEC",                  colour: "c328832",
         textControl: "gameCheckText",          Bind: "gameCheck.ahk",
@@ -48,8 +48,16 @@ class set_Edit_Val {
         textControl: "premPrevText",               Bind: "",
         objName: "--",                             UpDownOpt: "Range1-60"
     }
+    premSeq := {
+        control: "premSwq",                        EditPos: "xs Y+3",
+        scriptText: "``swapPreviousSequence()``",  textPos: "X+5 Y+-28",
+        otherText: " store timelines",             otherTextPos: "Y+-1",
+        iniInput: "premSwapSequencesLimit",        colour: "c753288",
+        textControl: "premSeqText",                Bind: "",
+        objName: "--",                             UpDownOpt: "Range1-10"
+    }
     MIC := {
-        control: "MIC",                                 EditPos: "xs Y+4",
+        control: "MIC",                                 EditPos: "xs Y+3",
         scriptText: "``Multi-Instance Close.ahk``",     textPos: "X+5 Y+-28",
         otherText: " check rate (sec)",                 otherTextPos: "Y+-1",
         iniInput: "multi SEC",                          colour: "cc742c7",
@@ -57,7 +65,7 @@ class set_Edit_Val {
         objName: "--",                                  UpDownOpt: "Range1-999"
     }
 
-    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.premPrev, this.MIC]
+    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.premPrev, this.premSeq, this.MIC]
     static control := []
     static EditPos := []
     static scriptText := []
