@@ -53,7 +53,7 @@
 - ✏️ Added `setMarker()`
 
 🔗 `mult-dl.ahk`
-###### *(v1.2.3 -> v1.2.7)*
+###### *(v1.2.3 -> v1.2.7.1)*
 - ✅ Fixed script not properly loading after installing all required packages
 - ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
 - ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL

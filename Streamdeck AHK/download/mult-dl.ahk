@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2025/10/08
  ***********************************************************************/
-global currentVer := "1.2.7"
+global currentVer := "1.2.7.1"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico

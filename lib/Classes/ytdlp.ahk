@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/09/22
- * @version 1.1.1
+ * @date 2025/10/12
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -178,14 +178,14 @@ class ytdlp {
         ;// determine if the downloaded file is a video file
         fmpg := ffmpeg()
         fmpg.doAlert := false ;// stops the traytip
-        isVideo := fmpg.isVideo(folderU "\" nameNoExt "." ext)
+        isVideo := fmpg.isVideo(folderU "\" this.currentName)
         switch {
             ;// determining what post args to perform
             case (isVideo = true && postArgs != false && postArgs == this.defaultPostProcess):
                 ;// determining whether to use cpu encoding or gpu encoding
-                fixArgs := (useNVENC() = true) ? Format(postArgs, this.defaultGPU, folderU, nameNoExt "." ext) : Format(postArgs, this.defaultCPU, folderU, nameNoExt "." ext)
+                fixArgs := (useNVENC() = true) ? Format(postArgs, this.defaultGPU, folderU, this.currentName) : Format(postArgs, this.defaultCPU, folderU, this.currentName)
                 ;// determining if downloaded file needs to be reencoded
-                getEncoding := cmd.result(Format('ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "{1}"', folderU "\" nameNoExt "." ext))
+                getEncoding := cmd.result(Format('ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "{1}"', folderU "\" this.currentName))
                 if getEncoding != "h264" && getEncoding != "h265" {
                     Notify.Show(, 'Downloaded file is being reencoded to h264 for NLE compatibility', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=6 maxW=400 bdr=0x75AEDC')
                     cmd.run(,,, fixArgs)
@@ -193,7 +193,7 @@ class ytdlp {
             case (isVideo = true && postArgs != false && postArgs !== this.defaultPostProcess): cmd.run(,,, postArgs)
         }
         if openDirOnFinish = true
-            explorer.highlightFile(folder "\" nameNoExt "." ext)
+            explorer.highlightFile(folder "\" this.currentName)
         return
     }
 

@@ -56,6 +56,10 @@ if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TomP
         }
     }
 
+    if refreshRate := cmd.result("powershell (Get-CimInstance -ClassName Win32_VideoController | Where-Object {$_.CurrentRefreshRate -ne $null} | Select-Object -First 1).CurrentRefreshRate") != "119" {
+        MsgBox("Refresh rate may not be set correctly!`nIt is currently returning: " refreshRate)
+    }
+
     return
 }
 else if FileExist(ptf["textreplaceUser"])
