@@ -1,11 +1,11 @@
 /************************************************************************
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
- * Originally designed for v22.3.1 of Premiere. As of 2023/06/30 code is maintained for the version of Premiere listed below
- * Any code after that date is no longer guaranteed to function on previous versions of Premiere. Please see the version number below to know which version of Premiere I am currently using for testing.
+ * Code is maintained for the version of Premiere listed below
+ * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/10/09
- * @version 2.2.65
+ * @date 2025/10/13
+ * @version 2.2.66
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -48,7 +48,7 @@ class Prem {
         try this.defaultTheme     := UserSettings.premDefaultTheme
         try this.useSwapSequences := UserSettings.use_swapSequences
         try {
-            this.prevSeqDelay := UserSettings.premthis.PrevSeqDelay * 1000
+            this.prevSeqDelay := UserSettings.premPrevSeqDelay * 1000
         } catch {
             this.defaultTheme := this.theme
         }
@@ -85,7 +85,8 @@ class Prem {
     static defaultTheme := ""
     static sequenceArr := []
     static resetSeqTimer := false
-    static prevSeqDelay := 1500
+    static prevSeqDelay := 1000
+    static pauseSeqTimer := false
     static useSwapSequences := true
 
     static exeTitle := Editors.Premiere.winTitle
@@ -2732,7 +2733,7 @@ class Prem {
             __onDown(which, ih, vk, sc) {
                 hotkeyName := GetKeyName(Format("vk{:X}", vk))
                 if IsNumber(hotkeyName) && hotkeyName >= 1 && hotkeyName <= 9
-                    __onInp(ih, GetKeyName(Format("vk{:X}", vk)))
+                    __onInp(ih, hotkeyName)
             }
             __onUp(ih, vk, sc) {
                 hotkeyName := GetKeyName(Format("vk{:X}", vk))
@@ -3222,6 +3223,8 @@ class Prem {
     /** handles setting a timer to check the user's current open sequence. This timer provides functionality to `swapPreviousSequence()` */
     static __setCurrSeq(*) {
         ListLines(0)
+        if this.pauseSeqTimer = true
+            return
         if this.resetSeqTimer = true {
             this.resetSeqTimer := false
             newDelay := (this.useSwapSequences = "true" || this.useSwapSequences = true) ? this.prevSeqDelay : 0
@@ -3251,15 +3254,21 @@ class Prem {
             return
         }
 
-        if seq = this.sequenceArr[1]
-            return
-        this.sequenceArr.InsertAt(1, seq)
-        if !ind := this.sequenceArr.IndexOf(seq, 2) {
-            this.sequenceArr.Capacity := toggleLimit
-            return
+        switch {
+            case (seq = this.sequenceArr[1]): return
+            case (this.sequenceArr.Length > 1 && seq = this.sequenceArr[this.sequenceArr.Length]):
+                this.sequenceArr.InsertAt(1, this.sequenceArr.Pop())
+                return
+            case (!ind := this.sequenceArr.IndexOf(seq, 1)):
+                this.sequenceArr.InsertAt(1, seq)
+                this.sequenceArr.Capacity := toggleLimit
+                return
+            default:
+                this.sequenceArr.RemoveAt(ind)
+                this.sequenceArr.InsertAt(1, seq)
+                this.sequenceArr.Capacity := toggleLimit
+                return
         }
-        this.sequenceArr.RemoveAt(ind)
-        this.sequenceArr.Capacity := toggleLimit
     }
 
     /**
@@ -3274,14 +3283,16 @@ class Prem {
             errorLog(MethodError("swapPreviousSequence() requires PremiereRemote to be installed"),,, true)
             return false
         }
+        if (this.useSwapSequences != true && this.useSwapSequences != "true")
+            return
         __pushToEnd() {
             UserSettings := UserPref()
             toggleLimit := UserSettings.premSwapSequencesLimit
             UserSettings := ""
-            this.__remoteFunc("focusSequence",, "ID=" String(this.sequenceArr[2]))
             this.sequenceArr.Push(this.sequenceArr[1])
             this.sequenceArr.RemoveAt(1)
             this.sequenceArr.Capacity := toggleLimit
+            this.__remoteFunc("focusSequence",, "ID=" String(this.sequenceArr[1]))
         }
         if A_ScriptName != this.mainScriptName ".ahk" {
             if !WinExist(this.mainScriptName ".ahk")
@@ -3289,10 +3300,12 @@ class Prem {
             resetOrigDetect(orig)
             try {
                 activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                activeObj.pauseSeqTimer := true
                 this.sequenceArr := activeObj.sequenceArr
                 if this.sequenceArr.Length != 0
                     __pushToEnd()
                 activeObj.sequenceArr := this.sequenceArr
+                activeObj.pauseSeqTimer := false
                 activeObj := ""
                 return true
             } catch {
@@ -3302,8 +3315,10 @@ class Prem {
             return false
         }
         resetOrigDetect(orig)
+        this.pauseSeqTimer := true
         if this.sequenceArr.Length != 0
             __pushToEnd()
+        this.pauseSeqTimer := false
         return true
     }
 
