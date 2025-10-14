@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2025/05/05
- * @version 1.1.7
+ * @date 2025/10/14
+ * @version 1.1.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -79,6 +79,22 @@ class obj {
     static WinPos(winTitle := this.winTitle, winText := this.winText, exTitle := this.exTitle, exText := this.exText) {
         WinGetPos(&x, &y, &width, &height, winTitle, winText, exTitle, exText)
         return {x: x, y: y, width: width, height: height}
+    }
+
+    /**
+     * This function acts as a wrapper for `CaretGetPos()` to return its VarRefs as an object instead
+     * @param {String} [caretCoordMode=A_CoordModeCaret] sets the desired coordmode before retrieve caret coordinates
+     * @returns {Object} If coordinates cannot be determined, will return `false`, otherwise;
+     * ```
+     * car := obj.CaretPos()
+     * car.x
+     * car.y
+     */
+    static CaretPos(caretCoordMode := A_CoordModeCaret) {
+        A_CoordModeCaret := caretCoordMode
+        if !CaretGetPos(&x, &y)
+            return false
+        return {x: x, y: y}
     }
 
     /**

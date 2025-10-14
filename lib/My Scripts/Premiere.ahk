@@ -29,7 +29,7 @@ $Tab::
 	SendInput(sendMod "{Tab}")
 }
 
-Space::
+Space:: ;// make space more useful by closing certain windows
 {
 	switch {
 		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"):
@@ -51,7 +51,7 @@ Space::
 }
 
 NumpadEnter::
-Enter::
+Enter:: ;// close windows by double tapping enter
 {
 	switch {
 		case isIn("Clip Fx Editor"), isIn("Track Fx Editor"):
@@ -66,7 +66,7 @@ Enter::
 	}
 }
 
-*`::
+*`:: ;// make ` key more useful in different scenarios
 {
 	switch {
 		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"), isIn("Clip Fx Editor - DeNoise"), isIn("Clip Fx Editor"), isIn("Track Fx Editor"), isIn("Color Picker"), isIn("Add Tracks"):
@@ -139,13 +139,13 @@ F5::prem.reset()
 NumpadSub::
 NumpadAdd::prem.numpadGain()
 
-$+c::
+$+c:: ;// stop playback before ripple deleting as it can go funky in laggy comps
 {
-	if prem.timelineFocusStatus() != true || !CaretGetPos(&carx, &cary) {
+	if prem.timelineFocusStatus() != true || CaretGetPos(&carx, &cary) {
 		SendInput("+c")
 		return
 	}
-	delaySI(16, ksa.shuttleStop, ksa.premRippleDelete)
+	delaySI(30, ksa.shuttleStop, ksa.premRippleDelete)
 	return
 }
 
@@ -155,9 +155,9 @@ $+3::prem.zoomPreviewWindow("+3", true)
 
 ^!f::prem.flattenAndColour(ksa.labelIris)
 ^!+f::prem.pseudoFS()
-$+d::
+$+d:: ;// deselect edit points after adding transitions
 {
-	if prem.timelineFocusStatus() != true {
+	if prem.timelineFocusStatus() != true || CaretGetPos(&carx, &cary) {
 		SendInput("+d")
 		return
 	}
@@ -166,6 +166,23 @@ $+d::
 }
 
 !w::prem.closeActiveSequence()
+
+$+x:: ;// stop keyframes getting added to all tracks (I never need that, it's super annoying)
+$s:: ;// stop "add edit" adding an edit to all tracks when nothing is selected (I have +s for that, fuck off)
+{
+	if !prem.__checkPremRemoteDir('isSelected') {
+		errorLog(MethodError("PremiereRemote is required for this hotkey"),,, true)
+		return
+	}
+	switch {
+		case (prem.timelineFocusStatus() != true || CaretGetPos(&carx, &cary)):
+			SendInput(SubStr(A_ThisHotkey, 2))
+			return
+		case (!prem.__remoteFunc('isSelected', true)): return
+
+		default: SendInput(SubStr(A_ThisHotkey, 2))
+	}
+}
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;

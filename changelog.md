@@ -6,6 +6,7 @@
 - ✅ Fixed `startup().trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
 - ✅ Fixed `reset {` scripts not affecting all scripts
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
+- ✏️ Added `obj.CaretPos()`
 - 📋 `premUIA_Values.__setNewVal()` will now abort if the `Save Project` window appears
 
 ### 📝 `prem {`
