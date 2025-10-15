@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2025/08/05
- * @version 1.2.12
+ * @date 2025/09/26
+ * @version 1.2.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -312,6 +312,47 @@ class Move {
     }
 
     /**
+     * A function to lock mouse movement on a particular axis. function can be called a second time to disable
+     * @link https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/
+     * @param {String} [axs] either "x", or "y"
+     * @param {Boolean} [keywait=true] determine whether to end the function after `keys.allWait(2)` or whether you wish to handle resetting manually
+     */
+    static clipMouse(Axs, keywait := true){
+        coord.s("mouse")
+        if (Clipped() = Axs) {
+            this.setMouseClip()
+            Clipped("-")
+        } else {
+            MouseGetPos(&x,&y)
+            if (Axs="X")
+                this.setMouseClip(1,0,y,A_ScreenWidth,y+1)
+            else
+                this.setMouseClip(1,x,0,x+1,A_ScreenHeight)
+            Clipped(Axs)
+        }
+
+        Clipped(Val:="") {
+            static Res:=""
+            Res:=Val?Val:Res
+            return Res
+        }
+        if keywait = true {
+            keys.allWait(2)
+            this.setMouseClip()
+        }
+    }
+
+    /** helper function for `clipMouse`. call with no params to disable locked mouse movement */
+    static setMouseClip(Conf:=0, x1:=0, y1:=0, x2:=1, y2:=1) {
+        pData := DllCall("GlobalAlloc","UInt",0,"UPtr",16,"Ptr")
+        NumPut("UPtr",x1,pData+0), NumPut("UPtr",y1,pData+4)
+        NumPut("UPtr",x2,pData+8), NumPut("UPtr",y2,pData+12)
+        Val := Conf ? DllCall("ClipCursor","Ptr",pData) : DllCall("ClipCursor")
+        DllCall("GlobalFree","Ptr",pData)
+        Return Val
+    }
+
+    /**
      * This function allows the minorly adjust the width/height & x/y values of the active window
      * @param {String} xORy determining which axis you wish to adjust
      * @param {String} window the title of the window you wish to adjust
@@ -429,5 +470,9 @@ class Move {
         try{
             WinMove(newX, newY, newWidth, newHeight, title,, "Editing Checklist -") ;then we attempt to move the window
         }
+    }
+
+    __Delete(*) {
+        try OnExit(this.setMouseClip())
     }
 }

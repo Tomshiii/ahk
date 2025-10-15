@@ -15,7 +15,10 @@
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
-- 📋 `gain()` will now highlight the text input field in the event the gain window is already open, but a text field is not selected
+
+🔗 `gain()`
+- 📋 Will now highlight the text input field in the event the gain window is already open, but a text field is not selected
+- 📋 Now uses `block_ext {` instead of just `block {` to ensure a `space::` hotkey can't close the gain window before the function has completed
 
 🔗 `__setCurrSeq()`
 - 📋 Should no longer flood the line execution

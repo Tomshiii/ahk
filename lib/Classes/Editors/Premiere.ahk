@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/10/13
- * @version 2.2.66
+ * @date 2025/10/15
+ * @version 2.2.67
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1107,7 +1107,8 @@ class Prem {
         }
         keys.allWait()
         Critical
-        block.On()
+        blocker := block_ext()
+        blocker.On(false)
         coord.s()
         check := winget.Title()
         if check = "Audio Gain" {
@@ -1125,13 +1126,13 @@ class Prem {
             }
             SendInput("{Tab 3}{Up 3}{Down}{Tab}" amount "{Enter}")
             WinWaitClose("Audio Gain",, 1.5)
-            block.Off()
+            blocker.Off()
             return -1
         }
         premUIA := premUIA_Values()
         try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
         if !IsSet(effCtrlNN) {
-            block.Off()
+            blocker.Off()
             return false
         }
 
@@ -1143,21 +1144,21 @@ class Prem {
                     delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                     this().__fxPanel()
                     if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y1: effCtrlNN.y + effCtrlNN.height},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
-                        block.Off()
+                        blocker.Off()
                         Notify.Show(, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
                 }
                 case true:
                     if !this.__remoteFunc('isSelected', true) {
-                        block.Off()
+                        blocker.Off()
                         Notify.Show(, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
 
             }
         } catch {
-            block.Off()
+            blocker.Off()
             errorLog(UnsetError("ClassNN wasn't given a value", -1))
             Notify.Show(, "ClassNN wasn't given a value",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return
@@ -1168,7 +1169,7 @@ class Prem {
         SendInput(KSA.gainAdjust)
         if !WinWait("Audio Gain",, 3) {
             errorLog(TimeoutError("Waiting for gain window timed out"),, true)
-            block.Off()
+            blocker.Off()
             return false
         }
 
@@ -1176,7 +1177,7 @@ class Prem {
         ;// instead focus the cancel button
         SendInput("{Tab 3}{Up 3}{Down}{Tab}" amount "{Enter}")
         WinWaitClose("Audio Gain",, 1.5)
-        block.Off()
+        blocker.Off()
         return true
     }
 
