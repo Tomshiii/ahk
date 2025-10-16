@@ -34,9 +34,10 @@
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header
 
 🔗 `button()`
-- ✅ Function should now be 2-3x faster
+- ✅ Function should now be 2-3x faster in most cases
 - ✅ Fixed function throwing if not hovering a message
 - ✅ Fixed `reply` not disabling the `@` ping when setting is enabled
+- ✅ Fixed function incorrectly determining when the user is within a dm or a server
 
 ### 📝 `explorer {`
 - ✏️ Added class `explorer {`

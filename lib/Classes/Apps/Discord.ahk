@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/10/10
- * @version 1.6.8
+ * @date 2025/10/16
+ * @version 1.6.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -60,14 +60,16 @@ class discord {
         blocker.On()
 
         currentTitle := WinGet.Title()
-        try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
+
+        cacheRequest := UIA.CreateCacheRequest(["LocalizedType", "LocalizedControlType", "AutomationId", "Name"],, 5)
+        try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, cacheRequest)
         if !IsSet(DiscordEl) || !IsObject(DiscordEl) || !DiscordEl {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             blocker.Off()
             return
         }
         SendInput("{RButton}") ;// this opens the right click context menu on the message you're hovering over
-        try discMenu := DiscordEl.WaitElement({LocalizedType:"menu", AutomationId:"message"}, 800)
+        try discMenu := DiscordEl.WaitElement({LocalizedType:"menu", AutomationId:"message"}, 800,,,,, cacheRequest)
         if !IsSet(discMenu) || !IsObject(discMenu) || !discMenu {
             icon := (FileExist(EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico")) ? EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico" : ""
             errorLog(TargetError("Could not determine discord right click menu", -1))
@@ -75,19 +77,28 @@ class discord {
             blocker.Off()
             return
         }
-        dms := InStr(currentTitle, "|") ? true : false ;// determines if we're in dm's or a server
+        discMenu := discMenu.BuildUpdatedCache(cacheRequest)
+
 
         switch button {
             case "reply":
                 UserSettings := UserPref()
                 disableAutoReplyPing := UserSettings.disc_disable_autoreply
                 UserSettings := ""
-                if dms = true || disableAutoReplyPing != true {
-                    try discMenu.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500).ControlClick()
+                try {
+                    quickSwitch := DiscordEl.FindCachedElement({LocalizedType:"button", Name:"Open Quick Switcher"})
+                    dms := quickSwitch.FindCachedElement({LocalizedType:"text", Name:"Direct Messages"})
+
+                } catch {
+                    ;// this may change at any time, it's already swapped in the past. discord changes shit all the time
+                    dms := InStr(currentTitle, "|") ? false : true ;// determines if we're in dm's or a server
+                }
+                if dms != false || disableAutoReplyPing != true {
+                    discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-reply"}).ControlClick()
                     blocker.Off()
                     return
                 }
-                try findReply := discMenu.WaitElement({LocalizedType: "menu item", A: "message-reply"}, 1500)
+                try findReply := discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-reply"})
                 if !IsSet(findReply) || !IsObject(findReply) || !findReply {
                     blocker.Off()
                     return
@@ -97,18 +108,18 @@ class discord {
                     blocker.Off()
                     return
                 }
-                try DiscordEl.WaitElement({LocalizedType:"button", Name:"Mention ON"}, 1500).ControlClick()
+                try DiscordEl.WaitElement({LocalizedType:"button", Name:"Mention ON"}, 800).ControlClick()
                 ;// get rid of the annoying popup window
                 MouseMove(2, 2, 1, "R")
                 MouseMove(-2, -2, 1, "R")
-            case "edit": try discMenu.WaitElement({LocalizedType: "menu item", A: "message-edit"}, 1500).ControlClick()
-            case "react": try discMenu.WaitElement({LocalizedType: "menu item", A: "message-add-reaction"}, 1500).ControlClick()
-            case "report": try discMenu.WaitElement({LocalizedType: "menu item", A: "message-report"}, 1500).ControlClick()
+            case "edit": try discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-edit"}).ControlClick()
+            case "react": try discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-add-reaction"}).ControlClick()
+            case "report": try discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-report"}).ControlClick()
             case "delete":
                 shift := GetKeyState("Shift", "P") ? true : false
                 if shift
                     SendInput("{Shift Down}")
-                try discMenu.WaitElement({LocalizedType: "menu item", A: "message-delete"}, 1500).ControlClick()
+                try discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-delete"}).ControlClick()
                 if shift
                     SendInput("{Shift Up}")
         }
