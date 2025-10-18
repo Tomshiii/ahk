@@ -7,8 +7,8 @@ Enter::unassigned()
 ;Right::unassigned()
 
 p::SendInput("!t" "b{Right}g") ;open gaussian blur (should really just use the inbuilt hotkey but uh. photoshop is smelly don't @ me)
-SC027::ps.Prop("x.png")
-/::ps.Prop("y.png")
+SC027::unassigned()
+; /::unassigned
 
 o::unassigned()
 l::ps.Prop("scale.png") ;this assumes you have h/w linked. You'll need more logic if you want separate values
@@ -50,8 +50,8 @@ x::unassigned()
 ;F15::unassigned()
 
 q::unassigned()
-a::unassigned()
-z::unassigned()
+a::ps.Prop("x.png")
+z::ps.Prop("y.png")
 ;F16::unassigned()
 
 ;Tab::unassigned()

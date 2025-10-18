@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/10/15
- * @version 2.2.67
+ * @date 2025/10/18
+ * @version 2.2.68
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3265,7 +3265,7 @@ class Prem {
                 this.sequenceArr.Capacity := toggleLimit
                 return
             default:
-                this.sequenceArr.RemoveAt(ind)
+                this.sequenceArr.RemoveAt(this.sequenceArr.IndexOf(seq, 1))
                 this.sequenceArr.InsertAt(1, seq)
                 this.sequenceArr.Capacity := toggleLimit
                 return
@@ -3287,12 +3287,8 @@ class Prem {
         if (this.useSwapSequences != true && this.useSwapSequences != "true")
             return
         __pushToEnd() {
-            UserSettings := UserPref()
-            toggleLimit := UserSettings.premSwapSequencesLimit
-            UserSettings := ""
             this.sequenceArr.Push(this.sequenceArr[1])
             this.sequenceArr.RemoveAt(1)
-            this.sequenceArr.Capacity := toggleLimit
             this.__remoteFunc("focusSequence",, "ID=" String(this.sequenceArr[1]))
         }
         if A_ScriptName != this.mainScriptName ".ahk" {
