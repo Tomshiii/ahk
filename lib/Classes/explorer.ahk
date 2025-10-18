@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2025/09/22
- * @version 1.0.0
+ * @date 2025/10/18
+ * @version 1.0.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\obj>
@@ -244,5 +244,53 @@ class explorer {
                 return true
         }
         cmd.exploreAndHighlight(filepath, true, true)
+    }
+
+    /**
+     * @param {String} path
+     * @param {Integer} windowHwnd
+     * @link https://github.com/ThioJoe/ThioJoe-AHK-Scripts/blob/58874c8396c714f511f91bd4f3e8bb67f4592c66/Scripts/ExplorerDialogPathSelector.ahk#L851
+     * @author ThioJoe
+     */
+    static navigateUsingAddressbar(path, windowHwnd) {
+        CheckAddressbarReadyAndNavigate(attemptNumber := 1) {
+            addressbarHwnd := ControlGetFocus("ahk_id " windowHwnd)
+            addressBarClassNN := ControlGetClassNN(addressbarHwnd)
+
+            ; Regex match if the address bar is an Edit control but not Edit1, which seems to always the file name box. But the address bar box might not always be Edit2
+            if (addressBarClassNN != "Edit1" and addressBarClassNN ~= "Edit\d+") {
+                DoNavigation(addressBarClassNN, addressbarHwnd)
+            } else if (attemptNumber <= 3) {
+                ; Try waiting a bit longer for the address bar to be ready
+                Sleep(50)
+                CheckAddressbarReadyAndNavigate(attemptNumber + 1)
+            }
+        }
+
+        DoNavigation(_addressbarClassNN, _addressbarHwnd) {
+            ControlSetText(path, _addressbarClassNN, "ahk_id " windowHwnd)
+            ControlSend("{Enter}", _addressbarClassNN, "ahk_id " windowHwnd)
+            ControlFocus("Edit1", "ahk_id " windowHwnd) ; Return focus to the file name box
+        }
+        ; Activate the window
+        WinActivate("ahk_id " windowHwnd)
+        WinWaitActive("ahk_id " windowHwnd)
+        ; Try getting the text from the Edit1 control
+        originalFileName := ""
+        try {
+            originalFileName := ControlGetText("Edit1", "ahk_id " windowHwnd)
+            ControlSetText("", "Edit1", windowHwnd) ; Clear the text box just in case something weird happens so it doesn't save the file prematurely
+        }
+
+        ; Move focus to Address Bar
+        Send("!{d}") ; For some reason doesn't seem to work sending to the window
+        Sleep(50)
+        CheckAddressbarReadyAndNavigate()
+
+        ; Restore the original file name if it was there
+        if (originalFileName != "") {
+            ControlSetText(originalFileName, "Edit1", "ahk_id " windowHwnd)
+        }
+
     }
 }

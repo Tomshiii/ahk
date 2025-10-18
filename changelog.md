@@ -8,6 +8,7 @@
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
 - ✏️ Added `obj.CaretPos()`
 - 📋 `premUIA_Values.__setNewVal()` will now abort if the `Save Project` window appears
+- 📋 `switchTo.adobeProject()` will now additionally navigate to the project directory for `#32770` windows
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
@@ -42,6 +43,7 @@
 ### 📝 `explorer {`
 - ✏️ Added class `explorer {`
 - ✏️ Added `cancelSearch()`
+- ✏️ Added [`navigateUsingAddressbar()`](<https://github.com/ThioJoe/ThioJoe-AHK-Scripts/blob/58874c8396c714f511f91bd4f3e8bb67f4592c66/Scripts/ExplorerDialogPathSelector.ahk#L851>)
 - 📋 Moved `switchTo.explorerHighlightFile()` => `highlightFile()`
 - 📋 Moved `nItemsInDir()`
 - 📋 Moved `selectFileInOpenWindow()`

@@ -405,6 +405,11 @@ class switchTo {
                 return
             }
 
+            ;// checking if a save window of some kind is open
+            if WinActive("ahk_class #32770") && switchCurrentWindow = true {
+                switchTo.Path(path.Dir)
+                return true
+            }
             ;// checking if a win explorer window for the path is open (this might not work if you have win explorer show the entire path in the title)
             if WinExist(getFolderName " ahk_class CabinetWClass",, "Adobe" "Editing Checklist", "Adobe") {
                 list := WinGetList(getFolderName " ahk_class CabinetWClass",, "Adobe" "Editing Checklist", "Adobe")
@@ -725,10 +730,13 @@ class switchTo {
         ; also works with previous versions of Windows Explorer
         hwnd := (hwnd="") ? WinExist("A") : hwnd ; if omitted, use active window
         processName := WinGetProcessName("ahk_id " hwnd)
-        if (ProcessName != "explorer.exe")  ; not Windows explorer
+        className := WinGetClass("ahk_id " hwnd)
+        if (ProcessName != "explorer.exe" && className != "#32770") ; not Windows explorer
             return
-        if !getTab := explorer.getTab(hwnd)
+        if !getTab := explorer.getTab(hwnd) {
+            explorer.navigateUsingAddressbar(FullPath, hwnd)
             return
+        }
         getTab.comObj.Navigate("file:///" FullPath)
     }
 }
