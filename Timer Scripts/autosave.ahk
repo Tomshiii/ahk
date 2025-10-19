@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/10/07
- * @version 2.1.49
+ * @date 2025/10/17
+ * @version 2.1.50
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -150,12 +150,13 @@ class adobeAutoSave extends count {
     }
 
     /** stops the timer */
-    Stop() {
+    Stop(doCheckStuck := true) {
+        super.stop()
         try {
-            super.stop()
             WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
         }
-        checkstuck()
+        if doCheckStuck
+            checkstuck()
         block.Off()
     }
 
@@ -213,7 +214,7 @@ class adobeAutoSave extends count {
     }
 
     __stopAndReset(*) {
-        this.Stop()
+        this.Stop(false)
         this.resetingSave := true, this.idleAttempt := true
         WinWaitClose("Save Project " prem.exeTitle, 2)
         ; sleep 5000
@@ -249,7 +250,7 @@ class adobeAutoSave extends count {
     /** check whether the user has recently interacted with their computer */
     __checkIdle() {
         if this.idleAttempt = true
-            return
+            return false
         loopTotal := 5
         loop loopTotal {
             __destroyNotify() {
@@ -325,6 +326,11 @@ class adobeAutoSave extends count {
             return false
         }
         __destroyNotify()
+        this.premWindow := WinGet.PremName()
+        if !this.premWindow.saveCheck {
+            return false
+        }
+        return true
     }
 
     /** @returns {Boolean} true/false on whether it can grab the active window */
@@ -718,12 +724,7 @@ class adobeAutoSave extends count {
     }
 
     __Delete() {
-        try {
-            super.stop()
-            WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
-        }
-        this.closeNotifys()
-        checkstuck()
         block.Off()
+        try this.Stop()
     }
 }

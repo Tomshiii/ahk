@@ -54,7 +54,10 @@
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
 - ✏️ Added [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>)
-- 📋 `autosave.ahk` `Notify` windows will now be destroyed if the user manually saves during a save attempt
+
+🔗 `autosave.ahk`
+- ✅ Fixed double saving if the user saves during the `idle` notifications
+- 📋 `Notify` windows will now be destroyed if the user manually saves during a save attempt
 
 🔗 `PremiereRemote`
 - ✏️ Added `setMarker()`
