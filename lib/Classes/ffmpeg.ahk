@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/09/22
- * @version 1.1.9
+ * @date 2025/10/20
+ * @version 1.1.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -291,7 +291,7 @@ class ffmpeg {
         pathobj := obj.SplitPath(path)
         outputFile := this.__getIndex(path)
         startval := (startval = "") ? 0 : startval
-        if !IsSet(durationval) || durationval = 0
+        if !IsSet(durationval) || durationval = 0 || durationval = "0"
             durationval := (this.__getDuration(path))- startval
         command := Format('ffmpeg -ss {1} -i "{3}" -t {2} {5} "{4}"', startval, durationval, path, outputFile, commands)
         cmd.run(,,, command)

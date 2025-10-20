@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to easily trim audio/video files using ffmpeg
  * @author tomshi
- * @date 2025/02/11
- * @version 1.0.4
+ * @date 2025/10/20
+ * @version 1.0.5
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -77,9 +77,9 @@ class trimGUI extends tomshiBasic {
         endVal   := A_YYYY A_MM A_DD Format("{:02}", this["H2"].value) Format("{:02}", this["M2"].value) Format("{:02}", this["S2"].value)
         ;// for trim function
         this.startVal    := DateDiff(startVal, A_YYYY A_MM A_DD "000000", "S")
-        this.durationVal := DateDiff(endVal, startVal, "S")
+        this.durationVal := (this.startVal != 0 && endVal != A_YYYY A_MM A_DD "000000") ? DateDiff(endVal, startVal, "S") : "0"
 
-        if InStr(this.startVal, "-") || InStr(this.durationVal, "-") {
+        if InStr(this.startVal, "-") || InStr(this.durationVal, "-") && this.durationVal != "0" {
             MsgBox("Incorrect timecode, please input a valid timecode",, 0x10)
             return
         }
