@@ -59,6 +59,7 @@
 🔗 `autosave.ahk`
 - ✅ Fixed double saving if the user saves during the `idle` notifications
 - 📋 `Notify` windows will now be destroyed if the user manually saves during a save attempt
+- 📋 Will now check for and halt if `excalibur` window is open
 
 🔗 `PremiereRemote`
 - ✏️ Added `setMarker()`

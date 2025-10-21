@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/10/20
- * @version 2.1.51
+ * @date 2025/10/21
+ * @version 2.1.52
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -327,7 +327,7 @@ class adobeAutoSave extends count {
         }
         __destroyNotify()
         this.premWindow := WinGet.PremName()
-        if !this.premWindow.saveCheck {
+        if !this.premWindow || Type(this.premWindow) != "Object" || !this.premWindow.saveCheck {
             return false
         }
         return true
@@ -392,7 +392,7 @@ class adobeAutoSave extends count {
      * @returns {Boolean} true if the window **doesn't** exist or false if it does
      */
     __checkDialogueClass(which := "Adobe Premiere Pro") {
-        if WinExist("ahk_class #32770 ahk_exe " which ".exe") {
+        if WinExist("ahk_class #32770 ahk_exe " which ".exe") || (DirExist(A_AppData "\Knights of the Editing Table\excalibur") && WinExist("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME")) {
             return false
         }
         return true
