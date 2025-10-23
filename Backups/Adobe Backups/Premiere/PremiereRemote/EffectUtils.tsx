@@ -70,6 +70,68 @@ export class EffectUtils {
       return clipInfo.clip.components[2].properties;
     }
 
+    static applyEffectOnAllSelectedClips(effectName: String) {
+      const activeSequence = app.project.activeSequence;
+      const selection = activeSequence.getSelection();
+
+      for (let i = 0; i < selection.length; i++) {
+        const selectedClip = selection[i];
+        const isVideoClip = selectedClip.mediaType === "Video";
+
+        const effect = isVideoClip
+          ? qe.project.getVideoEffectByName(effectName)
+          : qe.project.getAudioEffectByName(effectName);
+
+        const trackIndex = this.findTrackIndexForClip(selectedClip, isVideoClip);
+
+        if (trackIndex !== -1) {
+          const qeClip = isVideoClip
+            ? Utils.getQEVideoClipByStart(trackIndex, selectedClip.start.ticks)
+            : Utils.getQEAudioClipByStart(trackIndex, selectedClip.start.ticks);
+
+          if (qeClip) {
+            isVideoClip
+              ? qeClip.addVideoEffect(effect)
+              : qeClip.addAudioEffect(effect);
+          }
+        }
+      }
+
+      return true;
+    }
+
+    static findTrackIndexForClip(targetClip: any, isVideo: Boolean) {
+      const currentSequence = app.project.activeSequence;
+      const tracks = isVideo ? currentSequence.videoTracks : currentSequence.audioTracks;
+
+      for (let i = 0; i < tracks.numTracks; i++) {
+        for (let j = 0; j < tracks[i].clips.numItems; j++) {
+          const currentClip = tracks[i].clips[j];
+
+          // Match by start time and nodeId (or other unique identifier)
+          if (currentClip.start.ticks === targetClip.start.ticks &&
+              currentClip.nodeId === targetClip.nodeId) {
+            return i;
+          }
+        }
+      }
+
+      return -1; // Not found
+    }
+
+   /*  static applyEffectOnAllVideoClips(effectName: String) {
+      const activeSequence = app.project.activeSequence;
+      var selection = activeSequence.getSelection();
+      var effect = qe.project.getVideoEffectByName(effectName);
+
+      for (let i = 0; i < selection.length; i++) {
+        const qeClip = Utils.getQEVideoClipByStart(i, selection[i].start.ticks)
+        qeClip.addVideoEffect(effect);
+      }
+
+      return true
+    } */
+
     static applyDropShadowPreset() {
       const shadowEffectProperties = this.applyEffectOnFirstSelectedVideoClip("Schlagschatten");
       const opacity = shadowEffectProperties[1];

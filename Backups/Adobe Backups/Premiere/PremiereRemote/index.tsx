@@ -178,6 +178,10 @@ export const host = {
 
   setMarker: function(colour: string) {
     return MarkerUtils.setMarker(colour);
+  },
+
+  applyEffectOnAllSelectedClips: function(effect: string) {
+    return EffectUtils.applyEffectOnAllSelectedClips(effect);
   }
 };
 

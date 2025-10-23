@@ -48,7 +48,7 @@ SC027::prem.movepreview() ;press then hold this hotkey and drag to move position
 o::prem.preset("audio_basic")
 l::prem.valuehold("Scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
-.::prem.preset("Transform Me")
+.::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Transform")
 ;Down::unassigned()
 
 i::prem.preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your prem.preset onto the text layer. ;this hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section

@@ -50,7 +50,7 @@ SC027::prem.valuehold("Position") ;press then hold this hotkey and drag to incre
 o::prem.preset("audio_basic")
 l::prem.valuehold("Position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
-.::prem.preset("Transform Me")
+.::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Transform")
 ;Down::unassigned()
 
 i::prem.gain("-6") ;REDUCE GAIN BY -6db

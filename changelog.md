@@ -63,6 +63,7 @@
 
 🔗 `PremiereRemote`
 - ✏️ Added `setMarker()`
+- ✏️ Added `applyEffectOnAllSelectedClips()`
 
 🔗 `mult-dl.ahk`
 ###### *(v1.2.3 -> v1.2.7.1)*

@@ -156,6 +156,21 @@ export class Utils {
       }
     }
 
+    static getQEAudioClipByStart(trackIndex: number, startInTicks: string) {
+      const currentSequence = qe.project.getActiveSequence();
+      const audioTrack = currentSequence.getAudioTrackAt(trackIndex);
+
+      for(let i = 0; i < audioTrack.numItems; i++) {
+        const clip = audioTrack.getItemAt(i);
+
+        if(clip.start.ticks === startInTicks) {
+          return clip;
+        }
+      }
+
+      return null;
+    }
+
     static targetAllTracks(target: boolean) {
       const currentSequence = app.project.activeSequence;
       for(let i = 0; i < currentSequence.videoTracks.numTracks; i++) {
