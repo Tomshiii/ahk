@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/10/09
- * @version 1.7.80
+ * @date 2025/10/24
+ * @version 1.7.81
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -867,7 +867,7 @@ class Startup {
         submenuUIA := Menu()
         submenuUIA.Add("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
         submenuUIA.Add("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
-        submenuUIA.Add("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false).__setNewVal() : MsgBox("Premiere needs to be open for this option to function correctly!"))
+        submenuUIA.Add("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false) : MsgBox("Premiere needs to be open for this option to function correctly!"))
         A_TrayMenu.Insert(startingVal "&", "UIA", submenuUIA)
         startingVal++
 

@@ -5,7 +5,7 @@
  * @premVer 25.5
  * @author tomshi
  * @date 2025/10/24
- * @version 2.2.70
+ * @version 2.2.71
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1445,11 +1445,11 @@ class Prem {
         if UserSettings.Always_Check_UIA = true {
             if UserSettings.Set_UIA_Limit_Daily = true && UserSettings.UIA_Daily_Limit_Day = A_YDay
                 return false
-            vals := premUIA_Values(false).__setNewVal()
+            premUIA := premUIA_Values(false)
             UserSettings.UIA_Daily_Limit_Day := A_YDay
             UserSettings.__delAll()
             UserSettings := ""
-            return vals
+            return premUIA
         }
         return false
     }
@@ -1503,7 +1503,7 @@ class Prem {
         resetOrigDetect(orig)
 
         checkUIA := this.__checkAlwaysUIA()
-        premUIA := this.__checkAlwaysUIA() = false ? premUIA_Values() : checkUIA
+        premUIA := (checkUIA = false) ? premUIA_Values() : checkUIA
         try timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
         if !ObjHasOwnProp(premUIA, 'timeline') || !IsSet(timelineNN) || timelineNN = false
             return false

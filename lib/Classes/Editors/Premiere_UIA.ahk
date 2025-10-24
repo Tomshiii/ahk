@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2025/10/24
- * @version 2.0.23
+ * @version 2.0.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -47,8 +47,10 @@ Class premUIA_Values {
         this.currentVer := currentPremVer
         this.baseVer    := SubStr(this.currentVer, 1, InStr(this.currentVer, "_",, 1, 1)-1)
 
-        if !doChecks
+        if !doChecks {
+            this.__setNewVal()
             return
+        }
 
         if !this.allVals.HasOwnProp(this.currentVer) && !this.allVals.HasOwnProp(this.baseVer) {
             if WinExist(prem.winTitle) {
