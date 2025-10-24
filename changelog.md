@@ -8,7 +8,7 @@
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
 - ✅ Fixed `startup().trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
 - ✅ Fixed `reset {` scripts not affecting all scripts
-- ✅ Fixed `trimGUI {` not calculating remaining duration if ending timecode is left as `0`
+- ✅ Fixed `trimGUI {` not calculating remaining duration if ending timecode is left as `00:00:00`
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
 - ✏️ Added `obj.CaretPos()`
 - 📋 `switchTo.adobeProject()` will now additionally navigate to the project directory for `#32770` windows
@@ -62,6 +62,7 @@
 - 📋 Moved `winget.ExplorerPath()` => `getPath()`
 
 ## Other Changes
+- ❗License files are now provided for all third party libs contained within this repo <sup>[[link]](<https://github.com/Tomshiii/ahk/tree/dev/lib/Other/LICENSES>)</sup>
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
 - ✏️ Added [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>)
