@@ -18,6 +18,7 @@
 - ✅ Fixed `anchorToPosition()` not working correctly in versions `25.4` and greater
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
+- ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
 - 📋 `anchorToPosition()` now accepts parameter `ae` to determine if you're calling the function from After Effects or Premiere. Defaults to `false`
     - ✅ Fixes incorrect tabbing logic inside of After Effects

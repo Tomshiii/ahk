@@ -5,7 +5,7 @@
  * @premVer 25.5
  * @author tomshi
  * @date 2025/10/24
- * @version 2.2.69
+ * @version 2.2.70
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1444,12 +1444,14 @@ class Prem {
         UserSettings := UserPref()
         if UserSettings.Always_Check_UIA = true {
             if UserSettings.Set_UIA_Limit_Daily = true && UserSettings.UIA_Daily_Limit_Day = A_YDay
-                return
-            premUIA_Values(false).__setNewVal()
+                return false
+            vals := premUIA_Values(false).__setNewVal()
             UserSettings.UIA_Daily_Limit_Day := A_YDay
             UserSettings.__delAll()
             UserSettings := ""
+            return vals
         }
+        return false
     }
 
     /**
@@ -1500,10 +1502,10 @@ class Prem {
         }
         resetOrigDetect(orig)
 
-        this.__checkAlwaysUIA()
-        premUIA := premUIA_Values()
+        checkUIA := this.__checkAlwaysUIA()
+        premUIA := this.__checkAlwaysUIA() = false ? premUIA_Values() : checkUIA
         try timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
-        if !ObjHasOwnProp(premUIA, 'timeline') || !IsSet(timelineNN)
+        if !ObjHasOwnProp(premUIA, 'timeline') || !IsSet(timelineNN) || timelineNN = false
             return false
 
         ;// determine how much to account for the column left of the timeline based on premiere version
