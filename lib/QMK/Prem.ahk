@@ -40,7 +40,7 @@ SC028 & t::prem.manInput("level") ;manually input a level value
 Enter::prem.reset()
 Right::unassigned()
 
-p::prem.preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
+p::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Gaussian%20Blur")
 SC027::prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ; /::
 
@@ -91,8 +91,8 @@ m:: ;this hotkey will fill the frame to fit the window
 }
 ; b::
 
-r::prem.preset("Lowpass Me")
-f::prem.preset("Highpass Me")
+r::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lowpass")
+f::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Highpass")
 
 v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
 {
@@ -103,7 +103,7 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 }
 ;PgDn::unassigned()
 
-e::prem.preset("tint 100")
+e::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Tint")
 d::prem.preset("hflip")
 c::prem.preset("vflip")
 ;End::

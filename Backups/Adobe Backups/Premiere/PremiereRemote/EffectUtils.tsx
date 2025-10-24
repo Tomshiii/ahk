@@ -78,9 +78,20 @@ export class EffectUtils {
         const selectedClip = selection[i];
         const isVideoClip = selectedClip.mediaType === "Video";
 
-        const effect = isVideoClip
+        // Try to get the effect - might need matchName format
+        let effect = isVideoClip
           ? qe.project.getVideoEffectByName(effectName)
           : qe.project.getAudioEffectByName(effectName);
+
+        // If not found, try with "AE.ADBE" prefix
+        if (!effect) {
+          effect = qe.project.getVideoEffectByName("AE.ADBE " + effectName);
+        }
+
+        if (!effect) {
+          alert("Effect not found: " + effectName);
+          return false;
+        }
 
         const trackIndex = this.findTrackIndexForClip(selectedClip, isVideoClip);
 
@@ -155,4 +166,22 @@ export class EffectUtils {
       this.applyEffectOnFirstSelectedVideoClip("Verkrümmungsstabilisierung");
     }
 
+    static listEffectsOnSelectedClip() {
+      const clipInfo = Utils.getFirstSelectedClip(true);
+      if (!clipInfo) {
+        alert("No clip selected");
+        return;
+      }
+
+      const clip = clipInfo.clip;
+      let effectsList = "Effects on clip:\n";
+
+      // Iterate through components (effects are typically in components)
+      for (let i = 0; i < clip.components.numItems; i++) {
+        const component = clip.components[i];
+        effectsList += i + ": " + component.displayName + " (matchName: " + component.matchName + ")\n";
+      }
+
+      alert(effectsList);
+    }
   }

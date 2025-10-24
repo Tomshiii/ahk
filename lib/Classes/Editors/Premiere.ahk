@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/10/18
- * @version 2.2.68
+ * @date 2025/10/24
+ * @version 2.2.69
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -369,6 +369,10 @@ class Prem {
      * @param {String} whichFunc the function you wish to call
      * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window.
      * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
+     *
+     * ## Warning
+     *
+     * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*
      * @returns {String} if the user sets `needResult` to `true` this function will return a string containing the response.
      */
     static __remoteFunc(whichFunc, needResult := false, params*) {
@@ -2032,8 +2036,11 @@ class Prem {
         block.Off()
     }
 
-    /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
-    static anchorToPosition() {
+    /**
+     * A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab.
+     * @param {Boolean} [ae=false] determine whether you're calling this function for after effects or premiere as some of the logic may be different per version.  Defaults to `false`
+     */
+    static anchorToPosition(ae := false) {
         ;// check to see if the user is in a text field
         if !CaretGetPos(&carx, &cary) {
             tool.Cust("The user is not currently within a text field")
@@ -2052,6 +2059,12 @@ class Prem {
             return
         }
         anch2 := A_Clipboard
+        if ae = true {
+            delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
+            clip.delayReturn(clipb.storedClip)
+            blocker.Off()
+            return
+        }
         switch {
             ;// versions 25.4 and greater. They now focus the reset button when you tab
             case VerCompare(this.currentSetVer, "25.5") >= 0: delaySI(50, "{Tab 2}", anch1, "{Tab}", anch2, "{Enter}")

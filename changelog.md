@@ -1,5 +1,8 @@
 # <> Release 2.16.x - 
 
+> [!Caution]
+> If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated or added.
+
 ## Functions
 - ✅ Fixed `slack.button()` throwing in certain circumstances
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
@@ -8,7 +11,6 @@
 - ✅ Fixed `trimGUI {` not calculating remaining duration if ending timecode is left as `0`
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
 - ✏️ Added `obj.CaretPos()`
-- 📋 `premUIA_Values.__setNewVal()` will now abort if the `Save Project` window appears
 - 📋 `switchTo.adobeProject()` will now additionally navigate to the project directory for `#32770` windows
 
 ### 📝 `prem {`
@@ -17,6 +19,8 @@
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
+- 📋 `anchorToPosition()` now accepts parameter `ae` to determine if you're calling the function from After Effects or Premiere. Defaults to `false`
+    - ✅ Fixes incorrect tabbing logic inside of After Effects
 
 🔗 `gain()`
 - 📋 Will now highlight the text input field in the event the gain window is already open, but a text field is not selected
@@ -31,6 +35,11 @@
 - ✅ Fixed function failing to select the correct clips if the user released modifier keys too late
 - 📋 Now accepts param `ignore`
 - 📋 Now alerts the user if it attempted to interact with a transition handle (not perfect)
+
+### `premUIA_Values {`
+🔗 `__setNewVal()`
+- ✅ Fixed function sometimes leaving inputs blocked
+- 📋 Will now abort if the `Save Project` window appears
 
 ### 📝 `discord {`
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header
@@ -64,6 +73,7 @@
 🔗 `PremiereRemote`
 - ✏️ Added `setMarker()`
 - ✏️ Added `applyEffectOnAllSelectedClips()`
+- ✏️ Added `listEffectsOnSelectedClip()`
 
 🔗 `mult-dl.ahk`
 ###### *(v1.2.3 -> v1.2.7.1)*

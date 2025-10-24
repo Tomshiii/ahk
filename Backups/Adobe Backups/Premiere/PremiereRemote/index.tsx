@@ -182,6 +182,10 @@ export const host = {
 
   applyEffectOnAllSelectedClips: function(effect: string) {
     return EffectUtils.applyEffectOnAllSelectedClips(effect);
+  },
+
+  listEffectsOnSelectedClip: function() {
+    return EffectUtils.listEffectsOnSelectedClip();
   }
 };
 

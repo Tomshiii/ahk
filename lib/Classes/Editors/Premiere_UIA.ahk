@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/09/29
- * @version 2.0.22
+ * @date 2025/10/24
+ * @version 2.0.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -112,12 +112,18 @@ Class premUIA_Values {
         detect(false, 2) ;// incase the user is midreload while attempting to set values
         this.activeObj.isRunning := true
 
-        if !prem.__checkDialogueClass()
+        if !prem.__checkDialogueClass() {
+            this.activeObj.isRunning := false
+            block.Off()
             return
+        }
 
         premName := WinGet.PremName()
-        if !premName.winTitle
+        if !premName.winTitle {
+            this.activeObj.isRunning := false
+            block.Off()
             return
+        }
         ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
 
         AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space prem.winTitle,, false)
@@ -126,6 +132,7 @@ Class premUIA_Values {
             originalVers := JSON.stringify(currentVers)
         } catch {
             this.activeObj.isRunning := false
+            block.Off()
             ;// throw
             errorLog(Error("Parsing JSON Data Failed"),,, true)
         }
@@ -174,7 +181,9 @@ Class premUIA_Values {
         hasDupes   := false
         for currentPanel, currHotkey in this.windowHotkeys {
             if WinExist("Save Project " prem.winTitle) {
+                this.activeObj.isRunning := false
                 Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
+                block.Off()
                 return
             }
             SendInput(currHotkey)
@@ -226,8 +235,10 @@ Class premUIA_Values {
         Notify.Show(, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
         if this.successCount != this.windowHotkeys.Count
             Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
-        if JSON.stringify(currentVers) == originalVers
+        if JSON.stringify(currentVers) == originalVers {
+            this.activeObj.isRunning := false
             return
+        }
 
         if !DirExist(A_Temp "\tomshi")
             DirCreate(A_Temp "\tomshi")
