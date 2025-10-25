@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2025/10/25
  ***********************************************************************/
-global currentVer := "1.2.7.2"
+global currentVer := "1.2.8"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -319,8 +319,9 @@ class multiDL extends tomshiBasic {
                         case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, v,, false,, cookiesMulti)
                         case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, v,, false,, cookiesMulti)
                     }
-                    ;// prevent youtube thinking you're a bot
-                    sleep 8000
+                    ;// reduce the risk of youtube thinking you're a bot
+                    pickDelay := Random(18, 26) "000"
+                    sleep(pickDelay)
                 }
             case 3: ;// part
                 this.timecodeValue := (Format("{:02}", this["H1"].value) ":" Format("{:02}", this["M1"].value) ":" Format("{:02}", this["S1"].value) "-" Format("{:02}", this["H2"].value) ":" Format("{:02}", this["M2"].value) ":" Format("{:02}", this["S2"].value))

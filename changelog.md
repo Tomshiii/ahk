@@ -92,7 +92,7 @@
 - ✏️ Added `startPlayback()`
 
 🔗 `mult-dl.ahk`
-###### *(v1.2.3 -> v1.2.7.2)*
+###### *(v1.2.3 -> v1.2.8)*
 - ✅ Fixed script not properly loading after installing all required packages
 - ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
 - ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL
@@ -101,3 +101,4 @@
 - 📋 Now activates the GUI if the user tries to reopen the script/exe while it is already open
 - 📋 `Multi` tab now uses a `ListView` to input URLs instead of an `Edit` box
 - 📋 `Use cookies` is now disabled by default
+- 📋 `Multi` downloads will now sleep anywhere from `18s` to `26s` between each download to reduce the risk of being flagged by youtube as a bot
