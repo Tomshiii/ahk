@@ -3,7 +3,7 @@
  * @file cmd.ahk
  * @author tomshi
  * @date 2025/10/25
- * @version 1.1.9
+ * @version 1.1.9.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -128,7 +128,7 @@ class cmd {
         if !checkFile || InStr(checkFile, "D") {
             split := obj.SplitPath(fullpath)
             if DirExist(split.Dir) {
-                (wait = false) ? Run('explore "' dir '"') : RunWait('explore "' dir '"')
+                (wait = false) ? Run('explore "' split.Dir '"') : RunWait('explore "' split.Dir '"')
                 return true
             }
             return false
