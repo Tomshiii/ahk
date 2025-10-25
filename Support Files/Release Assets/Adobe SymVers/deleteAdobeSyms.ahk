@@ -6,6 +6,8 @@ imgsrchPath := scptDir '\..\..\ImageSearch'
 for k, v in adobeVers.maps {
     which := adobeVers.which[k]
     for name, verMap in v.OwnProps() {
+        if !verMap || !IsObject(verMap)
+            continue
         for k2, v2 in verMap {
             if DirExist(imgsrchPath "\" which "\" k2)
                 DirDelete(imgsrchPath "\" which "\" k2)

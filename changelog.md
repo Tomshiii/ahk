@@ -6,7 +6,6 @@
 ## Functions
 - ✅ Fixed `slack.button()` throwing in certain circumstances
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
-- ✅ Fixed `startup().trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
 - ✅ Fixed `reset {` scripts not affecting all scripts
 - ✅ Fixed `trimGUI {` not calculating remaining duration if ending timecode is left as `00:00:00`
 - ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
@@ -70,6 +69,10 @@
 - 📋 Moved `selectFileInOpenWindow()`
 - 📋 Moved `winget.getActiveExplorerTab()` => `getTab()`
 - 📋 Moved `winget.ExplorerPath()` => `getPath()`
+
+### 📝 `startup {`
+- ✅ Fixed `trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
+- ✅ Fixed `__checkForReloadAttempt()` causing scripts to throw under certain circumstances
 
 ## Other Changes
 - ❗License files are now provided for all third party libs contained within this repo <sup>[[link]](<https://github.com/Tomshiii/ahk/tree/dev/lib/Other/LICENSES>)</sup>

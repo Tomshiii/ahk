@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/10/24
- * @version 1.7.81
+ * @date 2025/10/25
+ * @version 1.7.82
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1392,6 +1392,8 @@ class Startup {
         readIni := IniRead(this.trackReloadsIni, "Track", funcName, A_YYYY "_" A_MM "_" A_DD)
         if readIni = A_YYYY "_" A_MM "_" A_DD {
             Notify.Show(, funcName '() appears to be attempting to reload multiple times, this may be because something is stopping it from progressing forward.`n`nThis function will no longer reload today, if this was unintentional it is recommended you report this issue on Github as a bug, otherwise a manual reload is required.', 'C:\Windows\System32\imageres.dll|icon80',,, 'dur=10 pos=BR bdr=0xD50000 maxW=400')
+            if !IsSet(this.UserSettings) || !IsObject(this.UserSettings)
+                this.UserSettings := UserPref()
             return false
         }
         IniWrite(A_YYYY "_" A_MM "_" A_DD, this.trackReloadsIni, "Track", funcName)

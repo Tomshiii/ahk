@@ -18,7 +18,9 @@ class adobeVers {
     }
     setVerMap[filepath] {
         get {
-            return JSON.parse(FileRead(filepath))
+            if FileExist(filepath)
+                return JSON.parse(FileRead(filepath))
+            return false
         }
     }
     Premiere := {
@@ -35,12 +37,7 @@ class adobeVers {
         26: this.setVerMap[this.dirFolder "\Vers\AE\v26.json"],
     }
     PS := {
-        ;// to keep the version list short I'll periodically reduce the amount of versions it creates.
-        ;// uncomment them if you use a version in here
-        ;// however, a note: the `deleteAdobeSyms.ahk` script will now similarly no longer delete these symlink folders
-        ;// so if you've already installed my repo before, you'll need to manually delete them
-
-        ; 24: this.setVerMap[this.dirFolder "\Vers\Ps\v24.json"],
+        24: this.setVerMap[this.dirFolder "\Vers\Ps\v24.json"],
         25: this.setVerMap[this.dirFolder "\Vers\Ps\v25.json"],
         26: this.setVerMap[this.dirFolder "\Vers\Ps\v26.json"],
         27: this.setVerMap[this.dirFolder "\Vers\Ps\v27.json"],
@@ -81,6 +78,8 @@ class adobeVers {
                     ps.Set(Integer(psYear)-1, 1) */
                 if !ps.Has(Integer(psYear)+1)
                     ps.Set(Integer(psYear)+1, 1)
+                if !ps.Has(Integer(psYear)+2)
+                    ps.Set(Integer(psYear)+2, 1)
             }
         }
         ;// since the beta cycle usually eventually ends up a version number ahead of what the current years is, we need to check if the beta folder exists
@@ -110,6 +109,8 @@ class adobeVers {
                             continue
                 }
 
+                if !val || !IsObject(val)
+                    continue
                 ;// this is the individual versions
                 for k2, v2 in val {
                     ;// will remove any symlinks before attempting to create it so that it doesn't error out
