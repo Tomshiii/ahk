@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/10/21
- * @version 2.1.52
+ * @date 2025/10/25
+ * @version 2.1.53
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -371,6 +371,10 @@ class adobeAutoSave extends count {
      * *note: this function will only work if the user has their program monitor on their main display*
      */
     __checkPremPlayback() {
+        if prem.__checkPremRemoteDir('isPlaying') {
+            this.userPlayback := prem.__remoteFunc('isPlaying', true)
+            return
+        }
         if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
             try progMon := prem.__uiaCtrlPos(this.premUIA.programMon,,, false)
             if !IsSet(progMon)
@@ -448,6 +452,10 @@ class adobeAutoSave extends count {
                     }
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
+                    if prem.__checkPremRemoteDir('startPlayback') {
+                        prem.__remoteFunc('startPlayback')
+                        return
+                    }
                     try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
                     catch {
                         try {
