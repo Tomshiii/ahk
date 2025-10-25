@@ -26,11 +26,13 @@ class adobeVers {
         23: this.setVerMap[this.dirFolder "\Vers\Prem\v23.json"],
         24: this.setVerMap[this.dirFolder "\Vers\Prem\v24.json"],
         25: this.setVerMap[this.dirFolder "\Vers\Prem\v25.json"],
+        26: this.setVerMap[this.dirFolder "\Vers\Prem\v26.json"],
     }
     AE := {
         23: this.setVerMap[this.dirFolder "\Vers\AE\v23.json"],
         24: this.setVerMap[this.dirFolder "\Vers\AE\v24.json"],
         25: this.setVerMap[this.dirFolder "\Vers\AE\v25.json"],
+        26: this.setVerMap[this.dirFolder "\Vers\AE\v26.json"],
     }
     PS := {
         ;// to keep the version list short I'll periodically reduce the amount of versions it creates.
@@ -40,7 +42,8 @@ class adobeVers {
 
         ; 24: this.setVerMap[this.dirFolder "\Vers\Ps\v24.json"],
         25: this.setVerMap[this.dirFolder "\Vers\Ps\v25.json"],
-        26: this.setVerMap[this.dirFolder "\Vers\Ps\v26.json"]
+        26: this.setVerMap[this.dirFolder "\Vers\Ps\v26.json"],
+        27: this.setVerMap[this.dirFolder "\Vers\Ps\v27.json"],
     }
 
     static maps := [this().Premiere, this().AE, this().PS]

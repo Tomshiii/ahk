@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2025/10/25
- * @version 2.0.25
+ * @version 2.0.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,6 +41,7 @@ Class premUIA_Values {
         UserSettings    := ""
         try this.allVals := JSON.parse(FileRead(this.valueINI),, false)
         catch {
+            block.Off()
             ;// throw
             errorLog(Error("Parsing JSON Data Failed"),,, true)
         }
@@ -49,6 +50,7 @@ Class premUIA_Values {
 
         if !doChecks {
             this.__setNewVal()
+            block.Off()
             return
         }
 
@@ -60,6 +62,7 @@ Class premUIA_Values {
                 block.Off()
                 return
             }
+            block.Off()
             errorLog(UnsetError("Current Version has no values set. Please run ``premUIA_Values(false).__setNewVal()``", -1),,, true)
             return
         }
@@ -108,6 +111,7 @@ Class premUIA_Values {
      */
     __setNewVal() {
         if this.activeObj.HasOwnProp('isRunning') && this.activeObj.isRunning = true {
+            block.Off()
             Notify.Show(, "Attempting to set UIA values is already in process.`nPlease wait.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
             Exit()
         }
@@ -115,15 +119,15 @@ Class premUIA_Values {
         this.activeObj.isRunning := true
 
         if !prem.__checkDialogueClass() {
-            this.activeObj.isRunning := false
             block.Off()
+            this.activeObj.isRunning := false
             return
         }
 
         premName := WinGet.PremName()
         if !premName.winTitle {
-            this.activeObj.isRunning := false
             block.Off()
+            this.activeObj.isRunning := false
             return
         }
         ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
@@ -133,8 +137,8 @@ Class premUIA_Values {
             currentVers  := JSON.parse(FileRead(ptf.SupportFiles "\UIA\values.ini"),, false)
             originalVers := JSON.stringify(currentVers)
         } catch {
-            this.activeObj.isRunning := false
             block.Off()
+            this.activeObj.isRunning := false
             ;// throw
             errorLog(Error("Parsing JSON Data Failed"),,, true)
         }
@@ -164,8 +168,8 @@ Class premUIA_Values {
                     sleep 150
                 }
             } catch {
-                this.activeObj.isRunning := false
                 block.off()
+                this.activeObj.isRunning := false
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
                 Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                 return
@@ -186,9 +190,9 @@ Class premUIA_Values {
         hasDupes   := false
         for currentPanel, currHotkey in this.windowHotkeys {
             if WinExist("Save Project " prem.winTitle) {
+                block.Off()
                 this.activeObj.isRunning := false
                 Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
-                block.Off()
                 return
             }
             SendInput(currHotkey)
@@ -205,8 +209,8 @@ Class premUIA_Values {
                     sleep 50
                     try currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
                     catch {
-                        this.activeObj.isRunning := false
                         block.Off()
+                        this.activeObj.isRunning := false
                         errorLog(Error("UIA Values could not be determined. Please try again later"))
                         try Notify.Destroy(attemptNotify['hwnd'])
                         Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
@@ -215,8 +219,8 @@ Class premUIA_Values {
                 }
             }
             if !IsSet(currentEl) {
-                this.activeObj.isRunning := false
                 block.Off()
+                this.activeObj.isRunning := false
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
                 try Notify.Destroy(attemptNotify['hwnd'])
                 Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
@@ -256,7 +260,7 @@ Class premUIA_Values {
     }
 
     __Delete() {
-        this.activeObj.isRunning := false
         block.Off()
+        this.activeObj.isRunning := false
     }
 }
