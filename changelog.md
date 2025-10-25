@@ -25,26 +25,26 @@
 - 📋 `anchorToPosition()` now accepts parameter `ae` to determine if you're calling the function from After Effects or Premiere. Defaults to `false`
     - ✅ Fixes incorrect tabbing logic inside of After Effects
 
-🔗 `gain()`
+📍 `gain()`
 - 📋 Will now highlight the text input field in the event the gain window is already open, but a text field is not selected
 - 📋 Now uses `block_ext {` instead of just `block {` to ensure a `space::` hotkey can't close the gain window before the function has completed
 
-🔗 `__setCurrSeq()`
+📍 `__setCurrSeq()`
 - 📋 Should no longer flood the line execution
 - 📋 Function (alongside `swapPreviousSequence()`) now store sequence values in an array, allowing more than 2 sequences to be toggled between
     - Limit can be set within `settingsGUI()`
 
-🔗 `toggleEnabled()`
+📍 `toggleEnabled()`
 - ✅ Fixed function failing to select the correct clips if the user released modifier keys too late
 - 📋 Now accepts param `ignore`
 - 📋 Now alerts the user if it attempted to interact with a transition handle (not perfect)
 
-`__remoteFunc()`
+📍 `__remoteFunc()`
 - 📋 Will now attempt to replace any `A_Space` in `params*` with `%20`
-- 📋 Will now warn the user if `PremiereRemote` is not installed or the requested function does not exist in the users `index.tsx`
+- 📋 Will now warn the user if `PremiereRemote` is not installed or the requested function does not exist in the user's `index.tsx`
 
-### `premUIA_Values {`
-🔗 `__setNewVal()`
+### 📝 `premUIA_Values {`
+📍 `__setNewVal()`
 - ✅ Fixed function sometimes leaving inputs blocked
 - 📋 Will now abort if the `Save Project` window appears
 - 📋 Will now use `PremiereRemote` to stop playback if available
@@ -54,7 +54,7 @@
 ### 📝 `discord {`
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header
 
-🔗 `button()`
+📍 `button()`
 - ✅ Function should now be 2-3x faster in most cases
 - ✅ Fixed function throwing if not hovering a message
 - ✅ Fixed `reply` not disabling the `@` ping when setting is enabled
@@ -73,6 +73,7 @@
 ### 📝 `startup {`
 - ✅ Fixed `trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
 - ✅ Fixed `__checkForReloadAttempt()` causing scripts to throw under certain circumstances
+- ✅ Fixed `checkVersJSON()` generating an entry even if an `ImageSearch` folder exists
 
 ## Other Changes
 - ❗License files are now provided for all third party libs contained within this repo <sup>[[link]](<https://github.com/Tomshiii/ahk/tree/dev/lib/Other/LICENSES>)</sup>
