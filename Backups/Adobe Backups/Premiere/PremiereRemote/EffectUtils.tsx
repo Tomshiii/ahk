@@ -143,19 +143,6 @@ export class EffectUtils {
       return -1; // Not found
     }
 
-   /*  static applyEffectOnAllVideoClips(effectName: String) {
-      const activeSequence = app.project.activeSequence;
-      var selection = activeSequence.getSelection();
-      var effect = qe.project.getVideoEffectByName(effectName);
-
-      for (let i = 0; i < selection.length; i++) {
-        const qeClip = Utils.getQEVideoClipByStart(i, selection[i].start.ticks)
-        qeClip.addVideoEffect(effect);
-      }
-
-      return true
-    } */
-
     static applyDropShadowPreset() {
       const shadowEffectProperties = this.applyEffectOnFirstSelectedVideoClip("Schlagschatten");
       const opacity = shadowEffectProperties[1];

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/10/24
- * @version 2.2.71
+ * @date 2025/10/25
+ * @version 2.2.72
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -364,6 +364,14 @@ class Prem {
                     ? true : false)
     }
 
+    /** stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind */
+    static stopPlayback() {
+        if !prem.__checkPremRemoteDir('stopPlayback')
+			SendInput(KSA.shuttleStop)
+		else
+			prem.__remoteFunc('stopPlayback')
+    }
+
     /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) function
      * @param {String} whichFunc the function you wish to call
@@ -372,10 +380,14 @@ class Prem {
      *
      * ## Warning
      *
-     * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*
+     * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues
      * @returns {String} if the user sets `needResult` to `true` this function will return a string containing the response.
      */
     static __remoteFunc(whichFunc, needResult := false, params*) {
+        if !this.__checkPremRemoteDir(whichFunc) {
+            MsgBox("PremiereRemote is not installed or function does not exist.",, "262160")
+            return
+        }
         paramsString := ""
         if params.Length >= 1 {
             for k, v in params {
@@ -390,6 +402,7 @@ class Prem {
                 paramsString := paramsString "&" params[A_Index]
             }
         }
+        paramsString := StrReplace(paramsString, A_Space, "%20")
         sendcommand := Format('curl "http://localhost:8081/{1}?{2}"', whichFunc, String(paramsString))
         if !needResult {
             Run(sendcommand,, "Hide")
@@ -834,7 +847,7 @@ class Prem {
         }
         blocker := block_ext()
         blocker.On(,, "{Shift}{F21}{F23}")
-        SendInput(KSA.shuttleStop)
+        this.stopPlayback()
         sleep 50
         premUIA := premUIA_Values()
         try premEl := this.__createUIAelement(false)
@@ -1831,7 +1844,7 @@ class Prem {
             keys.allWait()
             return
         }
-        SendInput(KSA.shuttleStop)
+        this.stopPlayback()
         MouseMove(playhead.x, playhead.y)
         SendInput("{LButton Down}")
         block.Off()
@@ -1884,7 +1897,7 @@ class Prem {
         }
         this.delayTime += 1
         if pauseFirst = true {
-            SendEvent(ksa.shuttleStop)
+            this.stopPlayback()
             sleep(delay)
         }
         SendEvent(A_ThisHotkey)

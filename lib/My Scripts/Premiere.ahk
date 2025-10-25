@@ -145,7 +145,9 @@ $+c:: ;// stop playback before ripple deleting as it can go funky in laggy comps
 		SendInput("+c")
 		return
 	}
-	delaySI(30, ksa.shuttleStop, ksa.premRippleDelete)
+	prem.stopPlayback()
+	sleep 30
+	SendInput(ksa.premRippleDelete)
 	return
 }
 

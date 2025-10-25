@@ -343,4 +343,57 @@ export class Utils {
         items[i].moveBin(folder);
       }
     }
+
+    static isPlaying() {
+      /* var isPlaying = qe.project.getActiveSequence().player.isPlaying;
+      return isPlaying */
+    }
+
+    static stopPlayback() {
+      var seq = qe.project.getActiveSequence();
+      seq.player.stop();
+    }
+
+    static startPlayback() {
+      var seq = qe.project.getActiveSequence();
+      seq.player.play();
+    }
+
+    static checkObjParams() {
+      try {
+        var seq = qe.project.getActiveSequence();
+        const player = seq.player;
+
+        var output = "=== PROPERTIES ===\n";
+        for (var prop in player) {
+            try {
+                var value = player[prop];
+                var valueType = typeof value;
+                output += prop + ": " + value + " (type: " + valueType + ")\n";
+            } catch(e) {
+                output += prop + ": [Error accessing property]\n";
+            }
+        }
+
+        output += "\n=== REFLECT INFO ===\n";
+        if (player.reflect) {
+            var info = player.reflect;
+            output += "Name: " + info.name + "\n";
+            output += "Methods: " + info.methods + "\n";
+            output += "Properties: " + info.properties + "\n";
+        } else {
+            output += "No reflect info available\n";
+        }
+
+        var file = new File("~/Desktop/player_info.txt");
+        file.open("w");
+        file.write(output);
+        file.close();
+
+        alert("Info written to Desktop/player_info.txt");
+    } catch(e) {
+        alert("Error: " + e.toString());
+    }
+
+    }
   }

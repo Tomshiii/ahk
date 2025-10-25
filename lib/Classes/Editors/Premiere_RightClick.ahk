@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.5
  * @author tomshi, taranVH
- * @date 2025/10/09
- * @version 2.3.22
+ * @date 2025/10/25
+ * @version 2.3.23
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -152,7 +152,7 @@ class rbuttonPrem {
 			SendInput(KSA.playheadtoCursor)
 			return
 		}
-		SendInput(KSA.shuttleStop) ;if it is on screen, we input a shuttle stop
+		prem.stopPlayback()
 
 		;// this stops the script from potentially clicking a clip if using `rbuttonPrem().movePlayhead(false)`
 		if !search {

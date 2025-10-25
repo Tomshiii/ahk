@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/10/24
- * @version 2.0.24
+ * @date 2025/10/25
+ * @version 2.0.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -146,9 +146,12 @@ Class premUIA_Values {
         ;// we need to ensure playback here is halted, otherwise UIA is SUPER unresponsive
         ;// and for whatever reason known only to the adobe devs some hotkeys no longer function globally
         ;// if they contain any modifiers, so we have to do a check here to see if the user has any in their set hotkey
-        if !InStr(ksa.shuttleStop, "+") && !InStr(ksa.shuttleStop, "^") && !InStr(ksa.shuttleStop, "!") && !InStr(ksa.shuttleStop, "Ctrl") && !InStr(ksa.shuttleStop, "Shift") && !InStr(ksa.shuttleStop, "Alt")
+        if prem.__checkPremRemoteDir('isPlaying') && prem.__checkPremRemoteFunc('stopPlayback') {
+            if prem.__remoteFunc('isPlaying', true)
+                prem.__remoteFunc('stopPlayback')
+        } else if !InStr(ksa.shuttleStop, "+") && !InStr(ksa.shuttleStop, "^") && !InStr(ksa.shuttleStop, "!") && !InStr(ksa.shuttleStop, "Ctrl") && !InStr(ksa.shuttleStop, "Shift") && !InStr(ksa.shuttleStop, "Alt") {
             SendInput(ksa.shuttleStop)
-        else {
+        } else {
             try {
                 delaySI(80, this.windowHotkeys["effectsControl"], this.windowHotkeys["programMon"])
                 sleep 150

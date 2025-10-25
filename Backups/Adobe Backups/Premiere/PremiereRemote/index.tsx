@@ -186,6 +186,23 @@ export const host = {
 
   listEffectsOnSelectedClip: function() {
     return EffectUtils.listEffectsOnSelectedClip();
+  },
+
+  isPlaying: function() {
+    return Utils.isPlaying();
+  },
+
+  checkObjParams: function() {
+    Utils.checkObjParams();
+  },
+
+  stopPlayback: function() {
+    Utils.stopPlayback();
+  },
+
+  startPlayback: function() {
+    // this function requires premiere to be focused
+    Utils.startPlayback();
   }
 };
 

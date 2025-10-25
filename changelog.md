@@ -21,6 +21,7 @@
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
+- ✏️ Added `stopPlayback()`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
 - 📋 `anchorToPosition()` now accepts parameter `ae` to determine if you're calling the function from After Effects or Premiere. Defaults to `false`
     - ✅ Fixes incorrect tabbing logic inside of After Effects
@@ -39,10 +40,17 @@
 - 📋 Now accepts param `ignore`
 - 📋 Now alerts the user if it attempted to interact with a transition handle (not perfect)
 
+`__remoteFunc()`
+- 📋 Will now attempt to replace any `A_Space` in `params*` with `%20`
+- 📋 Will now warn the user if `PremiereRemote` is not installed or the requested function does not exist in the users `index.tsx`
+
 ### `premUIA_Values {`
 🔗 `__setNewVal()`
 - ✅ Fixed function sometimes leaving inputs blocked
 - 📋 Will now abort if the `Save Project` window appears
+- 📋 Will now use `PremiereRemote` to stop playback if available
+> [!Caution]
+> This function requires updated `PremiereRemote` functions.
 
 ### 📝 `discord {`
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header
@@ -78,6 +86,9 @@
 - ✏️ Added `setMarker()`
 - ✏️ Added `applyEffectOnAllSelectedClips()`
 - ✏️ Added `listEffectsOnSelectedClip()`
+- ✏️ Added `isPlaying()`
+- ✏️ Added `stopPlayback()`
+- ✏️ Added `startPlayback()`
 
 🔗 `mult-dl.ahk`
 ###### *(v1.2.3 -> v1.2.7.2)*
