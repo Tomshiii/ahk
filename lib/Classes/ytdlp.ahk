@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/10/12
- * @version 1.1.2
+ * @date 2025/10/25
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -114,6 +114,7 @@ class ytdlp {
                 DirCreate(dlFolder "\tomshi")
             folder := dlFolder "\tomshi"
         }
+        filename := filename = "" ? this.defaultFilename : filename
         check := false
         origFold := folder
         if (StrLen(folder) = 2 && SubStr(folder, 2, 1) = ":") || (StrLen(folder) = 3 && SubStr(folder, 2, 2) =":\")

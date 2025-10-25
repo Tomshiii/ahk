@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2025/09/22
- * @version 1.1.8
+ * @date 2025/10/25
+ * @version 1.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -128,12 +128,12 @@ class cmd {
         if !checkFile || InStr(checkFile, "D") {
             split := obj.SplitPath(fullpath)
             if DirExist(split.Dir) {
-                (wait = false) ? Run("explore " split.Dir) : RunWait("explore " split.Dir)
+                (wait = false) ? Run('explore "' dir '"') : RunWait('explore "' dir '"')
                 return true
             }
             return false
         }
-        (wait = false) ? Run(A_ComSpec ' /c explorer.exe /select, ' fullpath,, "Hide") : RunWait(A_ComSpec ' /c explorer.exe /select, ' fullpath,, "Hide")
+        (wait = false) ? Run(A_ComSpec ' /c explorer.exe /select, "' fullpath '"',, "Hide") : RunWait(A_ComSpec ' /c explorer.exe /select, "' fullpath '"',, "Hide")
         if doubleCheck = true {
             SetTimer((*) => explorer.selectFileInOpenWindow.Bind(fullpath, false), -1500)
         }

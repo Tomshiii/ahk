@@ -9,6 +9,8 @@
 - ✅ Fixed `startup().trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
 - ✅ Fixed `reset {` scripts not affecting all scripts
 - ✅ Fixed `trimGUI {` not calculating remaining duration if ending timecode is left as `00:00:00`
+- ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
+- ✅ Fixed `cmd.exploreAndHighlight()` failing to open the desired path
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
 - ✏️ Added `obj.CaretPos()`
 - 📋 `switchTo.adobeProject()` will now additionally navigate to the project directory for `#32770` windows
@@ -78,7 +80,7 @@
 - ✏️ Added `listEffectsOnSelectedClip()`
 
 🔗 `mult-dl.ahk`
-###### *(v1.2.3 -> v1.2.7.1)*
+###### *(v1.2.3 -> v1.2.7.2)*
 - ✅ Fixed script not properly loading after installing all required packages
 - ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
 - ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL
