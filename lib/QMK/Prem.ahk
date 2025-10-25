@@ -104,16 +104,16 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 ;PgDn::unassigned()
 
 e::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Tint")
-d::prem.preset("hflip")
-c::prem.preset("vflip")
-;End::
+d::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Horizontal%20Flip")
+c::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Vertical%20Flip")
+End::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lumetri%20Color")
 
-w::unassigned()
-s::prem.preset("croptom")
+w::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Drop%20Shadow")
+s::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Crop")
 x::prem.fxSearch()
 ;F15::unassigned()
 
-q::prem.preset("S_Shake Me")
+q::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=S_Shake")
 a::prem.valuehold("Position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 z::prem.valuehold("Position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 

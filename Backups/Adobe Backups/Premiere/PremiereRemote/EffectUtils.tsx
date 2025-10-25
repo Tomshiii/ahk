@@ -105,6 +105,19 @@ export class EffectUtils {
               ? qeClip.addVideoEffect(effect)
               : qeClip.addAudioEffect(effect);
           }
+          switch (effectName) {
+            case "Transform":
+              const transformProps = selectedClip.components[2].properties;
+              const uniform = transformProps[2];
+
+              uniform.setValue(true, true);
+              if (selection.length == 1) {
+                selectedClip.setSelected(false, true);
+                selectedClip.setSelected(true, true);
+              }
+              break;
+            // case "":
+          }
         }
       }
 

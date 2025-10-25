@@ -50,8 +50,6 @@ SC03A & c::clip.capitilise()
 {
 	if !WinExist("Tracked Ideas · Planned Changes")
 		Run("https://github.com/users/Tomshiii/projects/1")
-	if !WinExist("Tracked Issues · Known Issues")
-		Run("https://github.com/users/Tomshiii/projects/2")
 }
 
 ;extraEnterHotkey;

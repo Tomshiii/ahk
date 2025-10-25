@@ -123,14 +123,7 @@ Enter & PgDn::switchTo.closeOtherWindow(browser.edge.winTitle)
 e::unassigned()
 d::unassigned()
 c::unassigned()
-End:: ;search for checklist file
-{
-	detect()
-	if !WinExist("Editing Checklist") && !WinExist("Select commission folder") && !WinExist("checklist.ahk - AutoHotkey")
-		Run(ptf["checklist"])
-	else if WinExist("Editing Checklist")
-		WinMove(-345, 0,,, "Editing Checklist -")
-}
+End::unassigned()
 
 w::unassigned()
 s::unassigned()
