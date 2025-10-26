@@ -10,6 +10,7 @@
 - ✅ Fixed `trimGUI {` not calculating remaining duration if ending timecode is left as `00:00:00`
 - ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
 - ✅ Fixed `cmd.exploreAndHighlight()` failing to open the desired path
+- ✅ Fixed version dropdown lists in `settingsGUI()` not being sorted in numerical order
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
 - ✏️ Added `obj.CaretPos()`
 - 📋 `switchTo.adobeProject()` will now additionally navigate to the project directory for `#32770` windows

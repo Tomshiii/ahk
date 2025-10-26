@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/09/22
- * @version 2.3.17
+ * @date 2025/10/26
+ * @version 2.3.18
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -15,6 +15,7 @@
 #Include <Classes\WM>
 #Include <Classes\reset>
 #Include <Other\Notify\Notify>
+#Include <Other\Array>
 #Include <Functions\refreshWin>
 #Include <Functions\detect>
 #Include <Functions\checkInternet>
@@ -806,6 +807,7 @@ settingsGUI()
             }
             if !IsSet(defaultIndex)
                 defaultIndex := 1
+            supportedVers := supportedVers.Sort("C")
             ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
 
             ;// look idk using .bind wasn't calling the editCtrl function, I gave up, this is easier
