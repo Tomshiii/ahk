@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/10/25
- * @version 2.0.26
+ * @date 2025/10/26
+ * @version 2.0.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -37,6 +37,7 @@ Class premUIA_Values {
         try this.activeObj := ComObjActive("{dcee88ec-9327-44cf-9d2a-5bc47c624e0e}")
         UserSettings := UserPref()
         this.mainScriptName := UserSettings.mainScriptName
+        this.setVer := UserSettings.premVer
         currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
         UserSettings    := ""
         try this.allVals := JSON.parse(FileRead(this.valueINI),, false)
@@ -72,6 +73,7 @@ Class premUIA_Values {
 
     valueINI   := ptf.SupportFiles "\UIA\values.ini"
     currentVer := false
+    setVer     := false
     allValls   := false
     baseVer    := false
     activeObj  := {}
@@ -130,6 +132,13 @@ Class premUIA_Values {
             this.activeObj.isRunning := false
             return
         }
+        if prem.__checkPremRemoteDir('premVer') {
+            appVer := "v" prem.__remoteFunc('premVer', true)
+
+            if (this.setVer != appVer) && (this.setVer ".0" != appVer) {
+                Notify.Show(, 'The currently set version of Premiere does not match the application version.`nConsider adjusting the set version in settingsGUI() and then reloading', 'C:\Windows\System32\imageres.dll|icon227', 'Windows Notify Messaging',, 'theme=Dark dur=7 bdr=Red maxW=400')
+            }
+        }
         ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
 
         AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space prem.winTitle,, false)
@@ -143,7 +152,7 @@ Class premUIA_Values {
             errorLog(Error("Parsing JSON Data Failed"),,, true)
         }
 
-        if !WinActivate(prem.winTitle)
+        if !WinActive(prem.winTitle)
             switchTo.Premiere()
 
         block.On()

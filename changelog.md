@@ -48,8 +48,9 @@
 - ✅ Fixed function sometimes leaving inputs blocked
 - 📋 Will now abort if the `Save Project` window appears
 - 📋 Will now use `PremiereRemote` to stop playback if available
+- 📋 Will alert the user if their set version of Premiere does not match the open application
 > [!Caution]
-> This function requires updated `PremiereRemote` functions.
+> Some of these changes require updated `PremiereRemote` functions.
 
 ### 📝 `discord {`
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header
@@ -94,6 +95,7 @@
 - ✏️ Added `isPlaying()`
 - ✏️ Added `stopPlayback()`
 - ✏️ Added `startPlayback()`
+- ✏️ Added `premVer()`
 
 🔗 `mult-dl.ahk`
 ###### *(v1.2.3 -> v1.2.8)*

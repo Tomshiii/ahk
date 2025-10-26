@@ -24,6 +24,10 @@ export const host = {
     return app.project.name
   },
 
+  premVer: function() {
+    return app.version
+  },
+
   saveProj: function () {
     app.project.save();
   },
