@@ -70,7 +70,7 @@ n::unassigned()
 #MaxThreadsBuffer false
 ;Space::unassigned()
 
-t::prem.preset("gaussian blur 20") ;hover over a track on the timeline, press this hotkey, then watch as ahk drags one of these presets onto the hovered track
+t::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Gaussian%20Blur")
 y:: ;this hotkey will fill the frame to fit the window
 {
 	premTimeline()
@@ -78,23 +78,23 @@ y:: ;this hotkey will fill the frame to fit the window
 }
 ; b::
 
-r::prem.preset("Lowpass Me")
-f::prem.preset("Highpass Me")
+r::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Horizontal%20Flip")
+f::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Vertical%20Flip")
 
 v::
 ;PgDn::unassigned()
 
-e::prem.preset("tint 100")
-d::prem.preset("hflip")
-c::prem.preset("vflip")
+e::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Tint")
+d::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Highpass")
+c::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lowpass")
 ;End::
 
-w::unassigned()
-s::prem.preset("croptom")
+w::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Drop%20Shadow")
+s::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Crop")
 x::prem.fxSearch()
-;F15::unassigned()
+F15::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Crop")
 
-q::prem.preset("S_Shake Me")
+q::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=S_Shake")
 a::
 z::
 

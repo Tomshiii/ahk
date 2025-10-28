@@ -44,9 +44,9 @@ if nonFootage.Length >= 1 {
     for v in nonFootage {
         xpos := (Mod(A_Index, 9) != 0) ? "xs" : "xs+150" " ys Section"
         onFirst := (A_Index = 1) ? "Section" : ""
-        extraGUI.AddCheckbox(xpos " v" StrReplace(v, A_Space, "_") " " onFirst, " \" v)
+        extraGUI.AddCheckbox(xpos " v" StrReplace(v, A_Space, "___") " " onFirst, " \" v)
         if xpos != "xs"
-            bottomY := "v" StrReplace(v, A_Space, "_")
+            bottomY := "v" StrReplace(v, A_Space, "___")
     }
 
     extraGUI.AddButton("xs y+25", "Backup").OnEvent("Click", __doBackupButt.Bind("backup"))
@@ -65,12 +65,12 @@ if nonFootage.Length >= 1 {
                 case "backup":
                     if !v
                         continue
-                    additionalDir.Push(videosFolder "\" k)
+                    additionalDir.Push(videosFolder "\" StrReplace(k, "___", A_Space))
                 case "ignore":
                     if v
                         continue
-                    additionalDir.Push(videosFolder "\" k)
-                case "backupall": additionalDir.Push(videosFolder "\" k)
+                    additionalDir.Push(videosFolder "\" StrReplace(k, "___", A_Space))
+                case "backupall": additionalDir.Push(videosFolder "\" StrReplace(k, "___", A_Space))
             }
         }
     }
@@ -112,11 +112,11 @@ __doBackup(backupFolder, additionalDir) {
 
     for v in autoSaves {
          if DirExist(projectFolder "\" v)
-            try cmd.run(,,, Format('Robocopy "{1}" "{2}" *.* /MIR /R:1', projectFolder "\" v, backupFolder "\_Additional Assets\auto save\" v),, "hide")
+            try cmd.run(,,, Format('Robocopy "{1}" "{2}" /MIR /R:1', projectFolder "\" v, backupFolder "\_Additional Assets\auto save\" v),, "hide")
     }
     for v in backFolders {
         if DirExist(projectFolder "\" v)
-            try cmd.run(,,, Format('Robocopy "{1}" "{2}" *.* /MIR /R:1', projectFolder "\" v, backupFolder "\_Additional Assets\proj dirs\" v),, "hide")
+            try cmd.run(,,, Format('Robocopy "{1}" "{2}" /MIR /R:1', projectFolder "\" v, backupFolder "\_Additional Assets\proj dirs\" v),, "hide")
     }
 
     loop files rootDir "\videos\*", 'F' {
@@ -141,7 +141,7 @@ __doBackup(backupFolder, additionalDir) {
 
     for v in additionalDir {
         SplitPath(v, &dirName)
-        try cmd.run(,,, Format('Robocopy "{1}" "{2}" *.* /MIR /R:1', v, backupFolder "\_Additional Assets\videos\" dirName),, "hide")
+        try cmd.run(,,, Format('Robocopy "{1}" "{2}" /MIR /R:1', v, backupFolder "\_Additional Assets\videos\" dirName),, "hide")
     }
 }
 
