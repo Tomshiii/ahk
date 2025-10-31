@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/10/25
- * @version 2.1.53
+ * @date 2025/10/31
+ * @version 2.1.54
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -163,9 +163,11 @@ class adobeAutoSave extends count {
     /** starts the timer */
     Start() {
         if this.saveOverride == true {
-            try WinEvent.Exist(this.__stopAndReset.Bind(this), "Save Project " prem.exeTitle)
-            catch {
-                SetTimer((*) => tool.Cust("Attempting to start lib ``WinEvent`` failed.`nA reload may be required for proper functionality."), -1)
+            if !WinEvent.IsRegistered("Exist", "Save Project " prem.exeTitle) {
+                try WinEvent.Exist(this.__stopAndReset.Bind(this), "Save Project " prem.exeTitle)
+                catch {
+                    SetTimer((*) => tool.Cust("Attempting to start lib ``WinEvent`` failed.`nA reload may be required for proper functionality."), -1)
+                }
             }
         }
         super.start()

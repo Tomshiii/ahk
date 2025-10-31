@@ -391,9 +391,9 @@ export class Utils {
         file.close();
 
         alert("Info written to Desktop/player_info.txt");
-    } catch(e) {
-        alert("Error: " + e.toString());
-    }
+      } catch(e) {
+          alert("Error: " + e.toString());
+      }
 
     }
   }

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/10/25
- * @version 2.2.72
+ * @date 2025/10/31
+ * @version 2.2.72.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1283,6 +1283,7 @@ class Prem {
         switch {
             case ih.EndReason = "Timeout":
                 tool.Cust(A_ThisFunc "() timed out. Further number inputs may result in`nmoving clips instead of adjusting audio", 5.0)
+                errorLog(Error('Function timed out'))
                 return
             case ih.EndKey = "Escape": return
         }
@@ -1300,6 +1301,7 @@ class Prem {
         if !IsNumber(sendGain) {
             ;// if the user times out, or the regex fails, we want to halt here or you'll end up with a `nan` keyframe in prem
             tool.Cust("A number could not be interpreted from the input keys. Please try again", 2.0)
+            errorLog(ValueError('A number could not be interpreted from the input keys', -1, sendGain))
             return
         }
         block.On()

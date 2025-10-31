@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2025/01/01
- * @version 2.1.4
+ * @date 2025/10/31
+ * @version 2.1.5
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -179,6 +179,8 @@ class errorLog extends log {
                 OSName, A_OSVersion, OSArch, RTrim(CPU), Logical, Memory, FreePhysMem,
                 Format("{}_{}_{}, {}:{}:{}.{}", A_YYYY, A_MM, A_DD, A_Hour, A_Min, A_Sec, A_MSec), A_AhkPath
             ))
+            ;// reset formatting
+            this.logger := log(Format("{}:{}:{}.{} ", A_Hour, A_Min, A_Sec, A_MSec),, this.logLocation)
         }
     }
 
