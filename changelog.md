@@ -13,7 +13,6 @@
 - ✅ Fixed version dropdown lists in `settingsGUI()` not being sorted in numerical order
 - ✅ Fixed `errorLog()` sometimes skipping the timestamp for the first error of the day
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
-- ✏️ Added `obj.CaretPos()`
 - 📋 `switchTo.adobeProject()` will now additionally navigate to the project directory for `#32770` windows
 
 ### 📝 `prem {`
@@ -72,6 +71,10 @@
 - 📋 Moved `selectFileInOpenWindow()`
 - 📋 Moved `winget.getActiveExplorerTab()` => `getTab()`
 - 📋 Moved `winget.ExplorerPath()` => `getPath()`
+
+### 📝 `obj {`
+- ✅ Fixed `WinPos()` throwing if it cannot determine the desired window position
+- ✏️ Added `CaretPos()`
 
 ### 📝 `startup {`
 - ✅ Fixed `trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed

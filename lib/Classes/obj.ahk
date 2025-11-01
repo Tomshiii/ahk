@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2025/10/14
- * @version 1.1.8
+ * @date 2025/11/01
+ * @version 1.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,7 +55,7 @@ class obj {
         try {
             MouseGetPos(&x, &y, &win, &cont, flags?)
         } catch {
-            errorLog(UnsetError("Failed to grab all variables with MouseGetPos", -1),, 1)
+            errorLog(UnsetError("Failed to grab all variables with MouseGetPos", -1),, true)
             Exit()
         }
         return {x: x, y: y, win: win, control: cont}
@@ -77,7 +77,12 @@ class obj {
      * ```
      */
     static WinPos(winTitle := this.winTitle, winText := this.winText, exTitle := this.exTitle, exText := this.exText) {
-        WinGetPos(&x, &y, &width, &height, winTitle, winText, exTitle, exText)
+        try {
+            WinGetPos(&x, &y, &width, &height, winTitle, winText, exTitle, exText)
+        } catch {
+            errorLog(UnsetError("Failed to grab all variables with WinGetPos", -1),, true)
+            Exit()
+        }
         return {x: x, y: y, width: width, height: height}
     }
 
@@ -91,9 +96,13 @@ class obj {
      * car.y
      */
     static CaretPos(caretCoordMode := A_CoordModeCaret) {
+        prev := A_CoordModeCaret
         A_CoordModeCaret := caretCoordMode
-        if !CaretGetPos(&x, &y)
+        if !CaretGetPos(&x, &y) {
+            A_CoordModeCaret := prev
             return false
+        }
+        A_CoordModeCaret := prev
         return {x: x, y: y}
     }
 
