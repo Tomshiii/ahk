@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/09/19
- * @version 1.3.23
+ * @date 2025/11/04
+ * @version 1.3.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -406,7 +406,7 @@ class switchTo {
             }
 
             ;// checking if a save window of some kind is open
-            if WinActive("ahk_class #32770") && switchCurrentWindow = true {
+            if WinActive("ahk_class #32770",, "Save Project ahk_exe " prem.exeTitle) && switchCurrentWindow = true {
                 switchTo.Path(path.Dir)
                 return true
             }
@@ -429,7 +429,7 @@ class switchTo {
                 }
             }
             ;// run the path
-            if (WinActive("ahk_exe explorer.exe") && switchCurrentWindow = true)
+            if (WinActive("ahk_exe explorer.exe",, "ahk_class Shell_TrayWnd") && switchCurrentWindow = true)
                 switchTo.Path(path.Dir)
             else
                 RunWait(path.dir)

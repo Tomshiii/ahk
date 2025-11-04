@@ -13,7 +13,6 @@
 - ✅ Fixed version dropdown lists in `settingsGUI()` not being sorted in numerical order
 - ✅ Fixed `errorLog()` sometimes skipping the timestamp for the first error of the day
 - ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
-- 📋 `switchTo.adobeProject()` will now additionally navigate to the project directory for `#32770` windows
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
@@ -80,6 +79,11 @@
 - ✅ Fixed `trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
 - ✅ Fixed `__checkForReloadAttempt()` causing scripts to throw under certain circumstances
 - ✅ Fixed `checkVersJSON()` generating an entry even if an `ImageSearch` folder exists
+
+### 📝 `switchTo {`
+📍 `adobeProject()`
+- ✅ Fixed function throwing if the taskbar is the active window
+- 📋 Will now additionally navigate to the project directory for `#32770` windows
 
 ## Other Changes
 - ❗License files are now provided for all third party libs contained within this repo <sup>[[link]](<https://github.com/Tomshiii/ahk/tree/dev/lib/Other/LICENSES>)</sup>
