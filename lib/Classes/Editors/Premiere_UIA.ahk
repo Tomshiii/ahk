@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/10/26
- * @version 2.0.27
+ * @date 2025/11/05
+ * @version 2.0.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -133,10 +133,17 @@ Class premUIA_Values {
             return
         }
         if prem.__checkPremRemoteDir('premVer') {
-            appVer := "v" prem.__remoteFunc('premVer', true)
+            try {
+                appVer := "v" prem.__remoteFunc('premVer', true)
+                if appVer = false
+                    throw
 
-            if (this.setVer != appVer) && (this.setVer ".0" != appVer) {
-                Notify.Show(, 'The currently set version of Premiere does not match the application version.`nConsider adjusting the set version in settingsGUI() and then reloading', 'C:\Windows\System32\imageres.dll|icon227', 'Windows Notify Messaging',, 'theme=Dark dur=7 bdr=Red maxW=400')
+                if (this.setVer != appVer) && (this.setVer ".0" != appVer) {
+                    Notify.Show(, 'The currently set version of Premiere does not match the application version.`nConsider adjusting the set version in settingsGUI() and then reloading', 'C:\Windows\System32\imageres.dll|icon227', 'Windows Notify Messaging',, 'theme=Dark dur=7 bdr=Red maxW=400')
+                }
+            } catch {
+                errorLog(MethodError("PremiereRemote server is currently not running correctly."), "Try restarting it using ``resetNPM.ahk``")
+                Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
             }
         }
         ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")

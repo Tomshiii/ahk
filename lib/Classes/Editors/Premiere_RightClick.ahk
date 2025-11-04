@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.5
  * @author tomshi, taranVH
- * @date 2025/10/25
- * @version 2.3.23
+ * @date 2025/11/05
+ * @version 2.3.23.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -397,6 +397,7 @@ class rbuttonPrem {
 				this.origSeq := prem.__remoteFunc("getActiveSequence", true)
 			if this.origSeq = false {
 				useRemote := false
+				errorLog(MethodError("PremiereRemote server is currently not running correctly."), "Try restarting it using ``resetNPM.ahk``")
 				Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
 				this.__exit()
 			}
