@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/10/31
- * @version 2.1.54
+ * @date 2025/11/11
+ * @version 2.1.55
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -609,6 +609,7 @@ class adobeAutoSave extends count {
             block.Off()
             return
         }
+        block.Off()
     }
 
     /** saves after effects */
@@ -650,11 +651,17 @@ class adobeAutoSave extends count {
 
         ;// if AE is the active window, a normal save will be fine
         if this.origWindow = WinGetProcessName(editors.AE.winTitle) {
+            block.On()
             SendEvent("^s")
-            if !WinWait("Save Project",, 3)
+            if !WinWait("Save Project",, 3) {
+                block.Off()
                 return
-            if !WinWaitClose("Save Project",, 3)
+            }
+            if !WinWaitClose("Save Project",, 3) {
+                block.Off()
                 return
+            }
+            block.Off()
             sleep 200
             return
         }
@@ -663,6 +670,7 @@ class adobeAutoSave extends count {
         ;// so we have to work around that
 
         try {
+            block.On()
             checkStuck()
             WinSetTransparent(0, editors.AE.winTitle)
             ;// attempt to send save
@@ -672,6 +680,7 @@ class adobeAutoSave extends count {
             ;// this part will throw if it's not inside a try block
             ControlSend("{Ctrl Down}s{Ctrl Up}",, this.aeWindow.winTitle)
         } catch {
+            block.Off()
             this.__resetAETrans()
             return
         }
@@ -679,9 +688,11 @@ class adobeAutoSave extends count {
             ControlSend("{Esc}",, "Save As " editors.AE.winTitle)
         }
         if !WinWaitClose("Save Project",, 3) {
+            block.Off()
             this.__resetAETrans()
             return
         }
+        block.Off()
         this.__resetAETrans()
     }
 
