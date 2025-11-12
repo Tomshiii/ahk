@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A list of colours required for each UI version/theme of premiere I've encountered. I only use the darkest themes, if you use a different theme you'll need to fill out your own
  * @author tomshi, taranVH
- * @date 2025/07/02
- * @version 1.0.1
+ * @date 2025/11/12
+ * @version 1.0.2
  ***********************************************************************/
 
 class timelineColours {
@@ -25,7 +25,7 @@ class timelineColours {
 		]
 	}
 
-	static oldUI := {
+	static preSpectrum := {
 		darkest: [
 			"timeline1",  0x414141, ;timeline colour inbetween two clips inside the in/out points ON a targeted track
 			"timeline2",  0x313131, ;timeline colour of the separating LINES between targeted AND non targeted tracks inside the in/out points

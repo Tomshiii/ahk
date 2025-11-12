@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/11/11
- * @version 2.2.72.2
+ * @date 2025/11/12
+ * @version 2.2.73
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,6 +55,7 @@ class Prem {
         UserSettings.__delAll()
         UserSettings := ""
 
+        this.setUI()
         orig := detect()
         if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") {
             try {
@@ -63,6 +64,7 @@ class Prem {
                 this.timelineCol := activeObj.timelineCol, this.timelineColArr := activeObj.timelineColArr
                 this.sequenceArr := activeObj.sequenceArr
                 activeObj := ""
+                this.__setTimelineCol(this.UI, this.theme)
             } catch {
                 activeObj := ""
                 this.__determineTheme()
@@ -83,6 +85,7 @@ class Prem {
     static timelineColArr := []
     static theme := "darkest"
     static defaultTheme := ""
+    static UI := "Spectrum"
     static sequenceArr := []
     static resetSeqTimer := false
     static prevSeqDelay := 1000
@@ -172,12 +175,19 @@ class Prem {
 
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
+    static setUI() {
+        switch  {
+            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.UI := "Spectrum"
+            case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0: this.UI := "preSpectrum"
+            default: this.UI := "Spectrum"
+        }
+    }
+
     /** Sets required class values for the user's premiere theme. Versions greater than the Spectrum UI update will have their theme determined automatically based off their premiere settings file */
     static __determineTheme() {
         ;// timeline colours + themes
-        switch {
-            ;// spectrum ui
-            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
+        switch this.UI {
+            case "Spectrum":
                 if FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs") {
                     loadSettings := loadXML(FileRead(ptf['PremProfile'] "Adobe Premiere Pro Prefs"))
                     props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
@@ -223,8 +233,7 @@ class Prem {
                     this.theme := this.defaultTheme
                     this.__setTimelineCol("Spectrum", this.theme) ;// defaults to this.defaultTheme
                 }
-            ;// old ui
-			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
+			case "preSpectrum":
                 sleep 50
                 if !Notify.Exist('preSpectrum') {
                     Notify.Show(, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=preSpectrum')
@@ -234,9 +243,8 @@ class Prem {
         }
 
         ;// other values
-        switch  {
-            ;// spectrum ui
-            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0:
+        switch this.UI {
+            case "Spectrum":
                 ;// set timeline and playhead colours
                 this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
                 ;// set layer button offsets (these get added onto `timelineRawX`)
@@ -245,8 +253,7 @@ class Prem {
                 this.editTabX := 154, this.editTabY := 35
                 ;// keyframes
                 this.keyframeGrey := 0xb0b0b0, this.keyframeBlue := 0x4096f3
-            ;// old ui
-			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:
+			case "preSpectrum":
                 ;// set timeline and playhead colours
                 this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
@@ -750,11 +757,10 @@ class Prem {
             return
         }
         motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
-        switch {
-            ;// spectrum UI
-            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
+        switch this.UI {
+            case "Spectrum": effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
             ;// old ui
-			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0: effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
+			case "preSpectrum": effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
         }
         startPos := {x: motionPos.x+15, y: motionPos.y+this.effCtrlSegment}
         for i, v in effCtrlArr {
@@ -791,12 +797,12 @@ class Prem {
         sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
         ToolTip("")
         if !GetKeyState(A_ThisHotkey, "P") {
-            switch {
+            switch this.UI {
                 ;// check version - pre Spectrum UI will need to start imagesearch higher
                 ;// spectrum ui
-                case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: startSegment := this.effCtrlSegment*.25, endSegment := this.effCtrlSegment*.75
+                case "Spectrum": startSegment := this.effCtrlSegment*.25, endSegment := this.effCtrlSegment*.75
                 ;// old ui
-			    case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0: startSegment := this.effCtrlSegment*.55, endSegment := this.effCtrlSegment*.55
+			    case "preSpectrum": startSegment := this.effCtrlSegment*.55, endSegment := this.effCtrlSegment*.55
             }
             ;// searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
             if !ImageSearch(&x2, &y2, startPos.x, startPos.y - startSegment, startPos.x + 1500, startPos.y + endSegment, "*2 " ptf.Premiere "reset.png") {
@@ -3015,8 +3021,8 @@ class Prem {
         this.timelineCols   := timelineCol
         this.timelineColArr := timelineColArr
 
-        switch {
-            case (VerCompare(ptf.premIMGver, this.spectrumUI_Version) >= 0):
+        switch this.UI {
+            case "Spectrum":
                 switch this.theme {
                     ;// these colours may change in future versions
                     ;// but should work between 25.0->25.5 at a minimum
