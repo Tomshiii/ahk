@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/10/25
+ * @date 2025/11/13
  ***********************************************************************/
-global currentVer := "1.2.8"
+global currentVer := "1.2.9"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -34,53 +34,45 @@ try {
 
 class multiDL extends tomshiBasic {
     __New() {
-        __checkInstalls(refresh, &ffmpeg, &ytdlp, &deno) {
-            if refresh != true && refresh != false
-                refresh := false
-            doRefresh := (refresh = true) ? "refreshenv; " : ""
-            ffmpeg := cmd.result('powershell -c ' doRefresh '"Get-Command -Name ffmpeg -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
-            ytdlp  := cmd.result('powershell -c ' doRefresh '"Get-Command -Name yt-dlp -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
-            deno   := cmd.result('powershell -c ' doRefresh '"Get-Command -Name deno -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+        __checkInstalls(&ffmpeg, &ytdlp, &deno) {
+            ffmpeg := cmd.result(Format(this.checkCommand, "ffmpeg"))
+            ytdlp  := cmd.result(Format(this.checkCommand, "yt-dlp"))
+            deno   := cmd.result(Format(this.checkCommand, "deno"))
         }
-        __checkInstalls(false, &ffmpeg, &ytdlp, &deno)
-
+        __checkInstalls(&ffmpeg, &ytdlp, &deno)
         ffmpeg := (!InStr(ffmpeg, "is not recognized") && ffmpeg != "")  ? true : false
         ytdlp  := (!InStr(ytdlp, "is not recognized")  && ytdlp != "")   ? true : false
         deno   := (!InStr(deno, "is not recognized")   && deno != "")    ? true : false
 
         if !ffmpeg || !ytdlp || !deno {
-            choco := cmd.result('powershell -c refreshenv; "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+            choco := cmd.result(Format(this.checkCommand, "choco"))
             choco := (!InStr(choco, "is not recognized") && choco != "") ? true : false
             if choco = true {
-                __checkInstalls(true, &ffmpeg, &ytdlp, &deno)
-                if !ffmpeg || !ytdlp || !deno {
-                    ;// incase the user hasn't reloaded since installation
-                    super.__New(,,, preReqTitle)
-                    this.AddText(, "Installing these prerequisites will require admin permissions. `nYou may also need to reboot after installation.")
-                    for v in this.arr {
-                        if v = "yt-dlp"
-                            v := "ytdlp"
-                        this.AddText("x5", v ":")
-                        this.AddButton("xm+70 yp-7 w100 h30 v" v, "Install " v)
-                        this[v].OnEvent("Click", this.__install_tool.Bind(this, v))
-                        if v = "deno"
-                            this.AddText("x+10 y+-23", "(yt-dlp requirement)")
-                        if %v% != false {
-                            this[v].Opt("Disabled")
-                            this[v].text := "done"
-                        }
+                super.__New(,,, preReqTitle)
+                this.AddText(, "Installing these prerequisites will require admin permissions. `nYou may also need to reboot after installation.")
+                for v in this.arr {
+                    if v = "yt-dlp"
+                        v := "ytdlp"
+                    this.AddText("x5", v ":")
+                    this.AddButton("xm+70 yp-7 w100 h30 v" v, "Install " v)
+                    this[v].OnEvent("Click", this.__install_tool.Bind(this, v))
+                    if v = "deno"
+                        this.AddText("x+10 y+-23", "(yt-dlp requirement)")
+                    if %v% != false {
+                        this[v].Opt("Disabled")
+                        this[v].text := "done"
                     }
-
-                    this.OnEvent("Escape", __checkInstalled.Bind(this))
-                    this.OnEvent("Close", __checkInstalled.Bind(this))
-                    this.show()
-                    __checkInstalled(*) {
-                        if this["choco"].text != "done" || this["ffmpeg"].text != "done" || this["ytdlp"].text != "done" || this["deno"].text != "done"
-                            ExitApp()
-                        Reload()
-                    }
-                    WinWaitClose(this.Title)
                 }
+
+                this.OnEvent("Escape", __checkInstalled.Bind(this))
+                this.OnEvent("Close", __checkInstalled.Bind(this))
+                this.show()
+                __checkInstalled(*) {
+                    if this["choco"].text != "done" || this["ffmpeg"].text != "done" || this["ytdlp"].text != "done" || this["deno"].text != "done"
+                        ExitApp()
+                    Reload()
+                }
+                WinWaitClose(this.Title)
             }
         }
         checkClipboard := isURL(A_Clipboard) ? A_Clipboard : ""
@@ -188,7 +180,7 @@ class multiDL extends tomshiBasic {
 
         ;// attempt check package updates
         ;// ================================================================
-        choco  := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+        choco  := cmd.result(Format(this.checkCommand, "choco"))
         this.chkDevObj := this.__getPosObj("checkDev")
         this.updObj    := this.__getPosObj("updates")
         this.__checkingButton("move")
@@ -219,6 +211,7 @@ class multiDL extends tomshiBasic {
     tabs := unset
     timecodeValue := ""
     defaultListText := "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files."
+    checkCommand := 'powershell -c "$env:Path = [System.Environment]::GetEnvironmentVariable(`'Path`',`'Machine`') + `';`' + [System.Environment]::GetEnvironmentVariable(`'Path`',`'User`'); Get-Command -Name {1} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"'
 
     __getPosObj(ctrl) {
         this[ctrl].GetPos(&x, &y, &width, &height)
@@ -357,7 +350,7 @@ class multiDL extends tomshiBasic {
     }
 
     __checkChoco(*) {
-        chkChoco := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+        chkChoco := cmd.result(Format(this.checkCommand, "choco"))
         if (InStr(chkChoco, "is not recognized") || chkChoco = "") {
             MsgBox("Choco is required to install this tool, please install choco first")
             return false
@@ -390,7 +383,7 @@ class multiDL extends tomshiBasic {
     __checkUpdates(*) {
         this.Opt("Disabled")
         this.__checkingButton("move")
-        choco  := cmd.result('powershell -c "Get-Command -Name choco -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+        choco  := cmd.result(Format(this.checkCommand, "choco"))
         if (InStr(choco, "is not recognized") || choco = "") {
             MsgBox("Checking for updates for ffmpeg or yt-dlp requires the package manager chocolatey to be installed.")
             __checkExeUpdate()
