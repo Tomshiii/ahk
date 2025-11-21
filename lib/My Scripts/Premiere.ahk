@@ -9,7 +9,7 @@
 isIn(title) {
 	try getTitle := WinGetTitle("A")
 	catch {
-		Exit()
+		return false
 	}
 	return InStr(getTitle, title)
 }
@@ -208,8 +208,7 @@ F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint,, true) ;goes
 F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint,, true) ;goes to the next edit point towards the right
 
 ;// mousedrag hotkeys
-LAlt & Xbutton2:: ;this is necessary for the below function to work
-Xbutton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
+*XButton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 ;// playback speed change hotkeys
 F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
@@ -260,16 +259,12 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 
 	;// ensure the main prem window is active before attempting to fire
 	getTitle := WinGet.PremName()
-	try {
-		if WinGetTitle("A") != gettitle.winTitle {
-			KeyWait(A_ThisHotkey)
-			__cleanup()
-			return
-		}
-	} catch {
+	if !getTitle || !IsObject(getTitle) || !gettitle.winTitle || WinGetTitle("A") != gettitle.winTitle {
+		KeyWait(A_ThisHotkey)
 		__cleanup()
 		return
 	}
+
 
 	;// checks to see whether the timeline position has been located
 	if !prem.__setTimelineValues() {
@@ -280,7 +275,11 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 
 	;// set coord mode and grab the cursor position
 	coord.client()
-	origMouse := obj.MousePos()
+	if !origMouse := obj.MousePos() {
+		KeyWait(A_ThisHotkey)
+		__cleanup()
+		return
+	}
 	prior := false
 	if A_PriorKey = "WheelUp" || A_PriorKey = "WheelDown" {
 		premUIA   := premUIA_Values()
@@ -329,6 +328,49 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 			SendInput("{LButton Up}{Ctrl Up}")
 			__cleanup()
 	}
+}
+
+/* ~F14::
+{
+	SendInput("{Ctrl Down}")
+	KeyWait(A_ThisHotkey)
+	SendInput("{Ctrl Up}")
+} */
+F14 & LButton::
+{
+	currKeys := getHotkeysArr()
+	if GetKeyName(currKeys[1]) != "F14" {
+		KeyWait(currKeys[1])
+		__cleanup()
+		return
+	}
+	__cleanup() => (checkStuck(["Ctrl", "LButton"]))
+	;// ensure the main prem window is active before attempting to fire
+	getTitle := WinGet.PremName()
+	if !getTitle || !IsObject(getTitle) || !gettitle.winTitle || WinGetTitle("A") != gettitle.winTitle {
+		KeyWait(currKeys[1])
+		__cleanup()
+		return
+	}
+
+	;// checks to see whether the timeline position has been located
+	if !prem.__setTimelineValues() {
+		KeyWait(currKeys[1])
+		__cleanup()
+		return
+	}
+
+	;// set coord mode and grab the cursor position
+	coord.client()
+	origMouse := obj.MousePos()
+	if !origMouse || !prem.__checkCoords(origMouse) {
+		KeyWait(currKeys[1])
+		__cleanup()
+		return
+	}
+	delaySI(16, "{LButton Down}", "{Ctrl Down}")
+	KeyWait(currKeys[1])
+	delaySI(16, "{LButton Up}", "{Ctrl Up}")
 }
 
 WheelUp::

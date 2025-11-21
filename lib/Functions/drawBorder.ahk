@@ -5,6 +5,8 @@
  * @param {Boolean} enable whether you wish to enable or disable the border
  */
 drawBorder(hwnd, colour := 0xFFFFFFFF, enable := false) {
+    Critical()
     if VerCompare(A_OSVersion, "10.0.22000") >= 0
         DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "int", 34, "int*", enable ? colour : 0xFFFFFFFF, "int", 4)
+    Critical("Off")
 }

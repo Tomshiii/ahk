@@ -14,21 +14,24 @@ premTimeline() {
 	__fallback() {
 		if !prem.__setTimelineValues(false) {
 			block.Off()
-			return
+			return false
 		}
 		tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
 	}
 	if !prem.__checkTimelineValues() {
 		WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
 		if !prem.__waitForTimeline() {
-			__fallback()
+			if !__fallback() {
+				block.Off()
+				return false
+			}
 			block.Off()
-			return
+			return true
 		}
 	}
 	; prem.__focusTimeline()
 	block.Off()
-	Exit()
+	return false
 }
 
 BackSpace:: ;this hotkey will activate the program monitor, then send the hotkey to activate safe margins
@@ -73,7 +76,8 @@ n::unassigned()
 t::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Gaussian%20Blur")
 y:: ;this hotkey will fill the frame to fit the window
 {
-	premTimeline()
+	if !premTimeline()
+		return
 	SendInput(KSA.scaleFrameSize)
 }
 ; b::

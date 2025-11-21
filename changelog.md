@@ -4,15 +4,17 @@
 > If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated or added.
 
 ## Functions
+- ✅ Fixed multiple instances of incorrect `||` logic
 - ✅ Fixed `slack.button()` throwing in certain circumstances
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
-- ✅ Fixed `reset {` scripts not affecting all scripts
+- ✅ Fixed `reset {` functions not affecting all scripts
 - ✅ Fixed `trimGUI {` not calculating remaining duration if ending timecode is left as `00:00:00`
 - ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
 - ✅ Fixed `cmd.exploreAndHighlight()` failing to open the desired path
 - ✅ Fixed version dropdown lists in `settingsGUI()` not being sorted in numerical order
 - ✅ Fixed `errorLog()` sometimes skipping the timestamp for the first error of the day
-- ✏️ Added [`move.clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
+- ✅ Fixed all instances of `winget.Title()`, `obj.MousePos()` & `obj.WinPos()` causing scripts to throw
+- 📋 Added minor ussage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
@@ -31,7 +33,7 @@
 
 📍 `__setCurrSeq()`
 - 📋 Should no longer flood the line execution
-- 📋 Function (alongside `swapPreviousSequence()`) now store sequence values in an array, allowing more than 2 sequences to be toggled between
+- 📋 Now stores sequence values in an array, allowing more than 2 sequences to be toggled between (alongside `swapPreviousSequence()`) 
     - Limit can be set within `settingsGUI()`
 
 📍 `toggleEnabled()`
@@ -61,6 +63,10 @@
 - ✅ Fixed `reply` not disabling the `@` ping when setting is enabled
 - ✅ Fixed function incorrectly determining when the user is within a dm or a server
 
+### `WinGet {`
+- ✏️ Added `Regex()` functions to cut repeat code
+    - `TitleRegex()`, `ActiveRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`
+
 ### 📝 `explorer {`
 - ✏️ Added class `explorer {`
 - ✏️ Added `cancelSearch()`
@@ -76,23 +82,40 @@
 - ✏️ Added `CaretPos()`
 
 ### 📝 `startup {`
-- ✅ Fixed `trayMen()` not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
 - ✅ Fixed `__checkForReloadAttempt()` causing scripts to throw under certain circumstances
 - ✅ Fixed `checkVersJSON()` generating an entry even if an `ImageSearch` folder exists
+
+📍 `trayMen()`
+- ✅ Fixed function not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
+- ✅ Fixed function potentially leaking `detect` settings
+- ✅ Fixed function potentially getting stuck if another process changes the current `detect` settings while function is operating
 
 ### 📝 `switchTo {`
 📍 `adobeProject()`
 - ✅ Fixed function throwing if the taskbar is the active window
 - 📋 Will now additionally navigate to the project directory for `#32770` windows
 
+### 📝 `move {`
+- ✏️ Added [`clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
+- ❌ Removed `Tab()`
+
+### 📝 `PS {`
+📍 `Type()`
+- 📋 Will now move the cursor out of the way so it doesn't cause the function to click the incorrect option
+- 📋 Will now refocus the filename field after selecting the filetype
+
 ## Other Changes
 - ❗License files are now provided for all third party libs contained within this repo <sup>[[link]](<https://github.com/Tomshiii/ahk/tree/dev/lib/Other/LICENSES>)</sup>
+- 📋 Reduced the usage of `Exit()` across the entire repo to minimise potential instances of inputs getting stuck
+- 📋 Placed most usage of `detect()` within `Critical()` blocks to avoid instances of changes leaking over to other functions
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
 - ✏️ Added [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>)
 
 🔗 `autosave.ahk`
 - ✅ Fixed double saving if the user saves during the `idle` notifications
+- ✅ Fixed inputs getting stuck blocked in certain circumstances
+- ✅ Fixed `After Effects` never saving in certain circumstances where `__checkDialogueClass()` always returned `false`
 - 📋 `Notify` windows will now be destroyed if the user manually saves during a save attempt
 - 📋 Will now check for and halt if `excalibur` window is open
 - 📋 Can now use `PremiereRemote` to determine & restart playback removing the need for `ImageSearch`
@@ -105,9 +128,10 @@
 - ✏️ Added `stopPlayback()`
 - ✏️ Added `startPlayback()`
 - ✏️ Added `premVer()`
+- ✏️ Added `moveToAssetsBin()`
 
 🔗 `mult-dl.ahk`
-###### *(v1.2.3 -> v1.2.8)*
+###### *(v1.2.3 -> v1.2.9)*
 - ✅ Fixed script not properly loading after installing all required packages
 - ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
 - ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL

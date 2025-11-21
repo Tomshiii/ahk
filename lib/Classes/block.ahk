@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2025/07/20
- * @version 1.3.8
+ * @date 2025/11/21
+ * @version 1.3.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -74,7 +74,7 @@ class block {
     static Off(option?) {
         if !IsSet(option)
             {
-                BlockInput("Default"), BlockInput("MouseMoveOff")
+                BlockInput("Default"), BlockInput("MouseMoveOff"), BlockInput("Off")
                 return
             }
         this().__inputs(option)
@@ -104,7 +104,7 @@ class block_ext {
 
     Off() {
         try this.blocker.Stop()
-        BlockInput("Default"), BlockInput("MouseMoveOff")
+        BlockInput("Default"), BlockInput("MouseMoveOff"), BlockInput("Off")
         this.blocker := {}
     }
 }

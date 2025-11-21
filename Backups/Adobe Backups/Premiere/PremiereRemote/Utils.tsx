@@ -304,8 +304,8 @@ export class Utils {
           var imageFolder = projectItem.createBin("Images");
         }
         var images = [];
-        if (typeof imageFolder == 'undefined') {
-          var videoFolder = projectItem.createBin("Video");
+        if (typeof videoFolder == 'undefined') {
+          var videoFolder = projectItem.createBin("06_Videos");
         }
         var videos = [];
         if (typeof linkedCompsFolder == 'undefined') {

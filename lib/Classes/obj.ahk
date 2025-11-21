@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2025/11/01
- * @version 1.1.9
+ * @date 2025/11/21
+ * @version 1.1.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -56,7 +56,7 @@ class obj {
             MouseGetPos(&x, &y, &win, &cont, flags?)
         } catch {
             errorLog(UnsetError("Failed to grab all variables with MouseGetPos", -1),, true)
-            Exit()
+            return false
         }
         return {x: x, y: y, win: win, control: cont}
     }
@@ -81,7 +81,7 @@ class obj {
             WinGetPos(&x, &y, &width, &height, winTitle, winText, exTitle, exText)
         } catch {
             errorLog(UnsetError("Failed to grab all variables with WinGetPos", -1),, true)
-            Exit()
+            return false
         }
         return {x: x, y: y, width: width, height: height}
     }

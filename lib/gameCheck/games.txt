@@ -32,4 +32,5 @@ Terraria ahk_exe dotnet.exe,
 R.E.P.O. ahk_exe REPO.exe,
 STAR WARS Battlefront II ahk_exe starwarsbattlefrontii.exe,
 PEAK ahk_exe PEAK.exe,
-Subnautica ahk_exe Subnautica.exe
+Subnautica ahk_exe Subnautica.exe,
+Momentum Mod - DX11 ahk_exe momentum.exe

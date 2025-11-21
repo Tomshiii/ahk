@@ -48,8 +48,8 @@ export const host = {
   setBarsAndTone: function() {
     // it should be noted this function very specifically looks for the bars and tone in the specific folder structure that I keep it in, which is;
     // [_Assets]
-    //   [Other]
-    //     .Bars and Tone - Rec 709
+    //   ┗━ [Other]
+    //     ┗━ .Bars and Tone - Rec 709
     for (let i = 0; i < app.project.rootItem.children.numItems; i++) {
       if(app.project.rootItem.children[i].name == "_Assets" && (app.project.rootItem.children[i].type == 2)) {
         const folder = app.project.rootItem.children[i]
@@ -207,6 +207,38 @@ export const host = {
   startPlayback: function() {
     // this function requires premiere to be focused
     Utils.startPlayback();
+  },
+
+  moveToAssetsBin: function(folder: string) {
+    // it should be noted this function very specifically looks for the folder structure that I use;
+      // [_Assets]
+      //   ┗━ [Folder]
+    var selected = app.getCurrentProjectViewSelection()
+      if (!selected)
+        return
+    var project = app.project;
+    var projectItem = project.rootItem;
+
+    for (let i = 0; i < projectItem.children.numItems; i++) {
+      switch (app.project.rootItem.children[i].name) {
+        case "_Assets":
+          if (app.project.rootItem.children[i].type !== 2)
+            continue;
+          const assetFolder = app.project.rootItem.children[i]
+          for (let j = 0; j < assetFolder.children.numItems; j++) {
+              if (assetFolder.children[j].name == folder) {
+                var moveFolder = assetFolder.children[j];
+                break;
+              }
+            }
+      }
+    }
+
+      if (typeof moveFolder == 'undefined') {
+        var moveFolder = projectItem.createBin(folder);
+      }
+
+      Utils.moveToFolder(selected, moveFolder);
   }
 };
 

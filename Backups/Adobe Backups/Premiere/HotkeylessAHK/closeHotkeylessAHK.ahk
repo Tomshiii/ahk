@@ -1,23 +1,17 @@
 #Include <Classes\ptf>
 #Include <Functions\detect>
+#Include <Classes\winGet>
 
-getorig := detect(, "RegEx")
 title := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
-exists := false
 ignore := browser.vscode.winTitle "|" A_ScriptName
-if hotkeyHWND := WinExist(title,, ignore)
-    exists := true
-if exists = false {
-    resetOrigDetect(getorig)
+exists := WinGet.ExistRegex(title,, ignore)
+if exists = false
+    return
+if WinGet.CountRegex(title,, ignore) <= 1 {
+    ProcessClose(winget.PIDRegex(exists,, ignore))
     return
 }
-if WinGetCount(title,, ignore) <= 1 {
-    ProcessClose(WinGetPID(hotkeyHWND,, ignore))
-    resetOrigDetect(getorig)
-    return
-}
-list := WinGetList(title)
+list := WinGet.ListRegex(title,, ignore)
 for v in list {
-    ProcessClose(WinGetPID(v,, ignore))
+    ProcessClose(winget.PIDRegex(v,, ignore))
 }
-resetOrigDetect(getorig)

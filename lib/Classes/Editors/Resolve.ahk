@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Last tested on Davinci Resolve v20.1
  * @author tomshi
- * @date 2025/08/11
- * @version 1.5.2
+ * @date 2025/11/21
+ * @version 1.5.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -106,7 +106,10 @@ class Resolve {
         coord.w()
         block.On()
         SendInput(KSA.resolveSelectPlayhead)
-        orig := obj.MousePos()
+        if !orig := obj.MousePos() {
+            block.Off()
+            return
+        }
         ;// open the inspector tab
         this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
         ;// open the video tab
@@ -173,7 +176,10 @@ class Resolve {
         }
         coord.w()
         block.On()
-        orig := obj.MousePos()
+        if !orig := obj.MousePos() {
+            block.Off()
+            return
+        }
         ;// open the effects panel
         this.OpenCoords().__open(this.OpenCoords.effects, "effects2", "effects", "the effects button")
         ;// find the open/close button
@@ -207,7 +213,10 @@ class Resolve {
             errorLog(TargetError("Couldn't find the desired effect", -1, effect),, 1)
             return
         }
-        colour := obj.MousePos()
+        if !colour := obj.MousePos() {
+            block.Off()
+            return
+        }
         if !ImageSearch(&effx, &effy, colour.x - (A_ScreenWidth/3), colour.y, colour.x, colour.y + (A_ScreenHeight/3), "*2 " ptf.Resolve folder "3.png")
             colError()
         if !PixelSearch(&findx, &findy, effx + 5, effy, effx + 20, effy + 50, 0x000000)
@@ -231,7 +240,10 @@ class Resolve {
         coord.w()
         block.On()
         SendInput(KSA.resolveSelectPlayhead)
-        orig := obj.MousePos()
+        if !orig := obj.MousePos() {
+            block.Off()
+            return
+        }
         ;// open the inspector tab
         this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
         ;// open the video tab
@@ -275,7 +287,10 @@ class Resolve {
     {
         coord.w()
         block.On()
-        orig := obj.MousePos()
+        if !orig := obj.MousePos() {
+            block.Off()
+            return
+        }
         ;// open the inspector tab
         this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
         ;// open the video tab
@@ -313,7 +328,10 @@ class Resolve {
         coord.w()
         block.On()
         SendInput(KSA.resolveSelectPlayhead)
-        origM := obj.MousePos()
+        if !origM := obj.MousePos() {
+            block.Off()
+            return
+        }
         ;// open the inspector tab
         this.OpenCoords().__open(this.OpenCoords.inspect, "inspector", "inspector2", "inspector tab")
         ;// open the audio tab

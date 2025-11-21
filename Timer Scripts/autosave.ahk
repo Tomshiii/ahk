@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/11/11
- * @version 2.1.55
+ * @date 2025/11/21
+ * @version 2.1.56
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -17,6 +17,7 @@
 #Include <Classes\winget>
 #Include <Classes\WM>
 #Include <Classes\timer>
+#Include <Classes\log>
 #Include <Classes\errorLog>
 #Include <Functions\trayShortcut>
 #Include <Functions\checkStuck>
@@ -47,12 +48,12 @@ OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 ;// defining exit func
 OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode) {
+    block.Off()
     try {
         WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
         autoSave.stop()
     }
     checkstuck()
-    block.Off()
 }
 
 /**
@@ -189,6 +190,7 @@ class adobeAutoSave extends count {
             block.Off()
             return
         }
+        block.Off()
 
         ;// save prem
         if this.premExist = true
@@ -200,7 +202,7 @@ class adobeAutoSave extends count {
     }
 
     closeNotifys() {
-        notifyArr := ["premDelay", "premNextAttempt", "premPlayback", "premBusy", "premSaveCheck", "premEdit", "premBusier", "premSaveAttempt", "premFailed", "aeBusy", "aeSaveCheck"]
+        notifyArr := ["premDelay", "premNextAttempt", "premPlayback", "premBusy", "premSaveCheck", "premEdit", "premBusier", "premSaveAttempt", "premFailed", "aeBusy", "aeSaveCheck", "waitTimeout"]
         anyExist := false
         for v in notifyArr {
             if notify.Exist(v) {
@@ -398,9 +400,10 @@ class adobeAutoSave extends count {
      * @returns {Boolean} true if the window **doesn't** exist or false if it does
      */
     __checkDialogueClass(which := "Adobe Premiere Pro") {
-        if WinExist("ahk_class #32770 ahk_exe " which ".exe") || (DirExist(A_AppData "\Knights of the Editing Table\excalibur") && WinExist("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME")) {
+        if InStr(which, "Premiere Pro") && (WinExist("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME ahk_exe " prem.exeTitle) && DirExist(A_AppData "\Knights of the Editing Table\excalibur"))
             return false
-        }
+        if WinExist("ahk_class #32770 ahk_exe " which ".exe")
+            return false
         return true
     }
 
@@ -448,8 +451,11 @@ class adobeAutoSave extends count {
                     if this.restartPlayback = false || this.userPlayback = false
                         return
                     if WinExist("Save Project ahk_exe " this.origWindow) {
-                        if !WinWaitClose("Save Project ahk_exe " this.origWindow,, 5)
+                        if !WinWaitClose("Save Project ahk_exe " this.origWindow,, 5) {
+                            errorLog(TimeoutError("Waiting for the Save window to close timed out"))
+                            Notify.Show(, 'Waiting for the Save window to close timed out, playback may not be returned.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc tag=waitTimeout')
                             return
+                        }
                         sleep 150
                     }
                     ;// if the user was originally playing back on the timeline
@@ -462,18 +468,21 @@ class adobeAutoSave extends count {
                     catch {
                         try {
                             fallbackFocus := (this.origPanelFocus = this.premUIA.timeline) ? false : true
-                            detect()
+                            prevDec := detect()
                             if !prem.__checkTimelineValues() {
                                 if !WinExist(this.mainScript ".ahk") {
+                                    resetOrigDetect(prevDec)
                                     this.__fallback(fallbackFocus)
                                     return
                                 }
                                 WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, this.mainScript ".ahk")
                                 if fallbackFocus = true && !prem.__waitForTimeline() {
+                                    resetOrigDetect(prevDec)
                                     this.__fallback(fallbackFocus)
                                     return
                                 }
                             }
+                            resetOrigDetect(prevDec)
                             this.__fallback(fallbackFocus)
                         }
                     }
@@ -566,7 +575,7 @@ class adobeAutoSave extends count {
         ; tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
 
         ;// attempts to save using `PremiereRemote`
-        saveAttempt := prem.save()
+        saveAttempt := prem.save(false)
         if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy" || saveAttempt = "noseq") {
             sleep 500
             return
@@ -584,6 +593,9 @@ class adobeAutoSave extends count {
                 throw
             }
 
+            saveAsTitle := "Save As " editors.Premiere.winTitle
+            this.__startSaveAsWinEvent(saveAsTitle)
+
             ;// attempt to send save
             if GetKeyState("Shift") || GetKeyState("Shift", "P")
                 SendInput("{Shift Up}")
@@ -597,19 +609,20 @@ class adobeAutoSave extends count {
             ControlSend("{Ctrl Up}",, this.premWindow.wintitle)
         } catch {
             block.Off()
+            this.__stopSaveAsWinEvent(saveAsTitle)
             return
         }
 
         ;// waiting for save dialogue to open & close
         if !WinWait("Save Project",, 3) {
             block.Off()
-            return
-        }
-        if !WinWaitClose("Save Project",, 3) {
-            block.Off()
+            this.__stopSaveAsWinEvent(saveAsTitle)
             return
         }
         block.Off()
+        this.__stopSaveAsWinEvent(saveAsTitle)
+        if !WinWaitClose("Save Project",, 3)
+            return
     }
 
     /** saves after effects */
@@ -647,17 +660,21 @@ class adobeAutoSave extends count {
         if this.idleAttempt = false
             return
 
+        block.On()
         checkStuck()
+        saveAsTitle := "Save As " editors.AE.winTitle
+        this.__startSaveAsWinEvent(saveAsTitle)
 
         ;// if AE is the active window, a normal save will be fine
         if this.origWindow = WinGetProcessName(editors.AE.winTitle) {
-            block.On()
             SendEvent("^s")
-            if !WinWait("Save Project",, 3) {
+            if !WinWait("Save Project " editors.AE.winTitle,, 3) {
+                this.__stopSaveAsWinEvent(saveAsTitle)
                 block.Off()
                 return
             }
-            if !WinWaitClose("Save Project",, 3) {
+            this.__stopSaveAsWinEvent(saveAsTitle)
+            if !WinWaitClose("Save Project " editors.AE.winTitle,, 3) {
                 block.Off()
                 return
             }
@@ -668,9 +685,7 @@ class adobeAutoSave extends count {
 
         ;// if AE ISN'T the active window, attempting to save it in the background will force it into the foreground which can be super disorienting/annoying
         ;// so we have to work around that
-
         try {
-            block.On()
             checkStuck()
             WinSetTransparent(0, editors.AE.winTitle)
             ;// attempt to send save
@@ -684,22 +699,36 @@ class adobeAutoSave extends count {
             this.__resetAETrans()
             return
         }
-        if WinWait("Save As",, 3) {
-            ControlSend("{Esc}",, "Save As " editors.AE.winTitle)
-        }
-        if !WinWaitClose("Save Project",, 3) {
-            block.Off()
+        ;// ae isn't the active window here anyway so we should return inputs to the user
+        block.Off()
+
+        if !WinWaitClose("Save Project " editors.AE.winTitle,, 3) {
+            this.__stopSaveAsWinEvent(saveAsTitle)
             this.__resetAETrans()
             return
         }
-        block.Off()
+        this.__stopSaveAsWinEvent(saveAsTitle)
         this.__resetAETrans()
+    }
+
+    /** start a winevent hook to cancel the "Save As" window if it appears */
+    __startSaveAsWinEvent(saveAsTitle) {
+        if !WinEvent.IsRegistered('Exist', saveAsTitle)
+            try WinEvent.Exist((*) => ControlSend("{Esc}",, saveAsTitle), saveAsTitle)
+    }
+
+    /** stop the winevent hook to cancel the "Save As" window */
+    __stopSaveAsWinEvent(saveAsTitle) {
+        if WinEvent.IsRegistered('Exist', saveAsTitle)
+            WinEvent.Stop('Exist', saveAsTitle)
     }
 
     /** checks to see if the script the user has defined as their main script is running */
     __checkMainScript() {
-        detect()
-        if WinExist(this.mainScript ".ahk")
+        prevDec := detect()
+        isMainScriptOpen := WinExist(this.mainScript ".ahk")
+        resetOrigDetect(prevDec)
+        if isMainScriptOpen
             return true
         return false
     }

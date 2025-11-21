@@ -68,7 +68,8 @@ Space::
 		return
 	}
 	if WinExist(discord.winTitle) {
-		pos := obj.WinPos(discord.winTitle)
+		if !pos := obj.WinPos(discord.winTitle)
+			return
 		switchTo.Disc(true, {x: pos.x, y: pos.y, width: pos.width, height: pos.height})
 		return
 	}

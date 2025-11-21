@@ -9,7 +9,8 @@
 fastWheel() {
 	getHotkeys(&first, &second)
 	try {
-		cursor := obj.MousePos()
+		if !cursor := obj.MousePos()
+			return
 		orig := WinGetTitle(WinActive("A"))
 		titleUnder := WinGetTitle("ahk_id " cursor.win)
 		classUnder := WinGetClass("ahk_id " cursor.win)

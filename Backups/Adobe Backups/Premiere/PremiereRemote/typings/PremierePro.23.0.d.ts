@@ -2222,7 +2222,7 @@ declare class ProjectManager {
 	/**
 	*
 	*/
-	getCurrentProjectViewSelection(viewID:String): Array <ProjectItem>
+	getCurrentProjectViewSelection(): Array <ProjectItem>
 
 	/**
 	 *

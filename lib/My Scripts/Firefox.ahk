@@ -29,8 +29,3 @@ Numpad9::
 		return
 	SendInput("{" A_ThisHotkey "}")
 }
-
-;movetabHotkey;
-XButton2:: ;these two hotkeys are activated by right clicking on a tab then pressing either of the two side mouse buttons
-;movetab2Hotkey;
-XButton1::move.Tab()

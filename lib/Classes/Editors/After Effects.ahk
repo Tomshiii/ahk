@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 25.5
  * @author tomshi
- * @date 2024/09/06
- * @version 1.2.7
+ * @date 2025/11/21
+ * @version 1.2.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -338,7 +338,8 @@ class AE {
             __sendOrig()
             return
         }
-        mouse := obj.MousePos()
+        if !mouse := obj.MousePos()
+            return
         if !PixelSearch(&colx, &coly, coords.x, coords.y, coords.x2, coords.y2, this.focusColour)
             return
         MouseMove(colx, coly, mousespeed)

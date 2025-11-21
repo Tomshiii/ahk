@@ -15,6 +15,8 @@ pauseYT() {
 	SetTitleMatchMode 2
 	needle := "YouTube"
 	winget.Title(&title)
+	if !title
+		return
 	if InStr(title, needle)
 		{
 			if InStr(title, "Subscriptions - YouTube", 1) || title = "YouTube"

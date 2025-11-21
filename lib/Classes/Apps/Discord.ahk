@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/10/16
- * @version 1.6.9
+ * @date 2025/11/21
+ * @version 1.6.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -56,10 +56,11 @@ class discord {
         if WinGetProcessName(win) != WinGetProcessName(this.winTitle)
             return
 
+        if !currentTitle := WinGet.Title()
+            return
+
         blocker := block_ext()
         blocker.On()
-
-        currentTitle := WinGet.Title()
 
         cacheRequest := UIA.CreateCacheRequest(["LocalizedType", "LocalizedControlType", "AutomationId", "Name"],, 5)
         try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, cacheRequest)
@@ -136,10 +137,11 @@ class discord {
         if !WinActive(this.winTitle)
             WinActivate(this.winTitle)
         coord.s()
-        origMousePos := obj.MousePos()
+        origMousePos := obj.MousePos(), currentTitle := WinGet.Title()
+        if !origMousePos || !currentTitle
+            return
         WinGetPos(&xpos, &ypos, &width, &height, this.winTitle)
         saveY := ypos
-        currentTitle := WinGet.Title()
         try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
         if !IsSet(DiscordEl) || !IsObject(DiscordEl) || !DiscordEl {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)

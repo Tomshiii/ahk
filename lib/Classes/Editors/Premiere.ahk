@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.5
  * @author tomshi
- * @date 2025/11/12
- * @version 2.2.73
+ * @date 2025/11/21
+ * @version 2.2.74
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -54,7 +54,7 @@ class Prem {
         }
         UserSettings.__delAll()
         UserSettings := ""
-
+        Critical()
         this.setUI()
         orig := detect()
         if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") {
@@ -73,6 +73,7 @@ class Prem {
             this.__determineTheme()
         }
         resetOrigDetect(orig)
+        Critical("Off")
 
         if (this.useSwapSequences = true || this.useSwapSequences = "true") && A_ScriptName = this.mainScriptName ".ahk"
             SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
@@ -466,7 +467,7 @@ class Prem {
             ((premWindow.winTitle = "" || !premWindow.wintitle) &&
             premWindow.titleCheck = -1 && premWindow.saveCheck = -1) {
             errorLog(UnsetError("prem.save() was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
-            return
+            return false
         }
         try procName := WinGetProcessName(premWindow.winTitle), procClass := WinGetClass(premWindow.wintitle)
         catch {
@@ -477,7 +478,8 @@ class Prem {
             return "busy"
         if !this.__checkPremRemoteDir("saveProj")
             return false
-        if !this.__checkPremRemoteFunc("getActiveSequence") || !this.__checkPremRemoteFunc("focusSequence")
+        actSequence := this.__checkPremRemoteFunc("getActiveSequence"), focusSequence := this.__checkPremRemoteFunc("focusSequence")
+        if !actSequence || !focusSequence
             return "noseq"
         origSeq := this.__remoteFunc("getActiveSequence", true)
         if !this.__remoteFunc("saveProj")
@@ -496,8 +498,9 @@ class Prem {
         loop checkAmount {
             currentSeq := this.__remoteFunc("getActiveSequence", true)
             if currentSeq != origSeq {
+                errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" origSeq))
                 this.__remoteFunc("focusSequence",, "ID=" String(origSeq))
-                break
+                return true
             }
             sleep checkSeqTime
         }
@@ -1007,7 +1010,8 @@ class Prem {
         block.Off()
         keys.allWait()
         SendInput("{Click Up}")
-        getMouse := obj.MousePos()
+        if !getMouse := obj.MousePos()
+            return
         this.disableDirectManip()
         MouseMove(getMouse.x, getMouse.y, 2)
         ;!MouseMove(xpos, ypos) ; // moving the mouse position back to origin after doing this is incredibly disorienting
@@ -1130,10 +1134,12 @@ class Prem {
         }
         keys.allWait()
         Critical
+        if !check := winget.Title()
+            return
         blocker := block_ext()
         blocker.On(false)
         coord.s()
-        check := winget.Title()
+
         if check = "Audio Gain" {
             ;// if the gain window is already open, then all we want to do is ensure the caret is visible, then highlight the gain textbox and input our value
             if !CaretGetPos(&xcar, &ycar) {
@@ -1232,7 +1238,7 @@ class Prem {
 
         checkSelected := this.__remoteFunc('isSelected', true)
         needsTimelineFocus := false
-		title := WinGet.Title(, false)
+		title := WinGet.Title()
         descernTitle := (title = "") ? true : false
         currTimelineStatus := this.timelineFocusStatus()
 
@@ -1307,7 +1313,7 @@ class Prem {
         if !IsNumber(sendGain) {
             ;// if the user times out, or the regex fails, we want to halt here or you'll end up with a `nan` keyframe in prem
             tool.Cust("A number could not be interpreted from the input keys. Please try again", 2.0)
-            errorLog(ValueError('A number could not be interpreted from the input keys', -1, sendGain), "Original: " orig " || Regex: " sendGain)
+            errorLog(ValueError('A number could not be interpreted from the input keys', -1, sendGain), "Original: " orig " || Regex: " sendGain " || starCheck: " starCheck)
             return
         }
         block.On()
@@ -1371,7 +1377,8 @@ class Prem {
             this.__focusTimeline()
         }
 
-        coordObj := obj.MousePos()
+        if !coordObj := obj.MousePos()
+            return
         ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
         if !this.__setTimelineValues() {
             return
@@ -1498,6 +1505,7 @@ class Prem {
         mainScriptName := UserSettings.mainScriptName
         UserSettings.__delAll()
         UserSettings := ""
+        Critical()
         orig := detect()
 
         ;// this block is called if the function originates from a script that isn't `UserSettings.mainScriptName`
@@ -1511,17 +1519,20 @@ class Prem {
                     this.timelineXControl := activeObj.timelineXControl, this.timelineYControl := activeObj.timelineYControl
                     this.timelineVals     := true
                     activeObj := ""
+                    Critical("Off")
                     return true
                 }
             } catch {
                 activeObj := ""
                 resetOrigDetect(orig)
+                Critical("Off")
                 Notify.Show(, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
-                Exit()
+                return false
             }
         }
         resetOrigDetect(orig)
+        Critical("Off")
 
         checkUIA := this.__checkAlwaysUIA()
         premUIA := (checkUIA = false) ? premUIA_Values() : checkUIA
@@ -1731,7 +1742,8 @@ class Prem {
         SetStoreCapsLockMode(true)
         if !this.__setTimelineValues()
 			return
-        origMouse := obj.MousePos()
+        if !origMouse := obj.MousePos()
+            return
         withinTimeline := this.__checkCoords(origMouse)
         if GetKeyState("SC03A", "P") && withinTimeline = true
             return
@@ -1810,7 +1822,8 @@ class Prem {
      * @param {Hexadecimal} playheadCol the colour you wish pixelsearch to look for
      * @returns {Obj/Boolean false} if successful and the playhead is found, returns object `{x: , y: }`. Else returns `false`
      * ```
-     * origMouse := obj.MousePos()
+     * if !origMouse := obj.MousePos()
+     *    return
      * searchPlayhead({x1: prem.timelineXValue, y1: origMouse.y, x2: prem.timelineXControl, y2: origMouse.y})
      * ```
      */
@@ -1824,11 +1837,12 @@ class Prem {
      * This function will search for the playhead and then slowly begin scrubbing forward. This function was designed to make scrubbing for thumbnail screenshots easier
      */
     static thumbScroll() {
+        storeHotkey := A_ThisHotkey
+		if !origMouse := obj.MousePos()
+            return
         block.On()
         ;// set coord mode and grab the cursor position
 		coord.s()
-        storeHotkey := A_ThisHotkey
-		origMouse := obj.MousePos()
         originalSpeed := this.scrollSpeed
         ;// checks to see whether the timeline position has been located
         if !this.__setTimelineValues() {
@@ -1862,8 +1876,7 @@ class Prem {
         }
         PremHotkeys.__HotkeySetThumbScroll(["Shift", "Ctrl"])
         while GetKeyState(storeHotkey, "P") {
-            getpos := obj.MousePos()
-            if !this.__checkCoords(getpos)
+            if !getpos := obj.MousePos() || !this.__checkCoords(getpos)
                 break
             MouseMove(this.scrollSpeed, 0,, "R")
             sleep 50
@@ -2008,7 +2021,8 @@ class Prem {
             this.__focusTimeline()
         sleep 50
         usePremRemote := false
-        if !this.__checkPremRemoteDir('getProxyToggle') || !this.__checkPremRemoteFunc('setProxies') {
+        ckDir := this.__checkPremRemoteDir('getProxyToggle'), ckFunc := this.__checkPremRemoteFunc('setProxies')
+        if !ckDir || !ckFunc {
             if proxSrch := obj.imgSrchMulti({x1: progMonNN.x, y1: progMonNN.y/2, x2: progMonNN.x+progMonNN.width, y2: progMonNN.y+progMonNN.height+50},, &proxX, &proxY, ptf.Premiere "\proxy_on.png", ptf.Premiere "\proxy_on2.png") {
                 __clickProx(proxX, proxY)
             }
@@ -2111,7 +2125,8 @@ class Prem {
         block.On()
         clipWinTitle := "Modify Clip"
         coord.s()
-        origCoords := obj.MousePos()
+        if !origCoords := obj.MousePos()
+            return
         SetDefaultMouseSpeed(mouseSpeed)
 
         if !WinActive(clipWinTitle) {
@@ -2129,7 +2144,8 @@ class Prem {
             sleep 150
         }
 
-        clipWin := obj.WinPos(clipWinTitle)
+        if !clipWin := obj.WinPos(clipWinTitle)
+            return
         __searchChannel(&x, &y, &chan, &clip) => (chan := ImageSearch(&x, &y, clipWin.x, clipWin.y + 150, clipWin.x + 200, clipWin.y + 500, "*2 " ptf.Premiere "channel1.png"), clip := ImageSearch(&x, &y, clipWin.x, clipWin.y + 125, clipWin.x + 200, clipWin.y + 325, "*2 " ptf.Premiere "clip1.png"))
         if !__searchChannel(&x, &y, &chan, &clip) {
             sleep 150
@@ -2215,8 +2231,9 @@ class Prem {
 				inList := true
 		}
 		coord.s()
-		mousePos := obj.MousePos()
-		winObj   := obj.WinPos(activeWin)
+        mousePos := obj.MousePos(), winObj := obj.WinPos(activeWin)
+		if !mousePos || !winObj
+            return
         (inList = true && WinGetTitle("A") == activeWin) ? SendEvent("{Click " ((winObj.x+winObj.width)-19) A_Space winObj.y+16 "}") : (SendInput(onFailure), Exit())
 		MouseMove(mousePos.x, mousePos.y)
 		sleep 200
@@ -2239,7 +2256,10 @@ class Prem {
 
         block.On()
         coord.s()
-        origMouse := obj.MousePos()
+        if !origMouse := obj.MousePos() {
+            block.Off()
+            return
+        }
 
         try WinClose(hwnd)
         catch {
@@ -2255,7 +2275,10 @@ class Prem {
         __manualMethod()
 
         __manualMethod() {
-            drover := obj.WinPos(window)
+            if !drover := obj.WinPos(window) {
+                block.Off()
+                return
+            }
             MouseMove((drover.x + drover.width)-15, drover.y+15, 2)
             SendInput("{Click}")
             MouseMove(origMouse.x, origMouse.y, 2)
@@ -2298,31 +2321,39 @@ class Prem {
             return
         }
 
-        if !this.__checkPremRemoteDir("sourceMonName") || !this.__checkPremRemoteFunc("sourceMonName") {
+        ckDir := this.__checkPremRemoteDir("sourceMonName"), ckFunc := this.__checkPremRemoteFunc("sourceMonName")
+        if !ckDir || !ckFunc {
             ;// throw
             blocker.Off()
             errorLog(MethodError("Some PremiereRemote functions are missing.", -1),,, true)
             return
         }
         coord.client()
-        origMouse := obj.MousePos()
+        if !origMouse := obj.MousePos() {
+            blocker.Off()
+            return
+        }
         if specificFile != false && specificFile != "" {
             getName := this.__remoteFunc("sourceMonName", true)
             if getName != specificFile {
                 __exit() {
                     errorLog(TargetError("The requested file: " specificFile "`nisn't open in the Source Monitor", -1),, true)
                     blocker.Off()
-                    Exit()
+                    return
                 }
                 if specificFile = "Bars and Tone - Rec 709" {
                     this.__remoteFunc("setBarsAndTone", false)
                     sleep 50
                     recheck := this.__remoteFunc("sourceMonName", true)
-                    if recheck != specificFile
+                    if recheck != specificFile {
                         __exit()
+                        return
+                    }
                 }
-                else
+                else {
                     __exit()
+                    return
+                }
             }
         }
 
@@ -2424,16 +2455,16 @@ class Prem {
         if !this.__setTimelineValues()
 			return
         storeHotkey := A_ThisHotkey
+        coord.client()
         blocker := block_ext()
         blocker.On()
+
+        getTitle := WinGet.PremName(), origMouseCords := obj.MousePos(), activationKey := getHotkeys(), LAltAct1 := GetKeyState("LAlt", "P"), LAltAct2 := GetKeyState("LAlt"), actWindow := WinGetTitle("A")
         ;// avoid attempting to fire unless main window is active
-        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() || !GetKeyState("LAlt", "P") {
+        if !getTitle || !origMouseCords || !activationKey || (!LAltAct1 && !LAltAct2) || actWindow != getTitle.winTitle {
             blocker.Off()
             return
         }
-
-        coord.client()
-        origMouseCords := obj.MousePos()
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
             blocker.Off()
@@ -2469,7 +2500,10 @@ class Prem {
                 tool.Cust("",,,, 9)
                 move.setMouseClip()
                 coord.client() ;// clipMouse changes the coordmode to "mouse"
-                newCoords := obj.MousePos()
+                if !newCoords := obj.MousePos() {
+                    block.Off()
+                    return
+                }
                 MouseClickDrag("Left", this.timelineRawX+10, midDivY+2, this.timelineRawX+10, newCoords.y)
                 MouseMove(origMouseCords.x, newCoords.y)
                 keyss := getHotkeysArr()
@@ -2535,9 +2569,9 @@ class Prem {
         keys.allWait(2)
         block.On()
         coord.client()
-        origMouseCords := obj.MousePos()
 
-        if !this.timelineFocusStatus() && !this.__checkCoords(origMouseCords) {
+        origMouseCords := obj.MousePos()
+        if !origMouseCords || (!this.timelineFocusStatus() && !this.__checkCoords(origMouseCords)) {
             block.Off()
             return
         }
@@ -2553,7 +2587,10 @@ class Prem {
         if which = "solo" {
             ;// check to see if the user is hovering over a video track
             ;// we have to do this otherwise if the user spams the solo button, the function will double click the layer and expand it
-            newCoords := obj.MousePos()
+            if !newCoords := obj.MousePos() {
+                block.Off()
+                return
+            }
             if origMouseCords.y < midDivY {
                 MouseMove(origMouseCords.x, origMouseCords.y, 1)
                 block.Off()
@@ -2641,7 +2678,8 @@ class Prem {
         if !mid := this.__getlayerMid(, &midDivY)
             return -1
         if !IsSet(mouseCoords) {
-            mouseCoords := obj.MousePos()
+            if !mouseCoords := obj.MousePos()
+                return false
         }
         A := Map()
         allPos := this.__getAllLayerPos(midDivY, audOrVid)
@@ -2720,7 +2758,8 @@ class Prem {
      */
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false, ignore := false) {
         ;// avoid attempting to fire unless main window is active
-        if !WinActive(editors.Premiere.winTitle) || !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle {
+        getTitle := WinGet.PremName(), actTitle := WinGetTitle("A")
+        if !WinActive(editors.Premiere.winTitle) || !getTitle || actTitle != getTitle.winTitle {
             ;// why does the sendinput no longer do anything in this block
             ;// but if you pull it out it works (but kills itself)
             ;// ahk is weird (or I'm dumb idk)
@@ -2793,9 +2832,15 @@ class Prem {
             errorLog(MethodError('This function requires PremiereRemote functionality', -1))
             return
         }
-        if !this.__checkPremRemoteFunc('isSelected')         || !this.__checkPremRemoteFunc('movePlayheadFrames')
-            || !this.__checkPremRemoteFunc('isClipEnabled')  || !this.__checkPremRemoteFunc('toggleEnabled')
-            || !this.__checkPremRemoteFunc('getAudioTracks') || !this.__checkPremRemoteFunc('getVideoTracks') {
+        checkTrack := false
+        funcs := ['isSelected', 'movePlayheadFrames', 'isClipEnabled', 'toggleEnabled', 'getAudioTracks', 'getVideoTracks']
+        for v in funcs {
+            if !this.__checkPremRemoteFunc(v) {
+                checkTrack := true
+                break
+            }
+        }
+        if checkTrack = true {
             blocker.Off()
             errorLog(MethodError('This function requires additional PremiereRemote functions for proper functionality', -1))
             return
@@ -2817,7 +2862,10 @@ class Prem {
         }
         SendInput(ksa.selectionPrem)
         sleep 16
-        origMouseCords := obj.MousePos()
+        if !origMouseCords := obj.MousePos() {
+            blocker.Off()
+            return
+        }
         movedPlayhead  := false
         if PixelGetColor(origMouseCords.x, origMouseCords.y) = this.playhead {
             this.__remoteFunc('movePlayheadFrames',, "subtract=true", "frames=3")
@@ -2884,22 +2932,6 @@ class Prem {
             blocker.Off()
             errorLog(UnsetError("Couldn't determine layers"))
             return
-        }
-
-        __determineEnabled() {
-            checkVal := this.__remoteFunc('isClipEnabled', true)
-            if checkVal != "EvalScript error."
-                return checkVal
-            loop 5 {
-                sleep 50*A_Index
-                checkVal := this.__remoteFunc('isClipEnabled', true)
-                if checkVal != "EvalScript error."
-                    return checkVal
-                errorLog(TargetError("Checking enabled state returned an error. #" A_Index),, true)
-            }
-            errorLog(TargetError("Couldn't determine state of selection"),, true)
-            blocker.Off()
-            Exit()
         }
 
         __doToggle(isAll := false) {
@@ -3062,7 +3094,8 @@ class Prem {
         blocker.On()
 
         ;// avoid attempting to fire unless main window is active
-        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle {
+        getTitle := WinGet.PremName(), actWin := WinGetTitle("A")
+        if !getTitle || actWin != getTitle.winTitle {
             blocker.Off()
             return
         }
@@ -3073,7 +3106,10 @@ class Prem {
             case "mute": colour := this.muteColour
         }
 
-        origMouseCords := obj.MousePos()
+        if !origMouseCords := obj.MousePos() {
+            blocker.Off()
+            return
+        }
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
             blocker.Off()
@@ -3124,12 +3160,16 @@ class Prem {
         blocker.On()
 
         ;// avoid attempting to fire unless main window is active
-        if !getTitle := WinGet.PremName() || WinGetTitle("A") != getTitle.winTitle || !activationKey := getHotkeys() {
+        getTitle := WinGet.PremName(), actWin := WinGetTitle("A"), activationKey := getHotkeys()
+        if !getTitle || actWin != getTitle.winTitle || !activationKey {
             blocker.Off()
             return
         }
 
-        origMouseCords := obj.MousePos()
+        if !origMouseCords := obj.MousePos() {
+            blocker.Off()
+            return
+        }
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
             blocker.Off()
@@ -3314,7 +3354,6 @@ class Prem {
      * requires the use of `__setCurrSeq` which requires `PremiereRemote`
      */
     static swapPreviousSequence() {
-        orig := detect()
         if !this.__checkPremRemoteDir("focusSequence") {
             ;// throw
             errorLog(MethodError("swapPreviousSequence() requires PremiereRemote to be installed"),,, true)
@@ -3322,6 +3361,8 @@ class Prem {
         }
         if (this.useSwapSequences != true && this.useSwapSequences != "true")
             return
+        Critical()
+        orig := detect()
         __pushToEnd() {
             this.sequenceArr.Push(this.sequenceArr[1])
             this.sequenceArr.RemoveAt(1)
@@ -3331,6 +3372,7 @@ class Prem {
             if !WinExist(this.mainScriptName ".ahk")
                 return false
             resetOrigDetect(orig)
+            Critical("Off")
             try {
                 activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
                 activeObj.pauseSeqTimer := true
@@ -3348,6 +3390,7 @@ class Prem {
             return false
         }
         resetOrigDetect(orig)
+        Critical("Off")
         this.pauseSeqTimer := true
         if this.sequenceArr.Length != 0
             __pushToEnd()

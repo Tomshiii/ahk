@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.25
+;\\v2.34.26
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -195,15 +195,6 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;//! VSCode
 #HotIf WinActive(vscode.winTitle)
 #Include <My Scripts\VSCode>
-
-;=============================================================================================================================================
-;
-; 		FIREFOX
-;
-;=============================================================================================================================================
-;//! Firefox
-#HotIf WinActive(browser.firefox.winTitle)
-#Include <My Scripts\Firefox>
 
 ;=============================================================================================================================================
 ;

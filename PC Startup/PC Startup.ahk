@@ -25,13 +25,19 @@ Run(ptf.TimerScripts "\gameCheck.ahk")
 Run(ptf.TimerScripts "\Multi-Instance Close.ahk")
 Run(ptf.TimerScripts "\premKeyCheck.ahk")
 
-runApp(path, name) {
+runApp(path, name, reboot := true) {
     if !FileExist(path)
         return
     orig := detect()
-    if WinExist(name,, browser.vscode.winTitle)
-        ProcessClose(WinGetPID(name,, browser.vscode.winTitle))
-    Run(path,, "Hide")
+    switch reboot {
+        case true:
+            if WinExist(name,, browser.vscode.winTitle)
+                ProcessClose(WinGetPID(name,, browser.vscode.winTitle))
+            Run(path,, "Hide")
+        case false:
+            if !WinExist(name,, browser.vscode.winTitle)
+                Run(path,, "Hide")
+    }
     resetOrigDetect(orig)
 }
 
@@ -39,7 +45,6 @@ runApp(path, name) {
 if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TomPC" && DirExist(ptf.SongQueue) { ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
     Run(ptf["textreplace"])
     runApp(ptf["HotkeylessAHK"], "HotkeylessAHK.ahk")
-    Run(ptf.TimerScripts "\setMicVolume.ahk")
     syncDirectories()
     Run(ptf.TimerScripts "\syncOnConnect.ahk")
     ;// run kleopatra

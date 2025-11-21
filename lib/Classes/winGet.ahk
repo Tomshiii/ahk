@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2025/09/22
- * @version 1.6
+ * @date 2025/11/21
+ * @version 1.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,16 @@
 ; }
 
 class WinGet {
+
+    static __New() {
+        ignoreText := ""
+        for k, v in this.explorerIgnoreMap {
+            ignoreText .= "ahk_class " k "|"
+        }
+        this.ignoreExplorerRegex := ignoreText
+    }
+    static ignoreExplorerRegex := ""
+
     /** A map containing common win explorer class names that some functions may wish to ignore */
     static explorerIgnoreMap := Mip(
         "Button", 1, "Shell_TrayWnd", 1, "NotifyIconOverflowWindow", 1,
@@ -65,7 +75,7 @@ class WinGet {
             try WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
             catch {
                 errorLog(TargetError("Failed to determine the active window", -1),, 1)
-                Exit()
+                return false
             }
             ;// sometimes windows when fullscreened will be at -8, -8 and not 0, 0
             ;// so we just add 10 pixels to both variables to ensure we're in the correct monitor
@@ -74,7 +84,7 @@ class WinGet {
                 if A_Index > 2 {
                     errorLog(UnsetError("Failed to get information about the window/monitor relationship", -1)
                                 , "The window may be overlapping monitors", 1)
-                    Exit()
+                    return false
                 }
                 ;// if the window is overlapping multiple monitors, fullscreen it first then try again so it is only on the one monitor
                 if !winget.isFullscreen(&testWin, title)
@@ -113,11 +123,10 @@ class WinGet {
             MouseGetPos(&x, &y)
         }
         monObj := this().__Monitor(x, y)
-        if !IsObject(monObj)
-            {
-                errorLog(TargetError("Failed to get the requested monitor", -1),, 1)
-                Exit()
-            }
+        if !IsObject(monObj)             {
+            errorLog(TargetError("Failed to get the requested monitor", -1),, 1)
+            return false
+        }
         return {monitor: monObj.monitor, left: monObj.left, right: monObj.right, top:monObj.top, bottom: monObj.bottom}
     }
 
@@ -125,10 +134,9 @@ class WinGet {
     /**
      * This function gets and returns the title for the current active window, autopopulating the `title` variable
      * @param {VarRef} title populates with the active window
-     * @param {Boolean} exitOut determines whether the active thread will `Exit` if it cannot determine the title. Defaults to `true`
      * @returns {String} returns the title
      */
-    static Title(&title?, exitOut := true)
+    static Title(&title?)
     {
         try {
             check := WinGetProcessName("A")
@@ -139,10 +147,8 @@ class WinGet {
             return title
         } catch {
             block.Off()
-            if exitOut = true {
-                errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
-                Exit()
-            }
+            errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
+            return false
         }
     }
 
@@ -155,6 +161,8 @@ class WinGet {
     static isFullscreen(&title?, window := false)
     {
         title := (window != false) ? window : this.Title(&title)
+        if !title
+            return -1
         ;// this block checks for the desktop or some common win explorer classes we want to ignore. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
         if (this.isProc(WinExist(title)) || (title = "Program Manager"))
             title := ""
@@ -163,7 +171,7 @@ class WinGet {
         } catch {
             errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
             block.Off()
-            Exit()
+            return -1
         }
     }
 
@@ -298,9 +306,9 @@ class WinGet {
         path := IsSet(premCheck) ? obj.SplitPath(premCheck) : obj.SplitPath(aeCheck)
         ;// if the comms folder isn't in the title path
         if !InStr(path.dir, ptf.comms) {
-                errorLog(UnsetError("``ptf.comms`` folder not found in Premiere title", -1, path.dir),, 1)
-                return false
-            }
+            errorLog(UnsetError("``ptf.comms`` folder not found in Premiere title", -1, path.dir),, 1)
+            return false
+        }
         return ClientName := SubStr(
             premCheck,                                                      ;// string
             start := (InStr(premCheck, ptf.comms) + StrLen(ptf.comms) + 1), ;// starting pos
@@ -353,6 +361,84 @@ class WinGet {
         return {Path: entirePath, Name: path.Name, Dir: path.Dir, Ext: path.Ext, NameNoExt: path.NameNoExt, Drive: path.Drive}
     }
 
+    /** A wrapper function for `WinGetTitle()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static TitleRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Title", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinGetClass()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static ClassRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Class", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinGetActive()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static ActiveRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Active", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinActivate()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static ActivateRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Activate", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinClose()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static CloseRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Close", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinExist()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static ExistRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Exist", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinGetCount()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static CountRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Count", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinGetPID()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static PIDRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("PID", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinGetProcessName()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static ProcessNameRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("ProcessName", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinGetList()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static ListRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("List", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinWaitClose()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static WaitCloseRegex(WinTitle := "A", WinText:="", Timeout := 0, ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("WaitClose", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin, Timeout)
+    }
+    /** A wrapper function for `WinWait()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static WaitRegex(WinTitle := "A", WinText:="", Timeout := 0, ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Wait", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin, Timeout)
+    }
+
+    static regexFunc(func, WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false, Timeout := 0) {
+        Critical(), orig := detect(dctHidWin, "RegEx")
+        try {
+            switch func {
+                case "Title": returnVal        := WinGetTitle(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                case "Class": returnVal        := WinGetClass(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                case "Active": returnVal       := WinActive(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                case "Activate":
+                    WinActivate(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                    return true
+                case "Exist": returnVal        := WinExist(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                case "Count": returnVal        := WinGetCount(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                case "PID": returnVal          := WinGetPID(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                case "ProcessName": returnVal  := WinGetProcessName(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                case "List": returnVal         := WinGetList(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                case "WaitClose": returnVal    := WinWaitClose(WinTitle, WinText, Timeout, ExcludeTitle, ExcludeText)
+                case "Close":
+                    WinClose(WinTitle, WinText, Timeout, ExcludeTitle, ExcludeText)
+                    return true
+                case "Wait": returnVal         := WinWait(WinTitle, WinText, Timeout, ExcludeTitle, ExcludeText)
+            }
+        } catch {
+            resetOrigDetect(orig), Critical("Off")
+            return false
+        }
+        resetOrigDetect(orig), Critical("Off")
+        return returnVal
+    }
+
     /**
      * This function will grab the proccess ID of the current active window
      * @param {VarRef} id is the processname of the active window, we want to pass this value back to the script
@@ -362,11 +448,12 @@ class WinGet {
     {
         try {
             id := WinGetProcessName("A")
-            if WinActive("ahk_exe explorer.exe")
+
+            if this.ActiveRegex("ahk_exe explorer.exe",, this.ignoreExplorerRegex)
                 id := "ahk_class CabinetWClass"
             return id
         } catch {
-            errorLog(TargetError("Couldn't grab information about the active window", -1),, 1)
+            errorLog(TargetError("Couldn't grab information about the active window", -1))
             return false
         }
     }

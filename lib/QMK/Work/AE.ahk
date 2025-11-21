@@ -1,7 +1,7 @@
 #Include <Classes\Editors\After Effects>
 #Include <Classes\Editors\Premiere>
 #Include <QMK\unassigned>
-,::prem.anchorToPosition()
+,::prem.anchorToPosition(true)
 /*
 BackSpace::unassigned()
 SC028::unassigned()

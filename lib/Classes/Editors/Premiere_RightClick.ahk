@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.5
  * @author tomshi, taranVH
- * @date 2025/11/05
- * @version 2.3.23.1
+ * @date 2025/11/21
+ * @version 2.3.24
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -207,6 +207,7 @@ class rbuttonPrem {
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {
+		block.Off()
 		PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
 		this.__resetClicks()
 		checkstuck()
@@ -245,6 +246,7 @@ class rbuttonPrem {
 		static count := 1
 		currentSeq := prem.__remoteFunc("getActiveSequence", true)
 		if currentSeq != origSequence {
+			errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" origSequence))
 			prem.__remoteFunc("focusSequence",, "ID=" origSequence)
 			return
 		}
@@ -323,7 +325,8 @@ class rbuttonPrem {
 
 		;// set coord mode and grab the cursor position
 		coord.client()
-		origMouse := obj.MousePos()
+		if !origMouse := obj.MousePos()
+			return
 
 		;// set what `LButton` & `XButton2` do
 		this.__HotkeySet(["LButton", "XButton2"])
@@ -387,7 +390,8 @@ class rbuttonPrem {
 		;// if any of the premremote functions return false, it won't continue checking them every time the function is fired
 		static useRemote := true
 		if useRemote = true {
-			if !prem.__checkPremRemoteDir("getActiveSequence") || !prem.__checkPremRemoteFunc("focusSequence") {
+			ckDir := prem.__checkPremRemoteDir("getActiveSequence"), ckFunc := prem.__checkPremRemoteFunc("focusSequence")
+			if !ckDir || !ckFunc {
 				useRemote := false
 				this.remote := false
 				Notify.Show('Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.`nrbuttonPrem().movePlayhead() will no longer attempt to use it until a script reload.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')

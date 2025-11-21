@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used tooltip/traytip functions for easier coding.
  * @author tomshi
- * @date 2024/09/16
- * @version 1.2.2
+ * @date 2025/11/21
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -109,7 +109,7 @@ class tool {
 
 
         ;// ensuring `WhichToolTip` never goes above 20 or below 1
-        WhichToolTip := !IsSet(WhichToolTip) || (IsSet(WhichToolTip) && (WhichToolTip > 20 || WhichToolTip < 1)) ? 1 : WhichToolTip
+        WhichToolTip := (!IsSet(WhichToolTip) || (IsSet(WhichToolTip) && (WhichToolTip > 20 || WhichToolTip < 1))) ? 1 : WhichToolTip
         ;// if the user opts to kill the tooltip, or if a new tooltip is called to be replaced
         if timeout = 0 || this().__checkIndex(this, WhichToolTip) {
             ToolTip("",,, WhichToolTip)
@@ -129,7 +129,8 @@ class tool {
         timeout := (!IsInteger(timeout) && IsFloat(timeout)) ? timeout * 1000 : timeout
 
         ;// if necessary, log original mouse coords
-        origMouse := (both = false || none = true) ? obj.MousePos() : {x: 0, y:0}
+        if !origMouse := (both = false || none = true) ? obj.MousePos() : {x: 0, y:0}
+            return
         time := A_TickCount ;log our starting time
 
         ;//! creating the tooltip
@@ -173,7 +174,8 @@ class tool {
             MouseGetPos(&newX, &newY) ;// here we're grabbing new mouse coords
             if newX != origMouse.x || newY != origMouse.y ;// so we can compare them to the old coords
                 {
-                    origMouse := obj.MousePos() ;// if they're different we'll replace the original coords and produce a new tooltip
+                    if !origMouse := obj.MousePos() ;// if they're different we'll replace the original coords and produce a new tooltip
+                        return
                     ToolTip(message, newX + x, newY + y, ttp)
                 }
         }

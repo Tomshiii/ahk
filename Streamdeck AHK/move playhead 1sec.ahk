@@ -1,4 +1,5 @@
 #Include <Classes\Editors\Premiere>
+#Include <Classes\errorLog>
 
 ;// moves the playhead 1s using PremiereRemote
 ;// will move forward by default or backwards if the user holds LCtrl

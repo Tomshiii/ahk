@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/11/05
- * @version 2.0.28
+ * @date 2025/11/21
+ * @version 2.0.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -112,8 +112,10 @@ Class premUIA_Values {
      * This function handles creating new json entries in the `values.ini` files
      */
     __setNewVal() {
+        Critical()
         if this.activeObj.HasOwnProp('isRunning') && this.activeObj.isRunning = true {
             block.Off()
+            Critical("Off")
             Notify.Show(, "Attempting to set UIA values is already in process.`nPlease wait.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
             Exit()
         }

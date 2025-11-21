@@ -10,13 +10,16 @@
  */
 alwaysOnTop(winTitle := "A")
 {
-	tooltipVal := isOnTop()
+	if !tooltipVal := isOnTop() {
+		return
+	}
 	isOnTop() {
 		try {
 			hwnd    := WinExist(winTitle)
 			title   := WinGetTitle(winTitle)
-			if WinGet.isProc(hwnd)
-				return
+			if WinGet.isProc(hwnd) {
+				return false
+			}
 			ExStyle := wingetExStyle(title)
 			if(ExStyle & 0x8) {
 				DrawBorder(hwnd)
@@ -27,10 +30,9 @@ alwaysOnTop(winTitle := "A")
 		} catch as e {
 			tool.Cust(A_ThisFunc "() couldn't determine the active window or you're attempting to interact with an ahk GUI")
 			errorLog(e)
-			Exit()
+			return false
 		}
-
 	}
-	tool.Cust(tooltipVal, 2.0)
 	WinSetAlwaysOnTop(-1, "A") ;will toggle whether the current window will remain on top
+	sleep 150
 }

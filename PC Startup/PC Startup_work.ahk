@@ -30,13 +30,19 @@ runApp(ptf["HotkeylessAHK"], "HotkeylessAHK.ahk")
 
 ;// run kleopatra
 runApp("C:\Program Files (x86)\Gpg4win\bin\kleopatra.exe", "ahk_exe kleopatra.exe")
-runApp(path, name) {
+runApp(path, name, reboot := true) {
     if !FileExist(path)
         return
     orig := detect()
-    if WinExist(name,, browser.vscode.winTitle)
-        ProcessClose(WinGetPID(name,, browser.vscode.winTitle))
-    Run(path,, "Hide")
+    switch reboot {
+        case true:
+            if WinExist(name,, browser.vscode.winTitle)
+                ProcessClose(WinGetPID(name,, browser.vscode.winTitle))
+            Run(path,, "Hide")
+        case false:
+            if !WinExist(name,, browser.vscode.winTitle)
+                Run(path,, "Hide")
+    }
     resetOrigDetect(orig)
 }
 

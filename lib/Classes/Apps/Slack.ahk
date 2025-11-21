@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/09/09
- * @version 1.1.7
+ * @date 2025/11/21
+ * @version 1.1.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,8 +38,9 @@ class Slack {
      */
     static unread(which) {
         coord.s()
-        origMousePos := obj.MousePos()
-        winPos := obj.WinPos(this.exeTitle)
+        origMousePos := obj.MousePos(), winPos := obj.WinPos(this.exeTitle)
+        if !origMousePos || !winPos
+            return
         switch which {
             case "dm":
                 if !PixelSearch(&x, &y, winPos.x, winPos.y, winPos.x + (winPos.width * 0.85), winPos.y + winPos.height, 0xB41541)
@@ -59,12 +60,13 @@ class Slack {
      */
     static button(button, replyInThread := false) {
         keys.allWait(2)
-        origMousePos := obj.MousePos()
+        origMousePos := obj.MousePos(), currentTitle := WinGet.Title()
+        if !origMousePos || !currentTitle
+            return
         if WinGetProcessName(origMousePos.win) != WinGetProcessName(this.winTitle)
             return
         blocker := block_ext()
         blocker.On()
-        currentTitle := WinGet.Title()
         try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
         catch {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
@@ -77,7 +79,7 @@ class Slack {
                 if !uiaObj.WaitElement({LocalizedType: "button", Name: "Save for later"}, 2000) {
                     errorLog(UnsetError("Failed to find Save for later element", -1),, true)
                     blocker.Off()
-                    Exit()
+                    return
                 }
                 findLocation := uiaObj.WaitElement({LocalizedType: "button", Name: "Save for later"}, 2000)
                 for el in uiaObj.FindElements({LocalizedType: "menu item", Name: "More actions"}) {

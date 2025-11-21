@@ -10,8 +10,9 @@
  * ```
  */
 detect(windows := true, title := 2) {
-    origWindows := A_DetectHiddenWindows, origTitle := A_TitleMatchMode
+    Critical(), origWindows := A_DetectHiddenWindows, origTitle := A_TitleMatchMode
     DetectHiddenWindows(windows), SetTitleMatchMode(title)
+    Critical("Off")
     return {Windows: origWindows, Title: origTitle}
 }
 
@@ -29,4 +30,4 @@ detect(windows := true, title := 2) {
  * }
  * ```
  */
-resetOrigDetect(obj) => (A_DetectHiddenWindows := obj.Windows, A_TitleMatchMode := obj.Title)
+resetOrigDetect(obj) => (Critical(), A_DetectHiddenWindows := obj.Windows, A_TitleMatchMode := obj.Title, Critical("Off"))

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/11/04
- * @version 1.3.24
+ * @date 2025/11/21
+ * @version 1.3.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -429,10 +429,12 @@ class switchTo {
                 }
             }
             ;// run the path
-            if (WinActive("ahk_exe explorer.exe",, "ahk_class Shell_TrayWnd") && switchCurrentWindow = true)
+            if (WinGet.ActiveRegex("ahk_exe explorer.exe",, WinGet.ignoreExplorerRegex) && switchCurrentWindow = true) {
                 switchTo.Path(path.Dir)
-            else
+            }
+            else {
                 RunWait(path.dir)
+            }
             if !WinWait(getFolderName " ahk_class CabinetWClass",, 2, "Adobe") {
                 tool.Cust("Waiting for project directory to open timed out")
                 return false

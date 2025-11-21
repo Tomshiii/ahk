@@ -3,8 +3,8 @@
  * Last tested in the version of Photoshop listed below
  * @psVer 26.9
  * @author tomshi
- * @date 2025/08/04
- * @version 1.2.2
+ * @date 2025/11/21
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,7 @@
 #Include <Classes\keys>
 #Include <Classes\errorLog>
 #Include <Other\UIA\UIA>
+#Include <Other\Notify\Notify>
 ; }
 
 class PS {
@@ -85,10 +86,13 @@ class PS {
      */
     static Type(filetype)
     {
-        if !WinExist("Save a Copy" A_Space "ahk_class #32770")
+        title := "Save a Copy" A_Space "ahk_class #32770 ahk_exe Photoshop.exe"
+        if !WinExist(title)
             return false
-        AdobeEl := UIA.ElementFromHandle("Save a Copy" A_Space "ahk_class #32770",, false)
+        AdobeEl := UIA.ElementFromHandle(title,, false)
         coord.w()
+        origCoords := obj.MousePos()
+        MouseMove(0, 0)
         sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
         fileComboBox := {Type: "50003 (ComboBox)", Name: "Save as type:", LocalizedType: "combo box", AutomationId: "FileTypeControlHost", ClassName: "AppControlHost"}
         try {
@@ -97,6 +101,7 @@ class PS {
                 case "jpg", "jpeg": __doSwap(AdobeEl, "JPEG (*.JPG;*.JPEG;*.JPE)")
             }
         } catch {
+            MouseMove(origCoords.x, origCoords.y, 2)
             Notify.Show(, 'Failed to set the correct filetype. Try again later.', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Balloon',, 'theme=Dark bdr=Red maxW=400')
             return false
         }
@@ -104,6 +109,9 @@ class PS {
         __doSwap(el, value) {
             el.WaitElement(fileComboBox, 1500).Expand()
             el.WaitElement({Type: '50007 (ListItem)', Name: value, LocalizedType: "list item"}, 1500).ControlClick()
+            el.WaitElement({Type:"Edit", Name:"File name:", LocalizedType:"edit"}).SetFocus()
+            coord.w()
+            MouseMove(origCoords.x, origCoords.y)
         }
     }
 }
