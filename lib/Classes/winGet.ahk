@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2025/11/21
- * @version 1.6.1
+ * @version 1.6.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -74,7 +74,7 @@ class WinGet {
             ;// attempt to determine the position of the window
             try WinGetPos(&x ,&y,,, title,, "Editing Checklist -")
             catch {
-                errorLog(TargetError("Failed to determine the active window", -1),, 1)
+                errorLog(TargetError("Failed to determine the active window", -1))
                 return false
             }
             ;// sometimes windows when fullscreened will be at -8, -8 and not 0, 0
@@ -124,7 +124,7 @@ class WinGet {
         }
         monObj := this().__Monitor(x, y)
         if !IsObject(monObj)             {
-            errorLog(TargetError("Failed to get the requested monitor", -1),, 1)
+            errorLog(TargetError("Failed to get the requested monitor", -1))
             return false
         }
         return {monitor: monObj.monitor, left: monObj.left, right: monObj.right, top:monObj.top, bottom: monObj.bottom}
@@ -147,7 +147,7 @@ class WinGet {
             return title
         } catch {
             block.Off()
-            errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
+            errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1))
             return false
         }
     }
