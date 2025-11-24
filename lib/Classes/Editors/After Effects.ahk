@@ -1,7 +1,7 @@
 /************************************************************************
  * @description A library of useful After Effects functions to speed up common tasks
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
- * @aeVer 25.5
+ * @aeVer 25.6.2
  * @author tomshi
  * @date 2025/11/21
  * @version 1.2.8

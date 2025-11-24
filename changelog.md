@@ -13,8 +13,7 @@
 - ✅ Fixed `cmd.exploreAndHighlight()` failing to open the desired path
 - ✅ Fixed version dropdown lists in `settingsGUI()` not being sorted in numerical order
 - ✅ Fixed `errorLog()` sometimes skipping the timestamp for the first error of the day
-- ✅ Fixed all instances of `winget.Title()`, `obj.MousePos()` & `obj.WinPos()` causing scripts to throw
-- 📋 Added minor ussage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
+- 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
@@ -64,11 +63,12 @@
 - ✅ Fixed function incorrectly determining when the user is within a dm or a server
 
 ### `WinGet {`
+- ✅ Fixed all instances of `Title()` causing scripts to throw
 - ✏️ Added `Regex()` functions to cut repeat code
-    - `TitleRegex()`, `ActiveRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`
+    - `TitleRegex()`, `ClassRegex()`, `ActiveRegex()`, `ActivateRegex()`, `CloseRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ProcessNameRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`
 
 ### 📝 `explorer {`
-- ✏️ Added class `explorer {`
+- ❗ Added class `explorer {`
 - ✏️ Added `cancelSearch()`
 - ✏️ Added [`navigateUsingAddressbar()`](<https://github.com/ThioJoe/ThioJoe-AHK-Scripts/blob/58874c8396c714f511f91bd4f3e8bb67f4592c66/Scripts/ExplorerDialogPathSelector.ahk#L851>)
 - 📋 Moved `switchTo.explorerHighlightFile()` => `highlightFile()`
@@ -78,7 +78,7 @@
 - 📋 Moved `winget.ExplorerPath()` => `getPath()`
 
 ### 📝 `obj {`
-- ✅ Fixed `WinPos()` throwing if it cannot determine the desired window position
+- ✅ Fixed all instances of `MousePos()` & `WinPos()` causing scripts to throw
 - ✏️ Added `CaretPos()`
 
 ### 📝 `startup {`

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2025/11/21
- * @version 1.6.2
+ * @date 2025/11/24
+ * @version 1.6.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,7 @@
 #Include <Classes\errorLog>
 #Include <Classes\Mip>
 #Include <Classes\Editors\Premiere>
+#Include <Functions\detect>
 ; }
 
 class WinGet {

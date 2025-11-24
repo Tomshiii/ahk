@@ -210,9 +210,12 @@ export const host = {
   },
 
   moveToAssetsBin: function(folder: string) {
-    // it should be noted this function very specifically looks for the folder structure that I use;
-      // [_Assets]
+    // This function does not have an incredible amount of logic and is very specifically tailored to my project folder structure.
+    // it should be noted this function very specifically looks through both a specific "_Assets" folder AND the "Root" folder - so if you have conflicting bin names, that could be an issue. The "Asset" folder stucture is as follows;
+      // root
+      // ┗━ [_Assets]
       //   ┗━ [Folder]
+    // As the bin name "_Assets" is at the top of sorting, this folder is likely to be checked first in most circumstances
     var selected = app.getCurrentProjectViewSelection()
       if (!selected)
         return
@@ -220,10 +223,10 @@ export const host = {
     var projectItem = project.rootItem;
 
     for (let i = 0; i < projectItem.children.numItems; i++) {
+      if (app.project.rootItem.children[i].type !== 2)
+        continue;
       switch (app.project.rootItem.children[i].name) {
         case "_Assets":
-          if (app.project.rootItem.children[i].type !== 2)
-            continue;
           const assetFolder = app.project.rootItem.children[i]
           for (let j = 0; j < assetFolder.children.numItems; j++) {
               if (assetFolder.children[j].name == folder) {
@@ -231,11 +234,14 @@ export const host = {
                 break;
               }
             }
+        case folder:
+          var moveFolder = app.project.rootItem.children[i];
       }
     }
 
       if (typeof moveFolder == 'undefined') {
-        var moveFolder = projectItem.createBin(folder);
+        alert("Desired folder does not seem to exist");
+        return false;
       }
 
       Utils.moveToFolder(selected, moveFolder);
