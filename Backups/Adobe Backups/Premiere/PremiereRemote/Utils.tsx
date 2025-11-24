@@ -345,8 +345,8 @@ export class Utils {
     }
 
     static isPlaying() {
-      /* var isPlaying = qe.project.getActiveSequence().player.isPlaying;
-      return isPlaying */
+      var isPlaying = qe.project.getActiveSequence().player.isPlaying;
+      return isPlaying
     }
 
     static stopPlayback() {
@@ -363,6 +363,8 @@ export class Utils {
       try {
         var seq = qe.project.getActiveSequence();
         const player = seq.player;
+        // const player = seq.source;
+        // const player = qe;
 
         var output = "=== PROPERTIES ===\n";
         for (var prop in player) {
