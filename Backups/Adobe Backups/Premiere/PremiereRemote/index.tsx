@@ -45,27 +45,22 @@ export const host = {
     return varr.name;
   },
 
-  setBarsAndTone: function() {
-    // it should be noted this function very specifically looks for the bars and tone in the specific folder structure that I keep it in, which is;
-    // [_Assets]
-    //   ┗━ [Other]
-    //     ┗━ .Bars and Tone - Rec 709
-    for (let i = 0; i < app.project.rootItem.children.numItems; i++) {
-      if(app.project.rootItem.children[i].name == "_Assets" && (app.project.rootItem.children[i].type == 2)) {
-        const folder = app.project.rootItem.children[i]
-        for (let i = 0; i < folder.children.numItems; i++) {
-          if((folder.children[i].name == "Other" || folder.children[i].name == "01_Other") && (folder.children[i].type == 2)){
-            const folder2 = folder.children[i]
-            for (let i = 0; i < folder2.children.numItems; i++) {
-              if(folder2.children[i].name == "Bars and Tone - Rec 709"){
-                app.sourceMonitor.openProjectItem(folder2.children[i]);
-                return;
-              }
-            }
-          }
-        }
-      }
+  loadInSourceMonitor: function(itemName: string, folder?: string) {
+    const searchFolder: ProjectItem | null = folder
+        ? this.searchForBinWithName(folder)
+        : app.project.rootItem;
+
+    if (!searchFolder) {
+        return false;
     }
+
+    const projItem = this.searchForItemByName(searchFolder, itemName);
+    if (!projItem) {
+        return false;
+    }
+
+    app.sourceMonitor.openProjectItem(projItem);
+    return true;
   },
 
   organiseProj: function() {
@@ -178,6 +173,51 @@ export const host = {
     }
 
     // alert("Active sequence not found in project.sequences list.");
+  },
+
+  // @link : https://github.com/Adobe-CEP/Samples/blob/fbc2f2fc090b41a07f07f9fffe2043d9bafb4988/PProPanel/jsx/PPRO/Premiere.jsx#L425
+  searchForBinWithName : function(nameToFind: string, inFolder?: ProjectItem) {
+    if (!inFolder) {
+      var inFolder = app.project.rootItem
+    }
+		// deep-search a folder by name in project
+		var deepSearchBin = function (inFolder) {
+			if (inFolder && inFolder.name === nameToFind && inFolder.type === 2) {
+				return inFolder;
+			} else {
+				for (var i = 0; i < inFolder.children.numItems; i++) {
+					if (inFolder.children[i] && inFolder.children[i].type === 2) {
+						var foundBin = deepSearchBin(inFolder.children[i]);
+						if (foundBin) {
+							return foundBin;
+						}
+					}
+				}
+			}
+		};
+		return deepSearchBin(inFolder);
+	},
+
+  // @link : https://github.com/Adobe-CEP/Samples/blob/fbc2f2fc090b41a07f07f9fffe2043d9bafb4988/PProPanel/jsx/PPRO/Premiere.jsx#L1119
+  // @link : https://chatgpt.com/s/t_6924520380ec8191882f7441c64f1251
+  searchForItemByName: function(bin: ProjectItem, name: string) {
+    for (var i = 0; i < bin.children.numItems; i++) {
+        var child = bin.children[i];
+
+        if (!child) continue;
+
+        // Match file
+        if (child.type !== ProjectItemType.BIN && child.name === name) {
+            return child;
+        }
+
+        // Search inside sub-bins
+        if (child.type === ProjectItemType.BIN) {
+            var found = this.searchForItemByName(child, name);
+            if (found) return found;
+        }
+    }
+    return null;
   },
 
   setMarker: function(colour: string) {

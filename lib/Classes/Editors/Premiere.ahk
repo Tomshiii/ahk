@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/11/21
- * @version 2.2.74
+ * @date 2025/11/24
+ * @version 2.2.75
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2293,9 +2293,10 @@ class Prem {
      * A function to quickly drag the audio or video track from the source monitor to the timeline. This is often easier than dealing with insert/override quirkiness.
      * @param {String} [audOrVid="audio"] determine whether you wish to drag the audio or video track. This parameter must be either `"audio"` or `"video"`
      * @param {String} [sendOnFailure=A_ThisHotkey] define what hotkey you want this function to send in the event that the main premiere window isn't the active window. This function will correctly handle any single key activation hotkey - if your activation is more (ie `Ctrl & F19`) you will need to instead define this parameter as `"^{F19}" etc
-     * @param {String} [specificFile=false] if set the function will only activate if the desired file is open within the source monitor
+     * @param {String} [specificFile=false] if set the function will only activate if the desired file is open within the source monitor. Defaults to `false`
+     * @param {Boolean} [searchForFile=false] if set to `true` the function will attempt to search for the desired file, then attempt to load it into the source monitor. As you would expect if you have multiple files of the same name in your project this feature may encounter issues. Defaults to `false`
      */
-    static dragSourceMon(audOrVid := "audio", sendOnFailure := A_ThisHotkey, specificFile := false) {
+    static dragSourceMon(audOrVid := "audio", sendOnFailure := A_ThisHotkey, specificFile := false, searchForFile := false) {
         if audOrVid != "audio" && audOrVid != "video" {
             ;// throw
             errorLog(PropertyError("Incorrect value in Parameter #1", -1),,, true)
@@ -2321,11 +2322,11 @@ class Prem {
             return
         }
 
-        ckDir := this.__checkPremRemoteDir("sourceMonName"), ckFunc := this.__checkPremRemoteFunc("sourceMonName")
-        if !ckDir || !ckFunc {
+        ckDir := this.__checkPremRemoteDir("sourceMonName"), ckFunc := this.__checkPremRemoteFunc("sourceMonName"), ckLoad := this.__checkPremRemoteFunc("loadInSourceMonitor")
+        if !ckDir || !ckFunc || !ckLoad {
             ;// throw
             blocker.Off()
-            errorLog(MethodError("Some PremiereRemote functions are missing.", -1),,, true)
+            errorLog(MethodError("Some PremiereRemote functions are missing. Aborting", -1),,, true)
             return
         }
         coord.client()
@@ -2337,20 +2338,19 @@ class Prem {
             getName := this.__remoteFunc("sourceMonName", true)
             if getName != specificFile {
                 __exit() {
-                    errorLog(TargetError("The requested file: " specificFile "`nisn't open in the Source Monitor", -1),, true)
+                    errorLog(TargetError("The requested file: " specificFile "`ncould not be found or could not be loaded into the source monitor.", -1),, true)
                     blocker.Off()
                     return
                 }
-                if specificFile = "Bars and Tone - Rec 709" {
-                    this.__remoteFunc("setBarsAndTone", false)
+                if searchForFile = true {
+                    this.__remoteFunc("loadInSourceMonitor",, "itemName=" specificFile, "folder=")
                     sleep 50
                     recheck := this.__remoteFunc("sourceMonName", true)
                     if recheck != specificFile {
                         __exit()
                         return
                     }
-                }
-                else {
+                } else {
                     __exit()
                     return
                 }

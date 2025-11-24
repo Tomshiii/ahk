@@ -25,6 +25,7 @@
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
 - 📋 `anchorToPosition()` now accepts parameter `ae` to determine if you're calling the function from After Effects or Premiere. Defaults to `false`
     - ✅ Fixes incorrect tabbing logic inside of After Effects
+- 📋 `dragSourceMon()` now accepts parameter `searchForFile` to determine if the function will attempt to search for the desired file if it isn't already in the source monitor
 
 📍 `gain()`
 - 📋 Will now highlight the text input field in the event the gain window is already open, but a text field is not selected
@@ -129,6 +130,10 @@
 - ✏️ Added `startPlayback()`
 - ✏️ Added `premVer()`
 - ✏️ Added `moveToAssetsBin()`
+- ✏️ Added `loadInSourceMonitor()`
+- ✏️ Added `searchForBinWithName()`
+- ✏️ Added `searchForItemByName()`
+- ❌ Removed `setBarsAndTone()`
 
 🔗 `mult-dl.ahk`
 ###### *(v1.2.3 -> v1.2.9)*
