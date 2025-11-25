@@ -6,23 +6,33 @@
 ;explorerbackHotkey;
 F21::
 {
+    if !actClass := WinGetClass("A")
+        return
+    if actClass = "ahk_class File Pilot" {
+        SendInput("!{Up}")
+        return
+    }
     expl := explorer.cancelSearch()
     switch {
         case (expl == -1): return
         case (expl = false):
-            __doBack() => (SendInput("!{Up}"), Exit())
             try currWin := WinGetTitle("A")
             catch {
-                __doBack()
+                SendInput("!{Up}")
+                return
             }
-            if !explorerEl := explorer.__createUIAelement(currWin, true)
-                __doBack()
+            if !explorerEl := explorer.__createUIAelement(currWin, true) {
+                SendInput("!{Up}")
+                return
+            }
             if explorer.isPopupHost(explorerEl.uiaElement) {
-                __doBack()
+                SendInput("!{Up}")
+                return
             }
             activeEl := explorer.__getUIAautoID(explorerEl)
             if activeEl != "FileExplorerSearchBox" {
-                __doBack()
+                SendInput("!{Up}")
+                return
             }
             SendInput("!{Up}") ;Moves back 1 folder in the tree in explorer
             explorerEl.uiaElement.FindElement({AutomationId:"FileExplorerSearchBox"}).SetFocus()

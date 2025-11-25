@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.26
+;\\v2.34.27
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -183,7 +183,10 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 #Include <My Scripts\Windows>
 
 ;//! windows explorer
-#HotIf WinActive("ahk_class CabinetWClass") || WinActive("ahk_class #32770")
+GroupAdd("explore_group", "ahk_class CabinetWClass")
+GroupAdd("explore_group", "ahk_class #32770")
+GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
+#HotIf WinActive("ahk_group explore_group")
 
 #Include <My Scripts\Windows_Explorer>
 
