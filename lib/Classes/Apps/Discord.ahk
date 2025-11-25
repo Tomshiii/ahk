@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/11/21
- * @version 1.6.10
+ * @date 2025/11/25
+ * @version 1.6.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -62,7 +62,7 @@ class discord {
         blocker := block_ext()
         blocker.On()
 
-        cacheRequest := UIA.CreateCacheRequest(["LocalizedType", "LocalizedControlType", "AutomationId", "Name"],, 5)
+        static cacheRequest := UIA.CreateCacheRequest(["LocalizedType", "LocalizedControlType", "AutomationId", "Name"],, 5)
         try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, cacheRequest)
         if !IsSet(DiscordEl) || !IsObject(DiscordEl) || !DiscordEl {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
@@ -78,7 +78,7 @@ class discord {
             blocker.Off()
             return
         }
-        discMenu := discMenu.BuildUpdatedCache(cacheRequest)
+        static discMenu := discMenu.BuildUpdatedCache(cacheRequest)
 
 
         switch button {
