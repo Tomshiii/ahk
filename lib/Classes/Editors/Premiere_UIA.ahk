@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/11/21
- * @version 2.0.29
+ * @date 2025/11/25
+ * @version 2.0.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -136,16 +136,23 @@ Class premUIA_Values {
         }
         if prem.__checkPremRemoteDir('premVer') {
             try {
-                appVer := "v" prem.__remoteFunc('premVer', true)
-                if appVer = false
+                premVerVal := prem.__remoteFunc('premVer', true)
+                if !premVerVal
                     throw
+                appVer := "v" premVerVal
 
                 if (this.setVer != appVer) && (this.setVer ".0" != appVer) {
-                    Notify.Show(, 'The currently set version of Premiere does not match the application version.`nConsider adjusting the set version in settingsGUI() and then reloading', 'C:\Windows\System32\imageres.dll|icon227', 'Windows Notify Messaging',, 'theme=Dark dur=7 bdr=Red maxW=400')
+                    Notify.Show(, 'The currently set version of Premiere does not match the application version.`nConsider adjusting the set version in settingsGUI() and then reloading`n`nSet Version: ' this.setVer ".0 || Premiere Version: " appVer, 'C:\Windows\System32\imageres.dll|icon227', 'Windows Notify Messaging',, 'theme=Dark dur=10 bdr=Red maxW=400')
+                    block.Off()
+                    this.activeObj.isRunning := false
+                    return
                 }
             } catch {
                 errorLog(MethodError("PremiereRemote server is currently not running correctly."), "Try restarting it using ``resetNPM.ahk``")
                 Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
+                block.Off()
+                this.activeObj.isRunning := false
+                return
             }
         }
         ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
