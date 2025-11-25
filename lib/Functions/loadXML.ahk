@@ -4,8 +4,13 @@
  * @returns {Object} returns a comobject
  */
 loadXML(xml) {
-    xmldoc := ComObject("MSXML2.DOMDocument.6.0")
-    xmldoc.async := false
-    xmldoc.loadXML(xml)
-    return xmldoc
+    try {
+        xmldoc := ComObject("MSXML2.DOMDocument.6.0")
+        xmldoc.async := false
+        xmldoc.loadXML(xml)
+        return xmldoc
+    } catch {
+        errorLog(TargetError("Failed to read xml file. File may be busy or damaged."))
+        return false
+    }
 }

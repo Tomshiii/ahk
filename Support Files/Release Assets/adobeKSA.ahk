@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a function designed to parse through AE and Premiere Pro keyboard shortcut files to automatically assign KSA.ini values
  * @author tomshi
- * @date 2025/07/02
- * @version 1.0.5
+ * @date 2025/f11/25
+ * @version 1.0.5.1
  ***********************************************************************/
 
 #Warn VarUnset, StdOut
@@ -410,6 +410,8 @@ xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.
 class adobeXML {
     __New(file) {
         this.xml := loadXML(file)
+        if !this.xml
+            return
     }
     xml := ""
 

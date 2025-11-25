@@ -13,6 +13,7 @@
 - ✅ Fixed `cmd.exploreAndHighlight()` failing to open the desired path
 - ✅ Fixed version dropdown lists in `settingsGUI()` not being sorted in numerical order
 - ✅ Fixed `errorLog()` sometimes skipping the timestamp for the first error of the day
+- ✅ Fixed `loadXML()` throwing in the event the file is busy
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 
 ### 📝 `prem {`

@@ -87,6 +87,7 @@ class Prem {
     static theme := "darkest"
     static defaultTheme := ""
     static UI := "Spectrum"
+    static defaultUI := "Spectrum"
     static sequenceArr := []
     static resetSeqTimer := false
     static prevSeqDelay := 1000
@@ -180,7 +181,7 @@ class Prem {
         switch  {
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.UI := "Spectrum"
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0: this.UI := "preSpectrum"
-            default: this.UI := "Spectrum"
+            default: this.UI := this.defaultUI
         }
     }
 
@@ -191,6 +192,15 @@ class Prem {
             case "Spectrum":
                 if FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs") {
                     loadSettings := loadXML(FileRead(ptf['PremProfile'] "Adobe Premiere Pro Prefs"))
+                    if !loadSettings {
+                        if !Notify.Exist('notDetermined') {
+                            Notify.Show('Premiere theme could not be determined. Settings file was busy', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
+                            errorLog(Error("Premiere theme could not be determined. File was busy", -1))
+                        }
+                        this.__setTimelineCol("Spectrum", this.defaultTheme)
+                        return
+                    }
+
                     props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
                     switch props.text {
                         case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
