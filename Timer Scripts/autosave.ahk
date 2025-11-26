@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/11/21
- * @version 2.1.56
+ * @date 2025/11/26
+ * @version 2.1.57
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -687,7 +687,7 @@ class adobeAutoSave extends count {
         ;// so we have to work around that
         try {
             checkStuck()
-            ; WinSetTransparent(0, editors.AE.winTitle)
+            WinSetTransparent(0, editors.AE.winTitle)
             ;// attempt to send save
             if GetKeyState("Shift") || GetKeyState("Shift", "P")
                 SendInput("{Shift Up}")
@@ -738,11 +738,12 @@ class adobeAutoSave extends count {
     /** reset after effects window transparency */
     __resetAETrans() {
         try {
-            WinMoveBottom(editors.AE.winTitle)
+            Critical()
+            WinWaitClose("Save Project " editors.AE.winTitle) ;// this is necessary, you can't reset transparency of the main window if the save window is open
+            if !WinExist("ahk_exe mocha4ae_adobe.exe")
+                WinMoveBottom(editors.AE.winTitle)
             WinSetTransparent("Off", editors.AE.winTitle)
-            checkTran := WinGetTransparent(editors.AE.winTitle)
-            if IsInteger(checkTran) && checkTran != 255
-                WinSetTransparent(255, editors.AE.winTitle)
+            Critical("Off")
         } catch {
             errorLog(Error("Failed to reset transparency", -1),, true)
         }

@@ -119,10 +119,11 @@
 
 🔗 `autosave.ahk`
 > [!Warning]
-> I am currently aware of a bug with `autosave.ahk` that is causing its memory usage to slowly climb. While I am not currently aware of the cause, it is actively being investigated and a fix should hopefully be implemented by the next release. You can track the status of the bug [here](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=134206373>)
+> I am currently aware of a bug with `autosave.ahk` causing its memory usage to slowly climb. While I am not currently aware of the cause, it is actively being investigated and a fix should hopefully be implemented by the next release. You can track the status of this bug [here](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=134206373>)
 - ✅ Fixed double saving if the user saves during the `idle` notifications
 - ✅ Fixed inputs getting stuck blocked in certain circumstances
 - ✅ Fixed `After Effects` never saving in certain circumstances where `__checkDialogueClass()` always returned `false`
+- ✅ Fixed `After Effects` being send to the bottom of the window stack if `Mocha` is open
 - 📋 `Notify` windows will now be destroyed if the user manually saves during a save attempt
 - 📋 Will now check for and halt if `excalibur` window is open
 - 📋 Can now use `PremiereRemote` to determine & restart playback removing the need for `ImageSearch`
