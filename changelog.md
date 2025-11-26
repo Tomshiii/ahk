@@ -8,7 +8,6 @@
 - ✅ Fixed `slack.button()` throwing in certain circumstances
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
 - ✅ Fixed `reset {` functions not affecting all scripts
-- ✅ Fixed `trimGUI {` not calculating remaining duration if ending timecode is left as `00:00:00`
 - ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
 - ✅ Fixed `cmd.exploreAndHighlight()` failing to open the desired path
 - ✅ Fixed version dropdown lists in `settingsGUI()` not being sorted in numerical order
@@ -101,6 +100,10 @@
 - ✏️ Added [`clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
 - ❌ Removed `Tab()`
 
+### 📝 `trimGUI {`
+- ✅ Fixed script not calculating remaining duration if ending timecode is left as `00:00:00`
+- ✅ Fixed script continuing if both timecodes are identical
+
 ### 📝 `PS {`
 📍 `Type()`
 - 📋 Will now move the cursor out of the way so it doesn't cause the function to click the incorrect option
@@ -115,6 +118,8 @@
 - ✏️ Added [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>)
 
 🔗 `autosave.ahk`
+> [!Warning]
+> I am currently aware of a bug with `autosave.ahk` that is causing its memory usage to slowly climb. While I am not currently aware of the cause, it is actively being investigated and a fix should hopefully be implemented by the next release. You can track the status of the bug [here](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=134206373>)
 - ✅ Fixed double saving if the user saves during the `idle` notifications
 - ✅ Fixed inputs getting stuck blocked in certain circumstances
 - ✅ Fixed `After Effects` never saving in certain circumstances where `__checkDialogueClass()` always returned `false`

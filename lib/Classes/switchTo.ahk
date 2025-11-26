@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/11/21
- * @version 1.3.25
+ * @date 2025/11/26
+ * @version 1.3.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -89,10 +89,12 @@ class switchTo {
     static Explorer(toggleFullscreen := true)
     {
         ;// the below values will be ignored (but only if `ignoreString` is added to the respective `GroupAdd` down below)
-        ignore := Map("ahk_exe hamachi-2-ui.exe", 1)
         ignoreString := ""
-        for k, v in ignore
-            ignoreString := ignoreString A_Space k
+        ignore := Map("ahk_exe hamachi-2-ui.exe", 1)
+        for k, v in ignore {
+            ignoreString .= k "|"
+        }
+
         if !WinExist("ahk_class CabinetWClass") && !WinExist("ahk_class #32770") {
             Run("explorer.exe")
             if !WinWait("ahk_class CabinetWClass",, 2)
@@ -103,9 +105,13 @@ class switchTo {
             }
             this.__explorerToggleFullscreen()
         }
+        Critical()
+        orig := detect(, "regex")
         GroupAdd("explorers", "ahk_class CabinetWClass")
         GroupAdd("explorers", "ahk_class #32770", ignoreString) ;these are usually save dialoge windows from any program
         GroupAdd("explorers", "ahk_class OperationStatusWindow") ;these are usually file transfer windows
+        resetOrigDetect(orig)
+        Critical("Off")
         if WinActive("ahk_exe explorer.exe")
             GroupActivate("explorers", "r")
         else if WinExist("ahk_class CabinetWClass") || WinExist("ahk_class #32770") || WinExist("ahk_class OperationStatusWindow")

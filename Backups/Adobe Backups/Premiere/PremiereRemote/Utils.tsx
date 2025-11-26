@@ -359,6 +359,17 @@ export class Utils {
       seq.player.play();
     }
 
+    static isSequence() {
+      var selection = app.project.activeSequence.getSelection();
+      if (selection[0].mediaType != "Video")
+        return false;
+
+      var projectItem = selection[0].projectItem;
+      if (!projectItem || !projectItem.isSequence())
+        return false;
+      return true;
+    }
+
     static checkObjParams() {
       try {
         var seq = qe.project.getActiveSequence();
@@ -396,6 +407,5 @@ export class Utils {
       } catch(e) {
           alert("Error: " + e.toString());
       }
-
     }
   }

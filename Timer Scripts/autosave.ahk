@@ -687,7 +687,7 @@ class adobeAutoSave extends count {
         ;// so we have to work around that
         try {
             checkStuck()
-            WinSetTransparent(0, editors.AE.winTitle)
+            ; WinSetTransparent(0, editors.AE.winTitle)
             ;// attempt to send save
             if GetKeyState("Shift") || GetKeyState("Shift", "P")
                 SendInput("{Shift Up}")
@@ -725,9 +725,11 @@ class adobeAutoSave extends count {
 
     /** checks to see if the script the user has defined as their main script is running */
     __checkMainScript() {
+        Critical()
         prevDec := detect()
         isMainScriptOpen := WinExist(this.mainScript ".ahk")
         resetOrigDetect(prevDec)
+        Critical("Off")
         if isMainScriptOpen
             return true
         return false
@@ -738,6 +740,11 @@ class adobeAutoSave extends count {
         try {
             WinMoveBottom(editors.AE.winTitle)
             WinSetTransparent("Off", editors.AE.winTitle)
+            checkTran := WinGetTransparent(editors.AE.winTitle)
+            if IsInteger(checkTran) && checkTran != 255
+                WinSetTransparent(255, editors.AE.winTitle)
+        } catch {
+            errorLog(Error("Failed to reset transparency", -1),, true)
         }
     }
 

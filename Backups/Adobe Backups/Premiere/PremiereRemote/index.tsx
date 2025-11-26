@@ -249,6 +249,10 @@ export const host = {
     Utils.startPlayback();
   },
 
+  isSequence: function() {
+    Utils.isSequence();
+  },
+
   moveToAssetsBin: function(folder: string) {
     // This function does not have an incredible amount of logic and is very specifically tailored to my project folder structure.
     // it should be noted this function very specifically looks through both a specific "_Assets" folder AND the "Root" folder - so if you have conflicting bin names, that could be an issue. The "Asset" folder stucture is as follows;
