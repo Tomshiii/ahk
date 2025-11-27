@@ -5,7 +5,7 @@
  * @premVer 25.6.2
  * @author tomshi
  * @date 2025/11/27
- * @version 2.2.76
+ * @version 2.2.77
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -382,36 +382,46 @@ class Prem {
                     ? true : false)
     }
 
-    /** stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind. Must be set within `KSA` */
-    static stopPlayback() {
+    /**
+     * stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind. Must be set within `KSA`
+     * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps)
+     * */
+    static stopPlayback(checkIsPlaying := false) {
         ckDir := this.__checkPremRemoteDir(), ckStop := this.__checkPremRemoteFunc('stopPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
-        if !ckDir || !ckStop || !ckIsPlaying
+        if !ckDir || !ckStop || !ckIsPlaying {
 			SendInput(KSA.shuttleStop)
-		else {
-            if !this.__remoteFunc('isPlaying', true)
-                return
-			this.__remoteFunc('stopPlayback')
+            return
         }
+        if !checkIsPlaying {
+            this.__remoteFunc('stopPlayback')
+            return
+        }
+        if !this.__remoteFunc('isPlaying', true)
+            return
+        this.__remoteFunc('stopPlayback')
     }
 
     /**
      * starts playback within premiere using either `PremiereRemote` or the user's Play-Stop Toggle keybind. Must be set within `KSA`
      * @param {Integer} [speed=1] Determine playback speed. `1` is normal, `2` is double, `0.5` is half, `-1` is backwards, etc. This parameter will only work if `PremiereRemote` is installed and used to resume playback. Otherwise normal playback will occur
+     * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps)
      * */
-    static startPlayback(speed := 1) {
+    static startPlayback(speed := 1, checkIsPlaying := false) {
         ckDir := this.__checkPremRemoteDir(), ckStart := this.__checkPremRemoteFunc('startPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
         if !ckDir || !ckStart || !ckIsPlaying {
 			delaySI(, KSA.shuttleStop, KSA.playStop)
             return
         }
-		else {
-            if !IsFloat(speed) && !IsInteger(speed)
-                speed := 1
-            isPlaying := this.__remoteFunc('isPlaying', true)
-            if speed == 1 && isPlaying
-                return
-			this.__remoteFunc('startPlayback',, "speed=" String(speed))
+        if !IsFloat(speed) && !IsInteger(speed)
+            speed := 1
+        if !checkIsPlaying {
+            this.__remoteFunc('startPlayback',, "speed=" String(speed))
+            return
         }
+        isPlaying := this.__remoteFunc('isPlaying', true)
+        if speed == 1 && isPlaying
+            return
+        this.__remoteFunc('startPlayback',, "speed=" String(speed))
     }
 
     /**
@@ -427,7 +437,7 @@ class Prem {
      */
     static __remoteFunc(whichFunc, needResult := false, params*) {
         if !this.__checkPremRemoteDir(whichFunc) {
-            MsgBox("PremiereRemote is not installed or function does not exist.",, "262160")
+            MsgBox("PremiereRemote is not installed or function does not exist.`nFunction: " whichFunc,, "262160")
             return
         }
         paramsString := ""
