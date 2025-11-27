@@ -1,0 +1,24 @@
+=== PROPERTIES ===
+audioClockJitters: 0 (type: number)
+audioDeviceLoadAvg: 0 (type: number)
+audioDeviceLoadMax: 0 (type: number)
+audioDeviceLoadMin: Infinity (type: number)
+audioDeviceLoadStdDev: 0 (type: number)
+audioDropouts: 0 (type: number)
+audioIODropouts: 0 (type: number)
+audioIOOverloads: 0 (type: number)
+audioMediaNotFound: 0 (type: number)
+audioPrefetchBehinds: 0 (type: number)
+avgFPS: INVALID (type: string)
+avgPrefetchTime: INVALID (type: string)
+avgRenderRate: INVALID (type: string)
+droppedFrames: INVALID (type: string)
+isPlaying: false (type: boolean)
+loopPlayback: false (type: boolean)
+preroll: INVALID (type: string)
+totalFrames: INVALID (type: string)
+
+=== REFLECT INFO ===
+Name: QEPlayer
+Methods: captureAudioDeviceLoad,clearAudioDropoutStatus,disableStatistics,enableStatistics,endScrubbing,getPosition,play,scrubTo,setLoopPlayback,startScrubbing,step,stop
+Properties: audioClockJitters,audioDeviceLoadAvg,audioDeviceLoadMax,audioDeviceLoadMin,audioDeviceLoadStdDev,audioDropouts,audioIODropouts,audioIOOverloads,audioMediaNotFound,audioPrefetchBehinds,avgFPS,avgPrefetchTime,avgRenderRate,droppedFrames,isPlaying,loopPlayback,preroll,totalFrames,__proto__

@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.6.2
  * @author tomshi, taranVH
- * @date 2025/11/21
- * @version 2.3.24
+ * @date 2025/11/27
+ * @version 2.3.25
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -191,13 +191,6 @@ class rbuttonPrem {
 		return true
 	}
 
-	/** If `LButton` or `XButton2` was pressed while `RButton` was being held, this function will start playback in either 1x or 2x speed once `RButton` is released */
-	__restartPlayback() {
-		;this check is purely to allow me to manipulate premiere easier with just my mouse. I sit like a shrimp sometimes alright leave me alone
-		SendInput(KSA.playStop)
-		if this.xbuttonClick = true ;if you press xbutton2 at all while holding the Rbutton, this script will remember and begin speeding up playback once you stop moving the playhead
-			SendInput(KSA.speedUpPlayback)
-	}
 
 	/** Set class variables to the found colour */
 	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
@@ -439,21 +432,11 @@ class rbuttonPrem {
 		if this.remote = true && useRemote = true
 			SetTimer(this.__ensureSeq.Bind(this, this.origSeq, 1), -1)
 
-		if allChecks = true || (allChecks = false && this.leftClick = true) {
-			;// determines whether to resume playback & how fast to playback
-			if allChecks = true && !this.leftClick && !this.xbuttonClick {
-				this.__exit()
-			}
-			switch allChecks {
-				case true:
-					if this.leftClick
-						this.__restartPlayback()
-				case false:
-					if this.leftClick
-						SendInput("{LButton}")
-			}
-			;// resets `LButton` & `XButton2` to their original function
-			PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
+		switch {
+			case (allChecks && !this.leftClick && !this.xbuttonClick): this.__exit()
+			return
+			case (!allChecks && this.leftClick): SendInput("{LButton}")
+			case (allChecks && this.leftClick): prem.startPlayback(((this.xbuttonClick = true) ? 2 : 1))
 		}
 
 		;// cleans up

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/11/24
- * @version 2.2.75
+ * @date 2025/11/27
+ * @version 2.2.76
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -382,12 +382,36 @@ class Prem {
                     ? true : false)
     }
 
-    /** stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind */
+    /** stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind. Must be set within `KSA` */
     static stopPlayback() {
-        if !prem.__checkPremRemoteDir('stopPlayback')
+        ckDir := this.__checkPremRemoteDir(), ckStop := this.__checkPremRemoteFunc('stopPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
+        if !ckDir || !ckStop || !ckIsPlaying
 			SendInput(KSA.shuttleStop)
-		else
-			prem.__remoteFunc('stopPlayback')
+		else {
+            if !this.__remoteFunc('isPlaying', true)
+                return
+			this.__remoteFunc('stopPlayback')
+        }
+    }
+
+    /**
+     * starts playback within premiere using either `PremiereRemote` or the user's Play-Stop Toggle keybind. Must be set within `KSA`
+     * @param {Integer} [speed=1] Determine playback speed. `1` is normal, `2` is double, `0.5` is half, `-1` is backwards, etc. This parameter will only work if `PremiereRemote` is installed and used to resume playback. Otherwise normal playback will occur
+     * */
+    static startPlayback(speed := 1) {
+        ckDir := this.__checkPremRemoteDir(), ckStart := this.__checkPremRemoteFunc('startPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
+        if !ckDir || !ckStart || !ckIsPlaying {
+			delaySI(, KSA.shuttleStop, KSA.playStop)
+            return
+        }
+		else {
+            if !IsFloat(speed) && !IsInteger(speed)
+                speed := 1
+            isPlaying := this.__remoteFunc('isPlaying', true)
+            if speed == 1 && isPlaying
+                return
+			this.__remoteFunc('startPlayback',, "speed=" String(speed))
+        }
     }
 
     /**

@@ -1,0 +1,29 @@
+=== SEQUENCE PROPERTIES ===
+CTI: [object QETime] (type: object)
+audioDisplayFormat: 200 (type: number)
+audioFrameRate: 48000 (type: number)
+editingMode: 9678af98-a7b7-4bdb-b477-7ac9c8df4a4e (type: string)
+fieldType: 0 (type: number)
+guid: 69e7c5eb-017f-45f3-9d3d-556057ef2cbf (type: string)
+inPoint: [object QETime] (type: object)
+multicam: [object Object] (type: object)
+name: 2025-08-30 10-44-54 (type: string)
+numAudioTracks: 6 (type: number)
+numVideoTracks: 5 (type: number)
+outPoint: [object QETime] (type: object)
+par: 1 (type: number)
+player: [object QEPlayer] (type: object)
+presetList: Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation,Animation (type: object)
+previewPresetCodec: 1634755443 (type: number)
+previewPresetPath: EncoderPresets\SequencePreview\9678af98-a7b7-4bdb-b477-7ac9c8df4a4e\QuickTime.epr (type: string)
+useMaxBitDepth: false (type: boolean)
+useMaxRenderQuality: false (type: boolean)
+videoDisplayFormat: 108 (type: number)
+videoFrameRate: 60 (type: number)
+workInPoint: [object QETime] (type: object)
+workOutPoint: [object QETime] (type: object)
+
+=== REFLECT INFO ===
+Name: Object
+Methods: addTracks,close,deletePreviewFiles,exportDirect,exportFrameBMP,exportFrameDPX,exportFrameGIF,exportFrameJPEG,exportFramePNG,exportFrameTIFF,exportFrameTarga,exportToAME,extract,flushCache,getAudioTrackAt,getEmptyBarTimes,getExportComplete,getExportFileExtension,getGreenBarTimes,getRedBarTimes,getVideoTrackAt,getYellowBarTimes,isIncompleteBackgroundVideoEffects,isOpen,left,lockTracks,makeCurrent,muteTracks,razor,removeAudioTrack,removeEmptyAudioTracks,removeEmptyVideoTracks,removeTracks,removeVideoTrack,renderAll,renderAudio,renderPreview,setAudioDisplayFormat,setAudioFrameRate,setCTI,setInOutPoints,setInPoint,setOutPoint,setPreviewFrameSize,setPreviewPresetPath,setUseMaxBitDepth,setUseMaxRenderQuality,setVideoDisplayFormat,setVideoFrameSize,setWorkInOutPoints,setWorkInPoint,setWorkOutPoint,syncLockTracks,addEventListener,removeEventListener,dispatchEvent,toLocaleString,hasOwnProperty,propertyIsEnumerable,isPrototypeOf,toSource,unwatch,watch
+Properties: CTI,audioDisplayFormat,audioFrameRate,editingMode,fieldType,guid,inPoint,multicam,name,numAudioTracks,numVideoTracks,outPoint,par,player,presetList,previewPresetCodec,previewPresetPath,useMaxBitDepth,useMaxRenderQuality,videoDisplayFormat,videoFrameRate,workInPoint,workOutPoint,__proto__,__count__,__class__,reflect

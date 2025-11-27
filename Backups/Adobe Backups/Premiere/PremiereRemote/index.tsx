@@ -244,9 +244,10 @@ export const host = {
     Utils.stopPlayback();
   },
 
-  startPlayback: function() {
+  // @param {String} [speed=1] set playback speed (1 - normal speed, 2 - double, 1/2 half, -1 - play backwards, etc.)
+  startPlayback: function(speed?: string) {
     // this function requires premiere to be focused
-    Utils.startPlayback();
+    Utils.startPlayback(parseFloat(speed || "1"));
   },
 
   isSequence: function() {

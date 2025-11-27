@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/11/25
- * @version 2.0.30
+ * @date 2025/11/27
+ * @version 2.0.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -176,8 +176,7 @@ Class premUIA_Values {
         ;// and for whatever reason known only to the adobe devs some hotkeys no longer function globally
         ;// if they contain any modifiers, so we have to do a check here to see if the user has any in their set hotkey
         if prem.__checkPremRemoteDir('isPlaying') && prem.__checkPremRemoteFunc('stopPlayback') {
-            if prem.__remoteFunc('isPlaying', true)
-                prem.__remoteFunc('stopPlayback')
+            prem.stopPlayback()
         } else if !InStr(ksa.shuttleStop, "+") && !InStr(ksa.shuttleStop, "^") && !InStr(ksa.shuttleStop, "!") && !InStr(ksa.shuttleStop, "Ctrl") && !InStr(ksa.shuttleStop, "Shift") && !InStr(ksa.shuttleStop, "Alt") {
             SendInput(ksa.shuttleStop)
         } else {

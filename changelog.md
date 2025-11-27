@@ -17,14 +17,12 @@
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
-- ✅ Fixed `anchorToPosition()` not working correctly in versions `25.4` and greater
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
 - ✏️ Added `stopPlayback()`
+- ✏️ Added `startPlayback()`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
-- 📋 `anchorToPosition()` now accepts parameter `ae` to determine if you're calling the function from After Effects or Premiere. Defaults to `false`
-    - ✅ Fixes incorrect tabbing logic inside of After Effects
 - 📋 `dragSourceMon()` now accepts parameter `searchForFile` to determine if the function will attempt to search for the desired file if it isn't already in the source monitor
 
 📍 `gain()`
@@ -44,6 +42,11 @@
 📍 `__remoteFunc()`
 - 📋 Will now attempt to replace any `A_Space` in `params*` with `%20`
 - 📋 Will now warn the user if `PremiereRemote` is not installed or the requested function does not exist in the user's `index.tsx`
+
+📍 `anchorToPosition()`
+- ✅ Fixed function not working correctly in versions `25.4` and greater
+- 📋 Now accepts parameter `ae` to determine if you're calling the function from After Effects or Premiere. Defaults to `false`
+    - ✅ Fixes incorrect tabbing logic inside of After Effects
 
 ### 📝 `premUIA_Values {`
 📍 `__setNewVal()`
@@ -122,6 +125,7 @@
 > I am currently aware of a bug with `autosave.ahk` causing its memory usage to slowly climb. While I am not currently aware of the cause, it is actively being investigated and a fix should hopefully be implemented by the next release. You can track the status of this bug [here](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=134206373>)
 - ✅ Fixed double saving if the user saves during the `idle` notifications
 - ✅ Fixed inputs getting stuck blocked in certain circumstances
+- ✅ Fixed `After Effects` getting stuck transparent when saved in the background
 - ✅ Fixed `After Effects` never saving in certain circumstances where `__checkDialogueClass()` always returned `false`
 - ✅ Fixed `After Effects` being send to the bottom of the window stack if `Mocha` is open
 - 📋 `Notify` windows will now be destroyed if the user manually saves during a save attempt

@@ -354,9 +354,9 @@ export class Utils {
       seq.player.stop();
     }
 
-    static startPlayback() {
+    static startPlayback(speed: number) {
       var seq = qe.project.getActiveSequence();
-      seq.player.play();
+      seq.player.play(speed);
     }
 
     static isSequence() {

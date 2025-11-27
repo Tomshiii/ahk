@@ -1,0 +1,18 @@
+=== QE PROPERTIES ===
+audioChannelMapping: 0 (type: number)
+codeProfiler: null (type: object)
+config: Release (type: string)
+ea: [object QEEA] (type: object)
+language: en_US (type: string)
+location: C:\Program Files\Adobe\Adobe Premiere Pro 2025\Adobe Premiere Pro.exe (type: string)
+name: Premiere Pro (type: string)
+platform: Windows (type: string)
+project: [object QEProject] (type: object)
+source: [object Object] (type: object)
+tqm: [object QECloudDispatcher] (type: object)
+version: 25.6.2 (type: string)
+
+=== REFLECT INFO ===
+Name: QEApplication
+Methods: beginDroppedFrameLogging,disablePerformanceLogging,enablePerformanceLogging,enablePlayStats,endDroppedFrameLogging,executeConsoleCommand,exit,getDebugDatabaseEntry,getDroppedFrames,getModalWindowID,getProgressContainerJSON,getSequencePresets,isFeatureEnabled,isPerformanceLoggingEnabled,localize,newProject,open,outputToConsole,resetProject,setAudioChannelMapping,setDebugDatabaseEntry,startPlayback,stop,stopPlayback,wait,write,addEventListener,removeEventListener,dispatchEvent
+Properties: audioChannelMapping,codeProfiler,config,ea,language,location,name,platform,project,source,tqm,version,__proto__
