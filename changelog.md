@@ -20,8 +20,10 @@
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
+- 📋 `save()` will now abort early if `Premiere` fails to retrieve the originally active sequence
 - ✏️ Added `stopPlayback()`
 - ✏️ Added `startPlayback()`
+- ✏️ Added `toggleLinearColour()`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
 - 📋 `dragSourceMon()` now accepts parameter `searchForFile` to determine if the function will attempt to search for the desired file if it isn't already in the source monitor
 
@@ -119,6 +121,7 @@
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
 - ✏️ Added [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>)
+- ❌ Removed `toggleLinearColour.ahk`
 
 🔗 `autosave.ahk`
 > [!Warning]
@@ -145,6 +148,11 @@
 - ✏️ Added `searchForBinWithName()`
 - ✏️ Added `searchForItemByName()`
 - ❌ Removed `setBarsAndTone()`
+- 📋 `saveProj()` now properly returns whether it suceeded or failed
+
+📍 `toggleLinearColour()`
+- ✅ Fixed function causing `Premiere` to crash if sequence settings are reopened after toggling
+- 📋 Now accepts parameter `enableMaxRenderQual`
 
 🔗 `mult-dl.ahk`
 ###### *(v1.2.3 -> v1.2.9)*

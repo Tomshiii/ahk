@@ -29,7 +29,7 @@ export const host = {
   },
 
   saveProj: function () {
-    app.project.save();
+    return !!app.project.save();
   },
 
   getActiveSequence: function() {
@@ -128,8 +128,8 @@ export const host = {
     return Utils.isSelected();
   },
 
-  toggleLinearColour: function() {
-    Utils.toggleLinearColour();
+  toggleLinearColour: function(enableMaxRenderQual: boolean) {
+    return Utils.toggleLinearColour(enableMaxRenderQual);
   },
 
   toggleEnabled: function() {

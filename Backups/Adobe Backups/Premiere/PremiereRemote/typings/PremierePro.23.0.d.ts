@@ -1058,7 +1058,7 @@ declare class ProjectManager {
 	/**
 	 *
 	 */
-	save(): void
+	save(): any
 
 	/**
 	 *

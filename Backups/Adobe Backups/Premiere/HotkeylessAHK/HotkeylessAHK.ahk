@@ -35,9 +35,10 @@ RunClient(serverPort, functionClassNames)
 ; The function name "kill" is reserved.
 
 Class CustomFunctions {
-    changeLabel(label)       => (prem.changeLabel(label))
-    changeDupe(toggleHotkey) => (prem.changeDupeFrameMarkers(toggleHotkey))
-    organiseProj()           => (prem.__remoteFunc('organiseProj'))
-    setMarker(colour)        => (prem.__remoteFunc('setMarker',, "colour=" colour))
-    moveToAssetBin(folder)   => (prem.__remoteFunc('moveToAssetsBin',, 'folder=' folder))
+    changeLabel(label)                      => (prem.changeLabel(label))
+    changeDupe(toggleHotkey)                => (prem.changeDupeFrameMarkers(toggleHotkey))
+    organiseProj()                          => (prem.__remoteFunc('organiseProj'))
+    setMarker(colour)                       => (prem.__remoteFunc('setMarker',, "colour=" colour))
+    moveToAssetBin(folder)                  => (prem.__remoteFunc('moveToAssetsBin',, 'folder=' folder))
+    toggleLinearColour(enableMaxRenderQual) => (prem.toggleLinearColour(true))
 }

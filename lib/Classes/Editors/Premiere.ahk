@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/11/27
- * @version 2.2.77
+ * @date 2025/11/28
+ * @version 2.2.78
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -518,7 +518,8 @@ class Prem {
             ;// prem may have crashed
             return false
         }
-        if continueOnBusy = false && ((procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (procClass != "Premiere Pro" && procClass != "Premiere Pro (Beta)")) || this.isEditTabActive() = false
+        editTab := this.isEditTabActive()
+        if continueOnBusy = false && ((procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (procClass != "Premiere Pro" && procClass != "Premiere Pro (Beta)")) || editTab = false
             return "busy"
         if !this.__checkPremRemoteDir("saveProj")
             return false
@@ -526,7 +527,7 @@ class Prem {
         if !actSequence || !focusSequence
             return "noseq"
         origSeq := this.__remoteFunc("getActiveSequence", true)
-        if !this.__remoteFunc("saveProj")
+        if !this.__remoteFunc("saveProj", true)
             return false
 
         if !andWait
@@ -538,6 +539,10 @@ class Prem {
         if !WinWaitClose("Save Project",, 3)
             return "timeout"
 
+        if origSeq = "" {
+            errorLog(Error("Premiere failed to retrieve the originally active sequence before saving. Aborting"))
+            return true
+        }
         sleep checkSeqTime
         loop checkAmount {
             currentSeq := this.__remoteFunc("getActiveSequence", true)
@@ -3295,6 +3300,26 @@ class Prem {
         if !this.__remoteFunc('isSelected', true)
             return
         SendInput(labelHotkey)
+    }
+
+    /**
+     * toggles the `Composite in Linear Color` option within the active sequence's settings, and optionally the `Maximum Render Quality` setting.
+     * @param {Boolean} [enableMaxRenderQual=true] whether `Maximum Render Quality` will be enabled when `Linear Color` is set to `true`. Note: this function is not tracking the previous setting and will not return it if you toggle `Linear Color` again
+     *
+     * #### This function requires `PremiereRemote`
+     */
+    static toggleLinearColour(enableMaxRenderQual := true) {
+        if !this.__checkPremRemoteDir('toggleLinearColour')
+            return
+        if enableMaxRenderQual != true && enableMaxRenderQual != false
+            enableMaxRenderQual := true
+        toggle := this.__remoteFunc('toggleLinearColour', true, "enableMaxRenderQual=" enableMaxRenderQual)
+        switch toggle {
+            case "failure": Notify.Show(, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red')
+            default:
+                state := (toggle = true) ? "Enabled" : "Disabled"
+                Notify.Show(, 'Toggling Linear Colour successful.`nNew setting: ' state,,,, 'dur=4 bc=Black bdr=Aqua')
+        }
     }
 
     /**

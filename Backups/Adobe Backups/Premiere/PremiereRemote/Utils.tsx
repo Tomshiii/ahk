@@ -68,12 +68,15 @@ export class Utils {
       currentSequence.setPlayerPosition(String(newPlayhead));
     }
 
-    static toggleLinearColour() {
+    static toggleLinearColour(enableMaxRenderQual: boolean) {
       const currentSequence = app.project.activeSequence;
       var currSettings = currentSequence.getSettings();
       currSettings.compositeLinearColor = !currSettings.compositeLinearColor;
+      if(currSettings.compositeLinearColor == true && enableMaxRenderQual == true) {
+        currSettings.maximumRenderQuality = true
+      }
       var setNewVal = currentSequence.setSettings(currSettings);
-      if(setNewVal = false)
+      if(setNewVal == false)
         return "failure"
       return currSettings.compositeLinearColor
     }
