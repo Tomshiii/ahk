@@ -72,6 +72,8 @@
 - ✅ Fixed all instances of `Title()` causing scripts to throw
 - ✏️ Added `Regex()` functions to cut repeat code
     - `TitleRegex()`, `ClassRegex()`, `ActiveRegex()`, `ActivateRegex()`, `CloseRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ProcessNameRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`
+- 📋 Renamed `ID()` => `PID()`
+    - ❗Now returns the `PID` instead of the `ProcessName`
 
 ### 📝 `explorer {`
 - ❗ Added class `explorer {`
@@ -133,6 +135,7 @@
 - ✅ Fixed `After Effects` being send to the bottom of the window stack if `Mocha` is open
 - 📋 `Notify` windows will now be destroyed if the user manually saves during a save attempt
 - 📋 Will now check for and halt if `excalibur` window is open
+- 📋 Will now use `CEP` to save `After Effects` instead of needing keystrokes
 - 📋 Can now use `PremiereRemote` to determine & restart playback removing the need for `ImageSearch`
 
 🔗 `PremiereRemote`

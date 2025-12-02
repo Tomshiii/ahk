@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/11/26
- * @version 2.1.57
+ * @date 2025/12/01
+ * @version 2.1.58
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -75,6 +75,7 @@ class adobeAutoSave extends count {
             this.alwaysSave      := this.UserSettings.autosave_always_save
             this.restartPlayback := this.UserSettings.autosave_restart_playback
             this.mainScript      := this.UserSettings.MainScriptName
+            ; this.aeSaveBG        := this.UserSettings.ae_save_bg
             this.UserSettings    := ""
         }
 
@@ -112,11 +113,13 @@ class adobeAutoSave extends count {
     mainScript    := "My Scripts"
     restartPlayback := false
     premRemoteSave := true
+    aeSaveBG      := true
 
     rClickPrem    := ""
     rClickMove    := ""
     movePlayhead  := InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}") ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{")
                                                                                           : ksa.playheadtoCursor
+    saveAttemptNotify := false
 
     programMonX1  := false,  programMonX2 := false
     programMonY1  := false,  programMonY2 := false
@@ -136,16 +139,8 @@ class adobeAutoSave extends count {
             this.__reactivateWindow()
 
         ;// finish up
-        if this.aeExist = true {
-            try aeTrans := WinGetTransColor(editors.AE.winTitle)
-            catch {
-                this.__reset()
-                block.Off()
-                return
-            }
-            if IsInteger(aeTrans) && aeTrans != 255
-                this.__resetAETrans()
-        }
+        if this.aeExist = true
+            this.__resetAETrans()
         this.__reset()
         block.Off()
     }
@@ -237,8 +232,8 @@ class adobeAutoSave extends count {
 
     /** determine whether premiere/ae is open */
     __checkforEditors() {
-        this.premExist := WinExist(prem.winTitle) ? true : false
-        this.aeExist   := WinExist(AE.winTitle)   ? true : false
+        this.premExist := WinGet.ExistRegex(prem.winTitle) ? true : false
+        this.aeExist   := WinGet.ExistRegex(AE.winTitle)   ? true : false
     }
 
     /** handles retrieving the users current sound device, then playing a beep at 50% of its current volume then returning sound back to normal. */
@@ -340,7 +335,7 @@ class adobeAutoSave extends count {
     /** @returns {Boolean} true/false on whether it can grab the active window */
     __getOrigWindow() {
         try{
-            this.origWindow := winget.ID()
+            this.origWindow := WinGet.ProcessNameRegex()
             return true
         } catch {
             errorLog(TargetError("Unable to determine the active window"),, 1)
@@ -437,16 +432,16 @@ class adobeAutoSave extends count {
     /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
     __reactivateWindow() {
         try {
-            checkActive := WinGet.ID()
+            checkActive := WinGet.ProcessNameRegex()
             if this.origWindow = checkActive && this.userPlayback = false
                 return
             switch this.origWindow {
-                case "ahk_class CabinetWClass": WinActivate("ahk_class CabinetWClass")
-                case "Adobe After Effects.exe", "Adobe After Effects (Beta).exe": switchTo.AE()
+                case "CabinetWClass": WinActivate("CabinetWClass")
+                case "AfterFX.exe", "AfterFX (Beta).exe": switchTo.AE()
                 case "Adobe Premiere Pro.exe", "Adobe Premiere Pro (Beta).exe":
-                    if this.restartPlayback = false && this.userPlayback = false && this.premRemoteSave = true && !WinActive(this.origWindow)
+                    if this.restartPlayback = false && this.userPlayback = false && this.premRemoteSave = true && !WinActive("ahk_exe " this.origWindow)
                         return
-                    if !WinActive(this.origWindow)
+                    if !WinActive("ahk_exe " this.origWindow)
                         switchTo.Premiere()
                     if this.restartPlayback = false || this.userPlayback = false
                         return
@@ -548,7 +543,8 @@ class adobeAutoSave extends count {
         }
 
         ;// this should cover occurrences where another window is open within premiere
-        if (currentProg := WinGet.ID() = prem.winTitle && ((name := WinGetTitle("A")) != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
+        currentProg := WinGet.ProcessNameRegex()
+        if ("ahk_exe " currentProg = prem.winTitle && ((name := WinGetTitle("A")) != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1))
             Notify.Show(, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc tag=premBusier')
             return
@@ -572,6 +568,7 @@ class adobeAutoSave extends count {
             this.__checkPremPlayback()
 
         Notify.Show(, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75 tag=premSaveAttempt')
+        this.saveAttemptNotify := true
         ; tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
 
         ;// attempts to save using `PremiereRemote`
@@ -660,6 +657,9 @@ class adobeAutoSave extends count {
         if this.idleAttempt = false
             return
 
+        if this.saveAttemptNotify = false && !Notify.Exist("premSaveAttempt")
+            Notify.Show(, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75 tag=premSaveAttempt')
+
         block.On()
         checkStuck()
         saveAsTitle := "Save As " editors.AE.winTitle
@@ -667,17 +667,15 @@ class adobeAutoSave extends count {
 
         ;// if AE is the active window, a normal save will be fine
         if this.origWindow = WinGetProcessName(editors.AE.winTitle) {
-            SendEvent("^s")
+            AE.save()
             if !WinWait("Save Project " editors.AE.winTitle,, 3) {
                 this.__stopSaveAsWinEvent(saveAsTitle)
                 block.Off()
+                errorLog(TimeoutError("Failed to wait for AE save window to appear"))
                 return
             }
             this.__stopSaveAsWinEvent(saveAsTitle)
-            if !WinWaitClose("Save Project " editors.AE.winTitle,, 3) {
-                block.Off()
-                return
-            }
+            WinWaitClose("Save Project " editors.AE.winTitle,, 3)
             block.Off()
             sleep 200
             return
@@ -687,34 +685,57 @@ class adobeAutoSave extends count {
         ;// so we have to work around that
         try {
             checkStuck()
-            WinSetTransparent(0, editors.AE.winTitle)
-            ;// attempt to send save
-            if GetKeyState("Shift") || GetKeyState("Shift", "P")
-                SendInput("{Shift Up}")
+            if this.aeSaveBG = true
+                WinSetTransparent(0, editors.AE.winTitle)
             ;// if the user manually saves inbetween grabbing the title and this timer attempting to save
             ;// this part will throw if it's not inside a try block
-            ControlSend("{Ctrl Down}s{Ctrl Up}",, this.aeWindow.winTitle)
+            AE.save()
         } catch {
             block.Off()
+            this.__stopSaveAsWinEvent(saveAsTitle)
             this.__resetAETrans()
             return
         }
         ;// ae isn't the active window here anyway so we should return inputs to the user
         block.Off()
 
-        if !WinWaitClose("Save Project " editors.AE.winTitle,, 3) {
-            this.__stopSaveAsWinEvent(saveAsTitle)
-            this.__resetAETrans()
-            return
+        WinWaitClose("Save Project " editors.AE.winTitle,, 3)
+        if this.aeSaveBG = true {
+            try {
+                ;// only move ae to the bottom if mocha is NOT open
+                if !WinExist("ahk_exe mocha4ae_adobe.exe")
+                    WinMoveBottom(editors.AE.winTitle)
+            }
         }
         this.__stopSaveAsWinEvent(saveAsTitle)
         this.__resetAETrans()
     }
 
+    /** determines ae's placement in the current window stack */
+    /* __determineAEWinPlacement() {
+        ;// I'd like to use this at some point to make moving ae to the bottom of the window stack smarter
+        ;// but it's just really hard bc there are too many variables at play
+        Critical(), orig := detect(false, "RegEx")
+        list := WinGetList()
+        arrDel := 0
+        for v in list {
+            if WinGet.explorerIgnoreMap.Has(WinGetClass(v)) || WinGetTitle(v) = "" {
+                arrDel++
+                continue
+            }
+            if WinGetTitle(v) = WinGetTitle(editors.AE.winTitle) {
+                Critical("Off"), orig := resetOrigDetect(orig)
+                return (A_Index-arrDel)
+            }
+        }
+        Critical("Off"), orig := resetOrigDetect(orig)
+        return false
+    } */
+
     /** start a winevent hook to cancel the "Save As" window if it appears */
     __startSaveAsWinEvent(saveAsTitle) {
         if !WinEvent.IsRegistered('Exist', saveAsTitle)
-            try WinEvent.Exist((*) => ControlSend("{Esc}",, saveAsTitle), saveAsTitle)
+            try WinEvent.Exist(((*) => ControlSend("{Esc}",, saveAsTitle)), saveAsTitle)
     }
 
     /** stop the winevent hook to cancel the "Save As" window */
@@ -740,9 +761,8 @@ class adobeAutoSave extends count {
         try {
             Critical()
             WinWaitClose("Save Project " editors.AE.winTitle) ;// this is necessary, you can't reset transparency of the main window if the save window is open
-            if !WinExist("ahk_exe mocha4ae_adobe.exe")
-                WinMoveBottom(editors.AE.winTitle)
-            WinSetTransparent("Off", editors.AE.winTitle)
+            sleep 100
+            WinSetTransparent(255, editors.AE.winTitle)
             Critical("Off")
         } catch {
             errorLog(Error("Failed to reset transparency", -1),, true)

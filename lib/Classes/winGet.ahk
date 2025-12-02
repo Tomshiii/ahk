@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2025/11/24
- * @version 1.6.2.1
+ * @date 2025/12/02
+ * @version 1.6.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -399,8 +399,8 @@ class WinGet {
         return this.regexFunc("ProcessName", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
     }
     /** A wrapper function for `WinGetList()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
-    static ListRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
-        return this.regexFunc("List", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    static ListRegex(WinTitle?, WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("List", WinTitle?, WinText, ExcludeTitle, ExcludeText, dctHidWin)
     }
     /** A wrapper function for `WinWaitClose()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
     static WaitCloseRegex(WinTitle := "A", WinText:="", Timeout := 0, ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
@@ -411,7 +411,7 @@ class WinGet {
         return this.regexFunc("Wait", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin, Timeout)
     }
 
-    static regexFunc(func, WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false, Timeout := 0) {
+    static regexFunc(func, WinTitle?, WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false, Timeout := 0) {
         Critical(), orig := detect(dctHidWin, "RegEx")
         try {
             switch func {
@@ -431,7 +431,7 @@ class WinGet {
                     WinClose(WinTitle, WinText, Timeout, ExcludeTitle, ExcludeText)
                     return true
                 case "Wait": returnVal         := WinWait(WinTitle, WinText, Timeout, ExcludeTitle, ExcludeText)
-            }
+             }
         } catch {
             resetOrigDetect(orig), Critical("Off")
             return false
@@ -442,17 +442,12 @@ class WinGet {
 
     /**
      * This function will grab the proccess ID of the current active window
-     * @param {VarRef} id is the processname of the active window, we want to pass this value back to the script
-     * @returns {String} returns the processname of the active window
+     * @returns {Integer} Returns PID of the desired window
      */
-    static ID(&id?)
+    static PID(winTitle := "A", winText?, excludeTitle?, excludeText?)
     {
         try {
-            id := WinGetProcessName("A")
-
-            if this.ActiveRegex("ahk_exe explorer.exe",, this.ignoreExplorerRegex)
-                id := "ahk_class CabinetWClass"
-            return id
+            return WinGetPID(winTitle, winText, excludeText, excludeText)
         } catch {
             errorLog(TargetError("Couldn't grab information about the active window", -1))
             return false

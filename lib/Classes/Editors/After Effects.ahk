@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 25.6.2
  * @author tomshi
- * @date 2025/11/21
- * @version 1.2.8
+ * @date 2025/12/02
+ * @version 1.2.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include <Classes\tool>
 #Include <Classes\keys>
 #Include <Classes\obj>
+#Include <Classes\cmd>
 #Include <Classes\errorLog>
 #Include <Functions\delaySI>
 ; }
@@ -26,6 +27,7 @@ class AE {
     static __New() {
         UserSettings := UserPref()
         this.currentSetVer := SubStr(UserSettings.aeVer, 2)
+        this.currentYearVer := SubStr(UserSettings.aeVer, 2, 2)
         UserSettings.__delAll()
         UserSettings := ""
 
@@ -44,6 +46,15 @@ class AE {
 
     static focusColour := 0x2D8CEB
     static currentSetVer := ""
+    static currentYearVer := ""
+
+    /** saves ae using CEP. Require's the correct year version to be set within `settingsGUI()` */
+    static save() {
+        aeLoc := Format("{}\Adobe\Adobe After Effects 20{}\Support Files\AfterFX.exe", EnvGet("ProgramFiles"), this.currentYearVer)
+        func := "app.project.save()"
+        command := '""{}" -noui -s "{}""'
+        cmd.run(,,, Format(command, aeLoc, func),, "Hide")
+    }
 
     /**
      * This function is to quickly begin keyframing the scale & position values.
