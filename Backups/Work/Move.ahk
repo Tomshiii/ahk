@@ -35,6 +35,12 @@ class Move {
             ;// throw
             errorLog(ValueError("Incorrect hotkey has been used for function.`nDouble check KSA values.", -1),,, 1)
         }
+        ignore := [prem.exeTitle]
+        for v in ignore {
+            GroupAdd("ignore", v)
+        }
+        if WinActive("ahk_group ignore")
+            return
         if WinActive("ahk_class CabinetWClass") ;this if statement is to check whether windows explorer is active to ensure proper right click functionality is kept
             {
                 if A_ThisHotkey = "RButton"
