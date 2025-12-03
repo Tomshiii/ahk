@@ -127,7 +127,7 @@
 
 🔗 `autosave.ahk`
 > [!Warning]
-> I am currently aware of a bug with `autosave.ahk` causing its memory usage to slowly climb. While I am not currently aware of the cause, it is actively being investigated and a fix should hopefully be implemented by the next release. You can track the status of this bug [here](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=134206373>)
+> I am aware of a bug with `autosave.ahk` causing its memory usage to slowly climb. While I am not currently sure of the cause, it is actively being investigated and a fix should hopefully be implemented by the next release. You can track the status of this bug [here](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=134206373>)
 - ✅ Fixed double saving if the user saves during the `idle` notifications
 - ✅ Fixed inputs getting stuck blocked in certain circumstances
 - ✅ Fixed `After Effects` getting stuck transparent when saved in the background
