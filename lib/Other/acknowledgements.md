@@ -56,3 +56,7 @@
 <ins>lexikos</ins> & <ins>Descolada</ins>  
 `ObjRegisterActive.ahk` => : https://www.autohotkey.com/boards/viewtopic.php?f=6&t=6148&sid=79f2a3736ebcc2c9b88842b5a5145d27&start=40  
 > LICENSE: N/A - Freely provided in a forum post
+
+<ins>Nagendra</ins>  
+`CreateGUID.ahk` => : https://www.autohotkey.com/boards/viewtopic.php?f=6&t=38822
+> LICENSE: N/A - Freely provided in a forum post
