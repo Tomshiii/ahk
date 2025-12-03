@@ -4,7 +4,7 @@
 
 title := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
 ignore := browser.vscode.winTitle "|" A_ScriptName
-exists := WinGet.ExistRegex(title,, ignore)
+exists := WinGet.ExistRegex(title,, ignore,, true)
 if exists = false
     return
 if WinGet.CountRegex(title,, ignore) <= 1 {

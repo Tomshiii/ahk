@@ -1,12 +1,7 @@
 ; { \\ #Includes
 #Include <Classes\winget>
 #Include <Classes\Move>
-#Include <Functions\pauseYT>
 ; }
-
-;pauseyoutubeHotkey;
-Media_Play_Pause::pauseYT() ;pauses youtube video if there is one.
-
 
 ;the below disables the numpad on youtube so you don't accidentally skip around a video
 ;numpadytHotkey;

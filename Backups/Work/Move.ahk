@@ -243,7 +243,7 @@ class Move {
         winget.Title(&title)
         if !title
             return
-        monitor := WinGet.WinMonitor(title) ;now we run the above function we created
+        monitor := WinGet.WinMonitor(title) ;now we run the above function we created.
         if !monitor || !IsObject(monitor)
             return
         if win = "" || win != title ;if our win variable doesn't have a title yet, or if it doesn't match the active window we run this code block to reset values

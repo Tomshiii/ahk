@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.27
+;\\v2.34.28
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -44,7 +44,6 @@
 #Include <Functions\refreshWin>
 #Include <Functions\getHotkeys>
 #Include <Functions\alwaysOnTop>
-#Include <Functions\pauseYT>
 #Include <Functions\delaySI>
 #Include <Functions\isDoubleClick>
 #Include <Functions\multiKeyPress>
