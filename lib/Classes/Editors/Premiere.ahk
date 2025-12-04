@@ -5,7 +5,7 @@
  * @premVer 25.6.2
  * @author tomshi
  * @date 2025/12/04
- * @version 2.2.79
+ * @version 2.2.80
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -419,22 +419,36 @@ class Prem {
     }
 
     /**
-     * starts playback within premiere using either `PremiereRemote` or the user's Play-Stop Toggle keybind. Must be set within `KSA`
-     * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps). *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
+     * uses the user's `KSA.playStop` hotkey to start playback
+     *
+     *  ~starts playback within premiere using either `PremiereRemote` or the user's Play-Stop Toggle keybind. Must be set within `KSA`~ *(read comments in function for why this functionality has been disabled)*
+     *
+     * ~@param {Integer} [speed=1] Determine playback speed. `1` is normal, `2` is double, `0.5` is half, `-1` is backwards, etc. This parameter will only work if `PremiereRemote` is installed and used to resume playback. Otherwise normal playback will occur. *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*~
      * */
-    static startPlayback(checkIsPlaying := false) {
-        ckDir := this.__checkPremRemoteDir(), ckStart := this.__checkPremRemoteFunc('startPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
+    static startPlayback() {
+        delaySI(, KSA.shuttleStop, KSA.playStop)
+
+        ;// unfortunately prem is kinda really dumb and the normal player & the multicam player are two completely separate things
+        ;// which means you can start/stop one, but they aren't the same - so if you try to call the startPlayback commands for both
+        ;// it'll inevitably stop playback for the other. And since there's no real way to programmatically determine if the multicam view
+        ;// is active, we can't determine which to use so we're left using keyboard shortcuts
+        ;// even `qe.startPlayback();` acts as a play/stop toggle...
+
+        /* ckDir := this.__checkPremRemoteDir(), ckStart := this.__checkPremRemoteFunc('startPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
         if !ckDir || !ckStart || !ckIsPlaying {
 			delaySI(, KSA.shuttleStop, KSA.playStop)
             return
         }
+        if !IsFloat(speed) && !IsInteger(speed)
+            speed := 1
         if !checkIsPlaying {
-            this.__remoteFunc('startPlayback')
+            this.__remoteFunc('startPlayback',, "speed=" String(speed))
             return
         }
-        if this.__remoteFunc('isPlaying', true)
+        isPlaying := this.__remoteFunc('isPlaying', true)
+        if speed == 1 && isPlaying
             return
-        this.__remoteFunc('startPlayback')
+        this.__remoteFunc('startPlayback',, "speed=" String(speed)) */
     }
 
     /**
