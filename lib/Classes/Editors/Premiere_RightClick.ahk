@@ -5,7 +5,7 @@
  * @premVer 25.6.2
  * @author tomshi, taranVH
  * @date 2025/12/04
- * @version 2.3.26
+ * @version 2.3.27
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -436,11 +436,14 @@ class rbuttonPrem {
 			case (allChecks && !this.leftClick && !this.xbuttonClick): this.__exit()
 			return
 			case (!allChecks && this.leftClick): SendInput("{LButton}")
-			case (allChecks && this.leftClick): prem.startPlayback(1)
+			case (allChecks && this.leftClick): prem.startPlayback()
 			case (allChecks && this.xbuttonClick):
-				prem.startPlayback(1)
+				prem.startPlayback()
 				SendInput(KSA.speedUpPlayback)
 				;// unfortunately need to do it this way bc there's no way to set playback speed while multicam is active...
+				;// prem only lets you set playback speed when you call `qe.project.getActiveSequence().player.play(speed)`
+				;// but then you can't play the multicam player... so we need to use `qe.startPlayback()` instead
+				;// which unfortunately takes no params
 		}
 
 		;// cleans up

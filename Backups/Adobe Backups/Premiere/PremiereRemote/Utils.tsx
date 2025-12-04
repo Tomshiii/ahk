@@ -355,20 +355,6 @@ export class Utils {
       return isPlaying
     }
 
-    static stopPlayback() {
-      var seq = qe.project.getActiveSequence();
-      seq.player.stop();
-
-      // for some reason this acts as a play/stop toggle...
-      // seq.multicam.stop();
-    }
-
-    static startPlayback(speed: number) {
-      var seq = qe.project.getActiveSequence();
-      seq.player.play(speed);
-      seq.multicam.play();
-    }
-
     static isSequence() {
       var selection = app.project.activeSequence.getSelection();
       if (selection[0].mediaType != "Video")

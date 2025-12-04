@@ -383,8 +383,9 @@ class Prem {
     }
 
     /**
-     * uses the user's KSA.shuttlestop hotkey to stop playback
-     * ~stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind. Must be set within `KSA`~ (read comments in function for why this functionality has been disabled)
+     * uses the user's `KSA.shuttlestop` hotkey to stop playback
+     *
+     * ~stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind. Must be set within `KSA`~ *(read comments in function for why this functionality has been disabled)*
      * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps). *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
      * */
     static stopPlayback(checkIsPlaying := false) {
@@ -419,25 +420,21 @@ class Prem {
 
     /**
      * starts playback within premiere using either `PremiereRemote` or the user's Play-Stop Toggle keybind. Must be set within `KSA`
-     * @param {Integer} [speed=1] Determine playback speed. `1` is normal, `2` is double, `0.5` is half, `-1` is backwards, etc. This parameter will only work if `PremiereRemote` is installed and used to resume playback. Otherwise normal playback will occur. *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
      * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps). *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
      * */
-    static startPlayback(speed := 1, checkIsPlaying := false) {
+    static startPlayback(checkIsPlaying := false) {
         ckDir := this.__checkPremRemoteDir(), ckStart := this.__checkPremRemoteFunc('startPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
         if !ckDir || !ckStart || !ckIsPlaying {
 			delaySI(, KSA.shuttleStop, KSA.playStop)
             return
         }
-        if !IsFloat(speed) && !IsInteger(speed)
-            speed := 1
         if !checkIsPlaying {
-            this.__remoteFunc('startPlayback',, "speed=" String(speed))
+            this.__remoteFunc('startPlayback')
             return
         }
-        isPlaying := this.__remoteFunc('isPlaying', true)
-        if speed == 1 && isPlaying
+        if this.__remoteFunc('isPlaying', true)
             return
-        this.__remoteFunc('startPlayback',, "speed=" String(speed))
+        this.__remoteFunc('startPlayback')
     }
 
     /**
