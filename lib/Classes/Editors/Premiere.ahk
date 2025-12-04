@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/11/28
- * @version 2.2.78
+ * @date 2025/12/04
+ * @version 2.2.79
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -383,10 +383,26 @@ class Prem {
     }
 
     /**
-     * stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind. Must be set within `KSA`
-     * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps)
+     * uses the user's KSA.shuttlestop hotkey to stop playback
+     * ~stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind. Must be set within `KSA`~ (read comments in function for why this functionality has been disabled)
+     * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps). *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
      * */
     static stopPlayback(checkIsPlaying := false) {
+        ckDir := this.__checkPremRemoteDir('isPlaying')
+        if !ckDir || !checkIsPlaying {
+            SendInput(KSA.shuttleStop)
+            return
+        }
+        if !this.__remoteFunc('isPlaying', true)
+            return
+        SendInput(KSA.shuttleStop)
+
+        /*
+        ;// unfortunately there's no way to track the state of the multicam monitor
+        ;// which means there's no real way to ensure we "stop" playback when the multicam monitor is active
+        ;// because calling qe.project.getActiveSequence().multicam.stop(); actually just acts as a `play/stop` toggle
+        :(
+
         ckDir := this.__checkPremRemoteDir(), ckStop := this.__checkPremRemoteFunc('stopPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
         if !ckDir || !ckStop || !ckIsPlaying {
 			SendInput(KSA.shuttleStop)
@@ -398,13 +414,13 @@ class Prem {
         }
         if !this.__remoteFunc('isPlaying', true)
             return
-        this.__remoteFunc('stopPlayback')
+        this.__remoteFunc('stopPlayback') */
     }
 
     /**
      * starts playback within premiere using either `PremiereRemote` or the user's Play-Stop Toggle keybind. Must be set within `KSA`
-     * @param {Integer} [speed=1] Determine playback speed. `1` is normal, `2` is double, `0.5` is half, `-1` is backwards, etc. This parameter will only work if `PremiereRemote` is installed and used to resume playback. Otherwise normal playback will occur
-     * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps)
+     * @param {Integer} [speed=1] Determine playback speed. `1` is normal, `2` is double, `0.5` is half, `-1` is backwards, etc. This parameter will only work if `PremiereRemote` is installed and used to resume playback. Otherwise normal playback will occur. *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
+     * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps). *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
      * */
     static startPlayback(speed := 1, checkIsPlaying := false) {
         ckDir := this.__checkPremRemoteDir(), ckStart := this.__checkPremRemoteFunc('startPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')

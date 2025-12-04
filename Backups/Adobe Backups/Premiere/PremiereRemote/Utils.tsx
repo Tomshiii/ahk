@@ -296,10 +296,13 @@ export class Utils {
                 case "Videos":
                 case "06_Videos":
                   var videoFolder = assetFolder.children[j];
+                  break;
               }
             }
+            break;
           case "_linked comps & renders":
             var linkedCompsFolder = app.project.rootItem.children[i]
+            break;
         }
       }
 
@@ -355,11 +358,15 @@ export class Utils {
     static stopPlayback() {
       var seq = qe.project.getActiveSequence();
       seq.player.stop();
+
+      // for some reason this acts as a play/stop toggle...
+      // seq.multicam.stop();
     }
 
     static startPlayback(speed: number) {
       var seq = qe.project.getActiveSequence();
       seq.player.play(speed);
+      seq.multicam.play();
     }
 
     static isSequence() {
@@ -376,7 +383,7 @@ export class Utils {
     static checkObjParams() {
       try {
         var seq = qe.project.getActiveSequence();
-        const player = seq.player;
+        const player = seq.multicam;
         // const player = seq.source;
         // const player = qe;
 
@@ -409,6 +416,141 @@ export class Utils {
         alert("Info written to Desktop/player_info.txt");
       } catch(e) {
           alert("Error: " + e.toString());
+      }
+    }
+
+    static checkFuncParams(inspectPath: string) {
+      try {
+
+        // var inspectPath = "qe.project.getActiveSequence().multicam.play";
+        // Examples:
+        // "qe.project.getActiveSequence().multicam.play"
+        // "qe.project.getActiveSequence().getVideoTrackAt"
+        // "qe.project.getActiveSequence().player.startPlayback"
+        // ========================================
+
+        // Parse the path
+        var parts = inspectPath.split('.');
+        var methodName = parts[parts.length - 1];
+
+        // Start from qe (the root object)
+        var current = qe;
+
+        // Skip the first part if it's "qe" since we're already starting there
+        var startIndex = parts[0] === 'qe' ? 1 : 0;
+
+        for (var i = startIndex; i < parts.length - 1; i++) {
+          var part = parts[i];
+
+          // Handle function calls like getActiveSequence()
+          if (part.indexOf('()') !== -1) {
+            var funcName = part.replace('()', '');
+            if (typeof current[funcName] === 'function') {
+              current = current[funcName]();
+            } else {
+              throw new Error("Function '" + funcName + "' not found");
+            }
+          } else {
+            current = current[part];
+          }
+
+          if (!current) {
+            throw new Error("Could not traverse to '" + parts.slice(0, i + 1).join('.') + "'");
+          }
+        }
+
+        var parentObj = current;
+        var targetMethod = parentObj[methodName];
+
+        var output = "=== INSPECTING: " + inspectPath + " ===\n\n";
+
+        // Check if method exists
+        if (!targetMethod) {
+          output += "Method '" + methodName + "' not found on object\n";
+        } else if (typeof targetMethod !== "function") {
+          output += "'" + methodName + "' is not a function (type: " + typeof targetMethod + ")\n";
+          output += "Value: " + targetMethod + "\n";
+        } else {
+          output += "=== METHOD DETAILS ===\n";
+          output += "Method name: " + methodName + "\n";
+          output += "Is function: YES\n\n";
+
+          // Try to get function signature
+          output += "Function toString:\n";
+          output += targetMethod.toString() + "\n\n";
+
+          // Check for reflect info on the method
+          output += "=== REFLECT INFO (METHOD) ===\n";
+          if (parentObj.reflect && parentObj.reflect.find) {
+            try {
+              var methodInfo = parentObj.reflect.find(methodName);
+              if (methodInfo) {
+                output += "Found reflect info for method!\n";
+                output += "Data type: " + methodInfo.dataType + "\n";
+                output += "Type: " + methodInfo.type + "\n";
+
+                if (methodInfo.arguments) {
+                  output += "\nArguments:\n";
+                  if (typeof methodInfo.arguments === 'string') {
+                    output += methodInfo.arguments + "\n";
+                  } else {
+                    for (var i = 0; i < methodInfo.arguments.length; i++) {
+                      output += "  - " + methodInfo.arguments[i] + "\n";
+                    }
+                  }
+                } else {
+                  output += "No arguments info\n";
+                }
+
+                if (methodInfo.description) {
+                  output += "\nDescription: " + methodInfo.description + "\n";
+                }
+
+                if (methodInfo.help) {
+                  output += "\nHelp: " + methodInfo.help + "\n";
+                }
+              } else {
+                output += "No reflect info found for this method\n";
+              }
+            } catch(reflectErr) {
+              output += "Error getting reflect info: " + reflectErr.toString() + "\n";
+            }
+          } else {
+            output += "Parent object has no reflect capability\n";
+          }
+
+          // Show all available methods on parent for context
+          output += "\n=== OTHER METHODS ON PARENT OBJECT ===\n";
+          if (parentObj.reflect && parentObj.reflect.methods) {
+            output += "Available methods:\n";
+            for (var i = 0; i < parentObj.reflect.methods.length; i++) {
+              output += "  - " + parentObj.reflect.methods[i] + "\n";
+            }
+          } else {
+            output += "Scanning object properties:\n";
+            for (var prop in parentObj) {
+              try {
+                if (typeof parentObj[prop] === "function") {
+                  output += "  - " + prop + "()\n";
+                }
+              } catch(e) {
+                // Skip inaccessible properties
+              }
+            }
+          }
+        }
+
+        // Create filename from the inspected path
+        var filename = inspectPath.replace(/[()]/g, '').replace(/\./g, '_') + "_info.txt";
+
+        var file = new File("~/Desktop/" + filename);
+        file.open("w");
+        file.write(output);
+        file.close();
+
+        alert("Info for '" + inspectPath + "' written to Desktop/" + filename);
+      } catch(e) {
+        alert("Error inspecting '" + (typeof inspectPath !== 'undefined' ? inspectPath : 'unknown') + "': " + e.toString());
       }
     }
   }

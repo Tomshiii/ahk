@@ -240,6 +240,10 @@ export const host = {
     Utils.checkObjParams();
   },
 
+  checkFuncParams: function(inspectPath: string) {
+    Utils.checkFuncParams(inspectPath);
+  },
+
   stopPlayback: function() {
     Utils.stopPlayback();
   },
@@ -248,6 +252,10 @@ export const host = {
   startPlayback: function(speed?: string) {
     // this function requires premiere to be focused
     Utils.startPlayback(parseFloat(speed || "1"));
+  },
+
+  togglePlayback: function() {
+    qe.project.getActiveSequence().multicam.stop();
   },
 
   isSequence: function() {
@@ -268,28 +276,31 @@ export const host = {
     var projectItem = project.rootItem;
 
     for (let i = 0; i < projectItem.children.numItems; i++) {
-      if (app.project.rootItem.children[i].type !== 2)
+      if (projectItem.children[i].type !== 2)
         continue;
-      switch (app.project.rootItem.children[i].name) {
+      switch (projectItem.children[i].name) {
         case "_Assets":
-          const assetFolder = app.project.rootItem.children[i]
+          const assetFolder = projectItem.children[i]
           for (let j = 0; j < assetFolder.children.numItems; j++) {
+              if (assetFolder.children[j].type !== 2)
+                continue;
               if (assetFolder.children[j].name == folder) {
                 var moveFolder = assetFolder.children[j];
                 break;
               }
             }
+          break;
         case folder:
-          var moveFolder = app.project.rootItem.children[i];
+          var moveFolder = projectItem.children[i];
+          break;
       }
     }
 
-      if (typeof moveFolder == 'undefined') {
-        alert("Desired folder does not seem to exist");
-        return false;
-      }
-
-      Utils.moveToFolder(selected, moveFolder);
+    if (typeof moveFolder == 'undefined') {
+      alert("Desired folder does not seem to exist");
+      return false;
+    }
+    Utils.moveToFolder(selected, moveFolder);
   }
 };
 

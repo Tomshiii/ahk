@@ -175,9 +175,7 @@ Class premUIA_Values {
         ;// we need to ensure playback here is halted, otherwise UIA is SUPER unresponsive
         ;// and for whatever reason known only to the adobe devs some hotkeys no longer function globally
         ;// if they contain any modifiers, so we have to do a check here to see if the user has any in their set hotkey
-        if prem.__checkPremRemoteDir('isPlaying') && prem.__checkPremRemoteFunc('stopPlayback') {
-            prem.stopPlayback()
-        } else if !InStr(ksa.shuttleStop, "+") && !InStr(ksa.shuttleStop, "^") && !InStr(ksa.shuttleStop, "!") && !InStr(ksa.shuttleStop, "Ctrl") && !InStr(ksa.shuttleStop, "Shift") && !InStr(ksa.shuttleStop, "Alt") {
+        if !InStr(ksa.shuttleStop, "+") && !InStr(ksa.shuttleStop, "^") && !InStr(ksa.shuttleStop, "!") && !InStr(ksa.shuttleStop, "Ctrl") && !InStr(ksa.shuttleStop, "Shift") && !InStr(ksa.shuttleStop, "Alt") {
             SendInput(ksa.shuttleStop)
         } else {
             try {

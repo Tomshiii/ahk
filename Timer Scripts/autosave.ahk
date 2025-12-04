@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/12/01
- * @version 2.1.58
+ * @date 2025/12/04
+ * @version 2.1.59
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -370,10 +370,11 @@ class adobeAutoSave extends count {
      * *note: this function will only work if the user has their program monitor on their main display*
      */
     __checkPremPlayback() {
-        if prem.__checkPremRemoteDir('isPlaying') {
+        ;// unfortunately cannot be relied on as it will not work if the multicam view is active...
+        /* if prem.__checkPremRemoteDir('isPlaying') {
             this.userPlayback := prem.__remoteFunc('isPlaying', true)
             return
-        }
+        } */
         if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
             try progMon := prem.__uiaCtrlPos(this.premUIA.programMon,,, false)
             if !IsSet(progMon)

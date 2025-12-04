@@ -54,7 +54,6 @@
 📍 `__setNewVal()`
 - ✅ Fixed function sometimes leaving inputs blocked
 - 📋 Will now abort if the `Save Project` window appears
-- 📋 Will now use `PremiereRemote` to stop playback if available
 - 📋 Will alert the user if their set version of Premiere does not match the open application
 > [!Caution]
 > Some of these changes require updated `PremiereRemote` functions.
@@ -136,7 +135,6 @@
 - 📋 `Notify` windows will now be destroyed if the user manually saves during a save attempt
 - 📋 Will now check for and halt if `excalibur` window is open
 - 📋 Will now use `CEP` to save `After Effects` instead of needing keystrokes
-- 📋 Can now use `PremiereRemote` to determine & restart playback removing the need for `ImageSearch`
 
 🔗 `PremiereRemote`
 - ✏️ Added `setMarker()`
@@ -145,6 +143,7 @@
 - ✏️ Added `isPlaying()`
 - ✏️ Added `stopPlayback()`
 - ✏️ Added `startPlayback()`
+- ✏️ Added `togglePlayback()`
 - ✏️ Added `premVer()`
 - ✏️ Added `moveToAssetsBin()`
 - ✏️ Added `loadInSourceMonitor()`

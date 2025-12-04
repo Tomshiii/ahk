@@ -1,0 +1,6 @@
+=== PROPERTIES ===
+
+=== REFLECT INFO ===
+Name: Object
+Methods: changeCamera,enable,play,record,stop,toLocaleString,hasOwnProperty,propertyIsEnumerable,isPrototypeOf,toSource,unwatch,watch
+Properties: __proto__,__count__,__class__,reflect

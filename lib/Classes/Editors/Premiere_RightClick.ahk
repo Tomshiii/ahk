@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.6.2
  * @author tomshi, taranVH
- * @date 2025/11/27
- * @version 2.3.25
+ * @date 2025/12/04
+ * @version 2.3.26
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -436,7 +436,11 @@ class rbuttonPrem {
 			case (allChecks && !this.leftClick && !this.xbuttonClick): this.__exit()
 			return
 			case (!allChecks && this.leftClick): SendInput("{LButton}")
-			case (allChecks && this.leftClick): prem.startPlayback(((this.xbuttonClick = true) ? 2 : 1))
+			case (allChecks && this.leftClick): prem.startPlayback(1)
+			case (allChecks && this.xbuttonClick):
+				prem.startPlayback(1)
+				SendInput(KSA.speedUpPlayback)
+				;// unfortunately need to do it this way bc there's no way to set playback speed while multicam is active...
 		}
 
 		;// cleans up
