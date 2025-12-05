@@ -329,7 +329,7 @@ export class Utils {
           }
 
           // images
-          if(thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "jpg" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "jpeg" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "png" || thisName.substring(thisName.length - 4, thisName.length).toLowerCase() == "webp") {
+          if(thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "jpg" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "jpeg" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "png" || thisName.substring(thisName.length - 4, thisName.length).toLowerCase() == "webp" || thisName.substring(thisName.length - 4, thisName.length).toLowerCase() == "heic") {
             images.push(projectItem.children[i]);
           }
 
