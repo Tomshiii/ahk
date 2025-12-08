@@ -5,7 +5,6 @@
 
 ## Functions
 - ✅ Fixed multiple instances of incorrect `||` logic
-- ✅ Fixed `slack.button()` throwing in certain circumstances
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
 - ✅ Fixed `reset {` functions not affecting all scripts
 - ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
@@ -73,6 +72,12 @@
 - ✅ Fixed function throwing if not hovering a message
 - ✅ Fixed `reply` not disabling the `@` ping when setting is enabled
 - ✅ Fixed function incorrectly determining when the user is within a dm or a server
+
+### 📝 `slack {`
+📍 `button()`
+- ✅ Function should now be 2-3x faster in most cases
+- ✅ Fixed function throwing in certain circumstances
+- ✅ Fixed `"edit"` & `"delete"` no longer working
 
 ### `WinGet {`
 - ✅ Fixed all instances of `Title()` causing scripts to throw

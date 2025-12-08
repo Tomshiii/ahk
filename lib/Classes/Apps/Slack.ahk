@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/11/21
- * @version 1.1.8
+ * @date 2025/12/08
+ * @version 1.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -67,8 +67,11 @@ class Slack {
             return
         blocker := block_ext()
         blocker.On()
-        try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
-        catch {
+
+        static cacheRequest := UIA.CreateCacheRequest(["LocalizedType", "AutomationId", "Name"],, 5)
+
+        try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, cacheRequest)
+        if !IsSet(slackEl) || !IsObject(slackEl) || !slackEl {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             blocker.Off()
             return
@@ -76,43 +79,42 @@ class Slack {
 
         pressButton(uiaObj, type, button) {
             if button = "Delete message… delete" || button = "Edit message E" {
-                if !uiaObj.WaitElement({LocalizedType: "button", Name: "Save for later"}, 2000) {
+                if !uiaObj.WaitElement({LocalizedType:"toggle button", Name: "Save for later"}, 2000) {
                     errorLog(UnsetError("Failed to find Save for later element", -1),, true)
                     blocker.Off()
                     return
                 }
-                findLocation := uiaObj.WaitElement({LocalizedType: "button", Name: "Save for later"}, 2000)
-                for el in uiaObj.FindElements({LocalizedType: "menu item", Name: "More actions"}) {
+                findLocation := uiaObj.FindCachedElement({LocalizedType:"toggle button", Name: "Save for later"})
+                for el in uiaObj.FindCachedElements({LocalizedType:"button", Name: "More actions"}) {
                     if el.location.y != findLocation.location.y
                         continue
                     el.ControlClick()
                 }
-                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
+                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 2000,,,,, cacheRequest).ControlClick()
                 return
             }
 
             ;// if a thread is open we need to hone our search to just the thread
-            if uiaObj.ElementExist({LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}) && button != "Reply in thread" {
-                findLocation := uiaObj.WaitElement([{LocalizedType:"dialog", Name:"Thread in channel", matchmode:"Substring"}, {LocalizedType: "button", Name: "Save for later"}], 2000)
-                for el in uiaObj.FindElements([{LocalizedType:"dialog", Name:"Thread in channel", matchmode:"Substring"}, {LocalizedType: "menu item", Name: "More actions"}]) {
+            if uiaObj.CachedElementExist({LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}) && button != "Reply in thread" {
+                findLocation := uiaObj.FindCachedElement([{LocalizedType:"dialog", Name:"Thread in channel", matchmode:"Substring"}, {LocalizedType: "button", Name: "Save for later"}])
+                for el in uiaObj.FindCachedElements([{LocalizedType:"dialog", Name:"Thread in channel", matchmode:"Substring"}, {LocalizedType:"button", Name: "More actions"}]) {
                     if el.location.y != findLocation.location.y
                         continue
                     el.ControlClick()
                 }
-                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
+                try uiaObj.FindCachedElement({LocalizedType: type, Name: button}).ControlClick()
                 return
             }
             ;// otherwise we just search for the button
             if button = "Reply in thread" {
-                try check := uiaObj.WaitElement({LocalizedType: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}, 1500).ControlClick()
+                try check := uiaObj.FindCachedElement({LocalizedType: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}).ControlClick()
             } else {
-                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 1500).ControlClick()
+                try uiaObj.FindCachedElement({LocalizedType: type, Name: button}).ControlClick()
                 return
             }
             if IsSet(check) && replyInThread = true {
                 try {
-                    uiaObj.WaitElement({LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}, 2000)
-                    uiaObj.WaitElement({AutomationId:"p-thread_footer__broadcast_checkbox", matchmode: "Substring"}, 2000).ControlClick()
+                    uiaObj.WaitElement([{LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}, {AutomationId:"p-thread_footer__broadcast_checkbox", matchmode: "Substring"}], 2000,,,,, cacheRequest).ControlClick()
                 }
             }
         }
