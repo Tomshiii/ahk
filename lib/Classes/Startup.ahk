@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/11/21
- * @version 1.7.84
+ * @date 2025/12/08
+ * @version 1.7.85
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -945,7 +945,7 @@ class Startup {
             submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK")
             hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
             ignore := browser.vscode.winTitle "|" A_ScriptName
-            if hotkeyHWND := WinExist(hotkeylessTitle,, ignore)
+            if hotkeyHWND := WinGet.ExistRegex(hotkeylessTitle,, ignore,, true)
                 exists := true
             switch closeOrOpen {
                 case "close":

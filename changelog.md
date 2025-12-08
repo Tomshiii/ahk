@@ -14,18 +14,25 @@
 - ✅ Fixed `errorLog()` sometimes skipping the timestamp for the first error of the day
 - ✅ Fixed `loadXML()` throwing in the event the file is busy
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
+- ✏️ Added `isBool()`
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
-- 📋 `save()` will now abort early if `Premiere` fails to retrieve the originally active sequence
 - ✏️ Added `stopPlayback()`
 - ✏️ Added `startPlayback()`
 - ✏️ Added `toggleLinearColour()`
+- ✏️ Added `renderPreviewsInOut()`
+    - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
 - 📋 `dragSourceMon()` now accepts parameter `searchForFile` to determine if the function will attempt to search for the desired file if it isn't already in the source monitor
+
+📍 `save()`
+- 📋 Will now abort early if `Premiere` fails to retrieve the originally active sequence
+- 📋 Now uses `WinEvent` to capture if the `Save Project` window appears/closes
+    - ✅ Fixes instances of `WinWait()` missing the window and causing the function to timeout
 
 📍 `gain()`
 - 📋 Will now highlight the text input field in the event the gain window is already open, but a text field is not selected
@@ -93,7 +100,7 @@
 - ✅ Fixed `checkVersJSON()` generating an entry even if an `ImageSearch` folder exists
 
 📍 `trayMen()`
-- ✅ Fixed function not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has been closed
+- ✅ Fixed function not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has already been closed
 - ✅ Fixed function potentially leaking `detect` settings
 - ✅ Fixed function potentially getting stuck if another process changes the current `detect` settings while function is operating
 
@@ -137,24 +144,19 @@
 - 📋 Will now use `CEP` to save `After Effects` instead of needing keystrokes
 
 🔗 `PremiereRemote`
-- ✏️ Added `setMarker()`
-- ✏️ Added `applyEffectOnAllSelectedClips()`
-- ✏️ Added `listEffectsOnSelectedClip()`
-- ✏️ Added `isPlaying()`
-- ✏️ Added `stopPlayback()`
-- ✏️ Added `startPlayback()`
-- ✏️ Added `togglePlayback()`
-- ✏️ Added `premVer()`
-- ✏️ Added `moveToAssetsBin()`
-- ✏️ Added `loadInSourceMonitor()`
-- ✏️ Added `searchForBinWithName()`
-- ✏️ Added `searchForItemByName()`
+- ✏️ Added;  
+     `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`
 - ❌ Removed `setBarsAndTone()`
 - 📋 `saveProj()` now properly returns whether it suceeded or failed
 
 📍 `toggleLinearColour()`
 - ✅ Fixed function causing `Premiere` to crash if sequence settings are reopened after toggling
 - 📋 Now accepts parameter `enableMaxRenderQual`
+
+🔗 `adobeKSA`
+- ✅ Fixed script not loading Premiere xml file correctly
+- ✏️ Added additional known `<virtualkey>` values to make process more reliable
+- 📋 Split out `adobeXML {` into its own class
 
 🔗 `mult-dl.ahk`
 ###### *(v1.2.3 -> v1.2.9)*

@@ -40,6 +40,10 @@ export const host = {
     app.project.openSequence(ID);
   },
 
+  renderPreviews: function() {
+    qe.project.getActiveSequence().renderAll();
+  },
+
   sourceMonName: function() {
     const varr = app.sourceMonitor.getProjectItem();
     return varr.name;

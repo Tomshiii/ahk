@@ -200,9 +200,11 @@
 
 
 ["** header **"]
-	"major_version" = "107"
+	"major_version" = "108"
 
 ["AE_TopLevelWindow"]
+	"CloseTimelinePanelsToLeft" = "()"
+	"CloseTimelinePanelsToRight" = "()"
 	"SelectNextTab" = "(Alt+Shift+.)"
 	"SelectPrevTab" = "(Alt+Shift+Comma)"
 	"ToggleTabPanelMaximize" = "(`)"
@@ -471,6 +473,8 @@
 	"ToolMaskToggle" = "(Shift+Q)"
 	"ToolPaint" = "(Ctrl+B)"
 	"ToolPan" = "(Y)"
+	"ToolParametricMesh" = "(Alt+7)"
+	"ToolParametricMeshToggle" = "(Alt+8)"
 	"ToolPen" = "(G)"
 	"ToolPenToggle" = "(Shift+G)"
 	"ToolPin" = "(Ctrl+P)"

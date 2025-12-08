@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a function designed to parse through AE and Premiere Pro keyboard shortcut files to automatically assign KSA.ini values
  * @author tomshi
- * @date 2025/f11/25
- * @version 1.0.5.1
+ * @date 2025/12/08
+ * @version 1.1.0
  ***********************************************************************/
 
 #Warn VarUnset, StdOut
@@ -20,7 +20,7 @@ The code for this script was also written a LONG time ago and by this point has 
 #Include <Classes\ptf>
 #Include <Classes\Mip>
 #Include <Classes\tool>
-#Include <Functions\loadXML>
+#Include <Classes\adobeXML>
 #Include <GUIs\tomshiBasic>
 ; }
 
@@ -63,58 +63,6 @@ class adobeKSA extends tomshiBasic {
         this.__indivSection(this.defaultPremiereFolder, "Premiere")
         this.__indivSection(this.defaultAEFolder, "AE")
         this.AddButton("y+20", "Submit").OnEvent("Click", this.__submit.Bind(this))
-    }
-
-    __isFKey(key) {
-        if StrLen(key) <= 3 && SubStr(key, 1, 1) == "F"
-            return "{" key "}"
-        return key
-    }
-
-    knownKeys := Mip(
-        "BackSpace",  1,
-        "Del",        1,
-        "Delete",     1,
-        "Enter",      1,
-        "Up",         1,
-        "Down",       1,
-        "Left",       1,
-        "Right",      1,
-        "Space",      1,
-        "Tab",        1,
-        "Esc",        1,
-        "Escape",     1,
-        "Insert",     1,
-        "Home",       1,
-        "End",        1,
-        "PgUp",       1,
-        "PgDown",     1
-    )
-
-    /**
-     * Wraps any required keys in "{}" so ahk interprets them correctly
-     * @param {String} key the hotkey string
-     * @returns {String} the final hotkey
-     */
-    __wrapKey(key) {
-        if checkF := this.__isFKey(key)
-            return checkF
-        if (
-            (pad := InStr(key, "Pad") || numpad := InStr(key, "Numpad")) &&
-            (IsNumber(SubStr(key, -1, 1)) || IsNumber(SubStr(key, -1, 2)))
-        ) {
-            if numpad
-                return "{" key "}"
-            if pad {
-                if this.AEKeyMap.Has(key) {
-                    return this.AEKeyMap.Get(key)
-                }
-            }
-        }
-        if this.knownKeys.Has(key)
-            return "{" key "}"
-
-        return key
     }
 
     /**
@@ -258,7 +206,6 @@ class adobeKSA extends tomshiBasic {
      */
     __parsePrem(location) {
         premSection  := IniRead(this.KSA, "Premiere")
-        premShortcut := FileRead(location)
 
         splitSection := StrSplit(premSection, ["=", "`n", "`r"])
         for k, v in splitSection {
@@ -269,77 +216,11 @@ class adobeKSA extends tomshiBasic {
 
             commandName := this.__command(v)
             context     := this.__context(v)
-            hotkeyVal := adobeXML(premShortcut).__buildHotkey(context, commandName)
+            hotkeyVal := adobeXML(location).__premBuildHotkey(context, commandName)
             if hotkeyVal = false
                 continue
             IniWrite(Format('"{}"', hotkeyVal), this.KSA, "Premiere", v)
         }
-    }
-
-    /**
-     * A map of known replacements
-     */
-    AEKeyMap := Mip(
-        "Comma",       ",",
-        "LeftArrow",   "{Left}",
-        "RightArrow",  "{Right}",
-        "UpArrow",     "{Up}",
-        "DownArrow",   "{Down}",
-        "FwdDel",      "{BackSpace}",
-        "SingleQuote", "'",
-        "Backslash",   "\",
-        "PadClear",    "{NumpadClear}",
-        "PadSlash",    "{NumpadDiv}",
-        "PadMinus",    "{NumpadSub}",
-        "PadPlus",     "{NumpadAdd}",
-        "PadInsert",   "{Insert}",
-        "PadDecimal",  "{NumpadDot}",
-        "PadMultiply", "{NumpadMulti}",
-        "PadHome",     "{NumpadHome}",
-        "PadEnd",      "{NumpadEnd}",
-        "PadPageUp",   "{NumpadPgUp}",
-        "PadPageDown", "{NumpadPgDn}",
-        "PadDelete",   "{NumpadDel}",
-
-    )
-
-    /**
-     * Clears any modifiers from the AE shortcut string
-     * @param {String} key the hotkey string to be stripped
-     */
-    __clearHotkey(key) {
-        key := StrReplace(key, "Shift+", "")
-        key := StrReplace(key, "Ctrl+", "")
-        key := StrReplace(key, "Alt+", "")
-        return key
-    }
-
-    /**
-     * Builds the AE hotkey
-     * @param {String} hotkey turns the shortcut file hotkey into an AHK readable hotkey
-     */
-    __aeBuildHotkey(hotkey) {
-        baseHotkey := SubStr(hotkey
-                        , startpos := InStr(hotkey, "(",, 1, 1) + 1
-                        , InStr(hotkey, ")",, 1, 1) - startpos
-                    )
-        builtHotkey := InStr(baseHotkey, "Ctrl",, 1, 1) ? "^" : ""
-        builtHotkey := InStr(baseHotkey, "Alt",, 1, 1) ? builtHotkey "!" : builtHotkey
-        builtHotkey := InStr(baseHotkey, "Shift",, 1, 1) ? builtHotkey "+" : builtHotkey
-
-        baseHotkey := this.__clearHotkey(baseHotkey)
-        loop {
-            nextKey := (plus := InStr(baseHotkey, "+",, 1, 1)) ? SubStr(baseHotkey, 1, InStr(baseHotkey, "+",, 1, 1))
-                                                     : SubStr(baseHotkey, 1)
-            nextKey := (this.AEKeyMap.Has(nextKey)) ? this.AEKeyMap.Get(nextKey) : nextKey
-            nextKey := this.__wrapKey(nextKey)
-            if StrLen(nextKey) = 1
-                nextKey := StrLower(nextKey)
-            builtHotkey := builtHotkey nextKey
-            if !plus
-                break
-        }
-        return builtHotkey
     }
 
     /**
@@ -348,7 +229,6 @@ class adobeKSA extends tomshiBasic {
      */
     __parseAE(location) {
         aeSection    := IniRead(this.KSA, "After Effects")
-        aeShortcut   := FileRead(location)
 
         aesplitSection := StrSplit(aeSection, ["=", "`n", "`r"])
         for k, v in aesplitSection {
@@ -361,7 +241,7 @@ class adobeKSA extends tomshiBasic {
             aeHotkeyIniVal := IniRead(location, sectionName, keyName, "")
             if aeHotkeyIniVal = ""
                 continue
-            buildHotkey := this.__aeBuildHotkey(aeHotkeyIniVal)
+            buildHotkey := adobeXML(location).__aeBuildHotkey(aeHotkeyIniVal)
             IniWrite(Format('"{}"', buildHotkey), this.KSA, "After Effects", v)
         }
     }
@@ -397,88 +277,6 @@ class adobeKSA extends tomshiBasic {
 
 }
 
-
-/**
- * @param file a filepath to the xml file you wish to parse
- * @returns {Object} returns an xml comobj to allow the user
- * Examples:
-```
-xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]/virtualkey').text
-xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]').nodename
-```
- */
-class adobeXML {
-    __New(file) {
-        this.xml := loadXML(file)
-        if !this.xml
-            return
-    }
-    xml := ""
-
-    /**
-     * haven't quite figured out why some keys provide different values than most. until the day that the math adds up, here's a list of keys that provide a different result alongside their actual values (on my pc atleast, who knows with adobe)
-     */
-    knownKeys := Map(
-        "14",             "{F8}",
-        "42",             "{Left}",
-        "43",             "{Right}",
-        "44",             "{Up}",
-        "45",             "{Down}",
-    )
-
-    /**
-     * takes premiere's virtual key value and returns they key
-     * @param {Integer} virtualKey the virtual key value retrieved from the xml file
-     * @returns {Boolean/String} returns `false` on failure or a string containing the name of the key
-     */
-    __convVirtToKey(virtualKey) {
-        if this.knownKeys.Has(virtualKey)
-            return this.knownKeys.Get(virtualKey)
-        if StrLen(virtualKey) < 8
-            return false
-        val := SubStr((Format("{:x}", virtualKey)), -2)
-        return StrLower(Chr(Integer("0x" . val)))
-    }
-
-    /**
-     * retrieves the modifiers for the given hotkey
-     * @param {String} path the xml path for the desired hotkey
-     * @returns {String} returns a string containing the modifiers for the given hotkey or a blank string if none
-     */
-    __retriveModifiers(path) {
-
-        try ctrl  := (this.xml.selectSingleNode(path "/modifier.ctrl").text  = "true") ? "^" : ""
-        try alt   := (this.xml.selectSingleNode(path "/modifier.alt").text   = "true") ? "!" : ""
-        try shift := (this.xml.selectSingleNode(path "/modifier.shift").text = "true") ? "+" : ""
-        return (ctrl ?? "") . (alt ?? "") . (shift ?? "")
-    }
-
-    /**
-     * Builds the hotkey for the desired xml path
-     * @param {String} start the xml path of the desired hotkey. eg. `'/PremiereData/shortcuts/context.global'`
-     * @param {String} codename the xml `codename` for the desired hotkey. eg. `"cmd.clip.scaletoframesize"`
-     * @returns {String} returns complete hotkey
-     */
-    __buildHotkey(start, codename) {
-        if codename = ""
-            return false
-        if InStr(this.xml.text, codename,,, 2) || !InStr(this.xml.text, codename)
-            return false
-        try {
-            firstPrompt := Format('{}/*[commandname="{}"]', start, codename)
-            getItemNum := this.xml.selectSingleNode(firstPrompt).nodename
-            secondPrompt := Format('{}[commandname="{}"]', start "/" getItemNum, codename)
-            getModifiers := this.__retriveModifiers(secondPrompt)
-            virtkey := this.__convVirtToKey(this.xml.selectSingleNode(secondPrompt "/virtualkey").text)
-            getKey := (virtkey != false) ? virtkey : "false"
-            if getKey == "false"
-                return false
-            getKey := adobeKSA().__wrapKey(getKey)
-            return (getModifiers getKey)
-        }
-        return false
-    }
-}
 
 adobegui := adobeKSA()
 adobegui.Show()

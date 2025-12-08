@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside
- * @date 2025/08/12
- * @version 1.1.0
+ * @date 2025/12/08
+ * @version 1.1.1
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -41,4 +41,5 @@ Class CustomFunctions {
     setMarker(colour)                       => (prem.__remoteFunc('setMarker',, "colour=" colour))
     moveToAssetBin(folder)                  => (prem.__remoteFunc('moveToAssetsBin',, 'folder=' folder))
     toggleLinearColour(enableMaxRenderQual) => (prem.toggleLinearColour(true))
+    renderPreviews()                        => (prem.renderPreviewsInOut())
 }

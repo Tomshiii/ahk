@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/12/04
- * @version 2.2.80
+ * @date 2025/12/08
+ * @version 2.2.81
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,6 +34,7 @@
 #Include <Functions\loadXML>
 #Include <Functions\change_msgButton>
 #Include <Functions\checkStuck>
+#Include <Functions\isBool>
 #Include <Other\Notify\Notify>
 #Include <Other\ShinsImageScanClass>
 #Include <Other\Array>
@@ -533,6 +534,10 @@ class Prem {
      * - `"busy"`    : another window may be open in premiere that could cause saving to fail
      */
     static save(andWait := true, checkSeqTime := 1000, checkAmount := 1, continueOnBusy := false) {
+        if !IsInteger(checkAmount) || !IsInteger(checkSeqTime) || !isBool(andWait) || !isBool(continueOnBusy) {
+            errorLog(PropertyError("Incorrect Parameter Type"),,, true)
+            return false
+        }
         premWindow := WinGet.PremName()
         if !premWindow || Type(premWindow) != "Object" ||
             ((premWindow.winTitle = "" || !premWindow.wintitle) &&
@@ -553,19 +558,39 @@ class Prem {
         actSequence := this.__checkPremRemoteFunc("getActiveSequence"), focusSequence := this.__checkPremRemoteFunc("focusSequence")
         if !actSequence || !focusSequence
             return "noseq"
-        origSeq := this.__remoteFunc("getActiveSequence", true)
-        if !this.__remoteFunc("saveProj", true)
-            return false
+        if checkAmount != 0
+            origSeq := this.__remoteFunc("getActiveSequence", true)
+        state := {hasAppeared: false, hasClosed: false}
+        try WinEvent.Exist((*) => state.hasAppeared := true, "Save Project " prem.exeTitle)
+        try WinEvent.Close((*) => state.hasClosed := true, "Save Project " prem.exeTitle)
+        __stopCallbacks() {
+            try {
+                WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
+                WinEvent.Stop('Close', "Save Project " prem.exeTitle)
+            }
+        }
 
-        if !andWait
+        ;// func won't continue until this premiereremote func finishes (saving completes)
+        if !this.__remoteFunc("saveProj", true) {
+            __stopCallbacks()
+            return false
+        }
+        __stopCallbacks()
+
+        if !andWait {
             return true
+        }
 
         ;// waiting for save dialogue to open & close
-        if !WinWait("Save Project",, 3)
+        if !state.hasAppeared {
             return "timeout_nosave"
-        if !WinWaitClose("Save Project",, 3)
+        }
+        if !state.hasClosed {
             return "timeout"
+        }
 
+        if checkAmount = 0
+            return true
         if origSeq = "" {
             errorLog(Error("Premiere failed to retrieve the originally active sequence before saving. Aborting"))
             return true
@@ -1864,32 +1889,23 @@ class Prem {
     }
 
     /**
-     * This function handles different hotkeys related to `Previews` (both rendering & deleting them). This function will attempt to save the project before doing anything.
+     * This function handles hotkeys related to deleting `Previews`. This function will attempt to save the project before doing anything.
      *
-     * > This function contains code that will check for `PremiereRemote` and use it if detected. This code will make the function more reliable.
-     * @param {String} which whether you wish to delete or render a preview. If deleting, pass `"delete"` else pass an empty string
      * @param {String} sendHotkey which hotkey you wish to send
      */
-    static Previews(which, sendHotkey) {
+    static deletePreviews(sendHotkey) {
         if !WinActive(this.exeTitle)
             return
         title := WinGet.PremName()
         if title.saveCheck != false
             attempt := this.saveAndFocusTimeline()
-        switch which {
-            case "delete": this().__delprev(sendHotkey, attempt ?? false)
-            default:
-                SendInput(sendHotkey)
-                if !WinWait("Rendering",, 2) {
-                    if attempt ?? false = "active" {
-                        SendInput(sendHotkey)
-                        if !WinWait("Rendering",, 2) {
-                            tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")
-                            return
-                        }
-                    }
-                }
-        }
+        this().__delprev(sendHotkey, attempt ?? false)
+    }
+
+    /** This function handles rendering `Previews` between the current `In`/`Out` point. This function *requires* `PremiereRemote` */
+    static renderPreviewsInOut() {
+        prem.save(, 0, 0)
+        prem.__remoteFunc('renderPreviews')
     }
 
     /**
@@ -2023,8 +2039,8 @@ class Prem {
             return
         }
         name := WinGet.PremName()
-        MenuSelect(name.winTitle, , "Edit", "Copy")
-        MenuSelect(name.winTitle, , "Edit", "Ripple Delete")
+        MenuSelect(name.winTitle, "", "Edit", "Copy")
+        MenuSelect(name.winTitle, "", "Edit", "Ripple Delete")
     }
 
     /**

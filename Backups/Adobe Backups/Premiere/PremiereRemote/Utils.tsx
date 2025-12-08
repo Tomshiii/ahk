@@ -463,7 +463,8 @@ export class Utils {
 
           // Try to get function signature
           output += "Function toString:\n";
-          output += targetMethod.toString() + "\n\n";
+          var funcString = targetMethod.toString();
+          output += funcString + "\n\n";
 
           // Check for reflect info on the method
           output += "=== REFLECT INFO (METHOD) ===\n";
@@ -476,16 +477,60 @@ export class Utils {
                 output += "Type: " + methodInfo.type + "\n";
 
                 if (methodInfo.arguments) {
-                  output += "\nArguments:\n";
+                  output += "\nArguments from reflect:\n";
                   if (typeof methodInfo.arguments === 'string') {
                     output += methodInfo.arguments + "\n";
                   } else {
+                    output += "Count: " + methodInfo.arguments.length + "\n";
                     for (var i = 0; i < methodInfo.arguments.length; i++) {
-                      output += "  - " + methodInfo.arguments[i] + "\n";
+                      var arg = methodInfo.arguments[i];
+                      var argStr = "  [" + i + "] ";
+
+                      if (typeof arg === 'string') {
+                        argStr += arg ? ("'" + arg + "'") : "(empty string)";
+                      } else if (typeof arg === 'object' && arg !== null) {
+                        // Try to extract more info if it's an object
+                        argStr += "Object { ";
+                        for (var key in arg) {
+                          try {
+                            argStr += key + ": " + arg[key] + ", ";
+                          } catch(e) {}
+                        }
+                        argStr += "}";
+                      } else {
+                        argStr += typeof arg + ": " + arg;
+                      }
+
+                      output += argStr + "\n";
                     }
                   }
                 } else {
                   output += "No arguments info\n";
+                }
+
+                // Check for additional reflect properties
+                if (methodInfo.parameters) {
+                  output += "\nParameters property:\n";
+                  if (typeof methodInfo.parameters === 'string') {
+                    output += methodInfo.parameters + "\n";
+                  } else if (typeof methodInfo.parameters === 'object') {
+                    output += "Type: object\n";
+                    for (var key in methodInfo.parameters) {
+                      try {
+                        output += "  " + key + ": " + methodInfo.parameters[key] + "\n";
+                      } catch(e) {}
+                    }
+                  } else {
+                    output += methodInfo.parameters + "\n";
+                  }
+                }
+
+                if (methodInfo.min) {
+                  output += "\nMin arguments: " + methodInfo.min + "\n";
+                }
+
+                if (methodInfo.max) {
+                  output += "Max arguments: " + methodInfo.max + "\n";
                 }
 
                 if (methodInfo.description) {
@@ -494,6 +539,17 @@ export class Utils {
 
                 if (methodInfo.help) {
                   output += "\nHelp: " + methodInfo.help + "\n";
+                }
+
+                // Dump all properties of methodInfo
+                output += "\n=== ALL REFLECT PROPERTIES ===\n";
+                for (var prop in methodInfo) {
+                  try {
+                    var val = methodInfo[prop];
+                    if (typeof val !== 'function') {
+                      output += prop + ": " + val + " (type: " + typeof val + ")\n";
+                    }
+                  } catch(e) {}
                 }
               } else {
                 output += "No reflect info found for this method\n";
@@ -508,21 +564,24 @@ export class Utils {
           // Show all available methods on parent for context
           output += "\n=== OTHER METHODS ON PARENT OBJECT ===\n";
           if (parentObj.reflect && parentObj.reflect.methods) {
-            output += "Available methods:\n";
+            output += "Available methods (count: " + parentObj.reflect.methods.length + "):\n";
             for (var i = 0; i < parentObj.reflect.methods.length; i++) {
               output += "  - " + parentObj.reflect.methods[i] + "\n";
             }
           } else {
             output += "Scanning object properties:\n";
+            var methodCount = 0;
             for (var prop in parentObj) {
               try {
                 if (typeof parentObj[prop] === "function") {
                   output += "  - " + prop + "()\n";
+                  methodCount++;
                 }
               } catch(e) {
                 // Skip inaccessible properties
               }
             }
+            output += "Total methods found: " + methodCount + "\n";
           }
         }
 
