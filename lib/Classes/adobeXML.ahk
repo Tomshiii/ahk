@@ -2,10 +2,11 @@
  * @description parse premiere xml keyboard shortcut files
  * @author tomshi
  * @date 2025/12/08
- * @version 1.1.0
+ * @version 1.1.1
  ***********************************************************************/
 
 #Include <Classes\Mip>
+#Include <GUIs\tomshiBasic>
 #Include <Functions\loadXML>
 
 /**
@@ -24,6 +25,7 @@ class adobeXML {
             return
     }
     xml := ""
+    buttonSelect := 1
 
     /**
      * adobe uses the `<virtualkey></virtualkey>` tag to either denote a full key, or they will sometimes use a 1-2 digit number to denote a special key. This is a map of known special keys
@@ -36,60 +38,37 @@ class adobeXML {
 
         "7", "{F1}", "8", "{F2}", "9", "{F3}", "10", "{F4}", "11", "{F5}", "12", "{F6}", "13", "{F7}", "14", "{F8}", "15", "{F9}", "16", "{F10}", "17", "{F11}", "18", "{F12}", "19", "{F13}", "20", "{F14}", "21", "{F15}", "22", "{F16}", "23", "{F17}", "24", "{F18}", "25", "{F19}", "26", "{F20}", "27", "{F21}", "28", "{F22}", "29", "{F23}", "30", "{F24}",
 
-        "32",             "{ScrollLock}",
-        "33",             "{Pause}",
-        "34",             "{Ins}",
+        "32",             "{ScrollLock}", "33", "{Pause}", "34", "{Ins}",
         "35",             "{Delete}",
-        "36",             "{Home}",
-        "37",             "{End}",
-        "38",             "{PgUp}",
-        "39",             "{PgDown}",
+        "36",             "{Home}", "37", "{End}", "38", "{PgUp}", "39", "{PgDown}",
         "40",             "{Help}",
         ; "41",             "{Sleep}", ;// I assume this is sleep? but doesn't work on my pc so idk
-        "42",             "{Left}",
-        "43",             "{Right}",
-        "44",             "{Up}",
-        "45",             "{Down}",
+        "42",             "{Left}", "43", "{Right}", "44", "{Up}", "45", "{Down}",
     )
 
     /**
      * A map of known ae replacements
      */
     AEKeyMap := Mip(
-        "Comma",       ",",
-        "LeftArrow",   "{Left}",
-        "RightArrow",  "{Right}",
-        "UpArrow",     "{Up}",
-        "DownArrow",   "{Down}",
-        "FwdDel",      "{BackSpace}",
-        "SingleQuote", "'",
-        "Backslash",   "\",
-        "PadClear",    "{NumpadClear}",
-        "PadSlash",    "{NumpadDiv}",
-        "PadMinus",    "{NumpadSub}",
-        "PadPlus",     "{NumpadAdd}",
         "PadInsert",   "{Insert}",
-        "PadDecimal",  "{NumpadDot}",
-        "PadMultiply", "{NumpadMulti}",
-        "PadHome",     "{NumpadHome}",
-        "PadEnd",      "{NumpadEnd}",
-        "PadPageUp",   "{NumpadPgUp}",
-        "PadPageDown", "{NumpadPgDn}",
-        "PadDelete",   "{NumpadDel}",
+        "Comma",       ",",             "SingleQuote", "'",           "Backslash", "\",
+        "LeftArrow",   "{Left}",        "RightArrow",  "{Right}",     "UpArrow",   "{Up}",        "DownArrow",  "{Down}",
+        "PadSlash",    "{NumpadDiv}",   "PadPlus",     "{NumpadAdd}", "PadMinus",  "{NumpadSub}", "PadDecimal", "{NumpadDot}", "PadMultiply", "{NumpadMulti}",
+        "PadHome",     "{NumpadHome}",  "PadEnd",      "{NumpadEnd}",
+        "PadPageUp",   "{NumpadPgUp}",  "PadPageDown", "{NumpadPgDn}",
+        "FwdDel",      "{BackSpace}",   "PadDelete",   "{NumpadDel}", "PadClear",    "{NumpadClear}",
     )
 
     knownKeys := Mip(
         "Space",      1,
         "Enter",      1,
-        "BackSpace",  1,
-        "Del",        1, "Delete", 1,
+        "BackSpace",  1, "Del",    1, "Delete", 1,
         "Up",         1, "Down",   1, "Left",   1, "Right", 1,
         "Tab",        1,
         "Esc",        1, "Escape", 1,
-        "Home",       1, "End",    1, "Insert", 1,
+        "Home",       1, "End",    1, "Insert", 1, "Ins",   1,
         "PgUp",       1, "PgDown", 1,
-        "ScrollLock", 1,
-        "Pause",      1, "Ins",    1
+        "ScrollLock", 1, "Pause",  1,
     )
 
     /**
@@ -193,39 +172,55 @@ class adobeXML {
      * Builds the hotkey for the desired xml path
      * @param {String} start the xml path of the desired hotkey. eg. `'/PremiereData/shortcuts/context.global'`
      * @param {String} codename the xml `codename` for the desired hotkey. eg. `"cmd.clip.scaletoframesize"`
-     * @returns {String} returns complete hotkey
+     * @param {Integer} [selectWhichHotkey=1] in the event the user has multiple shortcuts defined, pick which one you wish to use. If this parameter is set to `false` the user will be prompted with a GUI to pick which to use
+     * @returns {String} returns complete hotkey. Returns `false` on failure
+     *
+     * example
+     * ```
+     * premXML := adobeXML(adobeKSA(false).__findPremiereShortcut())
+     * hotkeyVal := premXML.__premBuildHotkey("/PremiereData/shortcuts/context.global", "cmd.clip.aeify", 1)
+     * ```
      */
     __premBuildHotkey(start, codename, selectWhichHotkey := 1) {
         if codename = ""
             return false
         if !InStr(this.xml.text, codename)
             return false
-        if selectWhichHotkey = false && InStr(this.xml.text, codename,,, 2) {
-            ;// need to prompt the user to select which hotkey seems correct
-            ;// would need to do a loop finding ALL occurrences of the desired codename (could be more than 2)
-            ;// then have the user select which
-            ;// "cmd.clip.aeify" is an example of a command that I have 2 hotkeys set for rn
 
-            ; selectWhichHotkey := selection
-        }
+        try {
+            firstPrompt  := Format('{}/*[commandname="{}"]', start, codename)
+            getItemNodes := this.xml.selectNodes(firstPrompt)
+            if selectWhichHotkey = false && getItemNodes.Length > 1 {
+                selectGui := tomshiBasic(,, "AlwaysOnTop +MinSize200x200", "Select Hotkey to Define")
+                xmarg := 7
+                selectGui.AddText("Section", "Multiple hotkeys are set for the following shortcut.`nPlease select which Hotkey you wish to use for the following command;")
+                selectGui.AddText("Section vcommandText x" xmarg " w420", codename)
+                selectGui["commandText"].SetFont("Bold")
+                for i, v in getItemNodes {
+                    selectGui.AddText("x" xmarg ((A_Index=1) ? " y+22" : ""), buildSelection(getItemNodes, A_Index))
+                    selectGui.AddButton("v" A_Index " x" xmarg+100 " y+-20", "Use").OnEvent("Click", (butt, *) => (this.buttonSelect := butt.name, WinClose(selectGui.Hwnd)))
+                }
+                selectGui.Show()
+                WinWaitClose(selectGui.Hwnd)
+            } else {
+                this.buttonSelect := ((selectWhichHotkey > 0) ? selectWhichHotkey : 1)
+            }
 
-        return __doBuild(selectWhichHotkey)
-        __doBuild(whichIndex) {
-            try {
-                firstPrompt := Format('{}/*[commandname="{}"]', start, codename)
-                getItemNodes := this.xml.selectNodes(firstPrompt)
-                getItemNum := getItemNodes[whichIndex-1].nodename
+            return buildSelection(getItemNodes, this.buttonSelect)
+
+            buildSelection(nodes, which) {
+                getItemNum   := nodes[which-1].nodename
                 secondPrompt := Format('{}[commandname="{}"]', start "/" getItemNum, codename)
                 getModifiers := this.__retriveModifiers(secondPrompt)
                 virtkey := this.__convVirtToKey(this.xml.selectSingleNode(secondPrompt "/virtualkey").text)
-                getKey := (virtkey != false) ? virtkey : "false"
+                getKey  := (virtkey != false) ? virtkey : "false"
                 if getKey == "false"
                     return false
                 getKey := this.__wrapKey(getKey)
                 return (getModifiers getKey)
-            } catch {
-                return false
             }
+        } catch {
+            return false
         }
     }
 }
