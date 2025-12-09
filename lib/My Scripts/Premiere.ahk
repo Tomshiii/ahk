@@ -330,12 +330,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 	}
 }
 
-/* ~F14::
-{
-	SendInput("{Ctrl Down}")
-	KeyWait(A_ThisHotkey)
-	SendInput("{Ctrl Up}")
-} */
+F14::prem.__remoteFunc('toggleEnabled')
 F14 & LButton::
 {
 	currKeys := getHotkeysArr()

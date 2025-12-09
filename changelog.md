@@ -1,7 +1,11 @@
 # <> Release 2.16.x - 
 
+> [!Warning]
+> There are still a few known issues with this release.  
+> It is recommended to check out the [`Known Issues & Planned Changes`](<https://github.com/users/Tomshiii/projects/1/views/1>) page if you are encountering any issues. If you are encountering an issue and it is not listed, consider creating an [Issue](<https://github.com/Tomshiii/ahk/issues>) so it can be tracked.
+
 > [!Caution]
-> If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated or added.
+> ###### If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated or added.
 
 ## Functions
 - ✅ Fixed multiple instances of incorrect `||` logic
@@ -25,8 +29,8 @@
 - ✏️ Added `toggleLinearColour()`
 - ✏️ Added `renderPreviewsInOut()`
     - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
-- 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if you wish to adjust the middle divider instead of the track height
-- 📋 `dragSourceMon()` now accepts parameter `searchForFile` to determine if the function will attempt to search for the desired file if it isn't already in the source monitor
+- 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height
+- 📋 `dragSourceMon()` now accepts parameter `searchForFile` which, when set, will attempt to search for the desired file if it isn't already loaded in the source monitor
 
 📍 `save()`
 - 📋 Will now abort early if `Premiere` fails to retrieve the originally active sequence
@@ -61,8 +65,6 @@
 - ✅ Fixed function sometimes leaving inputs blocked
 - 📋 Will now abort if the `Save Project` window appears
 - 📋 Will alert the user if their set version of Premiere does not match the open application
-> [!Caution]
-> Some of these changes require updated `PremiereRemote` functions.
 
 ### 📝 `discord {`
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header
@@ -78,6 +80,8 @@
 - ✅ Function should now be 2-3x faster in most cases
 - ✅ Fixed function throwing in certain circumstances
 - ✅ Fixed `"edit"` & `"delete"` no longer working
+- ✅ Fixed function failing while a thread is open
+- ✅ Fixed `"reaction"` attempting to interact with the icon under image messages
 
 ### `WinGet {`
 - ✅ Fixed all instances of `Title()` causing scripts to throw

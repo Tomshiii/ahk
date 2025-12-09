@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/12/08
- * @version 1.1.9
+ * @date 2025/12/09
+ * @version 1.1.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -95,26 +95,36 @@ class Slack {
             }
 
             ;// if a thread is open we need to hone our search to just the thread
-            if uiaObj.CachedElementExist({LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}) && button != "Reply in thread" {
-                findLocation := uiaObj.FindCachedElement([{LocalizedType:"dialog", Name:"Thread in channel", matchmode:"Substring"}, {LocalizedType: "button", Name: "Save for later"}])
-                for el in uiaObj.FindCachedElements([{LocalizedType:"dialog", Name:"Thread in channel", matchmode:"Substring"}, {LocalizedType:"button", Name: "More actions"}]) {
-                    if el.location.y != findLocation.location.y
+            if uiaObj.CachedElementExist({LocalizedType:"dialog", LocalizedType:"dialogue", Name: "Thread in channel", matchmode: "Substring"}) && button != "Reply in thread" {
+                findThread := uiaObj.WaitElement([{LocalizedType:"dialog", LocalizedType:"dialogue", Name:"Thread in channel", matchmode:"Substring"}], 2000,,,,, cacheRequest)
+                findLocation := findThread.WaitElement([{LocalizedType:"group", Name:"Message actions"}], 2000,,,,, cacheRequest)
+
+                moreActions := findThread.FindElements([{LocalizedType:"group", Name:"Message actions"}],,,, cacheRequest)
+                for el in moreActions {
+                    if el.location.y != findLocation.location.y && el.location.x != findLocation.location.x
                         continue
-                    el.ControlClick()
+                    if button = "Add reaction…" {
+                        el.FindCachedElement({LocalizedType: type, Name: button}).ControlClick()
+                        return
+                    }
+                    el.FindCachedElement([{LocalizedType:"button", Name: "More actions"}]).ControlClick()
                 }
-                try uiaObj.FindCachedElement({LocalizedType: type, Name: button}).ControlClick()
+                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 2000,,,,, cacheRequest).ControlClick()
                 return
             }
             ;// otherwise we just search for the button
-            if button = "Reply in thread" {
-                try check := uiaObj.FindCachedElement({LocalizedType: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}).ControlClick()
-            } else {
-                try uiaObj.FindCachedElement({LocalizedType: type, Name: button}).ControlClick()
+            if button != "Reply in thread" {
+                ;// limit to just the hover buttons (as the "add reaction" button appears under images and this script may attempt to interact with that)
+                try msgAction := uiaObj.FindCachedElement([{LocalizedType:"group", Name:"Message actions"}])
+                try msgAction.FindCachedElement({LocalizedType: type, Name: button}).ControlClick()
                 return
             }
+            try check := uiaObj.FindCachedElement({LocalizedType: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}).ControlClick()
             if IsSet(check) && replyInThread = true {
                 try {
-                    uiaObj.WaitElement([{LocalizedType: "dialog", Name: "Thread in channel", matchmode: "Substring"}, {AutomationId:"p-thread_footer__broadcast_checkbox", matchmode: "Substring"}], 2000,,,,, cacheRequest).ControlClick()
+                    findThread := uiaObj.WaitElement([{LocalizedType:"dialog", LocalizedType:"dialogue", Name:"Thread in (channel|conversation)", matchmode:"Regex"}], 2000,,,,, cacheRequest, 100)
+                    findBox    := uiaObj.WaitElement([{LocalizedType:"list item", Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, cacheRequest, 100)
+                    findBox.WaitElement([{LocalizedType:"checkbox", AutomationId:"p-thread_footer__broadcast_checkbox", matchmode: "Substring"}], 2000,,,,, cacheRequest).ControlClick()
                 }
             }
         }
