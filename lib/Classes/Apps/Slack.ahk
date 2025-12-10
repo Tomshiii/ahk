@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/12/09
- * @version 1.1.10
+ * @date 2025/12/10
+ * @version 1.1.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -68,9 +68,9 @@ class Slack {
         blocker := block_ext()
         blocker.On()
 
-        static cacheRequest := UIA.CreateCacheRequest(["LocalizedType", "AutomationId", "Name"],, 5)
+        static slackCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "AutomationId", "Name"],, 5)
 
-        try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, cacheRequest)
+        try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, slackCacheRequest)
         if !IsSet(slackEl) || !IsObject(slackEl) || !slackEl {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             blocker.Off()
@@ -90,16 +90,16 @@ class Slack {
                         continue
                     el.ControlClick()
                 }
-                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 2000,,,,, cacheRequest).ControlClick()
+                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 2000,,,,, slackCacheRequest).ControlClick()
                 return
             }
 
             ;// if a thread is open we need to hone our search to just the thread
-            if uiaObj.CachedElementExist({LocalizedType:"dialog", LocalizedType:"dialogue", Name: "Thread in channel", matchmode: "Substring"}) && button != "Reply in thread" {
-                findThread := uiaObj.WaitElement([{LocalizedType:"dialog", LocalizedType:"dialogue", Name:"Thread in channel", matchmode:"Substring"}], 2000,,,,, cacheRequest)
-                findLocation := findThread.WaitElement([{LocalizedType:"group", Name:"Message actions"}], 2000,,,,, cacheRequest)
+            if button != "Reply in thread" && uiaObj.CachedElementExist({LocalizedType:"dialog", LocalizedType:"dialogue", Name: "Thread in channel", matchmode: "Substring"}) {
+                findThread := uiaObj.WaitElement([{LocalizedType:"dialog", LocalizedType:"dialogue", Name:"Thread in channel", matchmode:"Substring"}], 2000,,,,, slackCacheRequest)
+                findLocation := findThread.WaitElement([{LocalizedType:"group", Name:"Message actions"}], 2000,,,,, slackCacheRequest)
 
-                moreActions := findThread.FindElements([{LocalizedType:"group", Name:"Message actions"}],,,, cacheRequest)
+                moreActions := findThread.FindElements([{LocalizedType:"group", Name:"Message actions"}],,,, slackCacheRequest)
                 for el in moreActions {
                     if el.location.y != findLocation.location.y && el.location.x != findLocation.location.x
                         continue
@@ -109,7 +109,7 @@ class Slack {
                     }
                     el.FindCachedElement([{LocalizedType:"button", Name: "More actions"}]).ControlClick()
                 }
-                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 2000,,,,, cacheRequest).ControlClick()
+                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 2000,,,,, slackCacheRequest).ControlClick()
                 return
             }
             ;// otherwise we just search for the button
@@ -122,9 +122,9 @@ class Slack {
             try check := uiaObj.FindCachedElement({LocalizedType: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}).ControlClick()
             if IsSet(check) && replyInThread = true {
                 try {
-                    findThread := uiaObj.WaitElement([{LocalizedType:"dialog", LocalizedType:"dialogue", Name:"Thread in (channel|conversation)", matchmode:"Regex"}], 2000,,,,, cacheRequest, 100)
-                    findBox    := uiaObj.WaitElement([{LocalizedType:"list item", Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, cacheRequest, 100)
-                    findBox.WaitElement([{LocalizedType:"checkbox", AutomationId:"p-thread_footer__broadcast_checkbox", matchmode: "Substring"}], 2000,,,,, cacheRequest).ControlClick()
+                    findThread := uiaObj.WaitElement([{LocalizedType:"dialog|dialogue", Name:"Thread in (channel|conversation)", matchmode:"Regex"}], 2000,,,,, slackCacheRequest, 100)
+                    findBox    := uiaObj.WaitElement([{LocalizedType:"list item", Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, slackCacheRequest, 100)
+                    findBox.WaitElement([{LocalizedType:"i)(check box|checkbox)", AutomationId:"p-thread_footer__broadcast_checkbox", Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, slackCacheRequest).ControlClick()
                 }
             }
         }

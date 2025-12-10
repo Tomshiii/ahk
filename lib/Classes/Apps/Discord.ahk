@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/11/25
- * @version 1.6.11
+ * @date 2025/12/10
+ * @version 1.6.11.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -62,15 +62,15 @@ class discord {
         blocker := block_ext()
         blocker.On()
 
-        static cacheRequest := UIA.CreateCacheRequest(["LocalizedType", "LocalizedControlType", "AutomationId", "Name"],, 5)
-        try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, cacheRequest)
+        static discCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "LocalizedControlType", "AutomationId", "Name"],, 5)
+        try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, discCacheRequest)
         if !IsSet(DiscordEl) || !IsObject(DiscordEl) || !DiscordEl {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             blocker.Off()
             return
         }
         SendInput("{RButton}") ;// this opens the right click context menu on the message you're hovering over
-        try discMenu := DiscordEl.WaitElement({LocalizedType:"menu", AutomationId:"message"}, 800,,,,, cacheRequest)
+        try discMenu := DiscordEl.WaitElement({LocalizedType:"menu", AutomationId:"message"}, 800,,,,, discCacheRequest)
         if !IsSet(discMenu) || !IsObject(discMenu) || !discMenu {
             icon := (FileExist(EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico")) ? EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico" : ""
             errorLog(TargetError("Could not determine discord right click menu", -1))
@@ -78,7 +78,7 @@ class discord {
             blocker.Off()
             return
         }
-        static discMenu := discMenu.BuildUpdatedCache(cacheRequest)
+        static discMenu := discMenu.BuildUpdatedCache(discCacheRequest)
 
 
         switch button {
@@ -87,7 +87,7 @@ class discord {
                 disableAutoReplyPing := UserSettings.disc_disable_autoreply
                 UserSettings := ""
                 try {
-                    quickSwitch := DiscordEl.FindCachedElement({LocalizedType:"button", Name:"Open Quick Switcher"})
+                    quickSwitch := DiscordEl.FindCachedElement({LocalizedType:"button", Name:"Open Quick Switcher"}) ;// the top bar of discord (ie. in dm's has the disc icon & "Direct Messages")
                     dms := quickSwitch.FindCachedElement({LocalizedType:"text", Name:"Direct Messages"})
 
                 } catch {
@@ -117,12 +117,13 @@ class discord {
             case "react": try discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-add-reaction"}).ControlClick()
             case "report": try discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-report"}).ControlClick()
             case "delete":
-                shift := GetKeyState("Shift", "P") ? true : false
-                if shift
+                if GetKeyState("Shift", "P") {
                     SendInput("{Shift Down}")
-                try discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-delete"}).ControlClick()
-                if shift
+                    try discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-delete"}).ControlClick()
                     SendInput("{Shift Up}")
+                } else {
+                    try discMenu.FindCachedElement({LocalizedType: "menu item", AutomationId: "message-delete"}).ControlClick()
+                }
         }
         blocker.Off()
     }
