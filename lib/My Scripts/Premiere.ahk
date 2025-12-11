@@ -331,7 +331,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 	}
 }
 
-F14::prem.__remoteFunc('toggleEnabled')
+; F14::prem.__remoteFunc('toggleEnabled')
 F14 & LButton::
 {
 	currKeys := getHotkeysArr()

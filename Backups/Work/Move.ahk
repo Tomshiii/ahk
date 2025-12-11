@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2025/11/21
- * @version 1.2.14
+ * @date 2025/12/11
+ * @version 1.2.15.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -186,7 +186,7 @@ class Move {
      */
     static Adjust(xORy := "x", window := "A") {
         keys.allWait(2)
-        WinGetPos(&x, &y, &w, &h, title := (window = "A") ? WinGetTitle(window) : title)
+        WinGetPos(&x, &y, &w, &h, title := (window = "A") ? winGet.Title() : title)
         hotkeys := getHotkeys()
         switch xORy {
             case "y":
