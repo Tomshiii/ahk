@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.6.2
  * @author tomshi, taranVH
- * @date 2025/12/04
- * @version 2.3.28
+ * @date 2025/12/11
+ * @version 2.3.29
  ***********************************************************************/
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
@@ -287,7 +287,7 @@ class rbuttonPrem {
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
 		try {
-			if WinGetTitle("A") != gettitle.winTitle {
+			if WinGet.Title() != gettitle.winTitle {
 				SendInput(this.sendHotkey)
 				return
 			}

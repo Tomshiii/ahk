@@ -3,6 +3,7 @@
 #Include <Classes\tool>
 #Include <Classes\errorLog>
 #Include <Classes\explorer>
+#Include <Classes\winget>
 ; }
 
 /**
@@ -16,7 +17,7 @@ refreshWin(window, runTarget, RunAs := false)
     coord.s()
     if window = "A"
         {
-            window := WinGetTitle("A")
+            window := WinGet.Title()
             switch WinGetProcessName(window) {
                 case "Notepad.exe":
                     for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where Name='notepad.exe'")

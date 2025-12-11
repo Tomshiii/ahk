@@ -17,6 +17,7 @@
 - ✅ Fixed `errorLog()` sometimes skipping the timestamp for the first error of the day
 - ✅ Fixed `loadXML()` throwing in the event the file is busy
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
+- 📋 Replaced all usage of `WinGetTitle("A")` with `WinGet.Title()` to avoid unnecessary instances of scripts throwing
 - ✏️ Added `isBool()`
 
 ### 📝 `prem {`

@@ -1,5 +1,6 @@
 ; { \\ #Includes
 #Include <KSA\Keyboard Shortcut Adjustments>
+#Include <Classes\winget>
 #Include <Classes\Editors\After Effects>
 #Include <Functions\mouseDrag>
 ; }
@@ -18,7 +19,7 @@ $+3::ae.zoomCompWindow({x:0, y:0, x2: 738, y2: 29}, A_ThisHotkey, 1)
 
 Space::
 {
-	switch getTitle := WinGetTitle("A") {
+	switch getTitle := WinGet.Title() {
 		case "Color":
 			if !CaretGetPos(&x, &y) {
 				SendInput("{Enter}")

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/12/08
- * @version 2.2.81
+ * @date 2025/12/11
+ * @version 2.2.82
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1719,7 +1719,7 @@ class Prem {
         }
         title := WinGet.PremName()
         CaretGetPos(&carx, &carY)
-        if WinGetTitle("A") != title.winTitle || CaretGetPos(&carx, &carY) {
+        if WinGet.Title() != title.winTitle || CaretGetPos(&carx, &carY) {
             __sendOrig()
             return
         }
@@ -2316,7 +2316,7 @@ class Prem {
 		windows := Map(
 			"Clip Fx Editor", true, "Track Fx Editor", true
 		)
-		activeWin := WinGetTitle("A")
+		activeWin := WinGet.Title()
 		inList := false
 		for k, v in windows {
 			if InStr(activeWin, k)
@@ -2326,7 +2326,7 @@ class Prem {
         mousePos := obj.MousePos(), winObj := obj.WinPos(activeWin)
 		if !mousePos || !winObj
             return
-        (inList = true && WinGetTitle("A") == activeWin) ? SendEvent("{Click " ((winObj.x+winObj.width)-19) A_Space winObj.y+16 "}") : (SendInput(onFailure), Exit())
+        (inList = true && WinGet.Title() == activeWin) ? SendEvent("{Click " ((winObj.x+winObj.width)-19) A_Space winObj.y+16 "}") : (SendInput(onFailure), Exit())
 		MouseMove(mousePos.x, mousePos.y)
 		sleep 200
 		this.__focusTimeline()
@@ -2404,7 +2404,7 @@ class Prem {
         }
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
-        try activeWin := WinGetTitle("A")
+        try activeWin := WinGet.Title()
         if !IsSet(activeWin) || activeWin != getTitle.winTitle {
             if !InStr(A_ThisHotkey, "&")
                 try SendInput("{" Format("sc{:X}", GetKeySC(A_ThisHotkey)) "}")
@@ -2551,7 +2551,7 @@ class Prem {
         blocker := block_ext()
         blocker.On()
 
-        getTitle := WinGet.PremName(), origMouseCords := obj.MousePos(), activationKey := getHotkeys(), LAltAct1 := GetKeyState("LAlt", "P"), LAltAct2 := GetKeyState("LAlt"), actWindow := WinGetTitle("A")
+        getTitle := WinGet.PremName(), origMouseCords := obj.MousePos(), activationKey := getHotkeys(), LAltAct1 := GetKeyState("LAlt", "P"), LAltAct2 := GetKeyState("LAlt"), actWindow := WinGet.Title()
         ;// avoid attempting to fire unless main window is active
         if !getTitle || !origMouseCords || !activationKey || (!LAltAct1 && !LAltAct2) || actWindow != getTitle.winTitle {
             blocker.Off()
@@ -2655,7 +2655,7 @@ class Prem {
             return
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
-        if WinGetTitle("A") != getTitle.winTitle
+        if WinGet.Title() != getTitle.winTitle
             return
 
         keys.allWait(2)
@@ -2762,7 +2762,7 @@ class Prem {
     static __getAllLayerButtonPos(audOrVid := "aud", mouseCoords?) {
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
-        if WinGetTitle("A") != getTitle.winTitle || (audOrVid != "aud" && audOrVid != "vid")
+        if WinGet.Title() != getTitle.winTitle || (audOrVid != "aud" && audOrVid != "vid")
             return false
         coord.client()
         if !this.__checkTimelineValues()
@@ -2796,7 +2796,7 @@ class Prem {
     static __getAllLayerPos(midDivY := "", vidOrAud := "aud", stopAt := false) {
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
-        if WinGetTitle("A") != getTitle.winTitle
+        if WinGet.Title() != getTitle.winTitle
             return false
 
         coord.client()
@@ -2850,7 +2850,7 @@ class Prem {
      */
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false, ignore := false) {
         ;// avoid attempting to fire unless main window is active
-        getTitle := WinGet.PremName(), actTitle := WinGetTitle("A")
+        getTitle := WinGet.PremName(), actTitle := WinGet.Title()
         if !WinActive(editors.Premiere.winTitle) || !getTitle || actTitle != getTitle.winTitle {
             ;// why does the sendinput no longer do anything in this block
             ;// but if you pull it out it works (but kills itself)
@@ -3186,7 +3186,7 @@ class Prem {
         blocker.On()
 
         ;// avoid attempting to fire unless main window is active
-        getTitle := WinGet.PremName(), actWin := WinGetTitle("A")
+        getTitle := WinGet.PremName(), actWin := WinGet.Title()
         if !getTitle || actWin != getTitle.winTitle {
             blocker.Off()
             return
@@ -3252,7 +3252,7 @@ class Prem {
         blocker.On()
 
         ;// avoid attempting to fire unless main window is active
-        getTitle := WinGet.PremName(), actWin := WinGetTitle("A"), activationKey := getHotkeys()
+        getTitle := WinGet.PremName(), actWin := WinGet.Title(), activationKey := getHotkeys()
         if !getTitle || actWin != getTitle.winTitle || !activationKey {
             blocker.Off()
             return

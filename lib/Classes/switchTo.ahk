@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/11/26
- * @version 1.3.26
+ * @date 2025/12/11
+ * @version 1.3.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -638,7 +638,7 @@ class switchTo {
                 else
                     GroupActivate "MusicPlayers", "r"
                 loop {
-                    IME := WinGetTitle("A")
+                    IME := WinGet.Title()
                     if IME != "Default IME" && IME != ""
                         break
                     GroupActivate "MusicPlayers", "r"

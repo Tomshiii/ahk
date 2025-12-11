@@ -2,12 +2,13 @@
 #Include <KSA\Keyboard Shortcut Adjustments>
 #Include <Classes\Editors\Premiere>
 #Include <Classes\keys>
+#Include <Classes\winget>
 #Include <Functions\isDoubleClick>
 #Include <Functions\delaySI>
 ; }
 
 isIn(title) {
-	try getTitle := WinGetTitle("A")
+	try getTitle := WinGet.Title()
 	catch {
 		return false
 	}
@@ -59,7 +60,7 @@ Enter:: ;// close windows by double tapping enter
 			if IsSet(A_PriorKey) && isDoubleClick(750, "key")
 				prem.escFxMenu()
 			return
-		case (WinGetTitle("A") == "Save Project"): return
+		case (WinGet.Title() == "Save Project"): return
 		default:
 			SendInput("{" A_ThisHotkey "}")
 			return
@@ -259,7 +260,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 
 	;// ensure the main prem window is active before attempting to fire
 	getTitle := WinGet.PremName()
-	if !getTitle || !IsObject(getTitle) || !gettitle.winTitle || WinGetTitle("A") != gettitle.winTitle {
+	if !getTitle || !IsObject(getTitle) || !gettitle.winTitle || WinGet.Title() != gettitle.winTitle {
 		KeyWait(A_ThisHotkey)
 		__cleanup()
 		return
@@ -342,7 +343,7 @@ F14 & LButton::
 	__cleanup() => (checkStuck(["Ctrl", "LButton"]))
 	;// ensure the main prem window is active before attempting to fire
 	getTitle := WinGet.PremName()
-	if !getTitle || !IsObject(getTitle) || !gettitle.winTitle || WinGetTitle("A") != gettitle.winTitle {
+	if !getTitle || !IsObject(getTitle) || !gettitle.winTitle || WinGet.Title() != gettitle.winTitle {
 		KeyWait(currKeys[1])
 		__cleanup()
 		return

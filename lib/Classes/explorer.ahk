@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2025/10/18
- * @version 1.0.1
+ * @date 2025/12/11
+ * @version 1.0.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\obj>
@@ -16,7 +16,7 @@ class explorer {
 
     /**
      * A function to create a UIA element for an explorer window
-     * @param {String} [currWin=WinGetTitle("A")] the explorer window you wish to operate on. Defaults to `WinGetTitle("A")`
+     * @param {String} [currWin=WinGet.Title()] the explorer window you wish to operate on. Defaults to `WinGet.Title()`
      * @param {Boolean} [getActive=true] determines whether this function will check the currently active panel. Note; leaving this as true can add anywhere from `60-1000ms` of delay depending on how busy Premiere currently is and is best left as `false` if performance is the goal or the active element isn't needed
      * @returns {Object}
      * ```
@@ -25,7 +25,7 @@ class explorer {
      * createEl.activeElement ;// the UIA string of the currently active element
      * ```
      */
-    static __createUIAelement(currWin := WinGetTitle("A"), getActive := true) {
+    static __createUIAelement(currWin := WinGet.Title(), getActive := true) {
         try explorerEl := UIA.ElementFromHandle(currWin " ahk_exe explorer.exe",, false)
         catch {
             try explorerEl := UIA.ElementFromHandle(currWin " ahk_class #32770",, false)
@@ -94,12 +94,13 @@ class explorer {
             return false
         }
 
-    /** A function to click the "Cancel search" button that appears in windows 11 */
+    /**
+     * A function to click the "Cancel search" button that appears in windows 1
+     * @returns {Object} [uiaElement, activeAutoID] returns an object. Returns `false` on failure or `-1` if the window title cannot be determined or if creating a UIA element fails
+     */
     static cancelSearch() {
-        try currWin := WinGetTitle("A")
-        catch {
+        if !currWin := WinGet.Title()
             return -1
-        }
         if !InStr(currWin, "Search Results in") {
             return false
         }
@@ -115,8 +116,6 @@ class explorer {
             return -1
         }
         return {uiaElement: explorerEl.uiaElement, activeAutoID: autoID}
-
-
     }
 
     /**

@@ -1,5 +1,6 @@
 ; { \\ #Includes
 #Include <Classes\explorer>
+#Include <Classes\winget>
 #Include <Functions\delaySI>
 ; }
 
@@ -16,7 +17,7 @@ F21::
     switch {
         case (expl == -1): return
         case (expl = false):
-            try currWin := WinGetTitle("A")
+            try currWin := WinGet.Title()
             catch {
                 SendInput("!{Up}")
                 return

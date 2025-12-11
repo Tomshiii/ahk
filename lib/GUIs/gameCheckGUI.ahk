@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\Dark>
+#Include <Classes\winget>
 #Include <GUIs\tomshiBasic>
 #Include <Functions\detect>
 ; }
@@ -11,7 +12,7 @@
  * @param {String} process the process name of the active window that will be auto filled into the respective edit box
  */
 class gameCheckGUI extends tomshiBasic {
-    __New(version := "", winTitle := WinGetTitle("A"), process := WinGetProcessName("A")) {
+    __New(version := "", winTitle := WinGet.Title(), process := WinGetProcessName("A")) {
         super.__New(,, "+MinSize450x320 +MaxSize450x AlwaysOnTop", "Add game to gameCheck.ahk")
         this.winTitle := winTitle, this.process := process, this.version := version
         this.__generate()

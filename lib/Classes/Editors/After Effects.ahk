@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 25.6.2
  * @author tomshi
- * @date 2025/12/02
- * @version 1.2.9
+ * @date 2025/12/11
+ * @version 1.2.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,7 @@
 #Include <Classes\keys>
 #Include <Classes\obj>
 #Include <Classes\cmd>
+#Include <Classes\winGet>
 #Include <Classes\errorLog>
 #Include <Functions\delaySI>
 ; }
@@ -242,7 +243,7 @@ class AE {
         */
         getCoords(&graphX, &graphY, &end, &bottom)
         {
-            activeWin := WinGetTitle("A")
+            activeWin := WinGet.Title()
             if !InStr(activeWin, "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(activeWin, "Adobe After Effects (Beta)")
                 return
             tool.Cust(A_ThisFunc "() is grabbing the timeline coords")
@@ -259,7 +260,7 @@ class AE {
         }
         if !IsSet(set)
             getCoords(&graphX, &graphY, &end, &bottom)
-        if (!IsSet(graphX) || !IsSet(graphY) || !IsSet(end) || !IsSet(bottom)) || (!InStr(WinGetTitle("A"), "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(WinGetTitle("A"), "Adobe After Effects (Beta) -" ))
+        if (!IsSet(graphX) || !IsSet(graphY) || !IsSet(end) || !IsSet(bottom)) || (!InStr(WinGet.Title(), "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(WinGet.Title(), "Adobe After Effects (Beta) -" ))
             {
                 SendInput("{" A_ThisHotkey "}")
                 tool.Wait()

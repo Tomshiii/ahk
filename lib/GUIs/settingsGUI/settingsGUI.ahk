@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/10/26
- * @version 2.3.18
+ * @date 2025/12/11
+ * @version 2.3.19
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -14,6 +14,7 @@
 #Include <Classes\obj>
 #Include <Classes\WM>
 #Include <Classes\reset>
+#Include <Classes\winget>
 #Include <Other\Notify\Notify>
 #Include <Other\Array>
 #Include <Functions\refreshWin>
@@ -98,7 +99,7 @@ settingsGUI()
 
     try { ;attempting to grab window information on the active window for `menu_AddGame()`
         winProcc := WinGetProcessName("A")
-        winTitle := WinGetTitle("A")
+        winTitle := WinGet.Title()
     } catch {
         winProcc := ""
         winTitle := ""

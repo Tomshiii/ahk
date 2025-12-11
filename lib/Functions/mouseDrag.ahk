@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include <Classes\ptf>
 #Include <Classes\keys>
+#Include <Classes\winget>
 #Include <Functions\delaySI>
 ; }
 
@@ -10,7 +11,7 @@
  * @param {String} toolorig is the button you want the script to press to bring you back to your tool of choice. (consider using values in KSA)
 */
 mouseDrag(tool, toolorig) {
-    activeWin := WinGetTitle("A")
+    activeWin := WinGet.Title()
     if (WinActive(editors.AE.winTitle) &&
         (
             (!InStr(activeWin, "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(activeWin, "Adobe After Effects (Beta)")) ||
