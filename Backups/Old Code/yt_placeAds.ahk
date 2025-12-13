@@ -5,7 +5,7 @@
 
 #HotIf WinActive("ahk_exe chrome.exe")
 
-titles := Map("Channel dashboard - YouTube Studio - Google Chrome", true, "Video monetization - YouTube Studio - Google Chrome", true, "Channel content - YouTube Studio - Google Chrome", true)
+titles := Map("Channel dashboard - YouTube Studio - Google Chrome", true, "Video monetization - YouTube Studio - Google Chrome", true, "Channel content - YouTube Studio - Google Chrome", true, "Ways to earn - YouTube Studio - Google Chrome", true)
 __howMany(UIAElement, amount) {
     newEl := UIAElement.FindElement({Name: "Skip forward 10 seconds", LocalizedType: "button", AutomationId: "skip-forward-10"})
     loop amount {

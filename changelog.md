@@ -2,7 +2,8 @@
 
 > [!Warning]
 > There are still a few known issues with this release.  
-> It is recommended to check out the [`Known Issues & Planned Changes`](<https://github.com/users/Tomshiii/projects/1/views/1>) page if you are encountering any issues. If you are encountering an issue and it is not listed, consider creating an [Issue](<https://github.com/Tomshiii/ahk/issues>) so it can be tracked.
+> It is recommended to check out the [`Known Issues & Planned Changes`](<https://github.com/users/Tomshiii/projects/1/views/1>) page if you are encountering any issues.  
+> If you are encountering an issue and it is not listed, consider creating an [Issue](<https://github.com/Tomshiii/ahk/issues>) so it can be tracked.
 
 > [!Caution]
 > ###### If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated or added.
@@ -18,7 +19,7 @@
 - ✅ Fixed `loadXML()` throwing in the event the file is busy
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 - 📋 Replaced all usage of `WinGetTitle("A")` with `WinGet.Title()` to avoid unnecessary instances of scripts throwing
-- ✏️ Added `isBool()`
+- ✏️ Added `isBool()`/`checkBool()`
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
@@ -108,6 +109,7 @@
 ### 📝 `startup {`
 - ✅ Fixed `__checkForReloadAttempt()` causing scripts to throw under certain circumstances
 - ✅ Fixed `checkVersJSON()` generating an entry even if an `ImageSearch` folder exists
+- 📋 `gitBranchCheck()` will now abort if the user has any stashed changes
 
 📍 `trayMen()`
 - ✅ Fixed function not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has already been closed

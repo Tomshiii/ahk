@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2024/06/02
- * @version 1.1.9
+ * @date 2025/12/12
+ * @version 1.1.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -60,6 +60,7 @@ class WM {
         NumPut( "Ptr", SizeInBytes  ; OS requires that this be done.
             , "Ptr", StrPtr(str)  ; Set lpData to point to the string itself.
             , CopyDataStruct, A_PtrSize)
+        Critical()
         dct := detect()
         returnDct() => (DetectHiddenWindows(dct.windows), SetTitleMatchMode(dct.title))
         ; Must use SendMessage not PostMessage.
@@ -68,9 +69,11 @@ class WM {
         } catch {
             tool.Cust("SendMessage timed out")
             returnDct()
+            Critical("Off")
             return false
         }
         returnDct()
+        Critical("Off")
         return RetValue  ; Return SendMessage's reply back to our caller.
     }
 
@@ -103,7 +106,6 @@ class WM {
         splitMsg := StrSplit(res, ",")
         switch splitMsg[1] {
             case "__premTimelineCoords":
-                detect()
                 if !prem.__checkTimelineValues()
                     return
                 response := Format("__thisTimelineCoords,timelineRawX,{},timelineRawY,{},timelineXValue,{},timelineYValue,{},timelineXControl,{},timelineYControl,{},timelineVals,{}", prem.timelineRawX, prem.timelineRawY, prem.timelineXValue, prem.timelineYValue, prem.timelineXControl, prem.timelineYControl, true)

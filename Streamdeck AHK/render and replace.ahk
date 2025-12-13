@@ -11,12 +11,14 @@ onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 LabelColour := KSA.labelViolet
 UserSettings := UserPref()
+MainScriptName := UserSettings.MainScriptName
+UserSettings := ""
 
 if !WinActive(prem.winTitle)
     return
-detect()
-if WinExist(UserSettings.MainScriptName ".ahk")
-    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
+
+if WinGet.ExistRegex(MainScriptName ".ahk",,,, true)
+    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, MainScriptName ".ahk")
 
 if prem.__checkTimelineValues() = true {
     sleep 100
@@ -32,7 +34,7 @@ sleep 50
 SendEvent(KSA.premRndrReplce)
 sleep 100
 if !WinWait("Render and Replace",, 2) {
-    if attempt ?? false = "active" {
+    if (attempt ?? false) = "active" {
         SendInput(KSA.premRndrReplce)
         if !WinWait("Render and Replace",, 2) {
             tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")
@@ -40,3 +42,4 @@ if !WinWait("Render and Replace",, 2) {
         }
     }
 }
+ExitApp() ;// prem.save() uses WinEvent which will cause this script to act persistently

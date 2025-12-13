@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/12/08
- * @version 1.7.85
+ * @date 2025/12/13
+ * @version 1.7.86
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,6 +32,7 @@
 #Include <Functions\editScript>
 #Include <Functions\checkInternet>
 #Include <Functions\detect>
+#Include <Functions\checkBool>
 #Include <Other\SystemThemeAwareToolTip>
 #Include <Other\FileGetExtendedProp>
 #Include <Other\print>
@@ -1360,6 +1361,11 @@ class Startup {
             }
             SplitPath(v, &repo)
             getBranch := SubStr(getStatus, first := InStr(getStatus, "'",, 1, 1)+1, InStr(getStatus, "'",, first+1, 1)-first)
+            checkStaged := cmd.result('git diff --cached --quiet && echo false || echo true',,, v)
+            if checkBool(checkStaged) = true {
+                Notify.Show(v, 'The following git repo has staged changes. Pulling from the repo will be aborted to avoid issues.', ptf.lib "\Other\Notify\Icons.dll|Icon28",,, 'dur=7 bdr=Red maxW=400')
+                continue
+            }
             userResponse := MsgBox("Branch: ``" getBranch "`` for repo: ``" repo "`` appears to have changes.`nWould you like to pull these changes? (this process will stash any uncommitted changes and then pop them once finished)", "Would you like to pull repo?", "4132")
             if userResponse != "Yes"
                 continue
