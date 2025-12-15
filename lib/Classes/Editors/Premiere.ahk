@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/12/11
- * @version 2.2.82
+ * @date 2025/12/15
+ * @version 2.2.83
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -460,7 +460,8 @@ class Prem {
      *
      * ## Warning
      *
-     * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues
+     * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
+     * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead. This function will attempt to rectify the issue itself but again, relying on such could result in issues.
      * @returns {String} if the user sets `needResult` to `true` this function will return a string containing the response.
      */
     static __remoteFunc(whichFunc, needResult := false, params*) {
@@ -471,15 +472,13 @@ class Prem {
         paramsString := ""
         if params.Length >= 1 {
             for k, v in params {
-                if params.Length == 1 {
-                    paramsString := params[A_Index]
-                    break ;// happens anyway but for readability
-                }
                 if k = 1 {
-                    paramsString := params[A_Index]
+                    paramsString := StrReplace(params[A_Index], "&", "%26")
+                    if params.Length == 1
+                        break
                     continue
                 }
-                paramsString := paramsString "&" params[A_Index]
+                paramsString := paramsString "&" StrReplace(params[A_Index], "&", "%26")
             }
         }
         paramsString := StrReplace(paramsString, A_Space, "%20")

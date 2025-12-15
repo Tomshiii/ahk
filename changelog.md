@@ -54,6 +54,7 @@
 - 📋 Now alerts the user if it attempted to interact with a transition handle (not perfect)
 
 📍 `__remoteFunc()`
+- ✅ Fix function failing to send `&` in paramaters
 - 📋 Will now attempt to replace any `A_Space` in `params*` with `%20`
 - 📋 Will now warn the user if `PremiereRemote` is not installed or the requested function does not exist in the user's `index.tsx`
 
