@@ -323,18 +323,21 @@ export class Utils {
         var thisName;
         for(var i = 0; i < projectItem.children.numItems; i++) {
           thisName = projectItem.children[i].name;
+          var ext = thisName.substring(thisName.lastIndexOf('.') + 1).toLowerCase();
 
-          if((thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "aep" && (thisName.indexOf("linked comp") !== -1 || thisName.indexOf("Linked Comp") !== -1)) || thisName.substring(thisName.length - 17, thisName.length).toLowerCase() == ".aep_rendered.mov" || thisName.substring(0, 15).toLowerCase() == "nested sequence") {
+          if((ext == "aep" && (thisName.indexOf("linked comp") !== -1 || thisName.indexOf("Linked Comp") !== -1)) || thisName.substring(thisName.length - 17, thisName.length).toLowerCase() == ".aep_rendered.mov" || thisName.substring(0, 15).toLowerCase() == "nested sequence") {
             linkedComps.push(projectItem.children[i]);
           }
 
           // images
-          if(thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "jpg" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "jpeg" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "png" || thisName.substring(thisName.length - 4, thisName.length).toLowerCase() == "webp" || thisName.substring(thisName.length - 4, thisName.length).toLowerCase() == "heic") {
+          var imageExts = ["jpg", "jpeg", "png", "webp", "heic", "gif"];
+          if (this.arrayContains(imageExts, ext)) {
             images.push(projectItem.children[i]);
           }
 
           // video
-          if(thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "mp4" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "mov" || thisName.substring(thisName.length - 3, thisName.length).toLowerCase() == "avi") {
+          var vidExts = ["mp4", "mov", "avi", "mkv"]
+          if (this.arrayContains(vidExts, ext)) {
             videos.push(projectItem.children[i]);
           }
         }
@@ -342,6 +345,13 @@ export class Utils {
         Utils.moveToFolder(images, imageFolder);
         Utils.moveToFolder(videos, videoFolder);
         Utils.moveToFolder(linkedComps, linkedCompsFolder);
+    }
+
+    static arrayContains(arr: any, value: string) {
+        for (var j = 0; j < arr.length; j++) {
+            if (arr[j] === value) return true;
+        }
+        return false;
     }
 
     static moveToFolder(items: any, folder: any) {
@@ -366,6 +376,8 @@ export class Utils {
       return true;
     }
 
+    // just fyi this function is ai slop through and through
+    // I didn't know enough about typescript to make something like this myself
     static checkObjParams() {
       try {
         var seq = qe.project.getActiveSequence();
@@ -405,6 +417,8 @@ export class Utils {
       }
     }
 
+    // just fyi this function is ai slop through and through
+    // I didn't know enough about typescript to make something like this myself
     static checkFuncParams(inspectPath: string) {
       try {
 

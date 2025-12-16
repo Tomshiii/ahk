@@ -9,6 +9,7 @@
 > ###### If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated or added.
 
 ## Functions
+- ✅ Fixed initial compatibility with `Premiere v26.1` after name change
 - ✅ Fixed multiple instances of incorrect `||` logic
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
 - ✅ Fixed `reset {` functions not affecting all scripts
@@ -26,6 +27,7 @@
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
+- ✅ Fixed `selectionTool()` containing left over code
 - ✏️ Added `stopPlayback()`
 - ✏️ Added `startPlayback()`
 - ✏️ Added `toggleLinearColour()`

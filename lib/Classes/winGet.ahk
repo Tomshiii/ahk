@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2025/12/02
- * @version 1.6.3
+ * @date 2025/12/16
+ * @version 1.6.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -231,7 +231,7 @@ class WinGet {
             switch which {
                 ;// we add the " -" to accomodate a window that is literally just called "Adobe -- [Year]"
                 case "AE":       title := "Adobe After Effects " adobeYear " -"
-                case "Premiere": title := "Adobe Premiere Pro " adobeYear " -"
+                case "Premiere": title := editors.__determinePremName() " " adobeYear " -"
             }
             titleCheck := InStr(progCheck, title)
             saveCheck := (SubStr(progCheck, -1, 1) = "*") ? true : false

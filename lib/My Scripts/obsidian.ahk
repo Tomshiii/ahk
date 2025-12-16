@@ -19,8 +19,6 @@
     - [ ]
     ### Eduardo
     - [ ]
-    ### James
-    - [ ] general checkin. where are you at?
     ### Everyone
     - [ ] make sure we're uploading shorts if we haven't already
 

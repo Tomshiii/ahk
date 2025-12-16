@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/12/11
- * @version 2.3.19
+ * @date 2025/12/16
+ * @version 2.3.20
  ***********************************************************************/
 ; { \\ #Includes
 #Include <Classes\Settings>
@@ -595,8 +595,8 @@ settingsGUI()
                 short := "prem"
                 static premIsBeta := unset
                 shortcutName := "Adobe Premiere Pro.exe"
-                shortcutNameBeta := "Adobe Premiere Pro (Beta).exe"
-                adobeFullName := "Adobe Premiere Pro"
+                shortcutNameBeta := editors.__determinePremName() " (Beta).exe"
+                adobeFullName := editors.__determinePremName()
                 title := program " Pro Settings"
                 yearIniName := "prem_year"
                 iniInitYear := UserSettings.prem_year

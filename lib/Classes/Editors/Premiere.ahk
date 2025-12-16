@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/12/15
- * @version 2.2.83
+ * @date 2025/12/16
+ * @version 2.2.84
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -191,8 +191,9 @@ class Prem {
         ;// timeline colours + themes
         switch this.UI {
             case "Spectrum":
-                if FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs") {
-                    loadSettings := loadXML(FileRead(ptf['PremProfile'] "Adobe Premiere Pro Prefs"))
+                filecheck := (FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs")) ? ptf['PremProfile'] "Adobe Premiere Pro Prefs" : ((FileExist(ptf['PremProfile'] "Adobe Premiere Prefs")) ? ptf['PremProfile'] "Adobe Premiere Prefs" : false)
+                if filecheck != false {
+                    loadSettings := loadXML(FileRead(filecheck))
                     if !loadSettings {
                         if !Notify.Exist('notDetermined') {
                             Notify.Show('Premiere theme could not be determined. Settings file was busy', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
@@ -220,15 +221,15 @@ class Prem {
                                 switch setTheme {
                                     case "Abort": ;// darkest
                                         props.text := "7.9999998211860657"
-                                        loadSettings.save(ptf['PremProfile'] "Adobe Premiere Pro Prefs")
+                                        loadSettings.save(ptf['PremProfile'] filecheck)
                                         this.theme := "darkest"
                                     case "Retry": ;// dark
                                         props.text := "34.999999403953552"
-                                        loadSettings.save(ptf['PremProfile'] "Adobe Premiere Pro Prefs")
+                                        loadSettings.save(ptf['PremProfile'] filecheck)
                                         this.theme := "dark"
                                     case "Ignore": ;// light
                                         props.text := "80.000001192092896"
-                                        loadSettings.save(ptf['PremProfile'] "Adobe Premiere Pro Prefs")
+                                        loadSettings.save(ptf['PremProfile'] filecheck)
                                         this.theme := "light"
                                 }
                             }
@@ -489,12 +490,12 @@ class Prem {
         }
         else {
             if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
-                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
+                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
                 return false
             }
             try parse := JSON.parse(getResp)
             catch {
-                errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
+                errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
                 return false
             }
             if parse["result"] != "true" && parse["result"] != "false"
@@ -1677,13 +1678,14 @@ class Prem {
         try toolsNN := this.__uiaCtrlPos(premUIA.tools,,, false)
         if !IsSet(toolsNN) {
             block.Off()
+            errorLog(UnsetError("Couldn't create UIA object", -2),, true)
             return
         }
-        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection_2.png") {
+        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + Min(toolsNN.width, 100), toolsNN.y + Min(toolsNN.height, 100), "*2 " ptf.Premiere "selection_2.png") {
             block.Off()
             return
         }
-        if ImageSearch(&x, &y, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection.png") {
+        if ImageSearch(&x, &y, toolsNN.x, toolsNN.y, toolsNN.x + Min(toolsNN.width, 100), toolsNN.y + Min(toolsNN.height, 100), "*2 " ptf.Premiere "selection.png") {
             coord.client("Mouse", false)
             MouseMove(x, y)
             SendInput("{Click}")
@@ -1692,15 +1694,8 @@ class Prem {
             block.Off()
             return
         }
-        sleep 100
-        if A_Index > 3 {
-            SendInput(KSA.timelineWindow)
-            SendInput(KSA.selectionPrem)
-            SendInput(KSA.programMonitor)
-            errorLog(Error("Couldn't find the selection tool", -1), "Used the selection hotkey instead", 1)
-            block.Off()
-            return
-        }
+        block.Off()
+        errorLog(TargetError("Couldn't find the selection tool"), "Used the selection hotkey instead", true)
     }
 
     /**

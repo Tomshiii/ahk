@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/12/11
- * @version 1.3.27
+ * @date 2025/12/16
+ * @version 1.3.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -369,7 +369,7 @@ class switchTo {
 
         __action(*) {
             ;// if an editor isn't open
-            if !WinExist("Adobe Premiere Pro") && !WinExist("Adobe After Effects") {
+            if !WinExist(editors.__determinePremName()) && !WinExist("Adobe After Effects") {
                 ;// if the commissions folder doesn't exist
                 if !DirExist(ptf.comms) {
                     errorLog(Error("Couldn't determine a Premiere/After Effects window & backup directory doesn't exist", -1, ptf.comms),, 1)

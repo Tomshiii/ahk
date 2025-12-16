@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2025/08/04
- * @version 1.2.11.1
+ * @date 2025/12/16
+ * @version 1.2.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -147,6 +147,12 @@ class Editors {
     static __setWinTitle(which, exe) {
         wintitle := (ptf().UserSettings.%which%IsBeta = true || ptf().UserSettings.%which%IsBeta = "true") ? "ahk_exe " exe " (Beta).exe" : "ahk_exe " exe ".exe"
         return wintitle
+    }
+    static __determinePremName(fullOrPro := true) {
+        switch fullOrPro {
+            case true: return (VerCompare(SubStr(ptf().UserSettings.premVer, 2), "26.1") >= 0) ? "Adobe Premiere" : "Adobe Premiere Pro"
+            case false: return (VerCompare(SubStr(ptf().UserSettings.premVer, 2), "26.1") >= 0) ? "" : " Pro"
+        }
     }
     static Premiere := {
         winTitle: this.__setWinTitle("prem", "Adobe Premiere Pro"),   class: "ahk_class Premiere Pro"
