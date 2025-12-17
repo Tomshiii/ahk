@@ -360,6 +360,65 @@ export class Utils {
       }
     }
 
+    static findOrCreateFolderPath(rootItem, folderPath, createIfMissing) {
+      // Navigate to a folder path, optionally creating it if it doesn't exist
+      // createIfMissing: if true, creates the final folder; if false, returns null if not found
+
+      if (typeof createIfMissing === 'undefined') {
+        createIfMissing = true; // Default to creating for backwards compatibility
+      }
+
+      // Split by forward slash or backslash
+      var pathParts = folderPath.split(/[\/\\]+/);
+
+      // Filter out empty parts
+      var filteredParts = [];
+      for (var k = 0; k < pathParts.length; k++) {
+        if (pathParts[k]) {
+          filteredParts.push(pathParts[k]);
+        }
+      }
+      pathParts = filteredParts;
+
+      var currentFolder = rootItem;
+
+      // Navigate through each level of the path
+      for (var partIndex = 0; partIndex < pathParts.length; partIndex++) {
+        var folderName = pathParts[partIndex];
+        var foundFolder = null;
+
+        // Search for the folder at this level
+        for (var childIndex = 0; childIndex < currentFolder.children.numItems; childIndex++) {
+          var child = currentFolder.children[childIndex];
+          if (child.type === 2 && child.name === folderName) { // type 2 is bin/folder
+            foundFolder = child;
+            break;
+          }
+        }
+
+        // If folder doesn't exist
+        if (!foundFolder) {
+          var isLastFolder = (partIndex === pathParts.length - 1);
+
+          if (createIfMissing && isLastFolder) {
+            // Create the final folder if allowed
+            foundFolder = currentFolder.createBin(folderName);
+          } else if (!isLastFolder) {
+            // Intermediate folder missing - can't continue
+            alert("Folder path incomplete: could not find '" + folderName + "' in path '" + folderPath + "'");
+            return null;
+          } else {
+            // Final folder missing and not allowed to create
+            return null;
+          }
+        }
+
+        currentFolder = foundFolder;
+      }
+
+      return currentFolder;
+    }
+
     static isPlaying() {
       var isPlaying = qe.project.getActiveSequence().player.isPlaying;
       return isPlaying

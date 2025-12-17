@@ -39,7 +39,7 @@ Class CustomFunctions {
     changeDupe(toggleHotkey)                => (prem.changeDupeFrameMarkers(toggleHotkey))
     organiseProj()                          => (prem.__remoteFunc('organiseProj'))
     setMarker(colour)                       => (prem.__remoteFunc('setMarker',, "colour=" colour))
-    moveToAssetBin(folder)                  => (prem.__remoteFunc('moveToAssetsBin',, 'folder=' folder))
+    moveToAssetBin(folder)                  => (prem.__remoteFunc('moveToAssetsBin',, 'folderPath=' folder))
     toggleLinearColour(enableMaxRenderQual) => (prem.toggleLinearColour(true))
     renderPreviews()                        => (prem.renderPreviewsInOut())
 }

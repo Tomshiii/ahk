@@ -201,7 +201,7 @@ Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, 2, tr
 <!F23::prem.wheelEditPoint(ksa.timelineWindow, ksa.selectedClipEnd, 2, true, "{LAlt}{F23}")
 
 F20::prem.dragSourceMon("video", "{F20}")
-F19::prem.dragSourceMon(, "{F19}", "Bars and Tone - Rec 709", true)
+F19::prem.dragSourceMon(, "{F19}", "_Assets/01_Other/Bars and Tone - Rec 709", true)
 F14 & F19::prem.dragSourceMon(, "")
 
 ;// next/previous edit point hotkeys

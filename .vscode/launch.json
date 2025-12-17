@@ -1,15 +1,19 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        {
+            "name": "AutoHotkey Debug",
+            "type": "autohotkey",
+            "request": "launch",
+            "program": "${file}"
+        },
         {
             "type": "extendscript-debug",
             "request": "launch",
             "name": "Launch Script in ExtendScript Engine",
             "bringToFront": true,
-            "hostAppSpecifier": "premierepro-25.0"
+            "hostAppSpecifier": "premierepro-25.0",
+            "script": "${file}"
         }
     ]
 }

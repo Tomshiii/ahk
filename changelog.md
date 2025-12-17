@@ -34,7 +34,6 @@
 - ✏️ Added `renderPreviewsInOut()`
     - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height
-- 📋 `dragSourceMon()` now accepts parameter `searchForFile` which, when set, will attempt to search for the desired file if it isn't already loaded in the source monitor
 
 📍 `save()`
 - 📋 Will now abort early if `Premiere` fails to retrieve the originally active sequence
@@ -64,6 +63,10 @@
 - ✅ Fixed function not working correctly in versions `25.4` and greater
 - 📋 Now accepts parameter `ae` to determine if you're calling the function from After Effects or Premiere. Defaults to `false`
     - ✅ Fixes incorrect tabbing logic inside of After Effects
+
+📍 `dragSourceMon()`
+- 📋 Parameter `specificFile` now requires a full path to the desired file
+- 📋 Now accepts parameter `searchForFile` which, when set, will attempt to search for the desired file if it isn't already loaded in the source monitor
 
 ### 📝 `premUIA_Values {`
 📍 `__setNewVal()`

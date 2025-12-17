@@ -49,7 +49,9 @@ export const host = {
     return varr.name;
   },
 
-  loadInSourceMonitor: function(itemName: string, folder?: string) {
+  /* loadInSourceMonitor: function(itemName: string, folder?: string) {
+    // this method brute searches for the provided folder which may be preferred in some instances
+    // but is ultimately far less reliable than providing an exact path
     const searchFolder: ProjectItem | null = folder
         ? this.searchForBinWithName(folder)
         : app.project.rootItem;
@@ -61,6 +63,55 @@ export const host = {
     const projItem = this.searchForItemByName(searchFolder, itemName);
     if (!projItem) {
         return false;
+    }
+
+    app.sourceMonitor.openProjectItem(projItem);
+    return true;
+  }, */
+
+  loadInSourceMonitor: function(itemPath: string) {
+    // itemPath can be just a filename or a full path like "_Assets/Footage/clip.mov"
+
+    // Find the last slash (backslash or forward slash)
+    var lastSlashIndex = -1;
+    for (var i = itemPath.length - 1; i >= 0; i--) {
+      if (itemPath[i] === '\\' || itemPath[i] === '/') {
+        lastSlashIndex = i;
+        break;
+      }
+    }
+
+    var folderPath = '';
+    var itemName = '';
+
+    if (lastSlashIndex > -1) {
+      // Build folderPath from characters before the slash
+      for (var i = 0; i < lastSlashIndex; i++) {
+        folderPath += itemPath[i];
+      }
+      // Build itemName from characters after the slash
+      for (var i = lastSlashIndex + 1; i < itemPath.length; i++) {
+        itemName += itemPath[i];
+      }
+    } else {
+      // No slash found, entire path is the item name
+      itemName = itemPath;
+    }
+
+    // Find the folder (don't create)
+    const searchFolder = folderPath
+      ? Utils.findOrCreateFolderPath(app.project.rootItem, folderPath, false)
+      : app.project.rootItem;
+
+    if (!searchFolder) {
+      alert("Could not find folder: " + folderPath);
+      return false;
+    }
+
+    const projItem = this.searchForItemByName(searchFolder, itemName);
+    if (!projItem) {
+      alert("Could not find item '" + itemName + "' in folder");
+      return false;
     }
 
     app.sourceMonitor.openProjectItem(projItem);
@@ -260,46 +311,22 @@ export const host = {
     Utils.isSequence();
   },
 
-  moveToAssetsBin: function(folder: string) {
-    // This function does not have an incredible amount of logic and is very specifically tailored to my project folder structure.
-    // it should be noted this function very specifically looks through both a specific "_Assets" folder AND the "Root" folder - so if you have conflicting bin names, that could be an issue. The "Asset" folder stucture is as follows;
-      // root
-      // ┗━ [_Assets]
-      //   ┗━ [Folder]
-    // As the bin name "_Assets" is at the top of sorting, this folder is likely to be checked first in most circumstances
-    var selected = app.getCurrentProjectViewSelection()
-      if (!selected)
-        return
-    var project = app.project;
-    var projectItem = project.rootItem;
+  moveToAssetsBin: function(folderPath: any) {
+    // Navigate to or create a folder path in the project panel
+    // Examples: `_Sequences`, `_Assets\\01_Other`, `_Assets/Footage/Raw/Day1`
+    var selected = app.getCurrentProjectViewSelection();
+    if (!selected)
+      return;
 
-    for (let i = 0; i < projectItem.children.numItems; i++) {
-      if (projectItem.children[i].type !== 2)
-        continue;
-      switch (projectItem.children[i].name) {
-        case "_Assets":
-          const assetFolder = projectItem.children[i]
-          for (let j = 0; j < assetFolder.children.numItems; j++) {
-              if (assetFolder.children[j].type !== 2)
-                continue;
-              if (assetFolder.children[j].name == folder) {
-                var moveFolder = assetFolder.children[j];
-                break;
-              }
-            }
-          break;
-        case folder:
-          var moveFolder = projectItem.children[i];
-          break;
-      }
-    }
+    var targetFolder = Utils.findOrCreateFolderPath(app.project.rootItem, folderPath, true);
 
-    if (typeof moveFolder == 'undefined') {
-      alert("Desired folder does not seem to exist");
+    if (!targetFolder) {
+      alert("Could not find or create folder: " + folderPath);
       return false;
     }
-    Utils.moveToFolder(selected, moveFolder);
-  }
+
+    Utils.moveToFolder(selected, targetFolder);
+  },
 };
 
 /**

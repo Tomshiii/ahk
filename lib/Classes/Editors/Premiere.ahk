@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/12/16
- * @version 2.2.84
+ * @date 2025/12/17
+ * @version 2.2.85
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2379,8 +2379,8 @@ class Prem {
      * A function to quickly drag the audio or video track from the source monitor to the timeline. This is often easier than dealing with insert/override quirkiness.
      * @param {String} [audOrVid="audio"] determine whether you wish to drag the audio or video track. This parameter must be either `"audio"` or `"video"`
      * @param {String} [sendOnFailure=A_ThisHotkey] define what hotkey you want this function to send in the event that the main premiere window isn't the active window. This function will correctly handle any single key activation hotkey - if your activation is more (ie `Ctrl & F19`) you will need to instead define this parameter as `"^{F19}" etc
-     * @param {String} [specificFile=false] if set the function will only activate if the desired file is open within the source monitor. Defaults to `false`
-     * @param {Boolean} [searchForFile=false] if set to `true` the function will attempt to search for the desired file, then attempt to load it into the source monitor. As you would expect if you have multiple files of the same name in your project this feature may encounter issues. Defaults to `false`
+     * @param {String} [specificFile=false] if set the function will only activate if the desired file is open within the source monitor. Defaults to `false`. If not set to `false` a path must be provided to the file; ie. `"_Assets/01_Other/Bars and Tone - Rec 709"` you may encounter issues if you try to use `\` instead of `/`
+     * @param {Boolean} [searchForFile=false] if set to `true` the function will attempt to search for the desired file provided in `specificFile`, then attempt to load it into the source monitor. Defaults to `false`
      */
     static dragSourceMon(audOrVid := "audio", sendOnFailure := A_ThisHotkey, specificFile := false, searchForFile := false) {
         if audOrVid != "audio" && audOrVid != "video" {
@@ -2422,17 +2422,18 @@ class Prem {
         }
         if specificFile != false && specificFile != "" {
             getName := this.__remoteFunc("sourceMonName", true)
+            sourceMonFile := SubStr(specificFile, (pos := instr(specificFile, "/",, -1) || pos := instr(specificFile, "\",, -1)) ? pos+1 : 1)
             if getName != specificFile {
                 __exit() {
-                    errorLog(TargetError("The requested file: " specificFile "`ncould not be found or could not be loaded into the source monitor.", -1),, true)
+                    errorLog(TargetError("The requested file: " sourceMonFile "`ncould not be found or could not be loaded into the source monitor.", -1),, true)
                     blocker.Off()
                     return
                 }
                 if searchForFile = true {
-                    this.__remoteFunc("loadInSourceMonitor",, "itemName=" specificFile, "folder=")
-                    sleep 50
+                    this.__remoteFunc("loadInSourceMonitor",, "itemPath=" specificFile)
+                    sleep 150
                     recheck := this.__remoteFunc("sourceMonName", true)
-                    if recheck != specificFile {
+                    if recheck != sourceMonFile {
                         __exit()
                         return
                     }
@@ -3417,16 +3418,18 @@ class Prem {
             SetTimer(, newDelay)
             return
         }
+        if !this.__checkPremRemoteDir("getActiveSequence")
+            SetTimer(, 0)
         if !WinExist(this.winTitle) || !WinActive(this.winTitle)
             return
         premWindow := WinGet.PremName(,,, false)
-        if !premWindow || Type(premWindow) != "Object" || (premWindow.winTitle = "" || !premWindow.wintitle) || !this.__checkDialogueClass()
+        if !premWindow || Type(premWindow) != "Object" || (premWindow.winTitle = "" || (!premWindow.wintitle && premWindow.titleCheck = -1)) || !this.__checkDialogueClass()
             return
-        if !this.__checkPremRemoteDir("getActiveSequence")
-            SetTimer(, 0)
         seq := this.__remoteFunc("getActiveSequence", true)
-        if !seq
+        if !seq {
+            sleep 5000
             return
+        }
 
         UserSettings := UserPref()
         toggleLimit  := UserSettings.premSwapSequencesLimit
