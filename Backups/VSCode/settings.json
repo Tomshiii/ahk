@@ -46,11 +46,6 @@
     "files.associations": {
         "*.ahk": "ahk2"
     },
-    "AutoHotkey2.SymbolFoldingFromOpenBrace": true,
-    "AutoHotkey2.FormatOptions": {
-        "indent_string": "      ",
-        "keep_array_indentation": true
-    },
     "editor.emptySelectionClipboard": false,
     "editor.dragAndDrop": false,
     "files.trimTrailingWhitespace": true,
@@ -132,13 +127,22 @@
                     // "foreground": "#dd78a2",
                     "fontStyle": ""
                 }
+            },
+            {
+                "name": "regex",
+                "scope": [
+                    "keyword.operator.regexp.ahk2",
+                ],
+                "settings": {
+                    "foreground": "#C678DD",
+                }
             }
         ]
     },
     "editor.stickyScroll.enabled": true,
     "workbench.editor.wrapTabs": true,
     "editor.minimap.scale": 2,
-    "editor.minimap.autohide": true,
+    "editor.minimap.autohide": "mouseover",
     "workbench.sideBar.location": "right",
     "editor.minimap.size": "fill",
     "editor.minimap.renderCharacters": false,
@@ -223,7 +227,6 @@
         "editor.renderWhitespace": "boundary"
     },
     "workbench.editor.splitInGroupLayout": "vertical",
-    "AutoHotkey2.CompleteFunctionParens": true,
     "markdown.updateLinksOnFileMove.enabled": "prompt",
     "betterAlign.indentBase": "activeline",
     "autoalign.moveableItems": [
@@ -262,5 +265,15 @@
     ],
     "markdown.preview.scrollPreviewWithEditor": false,
     "scm.showHistoryGraph": false,
-    "git.enableCommitSigning": true
+    "git.enableCommitSigning": true,
+    "security.workspace.trust.untrustedFiles": "open",
+    "explorer.confirmDragAndDrop": false,
+    "AutoHotkey2.SymbolFoldingFromOpenBrace": true,
+    "editor.experimental.preferTreeSitter.ini": true,
+    "AutoHotkey2.CompleteFunctionParens": true,
+    "AutoHotkey2.FormatOptions": {
+        "brace_style": "One True Brace"
+    },
+    "markdown.validate.enabled": true,
+    "diffEditor.ignoreTrimWhitespace": false
 }

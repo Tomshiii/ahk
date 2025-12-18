@@ -19,7 +19,7 @@
 checkBool(bool) {
     if !isBool(bool) {
         ;// throw
-        errorLog(ValueError('Function requires a Boolean',, -1),,, true)
+        errorLog(ValueError('Function requires a Boolean', -2, bool),,, true)
         return false
     }
     if bool = true || bool = "true"
