@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2025/10/09
- * @version 1.2.32
+ * @date 2025/12/20
+ * @version 1.3.0
  ***********************************************************************/
 
 class UserPref {
@@ -12,8 +12,8 @@ class UserPref {
                 SplitPath(A_WorkingDir, &name)
                 if (name = "classes" || name == "Release Assets")
                     {
-                        SetWorkingDir("..\..\")
-                        this.workingDir := A_WorkingDir
+                        this.workingDir := A_Appdata "\tomshi\installDir"
+                        SetWorkingDir(this.workingDir)
                         this.defaults["working_dir"] := A_WorkingDir
                     }
                 this.__createIni()

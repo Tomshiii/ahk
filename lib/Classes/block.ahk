@@ -1,14 +1,15 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2025/11/21
- * @version 1.3.9
+ * @date 2025/12/20
+ * @version 1.4.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\Mip>
-#Include <Classes\errorLog>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\Settings.ahk
+#Include Classes\Mip.ahk
+#Include Classes\errorLog.ahk
 ; }
 
 

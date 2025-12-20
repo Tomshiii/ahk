@@ -1,11 +1,12 @@
 ; { \\ #Includes
 ;// these includes are only for things directly called within this script, any functions/classes may contain their own includes
-#Include <Classes\reset>
-#Include <Classes\keys>
-#Include <Classes\tool>
-#Include <GUIs\settingsGUI\settingsGUI>
-#Include <GUIs\activeScripts>
-#Include <GUIs\hotkeysGUI>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\reset.ahk
+#Include Classes\keys.ahk
+#Include Classes\tool.ahk
+#Include GUIs\settingsGUI\settingsGUI.ahk
+#Include GUIs\activeScripts.ahk
+#Include GUIs\hotkeysGUI.ahk
 ; }
 
 ;// these are hotkeys that are supposed to fire everywhere that are EXEMPT from suspention

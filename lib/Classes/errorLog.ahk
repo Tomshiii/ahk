@@ -1,17 +1,18 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2025/10/31
- * @version 2.1.5
+ * @date 2025/12/20
+ * @version 2.2.0
  ***********************************************************************/
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\obj>
-#Include <Classes\ptf>
-#Include <Classes\log>
-#Include <Other\print>
-#Include <Functions\getScriptRelease>
-#Include <Functions\checkInternet>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\Settings.ahk
+#Include Classes\obj.ahk
+#Include Classes\ptf.ahk
+#Include Classes\log.ahk
+#Include Other\print.ahk
+#Include Functions\getScriptRelease.ahk
+#Include Functions\checkInternet.ahk
 ; }
 
 /**

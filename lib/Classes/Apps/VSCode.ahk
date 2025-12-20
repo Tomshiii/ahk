@@ -1,21 +1,22 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2025/12/08
- * @version 1.2.5.3
+ * @date 2025/12/20
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\keys>
-#Include <Classes\errorLog>
-#Include <Other\Notify\Notify>
-#Include <Functions\getHotkeys>
-#Include <Functions\delaySI>
+#Include "%A_Appdata%\tomshi\lib"
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\keys.ahk
+#Include Classes\errorLog.ahk
+#Include Other\Notify\Notify.ahk
+#Include Functions\getHotkeys.ahk
+#Include Functions\delaySI.ahk
 ; }
 
 class VSCode {

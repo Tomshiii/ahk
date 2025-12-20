@@ -4,40 +4,41 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.2
  * @author tomshi
- * @date 2025/12/17
- * @version 2.2.85
+ * @date 2025/12/20
+ * @version 2.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\winget>
-#Include <Classes\obj>
-#Include <Classes\keys>
-#Include <Classes\switchTo>
-#Include <Classes\clip>
-#Include <Classes\errorLog>
-#Include <Classes\WM>
-#Include <Classes\cmd>
-#Include <Classes\Mip>
-#Include <Classes\Move>
-#Include <Classes\Editors\Premiere_UIA>
-#Include <Classes\Editors\Premiere_TimelineColours>
-#Include <GUIs\tomshiBasic>
-#Include <Other\UIA\UIA>
-#Include <Functions\getHotkeys>
-#Include <Functions\delaySI>
-#Include <Functions\detect>
-#Include <Functions\loadXML>
-#Include <Functions\change_msgButton>
-#Include <Functions\checkStuck>
-#Include <Functions\isBool>
-#Include <Other\Notify\Notify>
-#Include <Other\ShinsImageScanClass>
-#Include <Other\Array>
+#Include "%A_Appdata%\tomshi\lib"
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\winget.ahk
+#Include Classes\obj.ahk
+#Include Classes\keys.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\clip.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\WM.ahk
+#Include Classes\cmd.ahk
+#Include Classes\Mip.ahk
+#Include Classes\Move.ahk
+#Include Classes\Editors\Premiere_UIA.ahk
+#Include Classes\Editors\Premiere_TimelineColours.ahk
+#Include GUIs\tomshiBasic.ahk
+#Include Other\UIA\UIA.ahk
+#Include Functions\getHotkeys.ahk
+#Include Functions\delaySI.ahk
+#Include Functions\detect.ahk
+#Include Functions\loadXML.ahk
+#Include Functions\change_msgButton.ahk
+#Include Functions\checkStuck.ahk
+#Include Functions\isBool.ahk
+#Include Other\Notify\Notify.ahk
+#Include Other\ShinsImageScanClass.ahk
+#Include Other\Array.ahk
 ; }
 
 class Prem {

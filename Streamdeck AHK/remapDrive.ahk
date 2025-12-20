@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\cmd>
-#Include <GUIs\tomshiBasic>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+#Include GUIs\tomshiBasic.ahk
 ; }
 
 ;// you may notice the command prompt flash before this GUI opens

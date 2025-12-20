@@ -1,12 +1,13 @@
 /************************************************************************
  * @description A class to contain functions that pause/suspend scripts.
  * @author tomshi, Lexikos
- * @date 2022/12/01
- * @version 1.0.1
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 ; { \\ #Includes
-#Include <Functions\detect>
-#Include <Classes\tool>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Functions\detect.ahk
+#Include Classes\tool.ahk
 ; }
 
 class Pause {

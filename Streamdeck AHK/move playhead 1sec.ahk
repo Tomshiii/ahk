@@ -1,5 +1,8 @@
-#Include <Classes\Editors\Premiere>
-#Include <Classes\errorLog>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\errorLog.ahk
+; }
 
 ;// moves the playhead 1s using PremiereRemote
 ;// will move forward by default or backwards if the user holds LCtrl

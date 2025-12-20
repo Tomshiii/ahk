@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Functions\getDaySuffix>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Functions\getDaySuffix.ahk
 ; }
 
 /**

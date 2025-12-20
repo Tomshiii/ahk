@@ -1,7 +1,8 @@
 #SingleInstance Off
 ; { \\ #Includes
-#Include <Classes\ffmpeg>
-#Include <Classes\explorer>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ffmpeg.ahk
+#Include Classes\explorer.ahk
 ; }
 
 defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""

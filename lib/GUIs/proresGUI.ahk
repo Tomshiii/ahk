@@ -1,17 +1,18 @@
 /************************************************************************
  * @description A GUI to quickly reencode a file to prores
  * @author tomshi
- * @date 2024/03/20
- * @version 1.0.4
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
 #SingleInstance Force
 ; { \\ #Includes
-#Include <GUIs\tomshiBasic>
-#Include <GUIs\reencodeGUI>
-#Include <Classes\ffmpeg>
-#Include <Classes\cmd>
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\tomshiBasic.ahk
+#Include GUIs\reencodeGUI.ahk
+#Include Classes\ffmpeg.ahk
+#Include Classes\cmd.ahk
 ; }
 
 class proresGUI extends encodeGUI {

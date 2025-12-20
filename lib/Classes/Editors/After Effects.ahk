@@ -3,22 +3,23 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 25.6.2
  * @author tomshi
- * @date 2025/12/11
- * @version 1.2.10
+ * @date 2025/12/20
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\keys>
-#Include <Classes\obj>
-#Include <Classes\cmd>
-#Include <Classes\winGet>
-#Include <Classes\errorLog>
-#Include <Functions\delaySI>
+#Include "%A_Appdata%\tomshi\lib"
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\keys.ahk
+#Include Classes\obj.ahk
+#Include Classes\cmd.ahk
+#Include Classes\winGet.ahk
+#Include Classes\errorLog.ahk
+#Include Functions\delaySI.ahk
 ; }
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it

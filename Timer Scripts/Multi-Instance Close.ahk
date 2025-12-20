@@ -1,12 +1,13 @@
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\obj>
-#Include <Classes\WM>
-#Include <Functions\detect>
-#Include <Functions\trayShortcut>
-#Include <Multi-Instance Close\ignoreList>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\obj.ahk
+#Include Classes\WM.ahk
+#Include Functions\detect.ahk
+#Include Functions\trayShortcut.ahk
+#Include Multi-Instance Close\ignoreList.ahk
 ; }
 
 #SingleInstance Force

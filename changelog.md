@@ -1,4 +1,4 @@
-# <> Release 2.16.x - 
+# <> Release 2.17.0 - 
 
 > [!Warning]
 > There are still a few known issues with this release.  
@@ -141,6 +141,7 @@
 - 📋 Will now refocus the filename field after selecting the filetype
 
 ## Other Changes
+- ❗`Lib` files will now be installed to `A_Appdata "\tomshi\Lib` removing the need to create a symlink
 - ❗License files are now provided for all third party libs contained within this repo <sup>[[link]](<https://github.com/Tomshiii/ahk/tree/dev/lib/Other/LICENSES>)</sup>
 - 📋 Reduced the usage of `Exit()` across the entire repo to minimise potential instances of inputs getting stuck
 - 📋 Placed most usage of `detect()` within `Critical()` blocks to avoid instances of changes leaking over to other functions

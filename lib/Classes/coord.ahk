@@ -1,13 +1,14 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2023/08/13
- * @version 1.2.6
+ * @date 2025/12/20
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\Mip>
-#Include <Classes\errorLog>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\Mip.ahk
+#Include Classes\errorLog.ahk
 ; }
 
 class coord {

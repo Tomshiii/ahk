@@ -1,11 +1,12 @@
 /************************************************************************
  * @description handle options.ini file
  * @author tomshi
- * @date 2024/11/04
- * @version 1.1.1
+ * @date 2025/12/20
+ * @version 1.2.0
  ***********************************************************************/
 ; { \\ #Includes
-#Include <Classes\ptf>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
 ; }
 
 class SD_Opt {

@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Classes\cmd>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
 ; }
 
 ;// this script will only work properly if powershel was initially installed via winget

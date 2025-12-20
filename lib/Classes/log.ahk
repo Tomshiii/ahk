@@ -1,13 +1,14 @@
 /************************************************************************
  * @description A class to enable easy file/outputdebug based logging
  * @author tomshi
- * @date 2024/03/16
- * @version 1.0.1
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Other\print>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
+#Include Other\print.ahk
 ; }
 
 class log {

@@ -1,5 +1,8 @@
-#Include <Classes\cmd>
-#Include <Classes\ptf>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+#Include Classes\ptf.ahk
+; }
 
 ;// this script is just to rebuild the webserver for `PremiereRemote` as
 ;// any time you change anything in the `index` file, you need to rebuild it

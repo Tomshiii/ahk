@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <Classes\explorer>
-#Include <Classes\winget>
-#Include <Functions\delaySI>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\explorer.ahk
+#Include Classes\winget.ahk
+#Include Functions\delaySI.ahk
 ; }
 
 ;explorerbackHotkey;

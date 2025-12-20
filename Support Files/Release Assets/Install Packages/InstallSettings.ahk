@@ -1,9 +1,11 @@
 ; { \\ #Includes
-#Include <Classes\settings>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\settings.ahk
 ; }
 
-SplitPath(A_LineFile,, &currentDir)
-SetWorkingDir(currentDir "\..\..\..\")
+installDir := FileRead(A_Appdata "\tomshi\installDir")
+SetWorkingDir(installDir)
+
 UserSettings := UserPref()
 if UserSettings.working_dir != A_WorkingDir
     UserSettings.working_dir := A_WorkingDir

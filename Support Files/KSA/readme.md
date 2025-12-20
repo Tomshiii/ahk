@@ -12,7 +12,8 @@ effectControls="^+4"
 ```
 Then within the `Keyboard Shortcut Adjustments.ahk` we automatically generate `effectControls` as a variable that can be called like so;
 ```autoit
-#Include <KSA\Keyboard Shortcut Adjustments>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
 hotkey::
 {
     ...

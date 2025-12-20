@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Functions\getHotkeys>
-#Include <Classes\errorLog>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Functions\getHotkeys.ahk
+#Include Classes\errorLog.ahk
 ; }
 
 /**

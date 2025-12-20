@@ -1,9 +1,10 @@
 #SingleInstance Force
 
 ; { \\ #Includes
-#Include <GUIs\tomshiBasic>
-#Include <Classes\cmd>
-#Include <Other\Notify\Notify>
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\tomshiBasic.ahk
+#Include Classes\cmd.ahk
+#Include Other\Notify\Notify.ahk
 ; }
 
 ;// For `sleep` to be an available option the user needs to download PSTools; https://learn.microsoft.com/en-us/sysinternals/downloads/psshutdown

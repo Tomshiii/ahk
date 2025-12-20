@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Other\JSON>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Other\JSON.ahk
 ; }
 
 /**

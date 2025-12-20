@@ -1,19 +1,20 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2025/11/21
- * @version 1.0.19
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\settings>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\Apps\VSCode> ;// only to easy grab the path/wintitle information
-#Include <Classes\obj>
-#Include <Classes\Mip>
-#Include <Functions\detect>
-#Include <Classes\winGet>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\Apps\VSCode.ahk
+#Include Classes\obj.ahk
+#Include Classes\Mip.ahk
+#Include Functions\detect.ahk
+#Include Classes\winGet.ahk
 ; }
 
 class reset {

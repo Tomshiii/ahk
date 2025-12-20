@@ -1,12 +1,13 @@
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Functions\getLocalVer>
-#Include <Functions\delaySI>
-#Include <Functions\getLocalVer>
-#Include <Other\7zip\SevenZip>
-#Include <Classes\winGet>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Functions\getLocalVer.ahk
+#Include Functions\delaySI.ahk
+#Include Functions\getLocalVer.ahk
+#Include Other\7zip\SevenZip.ahk
+#Include Classes\winGet.ahk
 ; }
 
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release

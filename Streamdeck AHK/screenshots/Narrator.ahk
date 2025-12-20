@@ -1,10 +1,11 @@
 #SingleInstance Ignore
 ; { \\ #Includes
-#Include <Classes\settings>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\ptf>
-#Include <Classes\wm>
-#Include <Classes\obj>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\settings.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\ptf.ahk
+#Include Classes\wm.ahk
+#Include Classes\obj.ahk
 ; }
 
 if !WinActive(prem.winTitle) || !WinExist(prem.winTitle)

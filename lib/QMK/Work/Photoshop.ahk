@@ -1,5 +1,8 @@
-#Include <Classes\Editors\Photoshop>
-#Include <QMK\unassigned>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Editors\Photoshop.ahk
+#Include QMK\unassigned.ahk
+; }
 
 BackSpace::unassigned()
 SC028::unassigned()

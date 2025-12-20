@@ -1,8 +1,9 @@
-﻿; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\coord>
-#Include <Classes\block>
-#Include <Functions\SD Functions\win_locations>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\coord.ahk
+#Include Classes\block.ahk
+#Include Functions\SD Functions\win_locations.ahk
 ; }
 
 if WinExist("ahk_exe obs64.exe")

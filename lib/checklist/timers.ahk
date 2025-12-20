@@ -1,4 +1,7 @@
-#Include <Classes\timer>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\timer.ahk
+; }
 
 class checklistTimer extends count {
     __New(startValue := 0, ms := 1*60000, ms10 := 10*60000) {

@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\Editors\Premiere>
-#Include <KSA\Keyboard Shortcut Adjustments>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Editors\Premiere.ahk
+#Include KSA\Keyboard Shortcut Adjustments.ahk
 ; }
 
 if !WinActive(prem.winTitle)

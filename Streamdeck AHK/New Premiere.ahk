@@ -3,15 +3,16 @@ SetWorkingDir(A_ScriptDir)
 SetDefaultMouseSpeed(0)
 
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\ptf>
-#Include <Classes\switchTo>
-#Include <Classes\pause>
-#Include <Classes\coord>
-#Include <Classes\block>
-#Include <Classes\Editors\Premiere>
-#Include <Functions\SD Functions\genProjDirs>
-#Include <Functions\delaySI>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\ptf.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\pause.ahk
+#Include Classes\coord.ahk
+#Include Classes\block.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Functions\SD Functions\genProjDirs.ahk
+#Include Functions\delaySI.ahk
 ; }
 
 ;// This version of the script (from 19th Dec, 2022) is designed for Premiere v22.3.1 (and beyond) - it copies a template project folder out of the `..\Backups\Adobe Backups\Premiere\Template\` folder and places it in the desired project folder. It then handles changing the proxy location

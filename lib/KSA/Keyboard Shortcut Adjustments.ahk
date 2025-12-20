@@ -1,14 +1,15 @@
 /************************************************************************
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
- * @date 2025/03/23
- * @version 1.0.3
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 
 ;{ \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\Mip>
-; #Include <Other\print>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\Mip.ahk
+; #Include Other\print.ahk
 ; }
 
 class KeyShortAdjust {

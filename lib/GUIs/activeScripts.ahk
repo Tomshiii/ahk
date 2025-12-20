@@ -1,11 +1,12 @@
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <GUIs\tomshiBasic>
-#Include <Classes\dark>
-#Include <Classes\ptf>
-#Include <Classes\WM>
-#Include <Functions\getLocalVer>
-#Include <Functions\detect>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Settings.ahk
+#Include GUIs\tomshiBasic.ahk
+#Include Classes\dark.ahk
+#Include Classes\ptf.ahk
+#Include Classes\WM.ahk
+#Include Functions\getLocalVer.ahk
+#Include Functions\detect.ahk
 ;
 
 /**

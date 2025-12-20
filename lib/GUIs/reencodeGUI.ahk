@@ -1,20 +1,21 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2025/09/22
- * @version 1.2.6
+ * @date 2025/12/20
+ * @version 1.3.0
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
 #SingleInstance Force
 ; { \\ #Includes
-#Include <GUIs\tomshiBasic>
-#Include <Classes\obj>
-#Include <Classes\ffmpeg>
-#Include <Classes\switchTo>
-#Include <Classes\cmd>
-#Include <Classes\explorer>
-#Include <Functions\useNVENC>
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\tomshiBasic.ahk
+#Include Classes\obj.ahk
+#Include Classes\ffmpeg.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\cmd.ahk
+#Include Classes\explorer.ahk
+#Include Functions\useNVENC.ahk
 ; }
 
 class encodeGUI extends tomshiBasic {

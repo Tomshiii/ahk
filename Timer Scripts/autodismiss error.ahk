@@ -1,12 +1,13 @@
-﻿#SingleInstance force ;only one instance of this script may run at a time!
+#SingleInstance force ;only one instance of this script may run at a time!
 #Requires AutoHotkey v2.0 ;this script requires AutoHotkey v2.0
 ListLines(0)
 KeyHistory(0)
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Functions\trayShortcut>
-#Include <Classes\Editors\Premiere>
-#Include <Other\WinEvent>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Functions\trayShortcut.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Other\WinEvent.ahk
 ; }
 
 Persistent()

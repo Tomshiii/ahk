@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <GUIs\reencodeGUI>
-#Include <GUIs\proresGUI>
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\reencodeGUI.ahk
+#Include GUIs\proresGUI.ahk
 ; }
 
 proresGUI("dir", true, true).show()

@@ -1,21 +1,22 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/12/10
- * @version 1.6.11.1
+ * @date 2025/12/20
+ * @version 1.7.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\clip>
-#Include <Classes\keys>
-#Include <Classes\errorLog>
-#Include <Other\UIA\UIA>
-#Include <Classes\winGet>
+#Include "%A_Appdata%\tomshi\lib"
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\clip.ahk
+#Include Classes\keys.ahk
+#Include Classes\errorLog.ahk
+#Include Other\UIA\UIA.ahk
+#Include Classes\winGet.ahk
 ; }
 
 /**

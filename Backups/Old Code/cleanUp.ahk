@@ -1,5 +1,8 @@
-#Include <Classes\tool>
-#Include <Classes\obj>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\tool.ahk
+#Include Classes\obj.ahk
+; }
 
 ; // not necessarily an "old" script, just one I used to clean up some directories on my NAS
 ; this isn't clean code at all, and some lines may seem redundant, I just wanted to be extra sure things wouldn't go wrong

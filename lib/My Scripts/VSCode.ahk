@@ -1,8 +1,9 @@
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\Apps\VSCode>
-#Include <Classes\Apps\Discord>
-#Include <Functions\delaySI>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\Apps\VSCode.ahk
+#Include Classes\Apps\Discord.ahk
+#Include Functions\delaySI.ahk
 ; }
 
 ;vscodemsHotkey;

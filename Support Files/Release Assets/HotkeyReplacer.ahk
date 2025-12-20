@@ -1,19 +1,20 @@
 /************************************************************************
  * @description optimises the process of updating tomshi's scripts by allowing the user to automatically set hotkeys within `My Scripts.ahk` to their own custom layout.
  * @author tomshi
- * @date 2023/09/28
- * @version 2.10.2.1
+ * @date 2025/12/20
+ * @version 2.11.0
  ***********************************************************************/
 #Warn VarUnset, StdOut
 
 ; { \\ #Includes
-#Include *i <Classes\Settings>
-#Include *i <KSA\Keyboard Shortcut Adjustments>
-#Include *i <Classes\dark>
-#Include *i <Classes\ptf>
-#Include *i <GUIs\tomshiBasic>
-#Include *i <Functions\getLocalVer>
-; #Include *i <Other\print>
+#Include '%A_Appdata%\tomshi\lib'
+#Include *i Classes\Settings.ahk
+#Include *i KSA\Keyboard Shortcut Adjustments.ahk
+#Include *i Classes\dark.ahk
+#Include *i Classes\ptf.ahk
+#Include *i GUIs\tomshiBasic.ahk
+#Include *i Functions\getLocalVer.ahk
+; #Include *i Other\print.ahk
 ; }
 
 

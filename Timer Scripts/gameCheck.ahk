@@ -5,15 +5,16 @@ ListLines(0)
 KeyHistory(0)
 
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\ptf>
-#Include <Classes\pause>
-#Include <Classes\winget>
-#Include <Classes\WM>
-#Include <Classes\Mip>
-#Include <GUIs\gameCheckGUI>
-#Include <gameCheck\Game List> ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
-#Include <Functions\trayShortcut>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\pause.ahk
+#Include Classes\winget.ahk
+#Include Classes\WM.ahk
+#Include Classes\Mip.ahk
+#Include GUIs\gameCheckGUI.ahk
+#Include gameCheck\Game List.ahk ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
+#Include Functions\trayShortcut.ahk
 ; }
 
 TraySetIcon(ptf.Icons "\game.png")

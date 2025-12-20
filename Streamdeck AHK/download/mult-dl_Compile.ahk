@@ -1,4 +1,7 @@
-#Include <Classes\ptf>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+; }
 
 RunWait '"C:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe"'
   . ' /in ' ptf.rootDir '"\Streamdeck AHK\download\mult-dl.ahk"'

@@ -1,6 +1,9 @@
-#Include <Classes\cmd>
-#Include <Classes\reset>
-#Include <Other\Notify\Notify>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+#Include Classes\reset.ahk
+#Include Other\Notify\Notify.ahk
+; }
 
 ;// this script is specifically designed to update THIS REPO'S git repo. It should also work for other users if they clone my repo
 

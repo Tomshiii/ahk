@@ -2,15 +2,16 @@
 #Requires AutoHotkey v2.0
 
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\Editors\Resolve>
-#Include <Classes\switchTo>
-#Include <Classes\coord>
-#Include <Classes\block>
-#Include <Classes\tool>
-#Include <Classes\keys>
-#Include <Functions\trayShortcut>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\Editors\Resolve.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\coord.ahk
+#Include Classes\block.ahk
+#Include Classes\tool.ahk
+#Include Classes\keys.ahk
+#Include Functions\trayShortcut.ahk
 ; }
 
 SetWorkingDir(ptf.rootDir)      ; Ensures a consistent starting directory.
@@ -21,7 +22,7 @@ TraySetIcon(ptf.Icons "\resolve.png")
 startupTray()
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.9.3
+;\\v2.10.0
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.16.2

@@ -2,42 +2,43 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/12/18
- * @version 1.7.87
+ * @date 2025/12/20
+ * @version 1.8.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <GUIs\todoGUI>
-#Include <GUIs\hotkeysGUI>
-#Include <GUIs\settingsGUI\settingsGUI>
-#Include <GUIs\activeScripts>
-#Include <GUIs\tomshiBasic>
-#Include <Classes\Settings>
-#Include <Classes\ptf>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\Editors\premiere_UIA>
-#Include <Classes\tool>
-#Include <Classes\Dark>
-#Include <Classes\winget>
-#Include <Classes\keys>
-#Include <Classes\Mip>
-#Include <Classes\reset>
-#Include <Classes\errorLog>
-#Include <Classes\cmd>
-#Include <Functions\getScriptRelease>
-#Include <Functions\getHTML>
-#Include <Functions\isReload>
-#Include <Functions\getLocalVer>
-#Include <Functions\trayShortcut>
-#Include <Functions\editScript>
-#Include <Functions\checkInternet>
-#Include <Functions\detect>
-#Include <Functions\checkBool>
-#Include <Other\SystemThemeAwareToolTip>
-#Include <Other\FileGetExtendedProp>
-#Include <Other\print>
-#Include <Other\Notify\Notify>
-#Include <Other\ThioJoe\Scripts\ExplorerDialogPathSelector>
+#Include "%A_Appdata%\tomshi\lib"
+#Include GUIs\todoGUI.ahk
+#Include GUIs\hotkeysGUI.ahk
+#Include GUIs\settingsGUI\settingsGUI.ahk
+#Include GUIs\activeScripts.ahk
+#Include GUIs\tomshiBasic.ahk
+#Include Classes\Settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\Editors\premiere_UIA.ahk
+#Include Classes\tool.ahk
+#Include Classes\Dark.ahk
+#Include Classes\winget.ahk
+#Include Classes\keys.ahk
+#Include Classes\Mip.ahk
+#Include Classes\reset.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\cmd.ahk
+#Include Functions\getScriptRelease.ahk
+#Include Functions\getHTML.ahk
+#Include Functions\isReload.ahk
+#Include Functions\getLocalVer.ahk
+#Include Functions\trayShortcut.ahk
+#Include Functions\editScript.ahk
+#Include Functions\checkInternet.ahk
+#Include Functions\detect.ahk
+#Include Functions\checkBool.ahk
+#Include Other\SystemThemeAwareToolTip.ahk
+#Include Other\FileGetExtendedProp.ahk
+#Include Other\print.ahk
+#Include Other\Notify\Notify.ahk
+#Include Other\ThioJoe\Scripts\ExplorerDialogPathSelector.ahk
 ; }
 
 class Startup {
@@ -873,8 +874,8 @@ class Startup {
 
         submenuGUIS := Menu()
         submenuGUIS.Add("Active Scripts", (*) => activeScripts())
-        submenuGUIS.Add("Notify Creator", (*) => Run(ptf.rootDir "\lib\Other\Notify\Notify Creator.ahk"))
-        submenuGUIS.Add("MsgBox Creator", (*) => Run(ptf.rootDir "\lib\Other\MsgBoxCreator.ahk"))
+        submenuGUIS.Add("Notify Creator", (*) => Run(ptf.lib "\Other\Notify\Notify Creator.ahk"))
+        submenuGUIS.Add("MsgBox Creator", (*) => Run(ptf.lib "\Other\MsgBoxCreator.ahk"))
         ; submenuGUIS.Add("Settings", (*) => settingsGUI())
         submenuGUIS.Add("Thio's Windows Explorer Script Settings", (*) => ShowPathSelectorSettingsGUI())
         A_TrayMenu.Insert(startingVal "&", "GUIs", submenuGUIS)
@@ -884,7 +885,7 @@ class Startup {
         startingVal++
 
         submenuUIA := Menu()
-        submenuUIA.Add("Open UIA Script", (*) => Run(ptf.rootDir "\lib\Other\UIA\UIA.ahk"))
+        submenuUIA.Add("Open UIA Script", (*) => Run(ptf.lib "\Other\UIA\UIA.ahk"))
         submenuUIA.Add("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
         submenuUIA.Add("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false) : MsgBox("Premiere needs to be open for this option to function correctly!"))
         A_TrayMenu.Insert(startingVal "&", "UIA", submenuUIA)

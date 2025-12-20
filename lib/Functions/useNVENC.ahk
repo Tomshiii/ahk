@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\cmd>
-#Include <Functions\Win32_VideoController>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+#Include Functions\Win32_VideoController.ahk
 ; }
 
 /**

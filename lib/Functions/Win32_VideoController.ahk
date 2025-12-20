@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Classes\Mip>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Mip.ahk
 ;
 
 /**

@@ -4,7 +4,7 @@
 ;// nothing special
 
 ; { \\ #Includes
-#Include <Other\print>
+#Include Other\print.ahk
 ; }
 
 baseFolder := "C:\Users\Tom\Downloads\Fonts"

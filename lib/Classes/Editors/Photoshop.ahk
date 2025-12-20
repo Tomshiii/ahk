@@ -3,20 +3,21 @@
  * Last tested in the version of Photoshop listed below
  * @psVer 27.1
  * @author tomshi
- * @date 2025/11/21
- * @version 1.2.3
+ * @date 2025/12/20
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\keys>
-#Include <Classes\errorLog>
-#Include <Other\UIA\UIA>
-#Include <Other\Notify\Notify>
+#Include "%A_Appdata%\tomshi\lib"
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\keys.ahk
+#Include Classes\errorLog.ahk
+#Include Other\UIA\UIA.ahk
+#Include Other\Notify\Notify.ahk
 ; }
 
 class PS {

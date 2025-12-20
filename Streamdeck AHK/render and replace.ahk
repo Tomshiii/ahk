@@ -1,11 +1,12 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\settings>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\WM>
-#Include <Classes\ptf>
-#Include <Classes\winget>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\settings.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\WM.ahk
+#Include Classes\ptf.ahk
+#Include Classes\winget.ahk
 ; }
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA

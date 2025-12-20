@@ -2,20 +2,21 @@
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
  * @date 2025/10/20
- * @version 1.1.10
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\tool>
-#Include <Classes\cmd>
-#Include <Classes\obj>
-#Include <Classes\winGet>
-#Include <Classes\errorLog>
-#Include <Classes\switchTo>
-#Include <Classes\explorer>
-#Include <Functions\useNVENC>
-#Include <Other\JSON>
-#Include <Other\Notify\Notify>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\tool.ahk
+#Include Classes\cmd.ahk
+#Include Classes\obj.ahk
+#Include Classes\winGet.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\explorer.ahk
+#Include Functions\useNVENC.ahk
+#Include Other\JSON.ahk
+#Include Other\Notify\Notify.ahk
 ; }
 
 class ffmpeg {

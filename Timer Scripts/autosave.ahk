@@ -1,30 +1,31 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/12/11
- * @version 2.1.60
+ * @date 2025/12/20
+ * @version 2.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\ptf>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\Editors\Premiere_UIA>
-#Include <Classes\switchTo>
-#Include <Classes\tool>
-#Include <Classes\block>
-#Include <Classes\winget>
-#Include <Classes\WM>
-#Include <Classes\timer>
-#Include <Classes\log>
-#Include <Classes\errorLog>
-#Include <Functions\trayShortcut>
-#Include <Functions\checkStuck>
-#Include <Functions\detect>
-#Include <Other\Notify\Notify>
-#Include <Other\WinEvent>
-#Include <Other\HighPrecisionSleep>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Settings.ahk
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\ptf.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\Editors\Premiere_UIA.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\tool.ahk
+#Include Classes\block.ahk
+#Include Classes\winget.ahk
+#Include Classes\WM.ahk
+#Include Classes\timer.ahk
+#Include Classes\log.ahk
+#Include Classes\errorLog.ahk
+#Include Functions\trayShortcut.ahk
+#Include Functions\checkStuck.ahk
+#Include Functions\detect.ahk
+#Include Other\Notify\Notify.ahk
+#Include Other\WinEvent.ahk
+#Include Other\HighPrecisionSleep.ahk
 ; }
 
 #SingleInstance force ;only one instance of this script may run at a time!

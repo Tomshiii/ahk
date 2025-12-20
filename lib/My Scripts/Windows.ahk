@@ -1,11 +1,12 @@
 ; { \\ #Includes
 ;// these includes are only for things directly called within this script, any functions/classes may contain their own includes
-#Include <Classes\Move>
-#Include <Classes\winget>
-#Include <Classes\switchTo>
-#Include <Functions\jumpChar>
-#Include <Functions\refreshWin>
-#Include <Functions\isDoubleClick>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Move.ahk
+#Include Classes\winget.ahk
+#Include Classes\switchTo.ahk
+#Include Functions\jumpChar.ahk
+#Include Functions\refreshWin.ahk
+#Include Functions\isDoubleClick.ahk
 ; }
 ;capsHotkey;
 SC03A:: ;double tap capslock to activate it, double tap to deactivate it. We need this hotkey because I have capslock disabled by default

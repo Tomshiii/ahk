@@ -1,15 +1,16 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\settings>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\Editors\After Effects>
-#Include <Classes\switchTo>
-#Include <Classes\ptf>
-#Include <Classes\WM>
-#Include <Classes\winGet>
-#Include <Functions\detect>
-#Include <Functions\change_msgButton>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\settings.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\Editors\After Effects.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\ptf.ahk
+#Include Classes\WM.ahk
+#Include Classes\winGet.ahk
+#Include Functions\detect.ahk
+#Include Functions\change_msgButton.ahk
 ; }
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA

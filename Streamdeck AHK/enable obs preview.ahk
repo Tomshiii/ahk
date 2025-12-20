@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
 ; }
 
 if WinExist("ahk_exe obs64.exe")

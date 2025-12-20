@@ -1,18 +1,19 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/12/10
- * @version 1.1.11
+ * @date 2025/12/20
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\keys>
-#Include <Classes\obj>
-#Include <Classes\block>
-#Include <Classes\winget>
-#Include <Functions\delaySI>
-#Include <Other\UIA\UIA>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
+#Include Classes\keys.ahk
+#Include Classes\obj.ahk
+#Include Classes\block.ahk
+#Include Classes\winget.ahk
+#Include Functions\delaySI.ahk
+#Include Other\UIA\UIA.ahk
 ; }
 
 class Slack {

@@ -4,14 +4,15 @@
 ;//! it is designed to swap the L/R channel on a single track stereo file.
 ;//! attempting to use this script on anything else will either produce unintended results or will simply not function at all
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\settings>
-#Include <Classes\ptf>
-#Include <Classes\block>
-#Include <Classes\obj>
-#Include <Classes\errorLog>
-#Include <Classes\WM>
-#Include <Classes\Editors\Premiere>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\block.ahk
+#Include Classes\obj.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\WM.ahk
+#Include Classes\Editors\Premiere.ahk
 ; }
 
 if !WinActive(prem.winTitle)

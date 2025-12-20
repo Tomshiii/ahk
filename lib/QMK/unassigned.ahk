@@ -1,5 +1,7 @@
-#Include <Classes\tool>
-
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\tool.ahk
+; }
 /**
  * This function creates a tooltip to inform the user of the pressed key and that it hasn't been assigned to do anything yet
  */

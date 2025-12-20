@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include <Classes\cmd>
+#Include Classes\cmd.ahk
 ; }
 
 

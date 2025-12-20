@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <Classes\errorLog>
-#Include <Functions\getHTML>
-#Include <Functions\isURL>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\errorLog.ahk
+#Include Functions\getHTML.ahk
+#Include Functions\isURL.ahk
 ; }
 
 /**

@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\Move>
-#Include <Functions\fastWheel>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Move.ahk
+#Include Functions\fastWheel.ahk
 ; }
 
 ;winmaxHotkey;

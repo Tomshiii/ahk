@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <Classes\cmd>
-#Include <Classes\obj>
-#Include <Classes\explorer>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+#Include Classes\obj.ahk
+#Include Classes\explorer.ahk
 ; }
 
 ;// this script will convert an mp3 => wav or wav => mp3

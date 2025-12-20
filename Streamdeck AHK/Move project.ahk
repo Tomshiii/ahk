@@ -1,8 +1,9 @@
 #SingleInstance Off ;// multiple processes can happen at once
 
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\obj>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\obj.ahk
 ; }
 
 ;// select the directory you wish to move

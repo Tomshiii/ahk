@@ -1,8 +1,8 @@
 #Requires AutoHotkey v2
 #SingleInstance Force
 
-#Include <Classes\coord>
-#Include <Classes\obj>
+#Include Classes\coord.ahk
+#Include Classes\obj.ahk
 
 ;// hover over item you want to bulk craft in the guide book, then hold button
 ;// mousemove position will need to change depending on whether you're using a crafting bench/inventory/depending on GUI scale/screen resolution

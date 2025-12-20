@@ -1,11 +1,12 @@
 ; { \\ #Includes
-#Include <Classes\ffmpeg>
-#Include <Classes\cmd>
-#Include <Classes\obj>
-#Include <Classes\explorer>
-#Include <Other\JSON>
-#Include <Other\print>
-#Include <Other\Notify\Notify>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ffmpeg.ahk
+#Include Classes\cmd.ahk
+#Include Classes\obj.ahk
+#Include Classes\explorer.ahk
+#Include Other\JSON.ahk
+#Include Other\print.ahk
+#Include Other\Notify\Notify.ahk
 ; }
 
 ;// I wish to hopefully build a little gui for this eventually but for now I just need it working

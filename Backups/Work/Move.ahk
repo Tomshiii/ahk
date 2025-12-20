@@ -1,21 +1,22 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2025/12/11
- * @version 1.2.15.1
+ * @date 2025/12/20
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\winGet>
-#Include <Classes\errorLog>
-#Include <Classes\switchTo>
-#Include <Classes\keys>
-#Include <Functions\getHotkeys>
+#Include "%A_Appdata%\tomshi\lib"
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\winGet.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\keys.ahk
+#Include Functions\getHotkeys.ahk
 ; }
 
 class Move {

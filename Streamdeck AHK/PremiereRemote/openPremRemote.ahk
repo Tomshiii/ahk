@@ -1,5 +1,8 @@
-#Include <Classes\Editors\Premiere>
-#Include <Functions\delaySI>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Editors\Premiere.ahk
+#Include Functions\delaySI.ahk
+; }
 
 ;// this script just reopens an extension window within premiere as anytime you change
 ;// the `index` file for `PremiereRemote` you need to reset the window within premiere

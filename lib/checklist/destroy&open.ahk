@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Functions\detect>
-#Include <Classes\ptf>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Functions\detect.ahk
+#Include Classes\ptf.ahk
 ; }
 
 detect()

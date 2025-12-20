@@ -1,6 +1,9 @@
-#Include <Classes\settings>
-#Include <Functions\generateAdobeShortcut>
-#Include <Other\Notify\Notify>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\settings.ahk
+#Include Functions\generateAdobeShortcut.ahk
+#Include Other\Notify\Notify.ahk
+; }
 
 UserSettings := UserPref()
 premYear := UserSettings.prem_Year

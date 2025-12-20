@@ -1,4 +1,7 @@
-#Include <Classes\ptf>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+; }
 
 /**
  * This function retrieves the local version (or the string after a specified tag) and then returns it.

@@ -10,9 +10,13 @@
 SetWorkingDir(A_ScriptDir)
 A_IconTip := "HotkeylessAHK"
 #SingleInstance Force
+
+; { \\ #Includes
 #Include files\lib.ahk
-#Include <Classes\Editors\Premiere>
-#Include <Functions\detect>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Editors\Premiere.ahk
+#Include Functions\detect.ahk
+; }
 ; #NoTrayIcon
 
 ; HotkeylessAHK by sebinside

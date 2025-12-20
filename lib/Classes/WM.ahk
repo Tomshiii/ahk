@@ -1,14 +1,15 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2025/12/12
- * @version 1.1.10
+ * @date 2025/12/20
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\tool>
-#Include <Classes\Editors\Premiere>
-#Include <Functions\detect>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\tool.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Functions\detect.ahk
 ; }
 
 class WM {

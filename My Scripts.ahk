@@ -3,55 +3,56 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2025/09/08
+ * @date 2025/12/20
  * @version v2.16.2
  * @ahk_ver 2.0.19
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.34.28
+;\\v2.35.0
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
 
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\ptf>
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\Apps\Discord>
-#Include <Classes\Apps\VSCode>
-#Include <Classes\Editors\After Effects>
-#Include <Classes\Editors\Photoshop>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\tool>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\switchTo>
-#Include <Classes\Move>
-#Include <Classes\winget>
-#Include <Classes\Startup>
-#Include <Classes\obj>
-#Include <Classes\clip>
-#Include <Classes\reset>
-#Include <Classes\keys>
-#Include <Classes\errorLog>
-#Include <Classes\Streamdeck_opt>
-#Include <Functions\mouseDrag>
-#Include <Functions\getLocalVer>
-#Include <Functions\fastWheel>
-#Include <Functions\youMouse>
-#Include <Functions\jumpChar>
-#Include <Functions\refreshWin>
-#Include <Functions\getHotkeys>
-#Include <Functions\alwaysOnTop>
-#Include <Functions\delaySI>
-#Include <Functions\isDoubleClick>
-#Include <Functions\multiKeyPress>
-#Include <GUIs\settingsGUI\settingsGUI>
-#Include <GUIs\activeScripts>
-#Include <GUIs\hotkeysGUI>
-#Include <Other\ObjRegisterActive>
-#Include <Other\ThioJoe\Scripts\ExplorerDialogPathSelector>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\Settings.ahk
+#Include Classes\ptf.ahk
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\Apps\Discord.ahk
+#Include Classes\Apps\VSCode.ahk
+#Include Classes\Editors\After Effects.ahk
+#Include Classes\Editors\Photoshop.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\tool.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\Move.ahk
+#Include Classes\winget.ahk
+#Include Classes\Startup.ahk
+#Include Classes\obj.ahk
+#Include Classes\clip.ahk
+#Include Classes\reset.ahk
+#Include Classes\keys.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\Streamdeck_opt.ahk
+#Include Functions\mouseDrag.ahk
+#Include Functions\getLocalVer.ahk
+#Include Functions\fastWheel.ahk
+#Include Functions\youMouse.ahk
+#Include Functions\jumpChar.ahk
+#Include Functions\refreshWin.ahk
+#Include Functions\getHotkeys.ahk
+#Include Functions\alwaysOnTop.ahk
+#Include Functions\delaySI.ahk
+#Include Functions\isDoubleClick.ahk
+#Include Functions\multiKeyPress.ahk
+#Include GUIs\settingsGUI\settingsGUI.ahk
+#Include GUIs\activeScripts.ahk
+#Include GUIs\hotkeysGUI.ahk
+#Include Other\ObjRegisterActive.ahk
+#Include Other\ThioJoe\Scripts\ExplorerDialogPathSelector.ahk
 ;#Include Premiere_RightClick.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing
 ; }
 
@@ -163,23 +164,23 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 #HotIf
 
 ;//! these scripts are placed here to avoid ANY #HotIf criteria. For some reason placing them under any causes issues
-#Include <My Scripts\misc>
+#Include My Scripts\misc.ahk
 
 ;// these scripts need to be separated out because if any of them are under a hotif with the `GetKeyState` conditional, they lag out because the getkeystate check can't keep up
 ;// this is only really necessary because the `fastwheel()` functions rapidly fire inputs, any other F14 hotkeys are then only in here because if they are split into other #HotIf's
 ;// and those hotif's have conditionals that are slow, ahk has to check all of those conditionals and thus drags `fastwheel()` down with it
-#Include <My Scripts\F14 Mouse Scripts>
+#Include My Scripts\F14 Mouse Scripts.ahk
 
 ;//! code below here (until the next #HotIf) will work anywhere as long as F24 is not being held
 #HotIf !GetKeyState("F24", "P")
 
 ;//! Suspend Exempt
 #SuspendExempt
-#Include <My Scripts\Windows_SE>
+#Include My Scripts\Windows_SE.ahk
 #SuspendExempt false
 
 ;//! NOT Suspend Exempt
-#Include <My Scripts\Windows>
+#Include My Scripts\Windows.ahk
 
 ;//! windows explorer
 GroupAdd("explore_group", "ahk_class CabinetWClass")
@@ -187,7 +188,7 @@ GroupAdd("explore_group", "ahk_class #32770")
 GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 #HotIf WinActive("ahk_group explore_group")
 
-#Include <My Scripts\Windows_Explorer>
+#Include My Scripts\Windows_Explorer.ahk
 
 ;=============================================================================================================================================
 ;
@@ -196,7 +197,7 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;=============================================================================================================================================
 ;//! VSCode
 #HotIf WinActive(vscode.winTitle)
-#Include <My Scripts\VSCode>
+#Include My Scripts\VSCode.ahk
 
 ;=============================================================================================================================================
 ;
@@ -206,7 +207,7 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;//! Discord
 #HotIf WinActive(discord.winTitle) ;some scripts to speed up discord interactions
 
-#Include <My Scripts\Discord>
+#Include My Scripts\Discord.ahk
 
 ;=============================================================================================================================================
 ;
@@ -216,7 +217,7 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;//! Slack
 #HotIf WinActive(Slack.winTitle) ;some scripts to speed up Slack interactions
 
-#Include <My Scripts\Slack>
+#Include My Scripts\Slack.ahk
 
 ;=============================================================================================================================================
 ;
@@ -226,7 +227,7 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;//! mpv
 #HotIf WinActive(ptf.mpvWintitle)
 
-#Include <My Scripts\mpv>
+#Include My Scripts\mpv.ahk
 
 ;=============================================================================================================================================
 ;
@@ -236,7 +237,7 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;//! obsidian
 #HotIf WinActive(ptf.obsidianWintitle)
 
-#Include <My Scripts\obsidian>
+#Include My Scripts\obsidian.ahk
 
 ;=============================================================================================================================================
 ;
@@ -246,7 +247,7 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;//! Photoshop
 #HotIf WinActive(editors.Photoshop.winTitle) && !GetKeyState("F24")
 
-#Include <My Scripts\Photoshop>
+#Include My Scripts\Photoshop.ahk
 
 ;=============================================================================================================================================
 ;
@@ -256,7 +257,7 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;//! After Effects
 #HotIf WinActive(editors.AE.winTitle) && !GetKeyState("F24")
 
-#Include <My Scripts\AE>
+#Include My Scripts\AE.ahk
 
 ;=============================================================================================================================================
 ;
@@ -266,10 +267,10 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;//! Premiere
 #HotIf WinActive(editors.Premiere.winTitle) && !GetKeyState("F24")
 
-#Include <My Scripts\Premiere>
+#Include My Scripts\Premiere.ahk
 
 ;// I have this here instead of running it separately because sometimes if the main script loads after this one things get funky and break because of priorities and stuff
-#Include <Classes\Editors\Premiere_RightClick>
+#Include Classes\Editors\Premiere_RightClick.ahk
 
 ;//? Attempts to stop adobe fs.ahk from freaking out at times
 ;stopfullscreenpremHotkey;
@@ -287,4 +288,4 @@ F18::prem.delayPlayback()
 ;//! Anything that isn't in the Editors Group
 #HotIf not WinActive("ahk_group Editors") && !GetKeyState("F24") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 
-#Include <My Scripts\Not Editor>
+#Include My Scripts\Not Editor.ahk

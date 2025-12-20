@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\ptf>
-#Include <Classes\tool>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
 ; }
 
 if !WinActive(Editors.Premiere.winTitle) && !WinActive(Editors.AE.winTitle)

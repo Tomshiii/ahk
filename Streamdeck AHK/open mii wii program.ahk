@@ -1,5 +1,6 @@
-﻿; { \\ #Includes
-#Include <Classes\ptf>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
 ; }
 
 Run(ptf["SongDJ"]) ;runs the queue program incase it opened too late

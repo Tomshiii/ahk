@@ -1,8 +1,9 @@
 ; { \\ #Includes
-#Include <Classes\tool>
-#Include <Classes\errorLog>
-#Include <Classes\Mip>
-#Include <Functions\checkInternet>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\tool.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\Mip.ahk
+#Include Functions\checkInternet.ahk
 ; }
 
 /**

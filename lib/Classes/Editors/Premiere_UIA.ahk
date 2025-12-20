@@ -1,24 +1,25 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/11/27
- * @version 2.0.31
+ * @date 2025/12/20
+ * @version 2.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\winget>
-#Include <Classes\switchTo>
-#Include <Classes\errorLog>
-#Include <Classes\settings>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\tool>
-#Include <Functions\checkStuck>
-#Include <functions\detect>
-#Include <Other\UIA\UIA>
-#Include <Other\JSON>
-#Include <Other\Notify\Notify>
-#Include <Other\WinEvent>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
+#Include Classes\winget.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\settings.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\tool.ahk
+#Include Functions\checkStuck.ahk
+#Include functions\detect.ahk
+#Include Other\UIA\UIA.ahk
+#Include Other\JSON.ahk
+#Include Other\Notify\Notify.ahk
+#Include Other\WinEvent.ahk
 ; }
 
 ;// [Table of Contents]

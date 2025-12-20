@@ -7,7 +7,10 @@ It also doesn't help that Premiere & After Effects store their data differently 
 **Please** report any issues with this process or any errors you come across, making sure to provide as much information as possible.
 */
 
-#Include <GUIs\adobeKSA>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\adobeKSA.ahk
+; }
 
 ksaGUI := adobeKSA()
 ksaGUI.Show()

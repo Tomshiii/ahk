@@ -1,5 +1,8 @@
-#Include <Classes\cmd>
-#Include <Other\Notify\Notify>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+#Include Other\Notify\Notify.ahk
+; }
 
 ;// this script is just to check the current install for any files that need fixing
 ;// this can be helpful if you're experiencing PremiereRemote randomly crashing, or other extensions crashing alongside PremiereRemote (I recently experienced this with Premiere Composer by Mr Horse)

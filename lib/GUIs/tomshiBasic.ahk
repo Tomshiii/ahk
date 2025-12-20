@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\ptf>
-#Include <Classes\dark>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\dark.ahk
 ; }
 
 /**

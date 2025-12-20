@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <checklist\trythenDel>
+#Include "%A_Appdata%\tomshi\lib"
+#Include checklist\trythenDel.ahk
 ; }
 
 localVer := IniRead(checklist, "Info", "ver")

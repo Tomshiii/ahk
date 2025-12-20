@@ -3,9 +3,10 @@
 #Requires AutoHotkey v2.0
 
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\Editors\Premiere>
-#Include <Functions\trayShortcut>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Functions\trayShortcut.ahk
 ;there are more includes down below
 ; }
 
@@ -21,7 +22,7 @@ onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.13.7
+;\\v2.14.0
 
 ;\\CURRENT RELEASE VERSION
 ;\\v2.16.2
@@ -59,16 +60,16 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 ;===========================================================================
 #HotIf WinActive(editors.Premiere.winTitle) and getKeyState("F24", "P")
-#Include <QMK\Prem>
+#Include QMK\Prem.ahk
 ;===========================================================================
 #HotIf WinActive(editors.AE.winTitle) and getKeyState("F24", "P")
-#Include <QMK\AE>
+#Include QMK\AE.ahk
 ;===========================================================================
 #HotIf getKeyState("F24", "P") and WinActive(editors.Photoshop.winTitle)
-#Include <QMK\Photoshop>
+#Include QMK\Photoshop.ahk
 ;===========================================================================
 #HotIf getKeyState("F24", "P") ;these will work everywhere
-#Include <QMK\Always>
+#Include QMK\Always.ahk
 ;===========================================================================
 
 

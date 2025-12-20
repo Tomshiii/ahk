@@ -1,10 +1,11 @@
 ; { \\ #Includes
-#Include <Classes\winget>
-#Include <Classes\Streamdeck_opt>
-#Include <Classes\obj>
-#Include <Classes\explorer>
-#Include <Classes\Editors\Premiere>
-#Include <Other\Notify\Notify>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\winget.ahk
+#Include Classes\Streamdeck_opt.ahk
+#Include Classes\obj.ahk
+#Include Classes\explorer.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Other\Notify\Notify.ahk
 ;
 if WinExist(prem.winTitle) {
     try {

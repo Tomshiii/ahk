@@ -2,15 +2,16 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2025/10/25
- * @version 1.1.9.1
+ * @date 2025/12/20
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\errorLog>
-#Include <Classes\obj>
-#Include <Classes\explorer>
-#Include <Other\pipeCommand>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\errorLog.ahk
+#Include Classes\obj.ahk
+#Include Classes\explorer.ahk
+#Include Other\pipeCommand.ahk
 ; }
 
 class cmd {

@@ -1,12 +1,15 @@
-#Include <QMK\unassigned>
-#Include <Classes\Apps\Discord>
-#Include <Classes\switchTo>
-#Include <Classes\ptf>
-#Include <Classes\winget>
-#Include <Classes\obj>
-#Include <Classes\errorLog>
-#Include <Functions\detect>
-#Include <GUIs\musicGUI>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include QMK\unassigned.ahk
+#Include Classes\Apps\Discord.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\ptf.ahk
+#Include Classes\winget.ahk
+#Include Classes\obj.ahk
+#Include Classes\errorLog.ahk
+#Include Functions\detect.ahk
+#Include GUIs\musicGUI.ahk
+; }
 
 BackSpace::unassigned()
 SC028::unassigned() ; ' key

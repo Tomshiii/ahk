@@ -1,16 +1,17 @@
 /************************************************************************
  * @description a GUI designed to help the user easily replace their KSA.ini file
  * @author tomshi
- * @date 2025/12/08
- * @version 1.1.1
+ * @date 2025/12/20
+ * @version 1.2.0
  ***********************************************************************/
 ; { \\ #Includes
-#Include <Classes\settings>
-#Include <Classes\ptf>
-#Include <Classes\Mip>
-#Include <Classes\tool>
-#Include <Classes\adobeXML>
-#Include <GUIs\tomshiBasic>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\Mip.ahk
+#Include Classes\tool.ahk
+#Include Classes\adobeXML.ahk
+#Include GUIs\tomshiBasic.ahk
 ; }
 
 class adobeKSA extends tomshiBasic {

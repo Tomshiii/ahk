@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Classes\Editors\Premiere>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Editors\Premiere.ahk
 ; }
 
 colourKey(colour) {

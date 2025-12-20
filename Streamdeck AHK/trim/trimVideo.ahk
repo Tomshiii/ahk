@@ -1,7 +1,8 @@
 ;// this script requires ffmpeg to be installed correctly and to the system path
 
 ; { \\ #Includes
-#Include <GUIs\trim>
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\trim.ahk
 ; }
 
 trimGUI("video", "-c:v copy -c:a copy -crf 17")

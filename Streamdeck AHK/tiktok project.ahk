@@ -1,11 +1,12 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <GUIs\tomshiBasic>
-#Include <Classes\ptf>
-#Include <Classes\coord>
-#Include <Classes\errorLog>
-#Include <Classes\switchTo>
-#Include <Functions\delaySI>
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\tomshiBasic.ahk
+#Include Classes\ptf.ahk
+#Include Classes\coord.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\switchTo.ahk
+#Include Functions\delaySI.ahk
 ; }
 
 if !WinActive(editors.Premiere.winTitle)

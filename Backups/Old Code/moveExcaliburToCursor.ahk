@@ -1,6 +1,6 @@
 ; { \\ #Includes
-#Include <Classes\obj>
-#Include <Classes\coord>
+#Include Classes\obj.ahk
+#Include Classes\coord.ahk
 ; }
 
 ~<^Space::

@@ -1,8 +1,9 @@
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\winget>
-#Include <Classes\Editors\After Effects>
-#Include <Functions\mouseDrag>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\winget.ahk
+#Include Classes\Editors\After Effects.ahk
+#Include Functions\mouseDrag.ahk
 ; }
 
 ;aetimelineHotkey;

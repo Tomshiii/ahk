@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <GUIs\tomshiBasic>
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\tomshiBasic.ahk
 ; }
 
 class partDL extends tomshiBasic {

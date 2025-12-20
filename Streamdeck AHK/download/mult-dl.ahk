@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/11/13
+ * @date 2025/12/20
  ***********************************************************************/
-global currentVer := "1.2.9"
+global currentVer := "1.3.0"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -12,14 +12,17 @@ preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetDescription GUI to interact with yt-dlp in different ways
 
 #Requires AutoHotkey v2.0
-#Include <Classes\ytdlp>
-#Include <Classes\switchTo>
-#Include <Classes\explorer>
-#Include <GUIs\tomshiBasic>
-#Include <Functions\useNVENC>
-#Include <Functions\getLocalVer>
-#Include <Functions\isURL>
-#Include <Other\LVICE_XXS>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ytdlp.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\explorer.ahk
+#Include GUIs\tomshiBasic.ahk
+#Include Functions\useNVENC.ahk
+#Include Functions\getLocalVer.ahk
+#Include Functions\isURL.ahk
+#Include Other\LVICE_XXS.ahk
+; }
 
 #SingleInstance Off
 if win := WinExist(A_ScriptName) || win := WinExist(preReqTitle) {

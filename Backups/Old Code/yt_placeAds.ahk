@@ -1,7 +1,7 @@
 #Requires AutoHotkey v2
-#Include <Functions\delaySI>
-#Include <Classes\block>
-#Include <Other\UIA\UIA>
+#Include Functions\delaySI.ahk
+#Include Classes\block.ahk
+#Include Other\UIA\UIA.ahk
 
 #HotIf WinActive("ahk_exe chrome.exe")
 

@@ -1,8 +1,9 @@
-﻿SetDefaultMouseSpeed 0
+SetDefaultMouseSpeed 0
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\Editors\Resolve>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\Editors\Resolve.ahk
 ; }
 
 if WinActive(editors.Premiere.winTitle)

@@ -2,15 +2,16 @@
  * @description a class to contain often used functions relating to keys
  * @file key.ahk
  * @author tomshi
- * @date 2025/10/06
- * @version 1.1.4
+ * @date 2025/12/20
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\tool>
-#Include <Classes\errorLog>
-#Include <Functions\getHotkeys>
-#Include <Functions\getHotkeysArr>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\tool.ahk
+#Include Classes\errorLog.ahk
+#Include Functions\getHotkeys.ahk
+#Include Functions\getHotkeysArr.ahk
 ; }
 
 class keys {

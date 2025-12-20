@@ -1,10 +1,11 @@
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\keys>
-#Include <Classes\winget>
-#Include <Functions\isDoubleClick>
-#Include <Functions\delaySI>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\keys.ahk
+#Include Classes\winget.ahk
+#Include Functions\isDoubleClick.ahk
+#Include Functions\delaySI.ahk
 ; }
 
 isIn(title) {

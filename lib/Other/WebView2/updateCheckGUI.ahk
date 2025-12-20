@@ -1,9 +1,10 @@
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <GUIs\tomshiBasic>
-#Include <Other\WebView2\WebView2>
-#Include <Classes\ptf>
-#Include <Functions\getScriptRelease>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Settings.ahk
+#Include GUIs\tomshiBasic.ahk
+#Include Other\WebView2\WebView2.ahk
+#Include Classes\ptf.ahk
+#Include Functions\getScriptRelease.ahk
 
 ; }
 

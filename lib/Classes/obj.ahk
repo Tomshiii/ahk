@@ -2,13 +2,14 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2025/11/21
- * @version 1.1.10
+ * @date 2025/12/20
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\errorLog>
-#Include <Functions\checkImg>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\errorLog.ahk
+#Include Functions\checkImg.ahk
 ; }
 
 class obj {

@@ -1,12 +1,13 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2025/12/16
- * @version 1.2.12
+ * @date 2025/12/20
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\Settings>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\Settings.ahk
 ; }
 
 class ptf {
@@ -19,7 +20,7 @@ class ptf {
     static SongQueue         := this.Stream "\TomSongQueueue"
     static Logs              := this.rootDir "\Logs"
     static ErrorLog          := this.Logs "\Error Logs"
-    static lib               := this.rootDir "\lib"
+    static lib               := A_AppData "\tomshi\lib"
     static TimerScripts      := this.rootDir "\Timer Scripts"
     static Shortcuts         := this.SupportFiles "\shortcuts"
     static textreplace       := this.SupportFiles "\textreplace"

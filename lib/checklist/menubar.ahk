@@ -1,13 +1,14 @@
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\Dark>
-#Include <Classes\winGet>
-#Include <Classes\tool>
-#Include <Classes\ptf>
-#Include <GUIs\tomshiBasic>
-#Include <Functions\getScriptRelease>
-#Include <Functions\refreshWin>
-#Include <GUIs\settingsGUI\settingsGUI>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\Settings.ahk
+#Include Classes\Dark.ahk
+#Include Classes\winGet.ahk
+#Include Classes\tool.ahk
+#Include Classes\ptf.ahk
+#Include GUIs\tomshiBasic.ahk
+#Include Functions\getScriptRelease.ahk
+#Include Functions\refreshWin.ahk
+#Include GUIs\settingsGUI\settingsGUI.ahk
 ; }
 
 ;// initialise settings instance

@@ -1,5 +1,8 @@
-#Include <Classes\ffmpeg>
-#Include <GUIs\tomshiBasic>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ffmpeg.ahk
+#Include GUIs\tomshiBasic.ahk
+; }
 
 class adjustAudio extends tomshiBasic {
     __New() {

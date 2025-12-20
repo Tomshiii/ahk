@@ -1,4 +1,7 @@
-#Include <Classes\errorLog>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\errorLog.ahk
+;
 
 /**
  * macOS creates annoying files with a ._ at the beginning this function removes them from a directory

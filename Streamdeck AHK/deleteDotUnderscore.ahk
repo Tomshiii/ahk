@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Functions\deleteDotUnderscore>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Functions\deleteDotUnderscore.ahk
 ; }
 
 deleteDotUnderscore()

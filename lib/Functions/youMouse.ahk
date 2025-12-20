@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\tool>
-#Include <Classes\errorLog>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\tool.ahk
+#Include Classes\errorLog.ahk
 ; }
 
 /**

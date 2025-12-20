@@ -1,11 +1,12 @@
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\clip>
-#Include <Classes\Move>
-#Include <Classes\clipStorage>
-#Include <Functions\fastWheel>
-#Include <Functions\youMouse>
-#Include <Functions\alwaysOnTop>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
+#Include Classes\clip.ahk
+#Include Classes\Move.ahk
+#Include Classes\clipStorage.ahk
+#Include Functions\fastWheel.ahk
+#Include Functions\youMouse.ahk
+#Include Functions\alwaysOnTop.ahk
 ; }
 
 ;winleftHotkey;

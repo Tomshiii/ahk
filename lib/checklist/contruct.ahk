@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <checklist\menubar>
-#Include <checklist\checkboxes>
+#Include "%A_Appdata%\tomshi\lib"
+#Include checklist\menubar.ahk
+#Include checklist\checkboxes.ahk
 ; }
 
 ;// checklistGUI will be the actual Gui instance.
@@ -28,7 +29,7 @@ timer := checklistTimer(startValue, ms, ms10)
 timer.reminder.start()
 
 ;// creating buttons
-#Include <checklist\buttons>
+#Include checklist\buttons.ahk
 
 ;// creating timer text
-#Include <checklist\timerText>
+#Include checklist\timerText.ahk

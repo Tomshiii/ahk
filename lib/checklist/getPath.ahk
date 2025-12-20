@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <checklist\generateIni>
+#Include "%A_Appdata%\tomshi\lib"
+#Include checklist\generateIni.ahk
 ; }
 
 /**

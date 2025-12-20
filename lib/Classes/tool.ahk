@@ -1,15 +1,16 @@
 /************************************************************************
  * @description A class to contain often used tooltip/traytip functions for easier coding.
  * @author tomshi
- * @date 2025/11/21
- * @version 1.2.3
+ * @date 2025/12/20
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\coord>
-#Include <Classes\errorLog>
-#Include <Other\SystemThemeAwareToolTip>
-#Include <Functions\detect>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\coord.ahk
+#Include Classes\errorLog.ahk
+#Include Other\SystemThemeAwareToolTip.ahk
+#Include Functions\detect.ahk
 ; }
 
 class tool {

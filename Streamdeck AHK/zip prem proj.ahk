@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\explorer>
-#Include <Other\7zip\SevenZip>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\explorer.ahk
+#Include Other\7zip\SevenZip.ahk
 ; }
 
 ;// this script is very much just for my own work related workflow and won't really help anyone else sorryyy

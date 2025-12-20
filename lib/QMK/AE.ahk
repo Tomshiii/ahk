@@ -1,6 +1,9 @@
-#Include <Classes\Editors\After Effects>
-#Include <Classes\Editors\Premiere>
-#Include <QMK\unassigned>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Editors\After Effects.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include QMK\unassigned.ahk
+; }
 
 BackSpace::unassigned()
 SC028::unassigned()

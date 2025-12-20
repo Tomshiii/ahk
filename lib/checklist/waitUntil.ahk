@@ -1,10 +1,11 @@
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\winGet>
-#Include <Classes\tool>
-#Include <Classes\block>
-#Include <Classes\errorLog>
-#Include <Functions\detect>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
+#Include Classes\winGet.ahk
+#Include Classes\tool.ahk
+#Include Classes\block.ahk
+#Include Classes\errorLog.ahk
+#Include Functions\detect.ahk
 ; }
 
 SetTimer(waitUntil, -1000)

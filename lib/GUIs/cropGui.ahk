@@ -1,18 +1,19 @@
 /************************************************************************
  * @description A GUI to quickly horizontally crop video files using ffmpeg
  * @author tomshi
- * @date 2024/01/08
- * @version 1.0.3
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
 #SingleInstance Force
 ; { \\ #Includes
-#Include <GUIs\tomshiBasic>
-#Include <GUIs\reencodeGUI>
-#Include <Classes\obj>
-#Include <Classes\ffmpeg>
-#Include <Classes\cmd>
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\tomshiBasic.ahk
+#Include GUIs\reencodeGUI.ahk
+#Include Classes\obj.ahk
+#Include Classes\ffmpeg.ahk
+#Include Classes\cmd.ahk
 ; }
 
 class cropGui extends encodeGUI {

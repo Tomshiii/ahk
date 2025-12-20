@@ -1,6 +1,7 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <Classes\ffmpeg>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ffmpeg.ahk
 ; }
 
 ffmpeg().all_XtoY(,, "mp3")

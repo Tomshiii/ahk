@@ -4,26 +4,27 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.6.2
  * @author tomshi, taranVH
- * @date 2025/12/11
- * @version 2.3.29
+ * @date 2025/12/20
+ * @version 2.4.0
  ***********************************************************************/
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\Settings>
-#Include <Classes\ptf>
-#Include <Classes\errorLog>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\Editors\Premiere_TimelineColours>
-#Include <Classes\Editors\Premiere_UIA>
-#Include <Classes\tool>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\keys>
-#Include <Classes\obj>
-#Include <Classes\winGet>
-#Include <Other\WinEvent>
-#Include <Other\Notify\Notify>
-#Include <Functions\checkStuck>
+#Include "%A_Appdata%\tomshi\lib"
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\Settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\Editors\Premiere_TimelineColours.ahk
+#Include Classes\Editors\Premiere_UIA.ahk
+#Include Classes\tool.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\keys.ahk
+#Include Classes\obj.ahk
+#Include Classes\winGet.ahk
+#Include Other\WinEvent.ahk
+#Include Other\Notify\Notify.ahk
+#Include Functions\checkStuck.ahk
 ; }
 
 ;//! if you intend on running this as a separate script, please read the notes below and the wiki page so you're aware of the unexpected behaviours that can cause!
@@ -31,7 +32,7 @@
 /*
 #SingleInstance force
 #HotIf WinActive(editors.Premiere.winTitle)
-#Include <Functions\trayShortcut>
+#Include Functions\trayShortcut.ahk
 TraySetIcon(ptf.Icons "\mouse.ico")
 startupTray()
 */

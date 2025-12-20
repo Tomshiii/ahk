@@ -1,6 +1,9 @@
-#Include <Classes\ptf>
-#Include <Functions\detect>
-#Include <Classes\winGet>
+; { \\ #Includes
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
+#Include Functions\detect.ahk
+#Include Classes\winGet.ahk
+; }
 
 title := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
 ignore := browser.vscode.winTitle "|" A_ScriptName

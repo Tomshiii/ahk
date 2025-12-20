@@ -1,13 +1,16 @@
 /************************************************************************
  * @description parse premiere xml keyboard shortcut files
  * @author tomshi
- * @date 2025/12/08
- * @version 1.1.1
+ * @date 2025/12/20
+ * @version 1.2.0
  ***********************************************************************/
 
-#Include <Classes\Mip>
-#Include <GUIs\tomshiBasic>
-#Include <Functions\loadXML>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Mip.ahk
+#Include GUIs\tomshiBasic.ahk
+#Include Functions\loadXML.ahk
+; }
 
 /**
  * @param file a filepath to the xml file you wish to parse

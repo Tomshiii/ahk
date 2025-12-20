@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\Editors\Photoshop>
-#Include <Functions\mouseDrag>
+#Include '%A_Appdata%\tomshi\lib'
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\Editors\Photoshop.ahk
+#Include Functions\mouseDrag.ahk
 ; }
 
 ;pngHotkey;

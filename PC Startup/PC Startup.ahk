@@ -1,9 +1,10 @@
 #Warn VarUnset, StdOut
 #Requires AutoHotkey v2.0
-#Include *i <Classes\Settings>
-#Include *i <Classes\ptf>
-#Include *i <Other\Notify\Notify>
-#Include *i <Functions\syncDirectories>
+#Include '%A_Appdata%\tomshi\lib'
+#Include *i Classes\Settings.ahk
+#Include *i Classes\ptf.ahk
+#Include *i Other\Notify\Notify.ahk
+#Include *i Functions\syncDirectories.ahk
 
 ;// if the user has not generated the symlink yet this script will return
 try {

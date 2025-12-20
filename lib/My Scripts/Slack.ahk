@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Classes\Apps\Slack>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Apps\Slack.ahk
 ; }
 
 SC03A & a::slack.button("reaction")

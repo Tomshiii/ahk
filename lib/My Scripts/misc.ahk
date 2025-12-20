@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Classes\Editors\Premiere>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Editors\Premiere.ahk
 ; }
 
 ;// these are any hotkeys that are for anything but need to be placed at the top of the stack for any given reason

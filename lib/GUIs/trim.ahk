@@ -1,16 +1,17 @@
 /************************************************************************
  * @description A GUI to easily trim audio/video files using ffmpeg
  * @author tomshi
- * @date 2025/11/26
- * @version 1.0.6
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
 #SingleInstance Force
 ; { \\ #Includes
-#Include <GUIs\tomshiBasic>
-#Include <Classes\obj>
-#Include <Classes\ffmpeg>
+#Include '%A_Appdata%\tomshi\lib'
+#Include GUIs\tomshiBasic.ahk
+#Include Classes\obj.ahk
+#Include Classes\ffmpeg.ahk
 ; }
 
 class trimGUI extends tomshiBasic {

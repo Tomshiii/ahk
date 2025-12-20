@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\winget>
-#Include <Classes\Move>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\winget.ahk
+#Include Classes\Move.ahk
 ; }
 
 ;the below disables the numpad on youtube so you don't accidentally skip around a video

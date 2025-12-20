@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\cmd>
-#Include <Classes\obj>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+#Include Classes\obj.ahk
 ; }
 
 /**

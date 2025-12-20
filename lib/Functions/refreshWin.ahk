@@ -1,9 +1,10 @@
 ; { \\ #Includes
-#Include <Classes\coord>
-#Include <Classes\tool>
-#Include <Classes\errorLog>
-#Include <Classes\explorer>
-#Include <Classes\winget>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\coord.ahk
+#Include Classes\tool.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\explorer.ahk
+#Include Classes\winget.ahk
 ; }
 
 /**

@@ -1,7 +1,10 @@
 #requires AutoHotkey v2
 #Warn VarUnset, StdOut
 
-#Include <Classes\ptf>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+; }
 
 instance := newGUI()
 instance.Show('w' instance.TotalWidth)

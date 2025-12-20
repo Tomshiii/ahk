@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\Apps\Discord>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\Apps\Discord.ahk
 ; }
 
 ;disceditHotkey;

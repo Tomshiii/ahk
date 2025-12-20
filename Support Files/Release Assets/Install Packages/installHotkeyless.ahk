@@ -1,8 +1,11 @@
-#Include <Classes\ptf>
-#Include <Functions\unzip>
-; #Include <Classes\winGet>
-#Include <Classes\errorLog>
-#Include <Classes\cmd>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Functions\unzip.ahk
+; #Include Classes\winGet.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\cmd.ahk
+; }
 
 ;// downloads and installs; https://github.com/sebinside/HotkeylessAHK
 
@@ -10,8 +13,8 @@
 
 ;// this script must be called AFTER symlinks have been generated
 ;// it requires cmd { & unzip()
-SplitPath(A_LineFile,, &workDir)
-SetWorkingDir(workDir "\..\..\..\")
+installDir := FileRead(A_Appdata "\tomshi\installDir")
+SetWorkingDir(installDir)
 
 getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
 if !getNPM {

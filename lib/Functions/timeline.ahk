@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\coord>
-#Include <Classes\block>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\coord.ahk
+#Include Classes\block.ahk
 ; }
 
 /**

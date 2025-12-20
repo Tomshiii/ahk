@@ -2,22 +2,23 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Last tested on Davinci Resolve v20.1
  * @author tomshi
- * @date 2025/11/21
- * @version 1.5.3
+ * @date 2025/12/20
+ * @version 1.6.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <KSA\Keyboard Shortcut Adjustments>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\winget>
-#Include <Classes\clip>
-#Include <Classes\obj>
-#Include <Classes\keys>
-#Include <Classes\errorLog>
-#Include <Functions\getHotkeys>
+#Include "%A_Appdata%\tomshi\lib"
+#Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\winget.ahk
+#Include Classes\clip.ahk
+#Include Classes\obj.ahk
+#Include Classes\keys.ahk
+#Include Classes\errorLog.ahk
+#Include Functions\getHotkeys.ahk
 ; }
 
 class Resolve {

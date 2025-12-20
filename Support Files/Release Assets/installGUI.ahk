@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2025/03/22
- * @version 1.0.2.1
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -193,10 +193,13 @@ class installGUI extends Gui {
 
         /** this function handles the entire install sequence of the installer */
         __Install(*) {
-            if DirExist(A_MyDocuments "\AutoHotkey\Lib") {
-                if MsgBox("AHK Lib folder detected in the User library. Continuing with this installation may delete any user downloaded libraries or otherwise fail to install correctly.`n`nDo you wish to continue?", "User Library Found.", "4 48 4096") = "No"
-                    return
-            }
+            if DirExist(A_AppData "\tomshi\lib")
+                DirDelete(A_AppData "\tomshi\lib")
+            if !DirExist(A_AppData "\tomshi")
+                DirCreate(A_AppData "\tomshi")
+            if FileExist(A_Appdata "\tomshi\installDir")
+                FileDelete(A_Appdata "\tomshi\installDir")
+            FileAppend(this.installDir, A_Appdata "\tomshi\installDir")
             amount := 0
             if !this.hasAttempted {
                 this.__addLogEditBox()
@@ -249,7 +252,11 @@ class installGUI extends Gui {
                 this["Progress"].opt("CRed")
                 throw(Error("Unable to Unzip install files", -1))
             }
-            this.__setProgress(65) ;// hard setting to 35 here
+            this.__setProgress(65) ;// hard setting to 65 here
+            ;// move lib folder
+            this.__addLogEntry("moving lib files")
+            DirMove(this.InstallDir "\lib", A_AppData "\tomshi\lib")
+            ;// set baseline settings
             if this.settingsCheck = false && FileExist(this.InstallDir "\Support Files\Release Assets\baseLineSettings.ahk") {
                 this.__addLogEntry("generating default ``settings.ini``")
                 Run(this.InstallDir "\Support Files\Release Assets\baseLineSettings.ahk")

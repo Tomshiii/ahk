@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Functions\detect>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Functions\detect.ahk
 ; }
 
 /**

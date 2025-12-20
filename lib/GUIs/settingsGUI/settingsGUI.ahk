@@ -1,26 +1,27 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/12/16
- * @version 2.3.20
+ * @date 2025/12/20
+ * @version 2.4.0
  ***********************************************************************/
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <GUIs\tomshiBasic>
-#Include <GUIs\gameCheckGUI>
-#Include <GUIs\settingsGUI\editValues>
-#Include <Classes\dark>
-#Include <Classes\tool>
-#Include <Classes\ptf>
-#Include <Classes\obj>
-#Include <Classes\WM>
-#Include <Classes\reset>
-#Include <Classes\winget>
-#Include <Other\Notify\Notify>
-#Include <Other\Array>
-#Include <Functions\refreshWin>
-#Include <Functions\detect>
-#Include <Functions\checkInternet>
-#Include <Functions\generateAdobeShortcut>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Settings.ahk
+#Include GUIs\tomshiBasic.ahk
+#Include GUIs\gameCheckGUI.ahk
+#Include GUIs\settingsGUI\editValues.ahk
+#Include Classes\dark.ahk
+#Include Classes\tool.ahk
+#Include Classes\ptf.ahk
+#Include Classes\obj.ahk
+#Include Classes\WM.ahk
+#Include Classes\reset.ahk
+#Include Classes\winget.ahk
+#Include Other\Notify\Notify.ahk
+#Include Other\Array.ahk
+#Include Functions\refreshWin.ahk
+#Include Functions\detect.ahk
+#Include Functions\checkInternet.ahk
+#Include Functions\generateAdobeShortcut.ahk
 ;}
 
 

@@ -1,8 +1,9 @@
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\keys>
-#Include <Classes\winget>
-#Include <Functions\delaySI>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\keys.ahk
+#Include Classes\winget.ahk
+#Include Functions\delaySI.ahk
 ; }
 
 /**

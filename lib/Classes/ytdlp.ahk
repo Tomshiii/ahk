@@ -1,22 +1,23 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/10/25
- * @version 1.1.3
+ * @date 2025/12/20
+ * @version 1.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\tool>
-#Include <Classes\cmd>
-#Include <Classes\ffmpeg>
-#Include <Classes\clip>
-#Include <Classes\obj>
-#Include <Classes\errorLog>
-#Include <Classes\switchTo>
-#Include <Classes\Streamdeck_opt>
-#Include <Classes\explorer>
-#Include <Other\Notify\Notify>
-#Include <Functions\getHTMLTitle>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\tool.ahk
+#Include Classes\cmd.ahk
+#Include Classes\ffmpeg.ahk
+#Include Classes\clip.ahk
+#Include Classes\obj.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\Streamdeck_opt.ahk
+#Include Classes\explorer.ahk
+#Include Other\Notify\Notify.ahk
+#Include Functions\getHTMLTitle.ahk
 ; }
 
 

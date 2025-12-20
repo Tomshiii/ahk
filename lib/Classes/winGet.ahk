@@ -1,19 +1,20 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2025/12/16
- * @version 1.6.4
+ * @date 2025/12/20
+ * @version 1.7.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\block>
-#Include <Classes\coord>
-#Include <Classes\errorLog>
-#Include <Classes\Mip>
-#Include <Classes\Editors\Premiere>
-#Include <Functions\detect>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\block.ahk
+#Include Classes\coord.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\Mip.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Functions\detect.ahk
 ; }
 
 class WinGet {

@@ -1,15 +1,18 @@
-#Include <Classes\errorLog>
-#Include <Classes\ptf>
-#Include <Classes\cmd>
-#Include <Functions\unzip>
-#Include <GUIs\cepVer>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\errorLog.ahk
+#Include Classes\ptf.ahk
+#Include Classes\cmd.ahk
+#Include Functions\unzip.ahk
+#Include GUIs\cepVer.ahk
+; }
 
 ;//! This script will NOT complete without NodeJS already being installed
 
 ;// this script must be called AFTER symlinks have been generated
 ;// it requires cmd { & unzip()
-SplitPath(A_LineFile,, &workDir)
-SetWorkingDir(workDir "\..\..\..\")
+installDir := FileRead(A_Appdata "\tomshi\installDir")
+SetWorkingDir(installDir)
 
 getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
 if !getNPM {

@@ -1,7 +1,10 @@
-#Include <Classes\Editors\Premiere>
-#Include <Classes\winget>
-#Include <Classes\Mip>
-#Include <Classes\explorer>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\winget.ahk
+#Include Classes\Mip.ahk
+#Include Classes\explorer.ahk
+; }
 
 ;// sometimes when dl'ing from frameio if it errors out or a file wasn't fully uploaded yet it'll leave an empty file behind which makes it difficult to then properlly download it later
 ;// this script will recurse a directory and delete any 0kb files.

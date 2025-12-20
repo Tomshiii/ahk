@@ -1,13 +1,14 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard or interact with highlighted text
  * @author tomshi
- * @date 2025/06/03
- * @version 1.0.9
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\errorLog>
-#Include <Classes\block>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\errorLog.ahk
+#Include Classes\block.ahk
 ; }
 
 class clip {

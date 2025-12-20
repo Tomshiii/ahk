@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <Classes\clip>
-#Include <Functions\FormatWeekRange>
-#Include <Functions\FormatWeekDay>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\clip.ahk
+#Include Functions\FormatWeekRange.ahk
+#Include Functions\FormatWeekDay.ahk
 ; }
 
 ^+c::clip.search("", "chrome.exe")

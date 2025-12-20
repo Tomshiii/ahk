@@ -2,13 +2,14 @@
  * @description a class of functions designed to store/send strings
  * @author tomshi
  * @date 2024/10/24
- * @version 1.0.0
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\tool>
-#Include <Classes\clip>
-#Include <Other\JSON>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\tool.ahk
+#Include Classes\clip.ahk
+#Include Other\JSON.ahk
 ; }
 
 class clipStorage {

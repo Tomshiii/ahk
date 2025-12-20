@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\Mip>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\Mip.ahk
 ; }
 
 ignorelist := Mip("checklist.ahk", 1, "launcher.ahk", 1)

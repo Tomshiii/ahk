@@ -2,29 +2,30 @@
 #Requires AutoHotkey v2.0
 
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <Classes\block>
-#Include <Classes\errorLog>
-#Include <Classes\winget>
-#Include <Functions\floorDecimal>
-#Include <Functions\detect>
-#Include <Functions\isReload>
-#Include <Functions\change_msgButton>
-#Include <Functions\trayShortcut>
-#Include <GUIs\tomshiBasic>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\Settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include Classes\block.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\winget.ahk
+#Include Functions\floorDecimal.ahk
+#Include Functions\detect.ahk
+#Include Functions\isReload.ahk
+#Include Functions\change_msgButton.ahk
+#Include Functions\trayShortcut.ahk
+#Include GUIs\tomshiBasic.ahk
 ; <checklist funcs> ;everything in <lib\checklist\> is needed for this script
 ;but these are just the ones that can be defined anywhere
-#Include <checklist\timers>
-#Include <checklist\generateIni>
-#Include <checklist\premNotOpen>
-#Include <checklist\problemDir>
-#Include <checklist\trythenDel>
-#Include <checklist\timers>
-#Include <checklist\log>
-#Include <checklist\getPath>
-#Include <checklist\haltChecklist>
+#Include checklist\timers.ahk
+#Include checklist\generateIni.ahk
+#Include checklist\premNotOpen.ahk
+#Include checklist\problemDir.ahk
+#Include checklist\trythenDel.ahk
+#Include checklist\timers.ahk
+#Include checklist\log.ahk
+#Include checklist\getPath.ahk
+#Include checklist\haltChecklist.ahk
 ; }
 
 TraySetIcon(ptf.Icons "\checklist.ico")
@@ -33,7 +34,7 @@ startupTray()
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.12.12"
+version := "v2.13.0"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -120,7 +121,7 @@ else
         end:
     }
 
-#Include <checklist\verCheck>
+#Include checklist\verCheck.ahk
 
 ;// getting the title
 ;// I keep my project files withhin a subfolder of the overall project folder
@@ -141,7 +142,7 @@ if !FileExist(logs)
 newDate(&today)
 
 ;// constructing the GUI
-#Include <checklist\contruct>
+#Include checklist\contruct.ahk
 
 ;// log opening
 FileAppend("\\ The checklist was opened : " A_YYYY "_" A_MM "_" A_DD ", " A_Hour ":" A_Min ":" A_Sec " -- Hours after opening = " startHoursRounded " -- seconds at opening = " startValue "`n", logs)
@@ -154,4 +155,4 @@ checklistGUI.BackColor := checklistGUI.LightColour
 checklistGUI.Move(-345, 0,,) ;I have it set to move onto one of my other monitors, if you notice that you can't see it after opening or it keeps warping to a weird location, this line of code is why
 ;// finish defining GUI
 
-#Include <checklist\close>
+#Include checklist\close.ahk

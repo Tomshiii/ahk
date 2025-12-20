@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <Classes\errorLog>
-#Include <Classes\winget>
-#Include <Functions\drawBorder>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\errorLog.ahk
+#Include Classes\winget.ahk
+#Include Functions\drawBorder.ahk
 ; }
 
 /**

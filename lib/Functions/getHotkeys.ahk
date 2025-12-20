@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Classes\keys>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\keys.ahk
 ; }
 
 /**

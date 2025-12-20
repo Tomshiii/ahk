@@ -1,8 +1,9 @@
 #SingleInstance Force
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\pause>
-#Include <Functions\SD Functions\genProjDirs>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\pause.ahk
+#Include Functions\SD Functions\genProjDirs.ahk
 ; }
 
 pause.pause("autosave")

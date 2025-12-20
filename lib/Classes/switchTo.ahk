@@ -1,28 +1,29 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/12/16
- * @version 1.3.28
+ * @date 2025/12/20
+ * @version 1.4.0
  ***********************************************************************/
 
 ; { \\ #Includes
-#Include <Classes\Settings>
-#Include <Classes\ptf>
-#Include <Classes\tool>
-#Include <GUIs\musicGUI>
-#Include <Classes\keys>
-#Include <Classes\winget>
-#Include <Classes\errorLog>
-#Include <Classes\explorer>
-#Include <Other\Notify\Notify>
-#Include <Classes\Apps\VSCode>
-#Include <Classes\Apps\Discord>
-#Include <Classes\Apps\Slack>
-#Include <Classes\Editors\After Effects>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\Editors\Photoshop>
-#Include <Functions\getHotkeys>
-#Include <Functions\generateAdobeShortcut>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\Settings.ahk
+#Include Classes\ptf.ahk
+#Include Classes\tool.ahk
+#Include GUIs\musicGUI.ahk
+#Include Classes\keys.ahk
+#Include Classes\winget.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\explorer.ahk
+#Include Other\Notify\Notify.ahk
+#Include Classes\Apps\VSCode.ahk
+#Include Classes\Apps\Discord.ahk
+#Include Classes\Apps\Slack.ahk
+#Include Classes\Editors\After Effects.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\Editors\Photoshop.ahk
+#Include Functions\getHotkeys.ahk
+#Include Functions\generateAdobeShortcut.ahk
 ; }
 
 class switchTo {

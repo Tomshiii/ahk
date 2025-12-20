@@ -1,7 +1,8 @@
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\errorLog>
-#Include <Classes\explorer>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\explorer.ahk
 ; }
 
 /**

@@ -2,8 +2,11 @@
 ;// not really useful for anyone else sorryyyyyyyyyyy
 #SingleInstance Force
 
-#Include <Classes\clip>
-#Include <Functions\delaySI>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\clip.ahk
+#Include Functions\delaySI.ahk
+; }
 
 arr1 := ["Eating Out", "Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Rent", "Health", "Amazon", "Friends/lover"]
 arr2 := ["Salary", "Loan Repayments", "Other Repayments"]

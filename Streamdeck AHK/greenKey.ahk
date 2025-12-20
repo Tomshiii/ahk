@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Functions\SD Functions\colourKey>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Functions\SD Functions\colourKey.ahk
 ; }
 
 colourKey("green")

@@ -1,9 +1,10 @@
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\Dark>
-#Include <Classes\winget>
-#Include <GUIs\tomshiBasic>
-#Include <Functions\detect>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\Dark.ahk
+#Include Classes\winget.ahk
+#Include GUIs\tomshiBasic.ahk
+#Include Functions\detect.ahk
 ; }
 
 /**

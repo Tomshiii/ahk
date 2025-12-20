@@ -1,10 +1,11 @@
 #SingleInstance Off
 ; { \\ #Includes
-#Include <Classes\ffmpeg>
-#Include <Classes\cmd>
-#Include <Classes\tool>
-#Include <Classes\obj>
-#Include <Classes\explorer>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ffmpeg.ahk
+#Include Classes\cmd.ahk
+#Include Classes\tool.ahk
+#Include Classes\obj.ahk
+#Include Classes\explorer.ahk
 ; }
 
 ;//! THIS SCRIPT IS NOT MEANT FOR GENERAL PURPOSE

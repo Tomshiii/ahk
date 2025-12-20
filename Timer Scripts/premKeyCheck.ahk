@@ -3,10 +3,11 @@
 ListLines(0)
 
 ; { \\ #Includes
-#Include <Classes\keys>
-#Include <Classes\ptf>
-#Include <Classes\timer>
-#Include <Functions\trayShortcut>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\keys.ahk
+#Include Classes\ptf.ahk
+#Include Classes\timer.ahk
+#Include Functions\trayShortcut.ahk
 ; }
 
 TraySetIcon(ptf.Icons "\premKey.png")

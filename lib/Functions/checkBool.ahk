@@ -1,6 +1,7 @@
 ; { \\ #Includes
-#Include <Functions\isBool>
-#Include <Classes\errorLog>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Functions\isBool.ahk
+#Include Classes\errorLog.ahk
 ; }
 
 /**

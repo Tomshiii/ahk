@@ -1,5 +1,6 @@
 ; { \\ #Includes
-#Include <Classes\ptf>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
 ; }
 
 SetWorkingDir(A_ScriptDir)

@@ -1,10 +1,11 @@
-﻿#SingleInstance Force
+#SingleInstance Force
 
 ; { \\ #Includes
-#Include <Functions\detect>
-#Include <Classes\coord>
-#Include <Classes\ptf>
-#Include <Functions\SD Functions\win_locations>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Functions\detect.ahk
+#Include Classes\coord.ahk
+#Include Classes\ptf.ahk
+#Include Functions\SD Functions\win_locations.ahk
 ; }
 
 detect()

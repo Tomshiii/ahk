@@ -4,10 +4,11 @@
 ; KeyHistory(0)
 
 ; { \\ #Includes
-#Include <Classes\ptf>
-#Include <Classes\Editors\Premiere>
-#Include <Classes\errorLog>
-#Include <Functions\trayShortcut>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\ptf.ahk
+#Include Classes\Editors\Premiere.ahk
+#Include Classes\errorLog.ahk
+#Include Functions\trayShortcut.ahk
 ; }
 
 InstallKeybdHook(true)

@@ -1,15 +1,16 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2025/12/11
- * @version 1.0.2
+ * @date 2025/12/20
+ * @version 1.1.0
  ***********************************************************************/
 ; { \\ #Includes
-#Include <Classes\obj>
-#Include <Classes\WinGet>
-#Include <Classes\cmd>
-#Include <Other\Notify\Notify>
-#Include <Other\UIA\UIA>
+#Include "%A_Appdata%\tomshi\lib"
+#Include Classes\obj.ahk
+#Include Classes\WinGet.ahk
+#Include Classes\cmd.ahk
+#Include Other\Notify\Notify.ahk
+#Include Other\UIA\UIA.ahk
 ; }
 
 class explorer {

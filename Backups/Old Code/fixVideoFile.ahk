@@ -1,7 +1,7 @@
 #Requires AutoHotkey v2.0
-#Include <Classes\cmd>
-#Include <Classes\obj>
-#Include <Other\print>
+#Include Classes\cmd.ahk
+#Include Classes\obj.ahk
+#Include Other\print.ahk
 
 ;// this script requires the user to;
 ;// download mplayer - https://sourceforge.net/projects/mplayer-win32/ (make sure you grab the `/MPlayer and MEncoder` link, not the ffmpeg link like I did 3 times...)
