@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Code is maintained for the version of Premiere listed below
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 25.6.2
+ * @premVer 25.6.3
  * @author tomshi
- * @date 2025/12/20
- * @version 2.3.0
+ * @date 2025/12/27
+ * @version 2.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -25,6 +25,7 @@
 #Include Classes\cmd.ahk
 #Include Classes\Mip.ahk
 #Include Classes\Move.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Classes\Editors\Premiere_UIA.ahk
 #Include Classes\Editors\Premiere_TimelineColours.ahk
 #Include GUIs\tomshiBasic.ahk
@@ -44,24 +45,25 @@
 class Prem {
 
     static __New() {
-        UserSettings := UserPref()
-        this.currentSetVer := SubStr(UserSettings.premVer, 2)
-        this.mainScriptName := (UserSettings.mainScriptName != "") ? UserSettings.mainScriptName : this.mainScriptName
-        try this.defaultTheme     := UserSettings.premDefaultTheme
-        try this.useSwapSequences := UserSettings.use_swapSequences
+        try this.UserSettings := CLSID_Objs.load("UserSettings")
+        catch {
+            this.UserSettings := UserPref()
+        }
+        this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
+        this.mainScriptName := (this.UserSettings.mainScriptName != "") ? this.UserSettings.mainScriptName : this.mainScriptName
+        try this.defaultTheme     := this.UserSettings.premDefaultTheme
+        try this.useSwapSequences := this.UserSettings.use_swapSequences
         try {
-            this.prevSeqDelay := UserSettings.premPrevSeqDelay * 1000
+            this.prevSeqDelay := this.UserSettings.premPrevSeqDelay * 1000
         } catch {
             this.defaultTheme := this.theme
         }
-        UserSettings.__delAll()
-        UserSettings := ""
         Critical()
         this.setUI()
         orig := detect()
-        if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") {
+        if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") && A_ScriptName != "Core Functionality.ahk" && WinExist("Core Functionality.ahk") {
             try {
-                activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                activeObj := CLSID_Objs.load("prem")
                 this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
                 this.timelineCol := activeObj.timelineCol, this.timelineColArr := activeObj.timelineColArr
                 this.sequenceArr := activeObj.sequenceArr
@@ -81,6 +83,7 @@ class Prem {
             SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
     }
 
+    static UserSettings := ""
     static mainScriptName := "My Scripts"
     static currentSetVer := ""
     static spectrumUI_Version := "25.0"
@@ -253,7 +256,7 @@ class Prem {
                     Notify.Show(, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=preSpectrum')
                 }
                 this.theme := this.defaultTheme
-                this.__setTimelineCol("oldUI", this.theme)
+                this.__setTimelineCol("preSpectrum", this.theme)
         }
 
         ;// other values
@@ -1571,14 +1574,11 @@ class Prem {
     }
 
     static __checkAlwaysUIA() {
-        UserSettings := UserPref()
-        if UserSettings.Always_Check_UIA = true {
-            if UserSettings.Set_UIA_Limit_Daily = true && UserSettings.UIA_Daily_Limit_Day = A_YDay
+        if this.UserSettings.Always_Check_UIA = true {
+            if this.UserSettings.Set_UIA_Limit_Daily = true && this.UserSettings.UIA_Daily_Limit_Day = A_YDay
                 return false
             premUIA := premUIA_Values(false)
-            UserSettings.UIA_Daily_Limit_Day := A_YDay
-            UserSettings.__delAll()
-            UserSettings := ""
+            this.UserSettings.UIA_Daily_Limit_Day := A_YDay
             return premUIA
         }
         return false
@@ -1603,17 +1603,13 @@ class Prem {
         ; SendInput(KSA.timelineWindow)
         sleep 75
         coord.client()
-        UserSettings := UserPref()
-        mainScriptName := UserSettings.mainScriptName
-        UserSettings.__delAll()
-        UserSettings := ""
         Critical()
         orig := detect()
 
         ;// this block is called if the function originates from a script that isn't `UserSettings.mainScriptName`
-        if A_ScriptName != mainScriptName ".ahk" && WinExist(mainScriptName ".ahk") {
+        if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") {
             try {
-                activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                activeObj := CLSID_Objs.load("prem")
                 if activeObj.__checkTimelineValues() {
                     coord.client()
                     this.timelineRawX     := activeObj.timelineRawX,     this.timelineRawY     := activeObj.timelineRawY
@@ -1722,7 +1718,7 @@ class Prem {
         hot := (SubStr(command, 1, 1) = "$" && StrLen(command) > 1) ? SubStr(command, 2) : command
 
         ;// with prem 25.2 zoom to fit can be set as a global hotkey
-        if zoomToFit = true && VerCompare(ptf.premIMGver, "v25.2") >= 0 {
+        if zoomToFit = true && VerCompare(ptf.premSETver, "v25.2") >= 0 {
             SendInput(command)
             return
         }
@@ -2622,11 +2618,11 @@ class Prem {
             ypos := 0
             switch {
                 ;// versions less than 25.2
-                case (VerCompare(ptf.premIMGver, "v25.2") < 0) && (button != "lock" || diff <= 54): ypos := topDivY+7
-                case (VerCompare(ptf.premIMGver, "v25.2") < 0) && (button = "lock" && diff > 54):   ypos := topDivY+((diff/2)-doMinus)
+                case (VerCompare(ptf.premSETver, "v25.2") < 0) && (button != "lock" || diff <= 54): ypos := topDivY+7
+                case (VerCompare(ptf.premSETver, "v25.2") < 0) && (button = "lock" && diff > 54):   ypos := topDivY+((diff/2)-doMinus)
 
                 ;// versions greater than or equal to 25.2
-                case (VerCompare(ptf.premIMGver, "v25.2") >= 0):
+                case (VerCompare(ptf.premSETver, "v25.2") >= 0):
                     switch {
                         case (diff <= 35):              ypos := topDivY+6
                         case (diff > 35 && diff <= 54): ypos := topDivY+15
@@ -3118,7 +3114,7 @@ class Prem {
 
     /**
 	 * Set internal colour variables based on the version of Premiere Pro the user currently has set within `settingsGUI()`
-	 * @param {String} UI which UI version should be used. Currently accepts `Spectrum` & `oldUI`
+	 * @param {String} UI which UI version should be used. Currently accepts `Spectrum` & `preSpectrum`
      * @param {String} theme which theme the user wishes to use. Currently accepts `darkest`
      * @returns {Map/Mip/Array}
 	 */
@@ -3432,9 +3428,7 @@ class Prem {
             return
         }
 
-        UserSettings := UserPref()
-        toggleLimit  := UserSettings.premSwapSequencesLimit
-        UserSettings := ""
+        toggleLimit  := this.UserSettings.premSwapSequencesLimit
         if this.sequenceArr.Length = 0 {
             this.sequenceArr.Push(seq)
             this.sequenceArr.Capacity := toggleLimit
@@ -3484,7 +3478,7 @@ class Prem {
             resetOrigDetect(orig)
             Critical("Off")
             try {
-                activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                activeObj := CLSID_Objs.load("prem")
                 activeObj.pauseSeqTimer := true
                 this.sequenceArr := activeObj.sequenceArr
                 if this.sequenceArr.Length != 0

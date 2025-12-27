@@ -2,8 +2,8 @@
  * @description: JSON格式字符串序列化和反序列化, 修改自[HotKeyIt/Yaml](https://github.com/HotKeyIt/Yaml)
  * 增加了对true/false/null类型的支持, 保留了数值的类型
  * @author thqby, HotKeyIt
- * @date 2024/02/24
- * @version 1.0.7
+ * @date 2025/12/22
+ * @version 1.0.8
  ***********************************************************************/
 
 class JSON {
@@ -18,15 +18,17 @@ class JSON {
 	static parse(text, keepbooltype := false, as_map := true) {
 		keepbooltype ? (_true := this.true, _false := this.false, _null := this.null) : (_true := true, _false := false, _null := "")
 		as_map ? (map_set := (maptype := Map).Prototype.Set) : (map_set := (obj, key, val) => obj.%key% := val, maptype := Object)
-		NQ := "", LF := "", LP := 0, P := "", R := ""
-		D := [C := (A := InStr(text := LTrim(text, " `t`r`n"), "[") = 1) ? [] : maptype()], text := LTrim(SubStr(text, 2), " `t`r`n"), L := 1, N := 0, V := K := "", J := C, !(Q := InStr(text, '"') != 1) ? text := LTrim(text, '"') : ""
+		NQ := "", LF := "", LP := 0, P := "", R := "", text := LTrim(text, " `t`r`n")
+		if !text || !InStr('{[', SubStr(text, 1, 1))
+			throw Error("Malformed JSON - unrecognized character.", 0, SubStr(text, 1, 1))
+		D := [C := (A := InStr(text, "[") = 1) ? [] : maptype()], text := LTrim(SubStr(text, 2), " `t`r`n"), L := 1, N := 0, V := K := "", J := C, !(Q := InStr(text, '"') != 1) ? text := SubStr(text, 2) : ""
 		Loop Parse text, '"' {
 			Q := NQ ? 1 : !Q
 			NQ := Q && RegExMatch(A_LoopField, '(^|[^\\])(\\\\)*\\$')
 			if !Q {
 				if (t := Trim(A_LoopField, " `t`r`n")) = "," || (t = ":" && V := 1)
 					continue
-				else if t && (InStr("{[]},:", SubStr(t, 1, 1)) || A && RegExMatch(t, "m)^(null|false|true|-?\d+(\.\d*(e[-+]\d+)?)?)\s*[,}\]\r\n]")) {
+				else if t && (InStr("{[]},:", SubStr(t, 1, 1)) || A && RegExMatch(t, "m)^(null|false|true|-?\d+(\.\d*)?([eE][-+]\d+)?)\s*[,}\]\r\n]")) {
 					Loop Parse t {
 						if N && N--
 							continue
@@ -44,7 +46,7 @@ class JSON {
 								throw Error("Malformed JSON - to many closing brackets.", 0, t)
 							else C := --L = 0 ? "" : D[L], A := Type(C) = "Array"
 						} else if !(InStr(" `t`r,", A_LoopField) || (A_LoopField = ":" && V := 1)) {
-							if RegExMatch(SubStr(t, A_Index), "m)^(null|false|true|-?\d+(\.\d*(e[-+]\d+)?)?)\s*[,}\]\r\n]", &R) && (N := R.Len(0) - 2, R := R.1, 1) {
+							if RegExMatch(SubStr(t, A_Index), "m)^(null|false|true|-?\d+(\.\d*)?([eE][-+]\d+)?)\s*[,}\]\r\n]", &R) && (N := R.Len(0) - 2, R := R.1, 1) {
 								if A
 									C.Push(R = "null" ? _null : R = "true" ? _true : R = "false" ? _false : IsNumber(R) ? R + 0 : R)
 								else if V

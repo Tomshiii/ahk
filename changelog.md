@@ -1,12 +1,16 @@
-# <> Release 2.17.0 - 
-
-> [!Warning]
-> There are still a few known issues with this release.  
-> It is recommended to check out the [`Known Issues & Planned Changes`](<https://github.com/users/Tomshiii/projects/1/views/1>) page if you are encountering any issues.  
-> If you are encountering an issue and it is not listed, consider creating an [Issue](<https://github.com/Tomshiii/ahk/issues>) so it can be tracked.
+# <> Release 2.17.0 - Core Functionality.ahk
+This update introduces some rather large, breaking changes to the functionality of my scripts;
+- ❗ __NO MORE SYMLINKS!__
+    - This should make installation as well as maintainance far easier for the user.
+    - ⚠️ `Lib` files will now be installed to `A_Appdata \tomshi\Lib`
+    - ⚠️ Adobe `ImageSearch` folders are now based off my `json` files and as such no longer need to generate individual symlinks per folder
+- ❗ Introducing `Core Functionality.ahk`
+    - This allows my scripts to share `objects` between each other easily (ie. `UserSettings`). This script __*MUST*__ run before any other scripts.
 
 > [!Caution]
-> ###### If the user uses `PremiereRemote` and isn't doing a clean install, this release requires the user to run `..\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk` as some functions have been updated or added.
+> ###### It is recommended for this release that the user does a completely new & fresh install of my scripts.
+
+***
 
 ## Functions
 - ✅ Fixed initial compatibility with `Premiere v26.1` after name change
@@ -21,9 +25,12 @@
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 - 📋 Replaced all usage of `WinGetTitle("A")` with `WinGet.Title()` to avoid unnecessary instances of scripts throwing
 - ✏️ Added `isBool()`/`checkBool()`
+- ✏️ Added `CLSID_Objs {`
+    - Allows for objects to be shared between scripts easily
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
+- ✅ Fixed `__setTimelineCol()` throwing if the user sets a Premiere version below `25.0`
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
@@ -141,7 +148,6 @@
 - 📋 Will now refocus the filename field after selecting the filetype
 
 ## Other Changes
-- ❗`Lib` files will now be installed to `A_Appdata "\tomshi\Lib` removing the need to create a symlink
 - ❗License files are now provided for all third party libs contained within this repo <sup>[[link]](<https://github.com/Tomshiii/ahk/tree/dev/lib/Other/LICENSES>)</sup>
 - 📋 Reduced the usage of `Exit()` across the entire repo to minimise potential instances of inputs getting stuck
 - 📋 Placed most usage of `detect()` within `Critical()` blocks to avoid instances of changes leaking over to other functions
@@ -188,3 +194,10 @@
 - 📋 `Multi` tab now uses a `ListView` to input URLs instead of an `Edit` box
 - 📋 `Use cookies` is now disabled by default
 - 📋 `Multi` downloads will now sleep anywhere from `18s` to `26s` between each download to reduce the risk of being flagged by youtube as a bot
+
+***
+
+> [!Warning]
+> There are still a few known issues with this release.  
+> It is recommended to check out the [`Known Issues & Planned Changes`](<https://github.com/users/Tomshiii/projects/1/views/1>) page if you are encountering any issues.  
+> If you are encountering an issue and it is not listed, consider creating an [Issue](<https://github.com/Tomshiii/ahk/issues>) so it can be tracked.

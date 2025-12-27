@@ -1,13 +1,14 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2025/12/20
- * @version 1.3.0
+ * @date 2025/12/27
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
 #Include Classes\Settings.ahk
+#Include *i Other\JSON.ahk
 ; }
 
 class ptf {
@@ -39,17 +40,17 @@ class ptf {
     static obsidianWintitle  := "ahk_exe Obsidian.exe"
 
     ;ImageSearch
-    static premIMGver        := this().UserSettings.premVer
-    static aeIMGver          := this().UserSettings.aeVer
-    static psIMGver          := this().UserSettings.psVer
-    static resolveIMGver     := this().UserSettings.resolveVer
+    static premSETver        := this().UserSettings.premVer
+    static aeSETver          := this().UserSettings.aeVer
+    static psSETver          := this().UserSettings.psVer
+    static resolveSETver     := this().UserSettings.resolveVer
     static ImgSearch         := this.SupportFiles "\ImageSearch"
     static Discord           := this.ImgSearch "\Discord\"
     static Slack             := this.ImgSearch "\Slack\"
-    static Premiere          := this.ImgSearch "\Premiere\" this.premIMGver "\"
-    static AE                := this.ImgSearch "\AE\" this.aeIMGver "\"
-    static Photoshop         := this.ImgSearch "\Photoshop\" this.psIMGver "\"
-    static Resolve           := this.ImgSearch "\Resolve\" this.resolveIMGver "\"
+    static Premiere          := this.ImgSearch "\Premiere\" this.__imgVer(this.premSETver, "Prem") "\"
+    static AE                := this.ImgSearch "\AE\" this.__imgVer(this.aeSETver, "AE") "\"
+    static Photoshop         := this.ImgSearch "\Photoshop\" this.__imgVer(this.psSETver, "Ps") "\"
+    static Resolve           := this.ImgSearch "\Resolve\" this.resolveSETver "\"
     static VSCodeImage       := this.ImgSearch "\VSCode\"
     static Explorer          := this.ImgSearch "\Windows\Win11\Explorer\"
     static Firefox           := this.ImgSearch "\Firefox\"
@@ -65,6 +66,39 @@ class ptf {
     static ProgFi            := "C:\Program Files"
     static ProgFi32          := "C:\Program Files (x86)"
 
+    /**
+     * determines the imagesearch version for an adobe app to use. Uses my json list
+     * @param {String} ver the current set version within settings.ini (ie. `premSETver`)
+     * @param {String} which which adobe folder to use as the basis for the json files. Must be `Prem`, `AE`, or `Ps`
+     */
+    static __imgVer(ver, which) {
+        if !IsSet(JSON)
+            return false
+        currYearVer := SubStr(ver, 1, InStr(ver, ".")-1)
+        jsonFile := this.SupportFiles "\Release Assets\Adobe SymVers\Vers\" which "\" currYearVer ".json"
+        if !FileExist(jsonFile) {
+            if !DirExist(this.SupportFiles "\Release Assets\Adobe SymVers\Vers\" which "\")
+                return false
+            files := Map()
+            filesArr := []
+            loop files this.SupportFiles "\Release Assets\Adobe SymVers\Vers\" which "\*", "F" {
+                files.Set(A_LoopFileName, true)
+            }
+            for v in files
+                filesArr.Push(v)
+            jsonFile := this.SupportFiles "\Release Assets\Adobe SymVers\Vers\" which "\" filesArr[-1]
+            yearObj := JSON.parse(FileRead(jsonFile))
+            for v in yearObj
+                return v
+        }
+        yearObj := JSON.parse(FileRead(jsonFile))
+        if !yearObj.Has(ver) {
+            for v in yearObj
+                return v
+        }
+        return yearObj[ver]
+    }
+
     ;variables
     /**
      * This function converts the version number into its year value
@@ -73,8 +107,8 @@ class ptf {
      */
     __adobeYear(version) => SubStr(version, 2, 2)
 
-    static PremYearVer          := this().__adobeYear(this.premIMGver)
-    static AEYearVer            := this().__adobeYear(this.aeIMGver)
+    static PremYearVer          := this().__adobeYear(this.premSETver)
+    static AEYearVer            := this().__adobeYear(this.aeSETver)
 
     /**
      * A little function to return the proper folder for the version of premiere/ae the user is using.
@@ -83,7 +117,7 @@ class ptf {
     static trimAdobeYear(which) {
         switch which {
             case "premiere": return SubStr(this.PremYearVer, -2) ".0"
-            case "ae":       return LTrim(this.aeIMGver, "v")
+            case "ae":       return LTrim(this.aeSETver, "v")
         }
     }
 
@@ -114,7 +148,7 @@ class ptf {
         "Photoshop",       this.Shortcuts "\Photoshop.exe.lnk",
         "SL_Chatbot",      this.Shortcuts "\Streamlabs Chatbot.lnk",
         "Phone Link",      this.Shortcuts "\Your Phone.lnk",
-        "scriptStartup",   A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\PC Startup.ahk - Shortcut.lnk",
+        "scriptStartup",   A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\Initialise.ahk - Shortcut.lnk",
 
         ;programs
         "LiveSplit",       "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe",
@@ -179,3 +213,4 @@ GroupAdd("Editors", editors.Premiere.winTitle)
 GroupAdd("Editors", editors.AE.winTitle)
 GroupAdd("Editors", editors.Resolve.winTitle)
 GroupAdd("Editors", editors.Photoshop.winTitle)
+GroupAdd("Editors", "ahk_exe Lightroom.exe")

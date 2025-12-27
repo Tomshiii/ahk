@@ -13,6 +13,7 @@
 #Include Classes\errorLog.ahk
 #Include Classes\WM.ahk
 #Include Classes\Editors\Premiere.ahk
+#Include Classes\CLSID_Objs.ahk
 ; }
 
 if !WinActive(prem.winTitle)
@@ -22,7 +23,7 @@ onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 detect()
-UserSettings := UserPref()
+UserSettings := CLSID_Objs.load("UserSettings")
 if WinExist(UserSettings.MainScriptName ".ahk")
     WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
 

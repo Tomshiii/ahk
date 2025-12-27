@@ -88,12 +88,8 @@ class installGUI extends Gui {
         names := Map("Backups", 1, "changelog.md", 1, "checklist.ahk", 1, "lib", 1,
                     "LICENSE", 1, "Logs", 1, "My Scripts.ahk", 1, "PC Startup", 1,
                     "QMK Keyboard.ahk", 1, "README.md", 1, "releases", 1, "Resolve_Example.ahk", 1,
-                    "Stream", 1, "Streamdeck AHK", 1, "Support Files", 1, "Timer Scripts", 1,
+                    "Stream", 1, "Streamdeck AHK", 1, "Support Files", 1, "Timer Scripts", 1, "Core Functionality.ahk", 1
                 )
-        installFiles := Map(
-            "CreateSymLink",        "{1}\Support Files\Release Assets\CreateSymLink.ahk",
-            "generateAdobeSym",     "{1}\Support Files\Release Assets\Adobe SymVers\generateAdobeSym.ahk"
-        )
 
         tempLog := A_Temp "\tomshi\" A_YYYY "_" A_MM "_" A_DD "_log.txt"
 
@@ -262,12 +258,7 @@ class installGUI extends Gui {
                 Run(this.InstallDir "\Support Files\Release Assets\baseLineSettings.ahk")
             }
             this.__deleteInstallFiles()
-            this.__setProgress(70)
-            if FileExist(Format(this.installFiles["CreateSymLink"], this.InstallDir)) {
-                this.__addLogEntry("generating lib symLinks")
-                try RunWait(Format(this.installFiles["CreateSymLink"], this.InstallDir))
-                this.__setProgress(80)
-            }
+            this.__setProgress(80)
 
             /** This function cuts repeat code for dealing with some first time settings */
             __runSettingsInstall(filename, catchText, workingDir := "") {
@@ -294,11 +285,13 @@ class installGUI extends Gui {
                     FileCopy(A_LoopFileFullPath, premRemoteDir "\backup\*.*", true)
                 }
                 this.__addLogEntry("copying over new PremiereRemote files")
-                loop files this.InstallDir "\Backups\Adobe Backups\Premiere\PremiereRemote\*.tsx", "F" {
-                    try FileCopy(A_LoopFileFullPath, A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src\*.*", 1)
-                }
+                try Run(this.InstallDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk false")
                 try Run(this.InstallDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk", this.InstallDir, "Hide")
             }
+            this.__setProgress(90)
+            ;// creating initialise shortcut
+            startupScript := this.InstallDir "\PC Startup\Initialise.ahk"
+            FileCreateShortcut(startupScript, A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\Initialise.ahk - Shortcut.lnk")
 
             ;//! finished
             this.__setProgress(100)
@@ -319,5 +312,4 @@ class installGUI extends Gui {
 ;// - Extract files from within exe
 ;// - Unzip any files
 ;// - Generate a settings.ini file if it doesn't exist
-;// - Generate SymLinks & adobeVers
 ;// - If script noted an old install, Attempt to copy data from `ksa.ini` and streamdeck `options.ini` backups

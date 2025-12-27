@@ -120,10 +120,10 @@ class WebView2 {
 	}
 
 	/**
-	 * @param {(sender, args)=>void} invoke 
+	 * @param {(sender, args)=>void} invoke
 	 * @param cls Subclass of WebView2.Base
 	 * @param ea WebView2.xxxxEnventArgs
-	 * @returns {WebView2.Handler} 
+	 * @returns {WebView2.Handler}
 	 */
 	static TypedHandler(invoke, cls, ea := 0) {
 		e := WebView2.Handler(handler)
@@ -1101,12 +1101,12 @@ class WebView2 {
 
 		static IID_14 := 'a5e9fad9-c875-59da-9bd7-473aa5ca1cef'
 		/**
-		 * @param {$FilePath} path 
+		 * @param {$FilePath} path
 		 * @param {WebView2.FILE_SYSTEM_HANDLE_PERMISSION} permission
 		 */
 		CreateWebFileSystemFileHandle(path, permission) => ComCall(26, this, 'wstr', path, 'int', permission, 'ptr*', value := WebView2.FileSystemHandle(), value)
 		/**
-		 * @param {$DirPath} path 
+		 * @param {$DirPath} path
 		 * @param {WebView2.FILE_SYSTEM_HANDLE_PERMISSION} permission
 		 */
 		CreateWebFileSystemDirectoryHandle(path, permission) => ComCall(27, this, 'wstr', path, 'int', permission, 'ptr*', value := WebView2.FileSystemHandle(), value)
@@ -2238,5 +2238,8 @@ CoTaskMem_String(ptr) {
 	s := StrGet(ptr), DllCall('ole32\CoTaskMemFree', 'ptr', ptr)
 	return s
 }
-#Include <ComVar>
-#Include <Promise>
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Other\ComVar.ahk
+#Include Other\Promise.ahk
+; }

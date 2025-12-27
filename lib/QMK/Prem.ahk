@@ -8,12 +8,13 @@
 #Include Classes\winget.ahk
 #Include Classes\errorLog.ahk
 #Include Classes\WM.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include QMK\unassigned.ahk
 ; }
 
 premTimeline() {
 	block.On()
-	UserSettings := UserPref()
+	UserSettings := CLSID_Objs.load("UserSettings")
 	__fallback() {
 		if !prem.__setTimelineValues(false) {
 			block.Off()

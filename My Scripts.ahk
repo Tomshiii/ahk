@@ -3,13 +3,13 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2025/12/20
+ * @date 2025/12/27
  * @version v2.16.2
  * @ahk_ver 2.0.19
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.0
+;\\v2.35.1
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -73,17 +73,6 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 #F12::reset.ex_exit() ;this is a panic button and will shutdown all active ahk scripts
 ;panicExitALLHotkey;
 #+F12::reset.ex_exit(true) ;this is a panic button and will shutdown all active ahk scripts INCLUDING the checklist.ahk script
-
-try {
-    uiaCheckRunning := {isRunning: false}
-    ObjRegisterActive(prem, "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
-    ObjRegisterActive(uiaCheckRunning, "{dcee88ec-9327-44cf-9d2a-5bc47c624e0e}")
-    OnExit(revoke)
-    revoke(*) {
-        ObjRegisterActive(prem, "")
-        ObjRegisterActive(uiaCheckRunning, "")
-    }
-}
 
 ; ============================================================================================================================================
 ;

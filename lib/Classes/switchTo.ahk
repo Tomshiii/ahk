@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/12/20
- * @version 1.4.0
+ * @date 2025/12/27
+ * @version 1.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,6 +22,7 @@
 #Include Classes\Editors\After Effects.ahk
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\Editors\Photoshop.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\getHotkeys.ahk
 #Include Functions\generateAdobeShortcut.ahk
 ; }
@@ -240,13 +241,11 @@ class switchTo {
                 Run(AE.path)
             } catch {
                 try {
-                    UserSettings := UserPref()
+                    UserSettings := CLSID_Objs.load("UserSettings")
                     if !generateAdobeShortcut(UserSettings, "Adobe After Effects", UserSettings.ae_year) {
-                        UserSettings.__delAll()
                         UserSettings := ""
                         throw
                     }
-                    UserSettings.__delAll()
                     UserSettings := ""
                     sleep 50
                     Run(AE.path)
@@ -514,13 +513,11 @@ class switchTo {
             Run(path)
         } catch {
             try {
-                UserSettings := UserPref()
+                UserSettings := CLSID_Objs.load("UserSettings")
                 if !generateAdobeShortcut(UserSettings, which, UserSettings.%year%_year) {
-                    UserSettings.__delAll()
                     UserSettings := ""
                     throw
                 }
-                UserSettings.__delAll()
                 UserSettings := ""
                 sleep 50
                 Run(path)

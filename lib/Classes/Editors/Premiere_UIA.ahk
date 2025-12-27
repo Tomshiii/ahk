@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/12/20
- * @version 2.1.0
+ * @date 2025/12/27
+ * @version 2.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,6 +14,7 @@
 #Include Classes\settings.ahk
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\tool.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\checkStuck.ahk
 #Include functions\detect.ahk
 #Include Other\UIA\UIA.ahk
@@ -35,12 +36,14 @@ effectsPanel          - The Effects panel
 
 Class premUIA_Values {
     __New(doChecks := true) {
-        try this.activeObj := ComObjActive("{dcee88ec-9327-44cf-9d2a-5bc47c624e0e}")
-        UserSettings := UserPref()
-        this.mainScriptName := UserSettings.mainScriptName
+        try {
+            this.activeObj := CLSID_Objs.load("uiaCheckRunning")
+            UserSettings := CLSID_Objs.load("UserSettings")
+        } catch {
+            return
+        }
         this.setVer := UserSettings.premVer
         currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
-        UserSettings    := ""
         try this.allVals := JSON.parse(FileRead(this.valueINI),, false)
         catch {
             block.Off()
@@ -78,7 +81,6 @@ Class premUIA_Values {
     allValls   := false
     baseVer    := false
     activeObj  := {}
-    mainScriptName := ""
     currentPremVer := ""
 
     windowHotkeys := Map(

@@ -7,7 +7,7 @@
 
 /**
  * This function will attempt to generate a shortcut of either `Adobe Premiere Pro`, `Adobe After Effects` or `Adobe Photoshop` to the users `..\Support Files\shortcuts\` folder
- * @param {Object} userSettingsObj the object containing the user's instance of `UserPrefs()`. Often seen as `UserSettings := UserPrefs()`
+ * @param {Object} userSettingsObj the object containing the user's instance of `UserPref()`. Often seen as `UserSettings := UserPref()`
  * @param {String} adobeName the full name of the desired program. Either `Adobe Premiere Pro`, `Adobe After Effects` or `Adobe Photoshop`
  * @param {Integer} adobeYear the year value you wish to determine the logic for.
  * @returns {Boolean} returns `false` if the desired file directory does not exist else `true`

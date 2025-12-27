@@ -12,18 +12,18 @@ KeyHistory(0)
 #Include Classes\winget.ahk
 #Include Classes\WM.ahk
 #Include Classes\Mip.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include GUIs\gameCheckGUI.ahk
 #Include gameCheck\Game List.ahk ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
 #Include Functions\trayShortcut.ahk
 ; }
 
 TraySetIcon(ptf.Icons "\game.png")
-SetTitleMatchMode(2) ;this is necessary to detect open .ahk scripts
 
 startupTray()
 
 ;// open settings instance
-UserSettings := UserPref()
+UserSettings := CLSID_Objs.load("UserSettings")
 
 ;// Set seconds delay
 sec := UserSettings.game_SEC
@@ -37,15 +37,13 @@ UserSettings := "" ;// closing settings instance
 OnMessage(0x004A, changeVar)  ; 0x004A is WM_COPYDATA
 changeVar(wParam, lParam, msg, hwnd) {
     try {
-        UserSettings := UserPref()
+        UserSettings := CLSID_Objs.load("UserSettings")
         res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
         ;// UserSettings.autosave_MIN_ 5
         lastUnd := InStr(res, "_", 1, -1)
         var := SubStr(res, 1, lastUnd-1)
         val := SubStr(res, lastUnd+1)
         UserSettings.%var% := val
-        UserSettings.__delAll()
-        UserSettings := ""
         SetTimer((*) => reload(), -500)
     }
     return
@@ -57,6 +55,8 @@ A_TrayMenu.Insert("8&", "Add Game", gameAdd)
 
 /** This function is called when the user attempts to add a game from the system tray icon */
 gameAdd(*) {
+    Critical()
+    orig := detect()
     value := WinGetList()
     ;// A map containing various win explorer classes that the script will ignore
     ;// otherwise things like the taskbar would populate the GUI instead of the most recently active window
@@ -68,6 +68,8 @@ gameAdd(*) {
         gameGUI.Show("AutoSize")
         break
     }
+    resetOrigDetect(orig)
+    Critical("Off")
 }
 
 SetTimer(check, secms)

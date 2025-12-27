@@ -14,6 +14,7 @@ KeyHistory(0)
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\Editors\After Effects.ahk
 #Include Classes\errorLog.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\trayShortcut.ahk
 ; }
 
@@ -39,12 +40,11 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 class adobeTimer extends count {
     __New() {
         try {
+            UserSettings := CLSID_Objs.load("UserSettings")
             ;// open settings instance and start timer
-            UserSettings := UserPref()
             fire_frequency := UserSettings.adobe_FS
             this.fire := (fire_frequency * 1000)
             this.mainScript := UserSettings.MainScriptName
-            UserSettings := ""
         }
 
         super.__New(this.fire)

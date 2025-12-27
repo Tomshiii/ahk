@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2025/12/20
- * @version 1.1.0
+ * @date 2025/12/27
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -13,6 +13,7 @@
 #Include Classes\Apps\VSCode.ahk
 #Include Classes\obj.ahk
 #Include Classes\Mip.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\detect.ahk
 #Include Classes\winGet.ahk
 ; }
@@ -24,10 +25,10 @@ class reset {
             if !this.ignoreScript.Has(A_LoopFileName)
                 this.ignoreScript.Set(A_LoopFileName, 1)
         }
-        UserSettings := UserPref()
+        UserSettings := CLSID_Objs.load("UserSettings")
         this.mainScript := UserSettings.MainScriptName
 
-        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, UserSettings.MainScriptName ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1)
+        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, UserSettings.MainScriptName ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "Core Functionality.ahk", 1, )
     }
 
     mainScript := ""

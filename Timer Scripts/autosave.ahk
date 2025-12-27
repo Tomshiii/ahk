@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/12/20
- * @version 2.2.0
+ * @date 2025/12/27
+ * @version 2.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,6 +20,7 @@
 #Include Classes\timer.ahk
 #Include Classes\log.ahk
 #Include Classes\errorLog.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\trayShortcut.ahk
 #Include Functions\checkStuck.ahk
 #Include Functions\detect.ahk
@@ -68,7 +69,7 @@ class adobeAutoSave extends count {
         try {
             this.premUIA := premUIA_Values()
             ;// attempt to grab user settings
-            this.UserSettings := UserPref()
+            this.UserSettings    := CLSID_Objs.load("UserSettings")
             this.ms              := (this.UserSettings.autosave_MIN * 60000)
             this.beep            := this.UserSettings.autosave_beep
             this.checkMouse      := this.UserSettings.autosave_check_mouse

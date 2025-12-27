@@ -5,6 +5,7 @@
 #Include Classes\tool.ahk
 #Include Classes\obj.ahk
 #Include Classes\WM.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\detect.ahk
 #Include Functions\trayShortcut.ahk
 #Include Multi-Instance Close\ignoreList.ahk
@@ -22,7 +23,7 @@ TraySetIcon(ptf.Icons "\M-I_C.png")
 startupTray()
 
 ;// open settings instance
-UserSettings := UserPref()
+UserSettings := CLSID_Objs.load("UserSettings")
 
 ;This script will not close multiple instances of `checklist.ahk` or anything within the `ignoreList.ahk` file
 set:
@@ -38,15 +39,13 @@ else
 OnMessage(0x004A, changeVar)  ; 0x004A is WM_COPYDATA
 changeVar(wParam, lParam, msg, hwnd) {
     try {
-        UserSettings := UserPref()
+        UserSettings := CLSID_Objs.load("UserSettings")
         res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
         ;// UserSettings.autosave_MIN_ 5
         lastUnd := InStr(res, "_", 1, -1)
         var := SubStr(res, 1, lastUnd-1)
         val := SubStr(res, lastUnd+1)
         UserSettings.%var% := val
-        UserSettings.__delAll()
-        UserSettings := ""
         SetTimer((*) => reload(), -500)
     }
     return

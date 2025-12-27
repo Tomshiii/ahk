@@ -5,6 +5,7 @@
 #Include Classes\dark.ahk
 #Include Classes\ptf.ahk
 #Include Classes\WM.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\getLocalVer.ahk
 #Include Functions\detect.ahk
 ;
@@ -154,7 +155,7 @@ activeScripts()
     checkScripts(*)
     {
         detect()
-        UserSettings := UserPref()
+        UserSettings := CLSID_Objs.load("UserSettings")
         if WinExist(UserSettings.MainScriptName ".ahk is Suspended")
             WinWaitClose(UserSettings.MainScriptName ".ahk is Suspended")
 

@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/12/20
- * @version 1.8.0
+ * @date 2025/12/27
+ * @version 1.8.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -25,6 +25,7 @@
 #Include Classes\reset.ahk
 #Include Classes\errorLog.ahk
 #Include Classes\cmd.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\getScriptRelease.ahk
 #Include Functions\getHTML.ahk
 #Include Functions\isReload.ahk
@@ -50,7 +51,7 @@ class Startup {
         ;// get release version of scripts
         this.MyRelease := this.__getMainRelease()
         ;// populate settings variables
-        this.UserSettings := UserPref()
+        this.UserSettings := CLSID_Objs.load("UserSettings")
 
         this.isReload := isReload()
     }
@@ -789,23 +790,6 @@ class Startup {
                 if !FileExist(previousFile)
                     continue
             }
-            __checkIMG(prog, short) {
-                checkpath := ptf.SupportFiles "\ImageSearch\" prog "\" this.UserSettings.%short%Ver
-                if DirExist(checkpath) && !InStr(FileGetAttrib(checkpath), "l")
-                    return false
-                return true
-            }
-            switch v {
-                case "ae":
-                    if !__checkIMG(v, v)
-                        continue
-                case "prem":
-                    if !__checkIMG("Premiere", v)
-                        continue
-                case "ps":
-                    if !__checkIMG("Photoshop", v)
-                        continue
-            }
             currFileMap := JSON.parse(FileRead(currentFile))
             if currFileMap.Has(this.UserSettings.%v%Ver) {
                 continue
@@ -867,7 +851,7 @@ class Startup {
         submenuSC.Add("Reload All Scripts", (*) => reset.ext_reload())
         submenuSC.Add("Hard Reset All Scripts", (*) => reset.reset())
         submenuSC.Add("keys.allUp()", (*) => keys.allUp())
-        submenuSC.Add("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\PC Startup.ahk"))
+        submenuSC.Add("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\Initialise.ahk"))
         submenuSC.Add("Close All Scripts", (*) => reset.ex_exit())
         A_TrayMenu.Insert(startingVal "&", "Script Control", submenuSC)
         startingVal++
@@ -1003,12 +987,16 @@ class Startup {
             }
         }
 
-        webView2 := {
+        /* webView2 := {
             name: "WebView2",                        url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/WebView2/WebView2.ahk",
             scriptPos: ptf.lib "\Other\WebView2",    ext: "unset"
-        }
+        } */
         comVar := {
             name: "ComVar",                          url: "https://raw.githubusercontent.com/thqby/ahk2_lib/master/ComVar.ahk",
+            scriptPos: ptf.lib "\Other",             ext: "unset"
+        }
+        promise := {
+            name: "Promise",                     url: "https://raw.githubusercontent.com/thqby/ahk2_lib/refs/heads/master/Promise.ahk",
             scriptPos: ptf.lib "\Other",             ext: "unset"
         }
         JSON := {
@@ -1052,7 +1040,7 @@ class Startup {
             scriptPos: ptf.lib "\Other",             ext: "unset"
         }
 
-        objs := [this.webView2, this.comVar, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator, this.NotifyIcons, this.HighPrecision, this.ShinsImageScanClass, this.arrayExt]
+        objs := [this.comVar, this.promise, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator, this.NotifyIcons, this.HighPrecision, this.ShinsImageScanClass, this.arrayExt]
         name        := []
         url         := []
         scriptPos   := []

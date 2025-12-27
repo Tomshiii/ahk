@@ -3,6 +3,7 @@
 #Include KSA\Keyboard Shortcut Adjustments.ahk
 #Include Classes\ptf.ahk
 #Include Classes\Editors\Premiere.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\delaySI.ahk
 ; }
 
@@ -20,7 +21,7 @@ startValue := "0"
 
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
-UserSettings := UserPref()
+UserSettings := CLSID_Objs.load("UserSettings")
 
 detect()
 if WinExist(UserSettings.MainScriptName ".ahk")

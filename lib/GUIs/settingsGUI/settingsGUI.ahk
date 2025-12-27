@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/12/20
- * @version 2.4.0
+ * @date 2025/12/27
+ * @version 2.4.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -16,6 +16,7 @@
 #Include Classes\WM.ahk
 #Include Classes\reset.ahk
 #Include Classes\winget.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Other\Notify\Notify.ahk
 #Include Other\Array.ahk
 #Include Functions\refreshWin.ahk
@@ -43,7 +44,7 @@ settingsGUI()
 
     readSet := FileRead(ptf.lib "\GUIs\settingsGUI\values.json")
     setJSON := JSON.parse(readSet,, false)
-    UserSettings := UserPref()
+    UserSettings := CLSID_Objs.load("UserSettings")
     initialSettings := FileRead(UserSettings.SettingsFile)
 
     ;// menubar
@@ -283,7 +284,7 @@ settingsGUI()
             case "run at startup":
                 switch script.Value {
                     case 1:
-                        startupScript := ptf.rootDir "\PC Startup\PC Startup.ahk"
+                        startupScript := ptf.rootDir "\PC Startup\Initialise.ahk"
                         FileCreateShortcut(startupScript, ptf["scriptStartup"])
                     case 0:
                         if FileExist(ptf["scriptStartup"])
@@ -302,9 +303,9 @@ settingsGUI()
                 (script.Value = 0) ? settingsGUI["premPrev"].Opt("+Disabled")
                                    : settingsGUI["premPrev"].Opt("-Disabled")
                 origDetect := detect()
-                if WinExist(UserSettings.mainScriptName ".ahk") {
+                if WinExist("Core Functionality.ahk") {
                     try {
-                        activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                        activeObj := CLSID_Objs.load("prem")
                         switch script.Value {
                             case 0:
                                 activeObj.useSwapSequences := false
@@ -605,7 +606,7 @@ settingsGUI()
                 initVer := UserSettings.premVer
                 genProg := program
                 otherTitle := "After Effects Settings"
-                static imageLoc := ptf.premIMGver
+                static imageLoc := ptf.premSETver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\" shortcutName
             case "AE":
                 short := "ae"
@@ -620,7 +621,7 @@ settingsGUI()
                 initVer := UserSettings.aeVer
                 genProg := "AE"
                 otherTitle := "Premiere Pro Settings"
-                static imageLoc := ptf.aeIMGver
+                static imageLoc := ptf.aeSETver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\Support Files\" shortcutName
             case "Photoshop":
                 short := "ps"
@@ -635,7 +636,7 @@ settingsGUI()
                 initVer := UserSettings.psVer
                 genProg := program
                 otherTitle := "Photoshop Settings"
-                static imageLoc := ptf.psIMGver
+                static imageLoc := ptf.psSETver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\" shortcutName
         }
         if WinExist(title) {
@@ -712,18 +713,20 @@ settingsGUI()
          * This function handles the logic behind what happens when the user selects a new year value
          */
         __yearEventDropDown(*) {
-            if program != "Photoshop" {
-                ver.Delete()
-                new := []
-                loop files ptf.ImgSearch "\" program "\*", "D" {
-                    if InStr(A_LoopFileName, "v" SubStr(year.Text, 3, 2)) && !InStr(A_LoopFileName, "_") && !InStr(A_LoopFileName, "-")
-                        new.Push(A_LoopFileName)
-                }
-                ver.Add(new)
-                if !new.Has(1)
-                    return
-                ver.Choose(new.Length)
+            ver.Delete()
+            jsonFolder := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers\" short
+            if !DirExist(jsonFolder "\") {
+                ;// throw
+                errorLog(ValueError("Adobe json directory cannot be found", -1, jsonFolder),,, 1)
             }
+            supportedVersMap := json.parse(FileRead(jsonFolder "\v" SubStr(year.Text, 3, 2) ".json"))
+            supportedVers := []
+            for v in supportedVersMap
+                supportedVers.Push(v)
+            ver.add(supportedVers)
+            if !supportedVers.Has(1)
+                return
+            ver.Choose(supportedVers.Length)
             UserSettings.%yearIniName% := year.text
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
         }
@@ -738,42 +741,29 @@ settingsGUI()
                 ;// throw
                 errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
             }
-            if !DirExist(ptf.ImgSearch "\" program "\") {
+            jsonFolder := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers\" short
+            if !DirExist(jsonFolder "\") {
                 ;// throw
-                errorLog(ValueError("ImageSearch directory cannot be found", -1, ptf.ImgSearch "\" program),,, 1)
+                errorLog(ValueError("Adobe json directory cannot be found", -1, jsonFolder),,, 1)
             }
-            supportedVers := []
-            foundYears := Map()
-            installPath := A_ProgramFiles "\Adobe\"
-            loop files ptf.ImgSearch "\" program "\*", "D" {
-                if SubStr(A_LoopFileName, 1, 1) != "v"
-                    continue
+            supportedYears := []
+            loop files jsonFolder "\*", "F" {
                 loopYear := SubStr(A_Year, 1, 2) SubStr(A_LoopFileName, 2, 2)
-                if program != "Photoshop" {
-                    removeAdobeName := StrReplace(adobeFullName, "Adobe ", "")
-                    if !DirExist(installPath adobeFullName A_Space loopYear) && !DirExist(A_MyDocuments "\Adobe\" removeAdobeName " (Beta)\" SubStr(loopYear, 3, 2) ".0") && (removeAdobeName = "After Effects" && !DirExist(A_AppData "\Adobe\" removeAdobeName " (Beta)\" SubStr(loopYear, 3, 2) ".0"))
-                        continue
-                }
-                if program = "Photoshop" {
-                    supportedVers.Push(A_Year-1), supportedVers.Push(A_Year), supportedVers.Push(A_Year+1)
-                    foundYears.Set(loopYear, 1)
-                    break
-                }
-                if !foundYears.Has(loopYear) {
-                    supportedVers.Push(loopYear)
-                    foundYears.Set(loopYear, 1)
-                }
+                supportedYears.Push(loopYear)
             }
-            for value in supportedVers {
+            for value in supportedYears {
                 if value = iniInitYear
                     {
                         defaultIndex := A_Index
                         break
                     }
             }
+            supportedYears := supportedYears.Sort("C")
+            supportedYears := supportedYears.Reverse()
+            try defaultIndex := supportedYears.IndexOf(iniInitYear)
             if !IsSet(defaultIndex)
                 defaultIndex := 1
-            year := adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
+            year := adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedYears)
             year.OnEvent("Change", __yearEventDropDown)
         }
 
@@ -785,21 +775,15 @@ settingsGUI()
                 ;// throw
                 errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
             }
-            if !DirExist(ptf.ImgSearch "\" program "\") {
+            jsonFolder := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers\" short
+            if !DirExist(jsonFolder "\") {
                 ;// throw
-                errorLog(ValueError("ImageSearch directory cannot be found", -1, ptf.ImgSearch "\" program),,, 1)
+                errorLog(ValueError("Adobe json directory cannot be found", -1, jsonFolder),,, 1)
             }
+            supportedVersMap := JSON.parse(FileRead(jsonFolder "\v" SubStr(iniInitYear, 3, 2) ".json"))
             supportedVers := []
-            loop files ptf.ImgSearch "\" program "\*", "D" {
-                if checkV := SubStr(A_LoopFileName, 1, 1) != "v"
-                    continue
-                if program = "Photoshop" {
-                    supportedVers.Push(A_LoopFileName)
-                    continue
-                }
-                if InStr(A_LoopFileName, "v" SubStr(iniInitYear, 3, 2))
-                    supportedVers.Push(A_LoopFileName)
-            }
+            for v in supportedVersMap
+                supportedVers.Push(v)
             for value in supportedVers {
                 if value = initVer
                     {

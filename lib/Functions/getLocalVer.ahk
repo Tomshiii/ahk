@@ -23,11 +23,11 @@
  * ver.script ;// the entire contents of the script
  * ```
  */
-getLocalVer(varRead?, script := "My Scripts.ahk", searchTag := "@version", endField := "*", returnObj := false) {
+getLocalVer(varRead?, script := ptf.rootDir "\My Scripts.ahk", searchTag := "@version", endField := "*", returnObj := false) {
     if IsSet(varRead)
         read := varRead
     else
-        read := FileRead(ptf.rootDir "\" script)
+        read := FileRead(script)
     getVerPos := InStr(read, searchTag)
     if !getVerPos ;if the lib doesn't have a @version tag, we'll pass back a blank script and do something else later
         return((returnObj = false) ? false : {version: "", script: read})

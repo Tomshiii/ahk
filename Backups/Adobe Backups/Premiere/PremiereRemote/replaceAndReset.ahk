@@ -4,5 +4,5 @@
 ; }
 
 SetWorkingDir(A_ScriptDir)
-RunWait("replacePremRemote.ahk")
+RunWait("replacePremRemote.ahk false")
 RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk")

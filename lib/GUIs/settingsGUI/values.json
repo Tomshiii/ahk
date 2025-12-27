@@ -53,8 +53,8 @@
   "startup": {
     "title": "Run at Startup",
     "tooltip": {
-      "true": "`PC Startup.ahk` script will automatically run at PC startup",
-      "false": "`PC Startup.ahk` script will no longer run at PC startup"
+      "true": "`Initialise.ahk` script will automatically run at PC startup",
+      "false": "`Initialise.ahk` script will no longer run at PC startup"
     }
   },
   "adobeExeOverride": {

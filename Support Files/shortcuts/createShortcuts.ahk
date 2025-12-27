@@ -1,11 +1,12 @@
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\settings.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\generateAdobeShortcut.ahk
 #Include Other\Notify\Notify.ahk
 ; }
 
-UserSettings := UserPref()
+UserSettings := CLSID_Objs.load("UserSettings")
 premYear := UserSettings.prem_Year
 aeYear   := UserSettings.ae_Year
 psYear   := UserSettings.ps_Year

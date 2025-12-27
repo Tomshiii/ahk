@@ -4,6 +4,7 @@
 #Include GUIs\tomshiBasic.ahk
 #Include Other\WebView2\WebView2.ahk
 #Include Classes\ptf.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\getScriptRelease.ahk
 
 ; }
@@ -12,7 +13,7 @@
 SetWorkingDir(ptf.lib)
 TraySetIcon(ptf.Icons "\update.png")
 
-UserSettings := UserPref()
+UserSettings := CLSID_Objs.load("UserSettings")
 if UserSettings.beta_update_check = true
 	{ ;if the user wants to check for beta updates instead, this block will fire
 		version := getScriptRelease(true, &changeVer)

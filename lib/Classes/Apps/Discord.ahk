@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2025/12/20
- * @version 1.7.0
+ * @date 2025/12/27
+ * @version 1.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include Classes\clip.ahk
 #Include Classes\keys.ahk
 #Include Classes\errorLog.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Other\UIA\UIA.ahk
 #Include Classes\winGet.ahk
 ; }
@@ -84,7 +85,7 @@ class discord {
 
         switch button {
             case "reply":
-                UserSettings := UserPref()
+                UserSettings := CLSID_Objs.load("UserSettings")
                 disableAutoReplyPing := UserSettings.disc_disable_autoreply
                 UserSettings := ""
                 try {

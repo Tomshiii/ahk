@@ -19,10 +19,10 @@ trayShortcut(shortcutLink := A_AppData "\Microsoft\Windows\Start Menu\Programs\S
     togVal := (FileExist(shortcutLink)) ? true : false
     switch togVal {
         case 0:
-            if FileExist(A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\PC Startup.ahk - Shortcut.lnk") {
+            if FileExist(A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\Initialise.ahk - Shortcut.lnk") {
                 MsgBox(Format("
                 (
-                    This script may already be running at startup due to ``PC Startup.ahk``.
+                    This script may already be running at startup due to ``Initialise.ahk``.
                     This can be removed via ``settingsGUI()`` or by removing the file manually.
 
                     Please check the windows startup folder if you require clarification.

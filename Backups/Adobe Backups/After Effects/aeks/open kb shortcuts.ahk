@@ -3,14 +3,15 @@
 #Include "%A_Appdata%\tomshi\lib"
 #Include *i Classes\settings.ahk
 #Include *i Classes\ptf.ahk
+#Include *i Classes\CLSID_Objs.ahk
 ; }
 
 try {
-    UserSettings := UserPref()
+   UserSettings := CLSID_Objs.load("UserSettings")
 }
 
 SetWorkingDir(A_ScriptDir)
-aeVerNum := StrReplace(ptf.aeIMGver, "v", "")
+aeVerNum := StrReplace(ptf.aeSETver, "v", "")
 aeVerNumTrim := InStr(aeVerNum, ".",,, 2) ? SubStr(aeVerNum, 1, InStr(aeVerNum, ".",,, 2)-1) : aeVerNum
 version := (IsSet(UserSettings)) ? aeVerNumTrim : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
 incBeta := (IsSet(UserSettings) && (UserSettings.aeIsBeta = true || UserSettings.aeIsBeta = "true")) ? " (Beta)" : ""

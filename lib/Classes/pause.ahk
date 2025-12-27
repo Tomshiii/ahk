@@ -37,10 +37,11 @@ class Pause {
     static Suspend(ScriptName, SuspendOn)
     {
         ; Get the HWND of the script main window (which is usually hidden).
-        dhw := A_DetectHiddenWindows
-        DetectHiddenWindows True
-        if scriptHWND := WinExist(ScriptName " ahk_class AutoHotkey")
-        {
+        Critical()
+        orig := detect()
+        /* dhw := A_DetectHiddenWindows
+        DetectHiddenWindows True */
+        if scriptHWND := WinExist(ScriptName " ahk_class AutoHotkey") {
             ; This constant is defined in the AutoHotkey source code (resource.h):
             static ID_FILE_SUSPEND := 65404
 
@@ -56,15 +57,19 @@ class Pause {
             DllCall("CloseHandle", "ptr", fileMenu)
             DllCall("CloseHandle", "ptr", mainMenu)
 
-            if (!SuspendOn != !isSuspended)
-                {
-                    SendMessage 0x111, ID_FILE_SUSPEND,,, "ahk_id " %&scriptHWND%
-                    return 1
-                }
-            else
+            if (!SuspendOn != !isSuspended) {
+                SendMessage 0x111, ID_FILE_SUSPEND,,, "ahk_id " %&scriptHWND%
+                resetOrigDetect(orig)
+                Critical("Off")
+                return 1
+            } else {
+                resetOrigDetect(orig)
+                Critical("Off")
                 return 0
+            }
             ; Otherwise, it already in the right state.
         }
-        DetectHiddenWindows %&dhw%
+        resetOrigDetect(orig)
+        Critical("Off")
     }
 }

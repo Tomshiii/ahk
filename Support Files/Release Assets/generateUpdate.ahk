@@ -8,14 +8,12 @@
 #Include Functions\getLocalVer.ahk
 #Include Other\7zip\SevenZip.ahk
 #Include Classes\winGet.ahk
+#Include Classes\CLSID_Objs.ahk
 ; }
 
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release
 ; // Then goes through the annoying process of generating the release
 ; // This script will not work, and is not designed to work for anyone else - it's simply placed in this folder so I can keep it tracked (and to keep its code open so you can make sure the install exe isn't too scary)
-
-;// delete all adobe symlinks because they may break things for the user when trying to extract them
-Run(A_ScriptDir "\Adobe SymVers\deleteAdobeSyms.ahk")
 
 ;// setting our working dir to the release folder
 SetWorkingDir(ptf.rootDir "\releases") ;this folder isn't included in the public version of my repo as it simply acts as a backup place for all the releases
@@ -31,7 +29,7 @@ if WinExist("Ahk2Exe for AutoHotkey")
 ;// backup adobe stuff
 ;//! premiere
 
-UserSettings := UserPref()
+UserSettings := CLSID_Objs.load("UserSettings")
 
 ;//* PremiereRemote
 RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\backupPremRemote.ahk"))
@@ -72,7 +70,7 @@ FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*", 1)
 
 ;//! ae
 
-aeVerNum := StrReplace(ptf.aeIMGver, "v", "")
+aeVerNum := StrReplace(ptf.aeSETver, "v", "")
 aeVerNumTrim := InStr(aeVerNum, ".",,, 2) ? SubStr(aeVerNum, 1, InStr(aeVerNum, ".",,, 2)-1) : aeVerNum
 aeDir := (UserSettings.aeIsBeta = true || UserSettings.aeIsBeta = "true") ? A_AppData "\Adobe\After Effects (Beta)\" aeVerNumTrim : A_AppData "\Adobe\After Effects\" aeVerNumTrim
 ahkAEDir := "E:\Github\ahk\Backups\Adobe Backups\After Effects"
@@ -421,4 +419,3 @@ if MsgBox("Backup wiki folder?",, 0x3) = "Yes" {
     ToolTip("")
     tool.Cust("Backing up wiki folder complete")
 }
-Run(ptf.rootDir "\Support Files\Release Assets\Adobe SymVers\generateAdobeSym.ahk")

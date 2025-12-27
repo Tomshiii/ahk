@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a GUI designed to help the user easily replace their KSA.ini file
  * @author tomshi
- * @date 2025/12/20
- * @version 1.2.0
+ * @date 2025/12/27
+ * @version 1.2.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -27,7 +27,7 @@ class adobeKSA extends tomshiBasic {
     Xclude := 500
 
     defaultPremiereFolder := A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-" A_UserName "\Win"
-    aeVerNum     := StrReplace(ptf.premIMGver, "v", "")
+    aeVerNum     := StrReplace(ptf.premSETver, "v", "")
     aeVerNumTrim := InStr(this.aeVerNum, ".",,, 2) ? SubStr(this.aeVerNum, 1, InStr(this.aeVerNum, ".",,, 2)-1) : this.aeVerNum
     defaultAEFolder := A_AppData "\Adobe\After Effects\" this.aeVerNumTrim "\aeks"
 

@@ -5,6 +5,7 @@
 #Include Classes\winGet.ahk
 #Include Classes\tool.ahk
 #Include Classes\ptf.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Functions\getScriptRelease.ahk
 #Include Functions\refreshWin.ahk
@@ -12,7 +13,7 @@
 ; }
 
 ;// initialise settings instance
-UserSettings := UserPref()
+UserSettings := CLSID_Objs.load("UserSettings")
 checklist_tooltip := UserSettings.checklist_tooltip
 dark_mode := UserSettings.dark_mode
 settingsFile := UserSettings.SettingsFile

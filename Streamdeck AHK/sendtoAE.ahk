@@ -9,6 +9,7 @@
 #Include Classes\ptf.ahk
 #Include Classes\WM.ahk
 #Include Classes\winGet.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\detect.ahk
 #Include Functions\change_msgButton.ahk
 ; }
@@ -17,7 +18,7 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 __detectMainScript() {
     detect()
-    UserSettings := UserPref()
+    UserSettings := CLSID_Objs.load("UserSettings")
     if !WinExist(UserSettings.MainScriptName ".ahk") {
         sleep 1000
         __final()

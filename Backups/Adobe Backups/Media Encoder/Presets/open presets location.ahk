@@ -3,10 +3,11 @@
 #Include "%A_Appdata%\tomshi\lib"
 #Include *i Classes\settings.ahk
 #Include *i Classes\ptf.ahk
+#Include *i Classes\CLSID_Objs.ahk
 ; }
 
 try {
-    UserSettings := UserPref()
+   UserSettings := CLSID_Objs.load("UserSettings")
 }
 
 SetWorkingDir(A_ScriptDir)

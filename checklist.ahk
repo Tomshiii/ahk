@@ -9,6 +9,7 @@
 #Include Classes\block.ahk
 #Include Classes\errorLog.ahk
 #Include Classes\winget.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\floorDecimal.ahk
 #Include Functions\detect.ahk
 #Include Functions\isReload.ahk
@@ -34,7 +35,7 @@ startupTray()
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.13.0"
+version := "v2.13.1"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -86,7 +87,7 @@ else
         if !IsSet(dashLocation)
             {
                 detect()
-                UserSettings := UserPref()
+                UserSettings := CLSID_Objs.load("UserSettings")
                 settingsFile := UserSettings.SettingsFile
                 checklist_wait := UserSettings.checklist_wait
                 UserSettings := ""

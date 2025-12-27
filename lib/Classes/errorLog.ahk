@@ -1,7 +1,7 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2025/12/20
+ * @date 2025/12/27
  * @version 2.2.0
  ***********************************************************************/
 ; { \\ #Includes
@@ -138,7 +138,7 @@ class errorLog extends log {
             FreePhysMem := Round(Response2, 2)
 
             ;// check for the latest versions of these scripts
-            UserSettings := UserPref()
+            UserSettings := UserPref() ;// using the comobj here may cause issues I'd rather avoid
             InstalledVersion := UserSettings.version
             UserSettings := ""
             LatestReleaseBeta := ""

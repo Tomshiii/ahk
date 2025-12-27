@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2025/12/20
- * @version 1.4.0
+ * @date 2025/12/27
+ * @version 1.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -10,6 +10,7 @@
 #Include Classes\Settings.ahk
 #Include Classes\Mip.ahk
 #Include Classes\errorLog.ahk
+#Include Classes\CLSID_Objs.ahk
 ; }
 
 
@@ -27,7 +28,7 @@ class block {
             }
         if args = "on" || args = "off"
             {
-                UserSettings := UserPref()
+                UserSettings := CLSID_Objs.load("UserSettings")
                 checkIni := UserSettings.block_aware
                 if checkIni = "false"
                     {
@@ -37,12 +38,9 @@ class block {
 
                             Would you like to be alerted of this again in the future?
                         )", "Block Mode Warning", "4 48 4096")
-                        if alert = "No"
-                            {
-                                UserSettings.block_aware := true
-                                UserSettings.__delAll()
-                                UserSettings := ""
-                            }
+                        if alert = "No" {
+                            UserSettings.block_aware := true
+                        }
                     }
             }
         BlockInput(args)

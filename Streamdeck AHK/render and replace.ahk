@@ -7,16 +7,17 @@
 #Include Classes\WM.ahk
 #Include Classes\ptf.ahk
 #Include Classes\winget.ahk
+#Include Classes\CLSID_Objs.ahk
 ; }
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 LabelColour := KSA.labelViolet
-UserSettings := UserPref()
-MainScriptName := UserSettings.MainScriptName
-UserSettings := ""
 
 if !WinActive(prem.winTitle)
     return
+
+UserSettings := CLSID_Objs.load("UserSettings")
+MainScriptName := UserSettings.MainScriptName
 
 if WinGet.ExistRegex(MainScriptName ".ahk",,,, true)
     WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, MainScriptName ".ahk")
