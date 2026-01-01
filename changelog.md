@@ -184,12 +184,13 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Split out `adobeXML {` into its own class
 
 🔗 `mult-dl.ahk`
-###### *(v1.2.3 -> v1.3.2)*
+###### *(v1.2.3 -> v1.3.3)*
 - ✅ Fixed script not properly loading after installing all required packages
 - ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
 - ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL
 - ✅ Fixed script throwing if the user closes the window before it has finished checking for updates
 - ✏️ Rudimentary playlist support
+- ✏️ Add `Show Download Folder` button
 - 📋 Now checks for `deno` to prepare for continued `yt-dlp` support ([see here for more info](<https://github.com/yt-dlp/yt-dlp/issues/14404>))
 - 📋 Now activates the GUI if the user tries to reopen the script/exe while it is already open
 - 📋 Now remembers previous download locations

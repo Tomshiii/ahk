@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2026/01/01
  ***********************************************************************/
-global currentVer := "1.3.2"
+global currentVer := "1.3.3"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -176,7 +176,8 @@ class multiDL extends tomshiBasic {
 
         ;// adding current folder path
         this.AddText("BackgroundTrans x9 yp+35", "Current Download Path").SetFont("underline")
-        this.AddButton("x+15 w185 h20 y+-18", "Change Download Directory").OnEvent("Click", this.__changeDlDir.bind(this))
+        this.AddButton("x+15 w60 h25 y+-18", "change").OnEvent("Click", this.__changeDlDir.bind(this))
+        this.AddButton("x+6 w60 h25 y+-25", "show").OnEvent("Click", (*) => (Run(this.getFile)))
         showDir := this.__cullDirectory(this.getFile)
         this.AddText("vCurrDir BackgroundTrans x9 y+5 h50 r1 w" listwid+10, showDir)
         this["currDir"].SetFont("Bold s10")
