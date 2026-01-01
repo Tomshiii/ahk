@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2025/12/20
- * @version 1.2.0
+ * @date 2026/01/01
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,12 +34,13 @@ class ytdlp {
     ]
     URL := ""
     defaultCommand      := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
-    defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 {2}'
+    defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --no-overwrites --merge-output-format mp4 {2}'
     defaultPostProcess  := 'ffmpeg -i "{2}\{3}" {1} -c:a aac -b:a 192k "{2}\temp_{3}" && del /f /q "{2}\{3}" && move /y "{2}\temp_{3}" "{2}\{3}"'
     defaultCPU          := "-c:v libx264 -crf 21 -preset medium"
     defaultGPU          := "-c:v h264_nvenc -preset 18 -cq 19"
-    defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --extract-audio --audio-format wav {2} --print after_move:filepath'
+    defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --no-overwrites --extract-audio --audio-format wav {2} --print after_move:filepath'
     defaultFilename := "%(title).50s [%(id)s].%(ext)s"
+    playlistFilename := "%(title).50s.%(ext)s"
     command := ""
     check := false
     checkClipState := false
@@ -103,8 +104,9 @@ class ytdlp {
      * @param {Boolean} [openDirOnFinish=true] determines whether the destination directory will be opened once the download process is complete. Defaults to `true`
      * @param {String/boolean} [postArgs=this.defaultPostProcess] any cmdline args you wish to execute after the initial download. By default this process will determine the codec of the downloaded file and if it isn't `h264` or `h265` it will reencode the file to `h264`. *Please note:* If you pass custom arguments to this parameter the prementioned codec check will **no longer** occur. You may also pass `false` to prevent any post download execution.
      * @param {String} [cookies="--cookies-from-browser firefox"] determines whether to pass cookies to various yt-dlp commands. Generally either the default or `""` is recommended. Pulling cookies from chrome can be a lot more challenging
+     * @param {Boolean} [playlist=false] determine whether you wish for ytdlp to download the entire playlist (by default any playlist link will automatically download the entire playlist, even if you're within an individual video).
      */
-    download(args, folder, URL, filename := this.defaultFilename, openDirOnFinish := true, postArgs := this.defaultPostProcess, cookies := "--cookies-from-browser firefox") {
+    download(args, folder, URL, filename := this.defaultFilename, openDirOnFinish := true, postArgs := this.defaultPostProcess, cookies := "--cookies-from-browser firefox", playlist := false) {
         if (Type(args) != "string" || Type(folder) != "string") {
                 ;// throw
                 errorLog(TypeError("Invalid value type passed to function", -1),,, 1)
@@ -139,37 +141,88 @@ class ytdlp {
         }
 
         isAud := (args = this.defaultAudioCommand) ? true : false
-        ;// checking if filename already exists
-        mNotifyGUI_Prog := Notify.Show(, 'Determining name of the output file...', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=6 maxW=400 bdr=0x75AEDC')
-        outputFileName := (filename = this.defaultFilename) ? this.defaultFilename : RegExReplace(filename, '[<>:"/\\|?*\x00-\x1F]') . ".%(ext)s"
-        if args = this.defaultAudioCommand || args = this.defaultVideoCommand
-            args := Format(args, "{}", cookies)
-        nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" {3}', outputFileName, this.URL, cookies))
-        SplitPath(nameOutput,,, &ext, &nameNoExt)
-        ext := (isAud = false) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
-        checkPath1 := WinGet.pathU(folder "\" nameOutput)
-        checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
-        if FileExist(checkPath1) || FileExist(checkPath2) {
-            index := 1
-            loop {
-                if FileExist(folder "\" nameNoExt String(index) "." ext) {
-                    index++
-                    continue
+        switch playlist {
+            case false:
+                mNotifyGUI_Prog := Notify.Show(, 'Determining name of the output file...', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=6 maxW=400 bdr=0x75AEDC')
+                outputFileName := (filename = this.defaultFilename) ? this.defaultFilename : RegExReplace(filename, '[<>:"/\\|?*\x00-\x1F]') . ".%(ext)s"
+                if args = this.defaultAudioCommand || args = this.defaultVideoCommand
+                    args := Format(args, "{}", cookies " --no-playlist")
+                nameOutput := cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" {3}', outputFileName, this.URL, cookies " --no-playlist"))
+                SplitPath(nameOutput,,, &ext, &nameNoExt)
+                ext := (isAud = false) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
+                checkPath1 := WinGet.pathU(folder "\" nameOutput)
+                checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
+                if FileExist(checkPath1) || FileExist(checkPath2) {
+                    index := 1
+                    loop {
+                        if FileExist(folder "\" nameNoExt String(index) "." ext) {
+                            index++
+                            continue
+                        }
+                        nameNoExt := nameNoExt String(index)
+                        args := Format(args, nameNoExt)
+                        break
+                    }
                 }
-                nameNoExt := nameNoExt String(index)
-                args := Format(args, nameNoExt)
-                break
-            }
+                else {
+                    args := Format(args, nameNoExt)
+                }
+                Notify.Destroy(mNotifyGUI_Prog['hwnd'])
+            case true:
+                listNames := []
+                outputFileName := this.playlistFilename
+                mNotifyGUI_Prog := Notify.Show(, 'Determining names of the output files...`nThis may take a while for large playlists...', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=20 maxW=400 bdr=0x75AEDC')
+                playlistURLs := cmd.result(Format('yt-dlp --flat-playlist --print "%(url)s" {1} {2}', this.URL, cookies))
+                if args = this.defaultAudioCommand || args = this.defaultVideoCommand
+                    args := Format(args, "{}", cookies)
+                playlistTitles := []
+                for v in StrSplit(playlistURLs, ["`n", "`r"]) {
+                    playlistTitles.Push(cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" {3}', outputFileName, v, cookies)))
+                }
+                Notify.Destroy(mNotifyGUI_Prog['hwnd'])
+
+                playlistURLs := StrSplit(playlistURLs, ["`n", "`r"])
+                origArgs := args
+                for i, v in playlistURLs {
+                    loopArgs := origArgs
+                    SplitPath(playlistTitles[i],,, &ext, &nameNoExt)
+                    curDlNotify := Notify.Show(, "Downloading: " nameNoExt, 'C:\Windows\System32\imageres.dll|icon86',,, 'dur=0 maxW=400 bdr=0x75AEDC')
+                    ext := (isAud = false) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
+                    checkPath1 := WinGet.pathU(folder "\" playlistTitles[i])
+                    checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
+                    if FileExist(checkPath1) || FileExist(checkPath2) {
+                        index := 1
+                        loop {
+                            if FileExist(folder "\" nameNoExt String(index) "." ext) {
+                                index++
+                                continue
+                            }
+                            nameNoExt := nameNoExt String(index)
+                            loopArgs := Format(loopArgs, nameNoExt)
+                            break
+                        }
+                    }
+                    else {
+                        loopArgs := Format(loopArgs, nameNoExt)
+                    }
+                    this.currentName := nameNoExt "." ext
+                    folderU := WinGet.pathU(origFold)
+                    folderU := (SubStr(folderU, -1, 1) = "\") ? SubStr(folderU, 1, StrLen(folderU)-1) : folderU
+                    currCommand := Format(this.defaultCommand, loopArgs, folder, v)
+
+                    ;// running command
+                    (isAud = true) ? path := cmd.result(currCommand) : cmd.run(,,, currCommand)
+                    Notify.Destroy(curDlNotify['hwnd'])
+                }
+
+                return
         }
-        else {
-            args := Format(args, nameNoExt)
-        }
-        Notify.Destroy(mNotifyGUI_Prog['hwnd'])
 
         this.currentName := nameNoExt "." ext
         folderU := WinGet.pathU(origFold)
         folderU := (SubStr(folderU, -1, 1) = "\") ? SubStr(folderU, 1, StrLen(folderU)-1) : folderU
         this.command := Format(this.defaultCommand, args, folder, this.URL)
+        MsgBox(this.command)
 
         ;// running command
         (isAud = true) ? path := cmd.result(this.command) : cmd.run(,,, this.command)

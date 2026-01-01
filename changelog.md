@@ -184,17 +184,18 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Split out `adobeXML {` into its own class
 
 🔗 `mult-dl.ahk`
-###### *(v1.2.3 -> v1.2.9)*
+###### *(v1.2.3 -> v1.3.2)*
 - ✅ Fixed script not properly loading after installing all required packages
 - ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
 - ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL
 - ✅ Fixed script throwing if the user closes the window before it has finished checking for updates
+- ✏️ Rudimentary playlist support
 - 📋 Now checks for `deno` to prepare for continued `yt-dlp` support ([see here for more info](<https://github.com/yt-dlp/yt-dlp/issues/14404>))
 - 📋 Now activates the GUI if the user tries to reopen the script/exe while it is already open
+- 📋 Now remembers previous download locations
 - 📋 `Multi` tab now uses a `ListView` to input URLs instead of an `Edit` box
 - 📋 `Use cookies` is now disabled by default
 - 📋 `Multi` downloads will now sleep anywhere from `18s` to `26s` between each download to reduce the risk of being flagged by youtube as a bot
-- 📋 Will now remember previous download locations
 
 ***
 
