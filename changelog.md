@@ -194,6 +194,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 `Multi` tab now uses a `ListView` to input URLs instead of an `Edit` box
 - 📋 `Use cookies` is now disabled by default
 - 📋 `Multi` downloads will now sleep anywhere from `18s` to `26s` between each download to reduce the risk of being flagged by youtube as a bot
+- 📋 Will now remember previous download locations
 
 ***
 

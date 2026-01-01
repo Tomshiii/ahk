@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2025/12/20
+ * @date 2026/01/01
  ***********************************************************************/
-global currentVer := "1.3.0"
+global currentVer := "1.3.1"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -79,11 +79,12 @@ class multiDL extends tomshiBasic {
             }
         }
         checkClipboard := isURL(A_Clipboard) ? A_Clipboard : ""
-
-        dlFolder := RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", EnvGet("USERPROFILE") "\Downloads")
-        if !DirExist(dlFolder "\tomshi")
-            DirCreate(dlFolder "\tomshi")
-        this.getFile := dlFolder "\tomshi"
+        this.requiredFilesDir := A_MyDocuments "\tomshi\multDL"
+        if !DirExist(this.requiredFilesDir)
+            DirCreate(this.requiredFilesDir)
+        defaulDlFodler := RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", EnvGet("USERPROFILE") "\Downloads") "\tomshi"
+        dlFolder := (FileExist(this.requiredFilesDir "\defaultDLLocation")) ? (DirExist(prevFile := FileRead(this.requiredFilesDir "\defaultDLLocation")) ? prevFile : defaulDlFodler) : ((*) => FileAppend(dlFolder, this.requiredFilesDir "\defaultDLLocation"), defaulDlFodler)
+        this.getFile := dlFolder
         super.__New(,,, A_ScriptName)
 
         startY := 110
@@ -207,6 +208,7 @@ class multiDL extends tomshiBasic {
         ;// ================================================================
     }
 
+    requiredFilesDir := ""
     getFile := ""
     arr := ["choco", "ffmpeg", "yt-dlp", "deno"]
     chkDevObj := unset
@@ -221,22 +223,14 @@ class multiDL extends tomshiBasic {
         return {x: x, y: y, width: width, height: height}
     }
 
-    /** Allows the user to change the file to operate on */
-    __selectFile(*) {
-        activeWin := explorer.getPath()
-        defaultDir := activeWin != false ? activeWin : ""
-        newFile := FileSelect("D3", defaultDir, "Select download location")
-        if !newFile
-            return false
-        this.getFile := newFile
-        return true
-    }
-
     __changeDlDir(*) {
         if !newFile := FileSelect("D2",, "Select download location")
             return false
         this.getFile := newFile
         this["currDir"].text := this.__cullDirectory(this.getFile)
+        if FileExist(this.requiredFilesDir "\defaultDLLocation")
+            FileDelete(this.requiredFilesDir "\defaultDLLocation")
+        FileAppend(this.getFile, this.requiredFilesDir "\defaultDLLocation")
     }
 
     __addListURL(*) {
