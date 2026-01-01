@@ -20,7 +20,10 @@ class tomshiBasic extends Gui {
         this.BackColor := this.LightColour
         this.SetFont("S" FontSize " W" FontWeight, "Segoe UI Variable") ;// sets the size of the font
         this.AddButton("Default W0 H0 X8 Y0", "_") ;// creates an invisible button to take focus away from the first defined ctrl
-        this.UserSettings := CLSID_Objs.load("UserSettings")
+        try this.UserSettings := CLSID_Objs.load("UserSettings")
+        catch {
+            this.UserSettings := UserPref()
+        }
         if this.UserSettings.dark_mode = true {
             dark.titleBar(this.Hwnd) ;// automatically make the titlebar darkmode if the setting is enabled
             dark.menu() ;// automatically make any menu dropdowns darkmode if the setting is enabled

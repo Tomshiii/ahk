@@ -14,7 +14,6 @@
 #Include Classes\obj.ahk
 #Include Classes\errorLog.ahk
 #Include Classes\switchTo.ahk
-#Include Classes\Streamdeck_opt.ahk
 #Include Classes\explorer.ahk
 #Include Other\Notify\Notify.ahk
 #Include Functions\getHTMLTitle.ahk
