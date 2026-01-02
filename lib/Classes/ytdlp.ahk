@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2026/01/01
- * @version 1.2.1
+ * @date 2026/01/02
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -221,7 +221,6 @@ class ytdlp {
         folderU := WinGet.pathU(origFold)
         folderU := (SubStr(folderU, -1, 1) = "\") ? SubStr(folderU, 1, StrLen(folderU)-1) : folderU
         this.command := Format(this.defaultCommand, args, folder, this.URL)
-        MsgBox(this.command)
 
         ;// running command
         (isAud = true) ? path := cmd.result(this.command) : cmd.run(,,, this.command)
