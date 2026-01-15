@@ -5,7 +5,7 @@
  * @premVer 25.6.4
  * @author tomshi
  * @date 2026/01/15
- * @version 2.3.2
+ * @version 2.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1622,7 +1622,7 @@ class Prem {
         orig := detect()
 
         ;// this block is called if the function originates from a script that isn't `UserSettings.mainScriptName`
-        if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") {
+        if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") && A_ScriptName != "Core Functionality.ahk" && WinExist("Core Functionality.ahk") {
             try {
                 activeObj := CLSID_Objs.load("prem")
                 if activeObj.__checkTimelineValues() {
@@ -1632,6 +1632,7 @@ class Prem {
                     this.timelineXControl := activeObj.timelineXControl, this.timelineYControl := activeObj.timelineYControl
                     this.timelineVals     := true
                     activeObj := ""
+                    resetOrigDetect(orig)
                     Critical("Off")
                     return true
                 }
@@ -1661,12 +1662,33 @@ class Prem {
             case xAddMap.Has(this.currentSetVer): xAdd := xAddMap[this.currentSetVer]
             default: xAdd := xAddMap["default"]
         }
-        this.timelineRawX     := timelineNN.x, this.timelineRawY := timelineNN.y
-        this.timelineXValue   := timelineNN.x + timelineNN.width - 22  ;accounting for the scroll bars on the right side of the timeline
-        this.timelineYValue   := timelineNN.y + 46                     ;accounting for the area at the top of the timeline that you can drag to move the playhead
-        this.timelineXControl := timelineNN.x + xAdd                   ;accounting for the column to the left of the timeline
-        this.timelineYControl := timelineNN.y + timelineNN.height - 25 ;accounting for the scroll bars at the bottom of the timeline
-        this.timelineVals     := true
+
+        Critical()
+        orig := detect()
+        if A_ScriptName = this.mainScriptName ".ahk" && WinExist("Core Functionality.ahk") {
+            try {
+                ;// we're setting the Core Functionality object (and this object) with the timeline coords - this will allow other scripts to retrieve them without needing to set them again
+                activeObj := CLSID_Objs.load("prem")
+                coord.client()
+                activeObj.timelineRawX     := this.timelineRawX     := timelineNN.x
+                activeObj.timelineRawY     := this.timelineRawY     := timelineNN.y
+                activeObj.timelineXValue   := this.timelineXValue   := timelineNN.x + timelineNN.width - 22  ;accounting for the scroll bars on the right side of the timeline
+                activeObj.timelineYValue   := this.timelineYValue   := timelineNN.y + 46                     ;accounting for the area at the top of the timeline that you can drag to move the playhead
+                activeObj.timelineXControl := this.timelineXControl := timelineNN.x + xAdd                   ;accounting for the column to the left of the timeline
+                activeObj.timelineYControl := this.timelineYControl := timelineNN.y + timelineNN.height - 25 ;accounting for the scroll bars at the bottom of the timeline
+                activeObj.timelineVals     := this.timelineVals     := true
+                activeObj := ""
+                resetOrigDetect(orig)
+                Critical("Off")
+            } catch {
+                activeObj := ""
+                resetOrigDetect(orig)
+                Critical("Off")
+                Notify.Show(, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                keys.allWait()
+                return false
+            }
+        }
         if tools = true {
             Notify.Show(,"
             (
