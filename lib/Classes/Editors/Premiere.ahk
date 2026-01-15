@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Code is maintained for the version of Premiere listed below
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 25.6.3
+ * @premVer 25.6.4
  * @author tomshi
- * @date 2025/12/27
- * @version 2.3.1
+ * @date 2026/01/15
+ * @version 2.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,6 +32,7 @@
 #Include Other\UIA\UIA.ahk
 #Include Functions\getHotkeys.ahk
 #Include Functions\delaySI.ahk
+#Include Functions\delayFuncs.ahk
 #Include Functions\detect.ahk
 #Include Functions\loadXML.ahk
 #Include Functions\change_msgButton.ahk
@@ -225,15 +226,15 @@ class Prem {
                                 switch setTheme {
                                     case "Abort": ;// darkest
                                         props.text := "7.9999998211860657"
-                                        loadSettings.save(ptf['PremProfile'] filecheck)
+                                        loadSettings.save(filecheck)
                                         this.theme := "darkest"
                                     case "Retry": ;// dark
                                         props.text := "34.999999403953552"
-                                        loadSettings.save(ptf['PremProfile'] filecheck)
+                                        loadSettings.save(filecheck)
                                         this.theme := "dark"
                                     case "Ignore": ;// light
                                         props.text := "80.000001192092896"
-                                        loadSettings.save(ptf['PremProfile'] filecheck)
+                                        loadSettings.save(filecheck)
                                         this.theme := "light"
                                 }
                             }
@@ -967,18 +968,32 @@ class Prem {
         try premEl := this.__createUIAelement(false)
 
         switch window {
-            ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a multicam nest for whatever reason. Doing it this way however, is unfortunately slower.
-            ;// hopefully one day adobe fixes this bug @link https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
-            ;// if you do not use the multiview window simply replace the below line with `this.__focusTimeline()` or `premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()`
             case ksa.timelineWindow:
-                try {
+                ;// If you ever use the multi camera view you unfortunately cannot simply send the required hotkey, for whatever reason there is a potential for premiere to get stuck within a multicam nest.
+                ;// hopefully one day adobe fixes this bug - https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
+
+                ;// I think simply moving the playhead back and forth avoids the issue
+                delaySI(16, ksa.stepBackOneFrame, ksa.stepforwardOneFrame)
+                /*
+                 but moving the playhead using cep doesn't seem to work the same way... for.. whatever reason.
+                 right := ObjBindMethod(this, '__remoteFunc', 'movePlayheadFrames', false, "subtract=false", "frames=1")
+                left  := ObjBindMethod(this, '__remoteFunc', 'movePlayheadFrames', false, "subtract=true", "frames=1")
+                delayFuncs(16, right, left)
+                */
+                this.__focusTimeline()
+
+                ;// old method focusing another panel then refocusing the timeline
+                /* try {
+                    ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a multicam nest for whatever reason. Doing it this way however, is unfortunately slower.
+                    ;// hopefully one day adobe fixes this bug @link https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
+                    ;// if you do not use the multiview window simply replace the below line with `this.__focusTimeline()` or `premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()`
                     premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
                     premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
                 } catch {
                     SendEvent(ksa.effectControls)
                     Sleep(50)
                     this.__focusTimeline()
-                }
+                }*/
             case ksa.effectControls:
                 try {
                     premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()

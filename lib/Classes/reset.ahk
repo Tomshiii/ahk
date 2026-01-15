@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2025/12/27
- * @version 1.1.1
+ * @date 2026/01/15
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -129,7 +129,7 @@ class reset {
     }
 
     /** a func to reset `HotkeylessAHK` to cut repeat code */
-    static __resetHotkeyless() {
+    static __resetHotkeyless(close := false) {
         hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
         ignore := browser.vscode.winTitle "|" A_ScriptName
         hotkeyHWND := WinGet.ExistRegex(hotkeylessTitle,, ignore,, true)
@@ -142,6 +142,8 @@ class reset {
                 return
             }
         }
+        if close = true
+            return
         Run(ptf['HotkeylessAHK'])
     }
 
@@ -202,6 +204,10 @@ class reset {
         for v in activeWindows {
             if !getInfo := this().__parseInfo(v, includeChecklist)
                 continue
+            if getInfo.scriptName = "HotkeylessAHK.ahk" {
+                this.__resetHotkeyless(true)
+                continue
+            }
             ProcessClose(getInfo.PID)
         }
         detect(false)

@@ -27,6 +27,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✏️ Added `isBool()`/`checkBool()`
 - ✏️ Added `CLSID_Objs {`
     - Allows for objects to be shared between scripts easily
+- ✏️ Added `delayFuncs()`
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific

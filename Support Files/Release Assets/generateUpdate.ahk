@@ -58,7 +58,10 @@ __backupPremFolders(layoutsBackup, layoutsBeginningDir, "Select Premiere Layouts
 settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\v" ptf.PremYearVer "\"
 settingsBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\" : A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\"
 isBetaPrefs := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? "Adobe Premiere Pro (Beta) Prefs" : "Adobe Premiere Pro Prefs"
-FileCopy(settingsBeginningDir "\" isBetaPrefs, settingsBackup "\" isBetaPrefs, 1)
+hasPro := FileExist(settingsBeginningDir "\" isBetaPrefs) ? isBetaPrefs : (FileExist(settingsBeginningDir "\" StrReplace(isBetaPrefs, "Pro ", "")) ? StrReplace(isBetaPrefs, "Pro ", "") : false)
+if !hasPro
+    throw
+FileCopy(settingsBeginningDir "\" hasPro, settingsBackup "\" hasPro, 1)
 FileCopy(settingsBeginningDir "\Effect Presets and Custom Items.prfpset", settingsBackup "\Effect Presets and Custom Items.prfpset", 1)
 FileCopy(settingsBeginningDir "\LayoutsWorkspaceConfig.xml", settingsBackup "\LayoutsWorkspaceConfig.xml", 1)
 

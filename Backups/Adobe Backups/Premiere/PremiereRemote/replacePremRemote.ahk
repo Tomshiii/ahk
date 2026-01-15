@@ -7,7 +7,8 @@ if !DirExist(installedPath) {
     return
 }
 
-if !IsSet(A_Args[1]) || (A_Args[1] != false && A_Args[1] != "false") {
+try override := A_Args[1]
+if !IsSet(override) || (override != false && override != "false") {
     if warning := MsgBox("This operation will override the currently installed files. Do you wish to continue?", "Are you sure?", "4 Icon! 0x1000") = "No"
         return
 }

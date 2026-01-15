@@ -16,7 +16,7 @@ SetWorkingDir(installDir)
 Persistent()
 
 UserSettings := UserPref()
-premiere := prem()
+premiere := prem
 ; premUIA := premUIA_Values(false)
 
 uiaCheckRunning := {isRunning: false}
