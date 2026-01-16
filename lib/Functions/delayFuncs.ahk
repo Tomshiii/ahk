@@ -5,8 +5,8 @@
 
 /**
  * A function to execute functions that are staggered out with sleeps. The delay will occur after each function.
- * @param {Integer} delay The delay you wish to be between each input in `ms`
- * @param {Func} funcs* All functions you wish to be execute. Must be a Func of BoundFunc
+ * @param {Integer} [delay=50] The delay you wish to be between each function in `ms`. Defaults to `50`
+ * @param {Func|BoundFunc|Variadic} funcs* All functions you wish to be execute. Must be a Func or BoundFunc
  */
 delayFuncs(delay := 50, funcs*) {
     if !IsNumber(delay) {

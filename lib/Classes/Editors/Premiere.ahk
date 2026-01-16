@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.4
  * @author tomshi
- * @date 2026/01/15
- * @version 2.3.3
+ * @date 2026/01/16
+ * @version 2.3.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -473,6 +473,11 @@ class Prem {
     static __remoteFunc(whichFunc, needResult := false, params*) {
         if !this.__checkPremRemoteDir(whichFunc) {
             MsgBox("PremiereRemote is not installed or function does not exist.`nFunction: " whichFunc,, "262160")
+            return
+        }
+        checkPrem := WinGet.PremName()
+        checkType := (Type(checkPrem) != "Object"), checkTitle := (checkPrem.winTitle != "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck != true)
+        if !checkPrem || checkType || checkTitle || checkCanSave {
             return
         }
         paramsString := ""

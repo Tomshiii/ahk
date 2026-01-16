@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2025/12/27
- * @version 2.2.1
+ * @date 2026/01/16
+ * @version 2.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -525,9 +525,11 @@ class adobeAutoSave extends count {
 
         ;// getting window title/information
         this.premWindow := WinGet.PremName()
-        if !this.premWindow || Type(this.premWindow) != "Object" ||
-            ((this.premWindow.winTitle = "" || !this.premWindow.wintitle) &&
-            this.premWindow.titleCheck = -1 && this.premWindow.saveCheck = -1) {
+        checkType := (Type(this.premWindow) != "Object"), checkTitle := (this.premWindow.winTitle != "" || !this.premWindow.wintitle) && this.premWindow.titleCheck = -1 && this.premWindow.saveCheck = -1, checkCanSave := (this.premWindow.titleCheck != true)
+        if checkCanSave {
+            return
+        }
+        if !this.premWindow || checkType || checkTitle {
             errorLog(UnsetError("autosave.ahk was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
             return
         }
@@ -642,9 +644,11 @@ class adobeAutoSave extends count {
 
         ;// getting window title/information
         this.aeWindow := WinGet.AEName()
-        if !this.aeWindow || Type(this.aeWindow) != "Object" ||
-            ((this.aeWindow.winTitle = "" || !this.aeWindow.wintitle) &&
-            this.aeWindow.titleCheck = -1 && this.aeWindow.saveCheck = -1) {
+        checkType := (Type(this.aeWindow) != "Object"), checkTitle := (this.aeWindow.winTitle != "" || !this.aeWindow.wintitle) && this.aeWindow.titleCheck = -1 && this.aeWindow.saveCheck = -1, checkCanSave := (this.aeWindow.titleCheck != true)
+        if checkCanSave {
+            return
+        }
+        if !this.aeWindow || checkType || checkTitle {
             errorLog(UnsetError("autosave.ahk was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
             return
         }

@@ -4,9 +4,9 @@
 ; }
 
 /**
- * A function to send a string of sendinput commands that are staggered out with sleeps. The delay will occur after each sendinput.
- * @param {Integer} delay The delay you wish to be between each input in `ms`
- * @param {String/Number} inputs* All inputs you wish to be sent
+ * A function to send a string of sendinput commands that are staggered out with sleeps. The delay will occur after each sendinput. Defaults to `50`
+ * @param {Integer} [delay=50] The delay you wish to be between each input in `ms`
+ * @param {String|Number|Variadic} inputs* All inputs you wish to be sent
  */
 delaySI(delay := 50, inputs*) {
     if !IsNumber(delay) {

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2025/12/20
- * @version 1.7.0
+ * @date 2026/01/16
+ * @version 1.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -236,7 +236,7 @@ class WinGet {
             }
             titleCheck := InStr(progCheck, title)
             saveCheck := (SubStr(progCheck, -1, 1) = "*") ? true : false
-            return {winTitle: progCheck, titleCheck: true, saveCheck: saveCheck}
+            return {winTitle: progCheck, titleCheck: titleCheck, saveCheck: saveCheck}
         } catch as e {
             block.Off()
             if ttips = true

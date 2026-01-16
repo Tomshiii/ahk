@@ -66,6 +66,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed function failing to pass `&` in `params*` paramaters
 - 📋 Will now attempt to replace any `A_Space` in `params*` with `%20`
 - 📋 Will now warn the user if `PremiereRemote` is not installed or the requested function does not exist in the user's `index.tsx`
+- 📋 Will now halt early if Premiere hasn't opened a project yet
 
 📍 `anchorToPosition()`
 - ✅ Fixed function not working correctly in versions `25.4` and greater
@@ -101,6 +102,7 @@ This update introduces some rather large, breaking changes to the functionality 
 
 ### `WinGet {`
 - ✅ Fixed all instances of `Title()` causing scripts to throw
+- ✅ Fixed `__AdobeName()` `titleCheck` always returning `true`
 - ✏️ Added `Regex()` functions to cut repeat code
     - `TitleRegex()`, `ClassRegex()`, `ActiveRegex()`, `ActivateRegex()`, `CloseRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ProcessNameRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`
 - 📋 Renamed `ID()` => `PID()`
