@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 25.6.2
  * @author tomshi, taranVH
- * @date 2025/12/20
- * @version 2.4.0
+ * @date 2026/01/16
+ * @version 2.4.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -396,7 +396,9 @@ class rbuttonPrem {
 			if this.origSeq = false {
 				useRemote := false
 				errorLog(MethodError("PremiereRemote server is currently not running correctly."), "Try restarting it using ``resetNPM.ahk``")
-				Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
+				if !Notify.Exist("RemoteServer") {
+					Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'tag=RemoteServer POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
+				}
 				this.__exit()
 			}
 		}

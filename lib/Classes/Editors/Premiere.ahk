@@ -5,7 +5,7 @@
  * @premVer 25.6.4
  * @author tomshi
  * @date 2026/01/16
- * @version 2.3.4
+ * @version 2.3.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -476,7 +476,7 @@ class Prem {
             return
         }
         checkPrem := WinGet.PremName()
-        checkType := (Type(checkPrem) != "Object"), checkTitle := (checkPrem.winTitle != "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck != true)
+        checkType := (Type(checkPrem) != "Object"), checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck != true)
         if !checkPrem || checkType || checkTitle || checkCanSave {
             return
         }

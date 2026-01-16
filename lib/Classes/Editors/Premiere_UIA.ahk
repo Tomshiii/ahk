@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2025/12/27
- * @version 2.1.1
+ * @date 2026/01/16
+ * @version 2.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -152,7 +152,9 @@ Class premUIA_Values {
                 }
             } catch {
                 errorLog(MethodError("PremiereRemote server is currently not running correctly."), "Try restarting it using ``resetNPM.ahk``")
-                Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
+                if !Notify.Exist("RemoteServer") {
+                    Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center tag=RemoteServer')
+                }
                 block.Off()
                 this.activeObj.isRunning := false
                 return
