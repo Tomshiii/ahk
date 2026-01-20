@@ -5,7 +5,7 @@
  * @premVer 25.6.4
  * @author tomshi
  * @date 2026/01/20
- * @version 2.3.5
+ * @version 2.3.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1361,13 +1361,7 @@ class Prem {
             this.__setTimelineValues()
             return
         }
-        if !this.__checkPremRemoteDir('isSelected') {
-            ;// throw
-            errorLog(MethodError('This function requires PremiereRemote'),,, true)
-            return
-        }
 
-        checkSelected := this.__remoteFunc('isSelected', true)
         needsTimelineFocus := false
 		title := WinGet.Title()
         descernTitle := (title = "") ? true : false
@@ -1378,6 +1372,16 @@ class Prem {
         ;// this does however mean we nean to manually stop this input hook or the user may lose control
         star_ih := InputHook()
         star_ih.Start()
+        ih := InputHook("L5 T4", "{NumpadEnter}{Esc}")
+        ih.Start()
+
+        if !this.__checkPremRemoteDir('isSelected') {
+            ;// throw
+            ih.Stop(), star_ih.Stop()
+            errorLog(MethodError('This function requires PremiereRemote'),,, true)
+            return
+        }
+        checkSelected := this.__remoteFunc('isSelected', true)
 
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
 		if (descernTitle || currTimelineStatus != 1) && title != "Audio Gain" {
@@ -1385,7 +1389,7 @@ class Prem {
             try createEl   := this.__createUIAelement(true)
             try toolsNN    := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
             if (!IsSet(createEl) || !IsSet(toolsNN)) {
-                star_ih.Stop()
+                ih.Stop(), star_ih.Stop()
                 errorLog(TargetError('Creating UIA element failed'))
                 return
             }
@@ -1394,26 +1398,24 @@ class Prem {
             switch {
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
                     if createEl.activeElement !== premUIA.effectsControl {
-                        star_ih.Stop()
+                        ih.Stop(), star_ih.Stop()
                         SendInput(sendOnFail star_ih.Input)
                         tool.Cust("If you are attempting to adjust audio;`nThe timeline is not currently in focus", 2000)
                         return
                     }
                     needsTimelineFocus := true
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && createEl.activeElement == premUIA.programMon:
-                    star_ih.Stop()
+                    ih.Stop(), star_ih.Stop()
                     SendInput(sendOnFail star_ih.Input)
                     return
                 case (currTimelineStatus != true): needsTimelineFocus := true
                 default:
-                    star_ih.Stop()
+                    ih.Stop(), star_ih.Stop()
                     SendInput(sendOnFail star_ih.Input)
                     return
             }
 		}
 
-        ih := InputHook("L5 T4", "{NumpadEnter}{Esc}")
-        ih.Start()
         ih.Wait()
         star_ih.Stop()
 
