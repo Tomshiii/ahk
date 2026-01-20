@@ -30,10 +30,12 @@ Run(ptf["textreplace"])
 runApp(ptf["HotkeylessAHK"], "HotkeylessAHK.ahk")
 
 ;// run kleopatra
-runApp("C:\Program Files (x86)\Gpg4win\bin\kleopatra.exe", "ahk_exe kleopatra.exe")
+if runApp("C:\Program Files (x86)\Gpg4win\bin\kleopatra.exe", "ahk_exe kleopatra.exe") = false
+    runApp("C:\Program Files\Gpg4win\bin\kleopatra.exe", "ahk_exe kleopatra.exe")
 runApp(path, name, reboot := true) {
     if !FileExist(path)
-        return
+        return false
+    Critical()
     orig := detect()
     switch reboot {
         case true:
@@ -45,6 +47,8 @@ runApp(path, name, reboot := true) {
                 Run(path,, "Hide")
     }
     resetOrigDetect(orig)
+    Critical("Off")
+    return true
 }
 
 try {

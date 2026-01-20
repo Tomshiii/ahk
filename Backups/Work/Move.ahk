@@ -283,8 +283,8 @@ class Move {
 
         ;// My main monitor is 1440p so I want my youtube window to be a little bigger if I centre it
         if InStr(title, "YouTube") && IsSet(newHeight) && monitor.monitor = mainMon {
-            newHeight := newHeight * 1.1
-            newY := newY / 2.10
+            newHeight := newHeight * 1.2
+            newY := newY / 3
         }
         ;// I want vlc to be a size for 16:9 video to get rid of any letterboxing
         if InStr(title, "VLC media player") && IsSet(newHeight) && monitor.monitor = mainMon {

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.4
  * @author tomshi
- * @date 2026/01/16
- * @version 2.3.4.1
+ * @date 2026/01/20
+ * @version 2.3.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -547,6 +547,12 @@ class Prem {
         if !IsInteger(checkAmount) || !IsInteger(checkSeqTime) || !isBool(andWait) || !isBool(continueOnBusy) {
             errorLog(PropertyError("Incorrect Parameter Type"),,, true)
             return false
+        }
+        ;// the below windows will halt the save process if they exist
+        haltSave := "Clip Fx Editor - RX 11"
+        if WinGet.ExistRegex(haltSave) {
+            if !WinGet.WaitCloseRegex(haltSave,, 10)
+                return "busy"
         }
         premWindow := WinGet.PremName()
         if !premWindow || Type(premWindow) != "Object" ||

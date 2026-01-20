@@ -28,7 +28,8 @@ Run(ptf.TimerScripts "\premKeyCheck.ahk")
 
 runApp(path, name, reboot := true) {
     if !FileExist(path)
-        return
+        return false
+    Critical()
     orig := detect()
     switch reboot {
         case true:
@@ -40,6 +41,8 @@ runApp(path, name, reboot := true) {
                 Run(path,, "Hide")
     }
     resetOrigDetect(orig)
+    Critical("Off")
+    return true
 }
 
 ;// I keep text replace in a different place to anyone else who uses this repo

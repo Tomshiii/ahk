@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include "%A_Appdata%\tomshi\lib"
+#Include '%A_Appdata%\tomshi\lib'
 #Include Classes\ptf.ahk
 #Include Classes\clip.ahk
 #Include Classes\Move.ahk
@@ -72,8 +72,8 @@ LWin & Escape::clipStorage.open()
 ^#5::clipStorage.store()
 
 ;centreHotkey;
-#c::move.winCenter(1.25, 0.6)
-#+c::move.winCenterWide(0.58)
+#c::move.winCenter(1.25)
+#+c::move.winCenterWide()
 
 ;fullscreenHotkey;
 #f:: ;this hotkey will fullscreen the active window if it isn't already. If it is already fullscreened, it will pull it out of fullscreen
