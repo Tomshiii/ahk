@@ -1,4 +1,4 @@
-# <> Release 2.17.0 - Core Functionality.ahk
+# <> Release 2.17.0 - Core Functionality.ahk & Premiere v26 Support
 This update introduces some rather large, breaking changes to the functionality of my scripts;
 - ❗ __NO MORE SYMLINKS!__
     - This should make installation as well as maintainance far easier for the user.
@@ -13,7 +13,7 @@ This update introduces some rather large, breaking changes to the functionality 
 ***
 
 ## Functions
-- ✅ Fixed initial compatibility with `Premiere v26.1` after name change
+- ✅ Fixed initial compatibility with `Premiere v26.0` after name change
 - ✅ Fixed multiple instances of incorrect `||` logic
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
 - ✅ Fixed `reset {` functions not affecting all scripts
