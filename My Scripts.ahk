@@ -141,7 +141,7 @@ start.__Delete()
 start := ""
 errorLog({state:"empty"})
 
-;// so streamdeck scripts can receive premiere timeline coords
+;// so settingsGUI() can interact with multiple scripts
 onMsgObj := ObjBindMethod(WM, "__recieveMessage")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;=============================================================================================================================================

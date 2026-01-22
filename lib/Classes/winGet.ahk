@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/01/16
- * @version 1.7.1
+ * @date 2026/01/23
+ * @version 1.7.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -189,7 +189,8 @@ class WinGet {
             if InStr(SubStr(progCheck, 1, 27), "(Beta)",, 1, 1) {
                 return "(Beta)"
             }
-            determineYear := SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), "20",, 1, 1), 4)
+            UserSettings := UserPref()
+            determineYear := (VerCompare(SubStr(ptf().UserSettings.premVer, 2), "26.0") >= 0) ? "" : A_Space SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), "20",, 1, 1), 4)
         } catch {
             ;// fallback to `ptf {`
             switch which {
@@ -232,7 +233,7 @@ class WinGet {
             switch which {
                 ;// we add the " -" to accomodate a window that is literally just called "Adobe -- [Year]"
                 case "AE":       title := "Adobe After Effects " adobeYear " -"
-                case "Premiere": title := editors.__determinePremName() " " adobeYear " -"
+                case "Premiere": title := editors.__determinePremName() adobeYear " -"
             }
             titleCheck := InStr(progCheck, title)
             saveCheck := (SubStr(progCheck, -1, 1) = "*") ? true : false
