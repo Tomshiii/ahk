@@ -24,10 +24,9 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `loadXML()` throwing in the event the file is busy
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 - 📋 Replaced all usage of `WinGetTitle("A")` with `WinGet.Title()` to avoid unnecessary instances of scripts throwing
-- ✏️ Added `isBool()`/`checkBool()`
+- ✏️ Added `isBool()`, `checkBool()`, `delayFuncs()`, `runExt()`, `validateTypes()`
 - ✏️ Added `CLSID_Objs {`
     - Allows for objects to be shared between scripts easily
-- ✏️ Added `delayFuncs()`
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
