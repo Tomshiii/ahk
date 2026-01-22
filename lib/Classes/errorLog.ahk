@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2025/12/27
- * @version 2.2.0
+ * @date 2026/01/22
+ * @version 2.2.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -63,6 +63,8 @@ class errorLog extends log {
 
         ;// check for and remove `Prototype.` from `err.what` string
         whatErrored := InStr(this.err.what, "Prototype.", 1, 1, 1) ? StrReplace(this.err.what, "Prototype.", '', 1,, 1) : this.err.what
+        if whatErrored == "<Hotkey>"
+            whatErrored := A_ThisHotkey "::"
 
         ;// IsSet requires a variable so we'll just assign this.err.Extra to a var
         extraVar := this.err.Extra

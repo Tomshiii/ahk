@@ -20,13 +20,16 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
 - ✅ Fixed `cmd.exploreAndHighlight()` failing to open the desired path
 - ✅ Fixed version dropdown lists in `settingsGUI()` not being sorted in numerical order
-- ✅ Fixed `errorLog()` sometimes skipping the timestamp for the first error of the day
 - ✅ Fixed `loadXML()` throwing in the event the file is busy
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 - 📋 Replaced all usage of `WinGetTitle("A")` with `WinGet.Title()` to avoid unnecessary instances of scripts throwing
 - ✏️ Added `isBool()`, `checkBool()`, `delayFuncs()`, `runExt()`, `validateTypes()`
 - ✏️ Added `CLSID_Objs {`
     - Allows for objects to be shared between scripts easily
+
+### 📝 `errorLog {`
+- ✅ Fixed occasionally skipping the timestamp for the first error of the day
+- 📋 If the error originates from a `Hotkey` and not a function, the log will now show the hotkey (ie. `<HotKey>` => `z::`)
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
