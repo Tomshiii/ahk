@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.4
  * @author tomshi
- * @date 2026/01/20
- * @version 2.3.6
+ * @date 2026/01/22
+ * @version 2.3.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -80,7 +80,7 @@ class Prem {
         resetOrigDetect(orig)
         Critical("Off")
 
-        if (this.useSwapSequences = true || this.useSwapSequences = "true") && A_ScriptName = this.mainScriptName ".ahk"
+        if (this.useSwapSequences = true || this.useSwapSequences = "true") && A_ScriptName = "Core Functionality.ahk"
             SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
     }
 
@@ -2085,128 +2085,6 @@ class Prem {
     }
 
     /**
-     * #### This function is almost entirely designed for my own workflow and requires hardcoded variables at the top of the class that are then specifically acted apon in various other classes/scripts.
-     * A function to facilitate quickly retriving large quantities of screenshots for yt thumbnails. This function is designed to be called from a streamdeck script and there may be unexpected behaviour if done in any other way
-     * @param {String} who the name of the person I'm grabbing the screenshot of
-     * @param {Boolean} change determine if the function is being called to change the new starting value
-     */
-    static screenshot(who, change := false) {
-        if change = true {
-            title := "Change stored value"
-            storedVar := 0
-            changeGUI := tomshiBasic(,, -0x30000, title) ; WS_MINIMIZEBOX := 0x20000, WS_MAXIMIZEBOX := 0x10000
-            listArr := []
-            loop files ptf.rootDir "\Streamdeck AHK\screenshots\*.ahk", "F" {
-                SplitPath(A_LoopFileFullPath,,,, &name)
-                if name = "Change"
-                    continue
-                listArr.Push(name)
-            }
-            if listarr.Length < 1 {
-                listArr := ["Desktop", "Narrator", "Mully", "Eddie", "Juicy", "Josh", "guest1", "guest2"]
-            }
-            changeGUI.AddDropDownList("vDropdwn Choose1 Sort", listArr) ;//! make alphabetical
-            changeGUI.AddEdit("Number Range1-100")
-            changeGUI.AddUpDown("vUpDwn", 1)
-            changeGUI.AddButton("x+10 y+-27", "Set").OnEvent("Click", (guiCtrl, *) => __setVal(guiCtrl))
-
-            changeGUI.OnEvent("Close", (*) => ExitApp())
-            changeGUI.OnEvent("Escape", (*) => ExitApp())
-            changeGUI.show()
-            WinWaitClose(title)
-
-            __setVal(guiCtrl, *) {
-                which := changeGUI["Dropdwn"].text
-                val := changeGUI["UpDwn"].value
-                this.sc%which% := val
-                changeGUI.Destroy()
-                storedVar := Format("{},{}", which, val)
-                return
-            }
-            return storedVar
-        }
-        sleep 50
-        scrshtTitle := "Export Frame"
-        premUIA := premUIA_Values()
-        try progMonNN := this.__uiaCtrlPos(premUIA.programMon,,, false)
-        if !IsSet(progMonNN) {
-            block.Off()
-            return
-        }
-
-        premUIA := premUIA_Values()
-        try premUIAEl := this.__createUIAelement(false)
-
-        __clickProx(x, y) {
-            block.On()
-            MouseGetPos(&origX, &origY)
-            MouseMove(x, y, 2)
-            SendInput("{Click}")
-            sleep 250
-            MouseMove(origX, origY, 2)
-            sleep 250
-            block.Off()
-        }
-
-        if IsSet(premUIAEl)
-            premUIAEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
-        else
-            this.__focusTimeline()
-        sleep 50
-        usePremRemote := false
-        ckDir := this.__checkPremRemoteDir('getProxyToggle'), ckFunc := this.__checkPremRemoteFunc('setProxies')
-        if !ckDir || !ckFunc {
-            if proxSrch := obj.imgSrchMulti({x1: progMonNN.x, y1: progMonNN.y/2, x2: progMonNN.x+progMonNN.width, y2: progMonNN.y+progMonNN.height+50},, &proxX, &proxY, ptf.Premiere "\proxy_on.png", ptf.Premiere "\proxy_on2.png") {
-                __clickProx(proxX, proxY)
-            }
-        } else {
-            usePremRemote := true
-            getState := this.__remoteFunc("getProxyToggle", true)
-            if getState = true || getState = "1"
-                this.__remoteFunc("setProxies",, "toggle=0")
-        }
-        SendEvent(ksa.premExportFrame)
-        if !WinWait(scrshtTitle,, 3) {
-            block.Off()
-            return
-        }
-        SendEvent(who "_" this.sc%who%)
-        if this.sc%who% = 1 {
-            if !WinWaitClose(scrshtTitle,, 10) {
-                block.Off()
-                return
-            }
-            if !usePremRemote {
-                if !proxSrch {
-                    block.Off()
-                    return
-                }
-                __clickProx(proxX, proxY)
-            }
-            else
-                this.__remoteFunc("setProxies",, "toggle=1")
-            block.Off()
-            return
-        }
-        SendEvent("{Enter}")
-        if !WinWaitClose(scrshtTitle,, 10) {
-            block.Off()
-            return
-        }
-        sleep 50
-        if !usePremRemote {
-            if !proxSrch {
-                block.Off()
-                return
-            }
-            __clickProx(proxX, proxY)
-        }
-        else
-            this.__remoteFunc("setProxies",, "toggle=1")
-        block.Off()
-    }
-
-    /**
      * A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab.
      * @param {Boolean} [ae=false] determine whether you're calling this function for after effects or premiere as some of the logic may be different per version.  Defaults to `false`
      */
@@ -3516,40 +3394,31 @@ class Prem {
         if (this.useSwapSequences != true && this.useSwapSequences != "true")
             return
         Critical()
-        orig := detect()
         __pushToEnd() {
+            Critical()
             this.sequenceArr.Push(this.sequenceArr[1])
             this.sequenceArr.RemoveAt(1)
             this.__remoteFunc("focusSequence",, "ID=" String(this.sequenceArr[1]))
         }
-        if A_ScriptName != this.mainScriptName ".ahk" {
-            if !WinExist(this.mainScriptName ".ahk")
-                return false
-            resetOrigDetect(orig)
+        if !WinGet.ExistRegex(this.mainScriptName ".ahk",,,, true)
+            return false
+        try {
+            activeObj := CLSID_Objs.load("prem")
+            activeObj.pauseSeqTimer := true
+            this.sequenceArr := activeObj.sequenceArr
+            if this.sequenceArr.Length != 0
+                __pushToEnd()
+            activeObj.sequenceArr := this.sequenceArr
+            activeObj.pauseSeqTimer := false
+            activeObj := ""
             Critical("Off")
-            try {
-                activeObj := CLSID_Objs.load("prem")
-                activeObj.pauseSeqTimer := true
-                this.sequenceArr := activeObj.sequenceArr
-                if this.sequenceArr.Length != 0
-                    __pushToEnd()
-                activeObj.sequenceArr := this.sequenceArr
-                activeObj.pauseSeqTimer := false
-                activeObj := ""
-                return true
-            } catch {
-                activeObj := ""
-                return false
-            }
+            return true
+        } catch {
+            activeObj := ""
+            errorLog(MethodError("Failed to interact with Premiere Object", -1))
+            Critical("Off")
             return false
         }
-        resetOrigDetect(orig)
-        Critical("Off")
-        this.pauseSeqTimer := true
-        if this.sequenceArr.Length != 0
-            __pushToEnd()
-        this.pauseSeqTimer := false
-        return true
     }
 
     /** A function to close the currently active sequence within premiere. This function **requires** `PremiereRemote` */

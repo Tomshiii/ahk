@@ -12,38 +12,12 @@
 #Include QMK\unassigned.ahk
 ; }
 
-premTimeline() {
-	block.On()
-	UserSettings := CLSID_Objs.load("UserSettings")
-	__fallback() {
-		if !prem.__setTimelineValues(false) {
-			block.Off()
-			return false
-		}
-		tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
-	}
-	if !prem.__checkTimelineValues() {
-		WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
-		if !prem.__waitForTimeline() {
-			if !__fallback() {
-				block.Off()
-				return false
-			}
-			block.Off()
-			return true
-		}
-	}
-	; prem.__focusTimeline()
-	block.Off()
-	return false
-}
-
 BackSpace:: ;this hotkey will activate the program monitor, then send the hotkey to activate safe margins
 {
 	SendInput(KSA.programMonitor)
 	SendInput(KSA.premSafeMargins)
 	sleep 100
-	premTimeline()
+	prem.__focusTimeline()
 }
 SC028::prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 Enter::prem.reset()
@@ -80,9 +54,8 @@ n::unassigned()
 t::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Gaussian%20Blur")
 y:: ;this hotkey will fill the frame to fit the window
 {
-	if !premTimeline()
-		return
-	SendInput(KSA.scaleFrameSize)
+	prem.__focusTimeline()
+	SendInput(KSA.fitToFrame)
 }
 ; b::
 

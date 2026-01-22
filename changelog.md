@@ -8,7 +8,7 @@ This update introduces some rather large, breaking changes to the functionality 
     - This allows my scripts to share `objects` between each other easily (ie. `UserSettings`). This script __*MUST*__ run before any other scripts.
 
 > [!Caution]
-> ###### It is recommended for this release that the user does a completely new & fresh install of my scripts.
+> ###### It is recommended for this release that the user does a completely fresh install of my scripts.
 
 ***
 
@@ -27,10 +27,6 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✏️ Added `CLSID_Objs {`
     - Allows for objects to be shared between scripts easily
 
-### 📝 `errorLog {`
-- ✅ Fixed occasionally skipping the timestamp for the first error of the day
-- 📋 If the error originates from a `Hotkey` and not a function, the log will now show the hotkey (ie. `<HotKey>` => `z::`)
-
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
 - ✅ Fixed `__setTimelineCol()` throwing if the user sets a Premiere version below `25.0`
@@ -38,11 +34,9 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
 - ✅ Fixed `selectionTool()` containing left over code
-- ✏️ Added `stopPlayback()`
-- ✏️ Added `startPlayback()`
-- ✏️ Added `toggleLinearColour()`
-- ✏️ Added `renderPreviewsInOut()`
-    - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
+- ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`
+- 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
+    - ✏️ Added `renderPreviewsInOut()`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height
 
 📍 `save()`
@@ -139,6 +133,10 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed function throwing if the taskbar is the active window
 - 📋 Will now additionally navigate to the project directory for `#32770` windows
 
+### 📝 `errorLog {`
+- ✅ Fixed occasionally skipping the timestamp for the first error of the day
+- 📋 If the error originates from a `Hotkey` and not a function, the log will now show the hotkey (ie. `<HotKey>` => `z::`)
+
 ### 📝 `move {`
 - ✏️ Added [`clipMouse()`](<https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/>)
 - ❌ Removed `Tab()`
@@ -160,6 +158,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
 - ✏️ Added [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>)
 - ❌ Removed `toggleLinearColour.ahk`
+- ❌ Removed `screenshot` `Streamdeck AHK` scripts and all related functions
 
 🔗 `autosave.ahk`
 > [!Warning]
@@ -189,12 +188,12 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Split out `adobeXML {` into its own class
 
 🔗 `mult-dl.ahk`
-###### *(v1.2.3 -> v1.3.3)*
+###### *(v1.2.3 -> v1.3.3.2)*
 - ✅ Fixed script not properly loading after installing all required packages
 - ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
 - ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL
 - ✅ Fixed script throwing if the user closes the window before it has finished checking for updates
-- ✏️ Rudimentary playlist support
+- ✏️ Rudimentary youtube playlist support
 - ✏️ Add `Show Download Folder` button
 - 📋 Now checks for `deno` to prepare for continued `yt-dlp` support ([see here for more info](<https://github.com/yt-dlp/yt-dlp/issues/14404>))
 - 📋 Now activates the GUI if the user tries to reopen the script/exe while it is already open

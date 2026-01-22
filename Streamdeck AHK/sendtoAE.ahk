@@ -7,29 +7,15 @@
 #Include Classes\Editors\After Effects.ahk
 #Include Classes\switchTo.ahk
 #Include Classes\ptf.ahk
-#Include Classes\WM.ahk
 #Include Classes\winGet.ahk
 #Include Classes\CLSID_Objs.ahk
-#Include Functions\detect.ahk
 #Include Functions\change_msgButton.ahk
 ; }
-onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
-OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
-__detectMainScript() {
-    detect()
-    UserSettings := CLSID_Objs.load("UserSettings")
-    if !WinExist(UserSettings.MainScriptName ".ahk") {
-        sleep 1000
-        __final()
-        return
-    }
-    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
-}
 
 if !WinActive(prem.winTitle)
     return
-__detectMainScript()
+
 SendInput("^s")
 if !WinWait("Save Project",, 3)
     return

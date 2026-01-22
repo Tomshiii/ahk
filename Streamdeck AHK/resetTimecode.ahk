@@ -19,14 +19,6 @@ if prem.__checkPremRemoteDir("setZeroPoint") {
 
 startValue := "0"
 
-onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
-OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
-UserSettings := CLSID_Objs.load("UserSettings")
-
-detect()
-if WinExist(UserSettings.MainScriptName ".ahk")
-    WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
-
 if prem.__checkTimelineValues() = true {
     sleep 100
     if !prem.__waitForTimeline(3)

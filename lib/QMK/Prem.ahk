@@ -12,32 +12,6 @@
 #Include QMK\unassigned.ahk
 ; }
 
-premTimeline() {
-	block.On()
-	UserSettings := CLSID_Objs.load("UserSettings")
-	__fallback() {
-		if !prem.__setTimelineValues(false) {
-			block.Off()
-			return false
-		}
-		tool.Cust("This function had to retrieve the coordinates of the timeline and was stopped from`ncontinuing incase you had multiple sequences open and need to go back.`nThis will not happen again.", 4.0,, -20, 14)
-	}
-	if !prem.__checkTimelineValues() {
-		WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, UserSettings.MainScriptName ".ahk")
-		if !prem.__waitForTimeline() {
-			if !__fallback() {
-				block.Off()
-				return false
-			}
-			block.Off()
-			return true
-		}
-	}
-	; prem.__focusTimeline()
-	block.Off()
-	return false
-}
-
 SC028 & SC027::prem.manInput("position") ;manually input an x value
 ; SC028 & /::prem.manInput("position", "60") ;manually input a y value
 SC028 & l::prem.manInput("scale") ;manually input a scale value
@@ -93,9 +67,8 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 }
 m:: ;this hotkey will fill the frame to fit the window
 {
-	if !premTimeline()
-		return
-	SendInput(KSA.scaleFrameSize)
+	prem.__focusTimeline()
+	SendInput(KSA.fitToFrame)
 }
 ; b::
 
@@ -107,7 +80,7 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 	SendInput(KSA.programMonitor)
 	SendInput(KSA.premSafeMargins)
 	sleep 100
-	premTimeline()
+	prem.__focusTimeline()
 }
 ;PgDn::unassigned()
 

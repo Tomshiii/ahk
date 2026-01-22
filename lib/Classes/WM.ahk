@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2025/12/20
- * @version 1.2.0
+ * @date 2026/01/22
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -106,24 +106,9 @@ class WM {
         res := this.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
         splitMsg := StrSplit(res, ",")
         switch splitMsg[1] {
-            case "__premTimelineCoords":
-                if !prem.__checkTimelineValues()
-                    return
-                response := Format("__thisTimelineCoords,timelineRawX,{},timelineRawY,{},timelineXValue,{},timelineYValue,{},timelineXControl,{},timelineYControl,{},timelineVals,{}", prem.timelineRawX, prem.timelineRawY, prem.timelineXValue, prem.timelineYValue, prem.timelineXControl, prem.timelineYControl, true)
-                this.Send_WM_COPYDATA(response, splitMsg[2])
             case "Premiere_RightClick":
                 response := (prem.RClickIsActive = true) ? "Premiere_RightClick,true" : "Premiere_RightClick,false"
                 this.Send_WM_COPYDATA(response, splitMsg[2])
-            case "Premiere_scMully", "Premiere_scJosh", "Premiere_scJuicy", "Premiere_scEddie", "Premiere_scNarrator",
-                 "Premiere_scDesktop", "Premiere_scguest1", "Premiere_scguest2", "Premiere_scEnvironment":
-                getName := SubStr(splitMsg[1], InStr(splitMsg[1], "_",, 1, 1)+1)
-                response := "Premiere_" getName "," String(prem.%getName%)
-                prem.%getName%++
-                this.Send_WM_COPYDATA(response, splitMsg[2])
-            case "Premiere_scChange":
-                getName := "sc" splitMsg[2]
-                response := "Premiere_" getName "," String(prem.%getName%)
-                prem.%getName% := splitMsg[3]
         }
     }
 
@@ -136,12 +121,6 @@ class WM {
         determineWhich := res[1]
         res.RemoveAt(1)
         switch determineWhich {
-            case "__premTimelineCoords", "__thisTimelineCoords":
-                for k, v in res {
-                    if Mod(k, 2) = 0
-                        continue
-                    prem.%v% := res[k+1]
-                }
             case "Premiere_RightClick":
                 bool := (res[1]) = "true" ? true : false
                 prem.RClickIsActive := bool
@@ -153,9 +132,6 @@ class WM {
             case "autosave_always_save":      %res[2]%.alwaysSave := res[1]
             case "autosave_restart_playback": %res[2]%.restartPlayback := res[1]
 
-            case "Premiere_scMully", "Premiere_scJosh", "Premiere_scJuicy", "Premiere_scEddie", "Premiere_scNarrator", "Premiere_scDesktop", "Premiere_scguest1", "Premiere_scguest2", "Premiere_scEnvironment":
-                getName := SubStr(determineWhich, InStr(determineWhich, "_",, 1, 1)+1)
-                prem.%getName% := res[1]
             default:
                 MsgBox("A message attempt was made but a declaration for its contents hasn't been defined. This means that Tomshi has made a mistake somewhere. Please open an issue on github explaining how to reproduce this message to alert him of his mistake!`n`nFor debug purposes;`ndetermineWhich: " determineWhich)
         }
