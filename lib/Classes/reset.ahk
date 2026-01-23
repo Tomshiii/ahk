@@ -2,7 +2,7 @@
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
  * @date 2026/01/23
- * @version 1.1.3
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -216,8 +216,8 @@ class reset {
         tool.Wait()
         hotkeylessTitle := this().mainScript ".ahk ahk_class AutoHotkey"
         ignore := browser.vscode.winTitle
-        hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore)
+        hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
         if hotkeyHWND
-            ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore))
+            ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
     }
 }

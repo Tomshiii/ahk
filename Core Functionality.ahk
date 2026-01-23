@@ -14,6 +14,7 @@
 installDir := FileRead(A_AppData "\tomshi\installDir")
 SetWorkingDir(installDir)
 Persistent()
+TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 
 UserSettings := UserPref()
 premiere := prem

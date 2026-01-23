@@ -7,16 +7,17 @@
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
+#SingleInstance Force
 SetWorkingDir(A_ScriptDir)
 A_IconTip := "HotkeylessAHK"
-#SingleInstance Force
-
 ; { \\ #Includes
 #Include files\lib.ahk
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\Editors\Premiere.ahk
+#Include Classes\ptf.ahk
 #Include Functions\detect.ahk
 ; }
+TraySetIcon(ptf.Icons "\hotkeyless.ico")
 ; #NoTrayIcon
 
 ; HotkeylessAHK by sebinside
