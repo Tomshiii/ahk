@@ -5,7 +5,7 @@
  * @premVer 25.6.4
  * @author tomshi
  * @date 2026/01/23
- * @version 2.3.8
+ * @version 2.3.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -28,6 +28,7 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\Editors\Premiere_UIA.ahk
 #Include Classes\Editors\Premiere_TimelineColours.ahk
+#Include Classes\winExt.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Other\UIA\UIA.ahk
 #Include Functions\getHotkeys.ahk
@@ -550,8 +551,8 @@ class Prem {
         }
         ;// the below windows will halt the save process if they exist
         haltSave := "Clip Fx Editor - RX 11"
-        if WinGet.ExistRegex(haltSave) {
-            if !WinGet.WaitCloseRegex(haltSave,, 10)
+        if winExt.ExistRegex(haltSave) {
+            if !winExt.WaitCloseRegex(haltSave,, 10)
                 return "busy"
         }
         premWindow := WinGet.PremName()
@@ -3400,7 +3401,7 @@ class Prem {
             this.sequenceArr.RemoveAt(1)
             this.__remoteFunc("focusSequence",, "ID=" String(this.sequenceArr[1]))
         }
-        if !WinGet.ExistRegex(this.mainScriptName ".ahk",,,, true)
+        if !winExt.ExistRegex(this.mainScriptName ".ahk",,,, true)
             return false
         try {
             activeObj := CLSID_Objs.load("prem")

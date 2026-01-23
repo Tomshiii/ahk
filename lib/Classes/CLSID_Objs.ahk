@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2025/12/27
- * @version 1.0.0
+ * @date 2026/01/23
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -10,10 +10,18 @@
 #Include Other\ObjRegisterActive.ahk
 #Include Other\createGUID.ahk
 #Include Classes\Mip.ahk
+#Include Classes\winExt.ahk
 #Include Functions\detect.ahk
 ; }
 
 class CLSID_Objs {
+    static __New() {
+        if A_ScriptName = "Core Functionality.ahk"
+            return
+        if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+            throw Error("Core Functionality.ahk isn't running.")
+        }
+    }
     static generateCLSID() => CreateGUID()
 
     static __Item := Mip(

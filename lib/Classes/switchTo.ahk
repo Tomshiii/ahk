@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2025/12/27
- * @version 1.4.1
+ * @date 2026/01/23
+ * @version 1.4.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,6 +23,7 @@
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\Editors\Photoshop.ahk
 #Include Classes\CLSID_Objs.ahk
+#Include Classes\winExt.ahk
 #Include Functions\getHotkeys.ahk
 #Include Functions\generateAdobeShortcut.ahk
 ; }
@@ -435,7 +436,7 @@ class switchTo {
                 }
             }
             ;// run the path
-            if (WinGet.ActiveRegex("ahk_exe explorer.exe",, WinGet.ignoreExplorerRegex) && switchCurrentWindow = true) {
+            if (winExt.ActiveRegex("ahk_exe explorer.exe",, WinGet.ignoreExplorerRegex) && switchCurrentWindow = true) {
                 switchTo.Path(path.Dir)
             }
             else {

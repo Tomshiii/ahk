@@ -234,8 +234,8 @@ class adobeAutoSave extends count {
 
     /** determine whether premiere/ae is open */
     __checkforEditors() {
-        this.premExist := WinGet.ExistRegex(prem.winTitle) ? true : false
-        this.aeExist   := WinGet.ExistRegex(AE.winTitle)   ? true : false
+        this.premExist := winExt.ExistRegex(prem.winTitle) ? true : false
+        this.aeExist   := winExt.ExistRegex(AE.winTitle)   ? true : false
     }
 
     /** handles retrieving the users current sound device, then playing a beep at 50% of its current volume then returning sound back to normal. */
@@ -337,7 +337,7 @@ class adobeAutoSave extends count {
     /** @returns {Boolean} true/false on whether it can grab the active window */
     __getOrigWindow() {
         try{
-            this.origWindow := WinGet.ProcessNameRegex()
+            this.origWindow := winExt.ProcessNameRegex()
             return true
         } catch {
             errorLog(TargetError("Unable to determine the active window"),, 1)
@@ -435,7 +435,7 @@ class adobeAutoSave extends count {
     /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
     __reactivateWindow() {
         try {
-            checkActive := WinGet.ProcessNameRegex()
+            checkActive := winExt.ProcessNameRegex()
             if this.origWindow = checkActive && this.userPlayback = false
                 return
             switch this.origWindow {
@@ -548,7 +548,7 @@ class adobeAutoSave extends count {
         }
 
         ;// this should cover occurrences where another window is open within premiere
-        currentProg := WinGet.ProcessNameRegex()
+        currentProg := winExt.ProcessNameRegex()
         if ("ahk_exe " currentProg = prem.winTitle && ((name := WinGet.Title()) != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1))
             Notify.Show(, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc tag=premBusier')

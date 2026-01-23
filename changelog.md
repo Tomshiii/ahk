@@ -99,11 +99,14 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed function failing while a thread is open
 - ✅ Fixed `"reaction"` attempting to interact with the icon under image messages
 
+### `winExt {`
+- ✏️ Added class `winExt {`
+- ✏️ Added `Regex()` functions to cut repeat code
+    - `TitleRegex()`, `ClassRegex()`, `ActiveRegex()`, `ActivateRegex()`, `CloseRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ProcessNameRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`
+
 ### `WinGet {`
 - ✅ Fixed all instances of `Title()` causing scripts to throw
 - ✅ Fixed `__AdobeName()` `titleCheck` always returning `true`
-- ✏️ Added `Regex()` functions to cut repeat code
-    - `TitleRegex()`, `ClassRegex()`, `ActiveRegex()`, `ActivateRegex()`, `CloseRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ProcessNameRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`
 - 📋 Renamed `ID()` => `PID()`
     - ❗Now returns the `PID` instead of the `ProcessName`
 

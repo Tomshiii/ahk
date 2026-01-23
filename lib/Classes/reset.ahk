@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2026/01/15
- * @version 1.1.2
+ * @date 2026/01/23
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,7 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Functions\detect.ahk
 #Include Classes\winGet.ahk
+#Include Classes\winExt.ahk
 ; }
 
 class reset {
@@ -132,12 +133,12 @@ class reset {
     static __resetHotkeyless(close := false) {
         hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
         ignore := browser.vscode.winTitle "|" A_ScriptName
-        hotkeyHWND := WinGet.ExistRegex(hotkeylessTitle,, ignore,, true)
+        hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
         if hotkeyHWND
-            ProcessClose(WinGet.PIDRegex(hotkeyHWND,, ignore,, true))
-        hotkeyHWNDAgain := WinGet.ExistRegex(hotkeylessTitle,, ignore,, true)
+            ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
+        hotkeyHWNDAgain := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
         if hotkeyHWNDAgain {
-            if !WinGet.WaitCloseRegex(hotkeyHWNDAgain,, 3, ignore,, true) {
+            if !winExt.WaitCloseRegex(hotkeyHWNDAgain,, 3, ignore,, true) {
                 MsgBox("HotkeylessAHK.ahk failed to close, it may have encountered an error", "Error")
                 return
             }
@@ -215,8 +216,8 @@ class reset {
         tool.Wait()
         hotkeylessTitle := this().mainScript ".ahk ahk_class AutoHotkey"
         ignore := browser.vscode.winTitle
-        hotkeyHWND := WinGet.ExistRegex(hotkeylessTitle,, ignore)
+        hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore)
         if hotkeyHWND
-            ProcessClose(WinGet.PIDRegex(hotkeyHWND,, ignore))
+            ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore))
     }
 }

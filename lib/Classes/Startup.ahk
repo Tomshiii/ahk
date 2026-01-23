@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2026/01/23
- * @version 1.8.2
+ * @version 1.8.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,6 +26,7 @@
 #Include Classes\errorLog.ahk
 #Include Classes\cmd.ahk
 #Include Classes\CLSID_Objs.ahk
+#Include Classes\winExt.ahk
 #Include Functions\getScriptRelease.ahk
 #Include Functions\getHTML.ahk
 #Include Functions\isReload.ahk
@@ -885,7 +886,7 @@ class Startup {
 
         hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
         ignore := browser.vscode.winTitle "|" A_ScriptName
-        hotkeyHWND := WinGet.ExistRegex(hotkeylessTitle,, ignore,, true)
+        hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
         switch {
             case hotkeyHWND:
                 Notify.Show(, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
@@ -896,7 +897,7 @@ class Startup {
                 submenuHotkeyless.Disable("Reboot HotkeylessAHK")
             case !hotkeyHWND && FileExist(ptf['HotkeylessAHK']):
                 try Run(ptf['HotkeylessAHK'])
-                if !WinGet.WaitRegex(hotkeylessTitle,, 2, ignore) {
+                if !winExt.WaitRegex(hotkeylessTitle,, 2, ignore) {
                     Notify.Show(, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
                     __disableHotkeyless()
                 }
@@ -932,14 +933,14 @@ class Startup {
             submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK")
             hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
             ignore := browser.vscode.winTitle "|" A_ScriptName
-            if hotkeyHWND := WinGet.ExistRegex(hotkeylessTitle,, ignore,, true)
+            if hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
                 exists := true
             switch closeOrOpen {
                 case "close":
                     if exists = false {
                         return
                     }
-                    ProcessClose(WinGet.PIDRegex(hotkeyHWND,, ignore,, true))
+                    ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
                 case "open":
                     if exists = true {
                         return
@@ -954,10 +955,10 @@ class Startup {
                         try Run(ptf['HotkeylessAHK'])
                         return
                     }
-                    try ProcessClose(WinGet.PIDRegex(hotkeyHWND,, ignore,, true))
-                    stillExists := WinGet.ExistRegex(hotkeylessTitle,, ignore,, true)
+                    try ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
+                    stillExists := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
                     if stillExists {
-                        if !WinGet.WaitCloseRegex(stillExists,, 3, ignore,, true) {
+                        if !winExt.WaitCloseRegex(stillExists,, 3, ignore,, true) {
                             MsgBox("HotkeylessAHK.ahk failed to close, it may have encountered an error", "Error")
                             return
                         }
