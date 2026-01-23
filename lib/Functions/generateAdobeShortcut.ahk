@@ -3,6 +3,7 @@
 #Include Classes\ptf.ahk
 #Include Classes\errorLog.ahk
 #Include Other\Notify\Notify.ahk
+#Include Functions\validateTypes.ahk
 ; }
 
 /**
@@ -13,10 +14,7 @@
  * @returns {Boolean} returns `false` if the desired file directory does not exist else `true`
  */
 generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
-    if Type(userSettingsObj) != "UserPref" {
-        ;// throw
-        errorLog(ValueError("Incorrect Value type passed in Parameter #1`nNeeds to be UserPref", -1),,, 1)
-    }
+    validateTypes([["UserPref", "ComObject"]], userSettingsObj)
     if adobeName != "Adobe Premiere Pro" && adobeName != "Adobe After Effects" && adobeName != "Adobe Photoshop" {
         ;// throw
         errorLog(ValueError("Incorrect Value set in Parameter #2", -1, adobeName),,, 1)

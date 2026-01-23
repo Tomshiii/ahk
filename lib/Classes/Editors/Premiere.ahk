@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 25.6.4
  * @author tomshi
- * @date 2026/01/22
- * @version 2.3.7
+ * @date 2026/01/23
+ * @version 2.3.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -984,7 +984,7 @@ class Prem {
                 ;// hopefully one day adobe fixes this bug - https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
 
                 ;// I think simply moving the playhead back and forth avoids the issue
-                delaySI(16, ksa.stepBackOneFrame, ksa.stepforwardOneFrame)
+                delaySI(30, ksa.stepBackOneFrame, ksa.stepforwardOneFrame)
                 /*
                  but moving the playhead using cep doesn't seem to work the same way... for.. whatever reason.
                  right := ObjBindMethod(this, '__remoteFunc', 'movePlayheadFrames', false, "subtract=false", "frames=1")

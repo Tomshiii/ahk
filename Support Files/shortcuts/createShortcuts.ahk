@@ -11,7 +11,10 @@ premYear := UserSettings.prem_Year
 aeYear   := UserSettings.ae_Year
 psYear   := UserSettings.ps_Year
 
-originalNotif := Notify.Show(, 'This script assumes you`'ve installed adobe programs to their default path and the correct version is selected within settingsGUI().', 'iconi',,, 'dur=4 maxW=500 bdr=0x75AEDC')
+try warning := A_Args[1]
+if !IsSet(warning) || (warning != false && warning != "false") {
+    originalNotif := Notify.Show(, 'This script assumes you`'ve installed adobe programs to their default path and the correct version is selected within settingsGUI().', 'iconi',,, 'dur=4 maxW=500 bdr=0x75AEDC')
+}
 defaults := "C:\Program Files\Adobe\"
 
 if !generateAdobeShortcut(UserSettings, "Adobe Premiere Pro", UserSettings.prem_Year) {

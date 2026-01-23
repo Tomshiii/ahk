@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2025/12/27
- * @version 1.8.1
+ * @date 2026/01/23
+ * @version 1.8.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -755,6 +755,7 @@ class Startup {
         if this.UserSettings.show_adobe_vers_startup = true
             __notifyVers()
         if operatePrem = true || operateAE = true {
+            Run(ptf.Shortcuts "\createShortcuts.ahk false")
             this.UserSettings.__delAll()
             this.UserSettings := ""
             if !this.__checkForReloadAttempt("adobeVerOverride")

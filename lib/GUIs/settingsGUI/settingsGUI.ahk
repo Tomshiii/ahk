@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2025/12/27
- * @version 2.4.1
+ * @date 2026/01/23
+ * @version 2.4.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -728,6 +728,7 @@ settingsGUI()
                 return
             ver.Choose(supportedVers.Length)
             UserSettings.%yearIniName% := year.text
+            Run(ptf.Shortcuts "\createShortcuts.ahk false")
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
         }
 

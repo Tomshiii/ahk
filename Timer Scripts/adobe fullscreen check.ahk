@@ -46,6 +46,7 @@ class adobeTimer extends count {
             this.fire := (fire_frequency * 1000)
             this.mainScript := UserSettings.MainScriptName
             this.premName := "Premiere" Editors.__determinePremName(false)
+            UserSettings := ""
         }
 
         super.__New(this.fire)

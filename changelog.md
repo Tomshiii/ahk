@@ -19,7 +19,6 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `reset {` functions not affecting all scripts
 - ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
 - ✅ Fixed `cmd.exploreAndHighlight()` failing to open the desired path
-- ✅ Fixed version dropdown lists in `settingsGUI()` not being sorted in numerical order
 - ✅ Fixed `loadXML()` throwing in the event the file is busy
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 - 📋 Replaced all usage of `WinGetTitle("A")` with `WinGet.Title()` to avoid unnecessary instances of scripts throwing
@@ -79,6 +78,10 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Will now abort if the `Save Project` window appears
 - 📋 Will alert the user if their set version of Premiere does not match the open application
 
+### `settingsGUI()`
+- ✅ Fixed version dropdown lists not being sorted in numerical order
+- ✅ Fixed changing `Premiere`/`After Efects` year versions not generating new shortcuts
+
 ### 📝 `discord {`
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header
 
@@ -121,6 +124,7 @@ This update introduces some rather large, breaking changes to the functionality 
 ### 📝 `startup {`
 - ✅ Fixed `__checkForReloadAttempt()` causing scripts to throw under certain circumstances
 - ✅ Fixed `checkVersJSON()` generating an entry even if an `ImageSearch` folder exists
+- ✅ Fixed `adobeVerOverride()` not generating new shortcuts
 - 📋 `gitBranchCheck()` will now abort if the user has any stashed changes
 
 📍 `trayMen()`
