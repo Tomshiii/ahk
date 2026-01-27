@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/01/23
- * @version 2.3.9
+ * @date 2026/01/27
+ * @version 2.3.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1633,12 +1633,11 @@ class Prem {
         sleep 75
         coord.client()
         Critical()
-        orig := detect()
 
         ;// this block is called if the function originates from a script that isn't `UserSettings.mainScriptName`
-        if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") && A_ScriptName != "Core Functionality.ahk" && WinExist("Core Functionality.ahk") {
+        if A_ScriptName != this.mainScriptName ".ahk" && A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try {
-                activeObj := CLSID_Objs.load("prem")
+                activeObj := CLSID_Objs.clone("prem")
                 if activeObj.__checkTimelineValues() {
                     coord.client()
                     this.timelineRawX     := activeObj.timelineRawX,     this.timelineRawY     := activeObj.timelineRawY
@@ -1646,20 +1645,16 @@ class Prem {
                     this.timelineXControl := activeObj.timelineXControl, this.timelineYControl := activeObj.timelineYControl
                     this.timelineVals     := true
                     activeObj := ""
-                    resetOrigDetect(orig)
-                    Critical("Off")
                     return true
                 }
             } catch {
                 activeObj := ""
-                resetOrigDetect(orig)
                 Critical("Off")
                 Notify.Show(, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 return false
             }
         }
-        resetOrigDetect(orig)
         Critical("Off")
 
         checkUIA := this.__checkAlwaysUIA()
@@ -1678,8 +1673,7 @@ class Prem {
         }
 
         Critical()
-        orig := detect()
-        if A_ScriptName = this.mainScriptName ".ahk" && WinExist("Core Functionality.ahk") {
+        if A_ScriptName = this.mainScriptName ".ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try {
                 ;// we're setting the Core Functionality object (and this object) with the timeline coords - this will allow other scripts to retrieve them without needing to set them again
                 activeObj := CLSID_Objs.load("prem")
@@ -1692,11 +1686,9 @@ class Prem {
                 activeObj.timelineYControl := this.timelineYControl := timelineNN.y + timelineNN.height - 25 ;accounting for the scroll bars at the bottom of the timeline
                 activeObj.timelineVals     := this.timelineVals     := true
                 activeObj := ""
-                resetOrigDetect(orig)
                 Critical("Off")
             } catch {
                 activeObj := ""
-                resetOrigDetect(orig)
                 Critical("Off")
                 Notify.Show(, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
@@ -1704,12 +1696,14 @@ class Prem {
             }
         }
         if tools = true {
-            Notify.Show(,"
-            (
-                prem.getTimeline() found the coordinates of the timeline. This function will not check coordinates again until a script refresh.
-                If this script grabbed the wrong coordinates, refresh and try again! If this script fails to function correctly, recheck your
-                Prem_UIA coords before refreshing the script and trying again!
-            )",,,, 'POS=BC DUR=6 MALI=CENTER BC=242424 show=Fade@250 hide=Fade@250')
+            if !Notify.Exist("premTimelineCoords") {
+                Notify.Show(,"
+                (
+                    prem.getTimeline() found the coordinates of the timeline. This function will not check coordinates again until a script refresh.
+                    If this script grabbed the wrong coordinates, refresh and try again! If this script fails to function correctly, recheck your
+                    Prem_UIA coords before refreshing the script and trying again!
+                )",,,, 'POS=BC DUR=6 MALI=CENTER BC=242424 show=Fade@250 hide=Fade@250 tag=premTimelineCoords')
+            }
         }
         return true
     }
