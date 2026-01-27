@@ -379,3 +379,20 @@ WheelDown::
 	}
 	SendInput("{" A_ThisHotkey "}")
 }
+
+;// testing...
+~z::
+~<+z::
+{
+	statePhys := GetKeyState("Shift", "P"), state := GetKeyState("Shift")
+	if statePhys = true && state = false {
+		tool.Cust("returning`n" A_ThisHotkey "`n" statePhys " -- " state, 2500)
+		errorLog(Error("returning`n" A_ThisHotkey "`n" statePhys " -- " state))
+		return
+		/* delaySI(16, "{Shift Down}", A_ThisHotkey, )
+		SendInput("{Shift Down}") */
+	}
+	; SendInput(A_ThisHotkey)
+	tool.Cust(A_ThisHotkey "`n" statePhys " -- " state, 2500)
+	errorLog(Error(A_ThisHotkey "`n" statePhys " -- " state))
+}

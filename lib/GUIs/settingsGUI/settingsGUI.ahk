@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/01/23
- * @version 2.4.2
+ * @date 2026/01/27
+ * @version 2.4.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -61,8 +61,8 @@ settingsGUI()
     editorsMenu.Add("&Adobe", (*) => MsgBox("Not implemented"))
     editorsMenu.Disable("&Adobe")
     editorsMenu.Add("&After Effects", menu_Adobe.bind("AE"))
-    editorsMenu.Add("&Photoshop", menu_Adobe.bind("Photoshop")) ;// call a different gui
     editorsMenu.Add("&Premiere", menu_Adobe.bind("Premiere"))
+    ; editorsMenu.Add("&Photoshop", menu_Adobe.bind("Photoshop")) ;// call a different gui
     ; editorsMenu.Add("&Resolve", ) ;// call a different gui
     othersMenu := Menu()
     othersMenu.Add("&Thio MButton Script", menu_Thio.Bind())
@@ -728,6 +728,10 @@ settingsGUI()
                 return
             ver.Choose(supportedVers.Length)
             UserSettings.%yearIniName% := year.text
+            title := "createShortcuts.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+            ignore := browser.vscode.winTitle
+            if winExt.ExistRegex(title,, ignore,, true)
+                winExt.WaitCloseRegex(title,,, ignore,, true)
             Run(ptf.Shortcuts "\createShortcuts.ahk false")
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
         }
@@ -792,9 +796,11 @@ settingsGUI()
                         break
                     }
             }
+            supportedVers := supportedVers.Sort("C")
+            supportedVers := supportedVers.Reverse()
+            try defaultIndex := supportedVers.IndexOf(initVer)
             if !IsSet(defaultIndex)
                 defaultIndex := 1
-            supportedVers := supportedVers.Sort("C")
             ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
 
             ;// look idk using .bind wasn't calling the editCtrl function, I gave up, this is easier
