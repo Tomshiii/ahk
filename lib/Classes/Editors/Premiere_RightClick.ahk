@@ -2,10 +2,10 @@
  * @description move the Premere Pro playhead to the cursor
  * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 moved workflow to v24+
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
- * @premVer 25.6.2
+ * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/01/16
- * @version 2.4.1
+ * @date 2026/01/27
+ * @version 2.4.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -395,10 +395,10 @@ class rbuttonPrem {
 				this.origSeq := prem.__remoteFunc("getActiveSequence", true)
 			if this.origSeq = false {
 				useRemote := false
-				errorLog(MethodError("PremiereRemote server is currently not running correctly."), "Try restarting it using ``resetNPM.ahk``")
-				if !Notify.Exist("RemoteServer") {
-					Notify.Show(, 'PremiereRemote server is currently not running correctly.`nTry restarting it using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'tag=RemoteServer POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center')
-				}
+				errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
+                if !Notify.Exist("RemoteServer") {
+                    Notify.Show(, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center tag=RemoteServer maxw=500')
+                }
 				this.__exit()
 			}
 		}

@@ -10,6 +10,9 @@ This update introduces some rather large, breaking changes to the functionality 
 > [!Caution]
 > ###### It is recommended for this release that the user does a completely fresh install of my scripts.
 
+> [!Warning]
+> The user will need to ensure they have manually set their `Premiere`/`After Effects` year versions to `2026` within `settingsGUI()` if they have updated from `2025`. The automatic version detection only works for the currently set year. Many functions will fail (including `PremiereRemote`) if the incorrect year version is set.
+
 ***
 
 ## Functions
