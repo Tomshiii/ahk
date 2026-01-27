@@ -8,13 +8,12 @@
 
 #SingleInstance force
 
-UserSettings := CLSID_Objs.load("UserSettings")
+UserSettings := CLSID_Objs.clone("UserSettings")
 
 try warning := A_Args[1]
 if !IsSet(warning) || (warning != false && warning != "false") {
     Notify.Show(, 'This script assumes you`'ve installed adobe programs to their default path and the correct version is selected within settingsGUI().', 'iconi',,, 'dur=4 maxW=500 bdr=0x75AEDC tag=origNotifShort')
 }
-defaults := "C:\Program Files\Adobe\"
 
 if !generateAdobeShortcut(UserSettings, "Adobe Premiere Pro", UserSettings.prem_Year) {
     if Notify.Exist("origNotifShort")

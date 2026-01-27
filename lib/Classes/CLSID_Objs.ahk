@@ -32,7 +32,20 @@ class CLSID_Objs {
         ; "ptf",             "{115D24DB-2C25-4FD4-9D76-9B95B43BF9FB}"
     )
 
+    /**
+     * load an active connection to the desired object
+     * @param {String} [clsid] the clsid of the desired object. if `inClass` is set to `false` this param must be the entire clsid string (including `{`/`}`). ie, `"{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}"`
+     * @param {Boolean} [inClass=true] determine whether to use a known clsid value from an internal map
+     */
     static load(clsid, inClass := true) {
         return ComObjActive(((inClass = true) ? CLSID_Objs[clsid] : clsid))
+    }
+
+    /** syntatic sugar to call `clsid_objs.load()`, clone the object, the sever the connection to the original object */
+    static clone(clsid, inClass := true) {
+        baseObj := this.load(clsid, inClass)
+        clonedObj := baseObj.clone()
+        baseObj := ""
+        return clonedObj
     }
 }

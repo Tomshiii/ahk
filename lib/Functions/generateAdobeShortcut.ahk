@@ -31,13 +31,38 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
             exeLocation := (userSettingsObj.%shortName%IsBeta = false || userSettingsObj.%shortName%IsBeta = "false") ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" aeFolder ahkEXE
                                                                        : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" aeFolder ahkEXEBeta
         case "Adobe Photoshop":
-            ;// determining some variables
             ahkEXE     := InStr(adobeName, "Adobe ",, 1, 1) ? SubStr(adobeName, InStr(adobeName, A_Space,, 1, 1)+1) ".exe"        : adobeName ".exe"
             ahkEXEBeta := InStr(adobeName, "Adobe ",, 1, 1) ? SubStr(adobeName, InStr(adobeName, A_Space,, 1, 1)+1) " (Beta).exe" : adobeName "(Beta).exe"
             shortName  := "ps"
+            /* ;// determining some variables
             ;// the location of the exe we're generating a shortcut for
             exeLocation := (userSettingsObj.%shortName%IsBeta = false || userSettingsObj.%shortName%IsBeta = "false") ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" ahkEXE
-                                                                       : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" ahkEXEBeta
+                                                                       : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" ahkEXEBeta */
+            ;// default to latest non beta instead of using usersettings
+            full := false, beta := false
+            years := Map()
+            loop files A_ProgramFiles "\Adobe\*", "D" {
+                if !InStr(A_LoopFileName, adobeName)
+                    continue
+                if InStr(A_LoopFileName, "(Beta)") {
+                    beta := true
+                    continue
+                }
+                years.Set(A_LoopFileName, true)
+                full := true
+            }
+            switch {
+                case (!full && !beta): return
+                case (!full && beta) : exeLocation := A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" ahkEXEBeta
+                default:
+                    folder := ""
+                    for v in years {
+                        if A_Index != years.Count
+                            continue
+                        folder := v
+                    }
+                    exeLocation := A_ProgramFiles "\Adobe\" folder "\" ahkEXE
+            }
         default: return
     }
     ;// where the shortcut will be generated+name

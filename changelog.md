@@ -82,6 +82,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed version dropdown lists not being sorted in numerical order
 - ✅ Fixed changing `Premiere`/`After Efects` year versions not generating new shortcuts
 - 📋 `Photoshop` has been removed from version selection due to differing criteria and not being relevant or required since implementation
+    - 📋 Shortcuts will now generate for the latest non beta of Photoshop (unless only a Beta version is installed)
 
 ### 📝 `discord {`
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header
