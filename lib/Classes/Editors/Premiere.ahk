@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/01/28
- * @version 2.3.11
+ * @version 2.3.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3089,6 +3089,12 @@ class Prem {
     static disableAllMuteSolo(muteOrSolo := "solo") {
         if muteOrSolo != "solo" && muteOrSolo != "mute"
             return
+
+        if muteOrSolo = "mute" && this.__checkPremRemoteDir('unmuteAllMutedTracks') {
+            this.__remoteFunc('unmuteAllMutedTracks')
+            return
+        }
+
         SetDefaultMouseSpeed(0)
         coord.client()
         if !this.__setTimelineValues()
@@ -3156,6 +3162,12 @@ class Prem {
     static soloVideo(soloInverseDisable := "solo") {
         SetDefaultMouseSpeed(0)
         coord.client()
+
+        if soloInverseDisable = "disable" && this.__checkPremRemoteDir('enableAllVideoTracks') {
+            this.__remoteFunc('enableAllVideoTracks')
+            return
+        }
+
         if !this.__setTimelineValues()
 			return
         if soloInverseDisable != "solo" && soloInverseDisable != "inverse" && soloInverseDisable != "disable" {
@@ -3205,8 +3217,8 @@ class Prem {
                         arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
                     }
                 case "disable":
-                    if getColour = this.eyeDisabled
-                        arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
+                        if getColour = this.eyeDisabled
+                            arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
             }
         }
         for i, v in arr {

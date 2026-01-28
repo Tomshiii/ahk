@@ -435,6 +435,26 @@ export class Utils {
       return true;
     }
 
+    static enableAllVideoTracks() {
+      const seq = app.project.activeSequence;
+      if (!seq)
+        return
+      const tracks = seq.videoTracks
+      for (let i = 0; i < tracks.numTracks; i++) {
+        tracks[i].setMute(0);
+      }
+    }
+
+    static unmuteAllMutedTracks() {
+      const seq = app.project.activeSequence;
+      if (!seq)
+        return
+      const tracks = seq.audioTracks
+      for (let i = 0; i < tracks.numTracks; i++) {
+        tracks[i].setMute(0);
+      }
+    }
+
     // just fyi this function is ai slop through and through
     // I didn't know enough about typescript to make something like this myself
     static checkObjParams() {

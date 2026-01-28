@@ -40,6 +40,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height
+- 📋 `disableAllMuteSolo()` && `soloVideo()` can now use `PremiereRemote` to reenable all video tracks & unmute all muted audio tracks
 
 📍 `save()`
 - 📋 Will now abort early if `Premiere` fails to retrieve the originally active sequence
@@ -186,7 +187,7 @@ This update introduces some rather large, breaking changes to the functionality 
 
 🔗 `PremiereRemote`
 - ✏️ Added;  
-     `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`
+     `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`, `enableAllVideoTracks()`, `unmuteAllMutedTracks()`
 - ❌ Removed `setBarsAndTone()`
 - 📋 `saveProj()` now properly returns whether it suceeded or failed
 

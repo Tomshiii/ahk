@@ -327,6 +327,14 @@ export const host = {
 
     Utils.moveToFolder(selected, targetFolder);
   },
+
+  enableAllVideoTracks: function() {
+    Utils.enableAllVideoTracks();
+  },
+
+  unmuteAllMutedTracks: function() {
+    Utils.unmuteAllMutedTracks();
+  }
 };
 
 /**
