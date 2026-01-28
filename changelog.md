@@ -168,6 +168,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Reduced the usage of `Exit()` across the entire repo to minimise potential instances of inputs getting stuck
 - 📋 Placed most usage of `detect()` within `Critical()` blocks to avoid instances of changes leaking over to other functions
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
+- ✏️ Added `uninstall.ahk`
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
 - ✏️ Added [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>)
 - ❌ Removed `toggleLinearColour.ahk`

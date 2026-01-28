@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2026/01/23
- * @version 1.1.4
+ * @date 2026/01/28
+ * @version 1.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,13 +26,14 @@ class reset {
             if !this.ignoreScript.Has(A_LoopFileName)
                 this.ignoreScript.Set(A_LoopFileName, 1)
         }
-        UserSettings := CLSID_Objs.load("UserSettings")
+        UserSettings := CLSID_Objs.clone("UserSettings")
         this.mainScript := UserSettings.MainScriptName
 
-        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, UserSettings.MainScriptName ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "Core Functionality.ahk", 1, )
+        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, this.mainScript ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "Core Functionality.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1)
     }
 
     mainScript := ""
+    ignoreString := browser.vscode.winTitle "|NotifyGUI_"
 
     ;// this portion of the code defines scripts to ignore within the below function
     ignoreScript := Mip()
@@ -40,9 +41,7 @@ class reset {
     /** @returns a list of open ahk windows */
     __getList() {
         Critical()
-        getDetect := detect()
-        list := WinGetList("ahk_class AutoHotkey")
-        resetOrigDetect(getDetect)
+        list := winExt.ListRegex("ahk_class AutoHotkey",, this.ignoreString,, true)
         Critical("Off")
         return list
     }
@@ -54,21 +53,17 @@ class reset {
      */
     __parseInfo(value, includeChecklist) {
         Critical()
-        getDetect := detect()
         try {
-            name := WinGettitle(value,, browser.vscode.winTitle)
+            name := winExt.TitleRegex(value,, this.ignoreString,, true)
             path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
             script := obj.SplitPath(path)
-            PID := WinGetPID(script.Name,, browser.vscode.winTitle)
-            resetOrigDetect(getDetect)
+            PID := winExt.PIDRegex(script.Name,, this.ignoreString,, true)
             Critical("Off")
             if (includeChecklist = false && (script.Name = "checklist.ahk" || script.Name = "test.ahk")) || this.ignoreScript.Has(script.Name) {
                 return false
             }
-            resetOrigDetect(getDetect)
             return {scriptName: script.name, PID: PID, path: path}
         }
-        resetOrigDetect(getDetect)
         Critical("Off")
     }
 
@@ -132,7 +127,7 @@ class reset {
     /** a func to reset `HotkeylessAHK` to cut repeat code */
     static __resetHotkeyless(close := false) {
         hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
-        ignore := browser.vscode.winTitle "|" A_ScriptName
+        ignore := this().ignoreString "|" A_ScriptName
         hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
         if hotkeyHWND
             ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
@@ -199,9 +194,9 @@ class reset {
      */
     static ex_exit(includeChecklist := false) {
         Critical()
-        getDetect := detect()
         tool.Cust("All active ahk scripts are being CLOSED")
         activeWindows := this().__getList()
+        ; logger := Log()
         for v in activeWindows {
             if !getInfo := this().__parseInfo(v, includeChecklist)
                 continue
@@ -209,15 +204,30 @@ class reset {
                 this.__resetHotkeyless(true)
                 continue
             }
+            ; logger.Append("closing: " getInfo.scriptName)
             ProcessClose(getInfo.PID)
+            if !checkPID := winExt.ExistRegex(getInfo.PID,, this().ignoreString,, true)
+                continue
+            try WinClose(checkPID)
         }
-        detect(false)
         Critical("Off")
         tool.Wait()
-        hotkeylessTitle := this().mainScript ".ahk ahk_class AutoHotkey"
-        ignore := browser.vscode.winTitle
-        hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
-        if hotkeyHWND
-            ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
+        mainScriptTitle := this().mainScript ".ahk ahk_class AutoHotkey"
+        coreFuncTitle   := "Core Functionality.ahk ahk_class AutoHotkey"
+        mainScriptHWND  := winExt.ExistRegex(mainScriptTitle,, this().ignoreString,, true)
+        coreFuncHWND    := winExt.ExistRegex(coreFuncTitle,, this().ignoreString,, true)
+        __checkClose(hwnd, title) {
+            if hwnd {
+                ; logger.Append("closing: " title)
+                ProcessClose(hwnd)
+                hwnd := winExt.ExistRegex(title,, this().ignoreString,, true)
+                ; logger.Append("trying again: " title)
+                if hwnd {
+                    try WinClose(hwnd)
+                }
+            }
+        }
+        __checkClose(mainScriptHWND, mainScriptTitle)
+        __checkClose(coreFuncHWND, coreFuncTitle)
     }
 }
