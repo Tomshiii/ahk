@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/01/27
- * @version 2.3.10
+ * @date 2026/01/28
+ * @version 2.3.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3258,6 +3258,14 @@ class Prem {
         if !this.__remoteFunc('isSelected', true)
             return
         SendInput(labelHotkey)
+    }
+
+    /** sends the hotkey set within KSA to delete all empty tracks */
+    static deleteEmptyTracks() {
+        if !WinActive(this.winTitle) ;// this is here in the event the user calls this func from `HotkeylessAHK` - otherwise it'll throw an error if prem isn't active
+            return
+        premUIA := premUIA_Values()
+        SendInput(ksa.deleteEmptyTracksAll)
     }
 
     /**

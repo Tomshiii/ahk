@@ -36,7 +36,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
 - ✅ Fixed `selectionTool()` containing left over code
-- ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`
+- ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`, `deleteEmptyTracks()`
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height

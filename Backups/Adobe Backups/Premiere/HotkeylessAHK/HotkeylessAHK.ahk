@@ -47,4 +47,5 @@ Class CustomFunctions {
     moveToAssetBin(folder)                  => (prem.__remoteFunc('moveToAssetsBin',, 'folderPath=' folder))
     toggleLinearColour(enableMaxRenderQual) => (prem.toggleLinearColour(true))
     renderPreviews()                        => (prem.renderPreviewsInOut())
+    deleteAllEmptyTracks()                  => (prem.deleteEmptyTracks())
 }
