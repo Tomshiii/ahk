@@ -16,7 +16,7 @@ This update introduces some rather large, breaking changes to the functionality 
 ***
 
 ## Functions
-- ✅ Fixed initial compatibility with `Premiere v26.0` after name change
+- ✅ Fixed compatibility with `Premiere v26.0` after name change
 - ✅ Fixed multiple instances of incorrect `||` logic
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
 - ✅ Fixed `reset {` functions not affecting all scripts
@@ -40,7 +40,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height
-- 📋 `disableAllMuteSolo()` && `soloVideo()` can now use `PremiereRemote` to reenable all video tracks & unmute all muted audio tracks
+- 📋 `disableAllMuteSolo()` & `soloVideo()` can now use `PremiereRemote` to reenable all video tracks & unmute all muted audio tracks
 
 📍 `save()`
 - 📋 Will now abort early if `Premiere` fails to retrieve the originally active sequence
