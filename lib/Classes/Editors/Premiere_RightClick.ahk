@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/01/27
- * @version 2.4.2
+ * @date 2026/01/30
+ * @version 2.4.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -94,6 +94,7 @@ class rbuttonPrem {
 	remote  := true
 
 	timelineCol := []
+	premObj := {}
 
 	/**
 	 * Checks to see whether the colour under the cursor indicates that it's a blank track
@@ -197,7 +198,7 @@ class rbuttonPrem {
 	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
 
 	/** Reset class variables */
-	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", prem.RClickIsActive := false, this.origSeq := "", this.remote = true)
+	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.premObj.RClickIsActive := false, this.origSeq := "", this.remote = true)
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {
@@ -310,7 +311,8 @@ class rbuttonPrem {
 		/* try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class") */ ;// prem has fixed the issue of it spamming the error... for now
 		try WinEvent.NotActive((*) => (checkstuck(), this.__exit()), prem.exeTitle)
 		InstallMouseHook(1)
-		prem.RClickIsActive := true
+		this.premObj := CLSID_Objs.load("prem")
+		this.premObj.RClickIsActive := true
 
 		;// check for stuck keys
 		if GetKeyState("Ctrl") || GetKeyState("Shift") {
@@ -373,7 +375,8 @@ class rbuttonPrem {
 			this.__exit()
 		}
 
-		this.premUIA := premUIA_Values()
+		this.premUIA := CLSID_Objs.load("premUIA_Values")
+		this.premUIA.initialise()
 		try premEl := prem.__createUIAelement(false)
 
 		;// we send a single input here so that in the event UIA is slow to respond because of premiere

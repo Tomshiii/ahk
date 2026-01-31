@@ -105,11 +105,11 @@ class WM {
     static __recieveMessage(wParam, lParam, msg, hwnd) {
         res := this.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
         splitMsg := StrSplit(res, ",")
-        switch splitMsg[1] {
-            case "Premiere_RightClick":
-                response := (prem.RClickIsActive = true) ? "Premiere_RightClick,true" : "Premiere_RightClick,false"
+        /* switch splitMsg[1] {
+            case :
+                response :=
                 this.Send_WM_COPYDATA(response, splitMsg[2])
-        }
+        } */
     }
 
     /**
@@ -121,10 +121,6 @@ class WM {
         determineWhich := res[1]
         res.RemoveAt(1)
         switch determineWhich {
-            case "Premiere_RightClick":
-                bool := (res[1]) = "true" ? true : false
-                prem.RClickIsActive := bool
-
             case "adobe_FS", "autosave_MIN":  %res[2]%.__changeVar(res[1]*1000)
             case "autosave_beep":             %res[2]%.beep := res[1]
             case "autosave_save_override":    %res[2]%.saveOverride := res[1]

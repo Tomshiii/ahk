@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/01/23
- * @version 1.0.1
+ * @date 2026/01/30
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -11,6 +11,9 @@
 #Include Other\createGUID.ahk
 #Include Classes\Mip.ahk
 #Include Classes\winExt.ahk
+#Include Classes\errorLog.ahk
+#Include Other\Mutex.ahk
+#Include Other\Notify\Notify.ahk
 #Include Functions\detect.ahk
 ; }
 
@@ -28,17 +31,38 @@ class CLSID_Objs {
         "prem",            "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}",
         "uiaCheckRunning", "{DCEE88EC-9327-44CF-9D2A-5BC47C624E0E}",
         "UserSettings",    "{AC89B835-1CD6-4CC3-AFCC-56360FD5116F}",
-        "premUIA",         "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}"
-        ; "ptf",             "{115D24DB-2C25-4FD4-9D76-9B95B43BF9FB}"
+        "premUIA_Values",  "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}"
     )
 
     /**
-     * load an active connection to the desired object
+     * Safely load an object with mutex locking
      * @param {String} [clsid] the clsid of the desired object. if `inClass` is set to `false` this param must be the entire clsid string (including `{`/`}`). ie, `"{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}"`
      * @param {Boolean} [inClass=true] determine whether to use a known clsid value from an internal map
+     * @param {Integer} timeout milliseconds to wait for lock (default 5000)
      */
-    static load(clsid, inClass := true) {
-        return ComObjActive(((inClass = true) ? CLSID_Objs[clsid] : clsid))
+    static load(clsid, inClass := true, timeout := 5000) {
+        objName := inClass ? clsid : "custom"
+        mtx := Mutex({Name: "Global\CoreFunc_" objName})
+
+        try {
+            result := mtx.Wait(timeout)
+            switch result {
+                case WAIT_OBJECT_0, WAIT_ABANDONED:
+                    try {
+                        return ComObjActive(((inClass = true) ? CLSID_Objs[clsid] : clsid))
+                    } finally {
+                        mtx.Release()
+                    }
+                case WAIT_TIMEOUT:
+                    Notify.Show(, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
+                    errorLog(TimeoutError('Timeout waiting for lock on: ' objName))
+                    return
+                case WAIT_FAILED:
+                    throw OSError()
+            }
+        } finally {
+            mtx.Close()
+        }
     }
 
     /** syntatic sugar to call `clsid_objs.load()`, clone the object, the sever the connection to the original object */

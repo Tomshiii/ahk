@@ -3,13 +3,13 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2025/12/27
+ * @date 2026/01/30
  * @version v2.16.2
  * @ahk_ver 2.0.19
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.1
+;\\v2.35.2
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -278,3 +278,15 @@ F18::prem.delayPlayback()
 #HotIf not WinActive("ahk_group Editors") && !GetKeyState("F24") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 
 #Include My Scripts\Not Editor.ahk
+
+
+OnExit(__exit)
+__exit(*) {
+    try {
+        premVals := CLSID_Objs.load("premUIA_Values")
+        premVals.beenSet := false
+        ;// ---
+        premObj := CLSID_Objs.clone("prem")
+        premObj.__resetTimelineVals()
+    }
+}

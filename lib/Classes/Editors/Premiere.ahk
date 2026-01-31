@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/01/28
- * @version 2.3.12
+ * @date 2026/01/30
+ * @version 2.3.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -636,7 +636,8 @@ class Prem {
      */
     static saveAndFocusTimeline() {
         premUIA := this.__createUIAelement()
-        uiaVals := premUIA_Values()
+        uiaVals := CLSID_Objs.load("premUIA_Values")
+        uiaVals.initialise()
         saveAttempt := this.save()
         if (saveAttempt = false || saveAttempt = "timeout" || saveAttempt = "timeout_nosave") {
             SendEvent("^s")
@@ -680,7 +681,8 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
@@ -824,7 +826,8 @@ class Prem {
             return
         coord.client()
         block.On()
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try progNN := this.__uiaCtrlPos(premUIA.programMon,,, false)
         if !IsSet(progNN) {
             errorLog(TargetError("Could not determine UIA object", -1))
@@ -856,7 +859,8 @@ class Prem {
         coord.client()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
@@ -976,7 +980,8 @@ class Prem {
         blocker.On(,, "{Shift}{F21}{F23}")
         this.stopPlayback()
         sleep 50
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try premEl := this.__createUIAelement(false)
 
         switch window {
@@ -1046,7 +1051,8 @@ class Prem {
         coord.client()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
@@ -1157,7 +1163,8 @@ class Prem {
         keys.allWait()
         coord.client()
         block.On()
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
@@ -1202,7 +1209,8 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
@@ -1290,7 +1298,8 @@ class Prem {
             blocker.Off()
             return -1
         }
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
         if !IsSet(effCtrlNN) {
             blocker.Off()
@@ -1386,7 +1395,8 @@ class Prem {
 
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
 		if (descernTitle || currTimelineStatus != 1) && title != "Audio Gain" {
-            premUIA    := premUIA_Values()
+            premUIA := CLSID_Objs.load("premUIA_Values")
+            premUIA.initialise()
             try createEl   := this.__createUIAelement(true)
             try toolsNN    := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
             if (!IsSet(createEl) || !IsSet(toolsNN)) {
@@ -1524,7 +1534,8 @@ class Prem {
             return
         }
 
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         ;// create UIA element so we can focus the timeline more efficiently later
         try {
             premUIAEl := this.__createUIAelement(false)
@@ -1606,7 +1617,8 @@ class Prem {
         if this.UserSettings.Always_Check_UIA = true {
             if this.UserSettings.Set_UIA_Limit_Daily = true && this.UserSettings.UIA_Daily_Limit_Day = A_YDay
                 return false
-            premUIA := premUIA_Values(false)
+            premUIA := CLSID_Objs.load("premUIA_Values")
+            premUIA.initialise()
             this.UserSettings.UIA_Daily_Limit_Day := A_YDay
             return premUIA
         }
@@ -1658,9 +1670,9 @@ class Prem {
         Critical("Off")
 
         checkUIA := this.__checkAlwaysUIA()
-        premUIA := (checkUIA = false) ? premUIA_Values() : checkUIA
+        premUIA := (checkUIA = false) ? CLSID_Objs.load("premUIA_Values") : checkUIA
         try timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
-        if !ObjHasOwnProp(premUIA, 'timeline') || !IsSet(timelineNN) || timelineNN = false
+        if !premUIA.HasProp("timeline") || !IsSet(timelineNN) || timelineNN = false
             return false
 
         ;// determine how much to account for the column left of the timeline based on premiere version
@@ -1708,6 +1720,11 @@ class Prem {
         return true
     }
 
+    /** resets internal values for the timeline */
+    static __resetTimelineVals() {
+        this.timelineVals := false, this.timelineRawX := 0, this.timelineRawY := 0, this.timelineXValue := 0, this.timelineYValue := 0, this.timelineXControl := 0, this.timelineYControl := 0
+    }
+
     /**
      * Getting back to the selection tool while you're editing text or in other edge case scenarios can be quite painful.
      * This function will instead attempt to warp to the selection tool on your toolbar and presses it instead. If that fails it will focus the toolbar and send the hotkey instead.
@@ -1716,7 +1733,8 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         sleep 50
         block.On()
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try toolsNN := this.__uiaCtrlPos(premUIA.tools,,, false)
         if !IsSet(toolsNN) {
             block.Off()
@@ -1767,7 +1785,8 @@ class Prem {
             SendInput(command)
             return
         }
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try createEl := this.__createUIAelement(false)
         try toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
         if !IsSet(createEl) || !IsSet(toolsNN) {
@@ -2364,7 +2383,8 @@ class Prem {
             }
         }
 
-        premUIA   := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         try sourceMonNN := this.__uiaCtrlPos(premUIA.sourceMon,,, false)
         if !IsSet(sourceMonNN) {
             blocker.Off()
@@ -3256,7 +3276,8 @@ class Prem {
         if !this.__setTimelineValues()
 			return
         premEl := this.__createUIAelement()
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         if premEl.activeElement = premUIA.project {
             SendInput(labelHotkey)
             return
@@ -3276,7 +3297,8 @@ class Prem {
     static deleteEmptyTracks() {
         if !WinActive(this.winTitle) ;// this is here in the event the user calls this func from `HotkeylessAHK` - otherwise it'll throw an error if prem isn't active
             return
-        premUIA := premUIA_Values()
+        premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
         SendInput(ksa.deleteEmptyTracksAll)
     }
 

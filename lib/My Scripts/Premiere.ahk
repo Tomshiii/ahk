@@ -284,7 +284,8 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 	}
 	prior := false
 	if A_PriorKey = "WheelUp" || A_PriorKey = "WheelDown" {
-		premUIA   := premUIA_Values()
+		premUIA := CLSID_Objs.load("premUIA_Values")
+        premUIA.initialise()
 		__within(coordObj, progmon) {
 			if ((coordObj.x > progmon.x) && (coordObj.x < progmon.x+progmon.width) && (coordObj.y < progmon.y) && (coordObj.y > progmon.y+progmon.height))
 				return false

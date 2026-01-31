@@ -15,6 +15,7 @@ KeyHistory(0)
 #Include Classes\Editors\After Effects.ahk
 #Include Classes\errorLog.ahk
 #Include Classes\CLSID_Objs.ahk
+#Include Classes\winExt.ahk
 #Include Functions\trayShortcut.ahk
 ; }
 
@@ -46,12 +47,13 @@ class adobeTimer extends count {
             this.fire := (fire_frequency * 1000)
             this.mainScript := UserSettings.MainScriptName
             this.premName := "Premiere" Editors.__determinePremName(false)
-            UserSettings := ""
+            this.premObj := CLSID_Objs.load("prem")
         }
 
         super.__New(this.fire)
         super.start()
     }
+    premObj := {}
     mainScript := ""
     playToCurs := (InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}")) ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{") : ksa.playheadtoCursor
     premName := ""
@@ -84,15 +86,13 @@ class adobeTimer extends count {
         if winget.isFullscreen(, nameObj.winTitle) = true
             return
         if A_TimeIdleKeyboard > 1250 {
-            detect()
             ;// this script will attempt to NOT fire if RClickPrem is active
-            if !WinExist(this.mainScript ".ahk") {
+            if !winExt.ExistRegex(this.mainScript ".ahk",,,, true) {
                 WinMaximize(nameObj.winTitle)
                 return
             }
-            WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, this.mainScript ".ahk")
             sleep 50
-            if prem.RClickIsActive = false && (GetKeyState("RButton", "P") = false) && (GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false)
+            if this.premObj.RClickIsActive = false && (GetKeyState("RButton", "P") = false) && (GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false)
                 WinMaximize(nameObj.winTitle)
             return
         }

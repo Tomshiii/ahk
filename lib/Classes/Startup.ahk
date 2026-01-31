@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/01/28
- * @version 1.8.4
+ * @date 2026/01/30
+ * @version 1.8.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -873,7 +873,8 @@ class Startup {
         submenuUIA := Menu()
         submenuUIA.Add("Open UIA Script", (*) => Run(ptf.lib "\Other\UIA\UIA.ahk"))
         submenuUIA.Add("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
-        submenuUIA.Add("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? premUIA_Values(false) : MsgBox("Premiere needs to be open for this option to function correctly!"))
+        submenuUIA.Add("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? (uiaVals := CLSID_Objs.load("premUIA_Values"), uiaVals.initialise(, true)) : MsgBox("Premiere needs to be open for this option to function correctly!"))
+
         A_TrayMenu.Insert(startingVal "&", "UIA", submenuUIA)
         startingVal++
 
@@ -1041,8 +1042,12 @@ class Startup {
             name: "Array",                           url: "https://raw.githubusercontent.com/Descolada/AHK-v2-libraries/refs/heads/main/Lib/Array.ahk",
             scriptPos: ptf.lib "\Other",             ext: "unset"
         }
+        mutex := {
+            name: "Mutex",                           url: "https://raw.githubusercontent.com/Nich-Cebolla/AutoHotkey-Interprocess-Communication/refs/heads/main/src/Mutex.ahk",
+            scriptPos: ptf.lib "\Other",             ext: "unset"
+        }
 
-        objs := [this.comVar, this.promise, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator, this.NotifyIcons, this.HighPrecision, this.ShinsImageScanClass, this.arrayExt]
+        objs := [this.comVar, this.promise, this.JSON, this.UIA, this.UIA_Browser, this.WinEvent, this.Notify, this.NotifyCreator, this.NotifyIcons, this.HighPrecision, this.ShinsImageScanClass, this.arrayExt, this.mutex]
         name        := []
         url         := []
         scriptPos   := []

@@ -60,3 +60,7 @@
 <ins>Nagendra</ins>  
 `CreateGUID.ahk` => : https://www.autohotkey.com/boards/viewtopic.php?f=6&t=38822
 > LICENSE: N/A - Freely provided in a forum post
+
+<ins>Nich-Cebolla</ins>  
+`Mutex.ahk`     => : https://github.com/Nich-Cebolla/AutoHotkey-Interprocess-Communication/blob/main/src/Mutex.ahk
+> LICENSE: MIT

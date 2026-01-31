@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/01/27
- * @version 2.1.3
+ * @date 2026/01/30
+ * @version 2.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -35,12 +35,10 @@ effectsPanel          - The Effects panel
 */
 
 Class premUIA_Values {
-    __New(doChecks := true) {
-        try {
-            this.activeObj := CLSID_Objs.load("uiaCheckRunning")
-            UserSettings := CLSID_Objs.load("UserSettings")
-        } catch {
-            return
+    static __New() {
+        try UserSettings := CLSID_Objs.load("UserSettings")
+        catch {
+            UserSettings := UserPref()
         }
         this.setVer := UserSettings.premVer
         currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
@@ -53,7 +51,31 @@ Class premUIA_Values {
         this.currentVer := currentPremVer
         this.baseVer    := SubStr(this.currentVer, 1, InStr(this.currentVer, "_",, 1, 1)-1)
 
-        if !doChecks {
+        if A_ScriptName = "Core Functionality.ahk" {
+            return
+        }
+    }
+
+    static valueINI   := ptf.SupportFiles "\UIA\values.ini"
+    static currentVer := false
+    static setVer     := false
+    static allValls   := false
+    static baseVer    := false
+    static currentPremVer := ""
+    static beenSet    := false
+
+    static windowHotkeys := Map(
+        "effectsControl",   ksa.effectControls,
+        "effectsPanel",     ksa.effectsWindow,
+        "programMon",       ksa.programMonitor,
+        "sourceMon",        ksa.sourceMonitor,
+        "timeline",         ksa.timelineWindow,
+        "tools",            ksa.toolsWindow,
+        "project",          ksa.projectsWindow
+    )
+    static successCount := 0
+    static initialise(doChecks := true, override := false) {
+        if ((!doChecks && override = false) || !this.beenSet || (override = true)) {
             this.__setNewVal()
             block.Off()
             return
@@ -71,33 +93,12 @@ Class premUIA_Values {
             errorLog(UnsetError("Current Version has no values set. Please run ``premUIA_Values(false).__setNewVal()``", -1),,, true)
             return
         }
-        this.__setClassVal()
-        checkStuck()
     }
-
-    valueINI   := ptf.SupportFiles "\UIA\values.ini"
-    currentVer := false
-    setVer     := false
-    allValls   := false
-    baseVer    := false
-    activeObj  := {}
-    currentPremVer := ""
-
-    windowHotkeys := Map(
-        "effectsControl",   ksa.effectControls,
-        "effectsPanel",     ksa.effectsWindow,
-        "programMon",       ksa.programMonitor,
-        "sourceMon",        ksa.sourceMonitor,
-        "timeline",         ksa.timelineWindow,
-        "tools",            ksa.toolsWindow,
-        "project",          ksa.projectsWindow
-    )
-    successCount := 0
 
     /**
      * This function turns the parsed json data into class variables so the user may call on them as an extension of the class object
      */
-    __setClassVal() {
+    static __setClassVal() {
         if !prem.__checkDialogueClass()
             return
         if !this.allVals.HasOwnProp(this.currentVer) && this.allVals.HasOwnProp(this.baseVer)
@@ -114,27 +115,28 @@ Class premUIA_Values {
     /**
      * This function handles creating new json entries in the `values.ini` files
      */
-    __setNewVal() {
+    static __setNewVal() {
         Critical()
-        if this.activeObj.HasOwnProp('isRunning') && this.activeObj.isRunning = true {
+        activeObj := CLSID_Objs.load("uiaCheckRunning")
+        if activeObj.HasOwnProp('isRunning') && activeObj.isRunning = true {
             block.Off()
             Critical("Off")
             Notify.Show(, "Attempting to set UIA values is already in process.`nPlease wait.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
             Exit()
         }
         detect(false, 2) ;// incase the user is midreload while attempting to set values
-        this.activeObj.isRunning := true
+        activeObj.isRunning := true
 
         if !prem.__checkDialogueClass() {
             block.Off()
-            this.activeObj.isRunning := false
+            activeObj.isRunning := false
             return
         }
 
         premName := WinGet.PremName()
         if !premName.winTitle {
             block.Off()
-            this.activeObj.isRunning := false
+            activeObj.isRunning := false
             return
         }
         if prem.__checkPremRemoteDir('premVer') {
@@ -147,7 +149,7 @@ Class premUIA_Values {
                 if (this.setVer != appVer) && (this.setVer ".0" != appVer) {
                     Notify.Show(, 'The currently set version of Premiere does not match the application version.`nConsider adjusting the set version in settingsGUI() and then reloading`n`nSet Version: ' this.setVer ".0 || Premiere Version: " appVer, 'C:\Windows\System32\imageres.dll|icon227', 'Windows Notify Messaging',, 'theme=Dark dur=10 bdr=Red maxW=400')
                     block.Off()
-                    this.activeObj.isRunning := false
+                    activeObj.isRunning := false
                     return
                 }
             } catch {
@@ -156,7 +158,7 @@ Class premUIA_Values {
                     Notify.Show(, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center tag=RemoteServer maxw=500')
                 }
                 block.Off()
-                this.activeObj.isRunning := false
+                activeObj.isRunning := false
                 return
             }
         }
@@ -168,7 +170,7 @@ Class premUIA_Values {
             originalVers := JSON.stringify(currentVers)
         } catch {
             block.Off()
-            this.activeObj.isRunning := false
+            activeObj.isRunning := false
             ;// throw
             errorLog(Error("Parsing JSON Data Failed"),,, true)
         }
@@ -196,7 +198,7 @@ Class premUIA_Values {
                 }
             } catch {
                 block.off()
-                this.activeObj.isRunning := false
+                activeObj.isRunning := false
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
                 Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                 return
@@ -218,7 +220,7 @@ Class premUIA_Values {
         for currentPanel, currHotkey in this.windowHotkeys {
             if WinExist("Save Project " prem.winTitle) {
                 block.Off()
-                this.activeObj.isRunning := false
+                activeObj.isRunning := false
                 Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
                 return
             }
@@ -237,7 +239,7 @@ Class premUIA_Values {
                     try currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
                     catch {
                         block.Off()
-                        this.activeObj.isRunning := false
+                        activeObj.isRunning := false
                         errorLog(Error("UIA Values could not be determined. Please try again later"))
                         try Notify.Destroy(attemptNotify['hwnd'])
                         Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
@@ -247,7 +249,7 @@ Class premUIA_Values {
             }
             if !IsSet(currentEl) {
                 block.Off()
-                this.activeObj.isRunning := false
+                activeObj.isRunning := false
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
                 try Notify.Destroy(attemptNotify['hwnd'])
                 Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
@@ -271,8 +273,10 @@ Class premUIA_Values {
         Notify.Show(, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
         if this.successCount != this.windowHotkeys.Count
             Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
+        this.successCount := 0
+        this.beenSet := true
         if JSON.stringify(currentVers) == originalVers {
-            this.activeObj.isRunning := false
+            activeObj.isRunning := false
             return
         }
 
@@ -283,11 +287,12 @@ Class premUIA_Values {
             FileDelete(tempPath)
         FileAppend(JSON.stringify(currentVers), tempPath)
         try FileMove(tempPath, this.valueINI, true)
-        this.activeObj.isRunning := false
+        activeObj.isRunning := false
     }
 
     __Delete() {
         block.Off()
-        this.activeObj.isRunning := false
+        activeObj := CLSID_Objs.load("uiaCheckRunning")
+        activeObj.isRunning := false
     }
 }

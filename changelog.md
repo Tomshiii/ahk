@@ -5,7 +5,7 @@ This update introduces some rather large, breaking changes to the functionality 
     - ⚠️ `Lib` files will now be installed to `A_Appdata \tomshi\Lib`
     - ⚠️ Adobe `ImageSearch` folders are now based off my `json` files and as such no longer need to generate individual symlinks per folder
 - ❗ Introducing `Core Functionality.ahk`
-    - This allows my scripts to share `objects` between each other easily (ie. `UserSettings`). This script __*MUST*__ run before any other scripts.
+    - This allows my scripts to share `objects` (ie. `UserSettings`, `prem`, etc) between each other easily and safety via `Mutex` locking. This script __*MUST*__ run before any other scripts.
 
 > [!Caution]
 > ###### It is recommended for this release that the user does a completely fresh install of my scripts.
@@ -36,7 +36,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
 - ✅ Fixed `selectionTool()` containing left over code
-- ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`, `deleteEmptyTracks()`
+- ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`, `deleteEmptyTracks()`, `__resetTimelineVals()`
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
 - 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height
@@ -134,6 +134,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `__checkForReloadAttempt()` causing scripts to throw under certain circumstances
 - ✅ Fixed `checkVersJSON()` generating an entry even if an `ImageSearch` folder exists
 - ✅ Fixed `adobeVerOverride()` not generating new shortcuts
+- ✅ Fixed `Set Prem_UIA Values` not working when selected from the tray menu
 - 📋 `gitBranchCheck()` will now abort if the user has any stashed changes
 
 📍 `trayMen()`
@@ -169,8 +170,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Placed most usage of `detect()` within `Critical()` blocks to avoid instances of changes leaking over to other functions
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
 - ✏️ Added `uninstall.ahk`
-- ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>)
-- ✏️ Added [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>)
+- ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>), [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>), [`Mutex.ahk`](<https://github.com/Nich-Cebolla/AutoHotkey-Interprocess-Communication/blob/main/src/Mutex.ahk>)
 - ❌ Removed `toggleLinearColour.ahk`
 - ❌ Removed `screenshot` `Streamdeck AHK` scripts and all related functions
 

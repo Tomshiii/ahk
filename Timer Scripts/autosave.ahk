@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/01/16
- * @version 2.2.2
+ * @date 2026/01/30
+ * @version 2.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -67,7 +67,8 @@ class adobeAutoSave extends count {
 
     __New(rClickPrem := "RButton", rClickMove := "XButton1") {
         try {
-            this.premUIA := premUIA_Values()
+            this.premUIA := CLSID_Objs.load("premUIA_Values")
+            this.premUIA.initialise()
             ;// attempt to grab user settings
             this.UserSettings    := CLSID_Objs.load("UserSettings")
             this.ms              := (this.UserSettings.autosave_MIN * 60000)
@@ -78,7 +79,6 @@ class adobeAutoSave extends count {
             this.restartPlayback := this.UserSettings.autosave_restart_playback
             this.mainScript      := this.UserSettings.MainScriptName
             ; this.aeSaveBG        := this.UserSettings.ae_save_bg
-            this.UserSettings    := ""
         }
 
         ;// set variables for some user hotkeys
@@ -466,21 +466,12 @@ class adobeAutoSave extends count {
                     catch {
                         try {
                             fallbackFocus := (this.origPanelFocus = this.premUIA.timeline) ? false : true
-                            prevDec := detect()
                             if !prem.__checkTimelineValues() {
-                                if !WinExist(this.mainScript ".ahk") {
-                                    resetOrigDetect(prevDec)
-                                    this.__fallback(fallbackFocus)
-                                    return
-                                }
-                                WM.Send_WM_COPYDATA("__premTimelineCoords," A_ScriptName, this.mainScript ".ahk")
                                 if fallbackFocus = true && !prem.__waitForTimeline() {
-                                    resetOrigDetect(prevDec)
                                     this.__fallback(fallbackFocus)
                                     return
                                 }
                             }
-                            resetOrigDetect(prevDec)
                             this.__fallback(fallbackFocus)
                         }
                     }
@@ -780,8 +771,8 @@ class adobeAutoSave extends count {
     __checkRClick() {
         InstallMouseHook(1)
         if this.__checkMainScript() {
-            WM.Send_WM_COPYDATA("Premiere_RightClick," A_ScriptName, this.mainScript ".ahk")
-            if prem.RClickIsActive = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true
+            premObj := CLSID_Objs.load("prem")
+            if premObj.RClickIsActive = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true
                 return true
         }
         return false
