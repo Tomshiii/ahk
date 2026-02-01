@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/01/30
- * @version 2.4.3
+ * @date 2026/02/02
+ * @version 2.4.4
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -75,7 +75,7 @@ RButton::rbuttonPrem().movePlayhead(, prem.currentSetVer)
 XButton1::rbuttonPrem().movePlayhead(false, prem.currentSetVer)
 
 OnExit(__OnExit)
-__OnExit(*) {
+__OnExit(ExitReason, ExitCode) {
 	; try WinEvent.Stop("Exist")
 	try WinEvent.Stop("NotActive", prem.exeTitle)
 }

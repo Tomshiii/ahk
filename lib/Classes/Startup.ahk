@@ -76,7 +76,7 @@ class Startup {
     __alertTooltip() {
         SetTimer(alertttp, 1)
         OnExit(ext, -1)
-        ext(*) {
+        ext(ExitReason, ExitCode) {
             this.activeFunc := ""
             this.alertTimer := false
             SetTimer(alertttp, 0)

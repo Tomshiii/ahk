@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/01/30
- * @version 2.2.3
+ * @date 2026/02/02
+ * @version 2.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -68,7 +68,7 @@ class adobeAutoSave extends count {
     __New(rClickPrem := "RButton", rClickMove := "XButton1") {
         try {
             this.premUIA := CLSID_Objs.load("premUIA_Values")
-            this.premUIA.initialise()
+            this.premUIA.initialise(false)
             ;// attempt to grab user settings
             this.UserSettings    := CLSID_Objs.load("UserSettings")
             this.ms              := (this.UserSettings.autosave_MIN * 60000)

@@ -3,13 +3,13 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2026/01/30
+ * @date 2026/02/02
  * @version v2.16.2
  * @ahk_ver 2.0.19
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.2
+;\\v2.35.3
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -66,6 +66,18 @@ SetWinDelay(0)                         ;sets default WinMove speed to 0 (instant
 A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
 A_MenuMaskKey := "vkD7"				   ;necessary for `alt_menu_acceleration_disabler.ahk` to work correctly
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
+
+OnExit(__exit)
+__exit(ExitReason, ExitCode) {
+    premVals := CLSID_Objs.load("premUIA_Values")
+    premVals.beenSet := false
+
+    isRun := CLSID_Objs.load("uiaCheckRunning")
+    isRun.isRunning := false
+
+    premObj := CLSID_Objs.load("prem")
+    premObj.__resetTimelineVals()
+}
 
 ;unstickKeysHotkey;
 #F11::keys.allUp() ;this function will attempt to unstick as many keys as possible
@@ -278,15 +290,3 @@ F18::prem.delayPlayback()
 #HotIf not WinActive("ahk_group Editors") && !GetKeyState("F24") ;code below here (until the next #HotIf) will trigger as long as premiere pro & after effects aren't active
 
 #Include My Scripts\Not Editor.ahk
-
-
-OnExit(__exit)
-__exit(*) {
-    try {
-        premVals := CLSID_Objs.load("premUIA_Values")
-        premVals.beenSet := false
-        ;// ---
-        premObj := CLSID_Objs.clone("prem")
-        premObj.__resetTimelineVals()
-    }
-}

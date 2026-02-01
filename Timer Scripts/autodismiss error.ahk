@@ -14,7 +14,7 @@ Persistent()
 TraySetIcon(ptf.Icons "\dismiss.ico")
 
 OnExit(__OnExit)
-__OnExit(*) {
+__OnExit(ExitReason, ExitCode) {
 	try WinEvent.Stop()
 }
 

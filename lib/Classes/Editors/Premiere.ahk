@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/01/30
- * @version 2.3.13
+ * @date 2026/02/02
+ * @version 2.3.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -62,8 +62,7 @@ class Prem {
         }
         Critical()
         this.setUI()
-        orig := detect()
-        if A_ScriptName != this.mainScriptName ".ahk" && WinExist(this.mainScriptName ".ahk") && A_ScriptName != "Core Functionality.ahk" && WinExist("Core Functionality.ahk") {
+        if A_ScriptName != this.mainScriptName ".ahk" && winExt.ExistRegex(this.mainScriptName ".ahk",,,, true) && A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try {
                 activeObj := CLSID_Objs.load("prem")
                 this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
@@ -78,7 +77,6 @@ class Prem {
         } else {
             this.__determineTheme()
         }
-        resetOrigDetect(orig)
         Critical("Off")
 
         if (this.useSwapSequences = true || this.useSwapSequences = "true") && A_ScriptName = "Core Functionality.ahk"
@@ -1614,12 +1612,12 @@ class Prem {
     }
 
     static __checkAlwaysUIA() {
-        if this.UserSettings.Always_Check_UIA = true {
-            if this.UserSettings.Set_UIA_Limit_Daily = true && this.UserSettings.UIA_Daily_Limit_Day = A_YDay
+        userSettings := CLSID_Objs.load("UserSettings")
+        if userSettings.Always_Check_UIA = true {
+            if userSettings.Set_UIA_Limit_Daily = true && userSettings.UIA_Daily_Limit_Day = A_YDay
                 return false
             premUIA := CLSID_Objs.load("premUIA_Values")
-            premUIA.initialise()
-            this.UserSettings.UIA_Daily_Limit_Day := A_YDay
+            userSettings.UIA_Daily_Limit_Day := A_YDay
             return premUIA
         }
         return false
@@ -1671,6 +1669,7 @@ class Prem {
 
         checkUIA := this.__checkAlwaysUIA()
         premUIA := (checkUIA = false) ? CLSID_Objs.load("premUIA_Values") : checkUIA
+        premUIA.initialise()
         try timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
         if !premUIA.HasProp("timeline") || !IsSet(timelineNN) || timelineNN = false
             return false
