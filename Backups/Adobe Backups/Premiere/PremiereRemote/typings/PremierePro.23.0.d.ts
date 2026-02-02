@@ -1242,6 +1242,11 @@ declare class ProjectManager {
 	/**
 	 *
 	 */
+	readonly parentTrackIndex: number
+
+	/**
+	 *
+	 */
 	readonly nodeId: string
 
 	/**

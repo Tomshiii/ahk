@@ -83,7 +83,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Will now abort if the `Save Project` window appears
 - 📋 Will alert the user if their set version of Premiere does not match the open application
 
-### `settingsGUI()`
+### 📝 `settingsGUI()`
 - ✅ Fixed version dropdown lists not being sorted in numerical order
 - ✅ Fixed changing `Premiere`/`After Efects` year versions not generating new shortcuts
 - 📋 `Photoshop` has been removed from version selection due to differing criteria and not being relevant or required since implementation
@@ -106,12 +106,12 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed function failing while a thread is open
 - ✅ Fixed `"reaction"` attempting to interact with the icon under image messages
 
-### `winExt {`
+### 📝 `winExt {`
 - ✏️ Added class `winExt {`
 - ✏️ Added `Regex()` functions to cut repeat code
-    - `F()`, `ClassRegex()`, `ActiveRegex()`, `ActivateRegex()`, `CloseRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ProcessNameRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`, `MinimizeRegex()`, `MaximizeRegex()`
+    - `TitleRegex()`, `ClassRegex()`, `ActiveRegex()`, `ActivateRegex()`, `CloseRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ProcessNameRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`, `MinimizeRegex()`, `MaximizeRegex()`
 
-### `WinGet {`
+### 📝 `WinGet {`
 - ✅ Fixed all instances of `Title()` causing scripts to throw
 - ✅ Fixed `__AdobeName()` `titleCheck` always returning `true`
 - 📋 Renamed `ID()` => `PID()`
