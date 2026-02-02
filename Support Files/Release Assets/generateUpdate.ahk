@@ -288,7 +288,7 @@ deleting() {
     checkDirDelete(A_WorkingDir "\release\" yes.Value "\.vscode")
     ;// resetting `values.ini` file so it's empty for the user
     checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\UIA\values.ini")
-    FileAppend("", A_WorkingDir "\release\" yes.Value "\Support Files\UIA\values.ini")
+    FileAppend("{`n`n}", A_WorkingDir "\release\" yes.Value "\Support Files\UIA\values.ini")
 }
 deleting()
 
