@@ -25,7 +25,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `loadXML()` throwing in the event the file is busy
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 - 📋 Replaced all usage of `WinGetTitle("A")` with `WinGet.Title()` to avoid unnecessary instances of scripts throwing
-- ✏️ Added `isBool()`, `checkBool()`, `delayFuncs()`, `runExt()`, `validateTypes()`
+- ✏️ Added `isBool()`, `checkBool()`, `delayFuncs()`, `runExt()`, `validateTypes()`, `notifyIfNotExist()`
 - ✏️ Added `CLSID_Objs {`
     - Allows for objects to be shared between scripts easily
 
@@ -183,6 +183,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `After Effects` getting stuck transparent when saved in the background
 - ✅ Fixed `After Effects` never saving in certain circumstances where `__checkDialogueClass()` always returned `false`
 - ✅ Fixed `After Effects` being send to the bottom of the window stack if `Mocha` is open
+- ✅ Fixed retrieving title logic causing scripts to throw in some scenarios
 - 📋 `Notify` windows will now be destroyed if the user manually saves during a save attempt
 - 📋 Will now check for and halt if `excalibur` window is open
 - 📋 Will now use `CEP` to save `After Effects` instead of needing keystrokes

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/02/02
- * @version 2.2.5
+ * @date 2026/02/03
+ * @version 2.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -498,6 +498,10 @@ class adobeAutoSave extends count {
         }
     }
 
+    _isObjHasProp(obj, prop, bool) {
+        return (IsObject(obj) && obj.HasProp(prop) && obj.%prop% != "" && obj.%prop% != bool)
+    }
+
     /** saves premiere */
     __savePrem() {
 
@@ -515,10 +519,9 @@ class adobeAutoSave extends count {
 
         ;// getting window title/information
         this.premWindow := WinGet.PremName()
-        checkType := (Type(this.premWindow) != "Object"), checkTitle := (this.premWindow.winTitle != "" || !this.premWindow.wintitle) && this.premWindow.titleCheck = -1 && this.premWindow.saveCheck = -1, checkCanSave := (this.premWindow.titleCheck != true)
-        if checkCanSave {
-            return
-        }
+        checkType := (Type(this.premWindow) != "Object")
+        checkTitle := this._isObjHasProp(this.premWindow, "winTitle", false) && this._isObjHasProp(this.premWindow, "titleCheck", -1) && this._isObjHasProp(this.premWindow, "saveCheck", -1)
+        checkCanSave := this._isObjHasProp(this.premWindow, "titleCheck", true)
         if !this.premWindow || checkType || checkTitle {
             errorLog(UnsetError("autosave.ahk was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
             return
@@ -634,14 +637,9 @@ class adobeAutoSave extends count {
 
         ;// getting window title/information
         this.aeWindow := WinGet.AEName()
-        checkType := (Type(this.aeWindow) != "Object"), checkTitle := (this.aeWindow.winTitle != "" || !this.aeWindow.wintitle) && this.aeWindow.titleCheck = -1 && this.aeWindow.saveCheck = -1, checkCanSave := (this.aeWindow.titleCheck != true)
-        if checkCanSave {
-            return
-        }
-        if !this.aeWindow || checkType || checkTitle {
-            errorLog(UnsetError("autosave.ahk was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
-            return
-        }
+        checkType := (Type(this.aeWindow) != "Object")
+        checkTitle := this._isObjHasProp(this.aeWindow, "winTitle", false) && this._isObjHasProp(this.aeWindow, "titleCheck", -1) && this._isObjHasProp(this.aeWindow, "saveCheck", -1)
+        checkCanSave := this._isObjHasProp(this.aeWindow, "titleCheck", true)
 
         ;// if save NOT required, exit early
         if !this.aeWindow.saveCheck {
