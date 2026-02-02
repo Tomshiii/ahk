@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/02/02
- * @version 2.2.2
+ * @version 2.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -42,11 +42,14 @@ Class premUIA_Values {
         }
         this.setVer := UserSettings.premVer
         currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
-        try this.allVals := JSON.parse(FileRead(this.valueINI),, false)
-        catch {
-            block.Off()
-            ;// throw
-            errorLog(Error("Parsing JSON Data Failed"),,, true)
+        readJSON := FileRead(this.valueINI)
+        if FileExist(this.valueINI) && readJSON != "" {
+            try this.allVals := JSON.parse(readJSON,, false)
+            catch {
+                block.Off()
+                ;// throw
+                errorLog(Error("Parsing JSON Data Failed"), this.valueINI,, true)
+            }
         }
         this.currentVer := currentPremVer
         this.baseVer    := SubStr(this.currentVer, 1, InStr(this.currentVer, "_",, 1, 1)-1)

@@ -51,3 +51,4 @@ try {
 cmd.run(,,, "npm i", dlLocation dirName "\files")
 
 DirMove(dlLocation dirName "\stream-deck-plugin\de.sebinside.hotkeylessahk.sdPlugin", streamdeckPlugin "de.sebinside.hotkeylessahk.sdPlugin", 1)
+ExitApp()

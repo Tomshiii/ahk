@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/02/02
- * @version 1.1.1
+ * @version 1.1.2
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -190,12 +190,12 @@ class installGUI extends Gui {
         /** this function handles the entire install sequence of the installer */
         __Install(*) {
             if DirExist(A_AppData "\tomshi\lib")
-                DirDelete(A_AppData "\tomshi\lib")
+                DirDelete(A_AppData "\tomshi\lib", true)
             if !DirExist(A_AppData "\tomshi")
                 DirCreate(A_AppData "\tomshi")
             if FileExist(A_Appdata "\tomshi\installDir")
                 FileDelete(A_Appdata "\tomshi\installDir")
-            FileAppend(this.installDir, A_Appdata "\tomshi\installDir")
+            FileAppend(this.installDir "\Tomshi AHK", A_Appdata "\tomshi\installDir")
             amount := 0
             if !this.hasAttempted {
                 this.__addLogEditBox()
@@ -251,7 +251,8 @@ class installGUI extends Gui {
             this.__setProgress(65) ;// hard setting to 65 here
             ;// move lib folder
             this.__addLogEntry("moving lib files")
-            DirMove(this.InstallDir "\lib", A_AppData "\tomshi\lib")
+            DirMove(this.InstallDir "\lib", A_AppData "\tomshi\lib", 2)
+            sleep 250
             ;// set baseline settings
             if this.settingsCheck = false && FileExist(this.InstallDir "\Support Files\Release Assets\baseLineSettings.ahk") {
                 this.__addLogEntry("generating default ``settings.ini``")

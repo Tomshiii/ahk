@@ -65,3 +65,4 @@ loop files BackupLocation "\*.tsx", "F" {
     FileCopy(A_LoopFileFullPath, remotePath "\host\src\" A_loopfilename, true)
 }
 cmd.run(,,, "npm run build", remotePath "\host")
+ExitApp()

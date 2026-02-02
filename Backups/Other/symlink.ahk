@@ -1,5 +1,7 @@
 if !DirExist(A_AppData "\tomshi")
     DirCreate(A_AppData "\tomshi")
+if DirExist(A_AppData "\tomshi\lib") && InStr(FileGetAttrib(A_AppData "\tomshi\lib"), "L")
+    DirDelete(A_AppData "\tomshi\lib", true)
 
 SplitPath(A_LineFile,, &workDir)
 SetWorkingDir(workDir)

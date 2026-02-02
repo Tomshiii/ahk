@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/01/27
- * @version 2.4.3
+ * @date 2026/02/02
+ * @version 2.4.4
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -387,27 +387,24 @@ settingsGUI()
 
     editCtrl(script, ini, objName, ctrl, *)
     {
-        detect()
         iniVar := StrReplace(ini, A_Space, "_")
         UserSettings.%iniVar% := ctrl.text
         switch ini {
             case "premPrevSeqDelay":
-                origDetect := detect()
-                if WinExist(UserSettings.mainScriptName ".ahk") {
+                if winExt.ExistRegex("Core Functionality.ahk",,,, true) {
                     try {
-                        activeObj := ComObjActive("{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}")
+                        activeObj := CLSID_Objs.load("prem")
                         activeObj.prevSeqDelay := (ctrl.text*1000)
-                        activeObj.resetSeqTimer    := true
+                        activeObj.resetSeqTimer := true
                         activeObj := ""
                     } catch {
                         activeObj := ""
                         Notify.Show("settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
                     }
                 }
-                resetOrigDetect(origDetect)
                 return
         }
-        if WinExist(script " - AutoHotkey") && script != "" {
+        if winExt.ExistRegex(script " - AutoHotkey",,,, true) && script != "" {
             WM.Send_WM_COPYDATA(iniVar "," ctrl.text "," objName, script)
         }
     }
@@ -415,7 +412,7 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! STATUS BAR
 
-    workDir := UserSettings.working_dir
+    workDir := FileRead(A_AppData "\tomshi\installDir")
     SB := settingsGUI.Add("StatusBar", "-Theme Background0xc0c0c0")
     SB.SetText("  Current working dir: " workDir,, 1)
     checkdir := SB.GetPos(,, &width)

@@ -2,7 +2,7 @@
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
  * @date 2026/02/02
- * @version 1.3.3
+ * @version 1.3.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,7 +14,7 @@
 class ptf {
     UserSettings := UserPref(true)
     ;general
-    static rootDir           := this().UserSettings.working_dir
+    static rootDir           := FileRead(A_AppData "\tomshi\installDir")
     static SupportFiles      := this.rootDir "\Support Files"
     static Backups           := this.rootDir "\Backups"
     static Stream            := this.rootDir "\Backups\Old Code\Stream"

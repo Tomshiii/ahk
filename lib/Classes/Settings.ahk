@@ -2,24 +2,20 @@
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
  * @date 2026/02/02
- * @version 1.3.1
+ * @version 1.3.2
  ***********************************************************************/
 
 class UserPref {
     __New(override := false) {
         if !FileExist(this.SettingsFile)
             {
-                SplitPath(A_WorkingDir, &name)
-                if (name = "classes" || name == "Release Assets")
-                    {
-                        this.workingDir := A_Appdata "\tomshi\installDir"
-                        SetWorkingDir(this.workingDir)
-                        this.defaults["working_dir"] := A_WorkingDir
-                    }
+                this.workingDir := A_Appdata "\tomshi\installDir"
+                SetWorkingDir(this.workingDir)
+                this.defaults["working_dir"] := A_WorkingDir
                 this.__createIni()
                 Run(A_ScriptFullPath)
             }
-        if A_ScriptName != "Core Functionality.ahk" && override = false
+        if (A_ScriptName != "Core Functionality.ahk" && override = false)
             return
         ;// initialise settings variables
         this.__setSett()
