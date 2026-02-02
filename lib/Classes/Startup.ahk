@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/01/30
- * @version 1.8.5
+ * @date 2026/02/02
+ * @version 1.8.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -202,7 +202,7 @@ class Startup {
                 this.UserSettings.__delAll()
                 sleep 1000
                 if !this.__checkForReloadAttempt("generate") {
-                    this.UserSettings := UserPref()
+                    this.UserSettings := UserPref(true)
                     return
                 }
                 Notify.Show(StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
@@ -1403,7 +1403,7 @@ class Startup {
         if readIni = A_YYYY "_" A_MM "_" A_DD {
             Notify.Show(, funcName '() appears to be attempting to reload multiple times, this may be because something is stopping it from progressing forward.`n`nThis function will no longer reload today, if this was unintentional it is recommended you report this issue on Github as a bug, otherwise a manual reload is required.', 'C:\Windows\System32\imageres.dll|icon80',,, 'dur=10 pos=BR bdr=0xD50000 maxW=400')
             if !IsObject(this.UserSettings)
-                this.UserSettings := UserPref()
+                this.UserSettings := UserPref(true)
             return false
         }
         IniWrite(A_YYYY "_" A_MM "_" A_DD, this.trackReloadsIni, "Track", funcName)

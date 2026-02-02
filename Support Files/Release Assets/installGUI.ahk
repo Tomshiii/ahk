@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2025/12/20
- * @version 1.1.0
+ * @date 2026/02/02
+ * @version 1.1.1
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -259,6 +259,8 @@ class installGUI extends Gui {
             }
             this.__deleteInstallFiles()
             this.__setProgress(80)
+            try Run(this.InstallDir "\Core Functionality.ahk")
+            this.__addLogEntry("running Core Functionality.ahk")
 
             /** This function cuts repeat code for dealing with some first time settings */
             __runSettingsInstall(filename, catchText, workingDir := "") {
@@ -266,6 +268,7 @@ class installGUI extends Gui {
                 catch
                     this.__addLogEntry(catchText)
             }
+
             ;// set correct working dir in settings.ini
             this.__addLogEntry("generating updated settings.ini file")
             __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallSettings.ahk", "failed to generate updated settings.ini file")

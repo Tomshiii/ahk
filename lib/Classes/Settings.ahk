@@ -1,12 +1,12 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2025/12/20
- * @version 1.3.0
+ * @date 2026/02/02
+ * @version 1.3.1
  ***********************************************************************/
 
 class UserPref {
-    __New() {
+    __New(override := false) {
         if !FileExist(this.SettingsFile)
             {
                 SplitPath(A_WorkingDir, &name)
@@ -19,6 +19,8 @@ class UserPref {
                 this.__createIni()
                 Run(A_ScriptFullPath)
             }
+        if A_ScriptName != "Core Functionality.ahk" && override = false
+            return
         ;// initialise settings variables
         this.__setSett()
         this.__setAdjust()

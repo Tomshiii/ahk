@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2026/01/22
- * @version 2.2.1
+ * @date 2026/02/02
+ * @version 2.2.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -140,7 +140,7 @@ class errorLog extends log {
             FreePhysMem := Round(Response2, 2)
 
             ;// check for the latest versions of these scripts
-            UserSettings := UserPref() ;// using the comobj here may cause issues I'd rather avoid
+            UserSettings := UserPref(true) ;// using the comobj here may cause issues I'd rather avoid
             InstalledVersion := UserSettings.version
             UserSettings := ""
             LatestReleaseBeta := ""

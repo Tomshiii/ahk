@@ -47,6 +47,19 @@ export class Utils {
       }
     }
 
+    static getClipTrackIndex() {
+      var sequence = app.project.activeSequence;
+      if (!sequence)
+          return false;
+
+      var selection = sequence.getSelection();
+      if (selection.length <= 0)
+          return false;
+      var clip = selection[0];
+
+      return clip.parentTrackIndex;
+    }
+
     static movePlayheadFrames(subtract: string, frames: number) {
       const currentSequence = app.project.activeSequence;
       const timebase = parseInt(currentSequence.timebase)

@@ -52,8 +52,8 @@ if nonFootage.Length >= 1 {
 
     extraGUI.AddButton("xs y+25", "Backup").OnEvent("Click", __doBackupButt.Bind("backup"))
     extraGUI.AddButton("x+5", "Ignore").OnEvent("Click", __doBackupButt.Bind("ignore"))
-    extraGUI.AddButton("xs y+5 Default", "Backup All").OnEvent("Click", __doBackupButt.Bind("backupall"))
-    extraGUI.AddButton("x+5", "Ignore All").OnEvent("Click", (*) => extraGUI.Destroy())
+    extraGUI.AddButton("xs y+5", "Backup All").OnEvent("Click", __doBackupButt.Bind("backupall"))
+    extraGUI.AddButton("x+5 Default", "Ignore All").OnEvent("Click", (*) => extraGUI.Destroy())
     extraGUI.Show()
     extraGUI.OnEvent('Close', __determineExit)
     extraGUI.Opt("-Resize")

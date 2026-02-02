@@ -3,13 +3,14 @@
 #Include '%A_Appdata%\tomshi\lib'
 #Include *i Classes\Settings.ahk
 #Include *i Classes\ptf.ahk
+#Include *i Classes\CLSID_Objs.ahk
 #Include *i Other\Notify\Notify.ahk
 #Include *i Functions\deleteDotUnderscore.ahk
 #Include *i Functions\syncDirectories.ahk
 
 ;// if the user has not generated the symlink yet this script will return
 try {
-    UserSettings := UserPref()
+    UserSettings := CLSID_Objs.load("UserSettings")
 }
 if !IsSet(UserSettings)
     return

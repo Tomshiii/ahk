@@ -77,6 +77,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Now accepts parameter `searchForFile` which, when set, will attempt to search for the desired file if it isn't already loaded in the source monitor
 
 ### 📝 `premUIA_Values {`
+- ✅ Fixed duplicate `Notify {` windows being spammed during errors
 📍 `__setNewVal()`
 - ✅ Fixed function sometimes leaving inputs blocked
 - 📋 Will now abort if the `Save Project` window appears
@@ -108,7 +109,7 @@ This update introduces some rather large, breaking changes to the functionality 
 ### `winExt {`
 - ✏️ Added class `winExt {`
 - ✏️ Added `Regex()` functions to cut repeat code
-    - `TitleRegex()`, `ClassRegex()`, `ActiveRegex()`, `ActivateRegex()`, `CloseRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ProcessNameRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`
+    - `F()`, `ClassRegex()`, `ActiveRegex()`, `ActivateRegex()`, `CloseRegex()`, `ExistRegex()`, `CountRegex()`, `PIDRegex()`, `ProcessNameRegex()`, `ListRegex()`, `WaitCloseRegex()`, `WaitRegex()`, `MinimizeRegex()`, `MaximizeRegex()`
 
 ### `WinGet {`
 - ✅ Fixed all instances of `Title()` causing scripts to throw
@@ -188,7 +189,7 @@ This update introduces some rather large, breaking changes to the functionality 
 
 🔗 `PremiereRemote`
 - ✏️ Added;  
-     `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`, `enableAllVideoTracks()`, `unmuteAllMutedTracks()`
+     `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`, `enableAllVideoTracks()`, `unmuteAllMutedTracks()`, `getClipTrackIndex()`
 - ❌ Removed `setBarsAndTone()`
 - 📋 `saveProj()` now properly returns whether it suceeded or failed
 

@@ -4,4 +4,4 @@
 #Include Classes\Settings.ahk
 ; }
 
-UserSettings := UserPref()
+UserSettings := UserPref(true)

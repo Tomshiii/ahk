@@ -45,7 +45,6 @@ class adobeTimer extends count {
             ;// open settings instance and start timer
             fire_frequency := UserSettings.adobe_FS
             this.fire := (fire_frequency * 1000)
-            this.mainScript := UserSettings.MainScriptName
             this.premName := "Premiere" Editors.__determinePremName(false)
             this.premObj := CLSID_Objs.load("prem")
         }
@@ -54,7 +53,6 @@ class adobeTimer extends count {
         super.start()
     }
     premObj := {}
-    mainScript := ""
     playToCurs := (InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}")) ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{") : ksa.playheadtoCursor
     premName := ""
 
@@ -87,7 +85,7 @@ class adobeTimer extends count {
             return
         if A_TimeIdleKeyboard > 1250 {
             ;// this script will attempt to NOT fire if RClickPrem is active
-            if !winExt.ExistRegex(this.mainScript ".ahk",,,, true) {
+            if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
                 WinMaximize(nameObj.winTitle)
                 return
             }

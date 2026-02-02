@@ -154,14 +154,13 @@ activeScripts()
 
     checkScripts(*)
     {
-        detect()
         UserSettings := CLSID_Objs.load("UserSettings")
-        if WinExist(UserSettings.MainScriptName ".ahk is Suspended")
-            WinWaitClose(UserSettings.MainScriptName ".ahk is Suspended")
+        if winExt.ExistRegex(UserSettings.MainScriptName ".ahk is Suspended",,,, true)
+            winExt.WaitCloseRegex(UserSettings.MainScriptName ".ahk is Suspended",,,,, true)
 
         MyGui[scripts[1]].Value := (A_IsSuspended = 0) ? 1 : 0
         loop scripts.Length - 1 {
-            MyGui[scripts[A_Index + 1]].Value := WinExist(names[scripts[A_Index + 1]] " - AutoHotkey") ? 1 : 0
+            try MyGui[scripts[A_Index + 1]].Value := winExt.ExistRegex(names[scripts[A_Index + 1]] " - AutoHotkey",,,, true) ? 1 : 0
         }
         SetTimer(, -100)
     }

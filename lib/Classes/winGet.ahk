@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/01/23
- * @version 1.7.3
+ * @date 2026/02/02
+ * @version 1.7.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -189,7 +189,7 @@ class WinGet {
             if InStr(SubStr(progCheck, 1, 27), "(Beta)",, 1, 1) {
                 return "(Beta)"
             }
-            UserSettings := UserPref()
+            UserSettings := CLSID_Objs.load("UserSettings")
             determineYear := (VerCompare(SubStr(ptf().UserSettings.premVer, 2), "26.0") >= 0) ? "" : A_Space SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), "20",, 1, 1), 4)
         } catch {
             ;// fallback to `ptf {`

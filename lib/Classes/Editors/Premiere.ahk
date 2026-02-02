@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/02/02
- * @version 2.3.14
+ * @version 2.3.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -49,10 +49,9 @@ class Prem {
     static __New() {
         try this.UserSettings := CLSID_Objs.load("UserSettings")
         catch {
-            this.UserSettings := UserPref()
+            this.UserSettings := UserPref(true)
         }
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
-        this.mainScriptName := (this.UserSettings.mainScriptName != "") ? this.UserSettings.mainScriptName : this.mainScriptName
         try this.defaultTheme     := this.UserSettings.premDefaultTheme
         try this.useSwapSequences := this.UserSettings.use_swapSequences
         try {
@@ -60,31 +59,26 @@ class Prem {
         } catch {
             this.defaultTheme := this.theme
         }
-        Critical()
         this.setUI()
-        if A_ScriptName != this.mainScriptName ".ahk" && winExt.ExistRegex(this.mainScriptName ".ahk",,,, true) && A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try {
-                activeObj := CLSID_Objs.load("prem")
+                activeObj := CLSID_Objs.clone("prem")
                 this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
                 this.timelineCol := activeObj.timelineCol, this.timelineColArr := activeObj.timelineColArr
                 this.sequenceArr := activeObj.sequenceArr
-                activeObj := ""
                 this.__setTimelineCol(this.UI, this.theme)
             } catch {
-                activeObj := ""
                 this.__determineTheme()
             }
         } else {
             this.__determineTheme()
         }
-        Critical("Off")
 
         if (this.useSwapSequences = true || this.useSwapSequences = "true") && A_ScriptName = "Core Functionality.ahk"
             SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
     }
 
     static UserSettings := ""
-    static mainScriptName := "My Scripts"
     static currentSetVer := ""
     static spectrumUI_Version := "25.0"
     static timelineCols := Mip()
@@ -1642,10 +1636,9 @@ class Prem {
         ; SendInput(KSA.timelineWindow)
         sleep 75
         coord.client()
-        Critical()
 
-        ;// this block is called if the function originates from a script that isn't `UserSettings.mainScriptName`
-        if A_ScriptName != this.mainScriptName ".ahk" && A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+        ;// this block is called if the function originates from a script that isn't `Core Functionality.ahk`
+        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try {
                 activeObj := CLSID_Objs.clone("prem")
                 if activeObj.__checkTimelineValues() {
@@ -1654,18 +1647,15 @@ class Prem {
                     this.timelineXValue   := activeObj.timelineXValue,   this.timelineYValue   := activeObj.timelineYValue
                     this.timelineXControl := activeObj.timelineXControl, this.timelineYControl := activeObj.timelineYControl
                     this.timelineVals     := true
-                    activeObj := ""
                     return true
                 }
             } catch {
-                activeObj := ""
                 Critical("Off")
                 Notify.Show(, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 return false
             }
         }
-        Critical("Off")
 
         checkUIA := this.__checkAlwaysUIA()
         premUIA := (checkUIA = false) ? CLSID_Objs.load("premUIA_Values") : checkUIA
@@ -1684,7 +1674,7 @@ class Prem {
         }
 
         Critical()
-        if A_ScriptName = this.mainScriptName ".ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try {
                 ;// we're setting the Core Functionality object (and this object) with the timeline coords - this will allow other scripts to retrieve them without needing to set them again
                 activeObj := CLSID_Objs.load("prem")
@@ -3436,7 +3426,7 @@ class Prem {
             this.sequenceArr.RemoveAt(1)
             this.__remoteFunc("focusSequence",, "ID=" String(this.sequenceArr[1]))
         }
-        if !winExt.ExistRegex(this.mainScriptName ".ahk",,,, true)
+        if !winExt.ExistRegex("Core Functionality.ahk",,,, true)
             return false
         try {
             activeObj := CLSID_Objs.load("prem")

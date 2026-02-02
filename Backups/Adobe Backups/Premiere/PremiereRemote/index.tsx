@@ -334,6 +334,10 @@ export const host = {
 
   unmuteAllMutedTracks: function() {
     Utils.unmuteAllMutedTracks();
+  },
+
+  getClipTrackIndex: function() {
+    return Utils.getClipTrackIndex();
   }
 };
 

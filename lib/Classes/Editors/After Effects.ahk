@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.0
  * @author tomshi
- * @date 2025/12/20
- * @version 1.3.0
+ * @date 2026/02/02
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -27,11 +27,12 @@
 class AE {
 
     static __New() {
-        UserSettings := UserPref()
+        try UserSettings := CLSID_Objs.clone("UserSettings")
+        catch {
+            UserSettings := UserPref(true)
+        }
         this.currentSetVer := SubStr(UserSettings.aeVer, 2)
         this.currentYearVer := SubStr(UserSettings.aeVer, 2, 2)
-        UserSettings.__delAll()
-        UserSettings := ""
 
         switch {
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.focusColour := 0x066CE7

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2026/01/21
- * @version 1.3.2
+ * @date 2026/02/02
+ * @version 1.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,7 +12,7 @@
 ; }
 
 class ptf {
-    UserSettings := UserPref()
+    UserSettings := UserPref(true)
     ;general
     static rootDir           := this().UserSettings.working_dir
     static SupportFiles      := this.rootDir "\Support Files"

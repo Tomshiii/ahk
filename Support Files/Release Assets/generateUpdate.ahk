@@ -36,6 +36,8 @@ RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRe
 
 ;//* KotET
 try DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
+if FileExist("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
+    FileDelete("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
 try DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
 
 ;//* labels
@@ -58,10 +60,13 @@ __backupPremFolders(layoutsBackup, layoutsBeginningDir, "Select Premiere Layouts
 settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\v" ptf.PremYearVer "\"
 settingsBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\" : A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\"
 isBetaPrefs := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? "Adobe Premiere Pro (Beta) Prefs" : "Adobe Premiere Pro Prefs"
-hasPro := FileExist(settingsBeginningDir "\" isBetaPrefs) ? isBetaPrefs : (FileExist(settingsBeginningDir "\" StrReplace(isBetaPrefs, "Pro ", "")) ? StrReplace(isBetaPrefs, "Pro ", "") : false)
+/* hasPro := FileExist(settingsBeginningDir "\" isBetaPrefs) ? isBetaPrefs : (FileExist(settingsBeginningDir "\" StrReplace(isBetaPrefs, "Pro ", "")) ? StrReplace(isBetaPrefs, "Pro ", "") : false)
 if !hasPro
     throw
-FileCopy(settingsBeginningDir "\" hasPro, settingsBackup "\" hasPro, 1)
+*/
+if !DirExist(settingsBackup "\" isBetaPrefs)
+    DirCreate(settingsBackup "\" isBetaPrefs)
+FileCopy(settingsBeginningDir "\" isBetaPrefs, settingsBackup "\" isBetaPrefs, 1)
 FileCopy(settingsBeginningDir "\Effect Presets and Custom Items.prfpset", settingsBackup "\Effect Presets and Custom Items.prfpset", 1)
 FileCopy(settingsBeginningDir "\LayoutsWorkspaceConfig.xml", settingsBackup "\LayoutsWorkspaceConfig.xml", 1)
 

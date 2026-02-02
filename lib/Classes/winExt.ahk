@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class of extended functions to built in ahk functions. Designed to use as little external functions/classes as possible.
  * @author tomshi
- * @date 2026/01/23
- * @version 1.0.0
+ * @date 2026/02/02
+ * @version 1.0.1
  ***********************************************************************/
 
 
@@ -60,6 +60,14 @@ class winExt {
     static WaitRegex(WinTitle := "A", WinText:="", Timeout := 0, ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
         return this.regexFunc("Wait", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin, Timeout)
     }
+    /** A wrapper function for `WinMinimize()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static MinimizeRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Minimize", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
+    /** A wrapper function for `WinMaximize()` with `regex` as the `TitleMatchMode` and (optionally) `DetectHiddenWindows` set */
+    static MaximizeRegex(WinTitle := "A", WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false) {
+        return this.regexFunc("Maximize", WinTitle, WinText, ExcludeTitle, ExcludeText, dctHidWin)
+    }
 
     static regexFunc(func, WinTitle?, WinText:="", ExcludeTitle:="", ExcludeText:="", dctHidWin := false, Timeout := 0) {
         Critical(), orig := detect(dctHidWin, "RegEx")
@@ -71,6 +79,12 @@ class winExt {
                 case "Activate":
                     WinActivate(WinTitle, WinText, ExcludeTitle, ExcludeText)
                     return true
+                case "Maximize":
+                    WinMaximize(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                    return true
+                case "Minimize":
+                    WinMinimize(WinTitle, WinText, ExcludeTitle, ExcludeText)
+                    return true
                 case "Exist": returnVal        := WinExist(WinTitle, WinText, ExcludeTitle, ExcludeText)
                 case "Count": returnVal        := WinGetCount(WinTitle, WinText, ExcludeTitle, ExcludeText)
                 case "PID": returnVal          := WinGetPID(WinTitle, WinText, ExcludeTitle, ExcludeText)
@@ -81,7 +95,7 @@ class winExt {
                     WinClose(WinTitle, WinText, Timeout, ExcludeTitle, ExcludeText)
                     return true
                 case "Wait": returnVal         := WinWait(WinTitle, WinText, Timeout, ExcludeTitle, ExcludeText)
-             }
+            }
         } catch {
             resetOrigDetect(orig), Critical("Off")
             return false

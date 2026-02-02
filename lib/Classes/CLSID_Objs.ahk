@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/01/30
- * @version 1.1.0
+ * @date 2026/02/02
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -54,9 +54,10 @@ class CLSID_Objs {
                         mtx.Release()
                     }
                 case WAIT_TIMEOUT:
-                    Notify.Show(, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
+                    if !Notify.Exist("mutexLock")
+                        Notify.Show(, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400 tag=mutexLock')
                     errorLog(TimeoutError('Timeout waiting for lock on: ' objName))
-                    return
+                    return false
                 case WAIT_FAILED:
                     throw OSError()
             }

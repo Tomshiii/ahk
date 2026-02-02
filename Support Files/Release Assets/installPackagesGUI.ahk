@@ -31,7 +31,7 @@ class newGUI extends Gui {
         this.AddButton("ys+20 xs+350 w65 vDoneButton", "Done").OnEvent("Click", (*) => ExitApp())
 
         this.AddCheckbox("xs+25 ys+20 Section vPremRemote", "Install/Update Premiere Remote").OnEvent("Click", (guiObj, *) => (this.__checkboxes(guiObj, "PremRemote")))
-        this.AddText("xs y+5", "*note: NodeJS must already be installed for all of the above").SetFont("S9 Italic")
+        this.AddText("xs y+5 BackgroundTrans", "*note: NodeJS must already be installed for all of the above").SetFont("S9 Italic")
 
     }
     TitleBack  := 'BackgroundWhite'

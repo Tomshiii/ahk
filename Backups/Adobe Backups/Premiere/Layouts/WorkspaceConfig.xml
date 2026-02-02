@@ -34,15 +34,15 @@
 <key>FilePaths</key>
 <array>
 <array.type><ustring/></array.type>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_1.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_3.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_3.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_4.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\25.0\Profile-Tom\Layouts\UserWorkspace_5.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\ArchivedLayouts\UserWorkspace_1.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\ArchivedLayouts\UserWorkspace_3.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_3.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_4.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_5.xml</ustring>
 </array>
 </prop.pair>
 <prop.pair>
@@ -68,10 +68,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>-31</int>
-<int type='signed' size='32'>3381</int>
-<int type='signed' size='32'>1448</int>
+<int type='signed' size='32'>56</int>
+<int type='signed' size='32'>57</int>
+<int type='signed' size='32'>4118</int>
+<int type='signed' size='32'>1504</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -87,7 +87,7 @@
 <string>20250815T013955.243628</string>
 <string>20250725T031359.840093</string>
 <string>20250724T233533.585158</string>
-<string>20251215T003509.242458</string>
+<string>20260130T104121.332103</string>
 <string>20250811T074521.423931</string>
 <string>20250427T230623.728351</string>
 <string>20250724T233504.530425</string>

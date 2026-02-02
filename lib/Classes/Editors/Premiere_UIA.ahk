@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/02/02
- * @version 2.2.1
+ * @version 2.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -36,9 +36,9 @@ effectsPanel          - The Effects panel
 
 Class premUIA_Values {
     static __New() {
-        try UserSettings := CLSID_Objs.load("UserSettings")
+        try UserSettings := CLSID_Objs.clone("UserSettings")
         catch {
-            UserSettings := UserPref()
+            UserSettings := UserPref(true)
         }
         this.setVer := UserSettings.premVer
         currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")

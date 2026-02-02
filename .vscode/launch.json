@@ -12,7 +12,7 @@
             "request": "launch",
             "name": "Launch Script in ExtendScript Engine",
             "bringToFront": true,
-            "hostAppSpecifier": "premierepro-25.0",
+            "hostAppSpecifier": "premierepro-26.0",
             "script": "${file}"
         }
     ]

@@ -200,7 +200,7 @@
 
 
 ["** header **"]
-	"major_version" = "108"
+	"major_version" = "109"
 
 ["AE_TopLevelWindow"]
 	"CloseTimelinePanelsToLeft" = "()"
@@ -405,7 +405,9 @@
 	"TimeJumpToWAStart" = "(Shift+HOME)"
 	"TimeRewind" = "(Ctrl+Alt+LeftArrow)(HOME)"
 	"TimeSetIn" = "([)"
+	"TimeSetInRelative" = "(Shift+[)"
 	"TimeSetOut" = "(])"
+	"TimeSetOutRelative" = "(Shift+])"
 	"TimeShiftSpacebarPlay" = "(Shift+Space)"
 	"TimeSpacebarPlay" = "(F18)(Space)"
 	"TimeStepBack" = "(Ctrl+LeftArrow)(PageUP)"
@@ -415,7 +417,9 @@
 	"TimeStretchIn" = "(Ctrl+Shift+Comma)"
 	"TimeStretchOut" = "(Ctrl+Alt+Comma)"
 	"TimeTrimIn" = "(Alt+[)"
+	"TimeTrimInRelative" = "(Alt+Shift+[)"
 	"TimeTrimOut" = "(Alt+])"
+	"TimeTrimOutRelative" = "(Alt+Shift+])"
 
 ["CDirItemTabPanelTime"]
 	"TimeFastForward" = "(Ctrl+Alt+RightArrow)(PadEnd)(END)"
@@ -826,11 +830,15 @@
 	"CompTimeZoomOut" = "(-)"
 	"CompTimeZoomToggleFullCustom" = "(Shift+;)"
 	"TimeSetIn" = "([)"
+	"TimeSetInRelative" = "(Shift+[)"
 	"TimeSetOut" = "(])"
+	"TimeSetOutRelative" = "(Shift+])"
 	"TimeStretchIn" = "(Ctrl+Shift+Comma)"
 	"TimeStretchOut" = "(Ctrl+Alt+Comma)"
 	"TimeTrimIn" = "(Alt+[)"
+	"TimeTrimInRelative" = "(Alt+Shift+[)"
 	"TimeTrimOut" = "(Alt+])"
+	"TimeTrimOutRelative" = "(Alt+Shift+])"
 	"ToggleGraph" = "(Shift+F3)"
 
 ["TextLayerUI"]

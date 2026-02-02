@@ -2,7 +2,7 @@
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
  * @date 2026/02/02
- * @version 2.2.4
+ * @version 2.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -68,7 +68,7 @@ class adobeAutoSave extends count {
     __New(rClickPrem := "RButton", rClickMove := "XButton1") {
         try {
             this.premUIA := CLSID_Objs.load("premUIA_Values")
-            this.premUIA.initialise(false)
+            ; this.premUIA.initialise(false) ;// don't do this or every reload it'll force attempt trying to set them
             ;// attempt to grab user settings
             this.UserSettings    := CLSID_Objs.load("UserSettings")
             this.ms              := (this.UserSettings.autosave_MIN * 60000)
@@ -77,7 +77,6 @@ class adobeAutoSave extends count {
             this.saveOverride    := this.UserSettings.autosave_save_override
             this.alwaysSave      := this.UserSettings.autosave_always_save
             this.restartPlayback := this.UserSettings.autosave_restart_playback
-            this.mainScript      := this.UserSettings.MainScriptName
             ; this.aeSaveBG        := this.UserSettings.ae_save_bg
         }
 
@@ -745,11 +744,8 @@ class adobeAutoSave extends count {
     /** checks to see if the script the user has defined as their main script is running */
     __checkMainScript() {
         Critical()
-        prevDec := detect()
-        isMainScriptOpen := WinExist(this.mainScript ".ahk")
-        resetOrigDetect(prevDec)
-        Critical("Off")
-        if isMainScriptOpen
+        isCoreFunc := winExt.ExistRegex("Core Functionality.ahk")
+        if isCoreFunc
             return true
         return false
     }
