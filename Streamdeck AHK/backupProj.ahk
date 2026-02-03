@@ -5,6 +5,7 @@
 #Include Classes\obj.ahk
 #Include Classes\explorer.ahk
 #Include Classes\Editors\Premiere.ahk
+#Include Functions\notifyIfNotExist.ahk
 #Include Other\Notify\Notify.ahk
 ;
 if WinExist(prem.winTitle) {
@@ -22,7 +23,7 @@ if !projectFolder := FileSelect("D 3", defaultDir, "Select Folder Containing Pro
     return
 sd := SD_Opt()
 if !DirExist(sd.backupFolder) {
-    Notify.Show(, 'You can set your backup location in;`n..\Support Files\Streamdeck Files\options.ini', 'C:\Windows\System32\imageres.dll|icon77', 'Windows Balloon',, 'dur=6 show=Fade@250 hide=Fade@250 bdr=0xC72424')
+    notifyIfNotExist("backupProjSetOpt",, 'You can set your backup location in;`n..\Support Files\Streamdeck Files\options.ini', 'C:\Windows\System32\imageres.dll|icon77', 'Windows Balloon',, 'dur=6 show=Fade@250 hide=Fade@250 bdr=0xC72424')
     if !backupFolder := FileSelect("D 3", defaultDir, "Select Location you wish to Backup to")
         return
 }
@@ -146,7 +147,7 @@ __doBackup(backupFolder, additionalDir) {
     }
 }
 
-Notify.Show(, 'Your project is being backed up!', 'C:\Windows\System32\imageres.dll|icon249', 'Windows Battery Critical',, 'dur=5 bc=Black show=Fade@250 hide=Fade@250 bdr=Yellow tag=backupProjPreAlert maxW=400')
+notifyIfNotExist("backupProjPreAlert",, 'Your project is being backed up!', 'C:\Windows\System32\imageres.dll|icon249', 'Windows Battery Critical',, 'dur=5 bc=Black show=Fade@250 hide=Fade@250 bdr=Yellow maxW=400')
 __doBackup(backupFolder, additionalDir)
 if !DirExist(sd.backupFolderWork)
     return

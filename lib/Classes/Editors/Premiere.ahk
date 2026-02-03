@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/02/03
- * @version 2.3.16
+ * @version 2.3.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -247,7 +247,7 @@ class Prem {
                 }
 			case "preSpectrum":
                 sleep 50
-                notifyIfNotExist('preSpectrum', 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                notifyIfNotExist('preSpectrum',, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                 this.theme := this.defaultTheme
                 this.__setTimelineCol("preSpectrum", this.theme)
         }
@@ -1306,14 +1306,14 @@ class Prem {
                     this().__fxPanel()
                     if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y1: effCtrlNN.y + effCtrlNN.height},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
                         blocker.Off()
-                        notifyIfNotExist("premNoClipSelectedGain", 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                        notifyIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
                 }
                 case true:
                     if !this.__remoteFunc('isSelected', true) {
                         blocker.Off()
-                        notifyIfNotExist("premNoClipSelectedGain", 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                        notifyIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
 
@@ -1321,7 +1321,7 @@ class Prem {
         } catch {
             blocker.Off()
             errorLog(UnsetError("ClassNN wasn't given a value", -1))
-            notifyIfNotExist("premNoClassNN", "ClassNN wasn't given a value",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            notifyIfNotExist("premNoClassNN",,"ClassNN wasn't given a value",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return
         }
         sleep 100
@@ -1467,7 +1467,7 @@ class Prem {
             levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
             if levels != true && levels != "true" {
                 errorLog(MethodError("Unexpected response", -1), "sent value: " String(which sendGain) " Response: " levels " - Type: " Type(levels))
-                notifyIfNotExist("premLevelKeyframe", 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
+                notifyIfNotExist("premLevelKeyframe", 'prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
                 block.Off()
                 return
             }
@@ -1650,7 +1650,7 @@ class Prem {
                 }
             } catch {
                 Critical("Off")
-                notifyIfNotExist("failedCSLIDobj", "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                notifyIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 return false
             }
@@ -1690,7 +1690,7 @@ class Prem {
             } catch {
                 activeObj := ""
                 Critical("Off")
-                notifyIfNotExist("failedCSLIDobj", "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                notifyIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 return false
             }
@@ -2419,7 +2419,7 @@ class Prem {
     static __layerDividerCheck(coords) {
         dividerCheck := PixelGetColor(this.timelineRawX+5, coords.y)
         if dividerCheck = this.layerDivider {
-            notifyIfNotExist("premLayerDivider", 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+            notifyIfNotExist("premLayerDivider",, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
             return false
         }
         return true
@@ -2918,7 +2918,7 @@ class Prem {
             }
             if track+offset < 1 {
                 blocker.Off()
-                notifyIfNotExist("premIncorrectTrackIndex", 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
+                notifyIfNotExist("premIncorrectTrackIndex", 'toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
                 errorLog(ValueError("Desired track must be greater than 1", -1))
                 return
             }
@@ -2987,7 +2987,7 @@ class Prem {
                         checkStuck()
                         blocker.Off()
                         this.ignoreKey := false
-                        notifyIfNotExist("premIgnoreOffset", 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                        notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         return
                     }
                     if ignore != false && A_Index-offset >= ignore
@@ -3019,7 +3019,7 @@ class Prem {
                         checkStuck()
                         blocker.Off()
                         this.ignoreKey := false
-                        notifyIfNotExist("premIgnoreOffset", 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                        notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         return
                     }
                     if ignore != false && A_Index-offset >= ignore
@@ -3056,7 +3056,7 @@ class Prem {
             sleep 50
             if !Notify.Exist("timeline")
                 theme := (timelineColours.%UI%.has(this.defaultTheme)) ? this.defaultTheme : "darkest"
-                Notify.Show(, '``timelineColours {`` does not have values set for the requested theme. Reverting to "' theme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=timeline')
+                notifyIfNotExist("timelineThemeNotSet",, '``timelineColours {`` does not have values set for the requested theme. Reverting to "' theme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
         }
 		for k, v in timelineColours.%UI%.%theme% {
 			if Mod(A_Index, 2) != 0
@@ -3140,8 +3140,8 @@ class Prem {
         if !allButtons || allButtons = -1 {
             blocker.Off()
             switch allButtons {
-                case false: notifyIfNotExist("premInvalidLayerVals", 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case -1: notifyIfNotExist("premMiddleDivider", 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case false: notifyIfNotExist("premInvalidLayerVals", 'prem.disableAllMuteSolo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case -1: notifyIfNotExist("premMiddleDivider", 'prem.disableAllMuteSolo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
             }
             return
         }
@@ -3207,8 +3207,8 @@ class Prem {
         if !allButtons || allButtons = -1 {
             blocker.Off()
             switch allButtons {
-                case false: notifyIfNotExist("premInvalidLayerVals", 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case -1: notifyIfNotExist("premMiddleDivider", 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case false: notifyIfNotExist("premInvalidLayerVals", 'prem.soloVideo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case -1: notifyIfNotExist("premMiddleDivider", 'prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
             }
             return
         }
@@ -3307,10 +3307,10 @@ class Prem {
             enableMaxRenderQual := true
         toggle := this.__remoteFunc('toggleLinearColour', true, "enableMaxRenderQual=" enableMaxRenderQual)
         switch toggle {
-            case "failure": Notify.Show(, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red tag=premFailLinColour')
+            case "failure": notifyIfNotExist("premFailLinColour",, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red')
             default:
                 state := (toggle = true) ? "Enabled" : "Disabled"
-                Notify.Show(, 'Toggling Linear Colour successful.`nNew setting: ' state,,,, 'dur=4 bc=Black bdr=Aqua tag=premLinColour')
+                notifyIfNotExist("premLinColour",, 'Toggling Linear Colour successful.`nNew setting: ' state,,,, 'dur=4 bc=Black bdr=Aqua')
         }
     }
 
@@ -3458,7 +3458,7 @@ class Prem {
             return false
         }
         if !this.__remoteFunc('closeActiveSequence', true) {
-            notifyIfNotExist("premCloseSeq", 'Failed to determine the active sequence', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=5 bdr=Red maxW=400')
+            notifyIfNotExist("premCloseSeq",, 'Failed to determine the active sequence', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=5 bdr=Red maxW=400')
             return
         }
     }

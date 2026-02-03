@@ -78,6 +78,7 @@ This update introduces some rather large, breaking changes to the functionality 
 
 ### 📝 `premUIA_Values {`
 - ✅ Fixed duplicate `Notify {` windows being spammed during errors
+
 📍 `__setNewVal()`
 - ✅ Fixed function sometimes leaving inputs blocked
 - 📋 Will now abort if the `Save Project` window appears

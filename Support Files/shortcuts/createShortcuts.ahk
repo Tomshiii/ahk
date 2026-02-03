@@ -3,6 +3,7 @@
 #Include Classes\settings.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Functions\generateAdobeShortcut.ahk
+#Include Functions\notifyIfNotExist.ahk
 #Include Other\Notify\Notify.ahk
 ; }
 
@@ -12,7 +13,7 @@ UserSettings := CLSID_Objs.clone("UserSettings")
 
 try warning := A_Args[1]
 if !IsSet(warning) || (warning != false && warning != "false") {
-    Notify.Show(, 'This script assumes you`'ve installed adobe programs to their default path and the correct version is selected within settingsGUI().', 'iconi',,, 'dur=4 maxW=500 bdr=0x75AEDC tag=origNotifShort')
+    notifyIfNotExist("origNotifShort",, 'This script assumes you`'ve installed adobe programs to their default path and the correct version is selected within settingsGUI().', 'iconi',,, 'dur=4 maxW=500 bdr=0x75AEDC')
 }
 
 if !generateAdobeShortcut(UserSettings, "Adobe Premiere Pro", UserSettings.prem_Year) {

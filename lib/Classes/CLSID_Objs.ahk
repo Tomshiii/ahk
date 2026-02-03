@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/02/02
- * @version 1.1.1
+ * @date 2026/02/03
+ * @version 1.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include Other\Mutex.ahk
 #Include Other\Notify\Notify.ahk
 #Include Functions\detect.ahk
+#Include Functions\notifyIfNotExist.ahk
 ; }
 
 class CLSID_Objs {
@@ -54,8 +55,7 @@ class CLSID_Objs {
                         mtx.Release()
                     }
                 case WAIT_TIMEOUT:
-                    if !Notify.Exist("mutexLock")
-                        Notify.Show(, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400 tag=mutexLock')
+                    notifyIfNotExist("mutexLock",, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
                     errorLog(TimeoutError('Timeout waiting for lock on: ' objName))
                     return false
                 case WAIT_FAILED:

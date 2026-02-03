@@ -4,6 +4,7 @@
 #Include Classes\errorLog.ahk
 #Include Other\Notify\Notify.ahk
 #Include Functions\validateTypes.ahk
+#Include Functions\notifyIfNotExist.ahk
 ; }
 
 /**
@@ -71,7 +72,7 @@ generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
         return false
     try FileCreateShortcut(exeLocation, shortcutLocation)
     catch {
-        Notify.Show("Unknown Error Occured", "An error occurred trying to generate the file shortcut", 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+        notifyIfNotExist("adobeFailedGeneratingShortcut", "Unknown Error Occured", "An error occurred trying to generate the file shortcut", 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
         errorLog(Error("An error occurred trying to generate the file shortcut", -1))
         return false
     }

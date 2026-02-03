@@ -7,6 +7,7 @@
 #Include *i Other\Notify\Notify.ahk
 #Include *i Functions\deleteDotUnderscore.ahk
 #Include *i Functions\syncDirectories.ahk
+#Include *i Functions\notifyIfNotExist.ahk
 
 ;// if the user has not generated the symlink yet this script will return
 try {
@@ -59,7 +60,7 @@ try {
             break
     }
     if mt != "5600" {
-        Notify.Show(, 'XMP is currently NOT enabled. Ram is running at ' mt 'MT/s', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark pos=CT dur=5 bdr=Red maxW=400')
+        notifyIfNotExist("XMP",, 'XMP is currently NOT enabled. Ram is running at ' mt 'MT/s', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark pos=CT dur=5 bdr=Red maxW=400')
     }
 }
 

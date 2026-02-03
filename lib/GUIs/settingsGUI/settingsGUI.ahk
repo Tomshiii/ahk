@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/02/02
- * @version 2.4.4
+ * @date 2026/02/03
+ * @version 2.4.5
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -23,6 +23,7 @@
 #Include Functions\detect.ahk
 #Include Functions\checkInternet.ahk
 #Include Functions\generateAdobeShortcut.ahk
+#Include Functions\notifyIfNotExist.ahk
 ;}
 
 
@@ -317,7 +318,7 @@ settingsGUI()
                         activeObj := ""
                     } catch {
                         activeObj := ""
-                        Notify.Show("settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
+                        notifyIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
                     }
                 }
                 resetOrigDetect(origDetect)
@@ -399,7 +400,7 @@ settingsGUI()
                         activeObj := ""
                     } catch {
                         activeObj := ""
-                        Notify.Show("settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
+                        notifyIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
                     }
                 }
                 return
@@ -458,7 +459,7 @@ settingsGUI()
         newSettings := FileRead(UserSettings.SettingsFile)
         UserSettings := ""
         if newSettings != initialSettings
-            Notify.Show("settingsGUI()", "Settings changes are being saved`nGUI cannot be reopened until this window disappears...", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250 TAG=settingsGUI")
+            notifyIfNotExist("settingsGUI", "settingsGUI()", "Settings changes are being saved`nGUI cannot be reopened until this window disappears...", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
         if IsSet(butt) {
             switch butt {
                 case "hard":

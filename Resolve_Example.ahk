@@ -25,7 +25,7 @@ startupTray()
 ;\\v2.10.0
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.16.2
+;\\v2.17.0beta4
 ; ==================================================================================================
 ;
 ; 							THIS SCRIPT IS FOR v2.0 OF AUTOHOTKEY

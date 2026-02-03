@@ -3,8 +3,8 @@
  * Last tested in the version of Photoshop listed below
  * @psVer 27.1
  * @author tomshi
- * @date 2025/12/20
- * @version 1.3.0
+ * @date 2026/02/03
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,7 @@
 #Include Classes\tool.ahk
 #Include Classes\keys.ahk
 #Include Classes\errorLog.ahk
+#Include Functions\notifyIfNotExist.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\Notify\Notify.ahk
 ; }
@@ -103,7 +104,7 @@ class PS {
             }
         } catch {
             MouseMove(origCoords.x, origCoords.y, 2)
-            Notify.Show(, 'Failed to set the correct filetype. Try again later.', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Balloon',, 'theme=Dark bdr=Red maxW=400')
+            notifyIfNotExist("psFailedFileType",, 'Failed to set the correct filetype. Try again later.', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Balloon',, 'theme=Dark bdr=Red maxW=400')
             return false
         }
 

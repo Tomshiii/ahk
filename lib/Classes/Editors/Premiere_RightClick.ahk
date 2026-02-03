@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/02/02
- * @version 2.4.4
+ * @date 2026/02/03
+ * @version 2.4.5
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -25,6 +25,7 @@
 #Include Other\WinEvent.ahk
 #Include Other\Notify\Notify.ahk
 #Include Functions\checkStuck.ahk
+#Include Functions\notifyIfNotExist.ahk
 ; }
 
 ;//! if you intend on running this as a separate script, please read the notes below and the wiki page so you're aware of the unexpected behaviours that can cause!
@@ -391,7 +392,7 @@ class rbuttonPrem {
 			if !ckDir || !ckFunc {
 				useRemote := false
 				this.remote := false
-				Notify.Show('Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.`nrbuttonPrem().movePlayhead() will no longer attempt to use it until a script reload.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+				notifyIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.`nrbuttonPrem().movePlayhead() will no longer attempt to use it until a script reload.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
 				this.__exit()
 			}
 			if this.remote = true
@@ -399,9 +400,7 @@ class rbuttonPrem {
 			if this.origSeq = false {
 				useRemote := false
 				errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
-                if !Notify.Exist("RemoteServer") {
-                    Notify.Show(, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center tag=RemoteServer maxw=500')
-                }
+				notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
 				this.__exit()
 			}
 		}

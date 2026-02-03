@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2025/10/20
- * @version 1.2.0
+ * @date 2026/02/03
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include Classes\switchTo.ahk
 #Include Classes\explorer.ahk
 #Include Functions\useNVENC.ahk
+#Include Functions\notifyIfNotExist.ahk
 #Include Other\JSON.ahk
 #Include Other\Notify\Notify.ahk
 ; }
@@ -23,7 +24,7 @@ class ffmpeg {
     doAlert := true
 
     /** generates a tooltip to alert the user the process has completed */
-    __finished() => (this.doAlert=true) ? Notify.Show(, 'ffmpeg process has completed!', 'C:\Windows\System32\imageres.dll|icon19', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
+    __finished() => (this.doAlert=true) ? notifyIfNotExist("ffmpegComplete",, 'ffmpeg process has completed!', 'C:\Windows\System32\imageres.dll|icon19', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
 
     /**
      * Retrieves the path of an active windows explorer process

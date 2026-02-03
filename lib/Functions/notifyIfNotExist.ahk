@@ -12,5 +12,5 @@ notifyIfNotExist(tag, title := '', msg := '', image := '', sound := '', callback
         return
     }
     if !Notify.Exist(tag)
-        Notify.Show(title, msg, image, sound, callback, options . "tag=" tag)
+        Notify.Show(title, msg, image, sound, callback, options . " tag=" tag)
 }

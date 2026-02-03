@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2026/01/02
- * @version 1.2.2
+ * @date 2026/02/03
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include Classes\errorLog.ahk
 #Include Classes\switchTo.ahk
 #Include Classes\explorer.ahk
+#Include Functions\notifyIfNotExist.ahk
 #Include Other\Notify\Notify.ahk
 #Include Functions\getHTMLTitle.ahk
 ; }
@@ -46,7 +47,7 @@ class ytdlp {
     currentName := ""
 
     /** generates a tooltip to alert the user the process has completed */
-    __finished() => (this.doAlert = true) ? Notify.Show(, 'yt-dlp process has completed!', 'C:\Windows\System32\imageres.dll|icon56', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
+    __finished() => (this.doAlert = true) ? notifyIfNotExist("ytdlpComplete",, 'yt-dlp process has completed!', 'C:\Windows\System32\imageres.dll|icon56', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
 
     /**
      * Checks the desired filepath to see if a file of the desired name already exists

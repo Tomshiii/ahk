@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/02/02
- * @version 2.2.3
+ * @date 2026/02/03
+ * @version 2.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -17,6 +17,7 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Functions\checkStuck.ahk
 #Include functions\detect.ahk
+#Include functions\notifyIfNotExist.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\JSON.ahk
 #Include Other\Notify\Notify.ahk
@@ -108,8 +109,7 @@ Class premUIA_Values {
             this.currentVer := this.baseVer
         if ObjOwnPropCount(this.allVals.%this.currentVer%) != this.windowHotkeys.Count {
             errorLog(Error("The user is currently missing UIA values. Please set new values to ensure proper function."))
-            if !Notify.Exist("UIAmissingVals")
-                Notify.Show(, 'The user is currently missing UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400 tag=UIAmissingVals')
+            notifyIfNotExist("UIAmissingVals",, 'The user is currently missing UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400')
         }
         for k, v in this.allVals.%this.currentVer%.Ownprops() {
             this.%k% := v
@@ -125,8 +125,7 @@ Class premUIA_Values {
         if activeObj.HasOwnProp('isRunning') && activeObj.isRunning = true {
             block.Off()
             Critical("Off")
-            if !Notify.Exist("UIAisRunning")
-                Notify.Show(, "Attempting to set UIA values is already in process.`nPlease wait.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 tag=UIAisRunning')
+            notifyIfNotExist("UIAisRunning",, "Attempting to set UIA values is already in process.`nPlease wait.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
             Exit()
         }
         detect(false, 2) ;// incase the user is midreload while attempting to set values
@@ -153,17 +152,14 @@ Class premUIA_Values {
                 appVer := "v" premVerVal
 
                 if (this.setVer != appVer) && (this.setVer ".0" != appVer) {
-                    if !Notify.Exist("UIAwrongVer")
-                        Notify.Show(, 'The currently set version of Premiere does not match the application version.`nConsider adjusting the set version in settingsGUI() and then reloading`n`nSet Version: ' this.setVer ".0 || Premiere Version: " appVer, 'C:\Windows\System32\imageres.dll|icon227', 'Windows Notify Messaging',, 'theme=Dark dur=10 bdr=Red maxW=400 tag=UIAwrongVer')
+                    notifyIfNotExist("UIAwrongVer",, 'The currently set version of Premiere does not match the application version.`nConsider adjusting the set version in settingsGUI() and then reloading`n`nSet Version: ' this.setVer ".0 || Premiere Version: " appVer, 'C:\Windows\System32\imageres.dll|icon227', 'Windows Notify Messaging',, 'theme=Dark dur=10 bdr=Red maxW=400')
                     block.Off()
                     activeObj.isRunning := false
                     return
                 }
             } catch {
                 errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
-                if !Notify.Exist("RemoteServer") {
-                    Notify.Show(, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center tag=RemoteServer maxw=500')
-                }
+                notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
                 block.Off()
                 activeObj.isRunning := false
                 return
@@ -207,8 +203,7 @@ Class premUIA_Values {
                 block.off()
                 activeObj.isRunning := false
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
-                if !Notify.Exist("UIAnotDetermined")
-                    Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400 tag=UIAnotDetermined')
+                notifyIfNotExist("UIAnotDetermined",, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                 return
             }
         }
@@ -221,7 +216,7 @@ Class premUIA_Values {
         }
 
         if !Notify.Exist("UIAattemptControls")
-            attemptNotify := Notify.Show(, 'Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=3 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75 tag=UIAattemptControls')
+            attemptNotify := Notify.Show(, 'Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=3 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
 
         checkDupes := Map()
         hasDupes   := false
@@ -229,8 +224,7 @@ Class premUIA_Values {
             if WinExist("Save Project " prem.winTitle) {
                 block.Off()
                 activeObj.isRunning := false
-                if !Notify.Exist("UIAfailedControls")
-                    Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400 tag=UIAfailedControls')
+                notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
                 errorLog(TargetError("Premiere save window is currently open. Aborting", -1))
                 return
             }
@@ -252,8 +246,7 @@ Class premUIA_Values {
                         activeObj.isRunning := false
                         errorLog(Error("UIA Values could not be determined. Please try again later"))
                         try Notify.Destroy(attemptNotify['hwnd'])
-                        if !Notify.Exist("UIAnotDetermined")
-                            Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400 tag=UIAnotDetermined')
+                        notifyIfNotExist("UIAnotDetermined",, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                         return
                     }
                 }
@@ -263,8 +256,7 @@ Class premUIA_Values {
                 activeObj.isRunning := false
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
                 try Notify.Destroy(attemptNotify['hwnd'])
-                if !Notify.Exist("UIAnotDetermined")
-                    Notify.Show(, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400 tag=UIAnotDetermined')
+                notifyIfNotExist("UIAnotDetermined",, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                 return
             }
             if checkDupes.Has(currentEl) {
@@ -276,18 +268,15 @@ Class premUIA_Values {
         }
         if hasDupes = true {
             errorLog(Error("The function may have set duplicate UIA values. Please set new values to ensure proper function."))
-            if !Notify.Exist("UIAhasDupes")
-                Notify.Show(, 'The function may have set duplicate UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400 tag=UIAhasDupes')
+            notifyIfNotExist("UIAhasDupes",, 'The function may have set duplicate UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400')
         }
         checkStuck(["XButton1", "XButton2", "Ctrl", "Shift", "Alt", "RButton", "LButton"])
         block.Off()
         this.allVals := currentVers
         this.__setClassVal()
-        if !Notify.Exist("UIAnoEffect")
-            Notify.Show(, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400 tag=UIAnoEffect')
+        notifyIfNotExist("UIAnoEffect",, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
         if this.successCount != this.windowHotkeys.Count {
-            if !Notify.Exist("UIADupes")
-                Notify.Show('Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400 tag=UIADupes')
+            notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
         }
         this.successCount := 0
         this.beenSet := true
