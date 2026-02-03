@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/02/02
- * @version 1.8.6
+ * @date 2026/02/03
+ * @version 1.8.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -726,8 +726,8 @@ class Startup {
         premExeLocation := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro (Beta).exe"             : A_ProgramFiles "\Adobe\" premFolder "\Adobe Premiere Pro.exe"
         aeExeLocation   := (this.UserSettings.aeIsBeta = true || this.UserSettings.aeIsBeta = "true")   ? A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX (Beta).exe" : A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX.exe"
 
-        premExeVer := FileExist(premExeLocation) ? FileGetExtendedProp(premExeLocation,, "Product version")["Product version"] : premNotFound := true
-        aeExeVer   := FileExist(aeExeLocation)   ? FileGetExtendedProp(aeExeLocation,, "Product version")["Product version"]   : aeNotFound   := true
+        premExeVer := FileExist(premExeLocation) ? FileGetExtendedProp(premExeLocation,, "System.Software.ProductVersion")["System.Software.ProductVersion"] : premNotFound := true
+        aeExeVer   := FileExist(aeExeLocation)   ? FileGetExtendedProp(aeExeLocation,, "System.Software.ProductVersion")["System.Software.ProductVersion"]   : aeNotFound   := true
 
         ;// remove ".0"
         premExeVer := SubStr(premExeVer, premFinalDot := InStr(premExeVer, ".",, -1), 2) = ".0" ? SubStr(premExeVer, 1, premFinalDot-1) : premExeVer
@@ -779,7 +779,7 @@ class Startup {
             return
 
         basePath := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers"
-        adobeProgs := ["ae", "prem", "ps"]
+        adobeProgs := ["ae", "prem"] ;, "ps"
         needsRefresh := false
         for v in adobeProgs {
             currVer := SubStr(this.UserSettings.%v%Ver, 1, 3)
@@ -788,7 +788,7 @@ class Startup {
             needsNewFile := false
             if !FileExist(currentFile) {
                 needsNewFile := true
-                FileAppend("", currentFile)
+                FileAppend("{`n`n}", currentFile)
                 if !FileExist(previousFile)
                     continue
             }

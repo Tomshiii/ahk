@@ -133,8 +133,6 @@ This update introduces some rather large, breaking changes to the functionality 
 
 ### 📝 `startup {`
 - ✅ Fixed `__checkForReloadAttempt()` causing scripts to throw under certain circumstances
-- ✅ Fixed `checkVersJSON()` generating an entry even if an `ImageSearch` folder exists
-- ✅ Fixed `adobeVerOverride()` not generating new shortcuts
 - ✅ Fixed `Set Prem_UIA Values` not working when selected from the tray menu
 - 📋 `gitBranchCheck()` will now abort if the user has any stashed changes
 
@@ -142,6 +140,14 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed function not actually rerunning `HotkeylessAHK.ahk` when the user selects `reboot` and it has already been closed
 - ✅ Fixed function potentially leaking `detect` settings
 - ✅ Fixed function potentially getting stuck if another process changes the current `detect` settings while function is operating
+
+📍 `adobeVerOverride()`
+- ✅ Fixed function not generating new shortcuts
+- ✅ Fixed function failing to retrieve file version if system language isn't set to `English`
+
+📍 `checkVersJSON()`
+- ✅ Fixed function generating an entry even if an `ImageSearch` folder exists
+- ✅ Fixed function generating broken `.json` files
 
 ### 📝 `switchTo {`
 📍 `adobeProject()`
