@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
- * @date 2025/12/20
- * @version 1.1.0
+ * @date 2026/02/03
+ * @version 1.1.1
  ***********************************************************************/
 
 ;{ \\ #Includes
@@ -25,29 +25,16 @@ class KeyShortAdjust {
      */
     __CreateMap(section, iniLocation := this.iniLocation) {
         getSection := IniRead(iniLocation, section)
-        ;// checking to see if `=` is between any of the ""
-        loop {
-            if !var := InStr(getSection, '="',,, A_Index)
-                break
-            if InStr(SubStr(getSection, var+1, InStr(getSection, '"',, var, 2) - var)
-                        , "=")
-                throw ValueError("An = sign was used in an ini value. Please remove this entry.", -1, section)
-            ; print(SubStr(getSection, var+1, InStr(getSection, '"',, var, 2) - var)) ;// debugging
-        }
-        ;// splitting the section into an array
-        arr := StrSplit(getSection, ["=", "`n", "`r"])
+        arr := StrSplit(getSection, ["`n", "`r"])
         newMap := Mip()
-        for i, v in arr {
-            if Mod(i, 2) = 0
-                continue
-            if i+1 > arr.Length
-                break
-            if InStr(v, A_Space)
-                v := StrReplace(v, A_Space, "_")
-            if newMap.Has(v)
-                throw ValueError("Variable Already Exists. Try a new name.", -1, v)
-            newMap.Set(v, arr.Get(i+1))
-            ; print(v ' ' arr.Get(i+1)) ;// debugging
+        for v in arr {
+            key := SubStr(v, 1, (equals := InStr(v, "=",,, 1))-1)
+            value := SubStr(v, equals+1)
+            if InStr(key, A_Space)
+                key := StrReplace(key, A_Space, "_")
+            if newMap.Has(key)
+                throw ValueError("Variable Already Exists. Try a new name.", -1, key)
+            newMap.Set(key, value)
         }
         return newMap
     }

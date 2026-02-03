@@ -25,6 +25,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `loadXML()` throwing in the event the file is busy
 - 📋 Added minor usage of `Critical()` across core functions to minimise instances where functions are interrupted during key operations
 - 📋 Replaced all usage of `WinGetTitle("A")` with `WinGet.Title()` to avoid unnecessary instances of scripts throwing
+- 📋 `KeyShortAdjust {` hotkeys may now include <kbd>=</kbd> or <kbd>"</kbd> for... whatever reason that you'd need that
 - ✏️ Added `isBool()`, `checkBool()`, `delayFuncs()`, `runExt()`, `validateTypes()`, `notifyIfNotExist()`
 - ✏️ Added `CLSID_Objs {`
     - Allows for objects to be shared between scripts easily
