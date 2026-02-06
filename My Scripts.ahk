@@ -93,11 +93,8 @@ __exit(ExitReason, ExitCode) {
 ;				 											   IT WILL NOT RUN IN v1.1
 ;									--------------------------------------------------------------------------------
 ;										           Everything in this script is functional within v2.0
-;									   any code like `errorLog()` or `hardReset()` etc are all functions and defined
-;										in the various `..\lib\Functions` scripts. Look there for specific code to edit.
-;
 ;                                       any code like `block.On()` or `tool.Cust()` etc are functions within a class
-;										       and also defined within the various `..\lib\Classes\` scripts.
+;										       and also defined within the various `%AppData%\tomshi\lib\Classes\` scripts.
 ;
 ; ============================================================================================================================================
 ;

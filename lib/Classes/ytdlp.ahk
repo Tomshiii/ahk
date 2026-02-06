@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2026/02/03
- * @version 1.2.3
+ * @date 2026/02/06
+ * @version 1.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -170,48 +170,32 @@ class ytdlp {
                 Notify.Destroy(mNotifyGUI_Prog['hwnd'])
             case true:
                 listNames := []
-                outputFileName := this.playlistFilename
                 mNotifyGUI_Prog := Notify.Show(, 'Determining names of the output files...`nThis may take a while for large playlists...', 'C:\Windows\System32\imageres.dll|icon86', 'Windows Balloon',, 'dur=20 maxW=400 bdr=0x75AEDC')
-                playlistURLs := cmd.result(Format('yt-dlp --flat-playlist --print "%(url)s" {1} {2}', this.URL, cookies))
+                playlistData := cmd.result(Format('yt-dlp --flat-playlist --restrict-filenames --print "%(id)s | %(title)S | %(url)s" "{1}" {2}', this.URL, cookies))
                 if args = this.defaultAudioCommand || args = this.defaultVideoCommand
                     args := Format(args, "{}", cookies)
-                playlistTitles := []
-                for v in StrSplit(playlistURLs, ["`n", "`r"]) {
-                    playlistTitles.Push(cmd.result(Format('yt-dlp --print filename -o "{1}" "{2}" {3}', outputFileName, v, cookies)))
+                playlistDataArr := []
+                for v in playlistStrSplit := StrSplit(playlistData, ["`n", "`r", " | "]) {
+                    if Mod(A_Index, 3) != 0
+                        continue
+                    playlistDataArr.Push({url: playlistStrSplit[A_Index], title: SubStr(playlistStrSplit[A_index-1], 1, 46-(StrLen(playlistStrSplit[A_Index-2])+3)) " [" playlistStrSplit[A_Index-2] "]"})
                 }
                 Notify.Destroy(mNotifyGUI_Prog['hwnd'])
 
-                playlistURLs := StrSplit(playlistURLs, ["`n", "`r"])
                 origArgs := args
-                for i, v in playlistURLs {
+                for vObj in playlistDataArr {
                     loopArgs := origArgs
-                    SplitPath(playlistTitles[i],,, &ext, &nameNoExt)
-                    curDlNotify := Notify.Show(, "Downloading: " nameNoExt, 'C:\Windows\System32\imageres.dll|icon86',,, 'dur=0 maxW=400 bdr=0x75AEDC')
-                    ext := (isAud = false) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
-                    checkPath1 := WinGet.pathU(folder "\" playlistTitles[i])
-                    checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
-                    if FileExist(checkPath1) || FileExist(checkPath2) {
-                        index := 1
-                        loop {
-                            if FileExist(folder "\" nameNoExt String(index) "." ext) {
-                                index++
-                                continue
-                            }
-                            nameNoExt := nameNoExt String(index)
-                            loopArgs := Format(loopArgs, nameNoExt)
-                            break
-                        }
-                    }
-                    else {
-                        loopArgs := Format(loopArgs, nameNoExt)
-                    }
-                    this.currentName := nameNoExt "." ext
+                    curDlNotify := Notify.Show(, "Downloading: " vObj.title, 'C:\Windows\System32\imageres.dll|icon86',,, 'dur=0 maxW=400 bdr=0x75AEDC')
+                    ;ext := (isAud = false) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
+                    ;// lets just assume and hope for the best, what could go wrong
+                    ext := (isAud = false) ? "" : "wav"
+                    loopArgs := (isAud = false) ? Format(loopArgs, vObj.title) : Format(loopArgs, vObj.title "." ext)
+                    this.currentName := vObj.title "." ext
                     folderU := WinGet.pathU(origFold)
                     folderU := (SubStr(folderU, -1, 1) = "\") ? SubStr(folderU, 1, StrLen(folderU)-1) : folderU
-                    currCommand := Format(this.defaultCommand, loopArgs, folder, v)
-
+                    currCommand := Format(this.defaultCommand, loopArgs, folder, vObj.url)
                     ;// running command
-                    (isAud = true) ? path := cmd.result(currCommand) : cmd.run(,,, currCommand)
+                    (isAud = true) ? path := cmd.result(currCommand) : cmd.run(,,, currCommand,, "Hide")
                     Notify.Destroy(curDlNotify['hwnd'])
                 }
 

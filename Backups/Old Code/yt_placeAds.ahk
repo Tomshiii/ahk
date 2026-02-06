@@ -1,4 +1,5 @@
 #Requires AutoHotkey v2
+#Include "%A_Appdata%\tomshi\lib"
 #Include Functions\delaySI.ahk
 #Include Classes\block.ahk
 #Include Other\UIA\UIA.ahk

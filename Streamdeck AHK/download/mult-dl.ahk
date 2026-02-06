@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/01/02
+ * @date 2026/02/06
  ***********************************************************************/
-global currentVer := "1.3.3.2"
+global currentVer := "1.3.4"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -289,8 +289,8 @@ class multiDL extends tomshiBasic {
                 switch {
                         case (vidOrAud = "vid" && this["deprioritise_single"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle, dlPlaySingle)
                         case (vidOrAud = "vid" && this["deprioritise_single"].value = true):
-                            altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesSingle dlPlaySingle
-                            yt.download(altCommand, this.getFile, this["singleURL"].value, custFileSingle,  showDir)
+                            altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesSingle
+                            yt.download(altCommand, this.getFile, this["singleURL"].value, custFileSingle, showDir,, "", dlPlaySingle)
                         case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle, dlPlaySingle)
                         case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle, dlPlaySingle)
                     }
@@ -309,8 +309,8 @@ class multiDL extends tomshiBasic {
                     switch {
                         case (vidOrAud = "vid" && this["deprioritise"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, v,, false,, cookiesMulti, dlPlayMulti)
                         case (vidOrAud = "vid" && this["deprioritise"].value = true):
-                            altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesMulti dlPlayMulti
-                            yt.download(altCommand, this.getFile, v,, false)
+                            altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesMulti
+                            yt.download(altCommand, this.getFile, v,, false,, "", dlPlayMulti)
                         case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, v,, false,, cookiesMulti, dlPlayMulti)
                         case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, v,, false,, cookiesMulti, dlPlayMulti)
                     }

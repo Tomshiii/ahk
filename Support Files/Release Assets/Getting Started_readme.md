@@ -6,16 +6,6 @@ After running the release `.exe` you will be prompted with a GUI to select a few
 
 ___
 
-**Hotkey Replacer:**
-
-Will produce a GUI that will allow the user to replace any hotkeys (in `My Scripts.ahk`) and KSA.ini values in this release with their own.
-
-A backup of the original release versions of `My Scripts.ahk` & `Keyboard Shortcuts.ini` will be saved in `\Backups\` just incase something goes wrong.
-
-**note: selecting this option is only necessary if the user has an older version of my scripts already in use*
-
-___
-
 **Run at Startup:**
 
 Will create a shortcut of `Initialise.ahk` (`..\PC Startup\Initialise.ahk`) in the user's startup folder `C:\Users\A_UserName\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`. This can be disabled/reenabled later in `settingsGUI()` (`#F1` by default)
