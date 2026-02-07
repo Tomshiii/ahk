@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2026/02/02
- * @version 1.1.6
+ * @date 2026/02/07
+ * @version 1.1.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,7 +29,7 @@ class reset {
         UserSettings := CLSID_Objs.clone("UserSettings")
         this.mainScript := UserSettings.MainScriptName
 
-        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, this.mainScript ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "Core Functionality.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1, "Add game to gameCheck.ahk", 1)
+        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, this.mainScript ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "Core Functionality.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1, "Add game to gameCheck.ahk", 1, "Install Tomshi AHK.ahk", 1)
     }
 
     mainScript := ""

@@ -3,13 +3,13 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2026/02/03
+ * @date 2026/02/07
  * @version v2.17.0beta4
  * @ahk_ver 2.0.19
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.4
+;\\v2.35.5
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -69,6 +69,8 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 
 OnExit(__exit)
 __exit(ExitReason, ExitCode) {
+    if ExitReason = "Shutdown"
+        ExitApp()
     premVals := CLSID_Objs.load("premUIA_Values")
     premVals.beenSet := false
 
