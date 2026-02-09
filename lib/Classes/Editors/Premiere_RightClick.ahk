@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/02/03
- * @version 2.4.5
+ * @date 2026/02/09
+ * @version 2.4.5.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -309,7 +309,7 @@ class rbuttonPrem {
 				return
 		}
 
-		/* try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class") */ ;// prem has fixed the issue of it spamming the error... for now
+		;try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class") ;// prem has fixed the issue of it spamming the error... for now
 		try WinEvent.NotActive((*) => (checkstuck(), this.__exit()), prem.exeTitle)
 		InstallMouseHook(1)
 		this.premObj := CLSID_Objs.load("prem")

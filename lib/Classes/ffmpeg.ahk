@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2026/02/03
- * @version 1.2.1
+ * @date 2026/02/09
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -208,7 +208,7 @@ class ffmpeg {
         ;// for %i in (*.mkv) do ffmpeg -i "%i" "%~ni.mp3"
         ;// for %f in (*.mkv) do ffmpeg -i "%f" -map 0 -c copy "%~nf.mp4"
         switch to {
-            case "mp3", "wav":
+            case "mp3", "wav", "ogg":
                 command := Format('for %i in (*.{1}) do ffmpeg -i `"%i`" `"%~ni.{2}`"', from, to)
                 this.__runCommand(command, path.path)
                 this.__activateWindow(path.hwnd)
