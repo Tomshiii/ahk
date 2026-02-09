@@ -1,8 +1,9 @@
 ; { \\ #Includes
-#Include <Classes\cmd>
-#Include <Classes\ffmpeg>
-#Include <Classes\explorer>
-#Include <Other\Notify\Notify>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+#Include Classes\ffmpeg.ahk
+#Include Classes\explorer.ahk
+#Include Other\Notify\Notify.ahk
 ; }
 
 if !dir := FileSelect("D2",, "Select Folder to Resample (this process will recurse to all subdirs)")

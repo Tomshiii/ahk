@@ -1,9 +1,10 @@
 #Requires AutoHotkey v2.0
-#Include <Classes\cmd>
-#Include <Classes\ffmpeg>
-#Include <Classes\explorer>
-#Include <Other\print>
-#Include <Other\Notify\Notify>
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+#Include Classes\ffmpeg.ahk
+#Include Classes\explorer.ahk
+#Include Other\print.ahk
+#Include Other\Notify\Notify.ahk
 
 sampleRate := "48000"
 ffmp := ffmpeg()

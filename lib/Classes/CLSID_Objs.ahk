@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/02/03
- * @version 1.1.2
+ * @date 2026/02/09
+ * @version 1.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -19,11 +19,12 @@
 ; }
 
 class CLSID_Objs {
-    static __New() {
+    ;// this shouldn't be `static __New()` -- otherwise apps like `multi-dl.ahk` will throw simply for having it included through other libs
+    static checkCoreFunc() {
         if A_ScriptName = "Core Functionality.ahk"
             return
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
-            throw Error("Core Functionality.ahk isn't running.")
+            throw Error("Core Functionality.ahk isn't running.", -2)
         }
     }
     static generateCLSID() => CreateGUID()
@@ -42,6 +43,7 @@ class CLSID_Objs {
      * @param {Integer} timeout milliseconds to wait for lock (default 5000)
      */
     static load(clsid, inClass := true, timeout := 5000) {
+        this.checkCoreFunc()
         objName := inClass ? clsid : "custom"
         mtx := Mutex({Name: "Global\CoreFunc_" objName})
 
@@ -68,6 +70,7 @@ class CLSID_Objs {
 
     /** syntatic sugar to call `clsid_objs.load()`, clone the object, the sever the connection to the original object */
     static clone(clsid, inClass := true) {
+        this.checkCoreFunc()
         baseObj := this.load(clsid, inClass)
         clonedObj := baseObj.clone()
         baseObj := ""

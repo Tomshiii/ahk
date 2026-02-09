@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/02/06
+ * @date 2026/02/09
  ***********************************************************************/
-global currentVer := "1.3.4"
+global currentVer := "1.3.5"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -17,6 +17,7 @@ preReqTitle := "Prerequisites Required"
 #Include Classes\ytdlp.ahk
 #Include Classes\switchTo.ahk
 #Include Classes\explorer.ahk
+#Include Classes\cmd.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Functions\useNVENC.ahk
 #Include Functions\getLocalVer.ahk
@@ -83,7 +84,12 @@ class multiDL extends tomshiBasic {
         if !DirExist(this.requiredFilesDir)
             DirCreate(this.requiredFilesDir)
         defaulDlFodler := RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", EnvGet("USERPROFILE") "\Downloads") "\tomshi"
-        dlFolder := (FileExist(this.requiredFilesDir "\defaultDLLocation")) ? (DirExist(prevFile := FileRead(this.requiredFilesDir "\defaultDLLocation")) ? prevFile : defaulDlFodler) : ((*) => FileAppend(dlFolder, this.requiredFilesDir "\defaultDLLocation"), defaulDlFodler)
+        dlFolder  := (FileExist(this.requiredFilesDir "\defaultDLLocation")) ? (DirExist(prevFile := FileRead(this.requiredFilesDir "\defaultDLLocation")) ? prevFile : defaulDlFodler) : __createDefault(this.requiredFilesDir "\defaultDLLocation", defaulDlFodler)
+        devBranch := (FileExist(this.requiredFilesDir "\devBranch")) ? FileRead(this.requiredFilesDir "\devBranch") : __createDefault(this.requiredFilesDir "\devBranch", "1")
+        __createDefault(filename, defaultReturn) {
+            FileAppend("1", filename)
+            return defaultReturn
+        }
         this.getFile := dlFolder
         super.__New(,,, A_ScriptName)
 
@@ -172,7 +178,7 @@ class multiDL extends tomshiBasic {
         this["VerText"].Move(verx+(verwid*0.725), very, verwid/3, verheight)
         this.AddButton("vupdates x9 y7", "Check for updates").OnEvent("Click", this.__checkUpdates.Bind(this))
         this["updates"].Opt("Disabled")
-        this.AddCheckbox("vcheckDev x+10 yp+7", "check dev branch")
+        this.AddCheckbox("vcheckDev x+10 yp+7 Checked" devBranch, "check dev branch").OnEvent("Click", (ctrl, *) => (FileDelete(this.requiredFilesDir "\devBranch"), FileAppend(ctrl.value, this.requiredFilesDir "\devBranch")))
 
         ;// adding current folder path
         this.AddText("BackgroundTrans x9 yp+35", "Current Download Path").SetFont("underline")
@@ -191,6 +197,7 @@ class multiDL extends tomshiBasic {
         this.chkDevObj := this.__getPosObj("checkDev")
         this.updObj    := this.__getPosObj("updates")
         this.__checkingButton("move")
+        this["checkDev"].Opt("Disabled")
 
         if (!InStr(choco, "is not recognized") && choco != "") {
             buildStr := this.__buildUpdateCmd()
@@ -205,8 +212,10 @@ class multiDL extends tomshiBasic {
                 this.Opt("-Disabled")
                 try WinActivate(this.title)
             }
+            this.__checkExeUpdate()
         }
         this["updates"].Opt("-Disabled")
+        this["checkDev"].Opt("-Disabled")
         this.__checkingButton("reset")
         ;// ================================================================
     }
@@ -388,7 +397,7 @@ class multiDL extends tomshiBasic {
         choco  := cmd.result(Format(this.checkCommand, "choco"))
         if (InStr(choco, "is not recognized") || choco = "") {
             MsgBox("Checking for updates for ffmpeg or yt-dlp requires the package manager chocolatey to be installed.")
-            __checkExeUpdate()
+            this.__checkExeUpdate()
             this.__checkingButton("reset")
             this.Opt("-Disabled")
             return
@@ -401,39 +410,42 @@ class multiDL extends tomshiBasic {
             cmd.run(true,,, buildStr)
         }
         WinActivate(this.Title)
-        __checkExeUpdate()
+        this.__checkExeUpdate()
         if updates = false {
             MsgBox("No updates available.")
         }
         WinActivate(this.Title)
         this.Opt("-Disabled")
         this.__checkingButton("reset")
+    }
 
-        __checkExeUpdate() {
-            if !A_IsCompiled {
-                this.Opt("-Disabled")
-                return
+    __checkExeUpdate() {
+        if !A_IsCompiled {
+            this.Opt("-Disabled")
+            return
+        }
+        if !DirExist(A_Temp "\tomshi")
+            DirCreate(A_Temp "\tomshi")
+        try {
+            if FileExist(A_Temp "\tomshi\mult-dl.ahk")
+                FileDelete(A_Temp "\tomshi\mult-dl.ahk")
+            mainOrDev := (this["checkDev"].value = true) ? "dev" : "main"
+            Download("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.ahk", A_Temp "\tomshi\mult-dl.ahk")
+            readDl := FileRead(A_Temp "\tomshi\mult-dl.ahk")
+            dlVer := getLocalVer(readDl,, "currentVer := ", '"')
+            if VerCompare(dlVer, currentVer) > 0 {
+                updates := true
+                if MsgBox("New version of mult-dl.exe available, would you like to download it?",, 0x4) = "No"
+                    return
+                if !dlLoc := FileSelect("D3",, "Download mult-dl.exe")
+                    return
+                Download("https://github.com/Tomshiii/ahk/raw/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl_v" dlVer ".exe")
+                MsgBox("Download Complete, please run the new file")
+                ExitApp()
             }
-            if !DirExist(A_Temp "\tomshi")
-                DirCreate(A_Temp "\tomshi")
-            try {
-                if FileExist(A_Temp "\tomshi\mult-dl.ahk")
-                    FileDelete(A_Temp "\tomshi\mult-dl.ahk")
-                mainOrDev := (this["checkDev"].value = true) ? "dev" : "main"
-                Download("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.ahk", A_Temp "\tomshi\mult-dl.ahk")
-                readDl := FileRead(A_Temp "\tomshi\mult-dl.ahk")
-                dlVer := getLocalVer(readDl,, "currentVer := ", '"')
-                if VerCompare(dlVer, currentVer) > 0 {
-                    updates := true
-                    if MsgBox("New version of mult-dl.exe available, would you like to download it?",, 0x4) = "No"
-                        return
-                    if !dlLoc := FileSelect("D3",, "Download mult-dl.exe")
-                        return
-                    Download("https://github.com/Tomshiii/ahk/raw/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl_v" dlVer ".exe")
-                    MsgBox("Download Complete, please run the new file")
-                    ExitApp()
-                }
-            }
+        } catch {
+            MsgBox("An error occurred while attempting to update the exe. Please try again later")
+            return
         }
     }
 }

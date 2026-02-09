@@ -1,12 +1,15 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/02/02
- * @version 1.3.2
+ * @date 2026/02/09
+ * @version 1.3.3
  ***********************************************************************/
 
 class UserPref {
     __New(override := false) {
+        if !FileExist(this.installDir) {
+            throw TargetError("lib files have not been installed.")
+        }
         if !FileExist(this.SettingsFile)
             {
                 this.workingDir := A_Appdata "\tomshi\installDir"
@@ -58,6 +61,7 @@ class UserPref {
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
+    installDir => A_Appdata "\tomshi\installDir"
 
     /**
      * A function to provide the default for each .ini value
