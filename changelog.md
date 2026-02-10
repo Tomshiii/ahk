@@ -40,7 +40,6 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`, `deleteEmptyTracks()`, `__resetTimelineVals()`
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
-- 📋 `layerSizeAdjust()` now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height
 - 📋 `disableAllMuteSolo()` & `soloVideo()` can now use `PremiereRemote` to reenable all video tracks & unmute all muted audio tracks
 
 📍 `save()`
@@ -67,6 +66,10 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Will now attempt to replace any `A_Space` in `params*` with `%20`
 - 📋 Will now warn the user if `PremiereRemote` is not installed or the requested function does not exist in the user's `index.tsx`
 - 📋 Will now halt early if Premiere hasn't opened a project yet
+
+📍 `layerSizeAdjust()`
+- 📋 Now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height
+- 📋 Now alerts the user if it has had to focus the timeline so they may reactivate the hotkey to proceed
 
 📍 `anchorToPosition()`
 - ✅ Fixed function not working correctly in versions `25.4` and greater

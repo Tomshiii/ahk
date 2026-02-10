@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/02/03
- * @version 2.3.17
+ * @date 2026/02/10
+ * @version 2.3.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2463,13 +2463,27 @@ class Prem {
      * @param {Boolean} [middle=false] determine whether you wish to adjust the middle divider instead of the current track. Be aware that due to windows/ahk issues when it comes to tracking whether keys are still held down; this function will not move the divider to the desired location until the user has let go of <kbd>LAlt</kbd>
      */
     static layerSizeAdjust(capsLockDisable := true, middle := false) {
+        if !WinActive(this.winTitle)
+            return
+        __resetCaps(storekey, capslockState) {
+            if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
+                SetCapsLockState('AlwaysOff')
+        }
         SetDefaultMouseSpeed(0)
         SetStoreCapsLockMode(true)
         InstallKeybdHook(true, true)
         capslockState := GetKeyState("CapsLock", "T")
-        if !this.__setTimelineValues()
-			return
         storeHotkey := A_ThisHotkey
+        if !this.__setTimelineValues() {
+            __resetCaps(storeHotkey, capslockState)
+			return
+        }
+        if !this.timelineFocusStatus() {
+            this.__focusTimeline()
+            tool.Cust("The timeline has been focused, you will need to reactive`nthe hotkey to continue", 3.0)
+            __resetCaps(storeHotkey, capslockState)
+            return
+        }
         coord.client()
         blocker := block_ext()
         blocker.On()
@@ -2524,8 +2538,7 @@ class Prem {
                 keyss := getHotkeysArr()
                 checkStuck(["LAlt", GetKeyName(keyss[-1])])
         }
-        if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
-            SetCapsLockState('AlwaysOff')
+        __resetCaps(storeHotkey, capslockState)
         block.Off()
     }
 
