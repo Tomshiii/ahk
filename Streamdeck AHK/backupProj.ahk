@@ -132,7 +132,7 @@ __doBackup(backupFolder, additionalDir) {
 
     loop files rootDir "\videos\footage\*", 'FR' {
         SplitPath(A_LoopFileFullPath,, &OrigDir,, &filename)
-        if filename ~= " Audio Extracted_\d+$" {
+        if filename ~= " Audio Extracted(_\d+)?$" {
             SplitPath(OrigDir, &dir)
             if !DirExist(backupFolder "\_Additional Assets\audio\extracted audio\" dir)
                 DirCreate(backupFolder "\_Additional Assets\audio\extracted audio\" dir)
@@ -142,7 +142,7 @@ __doBackup(backupFolder, additionalDir) {
 
     loop files rootDir "\audio\*", 'FR' {
         SplitPath(A_LoopFileFullPath,, &OrigDir,, &filename)
-        if filename ~= " Audio Extracted_\d+$" {
+        if filename ~= " Audio Extracted(_\d+)?$" {
             SplitPath(OrigDir, &dir)
             if !DirExist(backupFolder "\_Additional Assets\audio\extracted audio\" dir)
                 DirCreate(backupFolder "\_Additional Assets\audio\extracted audio\" dir)
