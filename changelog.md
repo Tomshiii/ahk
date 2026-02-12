@@ -38,6 +38,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
 - ✅ Fixed `selectionTool()` containing left over code
 - ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`, `deleteEmptyTracks()`, `__resetTimelineVals()`
+- ✏️ Added `__disableMulticamOnAudioEffect()` to handle toggling the `Multi-Cam View` if an audio effect window becomes active
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
 - 📋 `disableAllMuteSolo()` & `soloVideo()` can now use `PremiereRemote` to reenable all video tracks & unmute all muted audio tracks
@@ -209,6 +210,10 @@ This update introduces some rather large, breaking changes to the functionality 
 📍 `toggleLinearColour()`
 - ✅ Fixed function causing `Premiere` to crash if sequence settings are reopened after toggling
 - 📋 Now accepts parameter `enableMaxRenderQual`
+
+🔗 `Keyboard Shortcuts.ini`
+- Fixed `premRippleDelete` command (`cmd.timeline.ripple.delete` => `cmd.edit.rippledelete`). May have changed after a premiere update
+- ✏️ Added `fitToFrame`, `selectedClipStart`, `selectedClipEnd`, `stepBackOneFrame`, `stepForwardOneFrame`, `deleteEmptyTracksAll`, `toggleMultiCam`
 
 🔗 `adobeKSA`
 - ✅ Fixed script not loading Premiere xml file correctly

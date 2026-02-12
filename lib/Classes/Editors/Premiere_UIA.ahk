@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/02/03
- * @version 2.2.4
+ * @date 2026/02/12
+ * @version 2.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -121,11 +121,17 @@ Class premUIA_Values {
      */
     static __setNewVal() {
         Critical()
-        activeObj := CLSID_Objs.load("uiaCheckRunning")
+        try activeObj := CLSID_Objs.load("uiaCheckRunning")
+        catch {
+            block.Off()
+            Critical("Off")
+            Exit()
+        }
         if activeObj.HasOwnProp('isRunning') && activeObj.isRunning = true {
             block.Off()
             Critical("Off")
             notifyIfNotExist("UIAisRunning",, "Attempting to set UIA values is already in process.`nPlease wait.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+            sleep 250
             Exit()
         }
         detect(false, 2) ;// incase the user is midreload while attempting to set values

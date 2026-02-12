@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/02/10
- * @version 2.3.18
+ * @date 2026/02/12
+ * @version 2.3.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -75,8 +75,15 @@ class Prem {
             this.__determineTheme()
         }
 
-        if (this.useSwapSequences = true || this.useSwapSequences = "true") && A_ScriptName = "Core Functionality.ahk"
-            SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
+        if A_ScriptName = "Core Functionality.ahk" {
+            if (this.useSwapSequences = true || this.useSwapSequences = "true")
+                SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
+
+            ;// toggle multicam when audio effect windows become active
+            WinEvent.Active((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
+            WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
+        }
+
     }
 
     static UserSettings := ""
@@ -171,6 +178,8 @@ class Prem {
     static layerDivider := 0x303030
     static toggleWaiting := false
     static toggleableButtons := Mip("source", true, "target", true, "sync", true, "mute", true, "solo", true, "lock", true)
+
+    static prevMulticamState := true
 
     ;// MButton
     static MButtonPanning := false
@@ -3475,6 +3484,59 @@ class Prem {
             return
         }
     }
+
+    /**
+     * Handles disabling multicam view if an audio effect window becomes active, then reenabling it if it was previously active once the window is closed.
+     * This function is helpful as adjusting audio effects while the multicam view is active causes the program monitor to flicker like crazy
+     */
+    static __disableMulticamOnAudioEffect(which, title, *) {
+        getTitle := WinGet.PremName()
+        if !getTitle.winTitle {
+            errorLog(UnsetError("Couldn't determine Premiere winTitle", -1))
+            sleep 1500
+            return
+        }
+        if !WinActive(this.exeTitle)
+            return
+        try scan := ShinsImageScanClass(getTitle.winTitle)
+        catch {
+            return
+        }
+        if which = "enable" && !this.prevMulticamState {
+            return
+        }
+        multicamEnabled := scan.Image(ptf.Premiere "\multicam_enabled.png")
+        switch which {
+            case "disable":
+                if !multicamEnabled {
+                    this.prevMulticamState := false
+                    WinWaitClose(title)
+                    return
+                }
+                this.prevMulticamState := true
+            case "enable":
+                if multicamEnabled {
+                    return
+                }
+        }
+        try {
+            premUIA := CLSID_Objs.load("premUIA_Values")
+            premUIA.initialise()
+            effCtrlNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
+        } catch {
+            return
+        }
+        SendInput(ksa.toggleMultiCam)
+        WinWaitClose(title)
+    }
+
+    __Delete() {
+		try {
+            WinEvent.Stop("Active", prem.exeTitle " Clip Fx Editor")
+            WinEvent.Stop("Close", prem.exeTitle " Clip Fx Editor")
+        }
+	}
+
     ;//! *** ===============================================
 
     class Excalibur {
