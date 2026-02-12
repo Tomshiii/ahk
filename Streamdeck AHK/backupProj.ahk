@@ -104,6 +104,7 @@ __doBackup(backupFolder, additionalDir) {
     __existCreate(backupFolder "\_Additional Assets\videos")
     __existCreate(backupFolder "\_Additional Assets\audio\music")
     __existCreate(backupFolder "\_Additional Assets\audio\sfx")
+    __existCreate(backupFolder "\_Additional Assets\audio\extracted audio")
     __existCreate(backupFolder "\" A_YYYY "-" A_MM "-" A_DD)
 
 
@@ -127,6 +128,26 @@ __doBackup(backupFolder, additionalDir) {
 
     loop files rootDir "\videos\footage\*", 'F' {
         try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\videos\*.*", false)
+    }
+
+    loop files rootDir "\videos\footage\*", 'FR' {
+        SplitPath(A_LoopFileFullPath,, &OrigDir,, &filename)
+        if filename ~= " Audio Extracted_\d+$" {
+            SplitPath(OrigDir, &dir)
+            if !DirExist(backupFolder "\_Additional Assets\audio\extracted audio\" dir)
+                DirCreate(backupFolder "\_Additional Assets\audio\extracted audio\" dir)
+            try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\extracted audio\" dir "\*.*", false)
+        }
+    }
+
+    loop files rootDir "\audio\*", 'FR' {
+        SplitPath(A_LoopFileFullPath,, &OrigDir,, &filename)
+        if filename ~= " Audio Extracted_\d+$" {
+            SplitPath(OrigDir, &dir)
+            if !DirExist(backupFolder "\_Additional Assets\audio\extracted audio\" dir)
+                DirCreate(backupFolder "\_Additional Assets\audio\extracted audio\" dir)
+            try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\" dir "\*.*", false)
+        }
     }
 
     loop files rootDir "\audio\*", 'F' {
