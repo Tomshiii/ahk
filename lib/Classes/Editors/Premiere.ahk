@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/02/12
- * @version 2.3.19
+ * @version 2.3.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -80,8 +80,10 @@ class Prem {
                 SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
 
             ;// toggle multicam when audio effect windows become active
-            WinEvent.Active((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
-            WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
+            if !WinEvent.IsRegistered("Active", "Clip Fx Editor " prem.exeTitle)
+                WinEvent.Active((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
+            if !WinEvent.IsRegistered("Close", "Clip Fx Editor " prem.exeTitle)
+                WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
         }
 
     }

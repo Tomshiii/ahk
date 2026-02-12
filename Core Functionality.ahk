@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/01/30
- * @version 1.0.0
+ * @date 2026/02/12
+ * @version 1.0.1
  ***********************************************************************/
 
 #SingleInstance Force
@@ -36,7 +36,8 @@ for v in allRegister {
 
 OnExit(revoke.Bind(allRegister))
 revoke(allRegister, *) {
+    try WinEvent.Stop()
     for v in allRegister {
-        ObjRegisterActive(v.obj, "")
+        try ObjRegisterActive(v.obj, "")
     }
 }

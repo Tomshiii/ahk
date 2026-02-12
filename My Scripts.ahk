@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.5
+;\\v2.35.6
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -69,6 +69,7 @@ TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the
 
 OnExit(__exit)
 __exit(ExitReason, ExitCode) {
+    try WinEvent.Stop()
     if ExitReason = "Shutdown"
         ExitApp()
     premVals := CLSID_Objs.load("premUIA_Values")
