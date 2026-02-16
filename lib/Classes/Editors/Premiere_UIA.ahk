@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/02/12
- * @version 2.2.5
+ * @date 2026/02/16
+ * @version 2.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -37,9 +37,13 @@ effectsPanel          - The Effects panel
 
 Class premUIA_Values {
     static __New() {
-        try UserSettings := CLSID_Objs.clone("UserSettings")
-        catch {
+        if A_ScriptName = "Core Functionality.ahk" {
             UserSettings := UserPref(true)
+        } else {
+            try UserSettings := CLSID_Objs.load("UserSettings")
+            catch {
+                UserSettings := UserPref(true)
+            }
         }
         this.setVer := UserSettings.premVer
         currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
@@ -134,7 +138,7 @@ Class premUIA_Values {
             sleep 250
             Exit()
         }
-        detect(false, 2) ;// incase the user is midreload while attempting to set values
+        ; detect(false, 2) ;// incase the user is midreload while attempting to set values
         activeObj.isRunning := true
 
         if !prem.__checkDialogueClass() {

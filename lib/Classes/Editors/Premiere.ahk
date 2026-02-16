@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/02/12
- * @version 2.3.20
+ * @date 2026/02/16
+ * @version 2.3.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -39,6 +39,7 @@
 #Include Functions\change_msgButton.ahk
 #Include Functions\checkStuck.ahk
 #Include Functions\isBool.ahk
+#Include Functions\checkbool.ahk
 #Include Functions\notifyIfNotExist.ahk
 #Include Other\Notify\Notify.ahk
 #Include Other\ShinsImageScanClass.ahk
@@ -48,9 +49,13 @@
 class Prem {
 
     static __New() {
-        try this.UserSettings := CLSID_Objs.load("UserSettings")
-        catch {
+        if A_ScriptName = "Core Functionality.ahk" {
             this.UserSettings := UserPref(true)
+        } else {
+            try this.UserSettings := CLSID_Objs.load("UserSettings")
+            catch {
+                this.UserSettings := UserPref(true)
+            }
         }
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
         try this.defaultTheme     := this.UserSettings.premDefaultTheme
@@ -182,6 +187,7 @@ class Prem {
     static toggleableButtons := Mip("source", true, "target", true, "sync", true, "mute", true, "solo", true, "lock", true)
 
     static prevMulticamState := true
+    static audioWaitClose    := false
 
     ;// MButton
     static MButtonPanning := false
@@ -216,13 +222,14 @@ class Prem {
                     props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
                     switch props.text {
                         case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
-                        case "34.999999403953552": this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
-                        case "80.000001192092896": this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
+                        case "34.999999403953552": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
+                        case "80.000001192092896": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
                         case "0":
                             sleep 50
                             if !Notify.Exist('notDeterminedIntZero') {
                                 Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDeterminedIntZero')
                                 errorLog(Error("Premiere theme could not be determined. Settings File int: " props.text, -1))
+                                setWithRemote := this.__checkPremRemoteDir('setPref')
 
                                 title := "Fix settings file"
                                 SetTimer(change_msgButton.Bind(title, "darkest", "dark", "light"), 16)
@@ -232,15 +239,28 @@ class Prem {
                                     case "Abort": ;// darkest
                                         props.text := "7.9999998211860657"
                                         loadSettings.save(filecheck)
+                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                         this.theme := "darkest"
                                     case "Retry": ;// dark
-                                        props.text := "34.999999403953552"
+                                        MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
+                                        props.text := "7.9999998211860657"
                                         loadSettings.save(filecheck)
-                                        this.theme := "dark"
+                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                        this.theme := "darkest"
+                                        /* props.text := "34.999999403953552"
+                                        loadSettings.save(filecheck)
+                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
+                                        this.theme := "dark" */
                                     case "Ignore": ;// light
-                                        props.text := "80.000001192092896"
+                                        MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
+                                        props.text := "7.9999998211860657"
                                         loadSettings.save(filecheck)
-                                        this.theme := "light"
+                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                        this.theme := "darkest"
+                                        /* props.text := "80.000001192092896"
+                                        loadSettings.save(filecheck)
+                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
+                                        this.theme := "light" */
                                 }
                             }
                             this.__setTimelineCol("Spectrum", this.defaultTheme)
@@ -3078,9 +3098,9 @@ class Prem {
         timelineColArr := []
         if !timelineColours.%UI%.HasProp(theme) {
             sleep 50
-            if !Notify.Exist("timeline")
-                theme := (timelineColours.%UI%.has(this.defaultTheme)) ? this.defaultTheme : "darkest"
-                notifyIfNotExist("timelineThemeNotSet",, '``timelineColours {`` does not have values set for the requested theme. Reverting to "' theme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            notifyIfNotExist("timelineThemeNotSet",, '``timelineColours {`` does not have values set for the requested theme: ' theme '. Reverting to "' this.defaultTheme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            theme := (timelineColours.%UI%.has(this.defaultTheme)) ? this.defaultTheme : "darkest"
+            this.theme := theme
         }
 		for k, v in timelineColours.%UI%.%theme% {
 			if Mod(A_Index, 2) != 0
@@ -3490,6 +3510,7 @@ class Prem {
     /**
      * Handles disabling multicam view if an audio effect window becomes active, then reenabling it if it was previously active once the window is closed.
      * This function is helpful as adjusting audio effects while the multicam view is active causes the program monitor to flicker like crazy
+     * This function is expecting to be called from two separate `WinEvent` events
      */
     static __disableMulticamOnAudioEffect(which, title, *) {
         getTitle := WinGet.PremName()
@@ -3500,16 +3521,22 @@ class Prem {
         }
         if !WinActive(this.exeTitle)
             return
+        if which = "disable" && this.audioWaitClose = true
+            return
+
         try scan := ShinsImageScanClass(getTitle.winTitle)
         catch {
+            this.audioWaitClose := false
             return
         }
         if which = "enable" && !this.prevMulticamState {
+            this.audioWaitClose := false
             return
         }
         multicamEnabled := scan.Image(ptf.Premiere "\multicam_enabled.png")
         switch which {
             case "disable":
+                this.audioWaitClose := true
                 if !multicamEnabled {
                     this.prevMulticamState := false
                     WinWaitClose(title)
@@ -3518,18 +3545,59 @@ class Prem {
                 this.prevMulticamState := true
             case "enable":
                 if multicamEnabled {
+                    this.audioWaitClose := false
                     return
                 }
         }
-        try {
-            premUIA := CLSID_Objs.load("premUIA_Values")
-            premUIA.initialise()
-            effCtrlNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
-        } catch {
-            return
-        }
+        sleep 50
+        this.__focusTimeline()
+        sleep 50
         SendInput(ksa.toggleMultiCam)
         WinWaitClose(title)
+        if which = "enable"
+            this.audioWaitClose := false
+    }
+
+    /**
+     * Handles rendering the selected sequence (in the `Project` window) within Premiere (not AME).
+     * This function is mostly expecting my project folder structure, or more accurately, expects that the current project file is within a subfolder, and that the root folder of your project is one folder back in the tree.
+     *
+     * ### Note
+     * Due to technical limitations, this function will currently only properly index filenames (& import after rendering) for certain `h264`/`h264`/`mov` files.
+     * @param {String} [outputPath] the output folder. (this is AFTER the root folder, ie. if my project file is in `W:\work\airbnb\_project files` and I pass `timeline renders`, the file will be rendered to `W:\work\airbnb\timeline renders\`)
+     * @param {String} [presetName] the name of a preset file contained within `..\Backups\Adobe Backups\Media Encoder\Presets`. A custom path cannot be given, it must be within that folder
+     * @param {Boolean} [addToProj=true] whether you wish for the resulting file to be imported into the current project after rendering
+     */
+    static renderProjectSelection(outputPath, presetName, addToProj := true) {
+        if !WinActive(this.exeTitle)
+            return
+        checkDir := this.__checkPremRemoteDir('renderInPrem')
+        checkImport := this.__checkPremRemoteFunc('importFile')
+        if !checkDir || !checkImport {
+            notifyIfNotExist('premRenderRemoteFuncs', 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            return
+        }
+        presetPath := ptf.Backups "\Adobe Backups\Media Encoder\Presets"
+
+        projPath   := WinGet.ProjPath()
+        if !projPath {
+            notifyIfNotExist('premRenderProjPath', 'Could not determine the current project path', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            return
+        }
+        renderPath := WinGet.pathU(projPath.Dir "\..\" outputPath)
+        if !DirExist(renderPath)
+            DirCreate(renderPath)
+
+        if !FileExist(presetPath "\" presetName) && !FileExist(presetPath "\" presetName ".epr") {
+            notifyIfNotExist('premRenderPresetPath', 'Could not determine the desired render preset:`n' presetPath "\" presetName, 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            return
+        }
+        preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
+
+        file := this.__remoteFunc('renderInPrem', true, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
+        if checkbool(addToProj) && (file != false) && FileExist(file) {
+            this.__remoteFunc('importFile',, "filePath=" StrReplace(file, "\", "/"), "importAsStills=false")
+        }
     }
 
     __Delete() {
@@ -3542,6 +3610,10 @@ class Prem {
     ;//! *** ===============================================
 
     class Excalibur {
+
+        static __isInstalled() {
+            return DirExist(A_AppData "\Adobe\CEP\extensions\knights_of_the_editing_table.excalibur")
+        }
 
         lockNumpadKeys := Mip("Space", ",", "Numpad0", ",", "NumpadSub", "{BackSpace}")
         /**

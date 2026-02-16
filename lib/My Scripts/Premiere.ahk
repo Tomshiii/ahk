@@ -16,6 +16,38 @@ isIn(title) {
 	return InStr(getTitle, title)
 }
 
+;// this hotkey is an attempt to stop inputs being sent through to premiere while waiting for excalibur to pop up
+$^Space::
+{
+	keys.allWait()
+	spellbookExcalFile := A_AppData "\SpellBook\knights_of_the_editing_table.excalibur.json"
+	checkRemote := prem.__checkPremRemoteDir('isSelected')
+	checkExcal  := prem.Excalibur.__isInstalled()
+	checkSpell  := FileExist(spellbookExcalFile)
+	if !checkRemote || !checkExcal || !checkSpell {
+		notifyIfNotExist("remoteOrExcalNotExist",, 'PremiereRemote and Excalibur are required for this hotkey to function. `nEither install them or disable this hotkey here;`nA_linefile',, 'Windows Battery Critical',, 'bdr=Red maxW=400')
+		return
+	}
+	block.On()
+	arr := getHotkeysArr()
+	readSpell := JSON.parse(FileRead(spellbookExcalFile))
+	activationKeys := readSpell["commands"]["excalibur.open"]["shortcut"]
+	if activationKeys["key"] != GetKeyName(arr[-1]) && activationKeys["ctrl"] != true {
+
+		block.Off()
+		return
+	}
+	SendInput("^{Space}")
+	if !WinWait("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME",, 2) {
+		block.Off()
+		return
+	}
+	if WinActive("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME")
+		SendInput("{BackSpace}")
+	block.Off()
+	return
+}
+
 LCtrl & Tab::
 Shift & Tab::
 $Tab::

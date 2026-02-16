@@ -1,3 +1,8 @@
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\errorLog.ahk
+; }
+
 /**
  * takes an xml formatted string and returns a comobject
  * @param {String} xml the `fileread` xml file

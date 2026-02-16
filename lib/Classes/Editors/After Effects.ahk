@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.0
  * @author tomshi
- * @date 2026/02/02
- * @version 1.3.1
+ * @date 2026/02/16
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -27,9 +27,13 @@
 class AE {
 
     static __New() {
-        try UserSettings := CLSID_Objs.clone("UserSettings")
-        catch {
+        if A_ScriptName = "Core Functionality.ahk" {
             UserSettings := UserPref(true)
+        } else {
+            try UserSettings := CLSID_Objs.clone("UserSettings")
+            catch {
+                UserSettings := UserPref(true)
+            }
         }
         this.currentSetVer := SubStr(UserSettings.aeVer, 2)
         this.currentYearVer := SubStr(UserSettings.aeVer, 2, 2)

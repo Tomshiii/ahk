@@ -104,7 +104,7 @@ __doBackup(backupFolder, additionalDir) {
     __existCreate(backupFolder "\_Additional Assets\videos")
     __existCreate(backupFolder "\_Additional Assets\audio\music")
     __existCreate(backupFolder "\_Additional Assets\audio\sfx")
-    __existCreate(backupFolder "\_Additional Assets\audio\extracted audio")
+    ; __existCreate(backupFolder "\_Additional Assets\audio\extracted audio")
     __existCreate(backupFolder "\" A_YYYY "-" A_MM "-" A_DD)
 
 
@@ -130,6 +130,7 @@ __doBackup(backupFolder, additionalDir) {
         try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\videos\*.*", false)
     }
 
+    /* you don't need to do these manually dumb dumb - if you set `Render Edit in Audition files to:` to `Scratch disk location for Captured Audio` they'll go to `Adobe Premiere Pro Captured and Generated`
     loop files rootDir "\videos\footage\*", 'FR' {
         SplitPath(A_LoopFileFullPath,, &OrigDir,, &filename)
         if filename ~= " Audio Extracted(_\d+)?$" {
@@ -148,7 +149,7 @@ __doBackup(backupFolder, additionalDir) {
                 DirCreate(backupFolder "\_Additional Assets\audio\extracted audio\" dir)
             try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\" dir "\*.*", false)
         }
-    }
+    } */
 
     loop files rootDir "\audio\*", 'F' {
         try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\audio\*.*", false)

@@ -9,15 +9,9 @@
 #Include Classes\CLSID_Objs.ahk
 ; }
 LabelColour := KSA.labelViolet
-
 if !WinActive(prem.winTitle)
     return
 
-if prem.__checkTimelineValues() = true {
-    sleep 100
-    if !prem.__waitForTimeline(3)
-        return
-}
 title := WinGet.PremName()
 if title.saveCheck != false
     attempt := prem.saveAndFocusTimeline()

@@ -37,7 +37,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
 - ✅ Fixed `selectionTool()` containing left over code
-- ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`, `deleteEmptyTracks()`, `__resetTimelineVals()`
+- ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`, `deleteEmptyTracks()`, `__resetTimelineVals()`, `renderProjectSelection()`
 - ✏️ Added `__disableMulticamOnAudioEffect()` to handle toggling the `Multi-Cam View` if an audio effect window becomes active
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
@@ -203,7 +203,7 @@ This update introduces some rather large, breaking changes to the functionality 
 
 🔗 `PremiereRemote`
 - ✏️ Added;  
-     `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`, `enableAllVideoTracks()`, `unmuteAllMutedTracks()`, `getClipTrackIndex()`
+     `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`, `enableAllVideoTracks()`, `unmuteAllMutedTracks()`, `getClipTrackIndex()`, `renderInPrem()`, `importFile()`
 - ❌ Removed `setBarsAndTone()`
 - 📋 `saveProj()` now properly returns whether it suceeded or failed
 
@@ -228,7 +228,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed script throwing if the user closes the window before it has finished checking for updates
 - ✏️ Rudimentary youtube playlist support
 - ✏️ Add `Show Download Folder` button
-- 📋 Now checks for `deno` to prepare for continued `yt-dlp` support ([see here for more info](<https://github.com/yt-dlp/yt-dlp/issues/14404>))
+- 📋 Now checks for `deno` for continued `yt-dlp` support ([see here for more info](<https://github.com/yt-dlp/yt-dlp/issues/14404>))
 - 📋 Now activates the GUI if the user tries to reopen the script/exe while it is already open
 - 📋 Now remembers previous download locations
 - 📋 `Multi` tab now uses a `ListView` to input URLs instead of an `Edit` box

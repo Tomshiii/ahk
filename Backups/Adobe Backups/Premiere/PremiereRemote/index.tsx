@@ -338,6 +338,22 @@ export const host = {
 
   getClipTrackIndex: function() {
     return Utils.getClipTrackIndex();
+  },
+
+  renderInPrem: function(outputPath: string, presetPath: string) {
+    return Utils.renderInPrem(outputPath, presetPath);
+  },
+
+  importFile: function(filePath: string, importAsStills: string) {
+    app.project.importFiles([filePath], true, app.project.rootItem, Boolean(importAsStills));
+  },
+
+  getPref: function(pref: string) {
+    return app.properties.getProperty(pref);
+  },
+
+  setPref: function(pref: string, value: any, persistent: string, createIfNotExist: string) {
+    return app.properties.setProperty(pref, value, Boolean(persistent), Boolean(createIfNotExist));
   }
 };
 

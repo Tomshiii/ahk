@@ -468,6 +468,75 @@ export class Utils {
       }
     }
 
+    static renderInPrem(outputPath: string, presetPath: string) {
+    var selected = app.getCurrentProjectViewSelection();
+    if (!selected || selected.length === 0) return false;
+
+    var projectItem = selected[0];
+    if (!projectItem.isSequence()) return false;
+
+    var sequence = null;
+    for (var i = 0; i < app.project.sequences.numSequences; i++) {
+      if (app.project.sequences[i].projectItem.nodeId === projectItem.nodeId) {
+        sequence = app.project.sequences[i];
+        break;
+      }
+    }
+    if (!sequence) return false;
+
+    outputPath = outputPath.replace(/\//g, "\\");
+    presetPath = presetPath.replace(/\//g, "\\");
+
+    var presetFile = new File(presetPath);
+    var extension = null;
+    var fileTypeValue = null; // Store the actual value for error message
+
+    if (presetFile.open("r")) {
+      var content = presetFile.read();
+      presetFile.close();
+
+      var match = content.match(/<ExporterFileType>(\d+)<\/ExporterFileType>/);
+      if (match) {
+        var fileType = parseInt(match[1]);
+        fileTypeValue = fileType; // Save for later
+
+        switch(fileType) {
+          case 1299148630: // 'Mqv ' - QuickTime MOV
+            extension = ".mov";
+            break;
+          case 1212503619: // 'Hdmt' - H.265/HEVC MP4
+            alert("Rendering h265 programmatically is unfortunately impossible.")
+            return false;
+          case 1211250228: // 'Hdv4' - H.264 MP4
+            extension = ".mp4";
+            break;
+        }
+      }
+    }
+
+    if (!extension) {
+      alert("No extension defined for the current preset. ExporterFileType: " + fileTypeValue);
+      return false;
+    }
+
+    var baseName = sequence.name;
+    var finalPath = outputPath + "\\" + baseName;
+    var counter = 1;
+
+    while (this.fileExists(finalPath, extension)) {
+      finalPath = outputPath + "\\" + baseName + "_" + counter;
+      counter++;
+    }
+
+    sequence.exportAsMediaDirect(finalPath + extension, presetPath, 1);
+    return finalPath + extension;
+  }
+
+    static fileExists(basePath, ext) {
+      var file = new File(basePath + ext);
+      return file.exists;
+    }
+
     // just fyi this function is ai slop through and through
     // I didn't know enough about typescript to make something like this myself
     static checkObjParams() {
