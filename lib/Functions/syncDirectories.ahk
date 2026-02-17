@@ -16,7 +16,7 @@
  */
 syncDirectories(dirsMap?) {
 	myDirsMap := (!IsSet(dirsMap) || !IsObject(dirsMap) || !dirsMap.has("path") || !dirsMap.has("dest") || !dirsMap["dest"].HasOwnProp('label') || !dirsMap["dest"].HasOwnProp('serial') || !dirsMap["dest"].HasOwnProp('dirPath')) || !dirsMap["path"].HasOwnProp('label') || !dirsMap["path"].HasOwnProp('serial') || !dirsMap["path"].HasOwnProp('dirPath')
-		? Map("path", {label: "Tom Work", serial: 3829588704, dirPath: "W:\_Assets"}, "dest", {label: "Tom SSD", serial: 2956291937, dirPath: "S:\_Assets"})
+		? Map("path", {label: "Tom Work", serial: 3829588704, dirPath: "W:\_Assets"}, "dest", {label: "storage", serial: 489231902, dirPath: "N:\_Backups\Folder Backups\Tom Assets"})
 		: dirsMap
 	path := obj.SplitPath(myDirsMap["path"].dirPath)
 	dest := obj.SplitPath(myDirsMap["dest"].dirPath)
@@ -24,10 +24,11 @@ syncDirectories(dirsMap?) {
 	if !DirExist(path.path) || !DirExist(dest.path)
 		return false
 
-	getList := DriveGetList("FIXED")
-	if InStr(getList, path.Drive) && InStr(getList, dest.Drive) {
+	getList := DriveGetList("FIXED") . DriveGetList("NETWORK")
+	if InStr(getList, SubStr(path.Drive, 1, 1)) && InStr(getList, SubStr(dest.Drive, 1, 1)) {
 		labelW  := DriveGetLabel(path.Drive "\"),   labelS := DriveGetLabel(dest.Drive "\")
 		serialW := DriveGetSerial(path.Drive "\"), serialS := DriveGetSerial(dest.Drive "\")
+		; MsgBox(labelW "-" myDirsMap["path"].label "`n" labelS "-" myDirsMap["dest"].label "`n" serialW "-" myDirsMap["path"].serial "`n" serialS "-" myDirsMap["dest"].serial)
 		if labelW = myDirsMap["path"].label && labelS = myDirsMap["dest"].label && serialW = myDirsMap["path"].serial && serialS = myDirsMap["dest"].serial {
 			cmd.run(,,, Format(cmnd, path.path, dest.path),, "hide")
 			return true
@@ -42,7 +43,7 @@ WM_DEVICECHANGE(wParam, lparam, msg, hwnd) {
     if (wParam = DBT_DEVICEARRIVAL) {
 		lastDrive := cmd.result('powershell -NoProfile -Command "Get-Volume | Where-Object DriveType -eq `'Fixed`' | Sort-Object @{Expression = {(Get-Item ($_.DriveLetter + `':\`')).CreationTime}} -Descending | Select-Object -First 1 -ExpandProperty DriveLetter"')
 		getList := DriveGetList("FIXED")
-		if lastDrive = "S" && InStr(getList, "S") && InStr(getList, "W") {
+		if lastDrive = "S" && InStr(getList, "S") && InStr(getList, "W") && DriveGetLabel("W:/") = "Tom Work" {
             syncDirectories()
 			return
         }
