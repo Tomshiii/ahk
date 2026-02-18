@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/02/16
- * @version 2.3.22
+ * @date 2026/02/18
+ * @version 2.3.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -657,9 +657,9 @@ class Prem {
      * @returns {Boolean|String} returns boolean or `"active"` if timeline was the active window
      */
     static saveAndFocusTimeline() {
-        premUIA := this.__createUIAelement()
         uiaVals := CLSID_Objs.load("premUIA_Values")
         uiaVals.initialise()
+        premUIA := this.__createUIAelement()
         saveAttempt := this.save()
         if (saveAttempt = false || saveAttempt = "timeout" || saveAttempt = "timeout_nosave") {
             SendEvent("^s")
@@ -3573,11 +3573,22 @@ class Prem {
             return
         checkDir := this.__checkPremRemoteDir('renderInPrem')
         checkImport := this.__checkPremRemoteFunc('importFile')
-        if !checkDir || !checkImport {
+        checkIsSequence := this.__checkPremRemoteFunc('selectionIsSequence')
+        if !checkDir || !checkImport || !checkIsSequence {
             notifyIfNotExist('premRenderRemoteFuncs', 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return
         }
         presetPath := ptf.Backups "\Adobe Backups\Media Encoder\Presets"
+
+        if !this.__remoteFunc('selectionIsSequence', true) {
+            notifyIfNotExist('premSelectionNotSeq', 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400')
+            return
+        }
+
+        title := WinGet.PremName()
+        if title.saveCheck != false
+            attempt := prem.saveAndFocusTimeline()
+        sleep 100
 
         projPath   := WinGet.ProjPath()
         if !projPath {

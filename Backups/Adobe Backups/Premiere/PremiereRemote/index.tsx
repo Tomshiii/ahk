@@ -344,6 +344,10 @@ export const host = {
     return Utils.renderInPrem(outputPath, presetPath);
   },
 
+  selectionIsSequence: function() {
+    return Utils.selectionIsSequence();
+  },
+
   importFile: function(filePath: string, importAsStills: string) {
     app.project.importFiles([filePath], true, app.project.rootItem, Boolean(importAsStills));
   },

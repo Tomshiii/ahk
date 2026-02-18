@@ -468,12 +468,18 @@ export class Utils {
       }
     }
 
-    static renderInPrem(outputPath: string, presetPath: string) {
-    var selected = app.getCurrentProjectViewSelection();
-    if (!selected || selected.length === 0) return false;
+    static selectionIsSequence() {
+      var selected = app.getCurrentProjectViewSelection();
+      if (!selected || selected.length === 0) return false;
 
+      var projectItem = selected[0];
+      if (!projectItem.isSequence()) return false;
+    }
+
+    static renderInPrem(outputPath: string, presetPath: string) {
+    if (!this.selectionIsSequence()) return false;
+    var selected = app.getCurrentProjectViewSelection();
     var projectItem = selected[0];
-    if (!projectItem.isSequence()) return false;
 
     var sequence = null;
     for (var i = 0; i < app.project.sequences.numSequences; i++) {
