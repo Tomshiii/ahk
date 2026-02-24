@@ -23,7 +23,7 @@ genProjDirs(dirs?) {
     if !IsSet(dirs) {
         dirs := [
             "videos\footage", "audio\music", "audio\sfx",
-            "timeline renders", "_project files",
+            "timeline renders", "_project files", "_project files\templates",
             "renders\draft", "renders\final",  "renders\socials",
             "screenshots"
         ]

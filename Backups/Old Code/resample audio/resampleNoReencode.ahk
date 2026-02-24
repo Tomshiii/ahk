@@ -16,7 +16,7 @@ if !rootDir := FileSelect("D2",, "Select Folder to Resample (this process will r
 cmnd := 'ffmpeg -y -i "{1}" -c:v copy -c:a pcm_s16le -ar {3} -b:a 192k "{2}" && move /Y "{2}" "{1}"'
 
 totalFIles := explorer.nItemsInDir(rootDir, true)
-ignore := explorer.nItemsInDir(rootDir "\orig", true)
+ignore := DirExist(rootDir "\orig") ? explorer.nItemsInDir(rootDir "\orig", true) : {files: 0}
 
 check := Notify.Show('Resampling files in chosen directory', , 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' totalFIles.files-ignore.files)
 completed := Map()

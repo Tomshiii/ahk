@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\keys.ahk
 #Include Classes\winget.ahk
@@ -57,10 +58,19 @@ $Tab::
 		KeyWait("LCtrl")
 		return
 	}
-	if !isDoubleClick()
+	if CaretGetPos(&x, &y) {
+		if !isDoubleClick()
+			return
+		sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
+		SendInput(sendMod "{Tab}")
 		return
-	sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
-	SendInput(sendMod "{Tab}")
+	}
+	/* uiaVals := CLSID_Objs.load("premUIA_Values")
+	uiaVals.initialise()
+	premUIA := prem.__createUIAelement(true)
+	if premUIA.activeElement != uiaVals.timeline
+		return */
+	prem.swapPreviousSequence(true)
 }
 
 Space:: ;// make space more useful by closing certain windows
@@ -271,7 +281,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 <!+6::
 <!+7::
 <!+8::
-<!+9::prem.toggleEnabled(, "aud", 1, true, 8)
+<!+9::prem.toggleEnabled(, "aud", 1, true, 6)
 
 ;// while cursor is within timeline;
 ; use MButton to Ctrl click (adjust edit points with mouse if left hand isn't on keyboard)

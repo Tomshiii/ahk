@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/02/18
- * @version 2.3.23
+ * @date 2026/02/24
+ * @version 2.3.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -229,7 +229,7 @@ class Prem {
                             if !Notify.Exist('notDeterminedIntZero') {
                                 Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDeterminedIntZero')
                                 errorLog(Error("Premiere theme could not be determined. Settings File int: " props.text, -1))
-                                setWithRemote := this.__checkPremRemoteDir('setPref')
+                                setWithRemote := (this.__checkPremRemoteDir('setPref') && WinExist(this.winTitle) != 0)
 
                                 title := "Fix settings file"
                                 SetTimer(change_msgButton.Bind(title, "darkest", "dark", "light"), 16)
@@ -3059,15 +3059,18 @@ class Prem {
                 for k, v in allLayers {
                     if A_Index = track+offset || (offset != 0 && A_Index <= offset)
                         continue
-                    if ignore != false && offset+1 >= ignore {
+                    if ignore != false && (offset+1 >= ignore) {
                         checkStuck()
                         blocker.Off()
                         this.ignoreKey := false
                         notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         return
                     }
-                    if ignore != false && A_Index-offset >= ignore
+                    if ignore != false && A_Index-offset >= ignore {
+                        if (track+offset >= ignore+offset)
+                            notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Selected Track is greater than set ``Ignore value``',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         break
+                    }
                     layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
                     if this.timelineCols.Has(layerColour)
                         continue

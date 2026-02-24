@@ -10,9 +10,11 @@ SetDefaultMouseSpeed(0)
 #Include Classes\pause.ahk
 #Include Classes\coord.ahk
 #Include Classes\block.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Classes\Editors\Premiere.ahk
 #Include Functions\SD Functions\genProjDirs.ahk
 #Include Functions\delaySI.ahk
+#Include Functions\notifyIfNotExist.ahk
 ; }
 
 ;// This version of the script (from 19th Dec, 2022) is designed for Premiere v22.3.1 (and beyond) - it copies a template project folder out of the `..\Backups\Adobe Backups\Premiere\Template\` folder and places it in the desired project folder. It then handles changing the proxy location
@@ -49,6 +51,21 @@ if count > 1 {
         return
     }
 }
+
+templatesDir := SelectedFolder "\_project files\templates"
+mainTemplate := "W:\_Assets\Plugins & Presets\Mogrts & Presets\Main Channel AE Templates\Regular videos\The Boys Main Channel - Regular Template.aet"
+hauntTemplate := "W:\_Assets\Plugins & Presets\Mogrts & Presets\Main Channel AE Templates\Haunted videos\The Boys Main Channel - Haunted Template.aet"
+try {
+    UserSettings := CLSID_Objs.load("UserSettings")
+    aeIco := A_ProgramFiles "\Adobe\Adobe After Effects " UserSettings.ae_year "\Support Files\UXP\plugins\com.adobe.ccx.start\images\thumbs\AEFT_aep.ico"
+}
+if !IsSet(aeIco)
+    aeIco := 'C:\Windows\System32\shell32.dll|icon153'
+if !DirExist(templatesDir)
+    DirCreate(templatesDir)
+(FileExist(mainTemplate)) ? FileCopy(mainTemplate, templatesDir, true) : notifyIfNotExist("aeNoMainTemplate", 'AE Main Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
+(FileExist(hauntTemplate)) ? FileCopy(hauntTemplate, templatesDir, true) : notifyIfNotExist("aeNoHauntedTemplate", 'AE Haunted Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
+
 FileCopy(chosenFile, SelectedFolder "\_project files\" IB.Value ".prproj")
 if !FileExist(prem.path) {
     try RunWait(ptf.SupportFiles "\shortcuts\createShortcuts.ahk", ptf.SupportFiles "\shortcuts\")

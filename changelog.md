@@ -62,6 +62,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed function failing to select the correct clips if the user released modifier keys too late
 - 📋 Now accepts param `ignore`
 - 📋 Now alerts the user if it attempted to interact with a transition handle (not perfect)
+- 📋 Now alerts the user if selected track is greater than the users `Ignore` (+ `Offset`) value
 
 📍 `__remoteFunc()`
 - ✅ Fixed function failing to pass `&` in `params*` paramaters
