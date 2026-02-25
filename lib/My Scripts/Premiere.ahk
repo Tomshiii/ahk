@@ -70,7 +70,7 @@ $Tab::
 	premUIA := prem.__createUIAelement(true)
 	if premUIA.activeElement != uiaVals.timeline
 		return */
-	prem.swapPreviousSequence(true)
+	prem.swapPreviousSequence()
 }
 
 Space:: ;// make space more useful by closing certain windows
@@ -271,7 +271,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 
 
 ;// allExcept
-^!+`::prem.toggleEnabled(1, "aud",, "all")
+^!+`::prem.toggleEnabled(1, "aud",, "all", 7)
 <!+`::prem.toggleEnabled(1, "aud",, true)
 <!+1::
 <!+2::
