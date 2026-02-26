@@ -71,6 +71,6 @@ FileCopy(ptf.lib "\My Scripts\Not Editor.ahk", ptf.rootDir "\Backups\Work\Not Ed
 FileCopy(ptf.lib "\Classes\move.ahk", ptf.rootDir "\Backups\Work\move.ahk", 1)
 FileCopy(ptf.lib "\QMK\Work\Prem.ahk", ptf.rootDir "\Backups\Work\QMK\Work\Prem.ahk", 1)
 
-deleteDotUnderscore("N:\")
-syncDirectories()
-Run(ptf.TimerScripts "\syncOnConnect.ahk")
+; deleteDotUnderscore("N:\")
+; syncDirectories()
+; Run(ptf.TimerScripts "\syncOnConnect.ahk")

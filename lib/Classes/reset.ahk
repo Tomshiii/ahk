@@ -2,7 +2,7 @@
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
  * @date 2026/02/26
- * @version 1.1.9
+ * @version 1.1.9.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -63,8 +63,7 @@ class reset {
             ; logger := Log()
             name := winExt.TitleRegex(value,, this.ignoreString,, true)
             switch {
-                case InStr(name, " -",,, 1):
-                    path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
+                case InStr(name, " - AutoHotKey v",,, 1): path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
                 default: return false
             }
             script := obj.SplitPath(path)

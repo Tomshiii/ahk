@@ -283,7 +283,8 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 <!+8::
 <!+9::prem.toggleEnabled(, "aud", 1, true, 6)
 
-<!q::prem.__remoteFunc('closeClipSourceMon')
+<!c::prem.__remoteFunc('closeClipSourceMon')
+<!+c::prem.__remoteFunc('closeAllClipSourceMon')
 
 ;// while cursor is within timeline;
 ; use MButton to Ctrl click (adjust edit points with mouse if left hand isn't on keyboard)
