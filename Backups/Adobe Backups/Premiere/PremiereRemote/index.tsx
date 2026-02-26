@@ -358,6 +358,14 @@ export const host = {
 
   setPref: function(pref: string, value: any, persistent: string, createIfNotExist: string) {
     return app.properties.setProperty(pref, value, Boolean(persistent), Boolean(createIfNotExist));
+  },
+
+  closeClipSourceMon: function() {
+    app.sourceMonitor.closeClip();
+  },
+
+  closeAllClipSourceMon: function() {
+    app.sourceMonitor.closeAllClips();
   }
 };
 

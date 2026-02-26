@@ -209,7 +209,7 @@ This update introduces some rather large, breaking changes to the functionality 
 
 🔗 `PremiereRemote`
 - ✏️ Added;  
-     `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`, `enableAllVideoTracks()`, `unmuteAllMutedTracks()`, `getClipTrackIndex()`, `renderInPrem()`, `importFile()`, `selectionIsSequence()`
+     `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`, `enableAllVideoTracks()`, `unmuteAllMutedTracks()`, `getClipTrackIndex()`, `renderInPrem()`, `importFile()`, `selectionIsSequence()`, `closeClipSourceMon()`, `closeAllClipSourceMon()`
 - ❌ Removed `setBarsAndTone()`
 - 📋 `saveProj()` now properly returns whether it suceeded or failed
 
