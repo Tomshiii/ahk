@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/02/24
- * @version 2.3.24
+ * @date 2026/02/26
+ * @version 2.3.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2536,7 +2536,6 @@ class Prem {
             ;// adjust layers
             case false:
                 if !this.__layerDividerCheck(origMouseCords) || !this.__getlayerTopBottom(origMouseCords, middle,, &topDivY,,,, &midDivY) {
-                    blocker.Off()
                     return
                 }
                 block.On()
@@ -2550,7 +2549,6 @@ class Prem {
             case true:
                 ;// adjust middle divider
                 if !this.__getlayerMid(, &midDivY) {
-                    blocker.Off()
                     return
                 }
                 MouseMove(origMouseCords.x, midDivY+2)
@@ -2561,7 +2559,6 @@ class Prem {
                 move.setMouseClip()
                 coord.client() ;// clipMouse changes the coordmode to "mouse"
                 if !newCoords := obj.MousePos() {
-                    block.Off()
                     return
                 }
                 MouseClickDrag("Left", this.timelineRawX+10, midDivY+2, this.timelineRawX+10, newCoords.y)

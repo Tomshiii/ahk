@@ -19,7 +19,6 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed compatibility with `Premiere v26.0` after name change
 - ✅ Fixed multiple instances of incorrect `||` logic
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
-- ✅ Fixed `reset {` functions not affecting all scripts
 - ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
 - ✅ Fixed `cmd.exploreAndHighlight()` failing to open the desired path
 - ✅ Fixed `loadXML()` throwing in the event the file is busy
@@ -30,6 +29,11 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✏️ Added `isBool()`, `checkBool()`, `delayFuncs()`, `runExt()`, `validateTypes()`, `notifyIfNotExist()`
 - ✏️ Added `CLSID_Objs {`
     - Allows for objects to be shared between scripts easily
+
+### 📝 `reset {`
+- ✅ Fixed functions not affecting all scripts
+- ✅ Fixed functions throwing when encountering scripts with no path in the title
+
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific

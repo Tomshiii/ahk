@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2025/12/20
- * @version 1.3.0
+ * @date 2026/02/26
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -172,12 +172,14 @@ class Move {
 
     /** helper function for `clipMouse`. call with no params to disable locked mouse movement */
     static setMouseClip(Conf:=0, x1:=0, y1:=0, x2:=1, y2:=1) {
-        pData := DllCall("GlobalAlloc","UInt",0,"UPtr",16,"Ptr")
-        NumPut("UPtr",x1,pData+0), NumPut("UPtr",y1,pData+4)
-        NumPut("UPtr",x2,pData+8), NumPut("UPtr",y2,pData+12)
-        Val := Conf ? DllCall("ClipCursor","Ptr",pData) : DllCall("ClipCursor")
-        DllCall("GlobalFree","Ptr",pData)
-        Return Val
+        pData := DllCall("GlobalAlloc", "UInt", 0, "UPtr", 16, "Ptr")
+        if !Conf
+            return (DllCall("ClipCursor"), DllCall("GlobalFree","Ptr", pData))
+        NumPut("Int", x1, pData, 0), NumPut("Int", y1, pData, 4)
+        NumPut("Int", x2, pData, 8), NumPut("Int", y2, pData, 12)
+        Val := DllCall("ClipCursor", "Ptr", pData)
+        DllCall("GlobalFree", "Ptr", pData)
+        return Val
     }
 
     /**

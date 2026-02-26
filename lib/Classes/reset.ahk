@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts
  * @author tomshi
- * @date 2026/02/09
- * @version 1.1.8
+ * @date 2026/02/26
+ * @version 1.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -60,10 +60,16 @@ class reset {
         if this.ignoreScript.Has(winExt.TitleRegex(value,, this.ignoreString,, true))
             return false
         try {
+            ; logger := Log()
             name := winExt.TitleRegex(value,, this.ignoreString,, true)
-            path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
+            switch {
+                case InStr(name, " -",,, 1):
+                    path := SubStr(name, 1, InStr(name, " -",,, 1) -1)
+                default: return false
+            }
             script := obj.SplitPath(path)
             PID := winExt.PIDRegex(script.Name,, this.ignoreString,, true)
+            ; logger.Append(Format("value: {}`nname: {}`npath: {}", value, name, path))
             Critical("Off")
             if (includeChecklist = false && (script.Name = "checklist.ahk" || script.Name = "test.ahk")) || this.ignoreScript.Has(script.Name) {
                 return false

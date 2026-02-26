@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/02/09
- * @version 2.4.5.1
+ * @date 2026/02/26
+ * @version 2.4.6
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -176,7 +176,8 @@ class rbuttonPrem {
 			checktap() {
 				if !this.__checkForTap(A_ThisHotkey) {
 					SendInput("{LButton Up}")
-					Exit()
+					SendInput(KSA.playheadtoCursor)
+					this.__exit()
 				}
 			}
 		}
