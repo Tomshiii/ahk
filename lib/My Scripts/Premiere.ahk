@@ -378,29 +378,32 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 	}
 }
 
-; F14::prem.__remoteFunc('toggleEnabled')
-F14 & LButton::
-{
+__f14InitialChecks(Key, &kwait) {
 	currKeys := getHotkeysArr()
+	kwait := currKeys[1]
+	if !IsSet(kwait)
+		return false
 	if GetKeyName(currKeys[1]) != "F14" {
 		KeyWait(currKeys[1])
 		__cleanup()
-		return
+		return false
 	}
-	__cleanup() => (checkStuck(["Ctrl", "LButton"]))
+	__cleanup() => (checkStuck(["Ctrl", Key]))
 	;// ensure the main prem window is active before attempting to fire
 	getTitle := WinGet.PremName()
 	if !getTitle || !IsObject(getTitle) || !gettitle.winTitle || WinGet.Title() != gettitle.winTitle {
 		KeyWait(currKeys[1])
 		__cleanup()
-		return
+		return false
 	}
 
 	;// checks to see whether the timeline position has been located
-	if !prem.__setTimelineValues() {
+	ckValues := prem.__setTimelineValues()
+	ckFocus  := prem.timelineFocusStatus()
+	if !ckValues || (ckFocus != true) {
 		KeyWait(currKeys[1])
 		__cleanup()
-		return
+		return false
 	}
 
 	;// set coord mode and grab the cursor position
@@ -409,10 +412,30 @@ F14 & LButton::
 	if !origMouse || !prem.__checkCoords(origMouse) {
 		KeyWait(currKeys[1])
 		__cleanup()
+		return false
+	}
+	return true
+}
+F14 & MButton::
+{
+	if !__f14InitialChecks("MButton", &kwait)
+		return
+	ckDir := prem.__checkPremRemoteDir('isSelected'), ckEnabled := prem.__checkPremRemoteFunc('toggleEnabled')
+	if !ckDir || !ckEnabled
+		return
+	if !prem.__remoteFunc('isSelected', true) {
+		tool.Cust("nothing is selected")
 		return
 	}
+	KeyWait(kwait)
+	prem.__remoteFunc('toggleEnabled')
+}
+F14 & LButton::
+{
+	if !__f14InitialChecks("LButton", &kwait)
+		return
 	delaySI(16, "{LButton Down}", "{Ctrl Down}")
-	KeyWait(currKeys[1])
+	KeyWait(kwait)
 	delaySI(16, "{LButton Up}", "{Ctrl Up}")
 }
 
