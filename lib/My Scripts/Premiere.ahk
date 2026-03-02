@@ -438,6 +438,15 @@ F14 & LButton::
 	KeyWait(kwait)
 	delaySI(16, "{LButton Up}", "{Ctrl Up}")
 }
+F14 & F18::
+{
+	checkRemote := prem.__checkPremRemoteDir('setMarker')
+	initChecks := __f14InitialChecks("F18", &kwait)
+	if !checkRemote || !initChecks
+		return
+	KeyWait(kwait)
+	prem.__remoteFunc('setMarker',, "colour=0")
+}
 
 WheelUp::
 WheelDown::

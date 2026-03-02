@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/02/04
- * @version 2.2.8
+ * @date 2026/03/02
+ * @version 2.2.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -521,7 +521,7 @@ class adobeAutoSave extends count {
         checkType := (Type(this.premWindow) != "Object")
         checkTitle := this._isObjHasProp(this.premWindow, "winTitle", false) && this._isObjHasProp(this.premWindow, "titleCheck", -1) && this._isObjHasProp(this.premWindow, "saveCheck", -1)
         checkCanSave := this._isObjHasProp(this.premWindow, "titleCheck", true)
-        if !this.premWindow || checkType || !checkTitle {
+        if !this.premWindow || checkType || !checkTitle || checkCanSave {
             errorLog(UnsetError("autosave.ahk was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
             return
         }
@@ -534,8 +534,8 @@ class adobeAutoSave extends count {
         }
 
         if !prem.isEditTabActive() {
-            errorLog(TargetError("The Premiere 'Edit' tab is not currently selected, the save attempt was aborted", -1))
-            notifyIfNotExist("autosavepremEdit",, "The Premiere 'Edit' tab is not currently selected, the save attempt was aborted", 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            errorLog(TargetError("The Premiere 'Edit' tab is not currently selected, or the Premiere window could not be found. The save attempt was aborted", -1))
+            notifyIfNotExist("autosavepremEdit",, "The Premiere 'Edit' tab is not currently selected, or the Premiere window could not be found. The save attempt was aborted", 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
 
@@ -637,7 +637,7 @@ class adobeAutoSave extends count {
         checkType := (Type(this.aeWindow) != "Object")
         checkTitle := this._isObjHasProp(this.aeWindow, "winTitle", false) && this._isObjHasProp(this.aeWindow, "titleCheck", -1) && this._isObjHasProp(this.aeWindow, "saveCheck", -1)
         checkCanSave := this._isObjHasProp(this.aeWindow, "titleCheck", true)
-        if !this.aeWindow || checkType || !checkTitle {
+        if !this.aeWindow || checkType || !checkTitle || checkCanSave  {
             errorLog(UnsetError("autosave.ahk was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
             return
         }

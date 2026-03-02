@@ -17,9 +17,6 @@ SetDefaultMouseSpeed(0)
 #Include Functions\notifyIfNotExist.ahk
 ; }
 
-;// This version of the script (from 19th Dec, 2022) is designed for Premiere v22.3.1 (and beyond) - it copies a template project folder out of the `..\Backups\Adobe Backups\Premiere\Template\` folder and places it in the desired project folder. It then handles changing the proxy location
-;// it runs the version of premiere set within `settingsGUI()`
-
 pause.pause("autosave")
 pause.pause("adobe fullscreen check")
 

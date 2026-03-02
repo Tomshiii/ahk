@@ -34,8 +34,8 @@ class shutdownGUI extends tomshiBasic {
         }
         switch this["sleepCheck"].value {
             case 1:
-                cmd.run(1,, 1, Format('psshutdown64 -d -v 0 -t {}', timer))
-                Notify.Show('Scheduled Sleep', "This computer will sleep in " timer "s", 'C:\Windows\System32\shell32.dll|icon28',,, 'dur=3 show=Fade@250 hide=Fade@250 pad=,,,,20 bdr=0xC72424')
+                cmd.run(1, false, 1, Format('psshutdown64 -d -v 0 -t {}', timer))
+                Notify.Show('Scheduled Sleep', "This computer will sleep in " this["editVal"].Value this["drpdwn"].Text, 'C:\Windows\System32\shell32.dll|icon28',,, 'dur=3 show=Fade@250 hide=Fade@250 pad=,,,,20 bdr=0xC72424')
             default: cmd.run(,,, "shutdown -s -t " timer)
         }
     }

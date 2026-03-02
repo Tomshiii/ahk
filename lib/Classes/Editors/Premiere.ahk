@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/02/26
- * @version 2.3.25
+ * @date 2026/03/02
+ * @version 2.3.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -546,7 +546,7 @@ class Prem {
         if !WinExist(this.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
-            return
+            return false
         }
         gettitle := WinGet.PremName()
         scan := ShinsImageScanClass(gettitle.winTitle)
