@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/02/03
- * @version 1.8.8
+ * @date 2026/03/02
+ * @version 1.8.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,7 +55,8 @@ class Startup {
         ;// populate settings variables
         this.UserSettings := CLSID_Objs.load("UserSettings")
 
-        this.isReload := isReload()
+        try didReload := A_Args[1]
+        this.isReload := isReload(didReload ?? false)
     }
 
     ;// see if you can create function that reads product version of adobe .exe files to get their version and set in settings.ini
@@ -849,7 +850,7 @@ class Startup {
         submenuSC.Add("Hard Reset All Scripts", (*) => reset.reset())
         submenuSC.Add("keys.allUp()", (*) => keys.allUp())
         submenuSC.Add("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\Initialise.ahk"))
-        submenuSC.Add("Close All Scripts", (*) => Run(ptf.SupportFiles "\closeAll.ahk"))
+        submenuSC.Add("Close All Scripts", (*) => reset.ex_exit())
         A_TrayMenu.Insert(startingVal "&", "Script Control", submenuSC)
         startingVal++
 

@@ -6,4 +6,4 @@
  * ;// if the script was reloaded, beyond this point will not fire
  * ```
  */
-isReload() => DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)"
+isReload(arg := "") => (DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" || (checkBool(arg) = true))

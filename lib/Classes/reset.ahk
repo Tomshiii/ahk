@@ -1,8 +1,8 @@
 /************************************************************************
- * @description a class to contain functions used to action all active ahk scripts
+ * @description a class to contain functions used to action all active ahk scripts. These functions are designed specifically for my repo and may encounter unexpected issues with other scripts
  * @author tomshi
- * @date 2026/02/26
- * @version 1.1.9.1
+ * @date 2026/03/02
+ * @version 1.1.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,7 +20,7 @@
 ; }
 
 class reset {
-    __New() {
+    __New(ignoreMainScripts := true, ignoreCoreFunc := true) {
         ;// here we're adding all ahk files within `..\Streamdeck AHK\` to the ignore list
         loop files ptf.rootDir "\Streamdeck AHK\*.ahk", "R F" {
             if !this.ignoreScript.Has(A_LoopFileName)
@@ -33,7 +33,11 @@ class reset {
             this.mainScript := "My Scripts"
         }
 
-        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, this.mainScript ".ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "Core Functionality.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1, "Add game to gameCheck.ahk", 1, "Install Tomshi AHK.ahk", 1)
+        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1, "reloadAll.ahk", 1, "Add game to gameCheck.ahk", 1, "Install Tomshi AHK.ahk", 1)
+        if ignoreMainScripts
+            this.ignoreScript.Set(this.mainScript ".ahk", 1)
+        if ignoreCoreFunc
+            this.ignoreScript.Set("Core Functionality.ahk", 1)
     }
 
     mainScript := ""
@@ -67,13 +71,12 @@ class reset {
                 default: return false
             }
             script := obj.SplitPath(path)
-            PID := winExt.PIDRegex(script.Name,, this.ignoreString,, true)
             ; logger.Append(Format("value: {}`nname: {}`npath: {}", value, name, path))
             Critical("Off")
             if (includeChecklist = false && (script.Name = "checklist.ahk" || script.Name = "test.ahk")) || this.ignoreScript.Has(script.Name) {
                 return false
             }
-            return {scriptName: script.name, PID: PID, path: path}
+            return {scriptName: script.name, PID: value, path: path}
         }
         Critical("Off")
     }
@@ -160,7 +163,8 @@ class reset {
      */
     static ext_reload(includeChecklist := false) {
         Critical()
-        detect()
+        RunWait(ptf.SupportFiles "\reloadAll.ahk " includeChecklist . true)
+        /* detect()
         tool.Cust("All active ahk scripts reloading")
         activeWindows := this().__getList()
         for v in activeWindows {
@@ -175,7 +179,7 @@ class reset {
         detect(false)
         Critical("Off")
         tool.Wait()
-        this().__attemptReload()
+        this().__attemptReload() */
     }
 
     /**
@@ -183,8 +187,8 @@ class reset {
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
     static reset(includeChecklist := false) {
-        tool.Cust("All active ahk scripts are being rerun")
-        activeWindows := this().__getList()
+        RunWait(ptf.SupportFiles "\reloadAll.ahk" A_Space includeChecklist A_Space false)
+        /* activeWindows := this().__getList()
         for v in activeWindows {
             if !getInfo := this().__parseInfo(v, includeChecklist)
                 continue
@@ -196,7 +200,7 @@ class reset {
         }
         detect(false)
         tool.Wait()
-        Run(A_ScriptFullPath) ;// run this current script last so all of the rest actually happen
+        Run(A_ScriptFullPath) ;// run this current script last so all of the rest actually happen */
     }
 
     /**
@@ -205,7 +209,8 @@ class reset {
      */
     static ex_exit(includeChecklist := false) {
         Critical()
-        tool.Cust("All active ahk scripts are being CLOSED")
+        RunWait(ptf.SupportFiles "\closeAll.ahk")
+        /* tool.Cust("All active ahk scripts are being CLOSED")
         activeWindows := this().__getList()
         ; logger := Log()
         for v in activeWindows {
@@ -239,6 +244,6 @@ class reset {
             }
         }
         __checkClose(mainScriptHWND, mainScriptTitle)
-        __checkClose(coreFuncHWND, coreFuncTitle)
+        __checkClose(coreFuncHWND, coreFuncTitle) */
     }
 }
