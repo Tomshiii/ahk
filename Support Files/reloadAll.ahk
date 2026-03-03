@@ -2,6 +2,7 @@
 #Include "%A_Appdata%\tomshi\lib"
 #Include Classes\reset.ahk
 #Include Classes\pause.ahk
+#Include Classes\CLSID_Objs.ahk
 
 ;// get list of open ahk scripts
 ;// get path of said scripts
@@ -58,7 +59,13 @@ if coreFunc := winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,
 if IsSet(coreFuncObj)
     Run(coreFuncObj.path)
 
-sleep 1500
+if !CLSID_Objs.waitCoreFuncs(2) {
+    sleep 2000
+    try CLSID_Objs.load("Loading")
+    catch {
+        throw TimeoutError("Core Functionality.ahk failed to load in time")
+    }
+}
 for v in listArr {
     Run(v.path A_Space (doReset ?? true))
 }

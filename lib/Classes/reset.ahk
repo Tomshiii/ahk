@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts. These functions are designed specifically for my repo and may encounter unexpected issues with other scripts
  * @author tomshi
- * @date 2026/03/02
- * @version 1.1.10
+ * @date 2026/03/03
+ * @version 1.1.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -209,7 +209,7 @@ class reset {
      */
     static ex_exit(includeChecklist := false) {
         Critical()
-        RunWait(ptf.SupportFiles "\closeAll.ahk")
+        RunWait(ptf.SupportFiles "\closeAll.ahk" A_Space includeChecklist)
         /* tool.Cust("All active ahk scripts are being CLOSED")
         activeWindows := this().__getList()
         ; logger := Log()

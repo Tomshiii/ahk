@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/02/09
- * @version 1.1.3
+ * @date 2026/03/03
+ * @version 1.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,8 +33,25 @@ class CLSID_Objs {
         "prem",            "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}",
         "uiaCheckRunning", "{DCEE88EC-9327-44CF-9D2A-5BC47C624E0E}",
         "UserSettings",    "{AC89B835-1CD6-4CC3-AFCC-56360FD5116F}",
-        "premUIA_Values",  "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}"
+        "premUIA_Values",  "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}",
+        "Loading",         "{DFEF77D2-D0BE-4F54-BAF8-D0B456F6D959}"
     )
+
+    /** a quick and dirty function to wait for `Core Functionality.ahk` to finish loading */
+    static waitCoreFuncs(waitSec := 2) {
+        delay := 16
+        loop Round(((waitSec*1000)/delay)) {
+            try loading := this.load("Loading")
+            catch {
+                sleep delay
+                continue
+            }
+            if loading.isLoading = true
+                continue
+            return loading
+        }
+        return false
+    }
 
     /**
      * Safely load an object with mutex locking

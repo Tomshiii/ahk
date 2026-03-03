@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/02/03
- * @version 2.4.5
+ * @date 2026/03/03
+ * @version 2.4.6
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -721,10 +721,12 @@ settingsGUI()
             supportedVers := []
             for v in supportedVersMap
                 supportedVers.Push(v)
+            supportedVers := supportedVers.Sort("C")
+            supportedVers := supportedVers.Reverse()
             ver.add(supportedVers)
             if !supportedVers.Has(1)
                 return
-            ver.Choose(supportedVers.Length)
+            ver.Choose(1)
             UserSettings.%yearIniName% := year.text
             title := "createShortcuts.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
             ignore := browser.vscode.winTitle
