@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/03/03
- * @version 2.3.27
+ * @version 2.3.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3495,16 +3495,13 @@ class Prem {
     }
 
     /** A function to close the currently active sequence within premiere. This function **requires** `PremiereRemote` */
-    static closeActiveSequence() {
+    static closeActiveSequence(allExcept := false) {
         if !this.__checkPremRemoteDir("closeActiveSequence") {
             ;// throw
             errorLog(MethodError("closeActiveSequence() requires PremiereRemote to be installed"),,, true)
             return false
         }
-        if !this.__remoteFunc('closeActiveSequence', true) {
-            notifyIfNotExist("premCloseSeq",, 'Failed to determine the active sequence', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=5 bdr=Red maxW=400')
-            return
-        }
+        this.__remoteFunc('closeActiveSequence',, "allExcept=" allExcept)
     }
 
     /**

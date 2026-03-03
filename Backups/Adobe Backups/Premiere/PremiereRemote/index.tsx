@@ -203,11 +203,10 @@ export const host = {
     return Utils.getVideoTracks();
   },
 
-  closeActiveSequence: function() {
+  closeActiveSequence: function(allExcept: boolean) {
     const activeSequence = app.project.activeSequence;
 
     if (!activeSequence) {
-        // alert("No active sequence is open.");
         return;
     }
 
@@ -215,19 +214,26 @@ export const host = {
     const allSequences = app.project.sequences;
     const numSequences = allSequences.numSequences;
 
-    for (let i = 0; i < numSequences; i++) {
-        const seq = allSequences[i];
-        if (seq.sequenceID === activeID) {
-            const success = seq.close(); // Close the sequence tab
-            if (!success) {
-                // alert(`Failed to close sequence: ${seq.name}`);
+    switch (allExcept == true) {
+      case false:
+        for (let i = 0; i < numSequences; i++) {
+            const seq = allSequences[i];
+            if (seq.sequenceID === activeID) {
+                seq.close(); // Close the sequence tab
                 return;
             }
-            return;
         }
+        break;
+      case true:
+        for (let i = 0; i < numSequences; i++) {
+            const seq = allSequences[i];
+            if (seq.sequenceID !== activeID) {
+                seq.close(); // Close the sequence tab
+                continue;
+            }
+        }
+        break;
     }
-
-    // alert("Active sequence not found in project.sequences list.");
   },
 
   // @link : https://github.com/Adobe-CEP/Samples/blob/fbc2f2fc090b41a07f07f9fffe2043d9bafb4988/PProPanel/jsx/PPRO/Premiere.jsx#L425

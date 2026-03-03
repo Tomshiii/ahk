@@ -212,6 +212,7 @@ $+d:: ;// deselect edit points after adding transitions
 }
 
 !w::prem.closeActiveSequence()
+!+w::prem.closeActiveSequence(true)
 
 ;// this unfortunately causes tonnes of slowdown/lag on chunky timelines :( - I can only assume it's fighting with `__setCurrSeq()` as well
 /* $+x:: ;// stop keyframes getting added to all tracks (I never need that, it's super annoying)

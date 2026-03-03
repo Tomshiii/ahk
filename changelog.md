@@ -47,6 +47,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
 - 📋 `disableAllMuteSolo()` & `soloVideo()` can now use `PremiereRemote` to reenable all video tracks & unmute all muted audio tracks
+- 📋 `closeActiveSequence()` now accepts parameter `allExcept` to close all *except* the active sequence
 
 📍 `save()`
 - 📋 Will now abort early if `Premiere` fails to retrieve the originally active sequence
@@ -213,6 +214,8 @@ This update introduces some rather large, breaking changes to the functionality 
      `applyEffectOnAllSelectedClips()`, `isPlaying()`, `listEffectsOnSelectedClip()`, `loadInSourceMonitor()`, `moveToAssetsBin()`, `premVer()`, `renderPreviews()`, `searchForBinWithName()`, `searchForItemByName()`, `setMarker()`, `stopPlayback()`, `startPlayback()`, `togglePlayback()`, `enableAllVideoTracks()`, `unmuteAllMutedTracks()`, `getClipTrackIndex()`, `renderInPrem()`, `importFile()`, `selectionIsSequence()`, `closeClipSourceMon()`, `closeAllClipSourceMon()`
 - ❌ Removed `setBarsAndTone()`
 - 📋 `saveProj()` now properly returns whether it suceeded or failed
+- 📋 `closeActiveSequence()` now accepts parameter `allExcept` to close all *except* the active sequence
+
 
 📍 `toggleLinearColour()`
 - ✅ Fixed function causing `Premiere` to crash if sequence settings are reopened after toggling
