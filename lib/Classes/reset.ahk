@@ -2,7 +2,7 @@
  * @description a class to contain functions used to action all active ahk scripts. These functions are designed specifically for my repo and may encounter unexpected issues with other scripts
  * @author tomshi
  * @date 2026/03/03
- * @version 1.1.11
+ * @version 1.1.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -163,7 +163,9 @@ class reset {
      */
     static ext_reload(includeChecklist := false) {
         Critical()
-        RunWait(ptf.SupportFiles "\reloadAll.ahk " includeChecklist . true)
+        if !winExt.ExistRegex("reloadAll.ahk ahk_class AutoHotkey",,,, true)
+            RunWait(ptf.SupportFiles "\reloadAll.ahk " includeChecklist . true)
+        Critical("Off")
         /* detect()
         tool.Cust("All active ahk scripts reloading")
         activeWindows := this().__getList()
@@ -187,7 +189,10 @@ class reset {
      * @param {Boolean} includeChecklist whether to include `checklist.ahk`
      */
     static reset(includeChecklist := false) {
-        RunWait(ptf.SupportFiles "\reloadAll.ahk" A_Space includeChecklist A_Space false)
+        Critical()
+        if !winExt.ExistRegex("reloadAll.ahk ahk_class AutoHotkey",,,, true)
+            RunWait(ptf.SupportFiles "\reloadAll.ahk" A_Space includeChecklist A_Space false)
+        Critical("Off")
         /* activeWindows := this().__getList()
         for v in activeWindows {
             if !getInfo := this().__parseInfo(v, includeChecklist)
@@ -209,7 +214,9 @@ class reset {
      */
     static ex_exit(includeChecklist := false) {
         Critical()
-        RunWait(ptf.SupportFiles "\closeAll.ahk" A_Space includeChecklist)
+        if !winExt.ExistRegex("closeAll.ahk ahk_class AutoHotkey",,,, true)
+            RunWait(ptf.SupportFiles "\closeAll.ahk" A_Space includeChecklist)
+        Critical("Off")
         /* tool.Cust("All active ahk scripts are being CLOSED")
         activeWindows := this().__getList()
         ; logger := Log()

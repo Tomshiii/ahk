@@ -78,7 +78,7 @@ class adobeTimer extends count {
     __fs(nameObj, progName) {
         InstallMouseHook(1)
         if ((!IsObject(nameObj)             || !nameObj.HasProp("winTitle") ||
-            !nameObj.HasProp("titleCheck")) || !(nameObj.titleCheck = true)
+            !nameObj.HasProp("titleCheck")) || (nameObj.titleCheck = -1)
         )
             return
         if winget.isFullscreen(, nameObj.winTitle) = true
