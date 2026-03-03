@@ -16,7 +16,7 @@ This update introduces some rather large, breaking changes to the functionality 
 ***
 
 ## Functions
-- ✅ Fixed compatibility with `Premiere v26.0` after name change
+- ✅ Fixed compatibility with `Premiere v26.0+` after name change
 - ✅ Fixed multiple instances of incorrect `||` logic
 - ✅ Fixed `getHotkeysArr()` not working with scancodes/virtualkey codes
 - ✅ Fixed `ytdlp.download()` not defaulting to a template filename if `filename` parameter is a blank string
@@ -29,11 +29,6 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✏️ Added `isBool()`, `checkBool()`, `delayFuncs()`, `runExt()`, `validateTypes()`, `notifyIfNotExist()`
 - ✏️ Added `CLSID_Objs {`
     - Allows for objects to be shared between scripts easily
-
-### 📝 `reset {`
-- ✅ Fixed functions not affecting all scripts
-- ✅ Fixed functions throwing when encountering scripts with no path in the title
-
 
 ### 📝 `prem {`
 - ✅ Fixed some colours not being theme specific
@@ -70,7 +65,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Now alerts the user if selected track is greater than the users `Ignore` (+ `Offset`) value
 
 📍 `__remoteFunc()`
-- ✅ Fixed function failing to pass `&` in `params*` paramaters
+- ✅ Fixed function failing to pass `&` in `params*` parameters
 - 📋 Will now attempt to replace any `A_Space` in `params*` with `%20`
 - 📋 Will now warn the user if `PremiereRemote` is not installed or the requested function does not exist in the user's `index.tsx`
 - 📋 Will now halt early if Premiere hasn't opened a project yet
@@ -102,6 +97,10 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed interacting with `beta` checkbox throwing
 - 📋 `Photoshop` has been removed from version selection due to differing criteria and not being relevant or required since implementation
     - 📋 Shortcuts will now generate for the latest non beta of Photoshop (unless only a Beta version is installed)
+
+### 📝 `reset {`
+- ✅ Fixed functions not affecting all scripts
+- ✅ Fixed functions throwing when encountering scripts with no path in the title
 
 ### 📝 `discord {`
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header
@@ -148,6 +147,7 @@ This update introduces some rather large, breaking changes to the functionality 
 ### 📝 `startup {`
 - ✅ Fixed `__checkForReloadAttempt()` causing scripts to throw under certain circumstances
 - ✅ Fixed `Set Prem_UIA Values` not working when selected from the tray menu
+- ✅ Fixed `checkVersJSON()` generating broken `.json` files
 - 📋 `gitBranchCheck()` will now abort if the user has any stashed changes
 
 📍 `trayMen()`
@@ -158,10 +158,6 @@ This update introduces some rather large, breaking changes to the functionality 
 📍 `adobeVerOverride()`
 - ✅ Fixed function not generating new shortcuts
 - ✅ Fixed function failing to retrieve file version if system language isn't set to `English`
-
-📍 `checkVersJSON()`
-- ✅ Fixed function generating an entry even if an `ImageSearch` folder exists
-- ✅ Fixed function generating broken `.json` files
 
 ### 📝 `switchTo {`
 📍 `adobeProject()`

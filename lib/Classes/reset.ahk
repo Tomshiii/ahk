@@ -2,7 +2,7 @@
  * @description a class to contain functions used to action all active ahk scripts. These functions are designed specifically for my repo and may encounter unexpected issues with other scripts
  * @author tomshi
  * @date 2026/03/03
- * @version 1.1.12
+ * @version 1.1.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -139,9 +139,9 @@ class reset {
     }
 
     /** a func to reset `HotkeylessAHK` to cut repeat code */
-    static __resetHotkeyless(close := false) {
+    __resetHotkeyless(close := false) {
         hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
-        ignore := this().ignoreString "|" A_ScriptName
+        ignore := this.ignoreString "|" A_ScriptName
         hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
         if hotkeyHWND
             ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
