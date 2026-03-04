@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi, taranVH
  * @date 2026/03/04
- * @version 2.4.7
+ * @version 2.4.8
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -201,7 +201,7 @@ class rbuttonPrem {
 	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
 
 	/** Reset class variables */
-	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.premObj.RClickIsActive := false, this.origSeq := "", this.remote = true)
+	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.premObj.RClickIsActive := false, this.origSeq := "")
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {
@@ -398,17 +398,16 @@ class rbuttonPrem {
 			ckDir := prem.__checkPremRemoteDir("getActiveSequence"), ckFunc := prem.__checkPremRemoteFunc("focusSequence")
 			if !ckDir || !ckFunc {
 				useRemote := false
-				this.remote := false
-				notifyIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.`nrbuttonPrem().movePlayhead() will no longer attempt to use it until a script reload.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
-				this.__exit()
-			}
-			if this.remote = true
-				this.origSeq := prem.__remoteFunc("getActiveSequence", true)
-			if this.origSeq = false {
-				useRemote := false
-				errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
-				notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
-				this.__exit()
+				notifyIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
+			} else {
+
+				if !this.origSeq := prem.__remoteFunc("getActiveSequence", true) {
+					useRemote := false
+					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
+					notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
+					this.__exit() */
+					notifyIfNotExist("RClickpremRemoteFailed",, 'PremiereRemote failed to retrieve the currently active sequence.`nFalling back to older method', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=400')
+				}
 			}
 		}
 
@@ -441,7 +440,7 @@ class rbuttonPrem {
 		}
 
 		;// checks original sequence is still active
-		if this.remote = true && useRemote = true
+		if useRemote = true
 			SetTimer(this.__ensureSeq.Bind(this, this.origSeq, 1), -1)
 
 		switch {

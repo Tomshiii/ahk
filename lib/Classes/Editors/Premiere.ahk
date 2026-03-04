@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/03/04
- * @version 2.3.30
+ * @version 2.3.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3455,6 +3455,8 @@ class Prem {
             SetTimer(, newDelay)
             return
         }
+        if !this.remoteActive
+            return
         if !this.__checkPremRemoteDir("getActiveSequence")
             SetTimer(, 0)
         if !WinExist(this.winTitle) || !WinActive(this.winTitle)
