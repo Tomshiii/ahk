@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/02/16
- * @version 2.2.6
+ * @date 2026/03/04
+ * @version 2.2.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -28,7 +28,7 @@
 ;//!
 /**
 timeline              - The timeline panel
-effectsControl        - The effects control panel
+effectControls        - The effects control panel
 tools                 - The tools panel
 programMonitor        - The Program monitor panel
 sourceMonitor         - The Source monitor panel
@@ -73,7 +73,7 @@ Class premUIA_Values {
     static beenSet    := false
 
     static windowHotkeys := Map(
-        "effectsControl",   ksa.effectControls,
+        "effectControls",   ksa.effectControls,
         "effectsPanel",     ksa.effectsWindow,
         "programMon",       ksa.programMonitor,
         "sourceMon",        ksa.sourceMonitor,
@@ -199,7 +199,7 @@ Class premUIA_Values {
             SendInput(ksa.shuttleStop)
         } else {
             try {
-                delaySI(80, this.windowHotkeys["effectsControl"], this.windowHotkeys["programMon"])
+                delaySI(80, this.windowHotkeys["effectControls"], this.windowHotkeys["programMon"])
                 sleep 150
                 currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
                 progMon := prem.__uiaCtrlPos(currentEl,,, false)
@@ -248,7 +248,7 @@ Class premUIA_Values {
                     if currentPanel != "timeline"
                         SendInput(currHotkey)
                     else
-                        delaySI(50, this.windowHotkeys["effectsControl"], currHotkey) ;// if timeline is already active, it'll swap sequences which is annoying
+                        delaySI(50, this.windowHotkeys["effectControls"], currHotkey) ;// if timeline is already active, it'll swap sequences which is annoying
                     sleep 50
                     try currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
                     catch {
@@ -284,7 +284,7 @@ Class premUIA_Values {
         block.Off()
         this.allVals := currentVers
         this.__setClassVal()
-        notifyIfNotExist("UIAnoEffect",, "This process may have no effect until all scripts are reloaded!", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
+        notifyIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=TC DUR=3 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
         if this.successCount != this.windowHotkeys.Count {
             notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
         }
@@ -303,6 +303,7 @@ Class premUIA_Values {
         FileAppend(JSON.stringify(currentVers), tempPath)
         try FileMove(tempPath, this.valueINI, true)
         activeObj.isRunning := false
+        return
     }
 
     __Delete() {

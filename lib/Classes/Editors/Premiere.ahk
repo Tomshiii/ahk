@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/03
- * @version 2.3.28
+ * @date 2026/03/04
+ * @version 2.3.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,9 +41,11 @@
 #Include Functions\isBool.ahk
 #Include Functions\checkbool.ahk
 #Include Functions\notifyIfNotExist.ahk
+#Include Functions\isObjHasProp.ahk
 #Include Other\Notify\Notify.ahk
 #Include Other\ShinsImageScanClass.ahk
 #Include Other\Array.ahk
+#Include Other\_socket.ahk
 ; }
 
 class Prem {
@@ -84,6 +86,8 @@ class Prem {
             if (this.useSwapSequences = true || this.useSwapSequences = "true")
                 SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
 
+            SetTimer(prem.checkRemote.Bind(this), 2000)
+
             ;// toggle multicam when audio effect windows become active
             if !WinEvent.IsRegistered("Active", "Clip Fx Editor " prem.exeTitle)
                 WinEvent.Active((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
@@ -107,6 +111,7 @@ class Prem {
     static prevSeqDelay := 1000
     static pauseSeqTimer := false
     static useSwapSequences := true
+    static remoteActive := false
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
@@ -193,6 +198,21 @@ class Prem {
     static MButtonPanning := false
 
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
+
+    static checkRemote() {
+        sock := winsock("probe", (s,e,c) => this.probeCB(s,e,c), "IPV4")
+        sock.Connect("localhost", 8081)
+    }
+
+    static probeCB(sock, event, err) {
+        if (event = "Connect") {
+            this.remoteActive := (err = 0)
+            sock.Close()
+        } else if (event = "Close") {
+            this.remoteActive := false
+            sock.Close()
+        }
+    }
 
     static setUI() {
         switch  {
@@ -367,13 +387,13 @@ class Prem {
      * @param {Boolean} [getActive=true] determine whether you wish for `__createUIAelement()` to also retrieve the active panel. Note: doing so can add anywhere from `100ms` to `1s` of latency depending on Premiere
      * @returns {Object/false} returns an object containing all values recieved via `ControlGetPos` as well as the UIA object that can continue to be operated on. If the function cannot determine the controls position, it will return boolean `false`
      * ```
-     * effCtrl := this.__uiaCtrlPos(premUIA.effectsControl)
+     * effCtrl := this.__uiaCtrlPos(premUIA.effectControls)
      * effCtrl.x
      * effCtrl.y
      * effCtrl.width
      * effCtrl.height
      * effCtrl.classNN
-     * effCtrl.uiaVar ;// returns -> uiaVar := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectsControl).GetControlId())
+     * effCtrl.uiaVar ;// returns -> uiaVar := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectControls).GetControlId())
      * effCtrl.activeElement
      * ```
      */
@@ -498,6 +518,24 @@ class Prem {
             MsgBox("PremiereRemote is not installed or function does not exist.`nFunction: " whichFunc,, "262160")
             return
         }
+        if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+            errorLog(Error("Core Functionality.ahk is not open but is required.", -1),, true)
+            return
+        }
+
+        if A_ScriptName != "Core Functionality.ahk" {
+            activeObj := CLSID_Objs.clone("prem")
+            if !activeObj.remoteActive {
+                errorLog(Error("A socket connection could not be established", -1),, true)
+                return
+            }
+        } else {
+            if !this.remoteActive {
+                errorLog(Error("A socket connection could not be established", -1),, true)
+                return
+            }
+        }
+
         checkPrem := WinGet.PremName()
         checkType := (Type(checkPrem) != "Object"), checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
         if !checkPrem || checkType || checkTitle || checkCanSave {
@@ -523,7 +561,7 @@ class Prem {
         }
         else {
             if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
-                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
+                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1),, true)
                 return false
             }
             try parse := JSON.parse(getResp)
@@ -705,7 +743,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         premUIA := CLSID_Objs.load("premUIA_Values")
         premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
             return
@@ -883,7 +921,7 @@ class Prem {
         block.On()
         premUIA := CLSID_Objs.load("premUIA_Values")
         premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
             return
@@ -1026,7 +1064,7 @@ class Prem {
                     ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a multicam nest for whatever reason. Doing it this way however, is unfortunately slower.
                     ;// hopefully one day adobe fixes this bug @link https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
                     ;// if you do not use the multiview window simply replace the below line with `this.__focusTimeline()` or `premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()`
-                    premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
+                    premEl.AdobeEl.ElementFromPath(premUIA.effectControls).SetFocus()
                     premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
                 } catch {
                     SendEvent(ksa.effectControls)
@@ -1035,11 +1073,11 @@ class Prem {
                 }*/
             case ksa.effectControls:
                 try {
-                    premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
+                    premEl.AdobeEl.ElementFromPath(premUIA.effectControls).SetFocus()
                     Sleep(25)
                     premEl.AdobeEl.ElementFromPath(premUIA.programMonitor).SetFocus()
                     Sleep(25)
-                    premEl.AdobeEl.ElementFromPath(premUIA.effectsControl).SetFocus()
+                    premEl.AdobeEl.ElementFromPath(premUIA.effectControls).SetFocus()
                     Sleep(50)
                     delaySI(20, "^a", ksa.deselectAll)
                 }
@@ -1075,7 +1113,7 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         premUIA := CLSID_Objs.load("premUIA_Values")
         premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
             return
@@ -1187,7 +1225,7 @@ class Prem {
         block.On()
         premUIA := CLSID_Objs.load("premUIA_Values")
         premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
             return
@@ -1233,7 +1271,7 @@ class Prem {
         block.On()
         premUIA := CLSID_Objs.load("premUIA_Values")
         premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
         if !IsSet(effCtrlNN) {
             block.Off()
             return
@@ -1322,7 +1360,7 @@ class Prem {
         }
         premUIA := CLSID_Objs.load("premUIA_Values")
         premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectsControl,,, false)
+        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
         if !IsSet(effCtrlNN) {
             blocker.Off()
             return false
@@ -1430,7 +1468,7 @@ class Prem {
 
             switch {
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
-                    if createEl.activeElement !== premUIA.effectsControl {
+                    if createEl.activeElement !== premUIA.effectControls {
                         ih.Stop(), star_ih.Stop()
                         SendInput(sendOnFail star_ih.Input)
                         tool.Cust("If you are attempting to adjust audio;`nThe timeline is not currently in focus", 2000)
@@ -3421,11 +3459,14 @@ class Prem {
         if !WinExist(this.winTitle) || !WinActive(this.winTitle)
             return
         premWindow := WinGet.PremName(,,, false)
-        if !premWindow || Type(premWindow) != "Object" || (premWindow.winTitle = "" || (!premWindow.wintitle && premWindow.titleCheck = -1)) || !this.__checkDialogueClass()
+        checkType := (Type(premWindow) != "Object")
+        checkTitle := isObjHasProp(premWindow, "winTitle", false) && isObjHasProp(premWindow, "titleCheck", -1) && isObjHasProp(premWindow, "saveCheck", -1)
+        checkCanSave := isObjHasProp(premWindow, "titleCheck", true)
+		if !premWindow || checkType || !checkTitle || checkCanSave {
             return
+        }
         seq := this.__remoteFunc("getActiveSequence", true)
         if !seq {
-            sleep 5000
             return
         }
 

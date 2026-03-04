@@ -64,3 +64,7 @@
 <ins>Nich-Cebolla</ins>  
 `Mutex.ahk`     => : https://github.com/Nich-Cebolla/AutoHotkey-Interprocess-Communication/blob/main/src/Mutex.ahk
 > LICENSE: MIT
+
+<ins>TheArkive</ins>  
+`_socket.ahk`   => : https://github.com/TheArkive/Socket_ahk2/blob/master/_socket.ahk
+> LICENSE: N/A - Freely provided on Github

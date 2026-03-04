@@ -272,7 +272,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 
 
 ;// allExcept
-^!+`::prem.toggleEnabled(1, "aud",, "all", 7)
+^!+`::prem.toggleEnabled(1, "aud",, "all", 8)
 <!+`::prem.toggleEnabled(1, "aud",, true)
 <!+1::
 <!+2::
@@ -282,7 +282,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 <!+6::
 <!+7::
 <!+8::
-<!+9::prem.toggleEnabled(, "aud", 1, true, 6)
+<!+9::prem.toggleEnabled(, "aud", 1, true, 7)
 
 <!c::prem.__remoteFunc('closeClipSourceMon')
 <!+c::prem.__remoteFunc('closeAllClipSourceMon')
@@ -331,7 +331,7 @@ Shift & WheelDown::prem.accelScroll(5, 25)
 	prior := false
 	if A_PriorKey = "WheelUp" || A_PriorKey = "WheelDown" {
 		premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
+		premUIA.initialise()
 		__within(coordObj, progmon) {
 			if ((coordObj.x > progmon.x) && (coordObj.x < progmon.x+progmon.width) && (coordObj.y < progmon.y) && (coordObj.y > progmon.y+progmon.height))
 				return false

@@ -43,6 +43,8 @@ This update introduces some rather large, breaking changes to the functionality 
     - ✏️ Added `renderPreviewsInOut()`
 - 📋 `disableAllMuteSolo()` & `soloVideo()` can now use `PremiereRemote` to reenable all video tracks & unmute all muted audio tracks
 - 📋 `closeActiveSequence()` now accepts parameter `allExcept` to close all *except* the active sequence
+- 📋 Now polls the `PremiereRemote` socket on a timer so that `__remoteFunc()` can abort early if it isn't open
+    - It should be noted this is checking the default port of `8081`. If you change `PremiereRemote`'s port, you will need to change the port `Prem {` is checking as well
 
 📍 `save()`
 - 📋 Will now abort early if `Premiere` fails to retrieve the originally active sequence
@@ -69,6 +71,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Will now attempt to replace any `A_Space` in `params*` with `%20`
 - 📋 Will now warn the user if `PremiereRemote` is not installed or the requested function does not exist in the user's `index.tsx`
 - 📋 Will now halt early if Premiere hasn't opened a project yet
+- 📋 Will now halt early if a socket connection doesn't exist
 
 📍 `layerSizeAdjust()`
 - 📋 Now accepts parameter `middle` to determine if the user wishes to adjust the middle divider instead of the individual track height
@@ -85,6 +88,7 @@ This update introduces some rather large, breaking changes to the functionality 
 
 ### 📝 `premUIA_Values {`
 - ✅ Fixed duplicate `Notify {` windows being spammed during errors
+- 📋 Renamed `effectsControl` => `effectControls`
 
 📍 `__setNewVal()`
 - ✅ Fixed function sometimes leaving inputs blocked
@@ -183,14 +187,18 @@ This update introduces some rather large, breaking changes to the functionality 
 
 ## Other Changes
 - ❗License files are now provided for all third party libs contained within this repo <sup>[[link]](<https://github.com/Tomshiii/ahk/tree/dev/lib/Other/LICENSES>)</sup>
-- ✅ Fixed `Premiere_RightClick.ahk` throwing in `ahk v2.0.20`
 - ✅ Closing `HotkeylessAHK.ahk` should now be more reliable across scripts
 - 📋 Reduced the usage of `Exit()` across the entire repo to minimise potential instances of inputs getting stuck
 - 📋 Placed most usage of `detect()` within `Critical()` blocks to avoid instances of changes leaking over to other functions
 - ✏️ Added `uninstall.ahk`
-- ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>), [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>), [`Mutex.ahk`](<https://github.com/Nich-Cebolla/AutoHotkey-Interprocess-Communication/blob/main/src/Mutex.ahk>)
+- ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>), [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>), [`Mutex.ahk`](<https://github.com/Nich-Cebolla/AutoHotkey-Interprocess-Communication/blob/main/src/Mutex.ahk>), [`socket.ahk`](<https://github.com/TheArkive/Socket_ahk2/blob/master/_socket.ahk>)
 - ❌ Removed `toggleLinearColour.ahk`
 - ❌ Removed `screenshot` `Streamdeck AHK` scripts and all related functions
+
+🔗 `Premiere_RightClick.ahk`
+- ✅ Fixed script throwing in `ahk v2.0.20`
+- ✅ Fixed `checkStuck()` sometimes appearing after the user saves
+- ✅ Fixed script stalling if `PremiereRemote` is closed
 
 🔗 `autosave.ahk`
 > [!Warning]
