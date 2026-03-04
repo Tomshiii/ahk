@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/03/04
- * @version 2.3.29
+ * @version 2.3.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -523,6 +523,12 @@ class Prem {
             return
         }
 
+        checkPrem := WinGet.PremName()
+        checkType := (Type(checkPrem) != "Object"), checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
+        if !checkPrem || checkType || checkTitle || checkCanSave {
+            return
+        }
+
         if A_ScriptName != "Core Functionality.ahk" {
             activeObj := CLSID_Objs.clone("prem")
             if !activeObj.remoteActive {
@@ -536,11 +542,6 @@ class Prem {
             }
         }
 
-        checkPrem := WinGet.PremName()
-        checkType := (Type(checkPrem) != "Object"), checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
-        if !checkPrem || checkType || checkTitle || checkCanSave {
-            return
-        }
         paramsString := ""
         if params.Length >= 1 {
             for k, v in params {
