@@ -240,6 +240,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed script trying to get the user to reinstall required packages if they haven't rebooted their pc
 - ✅ Fixed script flashing if the user pressed the `download` button without inputting a URL
 - ✅ Fixed script throwing if the user closes the window before it has finished checking for updates
+- ✅ Fixed `Check dev branch` checkbox getting stuck disabled if the user doesn't update packages
 - ✏️ Rudimentary youtube playlist support
 - ✏️ Add `Show Download Folder` button
 - 📋 Now checks for `deno` for continued `yt-dlp` support ([see here for more info](<https://github.com/yt-dlp/yt-dlp/issues/14404>))

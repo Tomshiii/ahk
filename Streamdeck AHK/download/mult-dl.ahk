@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/02/09
+ * @date 2026/03/10
  ***********************************************************************/
-global currentVer := "1.3.5"
+global currentVer := "1.3.6"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -204,6 +204,7 @@ class multiDL extends tomshiBasic {
             if buildStr != "" {
                 if MsgBox("Updates for installed packages are available, would you like to install them now?",, 0x4) = "No" {
                     this["updates"].Opt("-Disabled")
+                    this["checkDev"].Opt("-Disabled")
                     this.__checkingButton("reset")
                     return
                 }
