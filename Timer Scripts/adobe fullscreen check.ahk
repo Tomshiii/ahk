@@ -90,7 +90,7 @@ class adobeTimer extends count {
                 return
             }
             sleep 50
-            if this.premObj.RClickIsActive = false && (GetKeyState("RButton", "P") = false) && (GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false)
+            if this.premObj.RClickIsActive = false && (GetKeyState("RButton", "P") = false) && (GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false) && WinExist(nameObj.winTitle)
                 WinMaximize(nameObj.winTitle)
             return
         }
