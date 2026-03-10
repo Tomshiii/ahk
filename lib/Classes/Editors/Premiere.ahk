@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/04
- * @version 2.3.31
+ * @date 2026/03/10
+ * @version 2.3.32
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1248,7 +1248,7 @@ class Prem {
         }
         MouseGetPos(&xpos, &ypos)
         motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
-        if !ImageSearch(&xcol, &ycol, motionPos.x, motionPos.y-20, motionPos.x+700, motionPos.y+20, "*2 " ptf.Premiere "reset.png") {
+        if !obj.imgSrchMulti({x1: motionPos.x, x2: motionPos.x+700, y1: motionPos.y-20, y2: motionPos.y+40},, &xcol, &ycol, ptf.Premiere "reset.png", ptf.Premiere "reset_2.png") {
             block.Off()
             errorLog(Error("Could not find reset image", -1),, 1)
             return
