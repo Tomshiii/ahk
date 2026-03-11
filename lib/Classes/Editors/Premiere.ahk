@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/10
- * @version 2.3.32
+ * @date 2026/03/11
+ * @version 2.3.33
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2385,14 +2385,21 @@ class Prem {
             errorLog(PropertyError("Incorrect value in Parameter #1", -1),,, true)
             return
         }
+        key := keys.allWait()
+        if !key
+            return
+        for v in key {
+            try name := GetKeyName(v)
+            catch {
+                continue
+            }
+            if name = "Shift" || name = "+" {
+                errorLog(ValueError("``Shift`` cannot be the first activation hotkey.", -1),,, true)
+                return
+            }
+        }
         blocker := block_ext()
         blocker.On()
-        key := keys.allWait(2)
-        if key[1] = "Shift" {
-            blocker.Off()
-            errorLog(ValueError("``Shift`` cannot be the first activation hotkey.", -1),,, true)
-            return
-        }
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
         try activeWin := WinGet.Title()

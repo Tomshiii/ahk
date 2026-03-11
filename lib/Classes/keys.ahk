@@ -129,7 +129,7 @@ class keys {
     /**
      * This function is designed to remove the hassle that can sometimes occur by using `KeyWait`. If a function is launched via something like a streamdeck `A_ThisHotkey` will be blank, if you design a function to only be activated with one button but then another user tries to launch it from two an error will be thrown. This function will automatically determine what's required and stop errors occuring
      * @param {Integer} [which=1] determines which hotkey should be waited for in the event that the user tries to activate with two hotkeys. This integer is the index of the array returned from `getHotkeysArr()`. ie; if the user is using the activation hotkey `!p::` - `!` is [1], `p` is [2]. So if the user puts `2` as this parameter, the function will move forward after `p` is released
-     * @returns {Boolean/Array} if `A_ThisHotkey` is blank, this function will return boolean `false`, otherwise this function will attempt to return the array received from `getHotkeysArr()`
+     * @returns {Boolean/Array} if `A_ThisHotkey` is blank, this function will return boolean `false`, otherwise this function will attempt to return the array received from `getHotkeysArr()` (vk values)
      */
     static allWait(which := 1) {
         if A_ThisHotkey = ""

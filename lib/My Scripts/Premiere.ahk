@@ -58,6 +58,12 @@ $Tab::
 		KeyWait("LCtrl")
 		return
 	}
+	titles := "Audio Gain " prem.winTitle "|"
+	if winExt.ExistRegex(titles) {
+		sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
+		SendInput(sendMod "{Tab}")
+		return
+	}
 	if CaretGetPos(&x, &y) {
 		if !isDoubleClick()
 			return
