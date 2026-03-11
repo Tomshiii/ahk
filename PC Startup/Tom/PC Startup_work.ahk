@@ -21,7 +21,7 @@ SetWorkingDir(ptf.rootDir)
 Run(ptf.rootDir "\My Scripts.ahk")
 Run(ptf.rootDir "\..\ahk_work\QMK Keyboard.ahk")
 Run(ptf.TimerScripts "\Alt_menu_acceleration_DISABLER.ahk")
-Run(ptf.TimerScripts "\autodismiss error.ahk")
+; Run(ptf.TimerScripts "\autodismiss error.ahk") ;// adobe added a toggle
 ;Run(A_WorkingDir "\Premiere_RightClick.ahk" ;#include(d) in main script now)
 Run(ptf.TimerScripts "\autosave.ahk")
 ; Run(ptf.rootDir "\..\ahk_work\Timer Scripts\adobe fullscreen check.ahk")

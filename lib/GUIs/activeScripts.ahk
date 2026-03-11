@@ -29,19 +29,18 @@ activeScripts()
     text := MyGui.Add("Text", "X" margX " Y8 W300 H20", "Current active scripts are:")
     text.SetFont("S13 Bold")
 
-    scripts := ["myscript", "error", "dismiss", "save", "fullscreen", "game", "M-I_C", "premkey", "keyboard", "text", "resolve"]
+    scripts := ["myscript", "error", "save", "fullscreen", "game", "M-I_C", "premkey", "keyboard", "text", "resolve"]
     names := Map(
         scripts[1],      "My Scripts.ahk",
         scripts[2],      "Alt_menu_acceleration_DISABLER.ahk",
-        scripts[3],      "autodismiss error.ahk",
-        scripts[4],      "autosave.ahk",
-        scripts[5],      "adobe fullscreen check.ahk",
-        scripts[6],      "gameCheck.ahk",
-        scripts[7],      "Multi-Instance Close.ahk",
-        scripts[8],      "premKeyCheck.ahk",
-        scripts[9],      "QMK Keyboard.ahk",
-        scripts[10],     "textreplace.ahk",
-        scripts[11],     "Resolve_Example.ahk",
+        scripts[3],      "autosave.ahk",
+        scripts[4],      "adobe fullscreen check.ahk",
+        scripts[5],      "gameCheck.ahk",
+        scripts[6],      "Multi-Instance Close.ahk",
+        scripts[7],      "premKeyCheck.ahk",
+        scripts[8],      "QMK Keyboard.ahk",
+        scripts[9],     "textreplace.ahk",
+        scripts[10],     "Resolve_Example.ahk",
     )
     tooltiptext := Map(
         scripts[1],      "Clicking this checkbox will toggle suspend the script",
@@ -59,7 +58,7 @@ activeScripts()
             MyGui[scripts[A_Index]].ToolTip := tooltiptext[scripts[tooltip]]
         }
         loop scripts.Length {
-            listNum := 6
+            listNum := 5
             moveOver := Mod(A_Index, listNum)
             switch A_Index {
                 case 1:
@@ -80,8 +79,6 @@ activeScripts()
             moveOver := Mod(A_Index, listNum)
             ;// making minor adjustments for some images
             switch scripts[A_Index] {
-                case "dismiss":
-                    y := "+5"
                 case "game":
                     type := ".png"
                 case "M-I_C" :
@@ -120,7 +117,7 @@ activeScripts()
 
     ;close button
     MyGui[scripts[scripts.Length]].GetPos(, &resolveHeight) ;get ypos of resolve checkbox (the last item)
-    buttonHeight := resolveHeight - 10
+    buttonHeight := resolveHeight + 10
     closeButton := MyGui.Add("Button", "X" buttonX " Y" buttonHeight, "Close")
     closeButton.OnEvent("Click", escape)
 

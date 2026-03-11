@@ -194,6 +194,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>), [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>), [`Mutex.ahk`](<https://github.com/Nich-Cebolla/AutoHotkey-Interprocess-Communication/blob/main/src/Mutex.ahk>), [`socket.ahk`](<https://github.com/TheArkive/Socket_ahk2/blob/master/_socket.ahk>)
 - ❌ Removed `toggleLinearColour.ahk`
 - ❌ Removed `screenshot` `Streamdeck AHK` scripts and all related functions
+- ❌ Removed `autodismiss error.ahk`. Adobe finally added a toggle to disable the warning
 
 🔗 `Premiere_RightClick.ahk`
 - ✅ Fixed script throwing in `ahk v2.0.20`
