@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/03/11
- * @version 2.3.33
+ * @version 2.3.34
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -86,7 +86,12 @@ class Prem {
             if (this.useSwapSequences = true || this.useSwapSequences = "true")
                 SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
 
-            SetTimer(prem.checkRemote.Bind(this), 2000)
+            ;// check for premremote and NPM before setting timer
+            extensionsPath := A_AppData "\Adobe\CEP\extensions"
+            remotePath     := extensionsPath "\PremiereRemote"
+            getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+            if DirExist(remotePath) && (getNPM != false && getNPM != "")
+                SetTimer(prem.checkRemote.Bind(this), 2000)
 
             ;// toggle multicam when audio effect windows become active
             if !WinEvent.IsRegistered("Active", "Clip Fx Editor " prem.exeTitle)
@@ -200,8 +205,15 @@ class Prem {
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
     static checkRemote() {
-        sock := winsock("probe", (s,e,c) => this.probeCB(s,e,c), "IPV4")
-        sock.Connect("localhost", 8081)
+        if !WinExist(this.winTitle)
+            return
+        try {
+            sock := winsock("probe", (s,e,c) => this.probeCB(s,e,c), "IPV4")
+            sock.Connect("localhost", 8081)
+        } catch {
+            errorLog(TargetError("Couldn't probe localhost", -1))
+            return
+        }
     }
 
     static probeCB(sock, event, err) {

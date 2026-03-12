@@ -39,6 +39,8 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `selectionTool()` containing left over code
 - ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`, `deleteEmptyTracks()`, `__resetTimelineVals()`, `renderProjectSelection()`
 - ✏️ Added `__disableMulticamOnAudioEffect()` to handle toggling the `Multi-Cam View` if an audio effect window becomes active
+- ✏️ Added `checkRemote()`
+    - `prem {` calls this function on a timer to poll for the `PremiereRemote` window to ensure `__remoteFunc()` will not fire if the window is closed
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
 - 📋 `disableAllMuteSolo()` & `soloVideo()` can now use `PremiereRemote` to reenable all video tracks & unmute all muted audio tracks

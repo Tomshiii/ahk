@@ -44,7 +44,7 @@ try DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Bac
 FileCopy(A_MyDocuments "\Adobe\Common\Assets\Label Color Presets\Mine.prlabelpreset", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Labels\Mine.prlabelpreset", 1)
 
 __backupPremFolders(ahkDir, pcDir, title) {
-    files := FileSelect("M3", pcDir)
+    files := FileSelect("M3", pcDir, title)
     if !files
         return
     for v in files {
