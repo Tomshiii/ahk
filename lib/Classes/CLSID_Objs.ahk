@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/03/03
- * @version 1.1.4
+ * @date 2026/03/13
+ * @version 1.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -78,7 +78,8 @@ class CLSID_Objs {
                     errorLog(TimeoutError('Timeout waiting for lock on: ' objName))
                     return false
                 case WAIT_FAILED:
-                    throw OSError()
+                    ; throw OSError()
+                    ExitApp()
             }
         } finally {
             mtx.Close()

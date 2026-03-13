@@ -52,12 +52,13 @@ for v in listArr {
 
 if coreFunc := winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,,, true) {
     coreFuncObj := resetter.__parseInfo(coreFunc, incChecklist ?? false)
+    if !IsSet(coreFuncObj)
+        throw TargetError("Could not determine ``Core Functionality.ahk``")
     ProcessClose(coreFunc)
     __checkClose(coreFunc, "Core Functionality.ahk ahk_class AutoHotkey")
 }
 
-if IsSet(coreFuncObj)
-    Run(coreFuncObj.path)
+Run(coreFuncObj.path)
 
 if !CLSID_Objs.waitCoreFuncs(2) {
     sleep 2000
