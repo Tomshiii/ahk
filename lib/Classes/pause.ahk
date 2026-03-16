@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain functions that pause/suspend scripts.
  * @author tomshi, Lexikos
- * @date 2025/12/20
- * @version 1.1.0
+ * @date 2026/03/16
+ * @version 1.1.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -15,12 +15,13 @@ class Pause {
      * This function toggles a pause on the autosave ahk script.
      * @param {String} scriptName is the name of the script you wish to pause, ie. "My Scripts" - do not include the ".ahk"
      */
-    static pause(scriptName)
+    static pause(scriptName, doTooltips := true)
     {
         detect(true, 2)
         if !WinExist(scriptName ".ahk")
             {
-                tool.Cust(scriptName ".ahk script isn't open")
+                if doTooltips
+                    tool.Cust(scriptName ".ahk script isn't open")
                 return
             }
         WM_COMMAND := 0x0111

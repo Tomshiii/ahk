@@ -7,6 +7,7 @@ ListLines(0)
 #Include Classes\keys.ahk
 #Include Classes\ptf.ahk
 #Include Classes\timer.ahk
+#Include Classes\WM.ahk
 #Include Functions\trayShortcut.ahk
 ; }
 
@@ -15,6 +16,9 @@ startupTray()
 
 
 keyCheck := premKeyCheck()
+
+changeInterval := ObjBindMethod(WM, "__parseMessageResponse")
+OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 
 ;// defining what happens if the script is somehow opened a second time and the function is forced to close
 OnExit(ExitFunc)
@@ -33,6 +37,11 @@ class premKeyCheck extends count {
     Tick() {
         if !WinExist(Editors.Premiere.winTitle)
             return
+    }
+
+    __remoteStop() {
+        try this.Stop()
+        return
     }
 
     __checkKeys() {

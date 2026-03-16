@@ -13,6 +13,7 @@ KeyHistory(0)
 #Include Classes\WM.ahk
 #Include Classes\Mip.ahk
 #Include Classes\CLSID_Objs.ahk
+#Include Classes\timer.ahk
 #Include GUIs\gameCheckGUI.ahk
 #Include gameCheck\Game List.ahk ;games can either be manually added to the game list linked below OR can be added by pressing the "Add game to `gameCheck.ahk`" button in the settings GUI (default hotkey is win + F1)
 #Include Functions\trayShortcut.ahk
@@ -21,33 +22,6 @@ KeyHistory(0)
 TraySetIcon(ptf.Icons "\game.png")
 
 startupTray()
-
-;// open settings instance
-UserSettings := CLSID_Objs.load("UserSettings")
-
-;// Set seconds delay
-sec := UserSettings.game_SEC
-secms := sec * 1000
-
-;// getting info from settings
-version := UserSettings.version
-mainScript := UserSettings.MainScriptName
-UserSettings := "" ;// closing settings instance
-
-OnMessage(0x004A, changeVar)  ; 0x004A is WM_COPYDATA
-changeVar(wParam, lParam, msg, hwnd) {
-    try {
-        UserSettings := CLSID_Objs.load("UserSettings")
-        res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
-        ;// UserSettings.autosave_MIN_ 5
-        lastUnd := InStr(res, "_", 1, -1)
-        var := SubStr(res, 1, lastUnd-1)
-        val := SubStr(res, lastUnd+1)
-        UserSettings.%var% := val
-        SetTimer((*) => reload(), -500)
-    }
-    return
-}
 
 ;// defining a GUI the user can access by right clicking the script
 A_TrayMenu.Insert("7&") ;adds a divider bar
@@ -64,7 +38,11 @@ gameAdd(*) {
         if WinGet.isProc(this_value)
             continue
         ;// generate the gui
-        gameGUI := gameCheckGUI(, WinGetTitle(this_value), WinGetProcessName(this_value))
+        try title := WinGetTitle(this_value), proc := WinGetProcessName(this_value)
+        catch {
+            continue
+        }
+        gameGUI := gameCheckGUI(, title, proc)
         gameGUI.Show("AutoSize")
         break
     }
@@ -72,52 +50,59 @@ gameAdd(*) {
     Critical("Off")
 }
 
-SetTimer(check, secms)
+gameCheck := gameCheckTimer()
 
-/** This timer is called by `check()` to periodically check if a game window is still active */
-notActive() {
-    if !WinActive("ahk_group games") {
-        pause.suspend(mainScript ".ahk", false) ;unsuspend
-        SetTimer(, 0) ;stop this timer
-        SetTimer(check, secms)
-    }
-}
+changeInterval := ObjBindMethod(WM, "__parseMessageResponse")
+OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 
-/** This function is called by a timer to determine. It keeps track of static variable `ask` to determine if the user has been prompted regarding their script being suspended outside of a game. */
-check() {
-    static ask := 1
-    ;// if a game is active and My Scripts.ahk isn't suspended
-    if WinActive("ahk_group games") {
-        pause.suspend(mainScript ".ahk", true) ;suspend
-        SetTimer(notActive, secms)
-        SetTimer(, 0)
-    }
-    if ask != 1
-        return
-    if WinActive("ahk_group games")
-        return
-    ;// if the user has suspended My Scripts.ahk manually outisde of a game, this block will fire and will prompt the user asking if they wish to unsuspend the scripts
-    if pause.suspend(mainScript ".ahk", false) = 1 {
-        checkMsg := MsgBox(Format("
-        (
-            You have ``{}.ahk`` suspended, do you wish to unsuspend it?
-
-            If this is not an accident, press "No" and you will not be asked again this session.
-        )", mainScript), mainScript ".ahk is Suspended", "4 32 4096") ;prompt the user with a msgbox
-        if checkMsg = "No" {
-            ask := 0
-            pause.suspend(mainScript ".ahk", true)
-        }
-    }
-}
-
-;// defining what happens if the script is somehow opened a second time and the function is forced to close
 OnExit(ExitFunc)
-ExitFunc(ExitReason, ExitCode)
-{
-    if (ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error") {
-        pause.suspend(mainScript ".ahk", false)
-        SetTimer(check, 0)
-        SetTimer(notActive, 0)
+ExitFunc(ExitReason, ExitCode) {
+    if ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error"
+        gameCheck.Stop()
+}
+
+
+class gameCheckTimer extends count {
+    __New() {
+        this.UserSettings := CLSID_Objs.load("UserSettings")
+        this.mainScript := this.UserSettings.MainScriptName
+        super.__New(-(this.UserSettings.game_SEC * 1000))
+        super.start()
     }
+
+    UserSettings := ""
+    mainScript := ""
+
+    ;// game open = true || closed = false
+    which := false
+
+    Tick() {
+        this.check()
+    }
+
+    __remoteStop() {
+        try this.Stop()
+        return
+    }
+
+    /** This function is called by a timer to determine. It keeps track of static variable `ask` to determine if the user has been prompted regarding their script being suspended outside of a game. */
+    check() {
+        switch this.which {
+            case true:
+                if !WinActive("ahk_group games") {
+                    pause.suspend(this.mainScript ".ahk", false) ;unsuspend
+                    this.which := false
+                }
+            case false:
+                if WinActive("ahk_group games") {
+                    pause.suspend(this.mainScript ".ahk", true) ;suspend
+                    this.which := true
+                }
+        }
+        this.interval := -(this.UserSettings.game_SEC * 1000)
+        this.stop()
+        this.start()
+    }
+
+    __Delete() => super.stop()
 }

@@ -3,6 +3,9 @@
 #Include Classes\reset.ahk
 #Include Classes\pause.ahk
 #Include Classes\CLSID_Objs.ahk
+#Include Classes\WM.ahk
+#Include Classes\winExt.ahk
+#Include Classes\tool.ahk
 
 ;// get list of open ahk scripts
 ;// get path of said scripts
@@ -39,11 +42,16 @@ for v in list {
     if itemObj.scriptName = "Core Functionality.ahk"
         continue
     listArr.Push(itemObj)
+    if WM.timerScripts.Has(itemObj.scriptName) {
+        justName := StrReplace(itemObj.scriptName, ".ahk", "",,, 1)
+        justName := StrReplace(justName, A_Space, "_")
+        try WM.Send_WM_COPYDATA(justName "_stop," WM.objName[justName], justName ".ahk")
+    }
     if itemObj.scriptName = "HotkeylessAHK.ahk" {
         Run(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\closeHotkeylessAHK.ahk")
         continue
     }
-    pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""))
+    pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""), false)
 }
 
 for v in listArr {

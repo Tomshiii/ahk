@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/03/03
- * @version 2.4.6
+ * @date 2026/03/16
+ * @version 2.4.7
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -405,7 +405,9 @@ settingsGUI()
                 }
                 return
         }
-        if winExt.ExistRegex(script " - AutoHotkey",,,, true) && script != "" {
+        exists := winExt.ExistRegex(script " - AutoHotkey",,,, true)
+        ignoreScripts := Mip("Multi-Instance Close.ahk", true, "gameCheck.ahk", true)
+        if exists && script != "" && !ignoreScripts.Has(script) {
             WM.Send_WM_COPYDATA(iniVar "," ctrl.text "," objName, script)
         }
     }

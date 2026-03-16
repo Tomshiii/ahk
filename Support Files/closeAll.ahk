@@ -1,6 +1,9 @@
 #SingleInstance Force
 #Include "%A_Appdata%\tomshi\lib"
 #Include Classes\reset.ahk
+#Include Classes\pause.ahk
+#Include Classes\tool.ahk
+#Include Classes\winExt.ahk
 
 try incChecklist := A_Args[1]
 
@@ -11,11 +14,17 @@ activeWindows := resetter.__getList()
 for v in activeWindows {
     if !getInfo := resetter.__parseInfo(v, incChecklist ?? false)
         continue
+    if WM.timerScripts.Has(getInfo.scriptName) {
+        justName := StrReplace(getInfo.scriptName, ".ahk", "",,, 1)
+        justName := StrReplace(justName, A_Space, "_")
+        try WM.Send_WM_COPYDATA(justName "_stop," WM.objName[justName], justName ".ahk")
+    }
     if getInfo.scriptName = "HotkeylessAHK.ahk" {
         resetter.__resetHotkeyless(true)
         continue
     }
     ; logger.Append("closing: " getInfo.scriptName)
+    pause.pause(StrReplace(getInfo.scriptName, ".ahk", ""), false)
     ProcessClose(getInfo.PID)
     if !checkPID := winExt.ExistRegex(getInfo.PID,, resetter.ignoreString,, true)
         continue

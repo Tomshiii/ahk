@@ -24,41 +24,19 @@ startupTray()
 
 ;// open settings instance
 UserSettings := CLSID_Objs.load("UserSettings")
+SetTimer(check, -50)
 
-;This script will not close multiple instances of `checklist.ahk` or anything within the `ignoreList.ahk` file
-set:
-ms := UserSettings.multi_SEC * 1000
-
-if IsSet(ms) { ;we don't want the timer starting before the ms variable has been set
-    UserSettings := "" ;// close settings instance
-    SetTimer(check, -50)
-}
-else
-    goto set
-
-OnMessage(0x004A, changeVar)  ; 0x004A is WM_COPYDATA
-changeVar(wParam, lParam, msg, hwnd) {
-    try {
-        UserSettings := CLSID_Objs.load("UserSettings")
-        res := WM.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
-        ;// UserSettings.autosave_MIN_ 5
-        lastUnd := InStr(res, "_", 1, -1)
-        var := SubStr(res, 1, lastUnd-1)
-        val := SubStr(res, lastUnd+1)
-        UserSettings.%var% := val
-        SetTimer((*) => reload(), -500)
-    }
-    return
-}
+changeInterval := ObjBindMethod(WM, "__parseMessageResponse")
+OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 
 check()
 {
-    detect()
-    value := WinGetList("ahk_class AutoHotkey")
+    static UserSettings := CLSID_Objs.load("UserSettings")
+    value := winExt.ListRegex("ahk_class AutoHotkey",,,, true)
     windows := ""
     for window in value{
         try {
-            newWin := WinGettitle(window)
+            newWin := WinGetTitle(window)
         }
         if !IsSet(newWin) || !IsSet(window)
             continue
@@ -67,12 +45,17 @@ check()
             {
                 tool.Cust("Closing multiple instance of : " script.Name, 3000)
                 try {
+                    Critical()
+                    orig := detect()
                     WinClose(window)
+                    resetOrigDetect(orig)
+                    Critical("Off")
                 }
             }
         windows .= script.Name "`n"
     }
-    SetTimer(, -ms)
+    windows := ""
+    SetTimer(, -(UserSettings.multi_SEC * 1000))
 }
 
 ;defining what happens if the script is somehow opened a second time and the function is forced to close

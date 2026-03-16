@@ -70,6 +70,11 @@ class adobeTimer extends count {
             this.__fs(WinGet.AEName(,,, false), "After Effects")
     }
 
+    __remoteStop() {
+        try super.stop()
+        return
+    }
+
     /**
      * This function handles fullscreening the desired program
      * @param {Object} nameObj an object for the desired name containing {titleCheck:, winTitle:} (using `winget.PremName()/winget.AEName()`)

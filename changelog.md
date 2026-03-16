@@ -37,10 +37,12 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
 - ✅ Fixed `selectionTool()` containing left over code
-- ✏️ Added `stopPlayback()`, `startPlayback()`, `toggleLinearColour()`, `deleteEmptyTracks()`, `__resetTimelineVals()`, `renderProjectSelection()`
+- ✏️ Added `stopPlayback()`, `startPlayback()`, `deleteEmptyTracks()`, `__resetTimelineVals()`, `renderProjectSelection()`
 - ✏️ Added `__disableMulticamOnAudioEffect()` to handle toggling the `Multi-Cam View` if an audio effect window becomes active
 - ✏️ Added `checkRemote()`
     - `prem {` calls this function on a timer to poll for the `PremiereRemote` window to ensure `__remoteFunc()` will not fire if the window is closed
+- ✏️ Added `toggleLinearColour()`
+    - ❌ Removed `toggleLinearColour.ahk`
 - 📋 Renamed `Previews()` => `deletePreviews()` and removed parameter `which`
     - ✏️ Added `renderPreviewsInOut()`
 - 📋 `disableAllMuteSolo()` & `soloVideo()` can now use `PremiereRemote` to reenable all video tracks & unmute all muted audio tracks
@@ -194,7 +196,6 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Placed most usage of `detect()` within `Critical()` blocks to avoid instances of changes leaking over to other functions
 - ✏️ Added `uninstall.ahk`
 - ✏️ Added [`LVICE_XXS.ahk`](<https://github.com/AHK-just-me/AHK2_LVICE_XXS>), [`Array.ahk`](<https://github.com/Descolada/AHK-v2-libraries/blob/main/Lib/Array.ahk>), [`Mutex.ahk`](<https://github.com/Nich-Cebolla/AutoHotkey-Interprocess-Communication/blob/main/src/Mutex.ahk>), [`socket.ahk`](<https://github.com/TheArkive/Socket_ahk2/blob/master/_socket.ahk>)
-- ❌ Removed `toggleLinearColour.ahk`
 - ❌ Removed `screenshot` `Streamdeck AHK` scripts and all related functions
 - ❌ Removed `autodismiss error.ahk`. Adobe finally added a toggle to disable the warning
 
@@ -229,7 +230,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 Now accepts parameter `enableMaxRenderQual`
 
 🔗 `Keyboard Shortcuts.ini`
-- Fixed `premRippleDelete` command (`cmd.timeline.ripple.delete` => `cmd.edit.rippledelete`). May have changed after a premiere update
+- ✅ Fixed `premRippleDelete` command (`cmd.timeline.ripple.delete` => `cmd.edit.rippledelete`). May have changed after a premiere update
 - ✏️ Added `fitToFrame`, `selectedClipStart`, `selectedClipEnd`, `stepBackOneFrame`, `stepForwardOneFrame`, `deleteEmptyTracksAll`, `toggleMultiCam`
 
 🔗 `adobeKSA`

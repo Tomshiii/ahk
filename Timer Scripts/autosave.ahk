@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/03/10
- * @version 2.2.11
+ * @date 2026/03/16
+ * @version 2.2.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -233,6 +233,11 @@ class adobeAutoSave extends count {
         }
     }
 
+    __remoteStop() {
+        try this.Stop()
+        return
+    }
+
     /** determine whether premiere/ae is open */
     __checkforEditors() {
         this.premExist := winExt.ExistRegex(prem.winTitle) ? true : false
@@ -377,7 +382,8 @@ class adobeAutoSave extends count {
             return
         } */
         if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
-            try progMon := prem.__uiaCtrlPos(this.premUIA.programMon,,, false)
+            passIn := (this.premUIAEl != false) ? this.premUIAEl : unset
+            try progMon := prem.__uiaCtrlPos(this.premUIA.programMon,, passIn, false)
             if !IsSet(progMon)
                 return false
             this.programMonX1 := progMon.x+100, this.programMonX2 := progMon.x + progMon.width-100, this.programMonY1 := (progMon.y+progMon.height)*0.7,  this.programMonY2 := progMon.y + progMon.height + 150
@@ -457,10 +463,6 @@ class adobeAutoSave extends count {
                     }
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
-                    if prem.__checkPremRemoteDir('startPlayback') {
-                        prem.__remoteFunc('startPlayback')
-                        return
-                    }
                     try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
                     catch {
                         try {
@@ -704,27 +706,6 @@ class adobeAutoSave extends count {
         this.__resetAETrans()
     }
 
-    /** determines ae's placement in the current window stack */
-    /* __determineAEWinPlacement() {
-        ;// I'd like to use this at some point to make moving ae to the bottom of the window stack smarter
-        ;// but it's just really hard bc there are too many variables at play
-        Critical(), orig := detect(false, "RegEx")
-        list := WinGetList()
-        arrDel := 0
-        for v in list {
-            if WinGet.explorerIgnoreMap.Has(WinGetClass(v)) || WinGetTitle(v) = "" {
-                arrDel++
-                continue
-            }
-            if WinGetTitle(v) = WinGetTitle(editors.AE.winTitle) {
-                Critical("Off"), orig := resetOrigDetect(orig)
-                return (A_Index-arrDel)
-            }
-        }
-        Critical("Off"), orig := resetOrigDetect(orig)
-        return false
-    } */
-
     /** start a winevent hook to cancel the "Save As" window if it appears */
     __startSaveAsWinEvent(saveAsTitle) {
         if !WinEvent.IsRegistered('Exist', saveAsTitle)
@@ -735,15 +716,6 @@ class adobeAutoSave extends count {
     __stopSaveAsWinEvent(saveAsTitle) {
         if WinEvent.IsRegistered('Exist', saveAsTitle)
             WinEvent.Stop('Exist', saveAsTitle)
-    }
-
-    /** checks to see if the script the user has defined as their main script is running */
-    __checkMainScript() {
-        Critical()
-        isCoreFunc := winExt.ExistRegex("Core Functionality.ahk")
-        if isCoreFunc
-            return true
-        return false
     }
 
     /** reset after effects window transparency */
@@ -761,12 +733,18 @@ class adobeAutoSave extends count {
 
     /** attempts to check if `Premiere_RightClick.ahk` is active */
     __checkRClick() {
-        InstallMouseHook(1)
-        if this.__checkMainScript() {
+        InstallMouseHook(true)
+        isCoreFunc := winExt.ExistRegex("Core Functionality.ahk")
+        if isCoreFunc {
             premObj := CLSID_Objs.load("prem")
-            if premObj.RClickIsActive = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true
+            if premObj.RClickIsActive = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true {
+                InstallMouseHook(false)
+                premObj := ""
                 return true
+            }
+            premObj := ""
         }
+        InstallMouseHook(false)
         return false
     }
 

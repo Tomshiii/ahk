@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/02/02
- * @version 1.7.4
+ * @date 2026/03/16
+ * @version 1.7.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,8 +32,12 @@ class WinGet {
     static explorerIgnoreMap := Mip(
         "Button", 1, "Shell_TrayWnd", 1, "NotifyIconOverflowWindow", 1,
         "Shell_SecondaryTrayWnd", 1, "Progman", 1, "TopLevelWindowForOverflowXamlIsland", 1,
-        "SearchHost", 1
+        "SearchHost", 1, "XamlExplorerHostIslandWindow", 1, "ForegroundStaging", 1, "ThumbnailDeviceHelperWnd", 1, "#32768", 1, "tooltips_class32", 1, "SIBTranslucentLayer", 1, "SIBJumpView", 1, "Desktop User Picture", 1, "DV2ControlHost", 1
     )
+    static explorerIgnoreExeMap := Mip("TabTip.exe", 1)
+    static ahkIgnoreMap := Mip("tooltips_class32", 1, "#32768", 1, "AutoHotkeyGUI", 1, "AutoHotkey", 1)
+    static otherIgnoreMap := Mip("Qt643QWindowPopupDropShadowSaveBits", 1, "SunAwtWindow", 1, "tooltips_class32", 1, "MozillaDropShadowWindowClass", 1)
+
 
     /**
      * This function is a helper function for a few other functions down below and removes repeat code
@@ -417,7 +421,7 @@ class WinGet {
             return false
         }
         ;// check to see if it's a win explorer process identified in a map within this class
-        if proc = "explorer.exe" && this.explorerIgnoreMap.Has(class)
+        if (proc = "explorer.exe" && this.explorerIgnoreMap.Has(class)) || (proc = "AutoHotkey64.exe" && this.ahkIgnoreMap.Has(class)) || this.explorerIgnoreExeMap.Has(proc) || this.otherIgnoreMap.Has(class)
             return true
         return false
     }
