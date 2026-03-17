@@ -31,6 +31,11 @@ This update introduces some rather large, breaking changes to the functionality 
     - Allows for objects to be shared between scripts easily
 
 ### 📝 `prem {`
+> [!Warning]
+> I am aware of slowdown issues and general incompatibility with Premiere functions that require `UIA` in the current `Premiere v26.3 Beta`.
+> This issue is caused by the adobe team finally fleshing out Premiere's `UIA Tree`, this however comes at the cost of speed. I will be eventually working towards a "fix" for these issues, but do not expect that until this hits the stable version of Premiere as it could come with any version of Premiere between `26.1` => `26.3+`. Expect the beta versions to no longer work with my scripts until then.
+> You can track my work on these issues by following the 2 relevant project items; [1](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=161573677>) || [2](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=164180255>)
+
 - ✅ Fixed some colours not being theme specific
 - ✅ Fixed `__setTimelineCol()` throwing if the user sets a Premiere version below `25.0`
 - ✅ Fixed `dismissWarning()` firing on seemingly non existent windows
@@ -110,6 +115,7 @@ This update introduces some rather large, breaking changes to the functionality 
 ### 📝 `reset {`
 - ✅ Fixed functions not affecting all scripts
 - ✅ Fixed functions throwing when encountering scripts with no path in the title
+- ✅ Fixed `__parseInfo()` sometimes ignoring `ignoreScript` Map
 
 ### 📝 `discord {`
 - ✅ Fixed `Unread()` sometimes throwing due to not finding the header

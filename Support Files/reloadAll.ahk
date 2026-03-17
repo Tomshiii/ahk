@@ -5,7 +5,8 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\WM.ahk
 #Include Classes\winExt.ahk
-#Include Classes\tool.ahk
+#Include Functions\notifyIfNotExist.ahk
+#Include Other\Notify\Notify.ahk
 
 ;// get list of open ahk scripts
 ;// get path of said scripts
@@ -32,8 +33,8 @@ __checkClose(hwnd, title) {
     }
 }
 
-which := IsSet(doReset) ? "resetting" : "reloading"
-tool.Cust(StrTitle(which) " all scripts...", 8000,,, 13)
+which := IsSet(doReset) ? "Resetting" : "Reloading"
+notifyIfNotExist("reloadAllAlert",, which ' all scripts...', 'C:\Windows\System32\shell32.dll|icon239',,, 'pos=BL dur=6 bc=0x131E2D bdr=0x00009B iw=24 maxW=400')
 
 for v in list {
     itemObj := resetter.__parseInfo(v, incChecklist ?? false)
@@ -45,7 +46,7 @@ for v in list {
     if WM.timerScripts.Has(itemObj.scriptName) {
         justName := StrReplace(itemObj.scriptName, ".ahk", "",,, 1)
         justName := StrReplace(justName, A_Space, "_")
-        try WM.Send_WM_COPYDATA(justName "_stop," WM.objName[justName], justName ".ahk")
+        try WM.Send_WM_COPYDATA(justName "_stop," WM.timerScripts[itemObj.scriptName], itemObj.scriptName)
     }
     if itemObj.scriptName = "HotkeylessAHK.ahk" {
         Run(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\closeHotkeylessAHK.ahk")
@@ -60,8 +61,11 @@ for v in listArr {
 
 if coreFunc := winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,,, true) {
     coreFuncObj := resetter.__parseInfo(coreFunc, incChecklist ?? false)
-    if !IsSet(coreFuncObj)
+    if !IsSet(coreFuncObj) {
+        if Notify.Exist("reloadAllAlert")
+            try Notify.Destroy("reloadAllAlert")
         throw TargetError("Could not determine ``Core Functionality.ahk``")
+    }
     ProcessClose(coreFunc)
     __checkClose(coreFunc, "Core Functionality.ahk ahk_class AutoHotkey")
 }
@@ -72,13 +76,15 @@ if !CLSID_Objs.waitCoreFuncs(2) {
     sleep 2000
     try CLSID_Objs.load("Loading")
     catch {
+        if Notify.Exist("reloadAllAlert")
+            try Notify.Destroy("reloadAllAlert")
         throw TimeoutError("Core Functionality.ahk failed to load in time")
     }
 }
 for v in listArr {
     Run(v.path A_Space (doReset ?? true))
 }
-tool.Cust("finished " which, 1500,,, 13)
+if Notify.Exist("reloadAllAlert")
+    try Notify.Destroy("reloadAllAlert")
 Critical("Off")
-tool.Wait(2)
 ExitApp()

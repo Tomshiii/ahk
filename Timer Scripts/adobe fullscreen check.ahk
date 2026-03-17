@@ -72,6 +72,7 @@ class adobeTimer extends count {
 
     __remoteStop() {
         try super.stop()
+        this.count := 0
         return
     }
 
@@ -110,6 +111,7 @@ class adobeTimer extends count {
         try {
             super.stop()
             this.interval := (val*1000)
+            this.count := 0
             super.start()
         }
     }

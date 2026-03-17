@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/03/16
- * @version 2.2.12
+ * @date 2026/03/17
+ * @version 2.2.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -354,6 +354,7 @@ class adobeAutoSave extends count {
         if this.filesBackedUp = true
             return
         try {
+            Critical()
             time := Format("{}-{}-{}", A_Hour, A_Min, A_Sec)
             path := WinGet.ProjPath()
             if !DirExist(path.Dir "\Backup\" A_YYYY "_" A_MM "_" A_DD)
@@ -368,6 +369,7 @@ class adobeAutoSave extends count {
             if FileExist(path.Dir "\checklist.ini")
                 FileCopy(path.Dir "\checklist.ini", path.Dir "\Backup\" A_YYYY "_" A_MM "_" A_DD "\*_" time ".*", 1)
             this.filesBackedUp := true
+            Critical("Off")
         }
     }
 

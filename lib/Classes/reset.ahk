@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts. These functions are designed specifically for my repo and may encounter unexpected issues with other scripts
  * @author tomshi
- * @date 2026/03/03
- * @version 1.1.13
+ * @date 2026/03/17
+ * @version 1.1.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,7 +33,7 @@ class reset {
             this.mainScript := "My Scripts"
         }
 
-        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1, "reloadAll.ahk", 1, "Add game to gameCheck.ahk", 1, "Install Tomshi AHK.ahk", 1)
+        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1, "reloadAll.ahk", 1, "Add game to gameCheck.ahk", 1, "Install Tomshi AHK.ahk", 1, "WindowSpy.ahk", 1)
         if ignoreMainScripts
             this.ignoreScript.Set(this.mainScript ".ahk", 1)
         if ignoreCoreFunc
@@ -71,6 +71,9 @@ class reset {
                 default: return false
             }
             script := obj.SplitPath(path)
+            if this.ignoreScript.Has(script.Name) {
+                return false
+            }
             ; logger.Append(Format("value: {}`nname: {}`npath: {}", value, name, path))
             Critical("Off")
             if (includeChecklist = false && (script.Name = "checklist.ahk" || script.Name = "test.ahk")) || this.ignoreScript.Has(script.Name) {

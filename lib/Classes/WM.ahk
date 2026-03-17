@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2026/03/16
- * @version 1.3.1
+ * @date 2026/03/17
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,8 +15,7 @@
 
 class WM {
 
-    static timerScripts := Mip("autosave.ahk", true, "adobe fullscreen check.ahk", true, "premKeyCheck", true, "gameCheck.ahk", true)
-    static objName      := Mip("autosave", "autosave", "adobe fullscreen check", "adobeCheck", "premKeyCheck", "keyCheck", "gameCheck", "gameCheck")
+    static timerScripts := Mip("autosave.ahk", "autosave", "adobe fullscreen check.ahk", "adobeCheck", "premKeyCheck", "keyCheck", "gameCheck.ahk", "gameCheck", "Multi-Instance Close.ahk", "multiRemoteStop")
 
     /**
      * This is a function designed to allow tooltips to appear while hovering over certain GUI elements. Use the example listed below & `GuiCtrl.ToolTip := "desired tooltip"` to make this function work
@@ -126,14 +125,15 @@ class WM {
         determineWhich := res[1]
         res.RemoveAt(1)
         switch determineWhich {
-            case "adobe_FS", "autosave_MIN":  %res[2]%.__changeVar(res[1]*1000)
+            case "adobe_FS", "autosave_MIN":          %res[2]%.__changeVar(res[1]*1000)
             case "autosave_stop", "adobe_fullscreen_check_stop",
-            "gameCheck_stop", "premKeyCheck_stop":      %res[1]%.__remoteStop()
-            case "autosave_beep":             %res[2]%.beep := res[1]
-            case "autosave_save_override":    %res[2]%.saveOverride := res[1]
-            case "autosave_check_mouse":      %res[2]%.checkMouse := res[1]
-            case "autosave_always_save":      %res[2]%.alwaysSave := res[1]
-            case "autosave_restart_playback": %res[2]%.restartPlayback := res[1]
+            "gameCheck_stop", "premKeyCheck_stop":    %res[1]%.__remoteStop()
+            case "Multi-Instance_Close_stop":         %res[1]%.__remoteStop()
+            case "autosave_beep":                     %res[2]%.beep := res[1]
+            case "autosave_save_override":            %res[2]%.saveOverride := res[1]
+            case "autosave_check_mouse":              %res[2]%.checkMouse := res[1]
+            case "autosave_always_save":              %res[2]%.alwaysSave := res[1]
+            case "autosave_restart_playback":         %res[2]%.restartPlayback := res[1]
 
             default:
                 MsgBox("A message attempt was made but a declaration for its contents hasn't been defined. This means that Tomshi has made a mistake somewhere. Please open an issue on github explaining how to reproduce this message to alert him of his mistake!`n`nFor debug purposes;`ndetermineWhich: " determineWhich)

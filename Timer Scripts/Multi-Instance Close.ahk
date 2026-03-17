@@ -23,11 +23,18 @@ TraySetIcon(ptf.Icons "\M-I_C.png")
 startupTray()
 
 ;// open settings instance
-UserSettings := CLSID_Objs.load("UserSettings")
 SetTimer(check, -50)
 
-changeInterval := ObjBindMethod(WM, "__parseMessageResponse")
-OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
+
+onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
+OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
+multiRemoteStop := stopper()
+
+class stopper {
+    __remoteStop() {
+        try SetTimer(check, 0)
+    }
+}
 
 check()
 {
@@ -40,7 +47,10 @@ check()
         }
         if !IsSet(newWin) || !IsSet(window)
             continue
-        script := obj.SplitPath(SubStr(newWin, 1, InStr(newWin, " -",,, 1) -1))
+        isScript := InStr(newWin, " -",,, 1)
+        if !isScript
+            continue
+        script := obj.SplitPath(SubStr(newWin, 1, isScript -1))
         if InStr(windows, script.Name "`n", 1,, 1) && !ignorelist.Has(script.Name)
             {
                 tool.Cust("Closing multiple instance of : " script.Name, 3000)
@@ -63,5 +73,5 @@ OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode)
 {
     if ExitReason = "Single" || ExitReason = "Close" || ExitReason = "Reload" || ExitReason = "Error"
-        SetTimer(check, 0)
+        try SetTimer(check, 0)
 }

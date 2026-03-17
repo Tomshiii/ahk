@@ -43,8 +43,7 @@ $^Space::
 		block.Off()
 		return
 	}
-	if WinActive("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME")
-		SendInput("{BackSpace}")
+	sleep 250
 	block.Off()
 	return
 }

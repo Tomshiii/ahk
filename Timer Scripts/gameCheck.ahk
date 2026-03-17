@@ -82,6 +82,7 @@ class gameCheckTimer extends count {
 
     __remoteStop() {
         try this.Stop()
+        this.count := 0
         return
     }
 
@@ -101,6 +102,7 @@ class gameCheckTimer extends count {
         }
         this.interval := -(this.UserSettings.game_SEC * 1000)
         this.stop()
+        this.count := 0
         this.start()
     }
 

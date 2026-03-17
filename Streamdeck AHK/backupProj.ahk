@@ -85,7 +85,7 @@ if nonFootage.Length >= 1 {
 
 ;// folders to backup
 autoSaves := ["Adobe After Effects Auto-Save", "Adobe After Effects Auto-Save (Beta)", "Adobe Premiere Pro Auto-Save", "Adobe Premiere Pro Auto-Save (Beta)"]
-backFolders := ["Adobe Premiere Pro Audio Previews", "Adobe Premiere Pro Captured and Generated", "AC Footage", "Motion Graphics Template Media", "Premiere Composer Files", "templates"]
+backFolders := ["Adobe Premiere Pro Audio Previews", "Adobe Premiere Pro Captured and Generated", "AC Footage", "Motion Graphics Template Media", "Premiere Composer Files", "templates", "fills"]
 
 rootDir := SubStr(folder := WinGet.pathU(projectFolder "\..\"), -1, 1) = "\" ? SubStr(folder, 1, StrLen(folder)-1) : folder
 proj := obj.SplitPath(rootDir)
