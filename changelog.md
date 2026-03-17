@@ -37,6 +37,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed `__getAllLayerButtonPos()` throwing if it couldn't find the middle divider
 - ✅ Fixed `Always Check UIA` being disabled causing scripts to throw
 - ✅ Fixed `selectionTool()` containing left over code
+- ✅ Fixed potential memory leak while using `isEditTabActive()`, especially in timers
 - ✏️ Added `stopPlayback()`, `startPlayback()`, `deleteEmptyTracks()`, `__resetTimelineVals()`, `renderProjectSelection()`
 - ✏️ Added `__disableMulticamOnAudioEffect()` to handle toggling the `Multi-Cam View` if an audio effect window becomes active
 - ✏️ Added `checkRemote()`
@@ -135,6 +136,7 @@ This update introduces some rather large, breaking changes to the functionality 
 ### 📝 `WinGet {`
 - ✅ Fixed all instances of `Title()` causing scripts to throw
 - ✅ Fixed `__AdobeName()` `titleCheck` always returning `true`
+- ✅ Fixed `__determineAdobeYear()` ignoring the year in an `After Effects` title
 - 📋 Renamed `ID()` => `PID()`
     - ❗Now returns the `PID` instead of the `ProcessName`
 
@@ -205,8 +207,7 @@ This update introduces some rather large, breaking changes to the functionality 
 - ✅ Fixed script stalling if `PremiereRemote` is closed
 
 🔗 `autosave.ahk`
-> [!Warning]
-> I am aware of a bug with `autosave.ahk` causing its memory usage to slowly climb. While I am not currently sure of the cause, it is actively being investigated and a fix should hopefully be implemented by the next release. You can track the status of this bug [here](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=134206373>)
+-❗ Fixed memory leak issue caused by `prem.isEditTabActive()` (see above)
 - ✅ Fixed double saving if the user saves during the `idle` notifications
 - ✅ Fixed inputs getting stuck blocked in certain circumstances
 - ✅ Fixed `After Effects` getting stuck transparent when saved in the background

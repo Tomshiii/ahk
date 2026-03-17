@@ -51,7 +51,7 @@ for v in list {
         Run(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\closeHotkeylessAHK.ahk")
         continue
     }
-    pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""), false)
+    try pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""), false)
 }
 
 for v in listArr {

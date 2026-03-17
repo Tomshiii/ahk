@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/03/16
- * @version 1.7.5
+ * @date 2026/03/17
+ * @version 1.7.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -194,12 +194,15 @@ class WinGet {
                 return "(Beta)"
             }
             UserSettings := CLSID_Objs.load("UserSettings")
-            determineYear := (VerCompare(SubStr(ptf().UserSettings.premVer, 2), "26.0") >= 0) ? "" : A_Space SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), "20",, 1, 1), 4)
+            switch which {
+                case "AE":       determineYear := SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), SubStr(A_YYYY, 1, 2),, 1, 1), 4)
+                case "Premiere": determineYear := (VerCompare(SubStr(UserSettings.premVer, 2), "26.0") >= 0) ? "" : SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), SubStr(A_YYYY, 1, 2),, 1, 1), 4)
+            }
         } catch {
             ;// fallback to `ptf {`
             switch which {
-                case "AE":       determineYear := "20" ptf.AEYearVer
-                case "Premiere": determineYear := "20" ptf.PremYearVer
+                case "AE":       determineYear := SubStr(A_YYYY, 1, 2) ptf.AEYearVer
+                case "Premiere": determineYear := SubStr(A_YYYY, 1, 2) ptf.PremYearVer
             }
         }
         return determineYear
