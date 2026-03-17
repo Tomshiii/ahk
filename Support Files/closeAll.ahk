@@ -8,6 +8,7 @@
 #Include Functions\notifyIfNotExist.ahk
 
 Critical()
+Notify.DestroyAll()
 try incChecklist := A_Args[1]
 
 notifyIfNotExist("closeAllAlert",, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237',,, 'pos=BL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400')

@@ -5,6 +5,7 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\WM.ahk
 #Include Classes\winExt.ahk
+#Include Classes\Editors\Premiere.ahk
 #Include Functions\notifyIfNotExist.ahk
 #Include Other\Notify\Notify.ahk
 
@@ -16,6 +17,7 @@
 ;// Pass commandline args to scripts to inform them if they are "reloading" or rerunning
 
 Critical()
+Notify.DestroyAll()
 try incChecklist := A_Args[1]
 try doReset := A_Args[2]
 resetter := reset(false, false)
@@ -35,7 +37,7 @@ __checkClose(hwnd, title) {
 
 which := IsSet(doReset) ? "Resetting" : "Reloading"
 notifyIfNotExist("reloadAllAlert",, which ' all scripts...', 'C:\Windows\System32\shell32.dll|icon239',,, 'pos=BL dur=6 bc=0x131E2D bdr=0x00009B iw=24 maxW=400')
-
+prem.resetCoreFuncVals()
 for v in list {
     itemObj := resetter.__parseInfo(v, incChecklist ?? false)
     if !itemObj

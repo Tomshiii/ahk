@@ -33,8 +33,8 @@ This update introduces some rather large, breaking changes to the functionality 
 ### 📝 `prem {`
 > [!Warning]
 > I am aware of slowdown issues and general incompatibility with Premiere functions that require `UIA` in the current `Premiere v26.3 Beta`.
-> This issue is caused by the adobe team finally fleshing out Premiere's `UIA Tree`, this however comes at the cost of speed. I will be eventually working towards a "fix" for these issues, but do not expect that until this hits the stable version of Premiere as it could come with any version of Premiere between `26.1` => `26.3+`. Expect the beta versions to no longer work with my scripts until then.
-> You can track my work on these issues by following the 2 relevant project items; [1](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=161573677>) || [2](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=164180255>)
+> This issue is caused by the adobe team finally fleshing out Premiere's `UIA Tree`, this however comes at the cost of speed. I will be eventually working towards a "fix" for these issues, but do not expect that until this change hits the stable version of Premiere as it could come alongside any version of Premiere between `26.1` => `26.3+`. Expect the beta versions to no longer work with my scripts until then.  
+> You can track my work on these issues by following the 2 relevant project items <sup>[[1]](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=161573677>) | [[2]](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=164180255>)</sup>
 
 - ✅ Fixed some colours not being theme specific
 - ✅ Fixed `__setTimelineCol()` throwing if the user sets a Premiere version below `25.0`
@@ -262,10 +262,3 @@ This update introduces some rather large, breaking changes to the functionality 
 - 📋 `Multi` downloads will now sleep anywhere from `18s` to `26s` between each download to reduce the risk of being flagged by youtube as a bot
 - 📋 `dev` branch is now checked for updates by default and previously set state will be remembered
 - 📋 `.exe` will now check for version updates on startup
-
-***
-
-> [!Warning]
-> There are still a few known issues with this release.  
-> It is recommended to check out the [`Known Issues & Planned Changes`](<https://github.com/users/Tomshiii/projects/1/views/1>) page if you are encountering any issues.  
-> If you are encountering an issue and it is not listed, consider creating an [Issue](<https://github.com/Tomshiii/ahk/issues>) so it can be tracked.

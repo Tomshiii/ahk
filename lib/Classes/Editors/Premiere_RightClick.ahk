@@ -4,8 +4,8 @@
  * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/03/04
- * @version 2.4.8
+ * @date 2026/03/17
+ * @version 2.4.9
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -201,7 +201,7 @@ class rbuttonPrem {
 	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
 
 	/** Reset class variables */
-	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.premObj.RClickIsActive := false, this.origSeq := "")
+	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.premObj.RClickIsActive := false, this.origSeq := "", this.premObj := {})
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {

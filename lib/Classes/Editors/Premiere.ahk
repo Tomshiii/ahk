@@ -603,8 +603,6 @@ class Prem {
             getPixel := scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
             return getPixel
         }
-        ; gettitle := WinGet.PremName()
-        ; scan := ShinsImageScanClass(gettitle.winTitle)
         static scan := ShinsImageScanClass(prem.winTitle)
         getPixel := scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
         return getPixel
@@ -3674,6 +3672,21 @@ class Prem {
         file := this.__remoteFunc('renderInPrem', true, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
         if checkbool(addToProj) && (file != false) && FileExist(file) {
             this.__remoteFunc('importFile',, "filePath=" StrReplace(file, "\", "/"), "importAsStills=false")
+        }
+    }
+
+    static resetCoreFuncVals() {
+        try WinEvent.Stop()
+        try {
+            premVals := CLSID_Objs.load("premUIA_Values")
+            premVals.beenSet := false
+
+            isRun := CLSID_Objs.load("uiaCheckRunning")
+            isRun.isRunning := false
+
+            premObj := CLSID_Objs.load("prem")
+            premObj.__resetTimelineVals()
+            premObj.RClickIsActive := false
         }
     }
 

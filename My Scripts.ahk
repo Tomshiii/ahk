@@ -3,13 +3,13 @@
  * The ahk version listed below is the version I am using while generating the current release (so the version that is being tested on)
  * @file My Scripts.ahk
  * @author Tomshi
- * @date 2026/02/07
+ * @date 2026/03/17
  * @version v2.17.0beta6
  * @ahk_ver 2.0.19
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.7
+;\\v2.35.8
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -66,34 +66,23 @@ SetWinDelay(0)                         ;sets default WinMove speed to 0 (instant
 A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If you make this value too high, you could run into issues if you accidentally create an infinite loop
 A_MenuMaskKey := "vkD7"				   ;necessary for `alt_menu_acceleration_disabler.ahk` to work correctly
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
+
 OnError(checkRPC)
+OnExit(__exit)
 checkRPC(err, *) {
     /* Extra   := (err.HasProp('Extra'))   ? err.Extra   : "", File    := (err.HasProp('File'))    ? err.File    : ""
     Line    := (err.HasProp('Line'))    ? err.Line    : "", Message := (err.HasProp('Message')) ? err.Message : ""
     Stack   := (err.HasProp('Stack'))   ? err.Stack   : "", What    := (err.HasProp('What'))    ? err.What    : ""
     errorLog(Error("Handler caught error: " err.Message, err.what, err.Extra), "File: " err.file " | Line: " err.Line) */
-    if err.Message = "(0x800706BA) The RPC server is unavailable." { ;(0x800706BA)
+    if err.Message = "(0x800706BA) The RPC server is unavailable." {
         errorLog(TargetError("Script could not interact with ``Core Functionality.ahk``. Script will now close.", -1))
         ExitApp()
     }
 }
-
-OnExit(__exit)
 __exit(ExitReason, ExitCode) {
     try WinEvent.Stop()
     if ExitReason = "Shutdown"
         ExitApp()
-    try {
-        premVals := CLSID_Objs.load("premUIA_Values")
-        premVals.beenSet := false
-
-        isRun := CLSID_Objs.load("uiaCheckRunning")
-        isRun.isRunning := false
-
-        premObj := CLSID_Objs.load("prem")
-        premObj.__resetTimelineVals()
-        premObj.RClickIsActive := false
-    }
 }
 
 ;unstickKeysHotkey;
