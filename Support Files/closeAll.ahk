@@ -11,7 +11,7 @@ Critical()
 Notify.DestroyAll()
 try incChecklist := A_Args[1]
 
-notifyIfNotExist("closeAllAlert",, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237',,, 'pos=BL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400')
+notifyIfNotExist("closeAllAlert",, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237', 'Windows Startup',, 'pos=TL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400')
 resetter := reset(false, false)
 activeWindows := resetter.__getList()
 ; logger := Log()
@@ -50,5 +50,9 @@ __checkClose(hwnd, title) {
 }
 __checkClose(mainScriptHWND, mainScriptTitle)
 __checkClose(coreFuncHWND, coreFuncTitle)
-if Notify.Exist("closeAllAlert")
-    try Notify.Destroy("closeAllAlert")
+
+SetTimer(destroyAlert, -3000)
+destroyAlert(*) {
+    if Notify.Exist("closeAllAlert")
+        try Notify.Destroy("closeAllAlert")
+}

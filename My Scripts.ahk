@@ -4,8 +4,8 @@
  * @file My Scripts.ahk
  * @author Tomshi
  * @date 2026/03/17
- * @version v2.17.0beta6
- * @ahk_ver 2.0.19
+ * @version v2.17.0
+ * @ahk_ver 2.0.20
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version

@@ -36,7 +36,7 @@ __checkClose(hwnd, title) {
 }
 
 which := IsSet(doReset) ? "Resetting" : "Reloading"
-notifyIfNotExist("reloadAllAlert",, which ' all scripts...', 'C:\Windows\System32\shell32.dll|icon239',,, 'pos=BL dur=6 bc=0x131E2D bdr=0x00009B iw=24 maxW=400')
+notifyIfNotExist("reloadAllAlert",, which ' all scripts...', 'C:\Windows\System32\shell32.dll|icon239', 'Windows Pop-up Blocked',, 'pos=TL dur=6 bc=0x131E2D bdr=0x00009B iw=24 maxW=400')
 prem.resetCoreFuncVals()
 for v in list {
     itemObj := resetter.__parseInfo(v, incChecklist ?? false)
@@ -86,7 +86,12 @@ if !CLSID_Objs.waitCoreFuncs(2) {
 for v in listArr {
     Run(v.path A_Space (doReset ?? true))
 }
-if Notify.Exist("reloadAllAlert")
-    try Notify.Destroy("reloadAllAlert")
+
 Critical("Off")
-ExitApp()
+
+SetTimer(destroyAlert, -3000)
+destroyAlert(*) {
+    if Notify.Exist("reloadAllAlert")
+        try Notify.Destroy("reloadAllAlert")
+    ExitApp()
+}

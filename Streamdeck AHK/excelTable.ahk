@@ -2,48 +2,35 @@
 ;// not really useful for anyone else sorryyyyyyyyyyy
 #SingleInstance Force
 
-; { \\ #Includes
-#Include '%A_Appdata%\tomshi\lib'
-#Include Classes\clip.ahk
-#Include Functions\delaySI.ahk
-; }
+if !WinExist("ahk_exe EXCEL.EXE")
+    return
 
 arr1 := ["Eating Out", "Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Rent", "Health", "Amazon", "Friends/lover"]
-arr2 := ["Salary", "Loan Repayments", "Other Repayments"]
 
-;// this will assume the second pivot table is 3 cells to the right of the first pivot table
+SetTimer(MoveCaret, -10)
+MoveCaret() {
+    if !WinWait("Expenses PivotTable Coords",, 2)
+        return
+    SendInput("{End}")
+}
 getValExpenses := InputBox("Enter Coordinates for Expenses PivotTable`n`nExample: $N$323`n`nThis script assumes the second pivot table to be 3 cells to the right of this first one.", "Expenses PivotTable Coords", "H130", "$N$")
 if getValExpenses.result = "Cancel"
     return
 
-response := StrSplit(getValExpenses.Value, "$")
-getValIncome := {}
-getValIncome.value := String("$" chr(ord(response[2])+3) "$" response[3])
-
-WinWaitClose("Income PivotTable Coords")
-
 if !WinActive("ahk_exe EXCEL.EXE")
     WinActivate("ahk_exe EXCEL.EXE")
 
-clipb := clip.clear()
-for v in arr1 {
-    clip.clear()
-    A_Clipboard := Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValExpenses.value, v)
-    if !ClipWait(2)
-        return
-    sleep 50
-    delaySI(50, "^v", "{Tab}")
+; Get the Excel COM object
+try {
+    xl := ComObjActive("Excel.Application")
+} catch {
+    return
 }
 
-delaySI(25, "+{Tab}", "{Right}", "{Tab}")
-
-for v in arr2 {
-    clip.clear()
-    A_Clipboard := Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValIncome.value, v)
-    if !ClipWait(2)
-        return
-    delaySI(50, "^v", "{Tab}")
+startCell := xl.ActiveCell
+for i, v in arr1 {
+    targetCell := startCell.Offset(0, i-1)
+    targetCell.Formula := Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValExpenses.value, v)
 }
 
-clip.clear()
-A_Clipboard := clipb.storedClip
+startCell.Select()

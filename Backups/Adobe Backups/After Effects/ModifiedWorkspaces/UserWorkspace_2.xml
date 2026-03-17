@@ -521,7 +521,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>0</int>
+<int type='unsigned' size='32'>1</int>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -670,7 +670,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>0</int>
+<int type='unsigned' size='32'>1</int>
 </prop.pair>
 <prop.pair>
 <key>HidTabState-0</key>
@@ -692,15 +692,6 @@
 </prop.pair>
 <prop.pair>
 <key>HidTabState-10</key>
-<string>&lt;prop.list&gt;
-                                        &lt;prop.pair&gt;
-                                        &lt;key&gt;FrameViewFlags&lt;/key&gt;
-                                        &lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;7&lt;/int&gt;
-                                        &lt;/prop.pair&gt;
-                                        &lt;/prop.list&gt;</string>
-</prop.pair>
-<prop.pair>
-<key>HidTabState-11</key>
 <string>&lt;prop.list&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;FrameViewFlags&lt;/key&gt;
@@ -789,7 +780,6 @@
 <string>AE CEP Extension-com.adobe.DesignLibraries.angular</string>
 <string>AEGP_CharacterPalette</string>
 <string>AEGP_ParagraphPalette</string>
-<string>AEGP_Filler</string>
 <string>AEGP_PaintPal</string>
 <string>AEGP_BrushPalette</string>
 <string>AEGP_MotionSketch</string>
@@ -804,6 +794,7 @@
 <array>
 <array.type><int type='unsigned' size='32'/></array.type>
 <int type='unsigned' size='32'>547</int>
+<int type='unsigned' size='32'>418</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -814,7 +805,8 @@
 <key>StackedViewOpen</key>
 <array>
 <array.type><bool/></array.type>
-<false/>
+<true/>
+<true/>
 </array>
 </prop.pair>
 <prop.pair>
@@ -822,6 +814,7 @@
 <array>
 <array.type><string/></array.type>
 <string>AEGP_Align</string>
+<string>AEGP_Filler</string>
 </array>
 </prop.pair>
 <prop.pair>
@@ -830,6 +823,16 @@
 </prop.pair>
 <prop.pair>
 <key>VisTabState-0</key>
+<string>&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;FrameViewFlags&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;5&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+</string>
+</prop.pair>
+<prop.pair>
+<key>VisTabState-1</key>
 <string>&lt;prop.list&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;FrameViewFlags&lt;/key&gt;
@@ -1043,11 +1046,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>4</int>
-</prop.pair>
-<prop.pair>
-<key>IsFocused</key>
-<true/>
+<int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -1057,10 +1056,6 @@
 <key>TabIDs</key>
 <array>
 <array.type><string/></array.type>
-<string>AE Timeline</string>
-<string>AE Timeline</string>
-<string>AE Timeline</string>
-<string>AE Timeline</string>
 <string>AE Timeline</string>
 </array>
 </prop.pair>
@@ -1081,79 +1076,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;166&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-1</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;Locked&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;0&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-2</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;Locked&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-3</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;Locked&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;2&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-4</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;Locked&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;3&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;5&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -1183,6 +1106,10 @@
 <prop.pair>
 <key>CurrTab</key>
 <int type='unsigned' size='32'>0</int>
+</prop.pair>
+<prop.pair>
+<key>IsFocused</key>
+<true/>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -1280,8 +1207,8 @@
 <key>MinPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>0</int>
-<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>-32067</int>
+<int type='signed' size='32'>-32000</int>
 </array>
 </prop.pair>
 <prop.pair>

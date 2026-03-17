@@ -599,7 +599,7 @@ settingsGUI()
                 shortcutName := "Adobe Premiere Pro.exe"
                 shortcutNameBeta := editors.__determinePremName() " (Beta).exe"
                 adobeFullName := editors.__determinePremName()
-                title := program " Pro Settings"
+                title := program " Settings"
                 yearIniName := "prem_year"
                 iniInitYear := UserSettings.prem_year
                 verIniName := "premVer"
@@ -620,7 +620,7 @@ settingsGUI()
                 verIniName := "aeVer"
                 initVer := UserSettings.aeVer
                 genProg := "AE"
-                otherTitle := "Premiere Pro Settings"
+                otherTitle := "Premiere Settings"
                 static imageLoc := ptf.aeSETver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\Support Files\" shortcutName
             case "Photoshop":

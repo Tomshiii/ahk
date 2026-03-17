@@ -102,7 +102,7 @@ hotkeysGUI() {
                 (
                     (That's : win > SHIFT > c, not the actual + key)
                     Will search google for whatever text you have highlighted!
-                    This hotkey is set to not activate while Premiere Pro/After Effects is active!
+                    This hotkey is set to not activate while Premiere/After Effects is active!
                 )"
                 hotGUI.Move(,, gui_Small.x, gui_Small.y)
             case 11:
