@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/03/17
- * @version 1.7.6
+ * @date 2026/03/19
+ * @version 1.7.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,7 +34,7 @@ class WinGet {
         "Shell_SecondaryTrayWnd", 1, "Progman", 1, "TopLevelWindowForOverflowXamlIsland", 1,
         "SearchHost", 1, "XamlExplorerHostIslandWindow", 1, "ForegroundStaging", 1, "ThumbnailDeviceHelperWnd", 1, "#32768", 1, "tooltips_class32", 1, "SIBTranslucentLayer", 1, "SIBJumpView", 1, "Desktop User Picture", 1, "DV2ControlHost", 1
     )
-    static explorerIgnoreExeMap := Mip("TabTip.exe", 1)
+    static explorerIgnoreExeMap := Mip("TabTip.exe", 1, "Microsoft.CmdPal.UI.exe", 1)
     static ahkIgnoreMap := Mip("tooltips_class32", 1, "#32768", 1, "AutoHotkeyGUI", 1, "AutoHotkey", 1)
     static otherIgnoreMap := Mip("Qt643QWindowPopupDropShadowSaveBits", 1, "SunAwtWindow", 1, "tooltips_class32", 1, "MozillaDropShadowWindowClass", 1)
 

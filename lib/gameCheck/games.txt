@@ -34,4 +34,5 @@ STAR WARS Battlefront II ahk_exe starwarsbattlefrontii.exe,
 PEAK ahk_exe PEAK.exe,
 Subnautica ahk_exe Subnautica.exe,
 Momentum Mod - DX11 ahk_exe momentum.exe,
-Treraira ahk_exe Terraria.exe
+Treraira ahk_exe Terraria.exe,
+Satisfactory   ahk_exe FactoryGameSteam-Win64-Shipping.exe
