@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/17
- * @version 2.3.35
+ * @date 2026/03/19
+ * @version 2.3.36
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -603,7 +603,10 @@ class Prem {
             getPixel := scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
             return getPixel
         }
-        static scan := ShinsImageScanClass(prem.winTitle)
+        try static scan := ShinsImageScanClass(prem.winTitle)
+        catch {
+            return false
+        }
         getPixel := scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
         return getPixel
     }

@@ -20,7 +20,7 @@ class tomshiBasic extends Gui {
         this.BackColor := this.LightColour
         this.SetFont("S" FontSize " W" FontWeight, "Segoe UI Variable") ;// sets the size of the font
         this.AddButton("Default W0 H0 X8 Y0", "_") ;// creates an invisible button to take focus away from the first defined ctrl
-        try this.UserSettings := CLSID_Objs.load("UserSettings")
+        try this.UserSettings := CLSID_Objs.clone("UserSettings")
         catch {
             this.UserSettings := UserPref(true)
         }
