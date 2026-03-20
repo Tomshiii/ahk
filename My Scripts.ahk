@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.8
+;\\v2.35.9
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -138,7 +138,6 @@ __exit(ExitReason, ExitCode) {
 ; =======================================================================================================================================
 start := Startup()
 start.generate()
-SD_Opt().checkCount()
 start.gitBranchCheck([ptf.rootDir, WinGet.pathU(ptf.rootDir "\..\textreplace")])
 start.updateChecker()
 start.updatePackages(,,,, ["vcredist"])

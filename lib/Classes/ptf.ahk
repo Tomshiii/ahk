@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2026/02/02
- * @version 1.3.4
+ * @date 2026/03/20
+ * @version 1.3.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -125,7 +125,7 @@ class ptf {
     static __Item := Map(
         "settings",        this().UserSettings.SettingsFile,
         "monitorsINI",     this().UserSettings.SettingsDir "\monitors.ini",
-        "KSAini",          this.SupportFiles "\KSA\Keyboard Shortcuts.ini",
+        "KSAini",          A_MyDocuments "\tomshi\Keyboard Shortcuts.ini",
         "SDdirsINI",       this.SupportFiles "\Streamdeck Files\dirs.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",
