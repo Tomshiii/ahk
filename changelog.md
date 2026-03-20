@@ -1,5 +1,5 @@
-# <> Release 2.17.x - 
+# <> Release 2.17.1 - 
 
-## Functions
-- ✅ Fixed `prem.isEditTabActive()` throwing in some circumstances
-- ✅ Fixed `tomshiBasic {` throwing if two GUIs were created
+## Other Changes
+- ❌ Removed `..\Support Files\Streamdeck Files`
+- ❌ Removed `..\Streamdeck AHK\run & activate`
