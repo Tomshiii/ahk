@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts. These functions are designed specifically for my repo and may encounter unexpected issues with other scripts
  * @author tomshi
- * @date 2026/03/17
- * @version 1.1.14
+ * @date 2026/03/22
+ * @version 1.1.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,27 +20,18 @@
 ; }
 
 class reset {
-    __New(ignoreMainScripts := true, ignoreCoreFunc := true) {
+    __New(ignoreCoreFunc := true) {
         ;// here we're adding all ahk files within `..\Streamdeck AHK\` to the ignore list
         loop files ptf.rootDir "\Streamdeck AHK\*.ahk", "R F" {
             if !this.ignoreScript.Has(A_LoopFileName)
                 this.ignoreScript.Set(A_LoopFileName, 1)
         }
-        try {
-            UserSettings := CLSID_Objs.clone("UserSettings")
-            this.mainScript := UserSettings.MainScriptName
-        } catch {
-            this.mainScript := "My Scripts"
-        }
 
         this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1, "reloadAll.ahk", 1, "Add game to gameCheck.ahk", 1, "Install Tomshi AHK.ahk", 1, "WindowSpy.ahk", 1)
-        if ignoreMainScripts
-            this.ignoreScript.Set(this.mainScript ".ahk", 1)
         if ignoreCoreFunc
             this.ignoreScript.Set("Core Functionality.ahk", 1)
     }
 
-    mainScript := ""
     ignoreString := browser.vscode.winTitle "|NotifyGUI_"
 
     ;// this portion of the code defines scripts to ignore within the below function
@@ -169,22 +160,6 @@ class reset {
         if !winExt.ExistRegex("reloadAll.ahk ahk_class AutoHotkey",,,, true)
             RunWait(ptf.SupportFiles "\reloadAll.ahk " includeChecklist . true)
         Critical("Off")
-        /* detect()
-        tool.Cust("All active ahk scripts reloading")
-        activeWindows := this().__getList()
-        for v in activeWindows {
-            if !getInfo := this().__parseInfo(v, includeChecklist)
-                continue
-            if getInfo.scriptName = "HotkeylessAHK.ahk" {
-                this.__resetHotkeyless()
-                continue
-            }
-            PostMessage(0x0111, 65303,,, getInfo.scriptName " - AutoHotkey")
-        }
-        detect(false)
-        Critical("Off")
-        tool.Wait()
-        this().__attemptReload() */
     }
 
     /**
@@ -196,19 +171,6 @@ class reset {
         if !winExt.ExistRegex("reloadAll.ahk ahk_class AutoHotkey",,,, true)
             RunWait(ptf.SupportFiles "\reloadAll.ahk" A_Space includeChecklist A_Space false)
         Critical("Off")
-        /* activeWindows := this().__getList()
-        for v in activeWindows {
-            if !getInfo := this().__parseInfo(v, includeChecklist)
-                continue
-            if getInfo.scriptName = "HotkeylessAHK.ahk" {
-                this.__resetHotkeyless()
-                continue
-            }
-            Run(getInfo.path)
-        }
-        detect(false)
-        tool.Wait()
-        Run(A_ScriptFullPath) ;// run this current script last so all of the rest actually happen */
     }
 
     /**
@@ -220,40 +182,5 @@ class reset {
         if !winExt.ExistRegex("closeAll.ahk ahk_class AutoHotkey",,,, true)
             RunWait(ptf.SupportFiles "\closeAll.ahk" A_Space includeChecklist)
         Critical("Off")
-        /* tool.Cust("All active ahk scripts are being CLOSED")
-        activeWindows := this().__getList()
-        ; logger := Log()
-        for v in activeWindows {
-            if !getInfo := this().__parseInfo(v, includeChecklist)
-                continue
-            if getInfo.scriptName = "HotkeylessAHK.ahk" {
-                this.__resetHotkeyless(true)
-                continue
-            }
-            ; logger.Append("closing: " getInfo.scriptName)
-            ProcessClose(getInfo.PID)
-            if !checkPID := winExt.ExistRegex(getInfo.PID,, this().ignoreString,, true)
-                continue
-            try WinClose(checkPID)
-        }
-        Critical("Off")
-        tool.Wait()
-        mainScriptTitle := this().mainScript ".ahk ahk_class AutoHotkey"
-        coreFuncTitle   := "Core Functionality.ahk ahk_class AutoHotkey"
-        mainScriptHWND  := winExt.ExistRegex(mainScriptTitle,, this().ignoreString,, true)
-        coreFuncHWND    := winExt.ExistRegex(coreFuncTitle,, this().ignoreString,, true)
-        __checkClose(hwnd, title) {
-            if hwnd {
-                ; logger.Append("closing: " title)
-                ProcessClose(hwnd)
-                hwnd := winExt.ExistRegex(title,, this().ignoreString,, true)
-                ; logger.Append("trying again: " title)
-                if hwnd {
-                    try WinClose(hwnd)
-                }
-            }
-        }
-        __checkClose(mainScriptHWND, mainScriptTitle)
-        __checkClose(coreFuncHWND, coreFuncTitle) */
     }
 }

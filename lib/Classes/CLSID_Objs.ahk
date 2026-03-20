@@ -51,6 +51,7 @@ class CLSID_Objs {
         "prem",            "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}",
         "UserSettings",    "{AC89B835-1CD6-4CC3-AFCC-56360FD5116F}",
         "determineUIA",    "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}",
+        "KSA",             "{A6A98BC1-C523-4F2E-8CB9-839106A6C8E1}",
         "Loading",         "{DFEF77D2-D0BE-4F54-BAF8-D0B456F6D959}",
         "determineActive", "{FB43A603-D55E-4615-8558-2BF1644CD4EC}"
     )
@@ -125,3 +126,5 @@ class CLSID_Objs {
         return clonedObj
     }
 }
+
+; A_Clipboard := CLSID_Objs.generateCLSID()

@@ -5,19 +5,29 @@
  * @version 1.4.2
  ***********************************************************************/
 
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Functions\checkINI.ahk
+; }
+
 class UserPref {
-    __New(override := false) {
+    __New(override := false, checkVals := false) {
         if !FileExist(this.installDir) {
             throw TargetError("lib files have not been installed.")
         }
-        if !FileExist(this.SettingsFile)
-            {
-                this.workingDir := FileRead(this.installDir)
-                SetWorkingDir(this.workingDir)
-                this.defaults["working_dir"] := A_WorkingDir
-                this.__createIni()
-                Run(A_ScriptFullPath)
-            }
+        if FileExist(this.SettingsFile) && checkVals = true {
+            tempFile := this.SettingsDir "\settings_temp"
+            this.__createIni(tempFile)
+            checkINI(tempFile, this.SettingsFile)
+            FileDelete(tempFile)
+        }
+        if !FileExist(this.SettingsFile) {
+            this.workingDir := FileRead(this.installDir)
+            SetWorkingDir(this.workingDir)
+            this.defaults["working_dir"] := A_WorkingDir
+            this.__createIni()
+            Run(A_ScriptFullPath)
+        }
         if (A_ScriptName != "Core Functionality.ahk" && override = false)
             return
         ;// initialise settings variables
@@ -52,11 +62,10 @@ class UserPref {
         "alternate_MButton_Key", "~F18",
 
         ;// [Track]
-        "adobe_temp", 0, "UIA_Daily_Limit_Day", 0, "working_dir", this.workingDir,
+        "adobe_temp", 0, "UIA_Daily_Limit_Day", 0,
         "first_check", "false", "block_aware", "false",
         "version", "v2.0", "skipVersion", "v2.0",
-        "monitor_alert", "0",
-        "MainScriptName", "My Scripts"
+        "monitor_alert", "0"
     )
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
@@ -267,12 +276,10 @@ class UserPref {
                     [Track]
                     adobe temp={}
                     UIA Daily Limit Day={}
-                    working dir={}
                     first check={}
                     block aware={}
                     monitor alert={}
                     skipVersion={}
-                    MainScriptName={}
                     version={}
                 )", filelocation)
                 ;// replace {}

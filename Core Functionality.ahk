@@ -21,6 +21,7 @@
 #Include *i Classes\Editors\Premiere.ahk
 #Include *i Classes\Editors\Premiere_UIA.ahk
 #Include *i Functions\isReload.ahk
+#Include *i KSA\Keyboard Shortcut Adjustments.ahk
 ; }
 try getReload := A_Args.Get(1)
 
@@ -40,7 +41,8 @@ TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 
 UserSettings := UserPref()
 premiere := prem
-Loading := {isLoading: true}
+Loading  := {isLoading: true}
+KSA      := KeyShortAdjust(true)
 determineActive := {isRunning: false}
 
 allRegister := [{obj:premiere, name: "prem"}, {obj: UserSettings, name: "UserSettings"}, {obj: Loading, name: "Loading"}, {obj: determineActive, name: "determineActive"}]

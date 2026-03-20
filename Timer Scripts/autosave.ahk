@@ -112,7 +112,6 @@ class adobeAutoSave extends count {
     soundName     := ""
     currentVolume := ""
     resetingSave  := false
-    mainScript    := "My Scripts"
     restartPlayback := false
     premRemoteSave := true
     aeSaveBG      := true

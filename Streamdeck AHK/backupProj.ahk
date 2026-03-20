@@ -1,7 +1,6 @@
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\winget.ahk
-#Include Classes\Streamdeck_opt.ahk
 #Include Classes\obj.ahk
 #Include Classes\explorer.ahk
 #Include Classes\Editors\Premiere.ahk
@@ -30,8 +29,6 @@ if !DirExist(sd.backupFolder) {
     if !backupFolder := FileSelect("D 3", defaultDir, "Select Location you wish to Backup to")
         return
 }
-else
-    backupFolder := sd.backupFolder
 
 additionalDir := []
 nonFootage := []
@@ -174,10 +171,15 @@ __doBackup(backupFolder, additionalDir) {
 
 notifyExt.showIfNotExist("backupProjPreAlert",, 'Your project is being backed up!', 'C:\Windows\System32\imageres.dll|icon249', 'Windows Battery Critical',, 'dur=5 bc=Black show=Fade@250 hide=Fade@250 bdr=Yellow maxW=400')
 __doBackup(backupFolder, additionalDir)
-if !DirExist(sd.backupFolderWork)
+if !DirExist(nas_work) {
+    finalNotify()
     return
-backupFolder := sd.backupFolderWork
-__doBackup(backupFolder, additionalDir)
-if Notify.Exist("backupProjPreAlert")
-    Notify.Destroy("backupProjPreAlert")
-Notify.Show(, 'Your project has finished copying to the backup location!`nDon`'t forget to wait for any uploading processes', 'C:\Windows\System32\imageres.dll|icon281', 'Windows Print complete',, 'dur=4 bc=Black show=Fade@250 hide=Fade@250 bdr=Green maxW=400')
+}
+
+__doBackup(nas_work, additionalDir)
+finalNotify()
+finalNotify() {
+    if Notify.Exist("backupProjPreAlert")
+        Notify.Destroy("backupProjPreAlert")
+    Notify.Show(, 'Your project has finished copying to the backup location!`nDon`'t forget to wait for any uploading processes', 'C:\Windows\System32\imageres.dll|icon281', 'Windows Print complete',, 'dur=4 bc=Black show=Fade@250 hide=Fade@250 bdr=Green maxW=400')
+}

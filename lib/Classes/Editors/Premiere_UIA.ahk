@@ -29,6 +29,7 @@ class premUIA_Values {
             catch {
                 this.UserSettings := UserPref(true)
             }
+            try this.KSA := CLSID_Objs.clone("this.KSA")
         }
     }
 

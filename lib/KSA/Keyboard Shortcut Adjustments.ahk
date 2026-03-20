@@ -1,19 +1,28 @@
 /************************************************************************
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
- * @date 2026/02/03
- * @version 1.1.1
+ * @date 2026/03/23
+ * @version 1.2.3
  ***********************************************************************/
 
 ;{ \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\ptf.ahk
 #Include Classes\Mip.ahk
+#Include Classes\CLSID_Objs.ahk
+#Include Functions\checkINI.ahk
 ; #Include Other\print.ahk
 ; }
 
 class KeyShortAdjust {
-    __New() {
+    __New(doCheck := false) {
+        if !FileExist(this.iniLocation)
+            FileCopy(ptf.lib "\KSA\Keyboard Shortcuts.ini", this.iniLocation)
+
+        templateINI := ptf.lib "\KSA\Keyboard Shortcuts.ini"
+        currentINI  := this.iniLocation
+        if doCheck = true
+          checkINI(templateINI, currentINI)
         this.__SetSections()
     }
     iniLocation => ptf["KSAini"]
@@ -46,6 +55,7 @@ class KeyShortAdjust {
      */
     __SetType(input) => StrReplace(input, '"', "")
 
+
     /**
      * generate all variables based off ini file
      */
@@ -63,4 +73,5 @@ class KeyShortAdjust {
         }
     }
 }
-KSA := KeyShortAdjust()
+if A_ScriptName != "Core Functionality.ahk"
+    KSA := CLSID_Objs.clone("KSA")

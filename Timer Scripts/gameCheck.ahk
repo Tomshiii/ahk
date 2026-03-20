@@ -1,5 +1,3 @@
-;This script will suspend `My Scripts.ahk` when a listed game is active. This is useful as several of the hotkeys in `My Scripts.ahk` interfere with games
-
 #SingleInstance Force
 ListLines(0)
 KeyHistory(0)
@@ -71,7 +69,6 @@ class gameCheckTimer extends count {
     }
 
     UserSettings := ""
-    mainScript := ""
 
     ;// game open = true || closed = false
     which := false
@@ -91,12 +88,12 @@ class gameCheckTimer extends count {
         switch this.which {
             case true:
                 if !WinActive("ahk_group games") {
-                    pause.suspend(this.mainScript ".ahk", false) ;unsuspend
+                    pause.suspend("My Scripts.ahk", false) ;unsuspend
                     this.which := false
                 }
             case false:
                 if WinActive("ahk_group games") {
-                    pause.suspend(this.mainScript ".ahk", true) ;suspend
+                    pause.suspend("My Scripts.ahk", true) ;suspend
                     this.which := true
                 }
         }

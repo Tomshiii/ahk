@@ -36,7 +36,6 @@
 #Include Classes\reset.ahk
 #Include Classes\keys.ahk
 #Include Classes\errorLog.ahk
-#Include Classes\Streamdeck_opt.ahk
 #Include Functions\mouseDrag.ahk
 #Include Functions\getLocalVer.ahk
 #Include Functions\fastWheel.ahk
@@ -126,8 +125,7 @@ __exit(ExitReason, ExitCode) {
 ;
 ; =======================================================================================================================================
 start := Startup()
-start.generate()
-SD_Opt().checkCount()
+; start.generate()
 start.gitBranchCheck([ptf.rootDir, WinGet.pathU(ptf.rootDir "\..\textreplace")])
 start.updateChecker()
 start.updatePackages(,,,, ["vcredist"])

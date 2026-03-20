@@ -57,6 +57,8 @@ class Startup {
 
         try didReload := A_Args[1]
         this.isReload := isReload(didReload ?? false)
+
+        this.__checkDark()
     }
 
     ;// see if you can create function that reads product version of adobe .exe files to get their version and set in settings.ini
@@ -120,14 +122,12 @@ class Startup {
             return this.UserSettings.dark_mode
         if (VerCompare(A_OSVersion, "10.0.17763") < 0) {
             this.UserSettings.dark_mode := "disabled"
-            this.UserSettings.__delAll()
             if !this.__checkForReloadAttempt("checkDark")
                 return
             reset.reset()
             return "disabled"
         }
         this.UserSettings.dark_mode := true
-        this.UserSettings.__delAll()
         return "true"
     }
 
@@ -135,7 +135,6 @@ class Startup {
      * This function handles checking `settings.ini` on a new release of the repo and ensures all values are present and set.
      * It will also automatically add new values to an existing settings file if it isn't currently present.
      *
-     * This function will also automatically set the `MainScriptName` variable within `settings.ini` based off the script name that calls this function.
      */
     generate() {
         if this.isReload != false ;checks if script was reloaded
@@ -165,11 +164,6 @@ class Startup {
 
         ;// checking to see if the settings folder location exists
         if FileExist(this.UserSettings.SettingsFile) {
-            ;// set `MainScriptName`
-            SplitPath(A_ScriptFullPath,,,, &name)
-            if name != "doStartup.ahk"
-                this.UserSettings.MainScriptName := name
-
             tempDir := A_Temp "\tomshi"
             tempSettingsPath := tempDir "\temp_settings.ini"
             if !DirExist(tempDir)
@@ -201,7 +195,6 @@ class Startup {
                 setSection(tempSettings, allSettings, "Settings")
                 setSection(tempAdjust, allAdjust, "Adjust")
                 setSection(tempTrack, allTrack, "Track", true)
-                this.UserSettings.__delAll()
                 sleep 1000
                 if !this.__checkForReloadAttempt("generate") {
                     this.UserSettings := UserPref(true)
@@ -243,11 +236,6 @@ class Startup {
                         if k = "version" {
                             this.UserSettings.%k% := this.MyRelease
                             continue
-                        }
-                        if k = "MainScriptName" {
-                            SplitPath(A_ScriptFullPath,,,, &name)
-                            if name != "doStartup.ahk"
-                                this.UserSettings.%k% := name
                         }
                         if k = "first_check" || k = "block_aware" {
                             returnBool(input) {
@@ -757,8 +745,6 @@ class Startup {
             __notifyVers()
         if operatePrem = true || operateAE = true {
             Run(ptf.Shortcuts "\createShortcuts.ahk false")
-            this.UserSettings.__delAll()
-            this.UserSettings := ""
             if !this.__checkForReloadAttempt("adobeVerOverride")
                 return
             notifyExt.showIfNotExist("settingsReload", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
