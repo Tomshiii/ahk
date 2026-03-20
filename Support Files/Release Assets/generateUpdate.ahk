@@ -1,4 +1,6 @@
 ; { \\ #Includes
+#Include shared functions\cleanUpInstall.ahk
+
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\Settings.ahk
 #Include Classes\ptf.ahk
@@ -9,6 +11,7 @@
 #Include Other\7zip\SevenZip.ahk
 #Include Classes\winGet.ahk
 #Include Classes\CLSID_Objs.ahk
+
 ; }
 
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release
@@ -228,69 +231,16 @@ MsgBox(versions)
 */
 
 ;// copying over the repo to a temp folder
-loop files ptf.rootDir "\*", "D"
-    {
-        if A_LoopFileName = ".git"
-            continue
-        if A_LoopFileName = "releases"
-            continue
-        DirCreate(A_WorkingDir "\release\" yes.Value "\" A_LoopFileName)
-        DirCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value "\" A_LoopFileName, 1)
-        ;MsgBox(A_LoopFileFullPath)
+loop files ptf.rootDir "\*", "DF" {
+    ignore := Map(".vscode", true, ".git", true, "releases", true, ".gitignore", true, ".gitmodules", true)
+    if ignore.Has(A_LoopFileName)
+        continue
+    switch FileExist(A_LoopFileFullPath) {
+        case "D": DirCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value "\" A_LoopFileName, 1)
+        default: FileCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value, 1)
     }
-loop files ptf.rootDir "\*", "F"
-    {
-        if A_LoopFileName = ".gitignore"
-            continue
-        if A_LoopFileName = ".gitmodules"
-            continue
-        FileCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value, 1)
-    }
-
-;// this portion doesn't need to be a function, it just makes it easier to keep track of by encapsulating it in one
-deleting() {
-    ;// these files will still be stored in their respective repos and can be downloaded manually
-    ;// deleting these files saves close to 10mb for the final release
-
-    ;// these functions is simply a wrapper to save lines & visual clutter
-    checkDirDelete(dir) {
-        if DirExist(dir)
-            DirDelete(dir, 1)
-    }
-    checkFileDelete(file) {
-        if FileExist(file)
-            FileDelete(file)
-    }
-    ;// deleting psd files
-    loop files A_WorkingDir "\release\" yes.Value "\*", "F R" {
-        if A_LoopFileExt = "psd" ;they're large and unnecessary to include
-            FileDelete(A_LoopFileFullPath)
-    }
-    ;// deleting the repo banner image
-    checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\repo_social.png")
-    ;// deleting the `old` wiki folder
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Wiki\Old")
-    ;// deleting qmk images folder
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Support Files\qmk keyboard images")
-    ;// deleting the `RODECaster` backup folder
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\RODECaster")
-    ;// deleting the `GoXLR` backup folder
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\GoXLR Backups")
-    ;// deleting the `Old Code` backup folder
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Old Code")
-    ;// deleting the `VSCode` backup folder
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\VSCode")
-    ;// deleting the full res images
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Support Files\images\og")
-    ;// deleting folder I store in repo that isn't needed
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\Backups\Old Code\Stream\TomSongQueueue")
-    ;// deleting vscode config folder
-    checkDirDelete(A_WorkingDir "\release\" yes.Value "\.vscode")
-    ;// resetting `values.ini` file so it's empty for the user
-    checkFileDelete(A_WorkingDir "\release\" yes.Value "\Support Files\UIA\values.ini")
-    FileAppend("{`n`n}", A_WorkingDir "\release\" yes.Value "\Support Files\UIA\values.ini")
 }
-deleting()
+cleanUpInstall(A_WorkingDir "\release\" yes.Value)
 
 ;// removing favourites from ThioJoe .ini file
 if FileExist(A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini")

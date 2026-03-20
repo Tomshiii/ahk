@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/02/02
- * @version 1.1.2
+ * @date 2026/03/20
+ * @version 1.1.3
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -36,7 +36,7 @@ if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
 
 ;// initiate GUI instance
 instance := installGUI()
-instance.Show('w' instance.TotalWidth)
+instance.Show('w' instance.TotalWidth " Center")
 
 
 class installGUI extends Gui {
@@ -262,7 +262,6 @@ class installGUI extends Gui {
             this.__setProgress(80)
             try Run(this.InstallDir "\Core Functionality.ahk")
             this.__addLogEntry("running Core Functionality.ahk")
-
             /** This function cuts repeat code for dealing with some first time settings */
             __runSettingsInstall(filename, catchText, workingDir := "") {
                 try RunWait(filename, workingDir)

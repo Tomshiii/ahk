@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/02/09
- * @version 1.3.3
+ * @date 2026/03/20
+ * @version 1.3.4
  ***********************************************************************/
 
 class UserPref {
@@ -12,7 +12,7 @@ class UserPref {
         }
         if !FileExist(this.SettingsFile)
             {
-                this.workingDir := A_Appdata "\tomshi\installDir"
+                this.workingDir := FileRead(this.installDir)
                 SetWorkingDir(this.workingDir)
                 this.defaults["working_dir"] := A_WorkingDir
                 this.__createIni()
