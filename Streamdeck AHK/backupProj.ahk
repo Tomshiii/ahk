@@ -21,14 +21,36 @@ else
     defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
 if !projectFolder := FileSelect("D 3", defaultDir, "Select Folder Containing Project Files")
     return
-sd := SD_Opt()
-if !DirExist(sd.backupFolder) {
-    notifyIfNotExist("backupProjSetOpt",, 'You can set your backup location in;`n..\Support Files\Streamdeck Files\options.ini', 'C:\Windows\System32\imageres.dll|icon77', 'Windows Balloon',, 'dur=6 show=Fade@250 hide=Fade@250 bdr=0xC72424')
-    if !backupFolder := FileSelect("D 3", defaultDir, "Select Location you wish to Backup to")
-        return
+
+isTomPc(rootDir, UserName, ComputerName, dirsExist*) {
+    isRootDir := (ptf.rootDir = rootDir)
+    isUserName := A_UserName = "Tom"
+    isCompName := A_ComputerName = "TomPC"
+    dirs := false
+    for v in dirsExist {
+        if !DirExist(v) {
+            break
+        }
+        if A_Index != dirsExist.Length
+            continue
+        dirs := true
+        break
+    }
+    return (isRootDir && isUserName && isCompName && dirs)
 }
-else
-    backupFolder := sd.backupFolder
+gDrive_home := "H:\Shared drives\The Boys\9. ASSETS\4. Editor Assets\_Backups\_Project Backups\Tom"
+gDrive_work := "G:\Shared drives\The Boys\9. ASSETS\4. Editor Assets\_Backups\_Project Backups\Tom"
+nas_work := "N:\_Backups\_Project Backups\Tom"
+switch {
+    case isTomPc("E:\Github\ahk", "Tom", "TomPC", ptf.SongQueue, gDrive_home): backupFolder := gDrive_home
+
+    ;// need to workout my work pc name/install loc
+    case isTomPc("E:\Github\ahk", "Tom", "TomPC", nas_work, gDrive_work): backupFolder := gDrive_work
+    default:
+        notifyIfNotExist("backupProjSetOpt",, 'You can set your backup location in;`n..\Support Files\Streamdeck Files\options.ini', 'C:\Windows\System32\imageres.dll|icon77', 'Windows Balloon',, 'dur=6 show=Fade@250 hide=Fade@250 bdr=0xC72424')
+        if !backupFolder := FileSelect("D 3", defaultDir, "Select Location you wish to Backup to")
+            return
+}
 
 additionalDir := []
 nonFootage := []
@@ -171,10 +193,15 @@ __doBackup(backupFolder, additionalDir) {
 
 notifyIfNotExist("backupProjPreAlert",, 'Your project is being backed up!', 'C:\Windows\System32\imageres.dll|icon249', 'Windows Battery Critical',, 'dur=5 bc=Black show=Fade@250 hide=Fade@250 bdr=Yellow maxW=400')
 __doBackup(backupFolder, additionalDir)
-if !DirExist(sd.backupFolderWork)
+if !DirExist(nas_work) {
+    finalNotify()
     return
-backupFolder := sd.backupFolderWork
-__doBackup(backupFolder, additionalDir)
-if Notify.Exist("backupProjPreAlert")
-    Notify.Destroy("backupProjPreAlert")
-Notify.Show(, 'Your project has finished copying to the backup location!`nDon`'t forget to wait for any uploading processes', 'C:\Windows\System32\imageres.dll|icon281', 'Windows Print complete',, 'dur=4 bc=Black show=Fade@250 hide=Fade@250 bdr=Green maxW=400')
+}
+
+__doBackup(nas_work, additionalDir)
+finalNotify()
+finalNotify() {
+    if Notify.Exist("backupProjPreAlert")
+        Notify.Destroy("backupProjPreAlert")
+    Notify.Show(, 'Your project has finished copying to the backup location!`nDon`'t forget to wait for any uploading processes', 'C:\Windows\System32\imageres.dll|icon281', 'Windows Print complete',, 'dur=4 bc=Black show=Fade@250 hide=Fade@250 bdr=Green maxW=400')
+}
