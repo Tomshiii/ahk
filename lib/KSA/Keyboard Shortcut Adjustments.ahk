@@ -1,14 +1,15 @@
 /************************************************************************
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
- * @date 2026/03/22
- * @version 1.2.1
+ * @date 2026/03/23
+ * @version 1.2.3
  ***********************************************************************/
 
 ;{ \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\ptf.ahk
 #Include Classes\Mip.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\checkINI.ahk
 ; #Include Other\print.ahk
 ; }
@@ -72,4 +73,5 @@ class KeyShortAdjust {
         }
     }
 }
-KSA := KeyShortAdjust()
+if A_ScriptName != "Core Functionality.ahk"
+    KSA := CLSID_Objs.clone("KSA")

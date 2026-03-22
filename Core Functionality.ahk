@@ -2,7 +2,7 @@
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
  * @date 2026/03/03
- * @version 1.0.3
+ * @version 1.0.4
  ***********************************************************************/
 
 #SingleInstance Force
@@ -17,6 +17,7 @@
 #Include *i Other\ObjRegisterActive.ahk
 #Include *i Classes\Editors\Premiere.ahk
 #Include *i Classes\Editors\Premiere_UIA.ahk
+#Include *i KSA\Keyboard Shortcut Adjustments.ahk
 ; }
 
 installDir := FileRead(A_AppData "\tomshi\installDir")
@@ -25,12 +26,13 @@ Persistent()
 TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 
 UserSettings := UserPref(, true)
-premiere := prem
-premUIA := premUIA_Values
-Loading := {isLoading: true}
+KSA          := KeyShortAdjust(true)
+premiere     := prem
+premUIA      := premUIA_Values
+Loading      := {isLoading: true}
 
 uiaCheckRunning := {isRunning: false}
-allRegister := [{obj:premiere, name: "prem"}, {obj: uiaCheckRunning, name: "uiaCheckRunning"} , {obj: UserSettings, name: "UserSettings"}, {obj: premUIA, name: "premUIA_Values"}, {obj: Loading, name: "Loading"}]
+allRegister := [{obj:premiere, name: "prem"}, {obj: uiaCheckRunning, name: "uiaCheckRunning"} , {obj: UserSettings, name: "UserSettings"}, {obj: premUIA, name: "premUIA_Values"}, {obj: KSA, name: "KSA"}, {obj: Loading, name: "Loading"}]
 for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }

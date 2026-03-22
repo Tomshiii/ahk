@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/03/13
- * @version 1.1.5
+ * @date 2026/03/22s
+ * @version 1.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,6 +34,7 @@ class CLSID_Objs {
         "uiaCheckRunning", "{DCEE88EC-9327-44CF-9D2A-5BC47C624E0E}",
         "UserSettings",    "{AC89B835-1CD6-4CC3-AFCC-56360FD5116F}",
         "premUIA_Values",  "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}",
+        "KSA",             "{A6A98BC1-C523-4F2E-8CB9-839106A6C8E1}",
         "Loading",         "{DFEF77D2-D0BE-4F54-BAF8-D0B456F6D959}"
     )
 
@@ -95,3 +96,5 @@ class CLSID_Objs {
         return clonedObj
     }
 }
+
+; A_Clipboard := CLSID_Objs.generateCLSID()

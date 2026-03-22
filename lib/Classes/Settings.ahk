@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/03/22
- * @version 1.3.5
+ * @date 2026/03/23
+ * @version 1.3.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -62,7 +62,7 @@ class UserPref {
         "alternate_MButton_Key", "~F18",
 
         ;// [Track]
-        "adobe_temp", 0, "UIA_Daily_Limit_Day", 0, "working_dir", this.workingDir,
+        "adobe_temp", 0, "UIA_Daily_Limit_Day", 0,
         "first_check", "false", "block_aware", "false",
         "version", "v2.0", "skipVersion", "v2.0",
         "monitor_alert", "0"
@@ -277,7 +277,6 @@ class UserPref {
                     [Track]
                     adobe temp={}
                     UIA Daily Limit Day={}
-                    working dir={}
                     first check={}
                     block aware={}
                     monitor alert={}

@@ -122,14 +122,12 @@ class Startup {
             return this.UserSettings.dark_mode
         if (VerCompare(A_OSVersion, "10.0.17763") < 0) {
             this.UserSettings.dark_mode := "disabled"
-            this.UserSettings.__delAll()
             if !this.__checkForReloadAttempt("checkDark")
                 return
             reset.reset()
             return "disabled"
         }
         this.UserSettings.dark_mode := true
-        this.UserSettings.__delAll()
         return "true"
     }
 
@@ -197,7 +195,6 @@ class Startup {
                 setSection(tempSettings, allSettings, "Settings")
                 setSection(tempAdjust, allAdjust, "Adjust")
                 setSection(tempTrack, allTrack, "Track", true)
-                this.UserSettings.__delAll()
                 sleep 1000
                 if !this.__checkForReloadAttempt("generate") {
                     this.UserSettings := UserPref(true)
@@ -750,8 +747,6 @@ class Startup {
             __notifyVers()
         if operatePrem = true || operateAE = true {
             Run(ptf.Shortcuts "\createShortcuts.ahk false")
-            this.UserSettings.__delAll()
-            this.UserSettings := ""
             if !this.__checkForReloadAttempt("adobeVerOverride")
                 return
             notifyIfNotExist("settingsReload", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')

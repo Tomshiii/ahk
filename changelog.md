@@ -3,9 +3,11 @@ This update is designed with the philosophy of removing any files the user is ex
 
 ## Functions
 - ✏️ Added `checkINI()`
+- 📋 `KSA` values now get shared automatically using `Core Functionality.ahk`
 
 ### 📝 `UserPref {`
 - ❌ Removed `MainScriptName`
+- ❌ Removed `working dir`
 - 📋 Will now check the user's `.ini` file against a fresh template during the `Core Functionality.ahk` initialisation flow
 
 ## Other Changes

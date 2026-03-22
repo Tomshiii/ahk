@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/03/06
- * @version 2.2.8
+ * @date 2026/03/23
+ * @version 2.2.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,6 +15,7 @@
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\tool.ahk
 #Include Classes\CLSID_Objs.ahk
+#Include KSA\Keyboard Shortcut Adjustments.ahk
 #Include Functions\checkStuck.ahk
 #Include functions\detect.ahk
 #Include functions\notifyIfNotExist.ahk
@@ -44,6 +45,7 @@ Class premUIA_Values {
             catch {
                 UserSettings := UserPref(true)
             }
+            try this.KSA := CLSID_Objs.clone("this.KSA")
         }
         this.setVer := UserSettings.premVer
         currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
@@ -71,15 +73,16 @@ Class premUIA_Values {
     static baseVer    := false
     static currentPremVer := ""
     static beenSet    := false
+    static KSA := KeyShortAdjust(false)
 
     static windowHotkeys := Map(
-        "effectControls",   ksa.effectControls,
-        "effectsPanel",     ksa.effectsWindow,
-        "programMon",       ksa.programMonitor,
-        "sourceMon",        ksa.sourceMonitor,
-        "timeline",         ksa.timelineWindow,
-        "tools",            ksa.toolsWindow,
-        "project",          ksa.projectsWindow
+        "effectControls",   this.ksa.effectControls,
+        "effectsPanel",     this.ksa.effectsWindow,
+        "programMon",       this.ksa.programMonitor,
+        "sourceMon",        this.ksa.sourceMonitor,
+        "timeline",         this.ksa.timelineWindow,
+        "tools",            this.ksa.toolsWindow,
+        "project",          this.ksa.projectsWindow
     )
     static successCount := 0
     static initialise(doChecks := true, override := false) {
@@ -199,8 +202,8 @@ Class premUIA_Values {
         ;// we need to ensure playback here is halted, otherwise UIA is SUPER unresponsive
         ;// and for whatever reason known only to the adobe devs some hotkeys no longer function globally
         ;// if they contain any modifiers, so we have to do a check here to see if the user has any in their set hotkey
-        if !InStr(ksa.shuttleStop, "+") && !InStr(ksa.shuttleStop, "^") && !InStr(ksa.shuttleStop, "!") && !InStr(ksa.shuttleStop, "Ctrl") && !InStr(ksa.shuttleStop, "Shift") && !InStr(ksa.shuttleStop, "Alt") {
-            SendInput(ksa.shuttleStop)
+        if !InStr(this.ksa.shuttleStop, "+") && !InStr(this.ksa.shuttleStop, "^") && !InStr(this.ksa.shuttleStop, "!") && !InStr(this.ksa.shuttleStop, "Ctrl") && !InStr(this.ksa.shuttleStop, "Shift") && !InStr(this.ksa.shuttleStop, "Alt") {
+            SendInput(this.ksa.shuttleStop)
         } else {
             try {
                 delaySI(80, this.windowHotkeys["effectControls"], this.windowHotkeys["programMon"])
