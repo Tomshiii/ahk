@@ -12,7 +12,7 @@ Notify.DestroyAll()
 try incChecklist := A_Args[1]
 
 notifyIfNotExist("closeAllAlert",, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237', 'Windows Startup',, 'pos=TL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400')
-resetter := reset(false, false)
+resetter := reset(false)
 activeWindows := resetter.__getList()
 ; logger := Log()
 for v in activeWindows {
@@ -35,9 +35,7 @@ for v in activeWindows {
     try WinClose(checkPID)
 }
 Critical("Off")
-mainScriptTitle := resetter.mainScript ".ahk ahk_class AutoHotkey"
 coreFuncTitle   := "Core Functionality.ahk ahk_class AutoHotkey"
-mainScriptHWND  := winExt.ExistRegex(mainScriptTitle,, resetter.ignoreString,, true)
 coreFuncHWND    := winExt.ExistRegex(coreFuncTitle,, resetter.ignoreString,, true)
 __checkClose(hwnd, title) {
     if hwnd {
@@ -48,7 +46,6 @@ __checkClose(hwnd, title) {
         }
     }
 }
-__checkClose(mainScriptHWND, mainScriptTitle)
 __checkClose(coreFuncHWND, coreFuncTitle)
 
 SetTimer(destroyAlert, -3000)

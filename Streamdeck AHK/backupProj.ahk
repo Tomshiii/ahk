@@ -1,7 +1,6 @@
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\winget.ahk
-#Include Classes\Streamdeck_opt.ahk
 #Include Classes\obj.ahk
 #Include Classes\explorer.ahk
 #Include Classes\Editors\Premiere.ahk
@@ -24,8 +23,8 @@ if !projectFolder := FileSelect("D 3", defaultDir, "Select Folder Containing Pro
 
 isTomPc(rootDir, UserName, ComputerName, dirsExist*) {
     isRootDir := (ptf.rootDir = rootDir)
-    isUserName := A_UserName = "Tom"
-    isCompName := A_ComputerName = "TomPC"
+    isUserName := A_UserName = UserName
+    isCompName := A_ComputerName = ComputerName
     dirs := false
     for v in dirsExist {
         if !DirExist(v) {

@@ -1,3 +1,5 @@
+reloadAll
+
 #SingleInstance Force
 #Include "%A_Appdata%\tomshi\lib"
 #Include Classes\reset.ahk
@@ -20,7 +22,7 @@ Critical()
 Notify.DestroyAll()
 try incChecklist := A_Args[1]
 try doReset := A_Args[2]
-resetter := reset(false, false)
+resetter := reset(false)
 list := resetter.__getList()
 listArr := []
 coreFuncObj := unset

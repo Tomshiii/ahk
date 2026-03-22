@@ -1,4 +1,12 @@
 # <> Release 2.17.1 - 
+This update is designed with the philosophy of removing any files the user is expected to modify out of the source directories, allowing for the installer process to simply replace the current install instead of requiring a fresh install.
+
+## Functions
+- ✏️ Added `checkINI()`
+
+### 📝 `UserPref {`
+- ❌ Removed `MainScriptName`
+- 📋 Will now check the user's `.ini` file against a fresh template during the `Core Functionality.ahk` initialisation flow
 
 ## Other Changes
 - ❌ Removed `Streamdeck_opt.ahk`

@@ -36,7 +36,6 @@
 #Include Classes\reset.ahk
 #Include Classes\keys.ahk
 #Include Classes\errorLog.ahk
-#Include Classes\Streamdeck_opt.ahk
 #Include Functions\mouseDrag.ahk
 #Include Functions\getLocalVer.ahk
 #Include Functions\fastWheel.ahk

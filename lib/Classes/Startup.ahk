@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/03/02
- * @version 1.8.9
+ * @date 2026/03/22
+ * @version 1.8.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -57,6 +57,8 @@ class Startup {
 
         try didReload := A_Args[1]
         this.isReload := isReload(didReload ?? false)
+
+        this.__checkDark()
     }
 
     ;// see if you can create function that reads product version of adobe .exe files to get their version and set in settings.ini
@@ -135,7 +137,6 @@ class Startup {
      * This function handles checking `settings.ini` on a new release of the repo and ensures all values are present and set.
      * It will also automatically add new values to an existing settings file if it isn't currently present.
      *
-     * This function will also automatically set the `MainScriptName` variable within `settings.ini` based off the script name that calls this function.
      */
     generate() {
         if this.isReload != false ;checks if script was reloaded
@@ -165,11 +166,6 @@ class Startup {
 
         ;// checking to see if the settings folder location exists
         if FileExist(this.UserSettings.SettingsFile) {
-            ;// set `MainScriptName`
-            SplitPath(A_ScriptFullPath,,,, &name)
-            if name != "doStartup.ahk"
-                this.UserSettings.MainScriptName := name
-
             tempDir := A_Temp "\tomshi"
             tempSettingsPath := tempDir "\temp_settings.ini"
             if !DirExist(tempDir)
@@ -243,11 +239,6 @@ class Startup {
                         if k = "version" {
                             this.UserSettings.%k% := this.MyRelease
                             continue
-                        }
-                        if k = "MainScriptName" {
-                            SplitPath(A_ScriptFullPath,,,, &name)
-                            if name != "doStartup.ahk"
-                                this.UserSettings.%k% := name
                         }
                         if k = "first_check" || k = "block_aware" {
                             returnBool(input) {

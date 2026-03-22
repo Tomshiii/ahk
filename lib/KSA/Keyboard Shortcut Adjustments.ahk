@@ -1,22 +1,27 @@
 /************************************************************************
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
- * @date 2026/03/20
- * @version 1.2.0
+ * @date 2026/03/22
+ * @version 1.2.1
  ***********************************************************************/
 
 ;{ \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\ptf.ahk
 #Include Classes\Mip.ahk
+#Include Functions\checkINI.ahk
 ; #Include Other\print.ahk
 ; }
 
 class KeyShortAdjust {
-    __New() {
+    __New(doCheck := false) {
         if !FileExist(this.iniLocation)
             FileCopy(ptf.lib "\KSA\Keyboard Shortcuts.ini", this.iniLocation)
-        this.checkINI()
+
+        templateINI := ptf.lib "\KSA\Keyboard Shortcuts.ini"
+        currentINI  := this.iniLocation
+        if doCheck = true
+          checkINI(templateINI, currentINI)
         this.__SetSections()
     }
     iniLocation => ptf["KSAini"]
@@ -49,48 +54,6 @@ class KeyShortAdjust {
      */
     __SetType(input) => StrReplace(input, '"', "")
 
-    /**
-     * Checks the user's active ksa.ini file against the template within the lib directory to ensure they aren't missing any values
-     */
-    checkINI() {
-        templateINI := ptf.lib "\KSA\Keyboard Shortcuts.ini"
-        currentINI  := this.iniLocation
-
-        templateArr := __createArr(templateINI)
-        currentArr  := __createArr(currentINI)
-
-        for section in templateArr.OwnProps() {
-            for k, v in templateArr.%section% {
-                ; MsgBox(currentArr.%section%.has(k) "`n" section "`n" k)
-                if !currentArr.%section%.has(k) {
-                    ; MsgBox(k "`n" v "`n" section)
-                    IniWrite(v, currentINI, section, k)
-                }
-            }
-        }
-
-        __createArr(path) {
-            try read := IniRead(path)
-            catch {
-                throw TargetError("Could not determine KSA ini file")
-            }
-            iniObj := {}
-            splitRead := StrSplit(read, "`n")
-            for section in splitRead {
-                iniObj.%section% := Map()
-                currSection := IniRead(path, section)
-                secSplit := StrSplit(currSection, "`n")
-                for v in secSplit {
-                    mid := InStr(v, "=",, 1, 1)
-                    key   := SubStr(v, 1, mid-1)
-                    value := SubStr(v, mid+1)
-                    ; obj := {section: section, key: key, value: value}
-                    iniObj.%section%.set(key, value)
-                }
-            }
-            return iniObj
-        }
-    }
 
     /**
      * generate all variables based off ini file

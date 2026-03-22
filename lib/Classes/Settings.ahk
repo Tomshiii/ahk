@@ -1,23 +1,33 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/03/20
- * @version 1.3.4
+ * @date 2026/03/22
+ * @version 1.3.5
  ***********************************************************************/
 
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Functions\checkINI.ahk
+; }
+
 class UserPref {
-    __New(override := false) {
+    __New(override := false, checkVals := false) {
         if !FileExist(this.installDir) {
             throw TargetError("lib files have not been installed.")
         }
-        if !FileExist(this.SettingsFile)
-            {
-                this.workingDir := FileRead(this.installDir)
-                SetWorkingDir(this.workingDir)
-                this.defaults["working_dir"] := A_WorkingDir
-                this.__createIni()
-                Run(A_ScriptFullPath)
-            }
+        if FileExist(this.SettingsFile) && checkVals = true {
+            tempFile := this.SettingsDir "\settings_temp"
+            this.__createIni(tempFile)
+            checkINI(tempFile, this.SettingsFile)
+            FileDelete(tempFile)
+        }
+        if !FileExist(this.SettingsFile) {
+            this.workingDir := FileRead(this.installDir)
+            SetWorkingDir(this.workingDir)
+            this.defaults["working_dir"] := A_WorkingDir
+            this.__createIni()
+            Run(A_ScriptFullPath)
+        }
         if (A_ScriptName != "Core Functionality.ahk" && override = false)
             return
         ;// initialise settings variables
@@ -55,8 +65,7 @@ class UserPref {
         "adobe_temp", 0, "UIA_Daily_Limit_Day", 0, "working_dir", this.workingDir,
         "first_check", "false", "block_aware", "false",
         "version", "v2.0", "skipVersion", "v2.0",
-        "monitor_alert", "0",
-        "MainScriptName", "My Scripts"
+        "monitor_alert", "0"
     )
     ;// define settings location
     SettingsDir  => A_MyDocuments "\tomshi"
@@ -273,7 +282,6 @@ class UserPref {
                     block aware={}
                     monitor alert={}
                     skipVersion={}
-                    MainScriptName={}
                     version={}
                 )", filelocation)
                 ;// replace {}

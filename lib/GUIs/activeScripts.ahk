@@ -136,7 +136,7 @@ activeScripts()
                 WinClose(script.text " - AutoHotkey")
                 return
             }
-        if script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk"
+        if script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk" || script.text = "My Scripts.ahk"
             Run(ptf.rootDir "\" script.text)
         else if script.text = "textreplace.ahk"
             {
@@ -151,13 +151,8 @@ activeScripts()
 
     checkScripts(*)
     {
-        UserSettings := CLSID_Objs.load("UserSettings")
-        if winExt.ExistRegex(UserSettings.MainScriptName ".ahk is Suspended",,,, true)
-            winExt.WaitCloseRegex(UserSettings.MainScriptName ".ahk is Suspended",,,,, true)
-
-        MyGui[scripts[1]].Value := (A_IsSuspended = 0) ? 1 : 0
-        loop scripts.Length - 1 {
-            try MyGui[scripts[A_Index + 1]].Value := winExt.ExistRegex(names[scripts[A_Index + 1]] " - AutoHotkey",,,, true) ? 1 : 0
+        loop scripts.Length {
+            try MyGui[scripts[A_Index]].Value := winExt.ExistRegex(names[scripts[A_Index + 1]] " - AutoHotkey",,,, true) ? 1 : 0
         }
         SetTimer(, -100)
     }

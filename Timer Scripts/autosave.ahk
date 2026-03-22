@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/03/17
- * @version 2.2.13
+ * @date 2026/03/22
+ * @version 2.2.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -113,7 +113,6 @@ class adobeAutoSave extends count {
     soundName     := ""
     currentVolume := ""
     resetingSave  := false
-    mainScript    := "My Scripts"
     restartPlayback := false
     premRemoteSave := true
     aeSaveBG      := true
