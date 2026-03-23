@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/03/03
- * @version 1.0.2
+ * @date 2026/03/23
+ * @version 1.0.3
  ***********************************************************************/
 
 #SingleInstance Force
@@ -20,6 +20,10 @@
 ; }
 
 installDir := FileRead(A_AppData "\tomshi\installDir")
+SplitPath(A_LineFile,, &currentDir)
+if currentDir != installDir {
+    throw TargetError("Installation has been moved, this will cause issues.`nMove the installation back or reinstall in the new location.",, installDir)
+}
 SetWorkingDir(installDir)
 Persistent()
 TraySetIcon(installDir "\Support Files\Icons\core func.ico")

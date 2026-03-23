@@ -278,7 +278,7 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 
 
 ;// allExcept
-^!+`::prem.toggleEnabled(1, "aud",, "all", 8)
+^!+`::prem.toggleEnabled(1, "aud",, "all", 7)
 <!+`::prem.toggleEnabled(1, "aud",, true)
 <!+1::
 <!+2::
@@ -288,7 +288,7 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 <!+6::
 <!+7::
 <!+8::
-<!+9::prem.toggleEnabled(, "aud", 1, true, 7)
+<!+9::prem.toggleEnabled(, "aud", 1, true, 6)
 
 <!c::prem.__remoteFunc('closeClipSourceMon')
 <!+c::prem.__remoteFunc('closeAllClipSourceMon')

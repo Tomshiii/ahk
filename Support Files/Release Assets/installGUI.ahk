@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/03/20
- * @version 1.1.3
+ * @date 2026/03/23
+ * @version 1.1.4
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -78,8 +78,7 @@ class installGUI extends Gui {
         TitleFore  := 'c3F627F'
         TotalWidth := 450
 
-        InstallDir    := A_WorkingDir
-        InstallExist  := false
+        InstallDir    := A_WorkingDir "\Tomshi AHK\"
         progress      := 0
         isDetected    := false
         settingsDir   := A_MyDocuments "\tomshi\"
@@ -152,10 +151,10 @@ class installGUI extends Gui {
         /** this function handles including the files in the .exe as well as extracting them when the user runs the installation process */
         __installDump() {
             __after(name) {
-                this.__addLogEntry("extracting ``" name "``")
+
             }
+            this.__addLogEntry(Format("extracting ``{}``", "yes.value.zip"))
             FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
-            __after("yes.value.zip")
         }
 
         /** this function handles deleting the left over files from installation */
@@ -163,8 +162,8 @@ class installGUI extends Gui {
             __after(name) {
                 this.__addLogEntry("deleting ``" name "``")
             }
-            FileDelete(A_WorkingDir '\yes.value.zip')
             __after("yes.value.zip")
+            FileDelete(A_WorkingDir '\yes.value.zip')
             sleep 100
         }
 
@@ -204,14 +203,9 @@ class installGUI extends Gui {
             if FileExist(A_MyDocuments "\tomshi\settings.ini")
                 this.settingsCheck := true
             this.__changeInstallButton(true)
-            SplitPath(this.InstallDir, &FinalDir)
-            if FinalDir !== "Tomshi AHK" {
-                this.InstallDir := this.InstallDir "\Tomshi AHK"
-                this.InstallExist := (DirExist(this.InstallDir)) ? true : false
-                if !this.InstallExist {
-                    this.__addLogEntry("creating install directory")
-                    DirCreate(this.InstallDir)
-                }
+            if !DirExist(this.InstallDir) {
+                this.__addLogEntry("creating install directory")
+                DirCreate(this.InstallDir)
             }
             loop files this.InstallDir "\*", "FD" {
                 if this.names.Has(A_LoopFileName) && this.settingsCheck = true && amount++ < 5
