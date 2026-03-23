@@ -1,9 +1,7 @@
-# <> Release 2.17.0.1 - Hotfix
+# <> Release 2.17.x - 
 
 ## Functions
-- ✅ Fixed `prem.isEditTabActive()` throwing in some circumstances
-- ✅ Fixed `tomshiBasic {` throwing if two GUIs were created
+- 📋 `prem.__remoteFunc()` will now alert the user if it is waiting for the socket connection to load
 
 ## Other Changes
-- ✅ Fixed `Settings.ahk` issue during installation
-- ✅ Fixed `doStartup.ahk` issue during installation
+- ✅ Fixed `Premiere_RightClick.ahk` causing a bunch of `PremiereRemote` errors if initiated too quickly after a reload

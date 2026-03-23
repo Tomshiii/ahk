@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/19
- * @version 2.3.36
+ * @date 2026/03/23
+ * @version 2.3.37
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -116,7 +116,7 @@ class Prem {
     static prevSeqDelay := 1000
     static pauseSeqTimer := false
     static useSwapSequences := true
-    static remoteActive := false
+    static remoteActive := "loading"
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
@@ -528,29 +528,37 @@ class Prem {
     static __remoteFunc(whichFunc, needResult := false, params*) {
         if !this.__checkPremRemoteDir(whichFunc) {
             MsgBox("PremiereRemote is not installed or function does not exist.`nFunction: " whichFunc,, "262160")
-            return
+            return false
         }
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),, true)
-            return
+            return false
         }
 
         checkPrem := WinGet.PremName()
         checkType := (Type(checkPrem) != "Object"), checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
         if !checkPrem || checkType || checkTitle || checkCanSave {
-            return
+            return false
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
             activeObj := CLSID_Objs.clone("prem")
+            if activeObj.remoteActive = "loading" {
+                notifyIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                return -1
+            }
             if !activeObj.remoteActive {
                 errorLog(Error("A socket connection could not be established", -1),, true)
-                return
+                return false
             }
         } else {
+            if this.remoteActive = "loading" {
+                notifyIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                return -1
+            }
             if !this.remoteActive {
                 errorLog(Error("A socket connection could not be established", -1),, true)
-                return
+                return false
             }
         }
 
@@ -600,7 +608,11 @@ class Prem {
             return false
         }
         if IsSet(scan) {
-            getPixel := scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
+            try getPixel := scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
+            catch {
+                errorLog(Error("ShinsImageScan failed. It was set.", -1))
+                return false
+            }
             return getPixel
         }
         try static scan := ShinsImageScanClass(prem.winTitle)
@@ -1747,7 +1759,10 @@ class Prem {
 
         checkUIA := this.__checkAlwaysUIA()
         premUIA := (checkUIA = false) ? CLSID_Objs.load("premUIA_Values") : checkUIA
-        premUIA.initialise()
+        if !premUIA.initialise() {
+            keys.allWait()
+            return false
+        }
         try timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
         if !premUIA.HasProp("timeline") || !IsSet(timelineNN) || timelineNN = false
             return false
@@ -3600,7 +3615,11 @@ class Prem {
             this.audioWaitClose := false
             return
         }
-        multicamEnabled := scan.Image(ptf.Premiere "\multicam_enabled.png")
+        try multicamEnabled := scan.Image(ptf.Premiere "\multicam_enabled.png")
+        catch {
+            this.audioWaitClose := false
+            return
+        }
         switch which {
             case "disable":
                 this.audioWaitClose := true

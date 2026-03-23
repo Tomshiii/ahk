@@ -1,11 +1,9 @@
 /************************************************************************
  * @description move the Premere Pro playhead to the cursor
- * Originally designed for v22.3.1 of Premiere. As of 2023/10/13 moved workflow to v24+
- * Any code after that date is no longer guaranteed to function on previous versions of Premiere.
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/03/17
- * @version 2.4.9
+ * @date 2026/03/23
+ * @version 2.4.10
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -385,9 +383,12 @@ class rbuttonPrem {
 			this.__exit()
 		}
 
-		this.premUIA := CLSID_Objs.load("premUIA_Values")
-		this.premUIA.initialise()
-		try premEl := prem.__createUIAelement(false)
+		;// testing the removal of the below
+		/* this.premUIA := CLSID_Objs.load("premUIA_Values")
+		if !this.premUIA.initialise() {
+			this.__exit()
+		} */
+		; try premEl := prem.__createUIAelement(false)
 
 		;// we send a single input here so that in the event UIA is slow to respond because of premiere
 		;// the cursor will still move if the user taps the activation hotkey
@@ -412,10 +413,12 @@ class rbuttonPrem {
 		}
 
 		;// focuses the timeline
-		try premEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+		prem.__focusTimeline()
+		;// testing the removal of the below
+		/* try premEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
 		catch {
 			prem.__focusTimeline()
-		}
+		} */
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
 		while GetKeyState(currHotkey, "P") {

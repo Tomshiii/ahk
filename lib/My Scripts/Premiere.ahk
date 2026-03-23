@@ -268,12 +268,13 @@ F14 & F23::
 	keys.allWait()
 }
 
-LAlt & SC03A::prem.layerSizeAdjust()
-LAlt & MButton::prem.layerSizeAdjust(, true)
 Alt & WheelUp::
 Alt & WheelDown::
 Shift & WheelUp::
 Shift & WheelDown::prem.accelScroll(5, 25)
+;// the below needs to be above^ or the below will not fire instantly
+LAlt & SC03A::prem.layerSizeAdjust()
+LAlt & MButton::prem.layerSizeAdjust(, true)
 
 
 ;// allExcept

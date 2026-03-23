@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/03/06
- * @version 2.2.8
+ * @date 2026/03/23
+ * @version 2.2.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -157,6 +157,11 @@ Class premUIA_Values {
         if prem.__checkPremRemoteDir('premVer') {
             try {
                 premVerVal := prem.__remoteFunc('premVer', true)
+                if premVerVal == -1 {
+                    block.Off()
+                    activeObj.isRunning := false
+                    return false
+                }
                 if !premVerVal
                     throw
                 appVer := "v" premVerVal
