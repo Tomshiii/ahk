@@ -1,6 +1,7 @@
 # <> Release 2.17.x - 
 
 ## Functions
+- 📋`startup.adobeVerOverride()` no longer shows `Photoshop` version
 
 ### 📝 `prem {`
 - 📋 `__remoteFunc()` will now alert the user if it is waiting for the socket connection to load and abort early to avoid unnecessary errors

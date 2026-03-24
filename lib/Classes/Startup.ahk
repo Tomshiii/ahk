@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/03/02
- * @version 1.8.9
+ * @date 2026/03/24
+ * @version 1.8.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -697,8 +697,7 @@ class Startup {
         __notifyVers() {
             notify_premBeta := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? " (Beta)" : ""
             notify_aeBeta   := (this.UserSettings.aeIsBeta = true   || this.UserSettings.aeIsBeta = "true")   ? " (Beta)"   : ""
-            notify_psBeta   := (this.UserSettings.psIsBeta = true   || this.UserSettings.psIsBeta = "true")   ? " (Beta)"   : ""
-            try notifyIfNotExist("currentAdobeVers", 'Currently Set Adobe Versions',"Adobe Versions - `nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`n   🖌️ Theme: " prem.theme "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer "`nPhotoshop" notify_psBeta ": " this.UserSettings.psVer, 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=7 pos=TR bdr=0xD50000')
+            try notifyIfNotExist("currentAdobeVers", 'Currently Set Adobe Versions',"Adobe Versions - `nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`n   🖌️ Theme: " prem.theme "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer, 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=7 pos=TR bdr=0xD50000')
         }
         if !this.UserSettings.adobeExeOverride
             return
