@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/23
- * @version 2.3.37
+ * @date 2026/03/24
+ * @version 2.3.38
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2932,15 +2932,13 @@ class Prem {
             ih.Wait()
 
             __onInp(ih, char) {
-                has := false
-                for v in which {
+                for i, v in which {
                     if char+offset = v {
-                        has := true
-                        break
+                        which.RemoveAt(i)
+                        return
                     }
                 }
-                if has = false
-                    which.Push(char+offset)
+                which.Push(char+offset)
             }
             __onDown(which, ih, vk, sc) {
                 hotkeyName := GetKeyName(Format("vk{:X}", vk))
