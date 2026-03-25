@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/03/25
- * @version 2.4.11
+ * @date 2026/03/26
+ * @version 2.4.12
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -240,19 +240,20 @@ class rbuttonPrem {
 	__ensureSeq(checkAmount := 1, timeWait := 1000, *) {
 		static count := 1
 		currentSeq := prem.__remoteFunc("getActiveSequence", true)
+
 		;// guard against WinGet title bleed or failed curl responses
-		if !currentSeq || InStr(currentSeq, "ahk_exe") || InStr(currentSeq, ".exe") {
+		isCurrSeqExe := InStr(currentSeq, "ahk_exe") ? true : (InStr(currentSeq, ".exe") ? true : false)
+		isOrigSeqExe := InStr(this.origSeq, "ahk_exe") ? true : (InStr(this.origSeq, ".exe") ? true : false)
+		if !currentSeq || !this.origSeq || isCurrSeqExe || isOrigSeqExe {
 			count := 1
 			this.origSeq := ""
 			SetTimer(, 0)
 			return
 		}
 
-		;// also guard origSeq having been poisoned
-		if !this.origSeq || InStr(this.origSeq, "ahk_exe") {
-			count := 1
-			this.origSeq := ""
-			SetTimer(, 0)
+		if currentSeq != this.origSeq {
+			errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" this.origSeq))
+			prem.__remoteFunc("focusSequence",, "ID=" this.origSeq)
 			return
 		}
 
