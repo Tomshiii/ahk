@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/03/23
- * @version 2.4.10
+ * @date 2026/03/25
+ * @version 2.4.11
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -199,7 +199,7 @@ class rbuttonPrem {
 	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
 
 	/** Reset class variables */
-	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.premObj.RClickIsActive := false, this.origSeq := "", this.premObj := {})
+	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.premObj.RClickIsActive := false, this.premObj := {})
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {
@@ -234,22 +234,32 @@ class rbuttonPrem {
 	/**
 	 * This function checks to ensure the active sequence hasn't changed since the beginning of the `movePlayhead()` function.
 	 * ### Warning; making check amount more than 1 can make it hard to traverse premiere. Ie you let go of right click then immediately open a nested sequence, if you check too many times or `timeWait` is too high, you'll just get instantly kicked back to the original sequence, basically achieving the exact opposite of the functions intention
-	 * @param {String} origSequence the ID of the original active sequence
 	 * @param {Integer} [checkAmount=1] the amount of times you'd like the function to check if the sequence has changed
 	 * @param {Integer} [timeWait=1000] the amount in `ms` of time you'd like the function to wait before rechecking to see if the active sequence has changed.
 	 */
-	__ensureSeq(origSequence, checkAmount := 1, timeWait := 1000, *) {
+	__ensureSeq(checkAmount := 1, timeWait := 1000, *) {
 		static count := 1
 		currentSeq := prem.__remoteFunc("getActiveSequence", true)
-		if currentSeq != origSequence {
-			errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" origSequence))
-			prem.__remoteFunc("focusSequence",, "ID=" origSequence)
+		;// guard against WinGet title bleed or failed curl responses
+		if !currentSeq || InStr(currentSeq, "ahk_exe") || InStr(currentSeq, ".exe") {
+			count := 1
+			this.origSeq := ""
+			SetTimer(, 0)
+			return
+		}
+
+		;// also guard origSeq having been poisoned
+		if !this.origSeq || InStr(this.origSeq, "ahk_exe") {
+			count := 1
+			this.origSeq := ""
+			SetTimer(, 0)
 			return
 		}
 
 		count++
 		if count > checkAmount {
 			count := 1
+			this.origSeq := ""
 			SetTimer(, 0)
 			return
 		}
@@ -272,6 +282,7 @@ class rbuttonPrem {
 			;// throw
 			errorLog(UnsetError("User has not set Paramater #2"),,, true)
 		}
+		this.origSeq := ""
 		;// sometimes ahk can be a bit slow off the mark if the user clicks multiple buttons at the same time
 		;// as their activation hotkey (and those other buttons are setup with other functions)
 		;// which can cause A_ThisHotkey to become something else other than RButton (ie. <!3)
@@ -443,9 +454,9 @@ class rbuttonPrem {
 		}
 
 		;// checks original sequence is still active
-		if useRemote = true
-			SetTimer(this.__ensureSeq.Bind(this, this.origSeq, 1), -1)
-
+		if useRemote = true {
+			SetTimer(this.__ensureSeq.Bind(this, 1), -1)
+		}
 		switch {
 			case (allChecks && !this.leftClick && !this.xbuttonClick): this.__exit()
 			return

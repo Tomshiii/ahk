@@ -51,7 +51,7 @@ for v in list {
         try WM.Send_WM_COPYDATA(justName "_stop," WM.timerScripts[itemObj.scriptName], itemObj.scriptName)
     }
     if itemObj.scriptName = "HotkeylessAHK.ahk" {
-        Run(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\closeHotkeylessAHK.ahk")
+        RunWait(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\closeHotkeylessAHK.ahk")
         continue
     }
     try pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""), false)
