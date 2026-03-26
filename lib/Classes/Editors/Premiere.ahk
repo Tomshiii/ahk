@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/03/26
- * @version 2.3.39
+ * @version 2.3.40
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -612,7 +612,7 @@ class Prem {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
             return false
         }
-        try scan := ShinsImageScanClass(this.exeTitle)
+        try scan := ShinsImageScanClass(name.winTitle)
         catch {
             errorLog(UnsetError("ShinsImageScanClass failed to be set", -1))
             return false
@@ -3594,10 +3594,10 @@ class Prem {
      */
     static __disableMulticamOnAudioEffect(which, title, *) {
         getTitle := WinGet.PremName()
-        if !getTitle.winTitle {
-            errorLog(UnsetError("Couldn't determine Premiere winTitle", -1))
+        if !getTitle || !isObjHasProp(getTitle, "winTitle", false) {
+            errorLog(UnsetError("Could not determine Premiere window title", -1))
             sleep 1500
-            return
+            return false
         }
         if !WinActive(this.exeTitle)
             return
