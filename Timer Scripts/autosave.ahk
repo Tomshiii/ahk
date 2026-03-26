@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/03/17
- * @version 2.2.13
+ * @date 2026/03/26
+ * @version 2.2.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -542,7 +542,8 @@ class adobeAutoSave extends count {
 
         ;// this should cover occurrences where another window is open within premiere
         currentProg := winExt.ProcessNameRegex()
-        if ("ahk_exe " currentProg = prem.winTitle && ((name := WinGet.Title()) != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
+        name := WinGet.Title()
+        if ("ahk_exe " currentProg = prem.winTitle && (name != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1))
             notifyIfNotExist("autosavepremBusier",, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return

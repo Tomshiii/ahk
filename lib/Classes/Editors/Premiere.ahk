@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/24
- * @version 2.3.38
+ * @date 2026/03/26
+ * @version 2.3.39
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -607,19 +607,19 @@ class Prem {
             errorLog(TargetError("Premiere is currently not open."),,, true)
             return false
         }
-        if IsSet(scan) {
-            try getPixel := scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
-            catch {
-                errorLog(Error("ShinsImageScan failed. It was set.", -1))
-                return false
-            }
-            return getPixel
+        name := WinGet.PremName()
+        if !name || !isObjHasProp(name, "winTitle", false) {
+            errorLog(UnsetError("Could not determine Premiere window title", -1))
+            return false
         }
-        try static scan := ShinsImageScanClass(prem.winTitle)
+        try scan := ShinsImageScanClass(this.exeTitle)
         catch {
+            errorLog(UnsetError("ShinsImageScanClass failed to be set", -1))
             return false
         }
         getPixel := scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
+        scan.__Delete()
+        scan := ""
         return getPixel
     }
 
@@ -3606,6 +3606,7 @@ class Prem {
 
         try scan := ShinsImageScanClass(getTitle.winTitle)
         catch {
+            errorLog(UnsetError("ShinsImageScanClass failed to be set", -1))
             this.audioWaitClose := false
             return
         }
@@ -3615,9 +3616,14 @@ class Prem {
         }
         try multicamEnabled := scan.Image(ptf.Premiere "\multicam_enabled.png")
         catch {
+            errorLog(TargetError("failed to find the multicam image", -1))
+            scan.__Delete()
+            scan := ""
             this.audioWaitClose := false
             return
         }
+        scan.__Delete()
+        scan := ""
         switch which {
             case "disable":
                 this.audioWaitClose := true

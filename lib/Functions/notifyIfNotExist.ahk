@@ -12,14 +12,14 @@ notifyIfNotExist(tag, title := '', msg := '', image := '', sound := '', callback
         errorLog(PropertyError("The user has redefined ``tag`` in ``options``", -1),,, true)
         return
     }
-    try {
+    /* try {
         Critical()
         logger := Log()
         logMsg := (InStr(msg, "`n")) ? '`n`t`t`t`t"' StrReplace(msg, "`n", "`n`t`t`t`t") '"' : '"' msg '"'
         (title != '') ? logger.Append(Format('Notify produced the following -`n`t`t`t// Title: "{1}"`n`t`t`t// Message: {2}`n`t`t`t// tag: "{3}"', title, logMsg, tag))
                       : logger.Append(Format('Notify produced the following -`n`t`t`t// Message: {1}`n`t`t`t// tag: "{2}"', logMsg, tag))
         Critical("Off")
-    }
+    } */
     options := (!InStr(options, " show=")) ? options A_Space "show=Fade@250" : options
     options := (!InStr(options, " hide=")) ? options A_Space "hide=Fade@250" : options
     if !Notify.Exist(tag)
