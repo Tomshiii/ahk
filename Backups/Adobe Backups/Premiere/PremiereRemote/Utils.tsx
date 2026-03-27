@@ -474,6 +474,7 @@ export class Utils {
 
       var projectItem = selected[0];
       if (!projectItem.isSequence()) return false;
+      return true;
     }
 
     static renderInPrem(outputPath: string, presetPath: string) {
