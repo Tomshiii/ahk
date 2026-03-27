@@ -8,6 +8,9 @@
 #Include Functions\notifyIfNotExist.ahk
 #Include Other\Notify\Notify.ahk
 ;
+
+#SingleInstance Ignore
+
 if WinExist(prem.winTitle) {
     try {
         path := WinGet.ProjPath()
