@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/26
- * @version 2.3.40
+ * @date 2026/03/27
+ * @version 2.3.41
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3665,13 +3665,13 @@ class Prem {
         checkImport := this.__checkPremRemoteFunc('importFile')
         checkIsSequence := this.__checkPremRemoteFunc('selectionIsSequence')
         if !checkDir || !checkImport || !checkIsSequence {
-            notifyIfNotExist('premRenderRemoteFuncs', 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            notifyIfNotExist('premRenderRemoteFuncs',, 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return
         }
         presetPath := ptf.Backups "\Adobe Backups\Media Encoder\Presets"
 
         if !this.__remoteFunc('selectionIsSequence', true) {
-            notifyIfNotExist('premSelectionNotSeq', 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400')
+            notifyIfNotExist('premSelectionNotSeq',, 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
             return
         }
 
@@ -3682,7 +3682,7 @@ class Prem {
 
         projPath   := WinGet.ProjPath()
         if !projPath {
-            notifyIfNotExist('premRenderProjPath', 'Could not determine the current project path', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            notifyIfNotExist('premRenderProjPath',, 'Could not determine the current project path', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return
         }
         renderPath := WinGet.pathU(projPath.Dir "\..\" outputPath)
@@ -3690,7 +3690,7 @@ class Prem {
             DirCreate(renderPath)
 
         if !FileExist(presetPath "\" presetName) && !FileExist(presetPath "\" presetName ".epr") {
-            notifyIfNotExist('premRenderPresetPath', 'Could not determine the desired render preset:`n' presetPath "\" presetName, 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            notifyIfNotExist('premRenderPresetPath',, 'Could not determine the desired render preset:`n' presetPath "\" presetName, 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return
         }
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"

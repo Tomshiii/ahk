@@ -6,6 +6,7 @@
 ### 📝 `prem {`
 - 📋 `__remoteFunc()` will now alert the user if it is waiting for the socket connection to load and abort early to avoid unnecessary errors
 - 📋 `toggleEnabled()` will now remove a track from the queue if selected twice
+- ✅ Fixed `Notify` use in `renderProjectSelection()`
 
 ## Other Changes
 - ✅ Fixed `Premiere_RightClick.ahk` causing a bunch of `PremiereRemote` errors if initiated too quickly after a reload
