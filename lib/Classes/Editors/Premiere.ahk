@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/03/27
- * @version 2.3.41
+ * @version 2.3.42
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1069,7 +1069,7 @@ class Prem {
                 return
         }
         blocker := block_ext()
-        blocker.On(,, "{Shift}{F21}{F23}")
+        blocker.On(,, "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}" activationKeys)
         this.stopPlayback()
         sleep 50
         premUIA := CLSID_Objs.load("premUIA_Values")
@@ -1986,7 +1986,7 @@ class Prem {
      * @param {Integer} altAmount the amount of accelerated scrolling you want
      * @param {Integer} scrollAmount the amount of accelerated scrolling you want
      */
-    static accelScroll(altAmount := 3, scrollAmount := 5) {
+    static accelScroll(altAmount := 2, scrollAmount := 5) {
         SetStoreCapsLockMode(true)
         if !this.__setTimelineValues()
 			return
@@ -1998,8 +1998,10 @@ class Prem {
         if !withinTimeline
             scrollAmount := 1, altAmount := 1
         getDir := getHotkeys()
-        switch getdir.first {
-            case "Alt": delaySI(0, SendInput(Format("!{{1} {2}}", getDir.second, altAmount)))
+        if !getDir
+            return
+        switch GetKeyName(getdir.first) {
+            case "Alt", "LAlt": delaySI(0, SendInput(Format("!{{1} {2}}", getDir.second, altAmount)))
             default:    delaySI(0, SendInput(Format("{{1} {2}}", getDir.second, scrollAmount)))
         }
     }

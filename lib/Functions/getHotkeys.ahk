@@ -31,7 +31,12 @@ getHotkeys(&first?, &second?) {
         return {first: unset, second: unset}
     getHotkey := A_ThisHotkey
     length := StrLen(getHotkey)
+
     switch {
+        case RegExMatch(getHotkey, "^([<>][#!^+]|<\^>!)(.+)$", &match):
+            first := match[1], second := match[2]
+            check1 := keys.vk(first), check2 := keys.vk(second)
+            return {first: (check1 != false) ? check1 : first, second: (check2 != false) ? check2 : second}
         case length = 3 && (pos := InStr(getHotkey, "<") = 1 || pos := InStr(getHotkey, ">") = 1) && keys.modMap.Has(SubStr(getHotkey, 1, 2)):
             first := SubStr(getHotkey, 1, 2), second := SubStr(getHotkey, 3, 1)
             check1 := keys.vk(first), check2 := keys.vk(second)

@@ -269,23 +269,10 @@ $s:: ;// stop "add edit" adding an edit to all tracks when nothing is selected (
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-;// next/previous frame hotkeys
-Shift & F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, 2, true) ;goes to the next keyframe point towards the left
-Shift & F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, 2, true) ;goes to the next keyframe towards the right
-
-<!F21::prem.wheelEditPoint(ksa.timelineWindow, ksa.selectedClipStart, 2, true, "{LAlt}{F21}")
-<!F23::prem.wheelEditPoint(ksa.timelineWindow, ksa.selectedClipEnd, 2, true, "{LAlt}{F23}")
 
 F20::prem.dragSourceMon("video", "{F20}")
 F19::prem.dragSourceMon(, "{F19}", "_Assets/01_Other/Bars and Tone - Rec 709", true)
 F14 & F19::prem.dragSourceMon(, "")
-
-;// next/previous edit point hotkeys
-F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint,, true) ;goes to the next edit point towards the left
-F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint,, true) ;goes to the next edit point towards the right
-
-;// mousedrag hotkeys
-*XButton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 ;// playback speed change hotkeys
 F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
@@ -294,11 +281,24 @@ F14 & F23::
 	delaySI(16, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement) ;alternate way to speed up playback on the timeline with mouse buttons
 	keys.allWait()
 }
+;// next/previous frame hotkeys
+<+F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, 2, true) ;goes to the next keyframe point towards the left
+<+F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, 2, true) ;goes to the next keyframe towards the right
 
-Alt & WheelUp::
-Alt & WheelDown::
-Shift & WheelUp::
-Shift & WheelDown::prem.accelScroll(5, 25)
+<!F21::prem.wheelEditPoint(ksa.timelineWindow, ksa.selectedClipStart, 2, true, "{LAlt}{F21}")
+<!F23::prem.wheelEditPoint(ksa.timelineWindow, ksa.selectedClipEnd, 2, true, "{LAlt}{F23}")
+;// next/previous edit point hotkeys
+F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint,, true) ;goes to the next edit point towards the left
+F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint,, true) ;goes to the next edit point towards the right
+
+;// mousedrag hotkeys
+*XButton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
+
+
+/* <!WheelUp::
+<!WheelDown:: */
+<+WheelUp::
+<+WheelDown::prem.accelScroll(5, 25)
 ;// the below needs to be above^ or the below will not fire instantly
 LAlt & SC03A::prem.layerSizeAdjust()
 LAlt & MButton::prem.layerSizeAdjust(, true)
