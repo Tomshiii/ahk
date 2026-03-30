@@ -110,8 +110,35 @@ Enter:: ;// close windows by double tapping enter
 			return
 		case (WinGet.Title() == "Save Project"): return
 		default:
-			SendInput("{" A_ThisHotkey "}")
-			return
+			;// if I'm typing and I hit enter I want typing to be finished
+			;// ie. the text box is deselected and the text tool is swapped back to the selection tool
+			currTimelineStatus := prem.timelineFocusStatus()
+			premUIA := CLSID_Objs.load("premUIA_Values")
+            premUIA.initialise()
+            try createEl   := prem.__createUIAelement(true)
+            try toolsNN    := prem.__uiaCtrlPos(premUIA.tools, false, createEl, false)
+            if (!IsSet(createEl) || !IsSet(toolsNN)) {
+                errorLog(TargetError('Creating UIA element failed'))
+                return
+            }
+            textStatus := ImageSearch(&xx, &yy, toolsNN.x+200, toolsNN.y, toolsNN.x+200 + 200, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
+
+			switch {
+				case (createEl.activeElement !== premUIA.programMon):
+					SendInput("{" A_ThisHotkey "}")
+					return
+				case (currTimelineStatus != true && createEl.activeElement == premUIA.programMon && textStatus != false):
+					if !GetKeyState("Shift") && !GetKeyState("Shift", "P") { ;// this check shouldn't be necessary but.. just incase
+						SendInput("{Escape}")
+						prem.selectionTool()
+						return
+					}
+					SendInput("{Blind}{" A_ThisHotkey "}")
+					return
+				default:
+					SendInput("{" A_ThisHotkey "}")
+					return
+			}
 	}
 }
 
