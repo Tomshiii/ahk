@@ -3,6 +3,7 @@
 ## Functions
 - 📋`startup.adobeVerOverride()` no longer shows `Photoshop` version
 - ✅ Fixed some edge cases with `getHotkeys()`
+- ✅ Fixed `move.clipMouse()` not working when activated twice
 
 ### 📝 `prem {`
 - 📋 `__remoteFunc()` will now alert the user if it is waiting for the socket connection to load and abort early to avoid unnecessary errors

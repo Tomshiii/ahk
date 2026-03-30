@@ -117,7 +117,8 @@ Enter:: ;// close windows by double tapping enter
             premUIA.initialise()
             try createEl   := prem.__createUIAelement(true)
             try toolsNN    := prem.__uiaCtrlPos(premUIA.tools, false, createEl, false)
-            if (!IsSet(createEl) || !IsSet(toolsNN)) {
+            if (!IsSet(createEl) || !IsSet(toolsNN)) || !toolsNN {
+				SendInput("{" A_ThisHotkey "}")
                 errorLog(TargetError('Creating UIA element failed'))
                 return
             }
@@ -193,6 +194,43 @@ SC03A & v::prem.selectionTool()
 ^!x::prem.rippleCut()
 
 SC03A & d::prem.disableDirectManip()
+SC03A & LButton:: ;// lock vertical movement while adjusting keyframe handles
+{
+	SetDefaultMouseSpeed(0)
+	SetStoreCapsLockMode(true)
+	InstallKeybdHook(true)
+	storeHotkey := A_ThisHotkey
+	capslockState := GetKeyState("CapsLock", "T")
+	__resetCaps(storekey, capslockState) {
+		if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState
+			SetCapsLockState('AlwaysOff')
+	}
+	; InstallMouseHook()
+	coord.c()
+	origCoord := obj.MousePos()
+	premUIA := CLSID_Objs.load("premUIA_Values")
+	premUIA.initialise()
+	try premEl := prem.__createUIAelement(true)
+
+	if premEl.activeElement !== premUIA.effectControls {
+		__resetCaps(storeHotkey, capslockState)
+		return
+	}
+	blocker := block_ext()
+	blocker.On()
+	if GetKeyState("LButton") || GetKeyState("LButton", "P")
+		SendInput("{LButton Up}")
+	MouseMove(origCoord.x, origCoord.y)
+	SendInput("{LButton Down}")
+	blocker.Off()
+	move.clipMouse("x", true)
+	KeyWait("vk14", "L")
+	if GetKeyState("LButton") || GetKeyState("LButton", "P")
+		SendInput("{LButton Up}")
+	move.setMouseClip()
+	__resetCaps(storeHotkey, capslockState)
+	checkStuck(["CapsLock", "LButton"])
+}
 
 ^!1::prem.disableAllMuteSolo("mute")
 ^!2::prem.disableAllMuteSolo("solo")
