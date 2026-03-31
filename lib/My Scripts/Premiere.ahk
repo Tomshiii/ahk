@@ -122,7 +122,7 @@ Enter:: ;// close windows by double tapping enter
                 errorLog(TargetError('Creating UIA element failed'))
                 return
             }
-            textStatus := ImageSearch(&xx, &yy, toolsNN.x+200, toolsNN.y, toolsNN.x+200 + 200, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
+            textStatus := ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
 
 			switch {
 				case (createEl.activeElement !== premUIA.programMon):

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/03/23
- * @version 2.2.9
+ * @date 2026/03/31
+ * @version 2.2.9.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -297,7 +297,7 @@ Class premUIA_Values {
         if this.successCount != this.windowHotkeys.Count {
             notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
         }
-        notifyIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", A_WinDir '\system32\shell32.dll|Icon28',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
+        notifyIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", A_WinDir '\system32\shell32.dll|icon270',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
         this.successCount := 0
         this.beenSet := true
         if JSON.stringify(currentVers) == originalVers {

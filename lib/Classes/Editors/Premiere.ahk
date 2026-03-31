@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/27
- * @version 2.3.42
+ * @date 2026/03/31
+ * @version 2.3.43
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1496,7 +1496,7 @@ class Prem {
                 errorLog(TargetError('Creating UIA element failed'))
                 return
             }
-            textStatus := ImageSearch(&xx, &yy, toolsNN.x+200, toolsNN.y, toolsNN.x+200 + 200, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
+            textStatus := ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
 
             switch {
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
@@ -1800,14 +1800,7 @@ class Prem {
             }
         }
         if tools = true {
-            if !Notify.Exist("premTimelineCoords") {
-                Notify.Show(,"
-                (
-                    prem.getTimeline() found the coordinates of the timeline. This function will not check coordinates again until a script refresh.
-                    If this script grabbed the wrong coordinates, refresh and try again! If this script fails to function correctly, recheck your
-                    Prem_UIA coords before refreshing the script and trying again!
-                )",,,, 'POS=BC DUR=6 MALI=CENTER BC=242424 show=Fade@250 hide=Fade@250 tag=premTimelineCoords')
-            }
+            notifyIfNotExist("premTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=6 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
         }
         return true
     }
@@ -1833,11 +1826,11 @@ class Prem {
             errorLog(UnsetError("Couldn't create UIA object", -2),, true)
             return
         }
-        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + Min(toolsNN.width, 100), toolsNN.y + Min(toolsNN.height, 100), "*2 " ptf.Premiere "selection_2.png") {
+        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection_2.png") {
             block.Off()
             return
         }
-        if ImageSearch(&x, &y, toolsNN.x, toolsNN.y, toolsNN.x + Min(toolsNN.width, 100), toolsNN.y + Min(toolsNN.height, 100), "*2 " ptf.Premiere "selection.png") {
+        if ImageSearch(&x, &y, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection.png") {
             coord.client("Mouse", false)
             MouseMove(x, y)
             SendInput("{Click}")
