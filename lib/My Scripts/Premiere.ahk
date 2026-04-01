@@ -9,12 +9,13 @@
 #Include Functions\delaySI.ahk
 ; }
 
-isIn(title) {
+isIn(title, ahk_exe?) {
 	try getTitle := WinGet.Title()
 	catch {
 		return false
 	}
-	return InStr(getTitle, title)
+	exe := (IsSet(ahk_exe) ? A_Space ahk_exe : "")
+	return InStr(getTitle exe, title)
 }
 
 ;// this hotkey is an attempt to stop inputs being sent through to premiere while waiting for excalibur to pop up
@@ -52,29 +53,26 @@ LCtrl & Tab::
 Shift & Tab::
 $Tab::
 {
-	if WinActive("Modify Clip " prem.winTitle) {
-		(GetKeyState("LCtrl", "P") = true) ? prem.swapChannels(1) : prem.swapChannels(1, 16, ksa.labelPurple)
-		KeyWait("LCtrl")
-		return
-	}
 	titles := "Audio Gain " prem.winTitle "|"
-	if winExt.ExistRegex(titles) {
-		sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
-		SendInput(sendMod "{Tab}")
-		return
-	}
-	if CaretGetPos(&x, &y) {
-		if !isDoubleClick()
+	switch {
+		case isIn("Modify Clip", prem.winTitle):
+			(GetKeyState("LCtrl", "P") = true) ? prem.swapChannels(1) : prem.swapChannels(1, 16, ksa.labelPurple)
+			KeyWait("LCtrl")
 			return
-		sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
-		SendInput(sendMod "{Tab}")
-		return
+		case isIn("Clip Fx Editor"), isIn("Track Fx Editor"):
+			SendInput("{Tab}")
+			return
+		case winExt.ExistRegex(titles):
+			sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
+			SendInput(sendMod "{Tab}")
+			return
+		case CaretGetPos(&x, &y):
+			/* if !isDoubleClick()
+				return */
+			sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
+			SendInput(sendMod "{Tab}")
+			return
 	}
-	/* uiaVals := CLSID_Objs.load("premUIA_Values")
-	uiaVals.initialise()
-	premUIA := prem.__createUIAelement(true)
-	if premUIA.activeElement != uiaVals.timeline
-		return */
 	prem.swapPreviousSequence()
 }
 
