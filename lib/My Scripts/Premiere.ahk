@@ -130,6 +130,8 @@ Enter:: ;// close windows by double tapping enter
 					if !GetKeyState("Shift") && !GetKeyState("Shift", "P") { ;// this check shouldn't be necessary but.. just incase
 						SendInput("{Escape}")
 						prem.selectionTool()
+						sleep 50
+						prem.__focusTimeline()
 						return
 					}
 					SendInput("{Blind}{" A_ThisHotkey "}")

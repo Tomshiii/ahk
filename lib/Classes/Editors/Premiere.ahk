@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/03/31
- * @version 2.3.43
+ * @date 2026/04/02
+ * @version 2.3.44
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3689,10 +3689,13 @@ class Prem {
             return
         }
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
-
         file := this.__remoteFunc('renderInPrem', true, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
         if checkbool(addToProj) && (file != false) && FileExist(file) {
+            notifyIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
+            sleep 1000
             this.__remoteFunc('importFile',, "filePath=" StrReplace(file, "\", "/"), "importAsStills=false")
+            logger := log()
+            logger.Append("Attempted to import: " StrReplace(file, "\", "/"))
         }
     }
 
