@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/03/24
- * @version 1.8.10
+ * @date 2026/04/07
+ * @version 1.8.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1367,7 +1367,7 @@ class Startup {
             switch getLocalStatus {
                 case "": cmd.run(,,, "git pull", v, "Hide")
                 default:
-                    cmd.run(,,, "git stash", v, "Hide")
+                    cmd.run(,,, "git stash -u", v, "Hide")
                     sleep 3000
                     cmd.run(,,, "git pull", v, "Hide")
                     sleep 3000

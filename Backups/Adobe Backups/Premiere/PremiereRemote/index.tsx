@@ -372,6 +372,30 @@ export const host = {
 
   closeAllClipSourceMon: function() {
     app.sourceMonitor.closeAllClips();
+  },
+
+  // this function expects a "true"/"false" for `number` & a `|` delimited list of param/value pairs for `params`. params/values must be distinguished by `-`.
+  // ie. videoFrameHeight-2160|videoFrameWidth-3840|videoFrameRate-29.97
+  setSeqSettings: function(number: string, params: string) {
+    // alert(params)
+    const currentSequence = app.project.activeSequence;
+    var currSettings = currentSequence.getSettings();
+    // alert(String(currSettings.videoFrameRate))
+
+    for (const v of params.split("|")) {
+        var split = v.split("-")
+        // alert(split[0] + split[1])
+        if (split[0] == "videoFrameRate") {
+          var newFrameRate = new Time();
+          newFrameRate.seconds = 1 / Number(split[1])
+          currSettings.videoFrameRate = newFrameRate;
+          continue
+        }
+        currSettings[split[0]] = (number == "false") ? split[1] : Number(split[1])
+    }
+    var setNewVal = currentSequence.setSettings(currSettings);
+    if(setNewVal == false)
+        return "failure"
   }
 };
 

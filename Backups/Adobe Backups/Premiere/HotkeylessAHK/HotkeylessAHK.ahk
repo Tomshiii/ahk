@@ -49,4 +49,5 @@ Class CustomFunctions {
     renderPreviews()                                        => (prem.renderPreviewsInOut())
     deleteAllEmptyTracks()                                  => (prem.deleteEmptyTracks())
     renderSelection(outputPath, presetName, import := true) => (prem.renderProjectSelection(outputPath, presetName, import))
+    setSettings(num := false, params := "")                 => (prem.__remoteFunc('setSeqSettings',, "number=" num, "params=" params))
 }

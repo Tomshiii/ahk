@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/04/02
- * @version 2.3.44
+ * @date 2026/04/08
+ * @version 2.3.45
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -567,11 +567,14 @@ class Prem {
             for k, v in params {
                 if k = 1 {
                     paramsString := StrReplace(params[A_Index], "&", "%26")
+                    paramsString := StrReplace(params[A_Index], ",", "%2C")
                     if params.Length == 1
                         break
                     continue
                 }
-                paramsString := paramsString "&" StrReplace(params[A_Index], "&", "%26")
+                replaceStr := StrReplace(params[A_Index], "&", "%26")
+                replaceStr := StrReplace(params[A_Index], ",", "%2C")
+                paramsString := paramsString "&" replaceStr
             }
         }
         paramsString := StrReplace(paramsString, A_Space, "%20")
@@ -3686,6 +3689,7 @@ class Prem {
 
         if !FileExist(presetPath "\" presetName) && !FileExist(presetPath "\" presetName ".epr") {
             notifyIfNotExist('premRenderPresetPath',, 'Could not determine the desired render preset:`n' presetPath "\" presetName, 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            this.save()
             return
         }
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
@@ -3697,6 +3701,7 @@ class Prem {
             logger := log()
             logger.Append("Attempted to import: " StrReplace(file, "\", "/"))
         }
+        this.save()
     }
 
     static resetCoreFuncVals() {

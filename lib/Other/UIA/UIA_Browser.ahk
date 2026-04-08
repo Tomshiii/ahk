@@ -896,7 +896,7 @@ class UIA_Browser {
 	ControlSend(text, releaseModifiers:=true) {
 		SendMessage(0x0006, 1, this.BrowserId,, this.BrowserId)
 		PrevKeyDelay := A_KeyDelay, PrevKeyDuration := A_KeyDuration
-		SetKeyDelay -1, 1
+		SetKeyDelay 0, 1
 		if releaseModifiers {
 			released := []
 			for key in ["LCtrl", "RCtrl", "LAlt", "RAlt", "LShift", "RShift"]
