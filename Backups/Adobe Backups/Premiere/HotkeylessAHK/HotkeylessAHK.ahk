@@ -45,7 +45,7 @@ Class CustomFunctions {
     organiseProj()                                          => (prem.__remoteFunc('organiseProj'))
     setMarker(colour)                                       => (prem.__remoteFunc('setMarker',, "colour=" colour))
     moveToAssetBin(folder)                                  => (prem.__remoteFunc('moveToAssetsBin',, 'folderPath=' folder))
-    toggleLinearColour(enableMaxRenderQual)                 => (prem.toggleLinearColour(true))
+    toggleLinearColour(enableMaxRenderQual)                 => (prem.toggleLinearColour(enableMaxRenderQual))
     renderPreviews()                                        => (prem.renderPreviewsInOut())
     deleteAllEmptyTracks()                                  => (prem.deleteEmptyTracks())
     renderSelection(outputPath, presetName, import := true) => (prem.renderProjectSelection(outputPath, presetName, import))

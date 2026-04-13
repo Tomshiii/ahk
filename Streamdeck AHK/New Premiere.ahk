@@ -50,8 +50,8 @@ if count > 1 {
 }
 
 templatesDir := SelectedFolder "\_project files\templates"
-mainTemplate := "W:\_Assets\Plugins & Presets\Mogrts & Presets\Main Channel AE Templates\Regular videos\The Boys Main Channel - Regular Template.aet"
-hauntTemplate := "W:\_Assets\Plugins & Presets\Mogrts & Presets\Main Channel AE Templates\Haunted videos\The Boys Main Channel - Haunted Template.aet"
+mainTemplate := "W:\_Assets\Plugins & Presets\Mogrts & Presets\Main Channel AE Templates\Regular videos\The Boys Main Channel - Regular Template.aep"
+hauntTemplate := "W:\_Assets\Plugins & Presets\Mogrts & Presets\Main Channel AE Templates\Haunted videos\The Boys Main Channel - Haunted Template.aep"
 try {
     UserSettings := CLSID_Objs.load("UserSettings")
     aeIco := A_ProgramFiles "\Adobe\Adobe After Effects " UserSettings.ae_year "\Support Files\UXP\plugins\com.adobe.ccx.start\images\thumbs\AEFT_aep.ico"
@@ -60,8 +60,8 @@ if !IsSet(aeIco)
     aeIco := 'C:\Windows\System32\shell32.dll|icon153'
 if !DirExist(templatesDir)
     DirCreate(templatesDir)
-(FileExist(mainTemplate)) ? FileCopy(mainTemplate, templatesDir, true) : notifyIfNotExist("aeNoMainTemplate", 'AE Main Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
-(FileExist(hauntTemplate)) ? FileCopy(hauntTemplate, templatesDir, true) : notifyIfNotExist("aeNoHauntedTemplate", 'AE Haunted Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
+(FileExist(mainTemplate)) ? FileCopy(mainTemplate, templatesDir, true) : notifyIfNotExist("aeNoMainTemplate",, 'AE Main Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
+(FileExist(hauntTemplate)) ? FileCopy(hauntTemplate, templatesDir, true) : notifyIfNotExist("aeNoHauntedTemplate",, 'AE Haunted Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
 
 FileCopy(chosenFile, SelectedFolder "\_project files\" IB.Value ".prproj")
 if !FileExist(prem.path) {

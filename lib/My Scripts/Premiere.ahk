@@ -21,7 +21,6 @@ isIn(title, ahk_exe?) {
 ;// this hotkey is an attempt to stop inputs being sent through to premiere while waiting for excalibur to pop up
 $^Space::
 {
-	keys.allWait()
 	spellbookExcalFile := A_AppData "\SpellBook\knights_of_the_editing_table.excalibur.json"
 	checkRemote := prem.__checkPremRemoteDir('isSelected')
 	checkExcal  := prem.Excalibur.__isInstalled()
@@ -39,7 +38,8 @@ $^Space::
 		block.Off()
 		return
 	}
-	SendInput("^{Space}")
+	keys.allWait()
+	SendInput("{Blind}^{Space}")
 	if !WinWait("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME",, 2) {
 		block.Off()
 		return
