@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0
  * @author tomshi
- * @date 2026/04/13
- * @version 2.3.46
+ * @date 2026/04/14
+ * @version 2.3.47
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -566,14 +566,12 @@ class Prem {
         if params.Length >= 1 {
             for k, v in params {
                 if k = 1 {
-                    paramsString := StrReplace(params[A_Index], "&", "%26")
-                    paramsString := StrReplace(params[A_Index], ",", "%2C")
+                    paramsString := StrReplace(v, "&", "%26")
                     if params.Length == 1
                         break
                     continue
                 }
-                replaceStr := StrReplace(params[A_Index], "&", "%26")
-                replaceStr := StrReplace(params[A_Index], ",", "%2C")
+                replaceStr := StrReplace(v, "&", "%26")
                 paramsString := paramsString "&" replaceStr
             }
         }
@@ -593,10 +591,18 @@ class Prem {
                 errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
                 return false
             }
-            if parse["result"] != "true" && parse["result"] != "false"
-                return parse["result"]
-            else
-                return(parse["result"] = "true" ? true : false)
+            switch {
+                case (!parse.has("result") && parse.has("message")):
+                    errorLog(ValueError(parse["message"],-1), whichFunc "_" paramsString)
+                    MsgBox("prem.__remoteFunc() failed.`n`nMessaeg: " parse["message"] "`nPassed Params:" paramsString)
+                    return false
+                case parse.has("result") && parse["result"] != "true" && parse["result"] != "false":
+                    return parse["result"]
+                case parse.has("result") && isBool(parse["result"]):
+                    return(parse["result"] = "true" ? true : false)
+                default:
+                    return((parse.has("result")) ? parse["result"] : false)
+            }
         }
     }
 
