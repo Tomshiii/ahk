@@ -374,9 +374,10 @@ export const host = {
     app.sourceMonitor.closeAllClips();
   },
 
-  // this function expects a "true"/"false" for `number` & a `|` delimited list of param/value pairs for `params`. params/values must be distinguished by `-`.
-  // ie. videoFrameHeight-2160|videoFrameWidth-3840|videoFrameRate-29.97
-  setSeqSettings: function(number: string, params: string) {
+  // this function expects a `|` delimited list of param/value pairs; x-y-z|x2-y-z2 where `x` is the name of the setting in premiere's settings object, `y` is the new value, `z` is either `true`/`false` to determine if the `y` value should be interpreted as a number instead of as a string
+  // params/values must be distinguished by `-` and settings must be separated by `|`.
+  // ie. videoFrameHeight-2160-true|videoFrameWidth-3840-true|videoFrameRate-29.97-true
+  setSeqSettings: function(params: string) {
     // alert(params)
     const currentSequence = app.project.activeSequence;
     var currSettings = currentSequence.getSettings();
@@ -391,7 +392,7 @@ export const host = {
           currSettings.videoFrameRate = newFrameRate;
           continue
         }
-        currSettings[split[0]] = (number == "false") ? split[1] : Number(split[1])
+        currSettings[split[0]] = (split[2] == "false") ? split[1] : Number(split[1])
     }
     var setNewVal = currentSequence.setSettings(currSettings);
     if(setNewVal == false)
