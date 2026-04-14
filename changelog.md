@@ -20,3 +20,4 @@
 - ✅ Fixed `selectionIsSequence()` only returning `false`
     - ✅ Fixes `renderInPrem()` always failing
 - ✏️ Added `setSeqSettings()`
+- ✏️ Added `setAllEnableDisabled()`

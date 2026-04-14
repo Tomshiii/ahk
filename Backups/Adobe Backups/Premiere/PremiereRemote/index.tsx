@@ -396,6 +396,21 @@ export const host = {
     var setNewVal = currentSequence.setSettings(currSettings);
     if(setNewVal == false)
         return "failure"
+  },
+
+  setAllEnableDisabled: function(enabled: string) {
+    if (!Utils.isSelected())
+      return false
+
+    const activeSequence = app.project.activeSequence;
+    const selection = activeSequence.getSelection();
+    const shouldDisable = enabled !== "true";
+    const len = selection.length;
+
+    for (let i = 0; i < len; i++) {
+      selection[i].disabled = shouldDisable;
+    }
+    return true
   }
 };
 

@@ -39,10 +39,11 @@ export class Utils {
     }
 
     static toggleEnabled() {
-      var activeSequence = app.project.activeSequence;
-      var selection = activeSequence.getSelection();
+      const activeSequence = app.project.activeSequence;
+      const selection = activeSequence.getSelection();
+      const len = selection.length
 
-      for (let i = 0; i < selection.length; i++) {
+      for (let i = 0; i < len; i++) {
         selection[i].disabled = !selection[i].disabled;
       }
     }
