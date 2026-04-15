@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/03/26
- * @version 2.4.12
+ * @date 2026/04/15
+ * @version 2.4.13
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -168,6 +168,7 @@ class rbuttonPrem {
 			SendInput(KSA.selectionPrem)
 			MouseMove(xcol, ycol)
 			SendInput("{LButton Down}")
+			MouseMove(coordObj.x, coordObj.y)
 			block.Off()
 			this.colourOrNorm := "colour"
 

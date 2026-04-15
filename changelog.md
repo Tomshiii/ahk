@@ -17,8 +17,11 @@
 - ✅ Fixed function throwing in some scenarios
 
 ## Other Changes
-- ✅ Fixed `Premiere_RightClick.ahk` causing a bunch of `PremiereRemote` errors if initiated too quickly after a reload
 - 📋 `Core Functionality.ahk` will now throw if the current directory does not match the install directory
+
+🔗 `Premiere_RightClick.ahk`
+- ✅ Fixed script causing a bunch of `PremiereRemote` errors if initiated too quickly after a reload
+- 📋 Cursor will now be moved back to the original position in the event it moves to grab the nearby playhead
 
 🔗 `PremiereRemote`
 - ✅ Fixed `selectionIsSequence()` only returning `false`
