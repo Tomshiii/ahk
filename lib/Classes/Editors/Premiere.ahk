@@ -5,7 +5,7 @@
  * @premVer 26.0
  * @author tomshi
  * @date 2026/04/14
- * @version 2.3.47
+ * @version 2.3.48
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3429,9 +3429,10 @@ class Prem {
             Notify.Destroy("premFailLinColour")
         if Notify.Exist("premLinColour")
             Notify.Destroy("premLinColour")
-        if enableMaxRenderQual != true && enableMaxRenderQual != false
-            enableMaxRenderQual := true
-        toggle := this.__remoteFunc('toggleLinearColour', true, "enableMaxRenderQual=" enableMaxRenderQual)
+        chkQual := checkBool(enableMaxRenderQual)
+        if chkQual != true && chkQual != false
+            chkQual := true
+        toggle := this.__remoteFunc('toggleLinearColour', true, "enableMaxRenderQual=" chkQual)
         switch toggle {
             case "failure": notifyIfNotExist("premFailLinColour",, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red')
             default:
