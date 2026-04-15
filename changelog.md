@@ -21,6 +21,7 @@
 
 🔗 `Premiere_RightClick.ahk`
 - ✅ Fixed script causing a bunch of `PremiereRemote` errors if initiated too quickly after a reload
+- ✏️ Added parameter `playbackKeys` to determine which hotkeys will reactivate playback once the function has finished
 - 📋 Cursor will now be moved back to the original position in the event it moves to grab the nearby playhead
 
 🔗 `PremiereRemote`

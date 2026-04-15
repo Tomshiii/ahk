@@ -3,7 +3,7 @@
  * @premVer 26.0
  * @author tomshi, taranVH
  * @date 2026/04/15
- * @version 2.4.13
+ * @version 2.4.14
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -67,7 +67,7 @@ There's probably some dumb hacky way to work around that but ultimately it's jus
 ;---------------------------------------------------------------------------------------
 
 ;// there may be code that EXPECTS the activation hotkey to be RButton
-RButton::rbuttonPrem().movePlayhead(, prem.currentSetVer)
+RButton::rbuttonPrem().movePlayhead(, prem.currentSetVer,, {play: "LButton", speed: "XButton2"})
 
 ;// there is code that EXPECTS the activation hotkey to be XButton1
 ;// including uses of `checkStuck()`
@@ -95,6 +95,8 @@ class rbuttonPrem {
 
 	timelineCol := []
 	premObj := {}
+	doPlayback := true
+	playbackKeys := {}
 
 	/**
 	 * Checks to see whether the colour under the cursor indicates that it's a blank track
@@ -205,7 +207,7 @@ class rbuttonPrem {
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {
 		block.Off()
-		PremHotkeys.__HotkeyReset(["LButton", "XButton2"])
+		PremHotkeys.__HotkeyReset([this.playbackKeys.play, this.playbackKeys.speed])
 		this.__resetClicks()
 		checkstuck()
 		try SetTimer(this.__ensureSeq, 0)
@@ -226,8 +228,8 @@ class rbuttonPrem {
 		 */
 		__set(which, *) {
 			switch which {
-				case "LButton":  this.leftClick := true
-				case "XButton2": this.leftClick := true, this.xbuttonClick := true
+				case this.playbackKeys.play:  this.leftClick := true
+				case this.playbackKeys.speed: this.leftClick := true, this.xbuttonClick := true
 			}
 		}
 	}
@@ -270,20 +272,26 @@ class rbuttonPrem {
 	}
 
 	/**
-	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton1</kbd>).
-	 * This function has built in checks for <kbd>LButton</kbd> & <kbd>XButton2</kbd> during activation - check the wiki for more details.
+	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton2</kbd>).
+	 * This function has built in checks for <kbd>LButton</kbd> & <kbd>XButton2</kbd> by default during activation - this can be overwritten by using the `playbackKeys` parameter.
 	 * This function should work as intended on both the old UI and the Spectrum UI assuming you use the default darkest themeing for both UI versions. Other themes will require the user to add additional colour values to `timelineColours {`
 	 *
 	 * #### This function has code to exit early in the event that `A_ThisHotkey` gets set to something that `GetKeyState` cannot handle. If you want to do this on purpose, you will need to remove that block of code.
 	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like <kbd>RButton</kbd> as that removes the ability for the keys native function to operate
 	 * @param {String} [version=unset] the currently selected version of premiere within `settingsGUI()`. This parameter can usually be filled in using `prem.currentSetVer`
 	 * @param {String} [sendOnFailure=unset] what you wish for the script to send in the event that it needs to fallback. What you set for this parameter will be sent to `SendInput()`. If left unset, sends `"{" A_ThisHotkey "}"`
+	 * @param {Object} [playbackKeys=unset] an object `{play: , speed: }` to determine which hotkeys will be used to start playback after the user releases the activation hotkey. ie. `{play: "LButton", speed: "XButton2"}. If the user leaves this parameter unset, or does not set both object properties, the function will assume that this functionality should be disabled.
 	 */
-	movePlayhead(allChecks := true, version := unset, sendOnFailure := unset) {
+	movePlayhead(allChecks := true, version := unset, sendOnFailure := unset, playbackKeys?) {
 		if !IsSet(version) {
 			;// throw
 			errorLog(UnsetError("User has not set Paramater #2"),,, true)
 		}
+		if !IsSet(playbackKeys) || (IsSet(playbackKeys) && (!isObjHasProp(playbackKeys, "play", false) || !isObjHasProp(playbackKeys, "speed", false))) {
+			playbackKeys := {play: "LButton", speed: "XButton2"}
+			this.doPlayback := false
+		}
+		this.playbackKeys := playbackKeys
 		this.origSeq := ""
 		;// sometimes ahk can be a bit slow off the mark if the user clicks multiple buttons at the same time
 		;// as their activation hotkey (and those other buttons are setup with other functions)
@@ -346,7 +354,7 @@ class rbuttonPrem {
 			return
 
 		;// set what `LButton` & `XButton2` do
-		this.__HotkeySet(["LButton", "XButton2"])
+		this.__HotkeySet([this.playbackKeys.play, this.playbackKeys.speed])
 
 		;// checks to see whether the timeline position has been located
 		if !prem.__setTimelineValues() {
@@ -439,7 +447,7 @@ class rbuttonPrem {
 				if allChecks = true
 					checkstuck()
 				else
-					checkStuck(["XButton2", "Ctrl", "Shift"])
+					checkStuck([this.playbackKeys.speed, "Ctrl", "Shift"])
 				if GetKeyState("Ctrl", "P") { ;you still want to be able to hold shift so you can cut all tracks on the timeline
 					tool.Cust("Holding control while scrubbing will cause Premiere to freak out")
 					break
@@ -462,12 +470,12 @@ class rbuttonPrem {
 		switch {
 			case (allChecks && !this.leftClick && !this.xbuttonClick): this.__exit()
 			return
-			case (allChecks && this.leftClick & !this.xbuttonClick): prem.startPlayback()
+			case (allChecks && this.doPlayback && this.leftClick && !this.xbuttonClick): prem.startPlayback()
 				;// unfortunately need to do it this way bc there's no way to set playback speed while multicam is active...
 				;// prem only lets you set playback speed when you call `qe.project.getActiveSequence().player.play(speed)`
 				;// but then you can't play the multicam player... so we need to use `qe.startPlayback()` instead
 				;// which unfortunately takes no params
-			case (allChecks && this.xbuttonClick):
+			case (allChecks && this.doPlayback && this.xbuttonClick):
 				prem.startPlayback()
 				SendInput(KSA.speedUpPlayback)
 			case (!allChecks && this.leftClick): SendInput("{LButton}")
