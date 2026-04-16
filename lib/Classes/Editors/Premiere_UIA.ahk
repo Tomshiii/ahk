@@ -106,10 +106,10 @@ class premUIA_Values {
         }
         if winExt.ExistRegex("determineUIA.ahk") {
             ;// notify
-            Exit()
+            return false
         }
         Run(ptf.SupportFiles "\determineUIA.ahk")
-        Exit()
+        return true
     }
     /* static successCount := 0
     static initialise(doChecks := true, override := false) {
