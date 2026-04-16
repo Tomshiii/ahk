@@ -1,27 +1,21 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/04/17
- * @version 2.2.11
+ * @date 2026/4/16
+ * @version 3.0.0
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
 #Include Classes\ptf.ahk
-#Include Classes\winget.ahk
-#Include Classes\switchTo.ahk
-#Include Classes\errorLog.ahk
 #Include Classes\settings.ahk
 #Include Classes\Editors\Premiere.ahk
-#Include Classes\tool.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Functions\checkStuck.ahk
 #Include Classes\notifyExt.ahk
 #Include Functions\detect.ahk
 #Include Other\UIA\UIA.ahk
-#Include Other\JSON.ahk
 #Include Other\Notify\Notify.ahk
-#Include Other\WinEvent.ahk
 ; }
 
 ;// [Table of Contents]
@@ -35,19 +29,19 @@ sourceMonitor         - The Source monitor panel
 effectsPanel          - The Effects panel
 */
 
-Class premUIA_Values {
-    static __New() {
-        if A_ScriptName = "Core Functionality.ahk" {
+class premUIA_Values {
+    ; static __New() {
+        /* if A_ScriptName = "Core Functionality.ahk" {
             UserSettings := UserPref(true)
         } else {
             try UserSettings := CLSID_Objs.load("UserSettings")
             catch {
                 UserSettings := UserPref(true)
             }
-        }
-        this.setVer := UserSettings.premVer
-        currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
-        readJSON := FileRead(this.valueINI)
+        } */
+        ; this.setVer := UserSettings.premVer
+        ; currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
+/*         readJSON := FileRead(this.valueINI)
         if FileExist(this.valueINI) && readJSON != "" {
             try this.allVals := JSON.parse(readJSON,, false)
             catch {
@@ -55,24 +49,24 @@ Class premUIA_Values {
                 ;// throw
                 errorLog(Error("Parsing JSON Data Failed"), this.valueINI,, true)
             }
-        }
-        this.currentVer := currentPremVer
-        this.baseVer    := SubStr(this.currentVer, 1, InStr(this.currentVer, "_",, 1, 1)-1)
+        } */
+        ; this.currentVer := currentPremVer
+        ; this.baseVer    := SubStr(this.currentVer, 1, InStr(this.currentVer, "_",, 1, 1)-1)
 
-        if A_ScriptName = "Core Functionality.ahk" {
+        /* if A_ScriptName = "Core Functionality.ahk" {
             return
-        }
-    }
+        } */
+    ; }
 
-    static valueINI   := ptf.SupportFiles "\UIA\values.ini"
-    static currentVer := false
-    static setVer     := false
-    static allValls   := false
-    static baseVer    := false
-    static currentPremVer := ""
+    ; static valueINI   := ptf.SupportFiles "\UIA\values.ini"
+    ; static currentVer := false
+    ; static setVer     := false
+    ; static allValls   := false
+    ; static baseVer    := false
+    ; static currentPremVer := ""
     static beenSet    := false
 
-    static windowHotkeys := Map(
+    /* static windowHotkeys := Map(
         "effectControls",   ksa.effectControls,
         "effectsPanel",     ksa.effectsWindow,
         "programMon",       ksa.programMonitor,
@@ -80,11 +74,47 @@ Class premUIA_Values {
         "timeline",         ksa.timelineWindow,
         "tools",            ksa.toolsWindow,
         "project",          ksa.projectsWindow
-    )
-    static successCount := 0
+    ) */
+
+    static UIA_Objs := false
+    static AdobeEl := false
+    static premCacheRequest := false
+
+    static setObjs() {
+        this.premCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "Type", "Name", "Value"],, "Descendants")
+        static this.AdobeEl  := UIA.ElementFromHandle(prem.winTitle, this.premCacheRequest, false)
+        this.UIA_Objs["timeline"]           := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Timeline"})
+        this.UIA_Objs["effectControls"]     := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Effect Controls"})
+        ;// effects Panel
+        ;// program mon
+        ;// source mon
+        ;// tools
+        ;// project
+        this.UIA_Objs["premRemote"]         := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"PremiereRemote"})
+
+        uiaObj := CLSID_Objs.load("premUIA")
+        uiaObj.AdobeEl := this.AdobeEl
+        uiaObj.UIA_Objs := this.UIA_Objs
+        uiaObj := ""
+        this.beenSet := true
+    }
+
+    static initialise() {
+        uiaObj := CLSID_Objs.load("premUIA")
+        if uiaObj.beenSet = true && uiaObj.AdobeEl != false && uiaObj.UIA_Objs != false {
+            return uiaObj.UIA_Objs
+        }
+        if winExt.ExistRegex("determineUIA.ahk") {
+            ;// notify
+            Exit()
+        }
+        Run(ptf.SupportFiles "\determineUIA.ahk")
+        Exit()
+    }
+    /* static successCount := 0
     static initialise(doChecks := true, override := false) {
         if ((!doChecks && override = false) || !this.beenSet || (override = true)) {
-            vals := this.__setNewVal()
+            ; vals := this.__setNewVal()
             block.Off()
             return vals
         }
@@ -92,7 +122,7 @@ Class premUIA_Values {
         if !this.allVals.HasOwnProp(this.currentVer) && !this.allVals.HasOwnProp(this.baseVer) {
             if WinExist(prem.winTitle) {
                 block.On()
-                vals := this.__setNewVal()
+                ; vals := this.__setNewVal()
                 checkStuck()
                 block.Off()
                 return vals
@@ -101,12 +131,12 @@ Class premUIA_Values {
             errorLog(UnsetError("Current Version has no values set.", -1),,, true)
             return false
         }
-    }
+    } */
 
     /**
      * This function turns the parsed json data into class variables so the user may call on them as an extension of the class object
      */
-    static __setClassVal() {
+/*     static __setClassVal() {
         if !prem.__checkDialogueClass()
             return
         if !this.allVals.HasOwnProp(this.currentVer) && this.allVals.HasOwnProp(this.baseVer)
@@ -118,12 +148,12 @@ Class premUIA_Values {
         for k, v in this.allVals.%this.currentVer%.Ownprops() {
             this.%k% := v
         }
-    }
+    } */
 
     /**
      * This function handles creating new json entries in the `values.ini` files
      */
-    static __setNewVal() {
+    /* static __setNewVal() {
         Critical()
         try activeObj := CLSID_Objs.load("uiaCheckRunning")
         catch {
@@ -174,14 +204,8 @@ Class premUIA_Values {
                 }
             } catch {
                 errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``. If PremiereRemote was not installed it is highly recommended for maximum compatibility with my functions.")
-                notifyExt.notifyIfNotExist("PremRemoteIfNotInstalled",, 'If PremiereRemote was not installed it is highly recommended for maximum compatibility with my functions.', ,,, 'POS=BC bc=0x220606 bdr=0xC72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500 dur=7')
-                notifyExt.notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'dur=8 POS=BC bc=0xC72424 bdr=0xE98D8D show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
-                /*
-                ;// shouldn't really need to abort here, stops things that don't require UIA from working
-                block.Off()
-                activeObj.isRunning := false
-                return
-                */
+                notifyIfNotExist("PremRemoteIfNotInstalled",, 'If PremiereRemote was not installed it is highly recommended for maximum compatibility with my functions.', ,,, 'POS=BC bc=0x220606 bdr=0xC72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500 dur=7')
+                notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'dur=8 POS=BC bc=0xC72424 bdr=0xE98D8D show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
             }
         }
         ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
@@ -314,7 +338,7 @@ Class premUIA_Values {
         try FileMove(tempPath, this.valueINI, true)
         activeObj.isRunning := false
         return true
-    }
+    } */
 
     __Delete() {
         block.Off()
