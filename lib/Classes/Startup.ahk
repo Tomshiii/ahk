@@ -867,8 +867,6 @@ class Startup {
 
         submenuUIA := Menu()
         submenuUIA.Add("Open UIA Script", (*) => Run(ptf.lib "\Other\UIA\UIA.ahk"))
-        submenuUIA.Add("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
-        submenuUIA.Add("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? (uiaVals := CLSID_Objs.load("premUIA_Values"), uiaVals.initialise(, true)) : MsgBox("Premiere needs to be open for this option to function correctly!"))
 
         A_TrayMenu.Insert(startingVal "&", "UIA", submenuUIA)
         startingVal++
