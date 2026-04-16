@@ -1,4 +1,10 @@
-# <> Release 2.17.x - 
+# <> Release 2.17.0.2 - Final Hotfix for pre v26.2
+
+This release acts as the final patch before my repo moves to requiring `Premiere v26.2+`  
+Supporting newer versions of Premiere will require some hefty rewrites to a lot of the UIA code and as such will **require** me to bump the minimum version required for this repo. So in that regard;
+
+> [!Caution]
+> This release is **NOT** compatible with Premiere v26.2+. You may experience large slowdown attempting to use these functions on this version (and beyond) of Premiere. Please wait for an update to address this issue in the future.
 
 ## Functions
 - 📋`startup.adobeVerOverride()` no longer shows `Photoshop` version
@@ -7,7 +13,7 @@
 
 ### 📝 `prem {`
 - 📋 `toggleEnabled()` will now remove a track from the queue if selected twice
-- ✅ Fixed `Notify` use in `renderProjectSelection()`
+- ✅ Fixed `Notify` use in `renderProjectSelection()` & `New Premiere.ahk`
 - ✅ Fixed `wheelEditPoint()` not passing on the user's `activationKeys` paramater
 - ✅ Fixed `accelScroll()` not working
 
