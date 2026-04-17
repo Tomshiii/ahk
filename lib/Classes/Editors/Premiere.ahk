@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0.2
  * @author tomshi
- * @date 2026/04/14
- * @version 2.3.48
+ * @date 2026/04/17
+ * @version 2.3.49
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -606,6 +606,9 @@ class Prem {
         }
     }
 
+    static _scan := ""
+    static _scanTitle := ""
+
     /**
      * Checks the active Premiere window to see whether the `Edit` tab is currently active
      * @returns {Boolean}
@@ -621,15 +624,32 @@ class Prem {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
             return false
         }
-        try scan := ShinsImageScanClass(name.winTitle)
-        catch {
-            errorLog(UnsetError("ShinsImageScanClass failed to be set", -1))
+
+        if !this.setShinsIMG(name.winTitle)
             return false
+        return this._scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
+    }
+
+    static setShinsIMG(title := "") {
+        if !this._scan {
+            this._scanTitle := title
+            try this._scan := ShinsImageScanClass(title)
+            catch {
+                errorLog(UnsetError("ShinsImageScanClass failed to be set", -1))
+                return false
+            }
+            this._scan.autoUpdate := 0
+            this._scan.Update()
+            return true
         }
-        getPixel := scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
-        scan.__Delete()
-        scan := ""
-        return getPixel
+        if this._scanTitle != title {
+            this._scanTitle := title
+            this._scan.hwnd := WinExist(title)
+            this._scan.Update()
+            return true
+        }
+        this._scan.Update()
+        return true
     }
 
     /**
@@ -3608,10 +3628,7 @@ class Prem {
             return
         if which = "disable" && this.audioWaitClose = true
             return
-
-        try scan := ShinsImageScanClass(getTitle.winTitle)
-        catch {
-            errorLog(UnsetError("ShinsImageScanClass failed to be set", -1))
+        if !this.setShinsIMG(getTitle.winTitle) {
             this.audioWaitClose := false
             return
         }
@@ -3619,16 +3636,12 @@ class Prem {
             this.audioWaitClose := false
             return
         }
-        try multicamEnabled := scan.Image(ptf.Premiere "\multicam_enabled.png")
+        try multicamEnabled := this._scan.Image(ptf.Premiere "\multicam_enabled.png")
         catch {
             errorLog(TargetError("failed to find the multicam image", -1))
-            scan.__Delete()
-            scan := ""
             this.audioWaitClose := false
             return
         }
-        scan.__Delete()
-        scan := ""
         switch which {
             case "disable":
                 this.audioWaitClose := true
