@@ -204,8 +204,14 @@ class premUIA_Values {
                 }
             } catch {
                 errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``. If PremiereRemote was not installed it is highly recommended for maximum compatibility with my functions.")
-                notifyIfNotExist("PremRemoteIfNotInstalled",, 'If PremiereRemote was not installed it is highly recommended for maximum compatibility with my functions.', ,,, 'POS=BC bc=0x220606 bdr=0xC72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500 dur=7')
-                notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'dur=8 POS=BC bc=0xC72424 bdr=0xE98D8D show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
+                notifyExt.notifyIfNotExist("PremRemoteIfNotInstalled",, 'If PremiereRemote was not installed it is highly recommended for maximum compatibility with my functions.', ,,, 'POS=BC bc=0x220606 bdr=0xC72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500 dur=7')
+                notifyExt.notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'dur=8 POS=BC bc=0xC72424 bdr=0xE98D8D show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
+                /*
+                ;// shouldn't really need to abort here, stops things that don't require UIA from working
+                block.Off()
+                activeObj.isRunning := false
+                return
+                */
             }
         }
         ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
@@ -258,7 +264,7 @@ class premUIA_Values {
             }
         }
 
-        notifyIfNotExist("UIAattemptControls",, 'Attempting to retrieve Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
+        notifyExt.notifyIfNotExist("UIAattemptControls",, 'Attempting to retrieve Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
 
         checkDupes := Map()
         hasDupes   := false
@@ -267,7 +273,7 @@ class premUIA_Values {
                 block.Off()
                 activeObj.isRunning := false
                 try Notify.Destroy("UIAattemptControls")
-                notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
+                notifyExt.notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
                 errorLog(TargetError("Premiere save window is currently open. Aborting", -1))
                 return -1
             }
