@@ -2,7 +2,7 @@
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
  * @date 2026/04/17
- * @version 1.3.4
+ * @version 1.3.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -136,7 +136,7 @@ class WM {
             case "autosave_always_save":              %res[2]%.alwaysSave := res[1]
             case "autosave_restart_playback":         %res[2]%.restartPlayback := res[1]
             case "NotifyNotExist":
-                paramSplit := StrSplit(SubStr(backup, StrLen("NotifyNotExist,")), "|||")
+                paramSplit := StrSplit(SubStr(backup, StrLen("NotifyNotExist,")+1), "|||")
                 tag := paramSplit[1]
                 title := paramSplit[2]
                 msgg := paramSplit[3]
@@ -145,7 +145,7 @@ class WM {
                 callback := paramSplit[6]
                 options := paramSplit[7]
                 if !Notify.Exist(tag) {
-                    SetTimer((*) => Notify.Show(title, msgg, image, sound, callback, options " tag=" tag), -1)
+                    SetTimer(() => Notify.Show(title, msgg, image, sound, callback, options " tag=" tag), -1)
                     ; WinWait("_" tag,, 1) ;// doing anything here causes audio not to play
                     return
                 }
