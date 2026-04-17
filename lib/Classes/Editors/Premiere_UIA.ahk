@@ -258,7 +258,7 @@ class premUIA_Values {
             }
         }
 
-        notifyExt.notifyIfNotExist("UIAattemptControls",, 'Attempting to retrieve Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
+        notifyIfNotExist("UIAattemptControls",, 'Attempting to retrieve Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
 
         checkDupes := Map()
         hasDupes   := false
@@ -267,7 +267,7 @@ class premUIA_Values {
                 block.Off()
                 activeObj.isRunning := false
                 try Notify.Destroy("UIAattemptControls")
-                notifyExt.notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
+                notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
                 errorLog(TargetError("Premiere save window is currently open. Aborting", -1))
                 return -1
             }
