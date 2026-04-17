@@ -2,7 +2,7 @@
  * @description
  * @author tomshi
  * @date 2026/04/17
- * @version 1.1.6
+ * @version 1.1.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -24,10 +24,28 @@ class CLSID_Objs {
         if A_ScriptName = "Core Functionality.ahk"
             return
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
-            throw Error("Core Functionality.ahk isn't running.", -2)
+            if this.errorWinExist() = true {
+                Notify.Show(, A_ScriptName " will close as Core Functionality.ahk is not opened.", 'C:\Windows\System32\shell32.dll|icon153',,, 'dur=4 bc=0x3E0000 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                sleep 4000
+                ExitApp()
+            }
+            else
+                throw Error("Core Functionality.ahk isn't running.", -2)
         }
     }
     static generateCLSID() => CreateGUID()
+    static errorWinExist() {
+        list := WinGetList(".ahk ahk_class #32770")
+        found := false
+        for _, v in list {
+            txt := WinGetText(v)
+            if !InStr(txt, "Error: Core Functionality.ahk isn't running.")
+                continue
+            found := true
+            break
+        }
+        return found
+    }
 
     static __Item := Mip(
         "prem",            "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}",
@@ -71,12 +89,15 @@ class CLSID_Objs {
                     try {
                         return ComObjActive(((inClass = true) ? CLSID_Objs[clsid] : clsid))
                     } finally {
-                        if Notify.Exist("mutexLock")
-                            try Notify.Destroy("mutexLock")
+                        if Notify.Exist("mutexLock_" clsid)
+                            try Notify.Destroy("mutexLock_" clsid)
                         mtx.Release()
                     }
                 case WAIT_TIMEOUT:
-                    notifyIfNotExist("mutexLock",, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
+                    ;// do manually as Core Func will be locked up so will probs fail
+                    if !Notify.Exist("mutexLock_" clsid)
+                        notify.Show(, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400 tag=mutexLock_' clsid)
+                    ; notifyIfNotExist("mutexLock_" clsid,, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
                     errorLog(TimeoutError('Timeout waiting for lock on: ' objName))
                     sleep 500
                     return false

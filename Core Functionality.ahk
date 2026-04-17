@@ -2,7 +2,7 @@
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
  * @date 2026/04/17
- * @version 1.0.4
+ * @version 1.0.5
  ***********************************************************************/
 
 #SingleInstance Force
@@ -16,6 +16,7 @@
 #Include *i Classes\CLSID_Objs.ahk
 #Include *i Classes\WM.ahk
 #Include *i Other\ObjRegisterActive.ahk
+#Include *i Other\WinEvent.ahk
 #Include *i Classes\Editors\Premiere.ahk
 #Include *i Classes\Editors\Premiere_UIA.ahk
 ; }
