@@ -4,10 +4,10 @@
 #Include *i Classes\Settings.ahk
 #Include *i Classes\ptf.ahk
 #Include *i Classes\CLSID_Objs.ahk
+#Include *i Classes\notifyExt.ahk
 #Include *i Other\Notify\Notify.ahk
 #Include *i Functions\deleteDotUnderscore.ahk
 #Include *i Functions\syncDirectories.ahk
-#Include *i Functions\notifyIfNotExist.ahk
 
 ;// if the user has not generated the symlink yet this script will return
 try {
@@ -61,7 +61,7 @@ try {
             break
     }
     if mt != "5600" {
-        notifyIfNotExist("XMP",, 'XMP is currently NOT enabled. Ram is running at ' mt 'MT/s', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark pos=CT dur=5 bdr=Red maxW=400')
+        notifyExt.notifyIfNotExist("XMP",, 'XMP is currently NOT enabled. Ram is running at ' mt 'MT/s', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark pos=CT dur=5 bdr=Red maxW=400')
     }
 }
 

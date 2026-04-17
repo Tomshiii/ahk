@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2026/02/03
- * @version 1.4.3
+ * @date 2026/04/17
+ * @version 1.4.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -24,9 +24,9 @@
 #Include Classes\Editors\Photoshop.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\winExt.ahk
+#Include Classes\notifyExt.ahk
 #Include Functions\getHotkeys.ahk
 #Include Functions\generateAdobeShortcut.ahk
-#Include Functions\notifyIfNotExist.ahk
 ; }
 
 class switchTo {
@@ -252,7 +252,7 @@ class switchTo {
                     sleep 50
                     Run(AE.path)
                 } catch {
-                    notifyIfNotExist("adobeShortcutNotFound", 'File Doesn`'t Exist', 'Program may not be installed or shortcut hasn`'t been generated correctly in;`n `..\Support Files\shortcuts\``nEnsure the proper version has been selected within settingsGUI()', 'C:\Windows\System32\imageres.dll|icon244', 'soundx',, 'dur=5 bdr=0xC72424')
+                    notifyExt.notifyIfNotExist("adobeShortcutNotFound", 'File Doesn`'t Exist', 'Program may not be installed or shortcut hasn`'t been generated correctly in;`n `..\Support Files\shortcuts\``nEnsure the proper version has been selected within settingsGUI()', 'C:\Windows\System32\imageres.dll|icon244', 'soundx',, 'dur=5 bdr=0xC72424')
                     errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\``")
                     return
                 }
@@ -524,7 +524,7 @@ class switchTo {
                 sleep 50
                 Run(path)
             } catch {
-                notifyIfNotExist("adobeShortcutNotFound", 'File Doesn`'t Exist', 'Program may not be installed or shortcut hasn`'t been generated correctly in;`n `..\Support Files\shortcuts\``nEnsure the proper version has been selected within settingsGUI()', 'C:\Windows\System32\imageres.dll|icon244', 'soundx',, 'dur=5 bdr=0xC72424')
+                notifyExt.notifyIfNotExist("adobeShortcutNotFound", 'File Doesn`'t Exist', 'Program may not be installed or shortcut hasn`'t been generated correctly in;`n `..\Support Files\shortcuts\``nEnsure the proper version has been selected within settingsGUI()', 'C:\Windows\System32\imageres.dll|icon244', 'soundx',, 'dur=5 bdr=0xC72424')
                 errorLog(TargetError("File Doesn't Exist", -1), "Program may not be installed or shortcut hasn't been generated correctly in ``..\Support Files\shortcuts\```nEnsure the proper version has been selected.")
                 return
             }

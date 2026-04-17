@@ -12,9 +12,9 @@ SetDefaultMouseSpeed(0)
 #Include Classes\block.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\Editors\Premiere.ahk
+#Include Classes\notifyExt.ahk
 #Include Functions\SD Functions\genProjDirs.ahk
 #Include Functions\delaySI.ahk
-#Include Functions\notifyIfNotExist.ahk
 ; }
 
 pause.pause("autosave")
@@ -60,8 +60,8 @@ if !IsSet(aeIco)
     aeIco := 'C:\Windows\System32\shell32.dll|icon153'
 if !DirExist(templatesDir)
     DirCreate(templatesDir)
-(FileExist(mainTemplate)) ? FileCopy(mainTemplate, templatesDir, true) : notifyIfNotExist("aeNoMainTemplate",, 'AE Main Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
-(FileExist(hauntTemplate)) ? FileCopy(hauntTemplate, templatesDir, true) : notifyIfNotExist("aeNoHauntedTemplate",, 'AE Haunted Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
+(FileExist(mainTemplate)) ? FileCopy(mainTemplate, templatesDir, true) : notifyExt.notifyIfNotExist("aeNoMainTemplate",, 'AE Main Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
+(FileExist(hauntTemplate)) ? FileCopy(hauntTemplate, templatesDir, true) : notifyExt.notifyIfNotExist("aeNoHauntedTemplate",, 'AE Haunted Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
 
 FileCopy(chosenFile, SelectedFolder "\_project files\" IB.Value ".prproj")
 if !FileExist(prem.path) {

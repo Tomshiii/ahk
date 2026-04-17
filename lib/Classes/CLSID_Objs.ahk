@@ -2,7 +2,7 @@
  * @description
  * @author tomshi
  * @date 2026/04/17
- * @version 1.1.7
+ * @version 1.1.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,10 +12,10 @@
 #Include Classes\Mip.ahk
 #Include Classes\winExt.ahk
 #Include Classes\errorLog.ahk
+#Include Classes\notifyExt.ahk
 #Include Other\Mutex.ahk
 #Include Other\Notify\Notify.ahk
 #Include Functions\detect.ahk
-#Include Functions\notifyIfNotExist.ahk
 ; }
 
 class CLSID_Objs {
@@ -90,14 +90,10 @@ class CLSID_Objs {
                         return ComObjActive(((inClass = true) ? CLSID_Objs[clsid] : clsid))
                     } finally {
                         if Notify.Exist("mutexLock_" clsid)
-                            try Notify.Destroy("mutexLock_" clsid)
                         mtx.Release()
                     }
                 case WAIT_TIMEOUT:
-                    ;// do manually as Core Func will be locked up so will probs fail
-                    if !Notify.Exist("mutexLock_" clsid)
-                        notify.Show(, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400 tag=mutexLock_' clsid)
-                    ; notifyIfNotExist("mutexLock_" clsid,, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
+                    notifyExt.notifyIfNotExist("mutexLock_" clsid,, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
                     errorLog(TimeoutError('Timeout waiting for lock on: ' objName))
                     sleep 500
                     return false
