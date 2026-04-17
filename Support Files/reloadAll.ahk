@@ -6,7 +6,6 @@
 #Include Classes\WM.ahk
 #Include Classes\winExt.ahk
 #Include Classes\Editors\Premiere.ahk
-#Include Functions\notifyIfNotExist.ahk
 #Include Other\Notify\Notify.ahk
 
 ;// get list of open ahk scripts
@@ -38,7 +37,7 @@ __checkClose(hwnd, title) {
 which := IsSet(doReset) ? "Resetting" : "Reloading"
 if !Notify.Exist("reloadAllAlert")
     Notify.Show(, which ' all scripts...', 'C:\Windows\System32\shell32.dll|icon239', 'Windows Pop-up Blocked',, 'pos=TL dur=6 bc=0x131E2D bdr=0x00009B iw=24 maxW=400 tag=reloadAllAlert')
-    ; notifyIfNotExist("reloadAllAlert",, which ' all scripts...', 'C:\Windows\System32\shell32.dll|icon239', 'Windows Pop-up Blocked',, 'pos=TL dur=6 bc=0x131E2D bdr=0x00009B iw=24 maxW=400') ;// don't use func here now that Core Functionality.ahk calls the notify gui otherwise it instantly closes
+    ; notifyExt.notifyIfNotExist("reloadAllAlert",, which ' all scripts...', 'C:\Windows\System32\shell32.dll|icon239', 'Windows Pop-up Blocked',, 'pos=TL dur=6 bc=0x131E2D bdr=0x00009B iw=24 maxW=400') ;// don't use func here now that Core Functionality.ahk calls the notify gui otherwise it instantly closes
 prem.resetCoreFuncVals()
 for v in list {
     itemObj := resetter.__parseInfo(v, incChecklist ?? false)

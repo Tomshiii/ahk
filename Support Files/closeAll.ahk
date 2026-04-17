@@ -5,7 +5,6 @@
 #Include Classes\winExt.ahk
 #Include Classes\WM.ahk
 #Include Other\Notify\Notify.ahk
-#Include Functions\notifyIfNotExist.ahk
 
 Critical()
 Notify.DestroyAll()
@@ -13,7 +12,7 @@ try incChecklist := A_Args[1]
 
 if !Notify.Exist("reloadAllAlert")
     Notify.Show(, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237', 'Windows Startup',, 'pos=TL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400 tag=closeAllAlert')
-    ; notifyIfNotExist("closeAllAlert",, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237', 'Windows Startup',, 'pos=TL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400') ;// don't use func here now that Core Functionality.ahk calls the notify gui otherwise it instantly closes
+    ; notifyExt.notifyIfNotExist("closeAllAlert",, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237', 'Windows Startup',, 'pos=TL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400') ;// don't use func here now that Core Functionality.ahk calls the notify gui otherwise it instantly closes
 resetter := reset(false, false)
 activeWindows := resetter.__getList()
 ; logger := Log()
