@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/03/31
- * @version 2.2.9.1
+ * @version 2.2.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -234,7 +234,7 @@ Class premUIA_Values {
             }
         }
 
-        attemptNotify := notifyIfNotExist("UIAattemptControls",, 'Attempting to retrive Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
+        notifyIfNotExist("UIAattemptControls",, 'Attempting to retrieve Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
 
         checkDupes := Map()
         hasDupes   := false
@@ -242,7 +242,7 @@ Class premUIA_Values {
             if WinExist("Save Project " prem.winTitle) {
                 block.Off()
                 activeObj.isRunning := false
-                try Notify.Destroy(attemptNotify["hwnd"])
+                try Notify.Destroy("UIAattemptControls")
                 notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
                 errorLog(TargetError("Premiere save window is currently open. Aborting", -1))
                 return -1
@@ -263,7 +263,7 @@ Class premUIA_Values {
                     catch {
                         block.Off()
                         activeObj.isRunning := false
-                        try Notify.Destroy(attemptNotify["hwnd"])
+                        try Notify.Destroy("UIAattemptControls")
                         errorLog(Error("UIA Values could not be determined. Please try again later"))
                         notifyIfNotExist("UIAnotDetermined",, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                         return false
@@ -273,7 +273,7 @@ Class premUIA_Values {
             if !IsSet(currentEl) {
                 block.Off()
                 activeObj.isRunning := false
-                try Notify.Destroy(attemptNotify['hwnd'])
+                try Notify.Destroy("UIAattemptControls")
                 errorLog(Error("UIA Values could not be determined. Please try again later"))
                 notifyIfNotExist("UIAnotDetermined",, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
                 return false
@@ -293,7 +293,7 @@ Class premUIA_Values {
         block.Off()
         this.allVals := currentVers
         this.__setClassVal()
-        try Notify.Destroy(attemptNotify["hwnd"])
+        try Notify.Destroy("UIAattemptControls")
         if this.successCount != this.windowHotkeys.Count {
             notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
         }

@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.8
+;\\v2.35.9
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -156,9 +156,6 @@ start.__Delete()
 start := ""
 errorLog({state:"empty"})
 
-;// so settingsGUI() can interact with multiple scripts
-onMsgObj := ObjBindMethod(WM, "__recieveMessage")
-OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 ;=============================================================================================================================================
 ;
 ;		Windows

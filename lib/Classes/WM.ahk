@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2026/03/17
- * @version 1.3.2
+ * @date 2026/04/17
+ * @version 1.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -121,6 +121,7 @@ class WM {
      */
     static __parseMessageResponse(wParam, lParam, msg, hwnd) {
         res := this.Receive_WM_COPYDATA(wParam, lParam, msg, hwnd)
+        backup := res
         res := StrSplit(res, ",")
         determineWhich := res[1]
         res.RemoveAt(1)
@@ -134,9 +135,23 @@ class WM {
             case "autosave_check_mouse":              %res[2]%.checkMouse := res[1]
             case "autosave_always_save":              %res[2]%.alwaysSave := res[1]
             case "autosave_restart_playback":         %res[2]%.restartPlayback := res[1]
+            case "NotifyNotExist":
+                tag := res[1]
+                title := res[2]
+                msgg := res[3]
+                image := res[4]
+                sound := res[5]
+                callback := res[6]
+                options := res[7]
+                if !Notify.Exist(tag) {
+                    SetTimer((*) => Notify.Show(title, msgg, image, sound, callback, options " tag=" tag), -1)
+                    ; WinWait("_" tag,, 1) ;// doing anything here causes audio not to play
+                    return
+                }
 
             default:
                 MsgBox("A message attempt was made but a declaration for its contents hasn't been defined. This means that Tomshi has made a mistake somewhere. Please open an issue on github explaining how to reproduce this message to alert him of his mistake!`n`nFor debug purposes;`ndetermineWhich: " determineWhich)
         }
+        Critical('Off')
     }
 }
