@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/03/26
- * @version 2.2.14
+ * @date 2026/04/17
+ * @version 2.2.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -765,6 +765,8 @@ class adobeAutoSave extends count {
         this.resetingSave  := false
 
         this.origPanelFocus := ""
+        try this.premUIAEl.AdobeEl := ""
+        try this.premUIAEl.activeElement := ""
         this.premUIAEl      := false
         this.premRemoteSave := true
         checkstuck()

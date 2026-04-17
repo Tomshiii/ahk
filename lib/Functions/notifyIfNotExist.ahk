@@ -16,8 +16,8 @@ notifyIfNotExist(tag, title := '', msg := '', image := '', sound := '', callback
     }
     options := (!InStr(options, " show=")) ? options A_Space "show=Fade@250" : options
     options := (!InStr(options, " hide=")) ? options A_Space "hide=Fade@250" : options
-    WM.Send_WM_COPYDATA("NotifyNotExist," tag "|||" title "|||" msg "|||" image "|||" sound "|||" callback "|||" options, "Core Functionality.ahk")
-    if doWinWait = true
+    proccessed := WM.Send_WM_COPYDATA("NotifyNotExist," tag "|||" title "|||" msg "|||" image "|||" sound "|||" callback "|||" options, "Core Functionality.ahk")
+    if doWinWait = true && proccessed
         WinWait("_" tag,, 1)
     return
 }
