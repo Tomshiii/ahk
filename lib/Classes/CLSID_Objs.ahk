@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/03/13
- * @version 1.1.5
+ * @date 2026/04/17
+ * @version 1.1.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -71,11 +71,14 @@ class CLSID_Objs {
                     try {
                         return ComObjActive(((inClass = true) ? CLSID_Objs[clsid] : clsid))
                     } finally {
+                        if Notify.Exist("mutexLock")
+                            try Notify.Destroy("mutexLock")
                         mtx.Release()
                     }
                 case WAIT_TIMEOUT:
                     notifyIfNotExist("mutexLock",, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
                     errorLog(TimeoutError('Timeout waiting for lock on: ' objName))
+                    sleep 500
                     return false
                 case WAIT_FAILED:
                     ; throw OSError()

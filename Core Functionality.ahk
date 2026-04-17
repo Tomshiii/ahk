@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/03/23
- * @version 1.0.3
+ * @date 2026/04/17
+ * @version 1.0.4
  ***********************************************************************/
 
 #SingleInstance Force
@@ -14,10 +14,16 @@
 #Include *i Classes\Settings.ahk
 #Include *i Classes\ptf.ahk
 #Include *i Classes\CLSID_Objs.ahk
+#Include *i Classes\WM.ahk
 #Include *i Other\ObjRegisterActive.ahk
 #Include *i Classes\Editors\Premiere.ahk
 #Include *i Classes\Editors\Premiere_UIA.ahk
 ; }
+
+;// this allows `notifyIfNotExist()` to send its prompts to Core Functionality
+;// fixes notify GUIs hanging when called from `HotkeylessAHK`
+onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
+OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 installDir := FileRead(A_AppData "\tomshi\installDir")
 SplitPath(A_LineFile,, &currentDir)

@@ -26,7 +26,7 @@ $^Space::
 	checkExcal  := prem.Excalibur.__isInstalled()
 	checkSpell  := FileExist(spellbookExcalFile)
 	if !checkRemote || !checkExcal || !checkSpell {
-		notifyIfNotExist("remoteOrExcalNotExist",, 'PremiereRemote and Excalibur are required for this hotkey to function. `nEither install them or disable this hotkey here;`nA_linefile',, 'Windows Battery Critical',, 'bdr=Red maxW=400')
+		notifyIfNotExist("remoteOrExcalNotExist",, 'PremiereRemote and Excalibur are required for this hotkey to function. `nEither install them or disable this hotkey here;`n' A_linefile,, 'Windows Battery Critical',, 'bdr=Red maxW=400')
 		return
 	}
 	block.On()
