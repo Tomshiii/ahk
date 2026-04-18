@@ -60,8 +60,8 @@ if !IsSet(aeIco)
     aeIco := 'C:\Windows\System32\shell32.dll|icon153'
 if !DirExist(templatesDir)
     DirCreate(templatesDir)
-(FileExist(mainTemplate)) ? FileCopy(mainTemplate, templatesDir, true) : notifyExt.notifyIfNotExist("aeNoMainTemplate",, 'AE Main Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
-(FileExist(hauntTemplate)) ? FileCopy(hauntTemplate, templatesDir, true) : notifyExt.notifyIfNotExist("aeNoHauntedTemplate",, 'AE Haunted Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
+(FileExist(mainTemplate)) ? FileCopy(mainTemplate, templatesDir, true) : notifyExt.showIfNotExist("aeNoMainTemplate",, 'AE Main Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
+(FileExist(hauntTemplate)) ? FileCopy(hauntTemplate, templatesDir, true) : notifyExt.showIfNotExist("aeNoHauntedTemplate",, 'AE Haunted Template file doesn`'t exist', aeIco,,, 'bdr=Red maxW=400')
 
 FileCopy(chosenFile, SelectedFolder "\_project files\" IB.Value ".prproj")
 if !FileExist(prem.path) {

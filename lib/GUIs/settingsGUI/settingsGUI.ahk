@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/04/17
- * @version 2.4.8
+ * @date 2026/04/18
+ * @version 2.4.9
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -318,7 +318,7 @@ settingsGUI()
                         activeObj := ""
                     } catch {
                         activeObj := ""
-                        notifyExt.notifyIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
+                        notifyExt.showIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
                     }
                 }
                 resetOrigDetect(origDetect)
@@ -400,7 +400,7 @@ settingsGUI()
                         activeObj := ""
                     } catch {
                         activeObj := ""
-                        notifyExt.notifyIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
+                        notifyExt.showIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
                     }
                 }
                 return
@@ -461,7 +461,7 @@ settingsGUI()
         newSettings := FileRead(UserSettings.SettingsFile)
         UserSettings := ""
         if newSettings != initialSettings
-            notifyExt.notifyIfNotExist("settingsGUI", "settingsGUI()", "Settings changes are being saved`nGUI cannot be reopened until this window disappears...", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
+            notifyExt.showIfNotExist("settingsGUI", "settingsGUI()", "Settings changes are being saved`nGUI cannot be reopened until this window disappears...", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
         if IsSet(butt) {
             switch butt {
                 case "hard":

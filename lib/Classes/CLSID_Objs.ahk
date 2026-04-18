@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/04/17
- * @version 1.1.8
+ * @date 2026/04/18
+ * @version 1.1.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -93,7 +93,7 @@ class CLSID_Objs {
                         mtx.Release()
                     }
                 case WAIT_TIMEOUT:
-                    notifyExt.notifyIfNotExist("mutexLock_" clsid,, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
+                    notifyExt.showIfNotExist("mutexLock_" clsid,, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
                     errorLog(TimeoutError('Timeout waiting for lock on: ' objName))
                     sleep 500
                     return false

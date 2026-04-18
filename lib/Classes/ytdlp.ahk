@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2026/04/17
- * @version 1.2.5
+ * @date 2026/04/18
+ * @version 1.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -47,7 +47,7 @@ class ytdlp {
     currentName := ""
 
     /** generates a tooltip to alert the user the process has completed */
-    __finished() => (this.doAlert = true) ? notifyExt.notifyIfNotExist("ytdlpComplete",, 'yt-dlp process has completed!', 'C:\Windows\System32\imageres.dll|icon56', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
+    __finished() => (this.doAlert = true) ? notifyExt.showIfNotExist("ytdlpComplete",, 'yt-dlp process has completed!', 'C:\Windows\System32\imageres.dll|icon56', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
 
     /**
      * Checks the desired filepath to see if a file of the desired name already exists
