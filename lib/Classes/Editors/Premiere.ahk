@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0.2
  * @author tomshi
- * @date 2026/04/17
- * @version 2.3.50
+ * @date 2026/04/18
+ * @version 2.3.51
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -310,7 +310,7 @@ class Prem {
                 }
 			case "preSpectrum":
                 sleep 50
-                notifyExt.notifyIfNotExist('preSpectrum',, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                notifyExt.showIfNotExist('preSpectrum',, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                 this.theme := this.defaultTheme
                 this.__setTimelineCol("preSpectrum", this.theme)
         }
@@ -544,7 +544,7 @@ class Prem {
         if A_ScriptName != "Core Functionality.ahk" {
             activeObj := CLSID_Objs.clone("prem")
             if activeObj.remoteActive = "loading" {
-                notifyExt.notifyIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
             if !activeObj.remoteActive {
@@ -553,7 +553,7 @@ class Prem {
             }
         } else {
             if this.remoteActive = "loading" {
-                notifyExt.notifyIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
             if !this.remoteActive {
@@ -1436,14 +1436,14 @@ class Prem {
                     this().__fxPanel()
                     if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y1: effCtrlNN.y + effCtrlNN.height},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
                         blocker.Off()
-                        notifyExt.notifyIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                        notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
                 }
                 case true:
                     if !this.__remoteFunc('isSelected', true) {
                         blocker.Off()
-                        notifyExt.notifyIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                        notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
 
@@ -1451,7 +1451,7 @@ class Prem {
         } catch {
             blocker.Off()
             errorLog(UnsetError("ClassNN wasn't given a value", -1))
-            notifyExt.notifyIfNotExist("premNoClassNN",,"ClassNN wasn't given a value",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            notifyExt.showIfNotExist("premNoClassNN",,"ClassNN wasn't given a value",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return
         }
         sleep 100
@@ -1590,14 +1590,14 @@ class Prem {
         else {
             if title = "Audio Gain" {
                 errorLog(MethodError("Levels cannot be adjusted while the gain window is open", -1))
-                notifyExt.notifyIfNotExist("premLevelsGain", 'Levels cannot be adjusted while the gain window is open.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
+                notifyExt.showIfNotExist("premLevelsGain", 'Levels cannot be adjusted while the gain window is open.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
                 block.Off()
                 return
             }
             levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
             if levels != true && levels != "true" {
                 errorLog(MethodError("Unexpected response", -1), "sent value: " String(which sendGain) " Response: " levels " - Type: " Type(levels))
-                notifyExt.notifyIfNotExist("premLevelKeyframe", 'prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
+                notifyExt.showIfNotExist("premLevelKeyframe", 'prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
                 block.Off()
                 return
             }
@@ -1780,7 +1780,7 @@ class Prem {
                 }
             } catch {
                 Critical("Off")
-                notifyExt.notifyIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                notifyExt.showIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 return false
             }
@@ -1823,13 +1823,13 @@ class Prem {
             } catch {
                 activeObj := ""
                 Critical("Off")
-                notifyExt.notifyIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                notifyExt.showIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 return false
             }
         }
         if tools = true {
-            notifyExt.notifyIfNotExist("premTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=6 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
+            notifyExt.showIfNotExist("premTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=6 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
         }
         return true
     }
@@ -2554,7 +2554,7 @@ class Prem {
     static __layerDividerCheck(coords) {
         dividerCheck := PixelGetColor(this.timelineRawX+5, coords.y)
         if dividerCheck = this.layerDivider {
-            notifyExt.notifyIfNotExist("premLayerDivider",, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+            notifyExt.showIfNotExist("premLayerDivider",, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
             return false
         }
         return true
@@ -3061,7 +3061,7 @@ class Prem {
             }
             if track+offset < 1 {
                 blocker.Off()
-                notifyExt.notifyIfNotExist("premIncorrectTrackIndex", 'toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
+                notifyExt.showIfNotExist("premIncorrectTrackIndex", 'toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
                 errorLog(ValueError("Desired track must be greater than 1", -1))
                 return
             }
@@ -3130,7 +3130,7 @@ class Prem {
                         checkStuck()
                         blocker.Off()
                         this.ignoreKey := false
-                        notifyExt.notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                        notifyExt.showIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         return
                     }
                     if ignore != false && A_Index-offset >= ignore
@@ -3162,12 +3162,12 @@ class Prem {
                         checkStuck()
                         blocker.Off()
                         this.ignoreKey := false
-                        notifyExt.notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                        notifyExt.showIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         return
                     }
                     if ignore != false && A_Index-offset >= ignore {
                         if (track+offset >= ignore+offset)
-                            notifyExt.notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Selected Track is greater than set ``Ignore value``',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                            notifyExt.showIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Selected Track is greater than set ``Ignore value``',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         break
                     }
                     layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
@@ -3200,7 +3200,7 @@ class Prem {
         timelineColArr := []
         if !timelineColours.%UI%.HasProp(theme) {
             sleep 50
-            notifyExt.notifyIfNotExist("timelineThemeNotSet",, '``timelineColours {`` does not have values set for the requested theme: ' theme '. Reverting to "' this.defaultTheme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            notifyExt.showIfNotExist("timelineThemeNotSet",, '``timelineColours {`` does not have values set for the requested theme: ' theme '. Reverting to "' this.defaultTheme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             theme := (timelineColours.%UI%.has(this.defaultTheme)) ? this.defaultTheme : "darkest"
             this.theme := theme
         }
@@ -3286,8 +3286,8 @@ class Prem {
         if !allButtons || allButtons = -1 {
             blocker.Off()
             switch allButtons {
-                case false: notifyExt.notifyIfNotExist("premInvalidLayerVals", 'prem.disableAllMuteSolo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case -1: notifyExt.notifyIfNotExist("premMiddleDivider", 'prem.disableAllMuteSolo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case false: notifyExt.showIfNotExist("premInvalidLayerVals", 'prem.disableAllMuteSolo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case -1: notifyExt.showIfNotExist("premMiddleDivider", 'prem.disableAllMuteSolo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
             }
             return
         }
@@ -3353,8 +3353,8 @@ class Prem {
         if !allButtons || allButtons = -1 {
             blocker.Off()
             switch allButtons {
-                case false: notifyExt.notifyIfNotExist("premInvalidLayerVals", 'prem.soloVideo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case -1: notifyExt.notifyIfNotExist("premMiddleDivider", 'prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case false: notifyExt.showIfNotExist("premInvalidLayerVals", 'prem.soloVideo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case -1: notifyExt.showIfNotExist("premMiddleDivider", 'prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
             }
             return
         }
@@ -3454,10 +3454,10 @@ class Prem {
             chkQual := true
         toggle := this.__remoteFunc('toggleLinearColour', true, "enableMaxRenderQual=" chkQual)
         switch toggle {
-            case "failure": notifyExt.notifyIfNotExist("premFailLinColour",, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red')
+            case "failure": notifyExt.showIfNotExist("premFailLinColour",, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red')
             default:
                 state := (toggle = true) ? "Enabled" : "Disabled"
-                notifyExt.notifyIfNotExist("premLinColour",, 'Toggling Linear Colour successful.`nNew setting: ' state,,,, 'dur=4 bc=Black bdr=Aqua')
+                notifyExt.showIfNotExist("premLinColour",, 'Toggling Linear Colour successful.`nNew setting: ' state,,,, 'dur=4 bc=Black bdr=Aqua')
         }
     }
 
@@ -3683,13 +3683,13 @@ class Prem {
         checkImport := this.__checkPremRemoteFunc('importFile')
         checkIsSequence := this.__checkPremRemoteFunc('selectionIsSequence')
         if !checkDir || !checkImport || !checkIsSequence {
-            notifyExt.notifyIfNotExist('premRenderRemoteFuncs',, 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            notifyExt.showIfNotExist('premRenderRemoteFuncs',, 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return
         }
         presetPath := ptf.Backups "\Adobe Backups\Media Encoder\Presets"
 
         if !this.__remoteFunc('selectionIsSequence', true) {
-            notifyExt.notifyIfNotExist('premSelectionNotSeq',, 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
+            notifyExt.showIfNotExist('premSelectionNotSeq',, 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
             return
         }
 
@@ -3700,7 +3700,7 @@ class Prem {
 
         projPath   := WinGet.ProjPath()
         if !projPath {
-            notifyExt.notifyIfNotExist('premRenderProjPath',, 'Could not determine the current project path', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            notifyExt.showIfNotExist('premRenderProjPath',, 'Could not determine the current project path', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return
         }
         renderPath := WinGet.pathU(projPath.Dir "\..\" outputPath)
@@ -3708,14 +3708,14 @@ class Prem {
             DirCreate(renderPath)
 
         if !FileExist(presetPath "\" presetName) && !FileExist(presetPath "\" presetName ".epr") {
-            notifyExt.notifyIfNotExist('premRenderPresetPath',, 'Could not determine the desired render preset:`n' presetPath "\" presetName, 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            notifyExt.showIfNotExist('premRenderPresetPath',, 'Could not determine the desired render preset:`n' presetPath "\" presetName, 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             this.save()
             return
         }
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
         file := this.__remoteFunc('renderInPrem', true, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
         if checkbool(addToProj) && (file != false) && FileExist(file) {
-            notifyExt.notifyIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
+            notifyExt.showIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
             sleep 1000
             this.__remoteFunc('importFile',, "filePath=" StrReplace(file, "\", "/"), "importAsStills=0")
             logger := log()

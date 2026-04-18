@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.0
  * @author tomshi, taranVH
- * @date 2026/04/17
- * @version 2.4.15
+ * @date 2026/04/18
+ * @version 2.4.16
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -420,15 +420,15 @@ class rbuttonPrem {
 			ckDir := prem.__checkPremRemoteDir("getActiveSequence"), ckFunc := prem.__checkPremRemoteFunc("focusSequence")
 			if !ckDir || !ckFunc {
 				useRemote := false
-				notifyExt.notifyIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
+				notifyExt.showIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
 			} else {
 
 				if !this.origSeq := prem.__remoteFunc("getActiveSequence", true) {
 					useRemote := false
 					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
-					notifyExt.notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
+					notifyExt.showIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
 					this.__exit() */
-					notifyExt.notifyIfNotExist("RClickpremRemoteFailed",, 'PremiereRemote failed to retrieve the currently active sequence.`nFalling back to older method', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=400')
+					notifyExt.showIfNotExist("RClickpremRemoteFailed",, 'PremiereRemote failed to retrieve the currently active sequence.`nFalling back to older method', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=400')
 				}
 			}
 		}

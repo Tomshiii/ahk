@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2026/04/17
- * @version 1.7.3
+ * @date 2026/04/18
+ * @version 1.7.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -77,7 +77,7 @@ class discord {
         if !IsSet(discMenu) || !IsObject(discMenu) || !discMenu {
             icon := (FileExist(EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico")) ? EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico" : ""
             errorLog(TargetError("Could not determine discord right click menu", -1))
-            notifyExt.notifyIfNotExist("discordNoRightClick",, 'Could not determine discord right click menu.`nAborting...', icon, 'Windows Startup',, 'theme=Dark dur=5 bdr=Red show=Fade@250 mon=Mouse hide=Fade@250 maxW=400')
+            notifyExt.showIfNotExist("discordNoRightClick",, 'Could not determine discord right click menu.`nAborting...', icon, 'Windows Startup',, 'theme=Dark dur=5 bdr=Red show=Fade@250 mon=Mouse hide=Fade@250 maxW=400')
             blocker.Off()
             return
         }

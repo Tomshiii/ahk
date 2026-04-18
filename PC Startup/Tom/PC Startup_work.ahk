@@ -61,7 +61,7 @@ try {
             break
     }
     if mt != "5600" {
-        notifyExt.notifyIfNotExist("XMP",, 'XMP is currently NOT enabled. Ram is running at ' mt 'MT/s', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark pos=CT dur=5 bdr=Red maxW=400')
+        notifyExt.showIfNotExist("XMP",, 'XMP is currently NOT enabled. Ram is running at ' mt 'MT/s', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark pos=CT dur=5 bdr=Red maxW=400')
     }
 }
 
