@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/03/20
- * @version 1.3.4
+ * @date 2026/04/20
+ * @version 1.4.0
  ***********************************************************************/
 
 class UserPref {
@@ -37,7 +37,6 @@ class UserPref {
         "autosave_always_save", "true", "autosave_restart_playback", "false",
         "checklist_hotkeys", "true", "checklist_tooltip", "true", "checklist_wait", "false",
         "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
-        "Always_Check_UIA", "true", "Set_UIA_Limit_Daily", "disabled",
         "Use_Thio_MButton", "false", "Use_MButton", "true",
         "Use_swapSequences", "true",
 

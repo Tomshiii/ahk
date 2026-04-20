@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/04/18
- * @version 2.4.9
+ * @date 2026/04/20
+ * @version 2.4.10
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -292,9 +292,6 @@ settingsGUI()
                             FileDelete(ptf["scriptStartup"])
                 }
                 return
-            case "Always Check UIA":
-                (script.Value = 0) ? (settingsGUI["setUIA_LimitDaily"].Opt("+Disabled"), UserSettings.Set_UIA_Limit_Daily := "disabled")
-                                   : (settingsGUI["setUIA_LimitDaily"].Opt("-Disabled"), UserSettings.Set_UIA_Limit_Daily := "false")
             case "Use Thio MButton":
                 (script.Value = 0) ? (altGUI["Use_MButton"].Opt("+Disabled"), UserSettings.Use_MButton := "disabled")
                                    : (altGUI["Use_MButton"].Opt("-Disabled"), UserSettings.Use_MButton := "false")
@@ -335,15 +332,6 @@ settingsGUI()
     ;// checklist tooltip
     settingsGUI.AddCheckbox("vchecklistTooltip Checked" UserSettings.checklist_tooltip " Y+5", setJSON.checklistTooltip.title).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
     settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
-
-    ;// getTimeline() - Always Check UIA
-    settingsGUI.AddCheckbox("valwaysCheckUIA Checked" UserSettings.Always_Check_UIA " Y+5", setJSON.alwaysCheckUIA.title).OnEvent("Click", toggle.Bind("Always Check UIA", "", ""))
-    settingsGUI["alwaysCheckUIA"].ToolTip := (UserSettings.Always_Check_UIA = true) ? setJSON.alwaysCheckUIA.tooltip.true : setJSON.alwaysCheckUIA.tooltip.false
-
-    ;// Set_UIA_LimitDaily
-    settingsGUI.AddCheckbox("vsetUIA_LimitDaily Checked" (UserSettings.Set_UIA_Limit_Daily != "disabled" ? UserSettings.Set_UIA_Limit_Daily : "0 +Disabled") " Y+5 xs+10", setJSON.setUIA_LimitDaily.title).OnEvent("Click", toggle.Bind("Set UIA Limit Daily", "", ""))
-    settingsGUI["setUIA_LimitDaily"].ToolTip := (UserSettings.Set_UIA_Limit_Daily = true) ? setJSON.setUIA_LimitDaily.tooltip.true : setJSON.setUIA_LimitDaily.tooltip.false
-    (settingsGUI["alwaysCheckUIA"].Value = 0) ? settingsGUI["setUIA_LimitDaily"].Opt("+Disabled") : settingsGUI["setUIA_LimitDaily"].Opt("-Disabled")
 
     /**
      * This function handles logic for checkboxes that need to pop up a msgbox to alert the user that they need to reload `checklist.ahk`

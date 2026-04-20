@@ -28,9 +28,6 @@ cleanUpInstall(rootDir) {
     checkDirDelete(rootDir "\Backups\Old Code\Stream\TomSongQueueue")
     ;// deleting vscode config folder
     checkDirDelete(rootDir "\.vscode")
-    ;// resetting `values.ini` file so it's empty for the user
-    checkFileDelete(rootDir "\Support Files\UIA\values.ini")
-    FileAppend("{`n`n}", rootDir "\Support Files\UIA\values.ini")
 }
 
 checkDirDelete(dir) {
