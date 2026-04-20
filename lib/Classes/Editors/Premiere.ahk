@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.0.2
  * @author tomshi
- * @date 2026/04/18
- * @version 2.3.51
+ * @date 2026/04/20
+ * @version 2.3.52
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,6 +32,7 @@
 #Include Classes\notifyExt.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Other\UIA\UIA.ahk
+#Include Other\WinEvent.ahk
 #Include Functions\getHotkeys.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\delayFuncs.ahk

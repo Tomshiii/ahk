@@ -19,7 +19,7 @@ class notifyExt {
      * syntatic sugar for only using `Notify.Show()` if the tag doesn't already exist. Do NOT respecify the `tag` in `options`. Notify's will be logged using `Log()`.
      * If no `show`/`hide` option is present in `options` `show=Fade@250 hide=Fade@250` will be added
     */
-    static notifyIfNotExist(tag, title := '', msg := '', image := '', sound := '', callback := '', options := '', doWinWait := false) {
+    static showIfNotExist(tag, title := '', msg := '', image := '', sound := '', callback := '', options := '', doWinWait := false) {
         if InStr(options, "tag=") {
             ;// throw
             errorLog(PropertyError("The user has redefined ``tag`` in ``options``", -1),,, true)
