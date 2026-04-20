@@ -112,22 +112,18 @@ Enter:: ;// close windows by double tapping enter
 			;// if I'm typing and I hit enter I want typing to be finished
 			;// ie. the text box is deselected and the text tool is swapped back to the selection tool
 			currTimelineStatus := prem.timelineFocusStatus()
-			premUIA := CLSID_Objs.load("premUIA_Values")
-            premUIA.initialise()
-            try createEl   := prem.__createUIAelement(true)
-            try toolsNN    := prem.__uiaCtrlPos(premUIA.tools, false, createEl, false)
-            if (!IsSet(createEl) || !IsSet(toolsNN)) || !toolsNN {
+			if !premUIA := premUIA_Values.initialise() {
 				SendInput("{" A_ThisHotkey "}")
-                errorLog(TargetError('Creating UIA element failed'))
-                return
-            }
-            textStatus := ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
-
+            	return
+			}
+			toolsNN := premUIA.UIA_Objs["tools"]
+			activePath := premUIA_Values.__activeElementPath()
+            textStatus := ImageSearch(&xx, &yy, toolsNN.location.x, toolsNN.location.y, toolsNN.location.x + toolsNN.location.w, toolsNN.location.y + toolsNN.location.h, "*2 " ptf.Premiere "text.png")
 			switch {
-				case (createEl.activeElement !== premUIA.programMon):
+				case (activePath !== premUIA.UIA_Objs["programMon"]):
 					SendInput("{" A_ThisHotkey "}")
 					return
-				case (currTimelineStatus != true && createEl.activeElement == premUIA.programMon && textStatus != false):
+				case (currTimelineStatus != true && activePath == premUIA.UIA_Objs["programMon"] && textStatus != false):
 					if !GetKeyState("Shift") && !GetKeyState("Shift", "P") { ;// this check shouldn't be necessary but.. just incase
 						SendInput("{Escape}")
 						prem.selectionTool()
@@ -209,11 +205,11 @@ SC03A & LButton:: ;// lock vertical movement while adjusting keyframe handles
 	; InstallMouseHook()
 	coord.c()
 	origCoord := obj.MousePos()
-	premUIA := CLSID_Objs.load("premUIA_Values")
-	premUIA.initialise()
-	try premEl := prem.__createUIAelement(true)
+	if !premUIA := premUIA_Values.initialise()
+		return
+	activePath := premUIA_Values.__activeElementPath()
 
-	if premEl.activeElement !== premUIA.effectControls {
+	if activePath !== premUIA.UIA_Objs["effectControls"] {
 		__resetCaps(storeHotkey, capslockState)
 		return
 	}
@@ -271,7 +267,6 @@ $+2::prem.zoomPreviewWindow(A_ThisHotkey)
 $+3::prem.zoomPreviewWindow("+3", true)
 
 ^!f::prem.flattenAndColour(ksa.labelIris)
-^!+f::prem.pseudoFS()
 $+d:: ;// deselect edit points after adding transitions
 {
 	if prem.timelineFocusStatus() != true || CaretGetPos(&carx, &cary) {
@@ -402,19 +397,17 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 	}
 	prior := false
 	if A_PriorKey = "WheelUp" || A_PriorKey = "WheelDown" {
-		premUIA := CLSID_Objs.load("premUIA_Values")
-		premUIA.initialise()
 		__within(coordObj, progmon) {
-			if ((coordObj.x > progmon.x) && (coordObj.x < progmon.x+progmon.width) && (coordObj.y < progmon.y) && (coordObj.y > progmon.y+progmon.height))
+			if ((coordObj.x > progmon.location.x) && (coordObj.x < progmon.location.x+progmon.location.w) && (coordObj.y < progmon.location.y) && (coordObj.y > progmon.location.y+progmon.location.h))
 				return false
 			return true
 		}
-		try progmon := prem.__uiaCtrlPos(premUIA.programMon, false)
-		if !IsSet(progmon) || !IsObject(progmon) {
+		if !premUIA := premUIA_Values.initialise() {
 			KeyWait(A_ThisHotkey)
 			__cleanup()
 			return
 		}
+		progmon := premUIA.UIA_Objs["programMon"]
 		if __within(origMouse, progmon) {
 			if A_Cursor != "Unknown" {
 				block.On()

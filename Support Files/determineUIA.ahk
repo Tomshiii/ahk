@@ -9,14 +9,18 @@ if !WinExist(prem.exeTitle)
     return
 
 ;// need to ensure a project is actually open
-
 uiaObj := CLSID_Objs.load("premUIA_Values")
 if uiaObj.beenSet = true {
-    return
+    ExitApp()
 }
 
-try uiaObj.setObjs()
-catch {
+try {
+    if !uiaObj.setObjs()
+        throw
+} catch as e {
+    if InStr(e.Message, "This version of Premiere is not supported.") {
+        throw MethodError(e.Message)
+    }
     notifyExt.showIfNotExist("determineUIAFailed",, 'Retrieving UIA Coordinates failed. Please try again', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Critical Stop',, 'dur=4 bc=0x371112 bdr=Red iw=25 show=Fade@250 hide=Fade@250 maxW=400')
     try {
         uiaObj.beenSet   := false
@@ -26,4 +30,5 @@ catch {
     ExitApp()
 }
 
+prem.__setTimelineValues()
 ExitApp()

@@ -1,11 +1,14 @@
 # <> Release 2.17.x - 
 
+## Functions
+- ✅ Fixed `winget.PremName()` failing to determine `beta` titles correctly
+
 ### 📝 `startup {`
 - ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing
 - ✅ Fixed `updateChecker()` throwing if the user attempted to download an update from the GUI
 
 ### 📝 Added class `notifyExt {`
-- ✏️Added `destroyDupes()`, `checkMultiple()`
+- ✏️Added `destroyDupes()`, `checkMultiple()`, `deleteIfExist()`
 
 📍 `notifyIfNotExist()`
 - 📋 Moved function into `notifyExt {` class
