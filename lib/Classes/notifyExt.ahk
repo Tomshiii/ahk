@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/04/17
- * @version 1.0.0
+ * @date 2026/04/20
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,5 +55,10 @@ class notifyExt {
         resetOrigDetect(orig)
         Critical('Off')
         return (hwndArr.Length > 0 ? hwndArr : false)
+    }
+
+    static deleteIfExist(tag, force := false) {
+        if Notify.Exist(tag)
+            try Notify.Destroy(tag, force)
     }
 }

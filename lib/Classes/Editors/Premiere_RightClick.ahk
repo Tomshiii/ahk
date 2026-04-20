@@ -404,13 +404,6 @@ class rbuttonPrem {
 			this.__exit()
 		}
 
-		;// testing the removal of the below
-		/* this.premUIA := CLSID_Objs.load("premUIA_Values")
-		if !this.premUIA.initialise() {
-			this.__exit()
-		} */
-		; try premEl := prem.__createUIAelement(false)
-
 		;// we send a single input here so that in the event UIA is slow to respond because of premiere
 		;// the cursor will still move if the user taps the activation hotkey
 		SendInput(ksa.playheadtoCursor)

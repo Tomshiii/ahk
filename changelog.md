@@ -2,9 +2,10 @@
 
 ## Functions
 - ✅ Fixed additional memory leak with functions that use `ShinsImageScanClass`
+- ✅ Fixed `winget.PremName()` failing to determine `beta` titles correctly
 
 ### 📝 Added class `notifyExt {`
-- ✏️Added `destroyDupes()`, `checkMultiple()`
+- ✏️Added `destroyDupes()`, `checkMultiple()`, `deleteIfExist()`
 
 📍 `notifyIfNotExist()`
 - 📋 Renamed `notifyIfNotExist` => `showIfNotExist()`

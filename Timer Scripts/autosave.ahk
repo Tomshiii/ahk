@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/04/18
- * @version 2.2.17
+ * @date 2026/04/20
+ * @version 2.2.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,7 +69,6 @@ class adobeAutoSave extends count {
 
     __New(rClickPrem := "RButton", rClickMove := "XButton1") {
         try {
-            this.premUIA := CLSID_Objs.load("premUIA_Values")
             ; this.premUIA.initialise(false) ;// don't do this or every reload it'll force attempt trying to set them
             ;// attempt to grab user settings
             this.UserSettings    := CLSID_Objs.load("UserSettings")
@@ -128,7 +127,6 @@ class adobeAutoSave extends count {
     programMonY1  := false,  programMonY2 := false
 
     origPanelFocus := ""
-    premUIAEl      := false
     resetAlreadyWaited := false
 
     /** This function is called every increment */
@@ -384,11 +382,10 @@ class adobeAutoSave extends count {
             return
         } */
         if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
-            passIn := (this.premUIAEl != false) ? this.premUIAEl : unset
-            try progMon := prem.__uiaCtrlPos(this.premUIA.programMon,, passIn, false)
-            if !IsSet(progMon)
+            if !this.premUIA := premUIA_Values.initialise()
                 return false
-            this.programMonX1 := progMon.x+100, this.programMonX2 := progMon.x + progMon.width-100, this.programMonY1 := (progMon.y+progMon.height)*0.7,  this.programMonY2 := progMon.y + progMon.height + 150
+            progMon := this.premUIA.UIA_Objs["programMon"]
+            this.programMonX1 := progMon.location.x+100, this.programMonX2 := progMon.location.x + progMon.location.w-100, this.programMonY1 := (progMon.location.y+progMon.location.h)*0.7,  this.programMonY2 := progMon.location.y + progMon.location.h + 150
         }
         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
         if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
@@ -465,10 +462,11 @@ class adobeAutoSave extends count {
                     }
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
-                    try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+
+                    try this.premUIA.UIA_Objs["timeline"].SetFocus()
                     catch {
                         try {
-                            fallbackFocus := (this.origPanelFocus = this.premUIA.timeline) ? false : true
+                            fallbackFocus := (this.origPanelFocus = this.premUIA.UIA_Path["timeline"]) ? false : true
                             if !prem.__checkTimelineValues() {
                                 if fallbackFocus = true && !prem.__waitForTimeline() {
                                     this.__fallback(fallbackFocus)
@@ -484,14 +482,14 @@ class adobeAutoSave extends count {
                     loop 3 {
                         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
                         if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
-                            try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+                            try this.premUIA.UIA_Objs["timeline"].SetFocus()
                             sleep 100
                             SendEvent(KSA.playStop)
                             continue
                         }
                         break
                     }
-                    try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+                    try this.premUIA.UIA_Objs["timeline"].SetFocus()
                 default:
                     if this.premRemoteSave = false
                         WinActivate("ahk_exe " this.origWindow)
@@ -549,12 +547,12 @@ class adobeAutoSave extends count {
             return
         }
 
+        if !this.premUIA := premUIA_Values.initialise()
+            return
+
         ;// get active UIA panel
         if WinActive(prem.winTitle) {
-            try {
-                this.premUIAEl := prem.__createUIAelement()
-                this.origPanelFocus := this.premUIAEl.activeElement
-            }
+            this.origPanelFocus := premUIA_Values.__activeElementPath()
         }
 
         ;// checking idle status
@@ -765,9 +763,7 @@ class adobeAutoSave extends count {
         this.resetingSave  := false
 
         this.origPanelFocus := ""
-        try this.premUIAEl.AdobeEl := ""
-        try this.premUIAEl.activeElement := ""
-        this.premUIAEl      := false
+        this.premUIA := ""
         this.premRemoteSave := true
         checkstuck()
         (this.resetAlreadyWaited = true) ? this.closeNotifys() : SetTimer((*) => (this.closeNotifys()), -4500)
