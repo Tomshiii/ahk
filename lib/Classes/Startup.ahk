@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/04/07
- * @version 1.8.11
+ * @date 2026/04/20
+ * @version 1.8.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -356,9 +356,9 @@ class Startup {
 
                 ;set download button
                 MyGui["gitButton"].GetPos(&x)
-                MyGui.AddButton("Section X" x-85 " ys+13", "Download").OnEvent("Click", Down)
+                MyGui.AddButton("Section X" x-85 " ys+13", "Download").OnEvent("Click", Down.Bind(this))
                 ;set cancel button
-                MyGui.AddButton("Default X+5", "Cancel").OnEvent("Click", closegui)
+                MyGui.AddButton("Default X+5", "Cancel").OnEvent("Click", closegui.Bind(this))
                 ;set "skip this version" checkbox
                 MyGui.AddCheckbox("xs-175 Ys-30", "Skip this Version").OnEvent("Click", prompt.bind("skip"))
                 ;set "don't prompt again" checkbox
@@ -569,11 +569,10 @@ class Startup {
         firstCheckGUI.AddButton("X+10", "Handy Hotkeys").OnEvent("Click", (*) => hotkeysGUI())
         firstCheckGUI.AddButton("X+10", "Close").OnEvent("Click", close)
 
-        firstCheckGUI.OnEvent("Escape", close)
-        firstCheckGUI.OnEvent("Close", close)
+        firstCheckGUI.OnEvent("Escape", close.Bind(this))
+        firstCheckGUI.OnEvent("Close", close.Bind(this))
         close(*) {
             this.UserSettings.first_check := true ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
-            this.UserSettings.__delAll()
             firstCheckGUI.Destroy()
             RunWait(A_ScriptFullPath)
             return
@@ -1438,11 +1437,11 @@ class Startup {
     }
     __Delete(*) {
         detect(false, 2)
+        try this.UserSettings.__delAll()
         try {
             if !FileExist(this.trackReloadsIni)
                 this.__createTrackReloads()
             this.__resetReloadTracking()
-            this.UserSettings.__delAll()
             this.UserSettings := ""
             this.alertTimer := false
             this.activeFunc := ""

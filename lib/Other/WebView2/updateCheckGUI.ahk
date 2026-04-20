@@ -27,15 +27,14 @@ main := tomshiBasic(,, "-Resize", "Latest Update - " version)
 main.OnEvent("Close", closeit)
 main.Show(Format("w{} h{}", A_ScreenWidth * 0.5, A_ScreenHeight * 0.65))
 
-wvc := WebView2.create(main.Hwnd)
+wvc := WebView2.CreateControllerAsync(main.Hwnd).await2()
 wv := wvc.CoreWebView2
 nwr := wv.NewWindowRequested(NewWindowRequestedHandler)
 wv.Navigate('https://github.com/Tomshiii/ahk/releases/tag/' version)
 
-NewWindowRequestedHandler(handler, wv2, arg) {
-	argp := WebView2.NewWindowRequestedEventArgs(arg)
-	deferral := argp.GetDeferral()
-	argp.NewWindow := wv2
+NewWindowRequestedHandler(wv2, arg) {
+	deferral := arg.GetDeferral()
+	arg.NewWindow := wv2
 	deferral.Complete()
 }
 

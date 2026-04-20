@@ -3,6 +3,10 @@
 ## Functions
 - ✅ Fixed additional memory leak with functions that use `ShinsImageScanClass`
 
+### 📝 `startup {`
+- ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing
+- ✅ Fixed `updateChecker()` throwing if the user attempted to download an update from the GUI
+
 ### 📝 Added class `notifyExt {`
 - ✏️Added `destroyDupes()`, `checkMultiple()`
 
