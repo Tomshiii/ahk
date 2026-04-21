@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/04/21
- * @version 2.4.1
+ * @version 2.4.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -105,23 +105,6 @@ class Prem {
             if !WinEvent.IsRegistered("Close", "Clip Fx Editor " this.exeTitle)
                 WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " this.exeTitle)), "Clip Fx Editor " this.exeTitle)
         }
-    }
-
-    static __resetUIAobj(*) {
-        if WinExist(this.exeTitle)
-            return
-        try {
-            premUIA := CLSID_Objs.load("premUIA_Values")
-            premUIA.beenSet := false
-            premUIA.UIA_Objs := Map()
-            premUIA.UIA_Path := Map()
-            premUIA.AdobeEl  := {}
-            premUIA := ""
-
-            premObj := CLSID_Objs.load("prem")
-            premObj.__resetTimelineVals()
-        }
-        MsgBox()
     }
 
     static minVer := "26.2"
@@ -1749,6 +1732,23 @@ class Prem {
     /** resets internal values for the timeline */
     static __resetTimelineVals() {
         this.timelineVals := false, this.timelineRawX := 0, this.timelineRawY := 0, this.timelineXValue := 0, this.timelineYValue := 0, this.timelineXControl := 0, this.timelineYControl := 0
+    }
+
+    /** reset various values to simulate reload */
+    static __resetUIAobj(*) {
+        if WinExist(this.exeTitle)
+            return
+        try {
+            premUIA := CLSID_Objs.load("premUIA_Values")
+            premUIA.beenSet := false
+            premUIA.UIA_Objs := Map()
+            premUIA.UIA_Path := Map()
+            premUIA.AdobeEl  := {}
+            premUIA := ""
+
+            premObj := CLSID_Objs.load("prem")
+            premObj.__resetTimelineVals()
+        }
     }
 
     /**
