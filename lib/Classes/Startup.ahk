@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/04/20
- * @version 1.8.12
+ * @date 2026/04/21
+ * @version 1.8.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -782,6 +782,8 @@ class Startup {
         adobeProgs := ["ae", "prem"] ;, "ps"
         needsRefresh := false
         for v in adobeProgs {
+            if VerCompare(SubStr(this.UserSettings.%v%Ver, 2), %v%.minVer) < 0
+                this.UserSettings.%v%Ver := "v" %v%.minVer
             currVer := SubStr(this.UserSettings.%v%Ver, 1, 3)
             currentFile := basePath "\" v "\" currVer ".json"
             previousFile := basePath "\" v "\v" (Number(SubStr(currVer, 2, 2))-1) ".json"

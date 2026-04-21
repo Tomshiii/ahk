@@ -1,9 +1,9 @@
 /************************************************************************
  * @description move the Premere Pro playhead to the cursor
- * @premVer 26.0
+ * @premVer 26.2
  * @author tomshi, taranVH
- * @date 2026/04/18
- * @version 2.4.16
+ * @date 2026/04/21
+ * @version 2.4.17
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -167,6 +167,7 @@ class rbuttonPrem {
 		;// then we check to see if it's relatively close to the cursors position
 		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
 			block.On()
+			prem.selectTool("selectionTool")
 			SendInput(KSA.selectionPrem)
 			MouseMove(xcol, ycol)
 			SendInput("{LButton Down}")
@@ -272,7 +273,7 @@ class rbuttonPrem {
 	}
 
 	/**
-	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton2</kbd>).
+	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton1</kbd>).
 	 * This function has built in checks for <kbd>LButton</kbd> & <kbd>XButton2</kbd> by default during activation - this can be overwritten by using the `playbackKeys` parameter.
 	 * This function should work as intended on both the old UI and the Spectrum UI assuming you use the default darkest themeing for both UI versions. Other themes will require the user to add additional colour values to `timelineColours {`
 	 *
@@ -298,15 +299,14 @@ class rbuttonPrem {
 		;// which can cause A_ThisHotkey to become something else other than RButton (ie. <!3)
 		;// If this happens, some code later on will throw because GetKeyState doesn't know how to handle
 		;// a hotkey that has modifiers in it; eg. `&`/`<`/`!` etc
-		try (chkVar := GetKeyState(A_ThisHotkey), chkVar := GetKeyState(A_ThisHotkey, "P"))
+		this.sendHotkey := (IsSet(sendOnFailure)) ? sendOnFailure : "{Blind}{" A_ThisHotkey "}"
+		currHotkey := A_ThisHotkey
+		try (chkVar := GetKeyState(currHotkey), chkVar := GetKeyState(currHotkey, "P"))
 		catch {
-			if IsSet(sendOnFailure)
-				SendInput(sendOnFailure)
+			SendInput(this.sendHotkey)
 			return
 		}
 
-		this.sendHotkey := (IsSet(sendOnFailure)) ? sendOnFailure : "{" A_ThisHotkey "}"
-		currHotkey := A_ThisHotkey
 
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
@@ -349,7 +349,7 @@ class rbuttonPrem {
 		}
 
 		;// set coord mode and grab the cursor position
-		coord.client()
+		coord.s()
 		if !origMouse := obj.MousePos()
 			return
 
@@ -426,13 +426,7 @@ class rbuttonPrem {
 			}
 		}
 
-		;// focuses the timeline
 		prem.__focusTimeline()
-		;// testing the removal of the below
-		/* try premEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
-		catch {
-			prem.__focusTimeline()
-		} */
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
 		while GetKeyState(currHotkey, "P") {

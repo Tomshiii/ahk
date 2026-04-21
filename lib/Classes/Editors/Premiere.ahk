@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Code is maintained for the version of Premiere listed below
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 26.3
+ * @premVer 26.2
  * @author tomshi
- * @date 2026/04/20
- * @version 2.4.0
+ * @date 2026/04/21
+ * @version 2.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -61,6 +61,8 @@ class Prem {
             }
         }
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
+        if VerCompare(this.currentSetVer, this.minVer) < 0
+            this.currentSetVer := this.minVer
         try this.defaultTheme     := this.UserSettings.premDefaultTheme
         try this.useSwapSequences := this.UserSettings.use_swapSequences
         try {
@@ -94,13 +96,32 @@ class Prem {
             if DirExist(remotePath) && (getNPM != false && getNPM != "")
                 SetTimer(prem.checkRemote.Bind(this), 2000)
 
-            ;// toggle multicam when audio effect windows become active
-            if !WinEvent.IsRegistered("Active", "Clip Fx Editor " prem.exeTitle)
-                WinEvent.Active((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
-            if !WinEvent.IsRegistered("Close", "Clip Fx Editor " prem.exeTitle)
-                WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
-        }
+            if !WinEvent.IsRegistered("Close", this.exeTitle)
+                WinEvent.Close((*) => this.__resetUIAobj(), this.exeTitle)
 
+            ;// toggle multicam when audio effect windows become active
+            if !WinEvent.IsRegistered("Active", "Clip Fx Editor " this.exeTitle)
+                WinEvent.Active((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " this.exeTitle)), "Clip Fx Editor " this.exeTitle)
+            if !WinEvent.IsRegistered("Close", "Clip Fx Editor " this.exeTitle)
+                WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " this.exeTitle)), "Clip Fx Editor " this.exeTitle)
+        }
+    }
+
+    static __resetUIAobj(*) {
+        if WinExist(this.exeTitle)
+            return
+        try {
+            premUIA := CLSID_Objs.load("premUIA_Values")
+            premUIA.beenSet := false
+            premUIA.UIA_Objs := Map()
+            premUIA.UIA_Path := Map()
+            premUIA.AdobeEl  := {}
+            premUIA := ""
+
+            premObj := CLSID_Objs.load("prem")
+            premObj.__resetTimelineVals()
+        }
+        MsgBox()
     }
 
     static minVer := "26.2"
@@ -1446,9 +1467,7 @@ class Prem {
                 errorLog(TargetError('Creating UIA element failed'))
                 return
             }
-            toolsNN := premUIA.UIA_Objs["tools"]
-
-            textStatus := ImageSearch(&xx, &yy, toolsNN.location.x, toolsNN.location.y, toolsNN.location.x + toolsNN.location.w, toolsNN.location.y + toolsNN.location.h, "*2 " ptf.Premiere "text.png")
+            textStatus := premUIA_Values.isToolSelected("textTool")
 
             switch {
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
@@ -1558,7 +1577,6 @@ class Prem {
                 return
             SetTimer(rdisable, -50)
         }
-        useUIA := false
 
         if this.__OSwindow() && WinActive(this.winTitle) {
             SendInput("{Escape}")
@@ -1583,9 +1601,9 @@ class Prem {
             return
         }
 
-        SetTimer(again.Bind(timeout, true, premUIA), -400)
-        again(timeout, useUIA, premUIA)
-        again(timeout, useUIA, el) {
+        SetTimer(again.Bind(timeout), -400)
+        again(timeout)
+        again(timeout) {
             ;// we check for the defined value `ksa.DragKeywait` here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
             isKey := false
             i := 0
@@ -1606,17 +1624,7 @@ class Prem {
 
             status := this.timelineFocusStatus()
             if status != true {
-                if useUIA = true && el != false {
-                    try el.UIA_Objs['timeline'].SetFocus()
-                    catch {
-                        this.__focusTimeline()
-                        __finish()
-                        return
-                    }
-                    sleep 400 ;// if you don't sleep here premiere will not properly let go of lbutton until the timer fires up to 400ms later
-                }
-                else
-                    this.__focusTimeline()
+                this.__focusTimeline()
             }
 
             __finish()
@@ -1654,7 +1662,7 @@ class Prem {
     }
 
     /**
-     * ### Note: This function will evaluate the premiere timeline coordinates based off the `Client` coordmode. This cannot be changed.
+     * ### Note: This function will evaluate the premiere timeline coordinates based off the `screen` coordmode. This cannot be changed.
      * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
      * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values. Defaults to true. Sends tooltips on `WhichToolTip` 11/12/13
      * @returns {Boolean} `true/false`
@@ -1700,12 +1708,13 @@ class Prem {
         timelineNN := premUIA.UIA_Objs['timeline']
 
         ;// determine how much to account for the column left of the timeline based on premiere version
-        xAddMap := Map("lessThan" this.spectrumUI_Version, 236, this.spectrumUI_Version, 204,
-                        "default", 206)
-        switch {
-            case (VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0) && !(VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0): xAdd := xAddMap["lessThan" this.spectrumUI_Version]
-            case xAddMap.Has(this.currentSetVer): xAdd := xAddMap[this.currentSetVer]
-            default: xAdd := xAddMap["default"]
+        xAddMap := Map("26.2", 204)
+        for k, v in xAddMap {
+            if VerCompare(this.currentSetVer, k) >= 0 {
+                xAdd := v
+                continue
+            }
+            break
         }
 
         Critical()
@@ -1743,15 +1752,14 @@ class Prem {
     }
 
     /**
-     * Getting back to the selection tool while you're editing text or in other edge case scenarios can be quite painful.
-     * This function will instead attempt to warp to the selection tool on your toolbar and presses it instead. If that fails it will focus the toolbar and send the hotkey instead.
+     * This function will attempt to select the desired tool using UIA.
+     * @param {String} [tool=selectionTool] the name of the tool. Must correspond to a tool set within `Premiere_UIA.ahk` or the function will throw.
      */
-    static selectionTool() {
-        MouseGetPos(&xpos, &ypos)
-        sleep 50
+    static selectTool(tool := "selectionTool") {
         if !premUIA := premUIA_Values.initialise()
             return
-        try premUIA.UIA_Objs["selectionTool"].click()
+        if !premUIA_Values.isToolSelected(tool)
+            try premUIA.UIA_Objs[tool].Click()
     }
 
     /**
@@ -1785,8 +1793,8 @@ class Prem {
             return
         toolsNN := premUIA.UIA_Objs["tools"]
         activePath := premUIA_Values.__activeElementPath()
-        if !toolsNN || SubStr(activePath, 1, StrLen(activePath)-3) = premUIA.UIA_Path["project"] ||
-            ImageSearch(&xx, &yy, toolsNN.location.x, toolsNN.location.y, toolsNN.location.x + toolsNN.location.w, toolsNN.location.y + toolsNN.location.h, "*2 " ptf.Premiere "text.png") {
+        textStatus := premUIA_Values.isToolSelected("textTool")
+        if !toolsNN || SubStr(activePath, 1, StrLen(activePath)-3) = premUIA.UIA_Path["project"] || textStatus {
             __sendOrig()
             return
         }
@@ -1832,8 +1840,13 @@ class Prem {
      * @returns {Boolean}
      */
     static __checkTimelineValues() {
+        try premObj := CLSID_Objs.load("prem")
+        catch {
+            premObj := {}
+            premObj.timelineVals := false
+        }
         if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
-            (this.timelineVals = false)
+            (this.timelineVals = false || premObj.timelineVals = false)
             return false
         return true
     }
@@ -2036,8 +2049,10 @@ class Prem {
     static delayPlayback(delayMS?) {
         this.defaultDelay := IsSet(delayMS) ? delayMS : this.defaultDelay
         delayMS := IsSet(delayMS) ? delayMS : this.defaultDelay
+        if !this.timelineFocusStatus()
+            return
         __sendSpace() => (SendEvent(ksa.playStop))
-        if !this.timelineFocusStatus() || (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
+        if (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
             ((A_PriorKey = ksa.premRipplePrev || A_PriorKey = ksa.premRippleNext) && (this.delayTime >= delayMS) || this.delayTime = 0) {
                 __sendSpace()
                 return
@@ -2125,7 +2140,7 @@ class Prem {
             ;// versions 25.4 and greater. They now focus the reset button when you tab
             case VerCompare(this.currentSetVer, "25.5") >= 0: delaySI(50, "{Tab 2}", anch1, "{Tab}", anch2, "{Enter}")
             ;// versions below 25.4
-            case VerCompare(this.currentSetVer, "25.4") < 0: delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
+            ; case VerCompare(this.currentSetVer, "25.4") < 0: delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
         }
 
         clip.delayReturn(clipb.storedClip)
@@ -2810,6 +2825,7 @@ class Prem {
 
             return
         }
+        premUIA := premUIA_Values.initialise()
         if allExcept != true && allExcept != false && allExcept != "all" {
             ;// throw
             errorLog(PropertyError("Parameter allExcept unaccepted value", allExcept),,, true)
@@ -2894,7 +2910,8 @@ class Prem {
                 }
             }
         }
-        SendInput(ksa.selectionPrem)
+        ; SendInput(ksa.selectionPrem)
+        this.selectTool()
         sleep 16
         if !origMouseCords := obj.MousePos() {
             blocker.Off()
@@ -3558,7 +3575,10 @@ class Prem {
         try {
             premVals := CLSID_Objs.load("premUIA_Values")
             premVals.beenSet := false
-            premVals.isRunning := false
+            premVals.UIA_Objs := Map()
+            premVals.UIA_Path := Map()
+            premVals.AdobeEl  := {}
+            premVals := ""
 
             premObj := CLSID_Objs.load("prem")
             premObj.__resetTimelineVals()

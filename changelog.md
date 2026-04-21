@@ -3,6 +3,11 @@
 ## Functions
 - ✅ Fixed `winget.PremName()` failing to determine `beta` titles correctly
 
+### 📝 `prem {`
+- 📋 UIA values will now be reset on Premiere close
+- 📋 Changed `prem.selectionTool()` => `prem.selectTool()`
+    - Can now set any tool set within `Premiere_UIA.ahk`
+
 ### 📝 `startup {`
 - ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing
 - ✅ Fixed `updateChecker()` throwing if the user attempted to download an update from the GUI

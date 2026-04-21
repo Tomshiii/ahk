@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/04/20
- * @version 3.0.3
+ * @date 2026/04/21
+ * @version 3.0.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,7 +22,7 @@ class premUIA_Values {
         if A_ScriptName = "Core Functionality.ahk" {
             this.UserSettings := UserPref(true)
         } else {
-            try this.UserSettings := CLSID_Objs.load("UserSettings")
+            try this.UserSettings := CLSID_Objs.clone("UserSettings")
             catch {
                 this.UserSettings := UserPref(true)
             }
@@ -46,49 +46,63 @@ class premUIA_Values {
             return -1
         focusedEl := UIA.GetFocusedElement()
         try focusedPath := uiaEl.AdobeEl.GetUIAPath(focusedEl, true)
-        return ((returnObj = false) ? focusedPath ?? "" : {uiaEl: uiaEl, Path: focusedPath})
+        return ((returnObj = false) ? focusedPath ?? "" : {uiaEl: uiaEl, Path: focusedPath, focusedEl: focusedEl})
     }
 
     static __isUiaElementActive(elementPath) {
         focusedPath := this.__activeElementPath(true)
-        if focusedPath.Path = -1
+        if !isObjHasProp(focusedPath, 'Path', -1) || focusedPath.Path = -1
             return -1
         return (focusedPath.uiaEl.UIA_Path[elementPath]=focusedPath)
     }
 
+    static isToolSelected(element) {
+        if !WinActive(prem.winTitle) {
+            return -1
+        }
+        if !uiaEl := this.initialise()
+            return -1
+        return (uiaEl.UIA_Objs[element].value = "Selected" ? true : false)
+    }
+
     static setObjs() {
+        Critical('On')
         notifyExt.deleteIfExist("premUIAGenTree")
+        notifyExt.deleteIfExist("premUIAGenTreeWarning")
         notifyExt.deleteIfExist("UIAretrieveComplete")
         notifyExt.deleteIfExist("determineUIAFailed")
         if !Notify.Exist("premUIAGenTree") {
             premExe := 'C:\Program Files\Adobe\Adobe Premiere Pro ' this.UserSettings.prem_year '\Adobe Premiere Pro.exe'
             img := FileExist(premExe) ? premExe : 'C:\Windows\System32\imageres.dll|icon80'
-            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTree')
+            Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning')
+            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }
 
         try premName := WinGet.PremName()
         if (!isObjHasProp(premName, 'titleCheck', false) && isObjHasProp(premName, 'titleCheck', -1)) || premName.titleCheck != true {
             notifyExt.deleteIfExist("premUIAGenTree")
-            notifyExt.showIfNotExist("UIApremNotReady",, "Determining Premiere's title failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
-            return false
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            throw Error("Failed to retrieve Premiere title.")
         }
         premObj := CLSID_Objs.clone("prem")
         if premObj.remoteActive = "loading" {
             notifyExt.deleteIfExist("premUIAGenTree")
-            notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-            return false
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            throw Error("Socket")
         }
         if !premObj.remoteActive {
             notifyExt.deleteIfExist("premUIAGenTree")
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
             errorLog(Error("A socket connection could not be established", -1),, true)
-            return false
+            throw Error("Socket")
         }
 
         currentVer := prem.__remoteFunc('premVer', true)
         if !currentVer
-            return false
+            throw Error("Failed to return Premiere Version")
         if VerCompare(currentVer, prem.minVer) < 0 {
             notifyExt.deleteIfExist("premUIAGenTree")
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
             throw MethodError("This version of Premiere is not supported.`nThe minimum supported version is: " prem.minVer "`nThe user has: " currentVer)
         }
         try {
@@ -103,10 +117,36 @@ class premUIA_Values {
             this.UIA_Objs["project"]        := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Project:", matchmode:"Substring"}), this.UIA_Path["project"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["project"], true)
 
             this.UIA_Objs["premRemote"]     := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"PremiereRemote"}), this.UIA_Path["premRemote"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["premRemote"], true)
-            this.UIA_Objs["selectionTool"]      := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name:"Selection Tool", matchmode:"Substring"}), this.UIA_Path["selectionTool"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["selectionTool"], true)
-        } catch {
+
+            ;// Tools
+            tools := Map(
+                "selectionTool", "Selection Tool",
+                "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
+                "rippleEdit", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
+                "razorTool", "Razor Tool",
+                "slipTool", ["Slip Tool", "Slide Tool"],
+                "penTool", "Pen Tool",
+                "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
+                "handTool", ["Hand Tool", "Zoom Tool"],
+                "textTool", ["Type Tool", "Vertical Type Tool"]
+            )
+            for k, v in tools {
+                switch Type(v), false {
+                    case "Array":
+                        for v2 in v {
+                            try this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v2, matchmode:"Substring"})
+                            catch {
+                                continue
+                            }
+                            this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
+                        }
+                    default: this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v, matchmode:"Substring"}), this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
+                }
+            }
+        } catch as e {
+            try errorLog(Error(e.Message, e.What, e.Extra))
             notifyExt.deleteIfExist("premUIAGenTree")
-            notifyExt.showIfNotExist("determineUIAFailed",, 'Retrieving UIA Coordinates failed. Please try again', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Critical Stop',, 'dur=4 bc=0x371112 bdr=Red iw=25 show=Fade@250 hide=Fade@250 maxW=400')
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
             if A_ScriptName != "Core Functionality.ahk" {
                 uiaObj := CLSID_Objs.load("premUIA_Values")
                 uiaObj.AdobeEl   := {}
@@ -122,7 +162,7 @@ class premUIA_Values {
                 this.beenSet := false
                 this.isRunning := false
             }
-            return false
+            throw Error("Setting UIA objs failed")
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
@@ -139,22 +179,30 @@ class premUIA_Values {
         }
 
         notifyExt.deleteIfExist("premUIAGenTree")
+        notifyExt.deleteIfExist("premUIAGenTreeWarning")
+        notifyExt.deleteIfExist("determiningUIA")
         notifyExt.showIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", img,,, 'dur=3 bdr=0x5B009F show=Fade@225 hide=Fade@250 maxW=400')
         return true
     }
 
     static initialise() {
-        uiaObj := CLSID_Objs.load("premUIA_Values")
+        Critical('On')
+        uiaObj := CLSID_Objs.clone("premUIA_Values")
         if uiaObj.beenSet = true && uiaObj.isRunning = false && isObjHasProp(uiaObj, "AdobeEl", false) && isObjHasProp(uiaObj, "UIA_Objs", false) {
             return uiaObj
         }
-        if winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",,,, true) {
+        if winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",,,, true) && uiaObj.isRunning = true {
             notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+            Critical('Off')
             return false
         }
+        uiaObj := ""
+        uiaObj := CLSID_Objs.load("premUIA_Values")
         uiaObj.isRunning := true
         scriptLoc := ptf.SupportFiles "\determineUIA.ahk"
         Run(scriptLoc)
+        uiaObj := ""
+        Critical('Off')
         return false
     }
 }

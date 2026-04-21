@@ -16,18 +16,29 @@ if uiaObj.beenSet = true {
 
 try {
     if !uiaObj.setObjs()
-        throw
+        ExitApp()
 } catch as e {
-    if InStr(e.Message, "This version of Premiere is not supported.") {
-        throw MethodError(e.Message)
+    switch {
+        case InStr(e.Message, "This version of Premiere is not supported."):
+            throw MethodError(e.Message)
+        case InStr(e.Message, "Failed to return Premiere Version"):
+            notifyExt.showIfNotExist("UIApremNotReady",, "Determining Premiere's version failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+            ExitApp()
+        case InStr(e.Message, "Socket"):
+            notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+            ExitApp()
+        case InStr(e.Message, "Failed to retrieve Premiere title."):
+            notifyExt.showIfNotExist("UIApremTitleFailed",, "Determining Premiere's title failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+            ExitApp()
+        case InStr(e.Message, "Setting UIA objs failed"):
+            notifyExt.showIfNotExist("determineUIAFailed",, 'Retrieving UIA Coordinates failed. Please try again', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Critical Stop',, 'dur=4 bc=0x371112 bdr=Red iw=25 show=Fade@250 hide=Fade@250 maxW=400')
+            try {
+                uiaObj.beenSet   := false
+                uiaObj.isRunning := false
+                uiaObj := ""
+            }
+            ExitApp()
     }
-    notifyExt.showIfNotExist("determineUIAFailed",, 'Retrieving UIA Coordinates failed. Please try again', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Critical Stop',, 'dur=4 bc=0x371112 bdr=Red iw=25 show=Fade@250 hide=Fade@250 maxW=400')
-    try {
-        uiaObj.beenSet   := false
-        uiaObj.isRunning := false
-        uiaObj := ""
-    }
-    ExitApp()
 }
 
 prem.__setTimelineValues()

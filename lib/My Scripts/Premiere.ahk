@@ -118,7 +118,7 @@ Enter:: ;// close windows by double tapping enter
 			}
 			toolsNN := premUIA.UIA_Objs["tools"]
 			activePath := premUIA_Values.__activeElementPath()
-            textStatus := ImageSearch(&xx, &yy, toolsNN.location.x, toolsNN.location.y, toolsNN.location.x + toolsNN.location.w, toolsNN.location.y + toolsNN.location.h, "*2 " ptf.Premiere "text.png")
+            textStatus := premUIA_Values.isToolSelected("textTool")
 			switch {
 				case (activePath !== premUIA.UIA_Objs["programMon"]):
 					SendInput("{" A_ThisHotkey "}")
@@ -389,7 +389,7 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 	}
 
 	;// set coord mode and grab the cursor position
-	coord.client()
+	coord.s()
 	if !origMouse := obj.MousePos() {
 		KeyWait(A_ThisHotkey)
 		__cleanup()
@@ -473,7 +473,7 @@ __f14InitialChecks(Key, &kwait) {
 	}
 
 	;// set coord mode and grab the cursor position
-	coord.client()
+	coord.s()
 	origMouse := obj.MousePos()
 	if !origMouse || !prem.__checkCoords(origMouse) {
 		KeyWait(currKeys[1])
