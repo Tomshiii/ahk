@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/04/21
- * @version 2.4.2
+ * @date 2026/04/22
+ * @version 2.4.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1417,7 +1417,7 @@ class Prem {
             return
         }
 
-        if this.timelineVals = false {
+        if !this.timelineVals {
             this.__setTimelineValues()
             return
         }
@@ -1532,8 +1532,11 @@ class Prem {
 
     /** This function will determine if the timeline is already focused or not. If it isn't, it will focus it. */
 	static __focusTimeline() {
-        check := this.timelineFocusStatus()
-        if check != false
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
+        if this.timelineFocusStatus() = true
             return
         sleep 1
         SendEvent(KSA.timelineWindow)
@@ -1569,7 +1572,8 @@ class Prem {
         if !coordObj := obj.MousePos()
             return
         ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
-        if !this.__setTimelineValues() {
+        if !this.timelineVals {
+            this.__setTimelineValues()
             return
         }
 
@@ -1605,10 +1609,8 @@ class Prem {
                 return
             }
 
-            status := this.timelineFocusStatus()
-            if status != true {
-                this.__focusTimeline()
-            }
+            if !this.timelineFocusStatus()
+                return
 
             __finish()
 
@@ -1632,6 +1634,10 @@ class Prem {
      * @returns {Trilean} true/false/-1. `-1` indicates that the timeline coordinates could not be determined.
      */
     static timelineFocusStatus() {
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return -1
+        }
         if !this.__setTimelineValues()
             return -1
         origcoord := A_CoordModePixel, returnCoord() => A_CoordModePixel := origcoord
@@ -1856,8 +1862,12 @@ class Prem {
      * @param {Integer} timout how many `seconds` you want to wait before this function times out
      */
     static __waitForTimeline(timeout := 5) {
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
         loop timeout {
-            if this.timelineFocusStatus() != true {
+            if !this.timelineFocusStatus() {
                 this.__focusTimeline()
                 sleep 1000
                 continue
@@ -2049,6 +2059,10 @@ class Prem {
     static delayPlayback(delayMS?) {
         this.defaultDelay := IsSet(delayMS) ? delayMS : this.defaultDelay
         delayMS := IsSet(delayMS) ? delayMS : this.defaultDelay
+        if !this.__checkTimelineValues() {
+            this.getTimeline(false)
+            return
+        }
         if !this.timelineFocusStatus()
             return
         __sendSpace() => (SendEvent(ksa.playStop))
@@ -2067,6 +2081,10 @@ class Prem {
      */
     static rippleTrim(pauseFirst := true, delay := 50) {
         Critical()
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
         ;// ensure the user isn't typing
         if CaretGetPos(&x, &y) || !this.timelineFocusStatus() {
             SendInput(A_ThisHotkey)
@@ -2495,6 +2513,10 @@ class Prem {
             if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
                 SetCapsLockState('AlwaysOff')
         }
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
         SetDefaultMouseSpeed(0)
         SetStoreCapsLockMode(true)
         InstallKeybdHook(true, true)
@@ -2616,6 +2638,11 @@ class Prem {
         getTitle := WinGet.PremName()
         if WinGet.Title() != getTitle.winTitle
             return
+
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
 
         keys.allWait(2)
         block.On()

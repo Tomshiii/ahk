@@ -109,6 +109,10 @@ Enter:: ;// close windows by double tapping enter
 			return
 		case (WinGet.Title() == "Save Project"): return
 		default:
+			if prem.timelineVals = false {
+				prem.__setTimelineValues()
+				return
+			}
 			;// if I'm typing and I hit enter I want typing to be finished
 			;// ie. the text box is deselected and the text tool is swapped back to the selection tool
 			currTimelineStatus := prem.timelineFocusStatus()
@@ -186,7 +190,7 @@ NumpadDot & NumpadSub::BackSpace
 
 Escape::prem.escFxMenu()
 
-SC03A & v::prem.selectionTool()
+SC03A & v::prem.selectTool("selectionTool")
 
 ^!x::prem.rippleCut()
 
@@ -252,7 +256,11 @@ NumpadAdd::prem.numpadGain()
 
 $+c:: ;// stop playback before ripple deleting as it can go funky in laggy comps
 {
-	if prem.timelineFocusStatus() != true || CaretGetPos(&carx, &cary) {
+	if prem.timelineVals = false {
+		prem.__setTimelineValues()
+		return
+	}
+	if !prem.timelineFocusStatus() || CaretGetPos(&carx, &cary) {
 		SendInput("+c")
 		return
 	}
@@ -269,7 +277,11 @@ $+3::prem.zoomPreviewWindow("+3", true)
 ^!f::prem.flattenAndColour(ksa.labelIris)
 $+d:: ;// deselect edit points after adding transitions
 {
-	if prem.timelineFocusStatus() != true || CaretGetPos(&carx, &cary) {
+	if prem.timelineVals = false {
+		prem.__setTimelineValues()
+		return
+	}
+	if !prem.timelineFocusStatus() || CaretGetPos(&carx, &cary) {
 		SendInput("+d")
 		return
 	}
@@ -464,6 +476,10 @@ __f14InitialChecks(Key, &kwait) {
 	}
 
 	;// checks to see whether the timeline position has been located
+	if prem.timelineVals = false {
+		prem.__setTimelineValues()
+		return
+	}
 	ckValues := prem.__setTimelineValues()
 	ckFocus  := prem.timelineFocusStatus()
 	if !ckValues || (ckFocus != true) {

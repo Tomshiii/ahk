@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.2
  * @author tomshi, taranVH
- * @date 2026/04/21
- * @version 2.4.17
+ * @date 2026/04/22
+ * @version 2.4.18
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -357,10 +357,11 @@ class rbuttonPrem {
 		this.__HotkeySet([this.playbackKeys.play, this.playbackKeys.speed])
 
 		;// checks to see whether the timeline position has been located
-		if !prem.__setTimelineValues() {
+		if !prem.timelineVals {
 			SendInput(this.sendHotkey)
-			this.__exit()
-		}
+            prem.__setTimelineValues()
+            this.__exit()
+        }
 
 		;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
 		;// only continues if the cursor is within the timeline

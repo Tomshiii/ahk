@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/04/20
- * @version 1.1.10
+ * @date 2026/04/22
+ * @version 1.1.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -89,6 +89,7 @@ class CLSID_Objs {
                         return ComObjActive(((inClass = true) ? CLSID_Objs[clsid] : clsid))
                     } finally {
                         if Notify.Exist("mutexLock_" clsid)
+                            try Notify.Destroy("mutexLock_" clsid)
                         mtx.Release()
                     }
                 case WAIT_TIMEOUT:
@@ -97,9 +98,11 @@ class CLSID_Objs {
                     sleep 500
                     return false
                 case WAIT_FAILED:
-                    ; throw OSError()
-                    ExitApp()
+                    throw OSError()
+                    ; ExitApp()
             }
+        } catch as e {
+            throw e
         } finally {
             mtx.Close()
         }
