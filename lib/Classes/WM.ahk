@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2026/04/21
- * @version 1.3.7
+ * @date 2026/04/22
+ * @version 1.3.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -147,6 +147,7 @@ class WM {
                 callback := paramSplit[6]
                 options := paramSplit[7]
                 duration := RegExMatch(options, "dur=(\d+)", &match) ? match[1] : "8"
+                duration := (duration=0) ? "1" : duration
                 if !Notify.Exist(tag) && !this.storeNotify.Has(tag) {
                     this.storeNotify.Set(tag, true)
                     SetTimer(() => Notify.Show(title, msgg, image, sound, callback, options " tag=" tag), -1)

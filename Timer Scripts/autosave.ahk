@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/04/20
- * @version 2.2.18
+ * @date 2026/04/22
+ * @version 2.2.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -277,7 +277,9 @@ class adobeAutoSave extends count {
                 || this.__checkRClick() {
                 if A_Index > 1 && this.beep = true
                     this.__playBeep()
-                notifyExt.showIfNotExist("autosavepremDelay", A_ScriptName, "Script tried to save but the user interacted with the keyboard/mouse in the last 0.5s.`nPlease wait for the next save attempt:", 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 hide=Fade@250 maxW=400')
+                ;// do this manually, otherwise the `notify.show()` down below will come out first
+                if !Notify.Exist("autosavepremDelay")
+                    Notify.Show(A_ScriptName, "Script tried to save but the user interacted with the keyboard/mouse in the last 0.5s.`nPlease wait for the next save attempt:", 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 hide=Fade@250 maxW=400 tag=autosavepremDelay')
 
                 __waitAndCheckAttempt() {
                     loop 50 {
@@ -409,33 +411,6 @@ class adobeAutoSave extends count {
         return true
     }
 
-    /**
-     * This function is fallback code for if `My Scripts.ahk` isn't currently open and autosave can't ask it for timeline coords
-     * @param {Boolean} needFocus pass into the function whether it needs to initially check for timeline focus. This is usually done by checking the original active panel against the user's saved UIA timeline value. If they match, pass `false` into this function
-     */
-    __fallback(needFocus := true) {
-        if !prem.__setTimelineValues()
-            return
-        sleep 100
-        if needFocus = true {
-            prem.__focusTimeline()
-            sleep 250
-        }
-        SendEvent(KSA.playStop)
-        sleep 2000
-        loop 3 {
-            ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
-            if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
-                prem.__focusTimeline()
-                sleep 1500
-                SendEvent(KSA.playStop)
-                continue
-            }
-            return
-        }
-        prem.__focusTimeline()
-    }
-
     /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
     __reactivateWindow() {
         try {
@@ -463,19 +438,6 @@ class adobeAutoSave extends count {
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
 
-                    try this.premUIA.UIA_Objs["timeline"].SetFocus()
-                    catch {
-                        try {
-                            fallbackFocus := (this.origPanelFocus = this.premUIA.UIA_Path["timeline"]) ? false : true
-                            if !prem.__checkTimelineValues() {
-                                if fallbackFocus = true && !prem.__waitForTimeline() {
-                                    this.__fallback(fallbackFocus)
-                                    return
-                                }
-                            }
-                            this.__fallback(fallbackFocus)
-                        }
-                    }
                     sleep 100
                     SendEvent(KSA.playStop)
                     sleep 1000
