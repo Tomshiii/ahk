@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/04/22
- * @version 2.4.3
+ * @version 2.4.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1749,7 +1749,6 @@ class Prem {
             premUIA.beenSet := false
             premUIA.UIA_Objs := Map()
             premUIA.UIA_Path := Map()
-            premUIA.AdobeEl  := {}
             premUIA := ""
 
             premObj := CLSID_Objs.load("prem")
@@ -1848,12 +1847,15 @@ class Prem {
     static __checkTimelineValues() {
         try premObj := CLSID_Objs.load("prem")
         catch {
-            premObj := {}
+            premObj := ""
             premObj.timelineVals := false
         }
         if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
-            (this.timelineVals = false || premObj.timelineVals = false)
+            (this.timelineVals = false || premObj.timelineVals = false) {
+            premObj := ""
             return false
+        }
+        premObj := ""
         return true
     }
 

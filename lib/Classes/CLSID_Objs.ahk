@@ -2,7 +2,7 @@
  * @description
  * @author tomshi
  * @date 2026/04/22
- * @version 1.1.11
+ * @version 1.1.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -91,6 +91,7 @@ class CLSID_Objs {
                         if Notify.Exist("mutexLock_" clsid)
                             try Notify.Destroy("mutexLock_" clsid)
                         mtx.Release()
+                        notifyExt.destroyDupes("mutexLock_" clsid)
                     }
                 case WAIT_TIMEOUT:
                     notifyExt.showIfNotExist("mutexLock_" clsid,, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
