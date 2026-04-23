@@ -95,6 +95,11 @@ Space:: ;// make space more useful by closing certain windows
 				return
 			}
 	}
+	timelineStatus := prem.timelineFocusStatus()
+	if !timelineStatus || CaretGetPos(&x, &y) {
+		SendInput("{Space}")
+		return
+	}
 	prem.delayPlayback()
 }
 
