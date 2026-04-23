@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/04/23
- * @version 3.0.5
+ * @version 3.0.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -75,7 +75,7 @@ class premUIA_Values {
             premExe := 'C:\Program Files\Adobe\Adobe Premiere Pro ' this.UserSettings.prem_year '\Adobe Premiere Pro.exe'
             img := FileExist(premExe) ? premExe : 'C:\Windows\System32\imageres.dll|icon80'
             /* Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning') */
-            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere & other AHK scripts may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
+            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere && other AHK scripts may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }
 
         try premName := WinGet.PremName()
@@ -189,8 +189,9 @@ class premUIA_Values {
         Critical('On')
         uiaObj := CLSID_Objs.clone("premUIA_Values")
         if winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",,,, true) && uiaObj.isRunning = true {
-            if !notify.Exist("determiningUIA")
-                try Notify.Show(, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=determiningUIA")
+            ;// would need to decouple notify from Core Func and move somewhere else
+            ; if !notify.Exist("determiningUIA")
+                ; try Notify.Show(, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=determiningUIA")
             ; notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
             Critical('Off')
             return false
