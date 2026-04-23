@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/04/22
- * @version 2.4.4
+ * @date 2026/04/23
+ * @version 2.4.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -87,14 +87,14 @@ class Prem {
 
         if A_ScriptName = "Core Functionality.ahk" {
             if (this.useSwapSequences = true || this.useSwapSequences = "true")
-                SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
+                SetTimer(this.__setCurrSeq.Bind(this), this.prevSeqDelay)
 
             ;// check for premremote and NPM before setting timer
             extensionsPath := A_AppData "\Adobe\CEP\extensions"
             remotePath     := extensionsPath "\PremiereRemote"
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
             if DirExist(remotePath) && (getNPM != false && getNPM != "")
-                SetTimer(prem.checkRemote.Bind(this), 2000)
+                SetTimer(this.checkRemote.Bind(this), 2000)
 
             if !WinEvent.IsRegistered("Close", this.exeTitle)
                 WinEvent.Close((*) => this.__resetUIAobj(), this.exeTitle)
@@ -235,7 +235,6 @@ class Prem {
     static setUI() {
         switch  {
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.UI := "Spectrum"
-            case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0: this.UI := "preSpectrum"
             default: this.UI := this.defaultUI
         }
     }
@@ -314,11 +313,6 @@ class Prem {
                     this.theme := this.defaultTheme
                     this.__setTimelineCol("Spectrum", this.theme) ;// defaults to this.defaultTheme
                 }
-			case "preSpectrum":
-                sleep 50
-                notifyExt.showIfNotExist('preSpectrum',, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
-                this.theme := this.defaultTheme
-                this.__setTimelineCol("preSpectrum", this.theme)
         }
 
         ;// other values
@@ -332,9 +326,6 @@ class Prem {
                 this.editTabX := 154, this.editTabY := 35
                 ;// keyframes
                 this.keyframeGrey := 0xb0b0b0, this.keyframeBlue := 0x4096f3
-			case "preSpectrum":
-                ;// set timeline and playhead colours
-                this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
     }
 
@@ -953,8 +944,6 @@ class Prem {
         motionPos := {x: effCtrlNN.location.x+57, y: effCtrlNN.location.y+62}
         switch this.UI {
             case "Spectrum": effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
-            ;// old ui
-			case "preSpectrum": effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
         }
         startPos := {x: motionPos.x+15, y: motionPos.y+this.effCtrlSegment}
         for i, v in effCtrlArr {
@@ -995,8 +984,6 @@ class Prem {
                 ;// check version - pre Spectrum UI will need to start imagesearch higher
                 ;// spectrum ui
                 case "Spectrum": startSegment := this.effCtrlSegment*.25, endSegment := this.effCtrlSegment*.75
-                ;// old ui
-			    case "preSpectrum": startSegment := this.effCtrlSegment*.55, endSegment := this.effCtrlSegment*.55
             }
             ;// searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
             if !ImageSearch(&x2, &y2, startPos.x, startPos.y - startSegment, startPos.x + 1500, startPos.y + endSegment, "*2 " ptf.Premiere "reset.png") {
@@ -1671,7 +1658,7 @@ class Prem {
         coord.s()
 
         ;// this block is called if the function originates from a script that isn't `Core Functionality.ahk`
-        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+        if A_ScriptName != "Core Functionality.ahk" {
             try {
                 activeObj := CLSID_Objs.clone("prem")
                 if activeObj.__checkTimelineValues() {
@@ -1707,7 +1694,7 @@ class Prem {
         }
 
         Critical()
-        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+        if A_ScriptName != "Core Functionality.ahk" {
             try {
                 ;// we're setting the Core Functionality object (and this object) with the timeline coords - this will allow other scripts to retrieve them without needing to set them again
                 activeObj := CLSID_Objs.load("prem")
@@ -3113,9 +3100,8 @@ class Prem {
 
     /**
 	 * Set internal colour variables based on the version of Premiere Pro the user currently has set within `settingsGUI()`
-	 * @param {String} UI which UI version should be used. Currently accepts `Spectrum` & `preSpectrum`
+	 * @param {String} UI which UI version should be used. Currently accepts `Spectrum`
      * @param {String} theme which theme the user wishes to use. Currently accepts `darkest`
-     * @returns {Map/Mip/Array}
 	 */
 	static __setTimelineCol(UI, theme) {
         timelineCol := Mip()
@@ -3154,7 +3140,6 @@ class Prem {
                         this.transitionHandleInsideSquare := 0x6D6D6D
                         this.transitionHandleHalfSquare := 0x000000
                 }
-            ;// may change over time
         }
 	}
 

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/04/21
- * @version 1.4.1
+ * @date 2026/04/23
+ * @version 1.4.2
  ***********************************************************************/
 
 class UserPref {
@@ -39,6 +39,7 @@ class UserPref {
         "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
         "Use_Thio_MButton", "false", "Use_MButton", "true",
         "Use_swapSequences", "true",
+        "Set_UIA_on_load", "true",
 
         ;// [Adjust]
         "adobe_GB", 45, "adobe_FS", 2,
@@ -235,8 +236,7 @@ class UserPref {
                     checklist wait={}
                     disc disable autoreply={}
                     adobeExeOverride={}
-                    Always Check UIA={}
-                    Set UIA Limit Daily={}
+                    Set UIA on load={}
                     Use Thio MButton={}
                     Use MButton={}
                     Use swapSequences={}

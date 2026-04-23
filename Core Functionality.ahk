@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/04/20
- * @version 1.0.6
+ * @date 2026/04/23
+ * @version 1.0.7
  ***********************************************************************/
 
 #SingleInstance Force
@@ -45,6 +45,16 @@ for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }
 Loading.isLoading := false
+
+if UserSettings.Set_UIA_on_load = true
+    SetTimer((*) => (__tryFunc(prem.__setTimelineValues()), __tryFunc(prem.getTimeline(false))), -3000)
+__tryFunc(tryFunc*) {
+    for v in tryFunc {
+        if Type(v) = "Func"
+            try v
+    }
+}
+
 
 OnExit(revoke.Bind(allRegister))
 revoke(allRegister, *) {

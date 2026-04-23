@@ -41,5 +41,9 @@ try {
     }
 }
 
-prem.__setTimelineValues()
-ExitApp()
+if WinExist(prem.winTitle) {
+    prem.__setTimelineValues()
+    prem.getTimeline(false)
+}
+notifyExt.deleteIfExist("determiningUIA")
+SetTimer((*) => (notifyExt.deleteIfExist("determiningUIA"), ExitApp()), -500)

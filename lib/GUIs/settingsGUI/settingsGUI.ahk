@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/04/20
- * @version 2.4.10
+ * @date 2026/04/23
+ * @version 2.4.11
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -332,6 +332,10 @@ settingsGUI()
     ;// checklist tooltip
     settingsGUI.AddCheckbox("vchecklistTooltip Checked" UserSettings.checklist_tooltip " Y+5", setJSON.checklistTooltip.title).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
     settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
+
+    ;// set UIA on load
+    settingsGUI.AddCheckbox("vUIAonLoad Checked" UserSettings.Set_UIA_on_load " Y+5", setJSON.UIAonLoad.title).OnEvent("Click", toggle.Bind("Set_UIA_on_load", "", ""))
+    settingsGUI["UIAonLoad"].ToolTip := (UserSettings.Set_UIA_on_load = true) ? setJSON.UIAonLoad.tooltip.true : setJSON.UIAonLoad.tooltip.false
 
     /**
      * This function handles logic for checkboxes that need to pop up a msgbox to alert the user that they need to reload `checklist.ahk`
