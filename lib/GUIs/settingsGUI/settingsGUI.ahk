@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/04/23
- * @version 2.4.11
+ * @date 2026/04/24
+ * @version 2.4.12
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -591,6 +591,7 @@ settingsGUI()
                 shortcutName := "Adobe Premiere Pro.exe"
                 shortcutNameBeta := editors.__determinePremName() " (Beta).exe"
                 adobeFullName := editors.__determinePremName()
+                shortcutName := "Adobe Premiere Pro"
                 title := program " Settings"
                 yearIniName := "prem_year"
                 iniInitYear := UserSettings.prem_year
@@ -606,6 +607,7 @@ settingsGUI()
                 shortcutName := "AfterFX.exe"
                 shortcutNameBeta := "AfterFX (Beta).exe"
                 adobeFullName := "Adobe After Effects"
+                shortcutName := "Adobe After Effects"
                 title := "After Effects Settings"
                 yearIniName := "ae_year"
                 iniInitYear := UserSettings.ae_year
@@ -615,21 +617,6 @@ settingsGUI()
                 otherTitle := "Premiere Settings"
                 static imageLoc := ptf.aeSETver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\Support Files\" shortcutName
-            case "Photoshop":
-                short := "ps"
-                static psIsBeta := unset
-                shortcutName := "Photoshop.exe"
-                shortcutNameBeta := "ahk_exe Photoshop.exe (Beta).exe"
-                adobeFullName := "Adobe Photoshop"
-                title := program " Settings"
-                yearIniName := "ps_year"
-                iniInitYear := UserSettings.ps_year
-                verIniName := "psVer"
-                initVer := UserSettings.psVer
-                genProg := program
-                otherTitle := "Photoshop Settings"
-                static imageLoc := ptf.psSETver
-                path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\" shortcutName
         }
         if WinExist(title) {
             WinActivate(title)
@@ -730,7 +717,7 @@ settingsGUI()
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
         }
 
-        __generateShortcut() => generateAdobeShortcut(UserSettings, adobeFullName, year.text)
+        __generateShortcut() => generateAdobeShortcut(UserSettings, shortcutName, year.text)
 
         /**
          * This function generates the year dropdown selector

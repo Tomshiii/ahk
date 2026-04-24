@@ -6,6 +6,7 @@ You may notice that gathering UIA information is no longer (practically) instant
 
 ## Functions
 - ✅ Fixed `winget.PremName()` failing to determine `beta` titles correctly
+- ✅ Fixed `settingsGUI()` not generating the proper `Premiere` shortcut when the `beta` checkbox is deselected
 
 ### 📝 `prem {`
 - ❗ Support for `v26.2`
