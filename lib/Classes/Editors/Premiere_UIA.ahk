@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/04/23
- * @version 3.0.6
+ * @date 2026/04/24
+ * @version 3.0.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -75,7 +75,7 @@ class premUIA_Values {
             premExe := 'C:\Program Files\Adobe\Adobe Premiere Pro ' this.UserSettings.prem_year '\Adobe Premiere Pro.exe'
             img := FileExist(premExe) ? premExe : 'C:\Windows\System32\imageres.dll|icon80'
             /* Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning') */
-            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere && other AHK scripts may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
+            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }
 
         try premName := WinGet.PremName()
@@ -105,18 +105,43 @@ class premUIA_Values {
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
             throw MethodError("This version of Premiere is not supported.`nThe minimum supported version is: " prem.minVer "`nThe user has: " currentVer)
         }
+        __TryCatchUIAobj(name, objOrPath, errorCode, pathName := "") {
+            try {
+                switch objOrPath {
+                    case "obj":  temp := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:name})
+                    case "path": temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true)
+                    case "premObj": temp := this.AdobeEl.FindCachedElement({Type:"Pane", Type:"TabItem", LocalizedType:"pane", LocalizedType:"tab item", Name:name})
+                    case "projObj": temp := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:name, matchmode:"Substring"})
+                }
+                return temp
+            } catch {
+                throw UnsetError("throw code:" errorCode,, errorCode)
+            }
+        }
         try {
             premCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "Type", "Name", "Value", "ClassName", "AutomationId", "BoundingRectangle"],, "Descendants") ;// all necessary for `GetUIAPath()`
-            this.AdobeEl     := UIA.ElementFromHandle(prem.winTitle, premCacheRequest, false)
-            this.UIA_Objs["timeline"]       := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Timeline"}), this.UIA_Path["timeline"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["timeline"], true)
-            this.UIA_Objs["effectControls"] := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Effect Controls"}), this.UIA_Path["effectControls"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["effectControls"], true)
-            this.UIA_Objs["effectsPanel"]   := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Effects"}), this.UIA_Path["effectsPanel"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["effectsPanel"], true)
-            this.UIA_Objs["programMon"]     := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Program Monitor"}), this.UIA_Path["programMon"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["programMon"], true)
-            this.UIA_Objs["sourceMon"]      := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Source Monitor"}), this.UIA_Path["sourceMon"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["sourceMon"], true)
-            this.UIA_Objs["tools"]          := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Tools"}), this.UIA_Path["tools"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["tools"], true)
-            this.UIA_Objs["project"]        := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"Project:", matchmode:"Substring"}), this.UIA_Path["project"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["project"], true)
+            try {
+                this.AdobeEl := UIA.ElementFromHandle(prem.winTitle, premCacheRequest, false)
+            } catch {
+                throw UnsetError("throw code:701")
+            }
 
-            this.UIA_Objs["premRemote"]     := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:"PremiereRemote"}), this.UIA_Path["premRemote"] := this.AdobeEl.GetUIAPath(this.UIA_Objs["premRemote"], true)
+            this.UIA_Objs["timeline"]       := __TryCatchUIAobj("Timeline", "obj", "702")
+            this.UIA_Path["timeline"]       := __TryCatchUIAobj("Timeline", "path", "702", "timeline")
+            this.UIA_Objs["effectControls"] := __TryCatchUIAobj("Effect Controls", "obj", "703")
+            this.UIA_Path["effectControls"] := __TryCatchUIAobj("Effect Controls", "path", "703", "effectControls")
+            this.UIA_Objs["effectsPanel"]   := __TryCatchUIAobj("Effects", "obj", "704")
+            this.UIA_Path["effectsPanel"]   := __TryCatchUIAobj("Effects", "path", "704", "effectsPanel")
+            this.UIA_Objs["programMon"]     := __TryCatchUIAobj("Program Monitor", "obj", "705")
+            this.UIA_Path["programMon"]     := __TryCatchUIAobj("Program Monitor", "path", "705", "programMon")
+            this.UIA_Objs["sourceMon"]      := __TryCatchUIAobj("Source Monitor", "obj", "706")
+            this.UIA_Path["sourceMon"]      := __TryCatchUIAobj("Source Monitor", "path", "706", "sourceMon")
+            this.UIA_Objs["tools"]          := __TryCatchUIAobj("Tools", "obj", "707")
+            this.UIA_Path["tools"]          := __TryCatchUIAobj("Tools", "path", "707", "tools")
+            this.UIA_Objs["project"]        := __TryCatchUIAobj("Project:", "projObj", "708")
+            this.UIA_Path["project"]        := __TryCatchUIAobj("Project:", "path", "708", "project")
+            this.UIA_Objs["premRemote"]     := __TryCatchUIAobj("PremiereRemote", "premObj", "709")
+            this.UIA_Path["premRemote"]     := __TryCatchUIAobj("PremiereRemote", "path", "709", "premRemote")
 
             ;// Tools
             tools := Map(
@@ -139,8 +164,11 @@ class premUIA_Values {
                                 continue
                             }
                             this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
+                            errorLog(UnsetError("Failed to find tool: " k))
                         }
-                    default: this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v, matchmode:"Substring"}), this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
+                    default:
+                        this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v, matchmode:"Substring"}), this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
+                        errorLog(UnsetError("Failed to find tool: " k))
                 }
             }
         } catch as e {
@@ -162,7 +190,7 @@ class premUIA_Values {
                 this.beenSet := false
                 this.isRunning := false
             }
-            throw Error("Setting UIA objs failed")
+            throw ValueError(e.Message,, e.Extra)
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
@@ -189,10 +217,7 @@ class premUIA_Values {
         Critical('On')
         uiaObj := CLSID_Objs.clone("premUIA_Values")
         if winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",,,, true) && uiaObj.isRunning = true {
-            ;// would need to decouple notify from Core Func and move somewhere else
-            ; if !notify.Exist("determiningUIA")
-                ; try Notify.Show(, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=determiningUIA")
-            ; notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+            notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
             Critical('Off')
             return false
         }

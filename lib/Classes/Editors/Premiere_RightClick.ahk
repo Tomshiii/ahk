@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.2
  * @author tomshi, taranVH
- * @date 2026/04/22
- * @version 2.4.19
+ * @date 2026/04/24
+ * @version 2.4.20
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -359,8 +359,7 @@ class rbuttonPrem {
 		;// checks to see whether the timeline position has been located
 		if !prem.__checkTimelineValues() {
 			; SendInput(this.sendHotkey)
-			prem.__setTimelineValues()
-			this.__exit()
+			(!this.premObj.timelineVals) ? (prem.__setTimelineValues(), this.__exit()) : prem.__setTimelineValues()
 		}
 
 		;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
