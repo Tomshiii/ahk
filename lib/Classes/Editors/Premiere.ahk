@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/04/23
- * @version 2.4.5
+ * @date 2026/04/24
+ * @version 2.4.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1644,17 +1644,6 @@ class Prem {
      * @returns {Boolean} `true/false`
      */
     static getTimeline(tools := true) {
-        try {
-            if WinGetClass("A") = "DroverLord - Window Class" ;// if you're focused on a window that isn't the main premiere window, controlgetclassnn will retrieve different values
-                switchTo.Premiere() ;// so we have to bring focus back to the main window first
-        } catch {
-            errorLog(UnsetError("Unable to determine the active window", -1),, 1)
-            return false
-        }
-        ;// because we're using UIA we shouldn't need to focus the timeline to grab information about it
-        ; SendInput(KSA.timelineWindow)
-        ; SendInput(KSA.timelineWindow)
-        sleep 75
         coord.s()
 
         ;// this block is called if the function originates from a script that isn't `Core Functionality.ahk`
@@ -1732,14 +1721,17 @@ class Prem {
         if WinExist(this.exeTitle)
             return
         try {
-            premUIA := CLSID_Objs.load("premUIA_Values")
-            premUIA.beenSet := false
-            premUIA.UIA_Objs := Map()
-            premUIA.UIA_Path := Map()
+            premUIA := CLSID_Objs.load("determineUIA")
+            premUIA.beenSet   := false
+            premUIA.isRunning := false
+            premUIA.UIA_Objs  := Map()
+            premUIA.UIA_Path  := Map()
+            premUIA.AdobeEl   := false
             premUIA := ""
 
             premObj := CLSID_Objs.load("prem")
             premObj.__resetTimelineVals()
+            premObj.RClickIsActive := false
         }
     }
 
@@ -3584,26 +3576,11 @@ class Prem {
         this.save()
     }
 
-    static resetCoreFuncVals() {
-        try WinEvent.Stop()
-        try {
-            premVals := CLSID_Objs.load("premUIA_Values")
-            premVals.beenSet := false
-            premVals.UIA_Objs := Map()
-            premVals.UIA_Path := Map()
-            premVals.AdobeEl  := {}
-            premVals := ""
-
-            premObj := CLSID_Objs.load("prem")
-            premObj.__resetTimelineVals()
-            premObj.RClickIsActive := false
-        }
-    }
-
     __Delete() {
 		try {
-            WinEvent.Stop("Active", prem.exeTitle " Clip Fx Editor")
-            WinEvent.Stop("Close", prem.exeTitle " Clip Fx Editor")
+            WinEvent.Stop("Active", this.exeTitle " Clip Fx Editor")
+            WinEvent.Stop("Close",  this.exeTitle " Clip Fx Editor")
+            WinEvent.Stop("Close",  this.exeTitle)
         }
 	}
 

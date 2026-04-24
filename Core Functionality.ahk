@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/04/23
- * @version 1.0.7
+ * @date 2026/04/24
+ * @version 1.0.8
  ***********************************************************************/
 
 #SingleInstance Force
@@ -37,10 +37,9 @@ TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 
 UserSettings := UserPref()
 premiere := prem
-premUIA := premUIA_Values
 Loading := {isLoading: true}
 
-allRegister := [{obj:premiere, name: "prem"}, {obj: UserSettings, name: "UserSettings"}, {obj: premUIA, name: "premUIA_Values"}, {obj: Loading, name: "Loading"}]
+allRegister := [{obj:premiere, name: "prem"}, {obj: UserSettings, name: "UserSettings"}, {obj: Loading, name: "Loading"}]
 for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }

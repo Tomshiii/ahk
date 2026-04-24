@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/04/24
- * @version 3.0.8
+ * @version 3.0.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -35,6 +35,7 @@ class premUIA_Values {
     static UIA_Objs := Map()
     static UIA_Path := Map()
     static AdobeEl  := false
+    static determineUIA_PID := false
 
     static UserSettings := ""
 
@@ -75,7 +76,7 @@ class premUIA_Values {
             premExe := 'C:\Program Files\Adobe\Adobe Premiere Pro ' this.UserSettings.prem_year '\Adobe Premiere Pro.exe'
             img := FileExist(premExe) ? premExe : 'C:\Windows\System32\imageres.dll|icon80'
             /* Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning') */
-            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere && other AHK scripts may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
+            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }
 
         try premName := WinGet.PremName()
@@ -175,35 +176,12 @@ class premUIA_Values {
             try errorLog(Error(e.Message, e.What, e.Extra))
             notifyExt.deleteIfExist("premUIAGenTree")
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
-            if A_ScriptName != "Core Functionality.ahk" {
-                uiaObj := CLSID_Objs.load("premUIA_Values")
-                uiaObj.AdobeEl   := {}
-                uiaObj.UIA_Objs  := Map()
-                uiaObj.UIA_Path  := Map()
-                uiaObj.beenSet   := false
-                uiaObj.isRunning := false
-                uiaObj := ""
-            } else {
-                this.AdobeEl   := {}
-                this.UIA_Objs  := Map()
-                this.UIA_Path  := Map()
-                this.beenSet := false
-                this.isRunning := false
-            }
-            throw ValueError(e.Message,, e.Extra)
-        }
-
-        if A_ScriptName != "Core Functionality.ahk" {
-            uiaObj := CLSID_Objs.load("premUIA_Values")
-            uiaObj.AdobeEl          := this.AdobeEl
-            uiaObj.UIA_Objs         := this.UIA_Objs
-            uiaObj.UIA_Path         := this.UIA_Path
-            uiaObj.beenSet          := true
-            uiaObj.isRunning        := false
-            uiaObj := ""
-        } else {
-            this.beenSet := true
+            this.AdobeEl   := false
+            this.UIA_Objs  := Map()
+            this.UIA_Path  := Map()
+            this.beenSet := false
             this.isRunning := false
+            throw ValueError(e.Message,, e.Extra)
         }
 
         notifyExt.deleteIfExist("premUIAGenTree")
@@ -213,32 +191,39 @@ class premUIA_Values {
         return true
     }
 
+    static determineUIA_Exist() {
+        try {
+            ComObjActive(CLSID_Objs["determineUIA"])
+            return true
+        } catch {
+            return false
+        }
+    }
+
     static initialise() {
         Critical('On')
-        uiaObj := CLSID_Objs.clone("premUIA_Values")
-        if winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe",,,, true) && uiaObj.isRunning = true {
-            ;// would need to decouple notify from Core Func and move somewhere else
-            ; if !notify.Exist("determiningUIA")
-                ; try Notify.Show(, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=determiningUIA")
-            ; notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+        scriptLoc := ptf.SupportFiles "\determineUIA.ahk"
+        determineUIAExist := this.determineUIA_Exist()
+
+        if !determineUIAExist {
+            Run(scriptLoc)
             Critical('Off')
             return false
         }
-        if uiaObj.beenSet = true && uiaObj.isRunning = false && isObjHasProp(uiaObj, "AdobeEl", false) {
-            return uiaObj
+
+        uiaObj := CLSID_Objs.load("determineUIA")
+        switch {
+            case uiaObj.isRunning:
+                notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+                Critical('Off')
+                return false
+            case uiaObj.beenSet:
+                Critical('Off')
+                return uiaObj
+            default:
+                ;// registered but not yet started - shouldn't normally happen
+                Critical('Off')
+                return false
         }
-        switch (A_ScriptName = "Core Functionality.ahk") {
-            case true:
-                this.isRunning := true
-            case false:
-                uiaObj := ""
-                uiaObj := CLSID_Objs.load("premUIA_Values")
-                uiaObj.isRunning := true
-                uiaObj := ""
-        }
-        scriptLoc := ptf.SupportFiles "\determineUIA.ahk"
-        Run(scriptLoc)
-        Critical('Off')
-        return false
     }
 }

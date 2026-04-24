@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/04/22
- * @version 1.1.12
+ * @date 2026/04/24
+ * @version 1.1.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -50,8 +50,8 @@ class CLSID_Objs {
     static __Item := Mip(
         "prem",            "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}",
         "UserSettings",    "{AC89B835-1CD6-4CC3-AFCC-56360FD5116F}",
-        "premUIA_Values",  "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}",
-        "Loading",         "{DFEF77D2-D0BE-4F54-BAF8-D0B456F6D959}"
+        "determineUIA",    "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}",
+        "Loading",         "{DFEF77D2-D0BE-4F54-BAF8-D0B456F6D959}",
     )
 
     /** a quick and dirty function to wait for `Core Functionality.ahk` to finish loading */

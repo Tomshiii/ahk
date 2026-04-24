@@ -94,9 +94,5 @@ SetTimer(destroyAlert, -3000)
 destroyAlert(*) {
     if Notify.Exist("reloadAllAlert")
         try Notify.Destroy("reloadAllAlert")
-    if WinExist(prem.winTitle) {
-        try prem.__setTimelineValues(false)
-        try prem.getTimeline(false)
-    }
     ExitApp()
 }
