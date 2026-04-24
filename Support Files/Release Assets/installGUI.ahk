@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/03/23
- * @version 1.1.4
+ * @date 2026/04/25
+ * @version 1.1.5
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -82,7 +82,10 @@ class installGUI extends Gui {
         progress      := 0
         isDetected    := false
         settingsDir   := A_MyDocuments "\tomshi\"
-        settingsCheck := false
+        libRootDir    := A_AppData "\tomshi\"
+        prevInstall   := this.libRootDir "\installDir"
+        prevInstallLoc := ""
+
         hasAttempted  := false
         names := Map("Backups", 1, "changelog.md", 1, "checklist.ahk", 1, "lib", 1,
                     "LICENSE", 1, "Logs", 1, "My Scripts.ahk", 1, "PC Startup", 1,
@@ -149,11 +152,19 @@ class installGUI extends Gui {
         }
 
         /** this function handles including the files in the .exe as well as extracting them when the user runs the installation process */
-        __installDump() {
+        __installDump(patch := false) {
             __after(name) {
 
             }
             this.__addLogEntry(Format("extracting ``{}``", "yes.value.zip"))
+            if patch = true {
+                if !DirExist(A_Temp "\tomshi\yes.value")
+                    DirCreate(A_Temp "\tomshi\yes.value")
+
+                FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_Temp "\tomshi\yes.value", 1)
+                __after("yes.value.zip")
+                return
+            }
             FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
         }
 
@@ -186,55 +197,72 @@ class installGUI extends Gui {
             return true
         }
 
+        __patchInstall() {
+            ;// add closeAll.ahk
+            try RunWait(this.prevInstallLoc "\Support Files\closeAll.ahk")
+
+            SetWorkingDir(A_Temp "\tomshi\yes.value")
+            this.__addLogEntry("unzipping release contents")
+            if this.__unzip(A_WorkingDir "\yes.value.zip", A_WorkingDir) != true {
+                DirDelete(A_Temp "\tomshi\yes.Value")
+                this.__setProgress(100)
+                this["Progress"].opt("CRed")
+                throw(Error("Unable to Unzip install files. Please try the installation again.", -1))
+            }
+            this.__setProgress(65) ;// hard setting to 65 here
+            ;//! MOVE LIB FILES INTO POSITION
+            ;//! MOVE EVERYTHING ELSE INTO OTHER POSITION
+
+
+            ;//! finished
+            this.__setProgress(100)
+            this["Progress"].opt("CLime")
+
+            ;// run next GUI and destroy this one
+            this.GetPos(&oldX, &oldY, &oldWidth, &oldHeight)
+            try Run(this.InstallDir "\Support Files\Release Assets\installPackagesGUI.ahk",,, &PID)
+            try WinMove(oldX, oldY, oldWidth, oldHeight, "ahk_pid " PID)
+            this.Destroy()
+        }
+
         /** this function handles the entire install sequence of the installer */
         __Install(*) {
-            if DirExist(A_AppData "\tomshi\lib")
-                DirDelete(A_AppData "\tomshi\lib", true)
             if !DirExist(A_AppData "\tomshi")
                 DirCreate(A_AppData "\tomshi")
-            if FileExist(A_Appdata "\tomshi\installDir")
-                FileDelete(A_Appdata "\tomshi\installDir")
+            if FileExist(A_Appdata "\tomshi\version") {
+                readVer := FileRead(A_Appdata "\tomshi\version")
+                compareVers := VerCompare(readVer, "yes.value")
+                switch compareVers {
+                    case 1: ;// installed version is newer
+                        throw PropertyError("Installed version is already newer.")
+                    case 0:
+                        throw PropertyError("This version is already installed.")
+                }
+            }
+            FileAppend("yes.value", A_Appdata "\tomshi\version")
+            try readPrevLoc := FileRead(this.prevInstall)
+            if IsSet(readPrevLoc)
+                this.prevInstallLoc := readPrevLoc
+            installDirExist := (DirExist(readPrevLoc) = true) ? true : false
             FileAppend(this.installDir "\Tomshi AHK", A_Appdata "\tomshi\installDir")
-            amount := 0
             if !this.hasAttempted {
                 this.__addLogEditBox()
             }
             this.hasAttempted := true
-            if FileExist(A_MyDocuments "\tomshi\settings.ini")
-                this.settingsCheck := true
             this.__changeInstallButton(true)
             if !DirExist(this.InstallDir) {
                 this.__addLogEntry("creating install directory")
                 DirCreate(this.InstallDir)
             }
-            loop files this.InstallDir "\*", "FD" {
-                if this.names.Has(A_LoopFileName) && this.settingsCheck = true && amount++ < 5
-                    continue
-                else if amount >= 5 {
-                    if MsgBox("Current install of Tomshi's repo potentially detected. Attempting to install over the current installation may break your install or remove custom changes.`n`nDo you wish to continue?", "Incorrect Install Path", "4 48 4096") = "No" {
-                        this.__changeInstallButton(false)
-                        return
-                    }
-                    this.isDetected := true
-                    break
-                }
-            }
             sleep 300
-            if this.isDetected = true && FileExist(this.settingsDir "\settings.ini") {
-                this.__addLogEntry("backing up previous install")
-                oldVer := IniRead(this.settingsDir "\settings.ini", "Track", "version", A_MM "_" A_DD)
-                if !DirExist(this.settingsDir "\Backups\") {
-                    this.__addLogEntry("creating backup folder")
-                    DirCreate(this.settingsDir "\Backups\")
-                }
-                this.__addLogEntry("backing up: " this.InstallDir)
-                DirCopy(this.InstallDir, this.settingsDir "\Backups\" oldVer)
-                this.__addLogEntry("backup complete: " this.settingsDir "\Backups\" oldVer)
-            }
             this.__setProgress(10)
             if A_IsCompiled = 1
                 this.__installDump()
             this.__setProgress(35) ;// hard setting to 35 here
+            if installDirExist {
+                this.__patchInstall()
+                return
+            }
 
             this.__addLogEntry("unzipping release contents")
             if this.__unzip(A_WorkingDir "\yes.value.zip", this.InstallDir) != true {
@@ -246,29 +274,30 @@ class installGUI extends Gui {
             ;// move lib folder
             this.__addLogEntry("moving lib files")
             DirMove(this.InstallDir "\lib", A_AppData "\tomshi\lib", 2)
-            sleep 250
-            ;// set baseline settings
-            if this.settingsCheck = false && FileExist(this.InstallDir "\Support Files\Release Assets\baseLineSettings.ahk") {
-                this.__addLogEntry("generating default ``settings.ini``")
-                Run(this.InstallDir "\Support Files\Release Assets\baseLineSettings.ahk")
+            dirMoved := false
+            loop 10 {
+                if !DirExist(A_AppData "\tomshi\lib") {
+                    sleep 500
+                    continue
+                }
+                dirMoved := true
+                break
             }
-            this.__deleteInstallFiles()
-            this.__setProgress(80)
-            try Run(this.InstallDir "\Core Functionality.ahk")
-            this.__addLogEntry("running Core Functionality.ahk")
+            if !dirMoved
+                throw TargetError("Failed to move lib folder")
             /** This function cuts repeat code for dealing with some first time settings */
             __runSettingsInstall(filename, catchText, workingDir := "") {
                 try RunWait(filename, workingDir)
                 catch
                     this.__addLogEntry(catchText)
             }
+            this.__addLogEntry("handling settings.ini file")
+            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\baseLineSettings.ahk", "failed to generate updated settings.ini file")
 
-            ;// set correct working dir in settings.ini
-            this.__addLogEntry("generating updated settings.ini file")
-            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallSettings.ahk", "failed to generate updated settings.ini file")
-            ;// do initial startup functions
-            this.__addLogEntry("running initial startup functions for proper settings file")
-            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\doStartup.ahk", "failed to run initial startup functions", this.installDir)
+            this.__deleteInstallFiles()
+            this.__setProgress(80)
+            try Run(this.InstallDir "\Core Functionality.ahk")
+            this.__addLogEntry("running Core Functionality.ahk")
             ;// set current adobe versions in settings.ini
             this.__addLogEntry("setting current adobe versions in settings.ini")
             __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk", "failed to set current adobe versions")
