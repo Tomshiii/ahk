@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/04/24
- * @version 1.0.8
+ * @date 2026/04/25
+ * @version 1.0.10
  ***********************************************************************/
 
 #SingleInstance Force
@@ -19,7 +19,9 @@
 #Include *i Other\WinEvent.ahk
 #Include *i Classes\Editors\Premiere.ahk
 #Include *i Classes\Editors\Premiere_UIA.ahk
+#Include *i Functions\isReload.ahk
 ; }
+try getReload := A_Args.Get(1)
 
 ;// this allows `notifyIfNotExist()` to send its prompts to Core Functionality
 ;// fixes notify GUIs hanging when called from `HotkeylessAHK`
@@ -45,7 +47,8 @@ for v in allRegister {
 }
 Loading.isLoading := false
 
-if UserSettings.Set_UIA_on_load = true
+
+if UserSettings.Set_UIA_on_load = true && (isReload(getReload ?? false) || !premUIA_Values.determineUIA_Exist())
     SetTimer((*) => (__tryFunc(prem.__setTimelineValues()), __tryFunc(prem.getTimeline(false))), -3000)
 __tryFunc(tryFunc*) {
     for v in tryFunc {

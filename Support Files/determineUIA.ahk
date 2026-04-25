@@ -1,22 +1,27 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/04/24
- * @version 1.0.2
+ * @date 2026/04/25
+ * @version 1.0.3
  ***********************************************************************/
-
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\Editors\Premiere_UIA.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\notifyExt.ahk
+#Include Functions\isReload.ahk
 #Include Other\ObjRegisterActive.ahk
+#Include Other\WinEvent.ahk
 #NoTrayIcon
+
+try getReload := A_Args.Get(1)
 Persistent()
+onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
+OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 if !WinExist(prem.exeTitle)
-    return
+    ExitApp()
 
 premUIA := premUIA_Values
 allRegister := [{obj: premUIA, name: "determineUIA"}]
@@ -89,7 +94,9 @@ premUIAobj.beenSet   := true
 premUIAobj := ""
 __deleteUIA()
 SetTimer((*) => (__deleteUIA()), -500)
-if WinExist(prem.winTitle) {
+
+didReload := isReload(getReload ?? false)
+if WinExist(prem.winTitle) && !didReload {
     SetTimer((*) => (prem.__setTimelineValues(), prem.getTimeline(false)), -2500)
 }
 

@@ -24,6 +24,9 @@ list := resetter.__getList()
 listArr := []
 coreFuncObj := unset
 __checkClose(hwnd, title) {
+    if title = "determineUIA.ahk" {
+        WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk")
+    }
     if hwnd {
         ProcessClose(hwnd)
         hwnd := winExt.ExistRegex(title,,,, true)
@@ -38,7 +41,7 @@ which := IsSet(doReset) ? "Resetting" : "Reloading"
 if !Notify.Exist("reloadAllAlert")
     Notify.Show(, which ' all scripts...', 'C:\Windows\System32\shell32.dll|icon239', 'Windows Pop-up Blocked',, 'pos=TL dur=6 bc=0x131E2D bdr=0x00009B iw=24 maxW=400 tag=reloadAllAlert')
     ; notifyExt.showIfNotExist("reloadAllAlert",, which ' all scripts...', 'C:\Windows\System32\shell32.dll|icon239', 'Windows Pop-up Blocked',, 'pos=TL dur=6 bc=0x131E2D bdr=0x00009B iw=24 maxW=400') ;// don't use func here now that Core Functionality.ahk calls the notify gui otherwise it instantly closes
-prem.resetCoreFuncVals()
+prem.__resetUIAobj()
 for v in list {
     itemObj := resetter.__parseInfo(v, incChecklist ?? false)
     if !itemObj
@@ -73,7 +76,7 @@ if coreFunc := winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,
     __checkClose(coreFunc, "Core Functionality.ahk ahk_class AutoHotkey")
 }
 
-Run(coreFuncObj.path)
+Run(coreFuncObj.path A_Space (doReset ?? true))
 
 if !CLSID_Objs.waitCoreFuncs(2) {
     sleep 2000

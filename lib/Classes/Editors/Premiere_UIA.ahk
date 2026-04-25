@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/04/24
- * @version 3.0.9
+ * @date 2026/04/25
+ * @version 3.0.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -196,7 +196,11 @@ class premUIA_Values {
             ComObjActive(CLSID_Objs["determineUIA"])
             return true
         } catch {
-            return false
+            title := "determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+            scriptExist := winExt.TitleRegex(title,,,, true)
+            if !scriptExist
+                return false
+            return true
         }
     }
 
