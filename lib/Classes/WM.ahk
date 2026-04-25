@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2026/04/17
- * @version 1.3.5
+ * @date 2026/04/22
+ * @version 1.3.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,8 @@
 class WM {
 
     static timerScripts := Mip("autosave.ahk", "autosave", "adobe fullscreen check.ahk", "adobeCheck", "premKeyCheck", "keyCheck", "gameCheck.ahk", "gameCheck", "Multi-Instance Close.ahk", "multiRemoteStop")
+
+    static storeNotify := Map()
 
     /**
      * This is a function designed to allow tooltips to appear while hovering over certain GUI elements. Use the example listed below & `GuiCtrl.ToolTip := "desired tooltip"` to make this function work
@@ -144,8 +146,24 @@ class WM {
                 sound := paramSplit[5]
                 callback := paramSplit[6]
                 options := paramSplit[7]
-                if !Notify.Exist(tag) {
+                duration := RegExMatch(options, "dur=(\d+)", &match) ? match[1] : "8"
+                duration := (duration=0) ? "1" : duration
+                if !Notify.Exist(tag) && !this.storeNotify.Has(tag) {
+                    this.storeNotify.Set(tag, true)
                     SetTimer(() => Notify.Show(title, msgg, image, sound, callback, options " tag=" tag), -1)
+                    SetTimer(__checkFinished.Bind(tag), -(duration*1000))
+                    __checkFinished(tag, *) {
+                        static count := 1
+                        notifyExt.destroyDupes(tag)
+                        if !Notify.Exist(tag) || count > 30 {
+                            this.storeNotify.Delete(tag)
+                            SetTimer(, 0)
+                            return
+                        }
+                        count += 1
+                        SetTimer(, -16)
+                        return
+                    }
                     ; WinWait("_" tag,, 1) ;// doing anything here causes audio not to play
                     return
                 }

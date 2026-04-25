@@ -101,6 +101,7 @@
 	this.GetCurrentMainPaneElement() -- fetches MainPaneElement, NavigationBarElement, TabBarElement, URLEditElement 
 		// this might be necessary to implement for speed reasons, and is automatically called by InitiateUIA method
 	this.GetCurrentDocumentElement() -- fetches Document element for the current page // might be necessary to implement
+	this.GetCurrentBackButton()
 	this.GetCurrentReloadButton()
 
 	this.MainPaneElement -- element that doesn't contain page content: this element includes URL bar, navigation buttons, setting buttons etc
@@ -108,6 +109,7 @@
 	this.TabBarElement -- contains only tabs
 	this.URLEditElement -- the URL bar element
 	this.ReloadButton
+	this.BackButton
 */
 
 class UIA_Vivaldi extends UIA_Browser {
@@ -127,7 +129,7 @@ class UIA_Vivaldi extends UIA_Browser {
 			try {
 				this.TabBarElement := TabElement.Parent
 				this.NavigationBarElement := this.TabBarElement.Parent
-				this.ReloadButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
+				this.ReloadButton := "", this.BackButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
 				this.ReloadButton := this.URLEditElement.WalkTree("-3", {Type:"Button"})
 				this.ReloadButtonDescription := this.ReloadButton.LegacyIAccessiblePattern.Description
 				this.ReloadButtonName := this.ReloadButton.Name
@@ -239,7 +241,7 @@ class UIA_Chrome extends UIA_Browser {
 					this.MainPaneElement := this.BrowserElement
 				if !(this.TabBarElement := UIA.CreateTreeWalker(this.TabControlCondition).GetNextSiblingElement(this.NavigationBarElement))
 					this.TabBarElement := this.MainPaneElement
-				this.ReloadButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
+				this.BackButton := "", this.ReloadButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
 				Loop 2 {
 					try {
 						this.ReloadButton := UIA.TreeWalkerTrue.GetNextSiblingElement(UIA.TreeWalkerTrue.GetNextSiblingElement(this.ButtonTreeWalker.GetFirstChildElement(this.NavigationBarElement)))
@@ -296,7 +298,7 @@ class UIA_Edge extends UIA_Browser {
 					this.MainPaneElement := this.BrowserElement
 				if !(this.TabBarElement := UIA.CreateTreeWalker(this.TabControlCondition).GetNextSiblingElement(this.NavigationBarElement))
 					this.TabBarElement := this.MainPaneElement
-				this.ReloadButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
+				this.BackButton := "", this.ReloadButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
 				Loop 2 {
 					try {
 						this.ReloadButton := this.ButtonTreeWalker.GetNextSiblingElement(this.ButtonTreeWalker.GetNextSiblingElement(this.ButtonTreeWalker.GetFirstChildElement(this.NavigationBarElement)))
@@ -341,13 +343,13 @@ class UIA_Mozilla extends UIA_Browser {
 			try {
 				this.TabBarElement := this.ToolbarTreeWalker.GetNextSiblingElement(this.ToolbarTreeWalker.GetFirstChildElement(this.BrowserElement))
 				this.NavigationBarElement := this.ToolbarTreeWalker.GetNextSiblingElement(this.TabBarElement)
-				this.URLEditElement := this.NavigationBarElement.FindFirst(this.EditControlCondition)
 				this.MainPaneElement := UIA.TreeWalkerTrue.GetParentElement(this.NavigationBarElement)
+				this.URLEditElement := this.NavigationBarElement.FindFirst(UIA.CreateOrCondition(this.EditControlCondition, UIA.CreatePropertyCondition(UIA.Property.Type, UIA.Type.ComboBox)))
 				if !this.NavigationBarElement
 					this.NavigationBarElement := this.BrowserElement
 				if !this.MainPaneElement
 					this.MainPaneElement := this.BrowserElement
-				this.ReloadButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
+				this.BackButton := "", this.ReloadButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
 				Loop 2 {
 					try {
 						this.ReloadButton := UIA.TreeWalkerTrue.GetNextSiblingElement(UIA.TreeWalkerTrue.GetNextSiblingElement(UIA.TreeWalkerTrue.GetFirstChildElement(this.NavigationBarElement)))
@@ -407,7 +409,7 @@ class UIA_Mozilla extends UIA_Browser {
 			return
 		ClipSave := ClipboardAll()
 		A_Clipboard := js
-		this.ControlSend("allow pasting{ctrl down}z{ctrl up}{ctrl down}v{ctrl up}")
+		this.ControlSend("allow pasting{ctrl down}{z 2}{ctrl up}{ctrl down}v{ctrl up}")
 		Sleep 20
 		this.ControlSend("{ctrl down}{enter}{ctrl up}")
 		sleep 40
@@ -430,7 +432,7 @@ class UIA_Mozilla extends UIA_Browser {
 			} catch
 				Sleep 100
 		}
-		try text := dialogEl.FindFirst(this.TextControlCondition).Name
+		try text := dialogEl.FindElement({AutomationId:"infoBody"}).Name
 		if closeAlert
 			try OKBut.Click()
 		return text
@@ -452,6 +454,15 @@ class UIA_Mozilla extends UIA_Browser {
 			}
 		}
 		this.ControlSend("{Ctrl down}w{Ctrl up}")
+	}
+
+	GetCurrentBackButton() {
+		try {
+			if this.BackButton && this.BackButton.Name
+				return this.BackButton
+		}
+		this.BackButton := this.NavigationBarElement.FindElement({Type:"Button", AutomationId:"back-button"})
+		return this.BackButton
 	}
 }
 
@@ -554,8 +565,9 @@ class UIA_Browser {
 					this.MainPaneElement := this.BrowserElement
 				if !(this.TabBarElement := UIA.CreateTreeWalker(this.TabControlCondition).GetPreviousSiblingElement(this.NavigationBarElement))
 					this.TabBarElement := this.MainPaneElement
+				this.GetCurrentBackButton()
 				this.GetCurrentReloadButton()
-				this.ReloadButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
+				this.BackButton := "", this.ReloadButton := "", this.ReloadButtonDescription := "", this.ReloadButtonFullDescription := "", this.ReloadButtonName := ""
 				Loop 2 {
 					try {
 						this.ReloadButtonDescription := this.ReloadButton.LegacyIAccessiblePattern.Description
@@ -579,6 +591,15 @@ class UIA_Browser {
 	; Returns the current document/content element of the browser
 	GetCurrentDocumentElement() { 
 		return (this.DocumentElement := this.CurrentDocumentElement := this.BrowserElement.WaitElement(this.DocumentControlCondition, 3000))
+	}
+
+	GetCurrentBackButton() {
+		try {
+			if this.BackButton && this.BackButton.Name
+				return this.BackButton
+		}
+		this.BackButton := this.ButtonTreeWalker.GetFirstChildElement(this.NavigationBarElement)
+		return this.BackButton
 	}
 
 	GetCurrentReloadButton() {
@@ -761,12 +782,12 @@ class UIA_Browser {
 	
 	; Presses the Back button
 	Back() { 
-		this.ButtonTreeWalker.GetFirstChildElement(this.NavigationBarElement).Invoke()
+		this.GetCurrentBackButton().Click()
 	}
 	
 	; Presses the Forward button
 	Forward() { 
-		this.ButtonTreeWalker.GetNextSiblingElement(this.ButtonTreeWalker.GetFirstChildElement(this.NavigationBarElement)).Click()
+		this.ButtonTreeWalker.GetNextSiblingElement(this.GetCurrentBackButton()).Click()
 	}
 
 	; Presses the Reload button

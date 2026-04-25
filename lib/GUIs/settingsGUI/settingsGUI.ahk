@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/04/17
- * @version 2.4.8
+ * @date 2026/04/24
+ * @version 2.4.12
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -292,9 +292,6 @@ settingsGUI()
                             FileDelete(ptf["scriptStartup"])
                 }
                 return
-            case "Always Check UIA":
-                (script.Value = 0) ? (settingsGUI["setUIA_LimitDaily"].Opt("+Disabled"), UserSettings.Set_UIA_Limit_Daily := "disabled")
-                                   : (settingsGUI["setUIA_LimitDaily"].Opt("-Disabled"), UserSettings.Set_UIA_Limit_Daily := "false")
             case "Use Thio MButton":
                 (script.Value = 0) ? (altGUI["Use_MButton"].Opt("+Disabled"), UserSettings.Use_MButton := "disabled")
                                    : (altGUI["Use_MButton"].Opt("-Disabled"), UserSettings.Use_MButton := "false")
@@ -318,7 +315,7 @@ settingsGUI()
                         activeObj := ""
                     } catch {
                         activeObj := ""
-                        notifyExt.notifyIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
+                        notifyExt.showIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
                     }
                 }
                 resetOrigDetect(origDetect)
@@ -336,14 +333,9 @@ settingsGUI()
     settingsGUI.AddCheckbox("vchecklistTooltip Checked" UserSettings.checklist_tooltip " Y+5", setJSON.checklistTooltip.title).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
     settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
 
-    ;// getTimeline() - Always Check UIA
-    settingsGUI.AddCheckbox("valwaysCheckUIA Checked" UserSettings.Always_Check_UIA " Y+5", setJSON.alwaysCheckUIA.title).OnEvent("Click", toggle.Bind("Always Check UIA", "", ""))
-    settingsGUI["alwaysCheckUIA"].ToolTip := (UserSettings.Always_Check_UIA = true) ? setJSON.alwaysCheckUIA.tooltip.true : setJSON.alwaysCheckUIA.tooltip.false
-
-    ;// Set_UIA_LimitDaily
-    settingsGUI.AddCheckbox("vsetUIA_LimitDaily Checked" (UserSettings.Set_UIA_Limit_Daily != "disabled" ? UserSettings.Set_UIA_Limit_Daily : "0 +Disabled") " Y+5 xs+10", setJSON.setUIA_LimitDaily.title).OnEvent("Click", toggle.Bind("Set UIA Limit Daily", "", ""))
-    settingsGUI["setUIA_LimitDaily"].ToolTip := (UserSettings.Set_UIA_Limit_Daily = true) ? setJSON.setUIA_LimitDaily.tooltip.true : setJSON.setUIA_LimitDaily.tooltip.false
-    (settingsGUI["alwaysCheckUIA"].Value = 0) ? settingsGUI["setUIA_LimitDaily"].Opt("+Disabled") : settingsGUI["setUIA_LimitDaily"].Opt("-Disabled")
+    ;// set UIA on load
+    settingsGUI.AddCheckbox("vUIAonLoad Checked" UserSettings.Set_UIA_on_load " Y+5", setJSON.UIAonLoad.title).OnEvent("Click", toggle.Bind("Set_UIA_on_load", "", ""))
+    settingsGUI["UIAonLoad"].ToolTip := (UserSettings.Set_UIA_on_load = true) ? setJSON.UIAonLoad.tooltip.true : setJSON.UIAonLoad.tooltip.false
 
     /**
      * This function handles logic for checkboxes that need to pop up a msgbox to alert the user that they need to reload `checklist.ahk`
@@ -400,7 +392,7 @@ settingsGUI()
                         activeObj := ""
                     } catch {
                         activeObj := ""
-                        notifyExt.notifyIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
+                        notifyExt.showIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
                     }
                 }
                 return
@@ -461,7 +453,7 @@ settingsGUI()
         newSettings := FileRead(UserSettings.SettingsFile)
         UserSettings := ""
         if newSettings != initialSettings
-            notifyExt.notifyIfNotExist("settingsGUI", "settingsGUI()", "Settings changes are being saved`nGUI cannot be reopened until this window disappears...", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
+            notifyExt.showIfNotExist("settingsGUI", "settingsGUI()", "Settings changes are being saved`nGUI cannot be reopened until this window disappears...", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
         if IsSet(butt) {
             switch butt {
                 case "hard":
@@ -599,6 +591,7 @@ settingsGUI()
                 shortcutName := "Adobe Premiere Pro.exe"
                 shortcutNameBeta := editors.__determinePremName() " (Beta).exe"
                 adobeFullName := editors.__determinePremName()
+                shortcutName := "Adobe Premiere Pro"
                 title := program " Settings"
                 yearIniName := "prem_year"
                 iniInitYear := UserSettings.prem_year
@@ -614,6 +607,7 @@ settingsGUI()
                 shortcutName := "AfterFX.exe"
                 shortcutNameBeta := "AfterFX (Beta).exe"
                 adobeFullName := "Adobe After Effects"
+                shortcutName := "Adobe After Effects"
                 title := "After Effects Settings"
                 yearIniName := "ae_year"
                 iniInitYear := UserSettings.ae_year
@@ -623,21 +617,6 @@ settingsGUI()
                 otherTitle := "Premiere Settings"
                 static imageLoc := ptf.aeSETver
                 path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\Support Files\" shortcutName
-            case "Photoshop":
-                short := "ps"
-                static psIsBeta := unset
-                shortcutName := "Photoshop.exe"
-                shortcutNameBeta := "ahk_exe Photoshop.exe (Beta).exe"
-                adobeFullName := "Adobe Photoshop"
-                title := program " Settings"
-                yearIniName := "ps_year"
-                iniInitYear := UserSettings.ps_year
-                verIniName := "psVer"
-                initVer := UserSettings.psVer
-                genProg := program
-                otherTitle := "Photoshop Settings"
-                static imageLoc := ptf.psSETver
-                path := A_ProgramFiles "\Adobe\" adobeFullName A_Space iniInitYear "\" shortcutName
         }
         if WinExist(title) {
             WinActivate(title)
@@ -738,7 +717,7 @@ settingsGUI()
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
         }
 
-        __generateShortcut() => generateAdobeShortcut(UserSettings, adobeFullName, year.text)
+        __generateShortcut() => generateAdobeShortcut(UserSettings, shortcutName, year.text)
 
         /**
          * This function generates the year dropdown selector

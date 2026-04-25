@@ -27,7 +27,7 @@ $^Space::
 	checkExcal  := prem.Excalibur.__isInstalled()
 	checkSpell  := FileExist(spellbookExcalFile)
 	if !checkRemote || !checkExcal || !checkSpell {
-		notifyExt.notifyIfNotExist("remoteOrExcalNotExist",, 'PremiereRemote and Excalibur are required for this hotkey to function. `nEither install them or disable this hotkey here;`n' A_linefile,, 'Windows Battery Critical',, 'bdr=Red maxW=400')
+		notifyExt.showIfNotExist("remoteOrExcalNotExist",, 'PremiereRemote and Excalibur are required for this hotkey to function. `nEither install them or disable this hotkey here;`n' A_linefile,, 'Windows Battery Critical',, 'bdr=Red maxW=400')
 		return
 	}
 	block.On()
@@ -95,6 +95,11 @@ Space:: ;// make space more useful by closing certain windows
 				return
 			}
 	}
+	timelineStatus := prem.timelineFocusStatus()
+	if !timelineStatus || CaretGetPos(&x, &y) {
+		SendInput("{Space}")
+		return
+	}
 	prem.delayPlayback()
 }
 
@@ -109,25 +114,25 @@ Enter:: ;// close windows by double tapping enter
 			return
 		case (WinGet.Title() == "Save Project"): return
 		default:
+			if prem.timelineVals = false {
+				prem.__setTimelineValues()
+				return
+			}
 			;// if I'm typing and I hit enter I want typing to be finished
 			;// ie. the text box is deselected and the text tool is swapped back to the selection tool
 			currTimelineStatus := prem.timelineFocusStatus()
-			premUIA := CLSID_Objs.load("premUIA_Values")
-            premUIA.initialise()
-            try createEl   := prem.__createUIAelement(true)
-            try toolsNN    := prem.__uiaCtrlPos(premUIA.tools, false, createEl, false)
-            if (!IsSet(createEl) || !IsSet(toolsNN)) || !toolsNN {
+			if !premUIA := premUIA_Values.initialise() {
 				SendInput("{" A_ThisHotkey "}")
-                errorLog(TargetError('Creating UIA element failed'))
-                return
-            }
-            textStatus := ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
-
+            	return
+			}
+			toolsNN := premUIA.UIA_Objs["tools"]
+			activePath := premUIA_Values.__activeElementPath()
+            textStatus := premUIA_Values.isToolSelected("textTool")
 			switch {
-				case (createEl.activeElement !== premUIA.programMon):
+				case (activePath !== premUIA.UIA_Objs["programMon"]):
 					SendInput("{" A_ThisHotkey "}")
 					return
-				case (currTimelineStatus != true && createEl.activeElement == premUIA.programMon && textStatus != false):
+				case (currTimelineStatus != true && activePath == premUIA.UIA_Objs["programMon"] && textStatus != false):
 					if !GetKeyState("Shift") && !GetKeyState("Shift", "P") { ;// this check shouldn't be necessary but.. just incase
 						SendInput("{Escape}")
 						prem.selectionTool()
@@ -190,7 +195,7 @@ NumpadDot & NumpadSub::BackSpace
 
 Escape::prem.escFxMenu()
 
-SC03A & v::prem.selectionTool()
+SC03A & v::prem.selectTool("selectionTool")
 
 ^!x::prem.rippleCut()
 
@@ -209,11 +214,11 @@ SC03A & LButton:: ;// lock vertical movement while adjusting keyframe handles
 	; InstallMouseHook()
 	coord.c()
 	origCoord := obj.MousePos()
-	premUIA := CLSID_Objs.load("premUIA_Values")
-	premUIA.initialise()
-	try premEl := prem.__createUIAelement(true)
+	if !premUIA := premUIA_Values.initialise()
+		return
+	activePath := premUIA_Values.__activeElementPath()
 
-	if premEl.activeElement !== premUIA.effectControls {
+	if activePath !== premUIA.UIA_Objs["effectControls"] {
 		__resetCaps(storeHotkey, capslockState)
 		return
 	}
@@ -256,7 +261,11 @@ NumpadAdd::prem.numpadGain()
 
 $+c:: ;// stop playback before ripple deleting as it can go funky in laggy comps
 {
-	if prem.timelineFocusStatus() != true || CaretGetPos(&carx, &cary) {
+	if prem.timelineVals = false {
+		prem.__setTimelineValues()
+		return
+	}
+	if !prem.timelineFocusStatus() || CaretGetPos(&carx, &cary) {
 		SendInput("+c")
 		return
 	}
@@ -271,10 +280,13 @@ $+2::prem.zoomPreviewWindow(A_ThisHotkey)
 $+3::prem.zoomPreviewWindow("+3", true)
 
 ^!f::prem.flattenAndColour(ksa.labelIris)
-^!+f::prem.pseudoFS()
 $+d:: ;// deselect edit points after adding transitions
 {
-	if prem.timelineFocusStatus() != true || CaretGetPos(&carx, &cary) {
+	if prem.timelineVals = false {
+		prem.__setTimelineValues()
+		return
+	}
+	if !prem.timelineFocusStatus() || CaretGetPos(&carx, &cary) {
 		SendInput("+d")
 		return
 	}
@@ -394,7 +406,7 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 	}
 
 	;// set coord mode and grab the cursor position
-	coord.client()
+	coord.s()
 	if !origMouse := obj.MousePos() {
 		KeyWait(A_ThisHotkey)
 		__cleanup()
@@ -402,19 +414,17 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 	}
 	prior := false
 	if A_PriorKey = "WheelUp" || A_PriorKey = "WheelDown" {
-		premUIA := CLSID_Objs.load("premUIA_Values")
-		premUIA.initialise()
 		__within(coordObj, progmon) {
-			if ((coordObj.x > progmon.x) && (coordObj.x < progmon.x+progmon.width) && (coordObj.y < progmon.y) && (coordObj.y > progmon.y+progmon.height))
+			if ((coordObj.x > progmon.location.x) && (coordObj.x < progmon.location.x+progmon.location.w) && (coordObj.y < progmon.location.y) && (coordObj.y > progmon.location.y+progmon.location.h))
 				return false
 			return true
 		}
-		try progmon := prem.__uiaCtrlPos(premUIA.programMon, false)
-		if !IsSet(progmon) || !IsObject(progmon) {
+		if !premUIA := premUIA_Values.initialise() {
 			KeyWait(A_ThisHotkey)
 			__cleanup()
 			return
 		}
+		progmon := premUIA.UIA_Objs["programMon"]
 		if __within(origMouse, progmon) {
 			if A_Cursor != "Unknown" {
 				block.On()
@@ -471,6 +481,10 @@ __f14InitialChecks(Key, &kwait) {
 	}
 
 	;// checks to see whether the timeline position has been located
+	if prem.timelineVals = false {
+		prem.__setTimelineValues()
+		return
+	}
 	ckValues := prem.__setTimelineValues()
 	ckFocus  := prem.timelineFocusStatus()
 	if !ckValues || (ckFocus != true) {
@@ -480,7 +494,7 @@ __f14InitialChecks(Key, &kwait) {
 	}
 
 	;// set coord mode and grab the cursor position
-	coord.client()
+	coord.s()
 	origMouse := obj.MousePos()
 	if !origMouse || !prem.__checkCoords(origMouse) {
 		KeyWait(currKeys[1])

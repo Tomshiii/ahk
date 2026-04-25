@@ -104,13 +104,13 @@ export const host = {
       : app.project.rootItem;
 
     if (!searchFolder) {
-      alert("Could not find folder: " + folderPath);
+      // alert("Could not find folder: " + folderPath);
       return false;
     }
 
     const projItem = this.searchForItemByName(searchFolder, itemName);
     if (!projItem) {
-      alert("Could not find item '" + itemName + "' in folder");
+      // alert("Could not find item '" + itemName + "' in folder");
       return false;
     }
 

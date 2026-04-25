@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/04/17
- * @version 2.2.16
+ * @date 2026/04/22
+ * @version 2.2.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,7 +69,6 @@ class adobeAutoSave extends count {
 
     __New(rClickPrem := "RButton", rClickMove := "XButton1") {
         try {
-            this.premUIA := CLSID_Objs.load("premUIA_Values")
             ; this.premUIA.initialise(false) ;// don't do this or every reload it'll force attempt trying to set them
             ;// attempt to grab user settings
             this.UserSettings    := CLSID_Objs.load("UserSettings")
@@ -128,7 +127,6 @@ class adobeAutoSave extends count {
     programMonY1  := false,  programMonY2 := false
 
     origPanelFocus := ""
-    premUIAEl      := false
     resetAlreadyWaited := false
 
     /** This function is called every increment */
@@ -279,7 +277,9 @@ class adobeAutoSave extends count {
                 || this.__checkRClick() {
                 if A_Index > 1 && this.beep = true
                     this.__playBeep()
-                notifyExt.notifyIfNotExist("autosavepremDelay", A_ScriptName, "Script tried to save but the user interacted with the keyboard/mouse in the last 0.5s.`nPlease wait for the next save attempt:", 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 hide=Fade@250 maxW=400')
+                ;// do this manually, otherwise the `notify.show()` down below will come out first
+                if !Notify.Exist("autosavepremDelay")
+                    Notify.Show(A_ScriptName, "Script tried to save but the user interacted with the keyboard/mouse in the last 0.5s.`nPlease wait for the next save attempt:", 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 hide=Fade@250 maxW=400 tag=autosavepremDelay')
 
                 __waitAndCheckAttempt() {
                     loop 50 {
@@ -384,16 +384,15 @@ class adobeAutoSave extends count {
             return
         } */
         if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
-            passIn := (this.premUIAEl != false) ? this.premUIAEl : unset
-            try progMon := prem.__uiaCtrlPos(this.premUIA.programMon,, passIn, false)
-            if !IsSet(progMon)
+            if !this.premUIA := premUIA_Values.initialise()
                 return false
-            this.programMonX1 := progMon.x+100, this.programMonX2 := progMon.x + progMon.width-100, this.programMonY1 := (progMon.y+progMon.height)*0.7,  this.programMonY2 := progMon.y + progMon.height + 150
+            progMon := this.premUIA.UIA_Objs["programMon"]
+            this.programMonX1 := progMon.location.x+100, this.programMonX2 := progMon.location.x + progMon.location.w-100, this.programMonY1 := (progMon.location.y+progMon.location.h)*0.7,  this.programMonY2 := progMon.location.y + progMon.location.h + 150
         }
         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
         if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
             return
-        notifyExt.notifyIfNotExist("autosavepremPlayback",, 'If you were playing back anything, this function should attempt to resume it', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
+        notifyExt.showIfNotExist("autosavepremPlayback",, 'If you were playing back anything, this function should attempt to resume it', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
         ; tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
         this.userPlayback := true
     }
@@ -410,33 +409,6 @@ class adobeAutoSave extends count {
         if WinExist("ahk_class #32770 ahk_exe " which ".exe")
             return false
         return true
-    }
-
-    /**
-     * This function is fallback code for if `My Scripts.ahk` isn't currently open and autosave can't ask it for timeline coords
-     * @param {Boolean} needFocus pass into the function whether it needs to initially check for timeline focus. This is usually done by checking the original active panel against the user's saved UIA timeline value. If they match, pass `false` into this function
-     */
-    __fallback(needFocus := true) {
-        if !prem.__setTimelineValues()
-            return
-        sleep 100
-        if needFocus = true {
-            prem.__focusTimeline()
-            sleep 250
-        }
-        SendEvent(KSA.playStop)
-        sleep 2000
-        loop 3 {
-            ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
-            if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
-                prem.__focusTimeline()
-                sleep 1500
-                SendEvent(KSA.playStop)
-                continue
-            }
-            return
-        }
-        prem.__focusTimeline()
     }
 
     /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
@@ -458,40 +430,28 @@ class adobeAutoSave extends count {
                     if WinExist("Save Project ahk_exe " this.origWindow) {
                         if !WinWaitClose("Save Project ahk_exe " this.origWindow,, 5) {
                             errorLog(TimeoutError("Waiting for the Save window to close timed out"))
-                            notifyExt.notifyIfNotExist("autosavewaitTimeout",, 'Waiting for the Save window to close timed out, playback may not be returned.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+                            notifyExt.showIfNotExist("autosavewaitTimeout",, 'Waiting for the Save window to close timed out, playback may not be returned.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
                             return
                         }
                         sleep 150
                     }
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
-                    try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
-                    catch {
-                        try {
-                            fallbackFocus := (this.origPanelFocus = this.premUIA.timeline) ? false : true
-                            if !prem.__checkTimelineValues() {
-                                if fallbackFocus = true && !prem.__waitForTimeline() {
-                                    this.__fallback(fallbackFocus)
-                                    return
-                                }
-                            }
-                            this.__fallback(fallbackFocus)
-                        }
-                    }
+
                     sleep 100
                     SendEvent(KSA.playStop)
                     sleep 1000
                     loop 3 {
                         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
                         if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
-                            try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+                            try this.premUIA.UIA_Objs["timeline"].SetFocus()
                             sleep 100
                             SendEvent(KSA.playStop)
                             continue
                         }
                         break
                     }
-                    try this.premUIAEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
+                    try this.premUIA.UIA_Objs["timeline"].SetFocus()
                 default:
                     if this.premRemoteSave = false
                         WinActivate("ahk_exe " this.origWindow)
@@ -513,7 +473,7 @@ class adobeAutoSave extends count {
 
         ;// checking for save dialogue box
         if !this.__checkDialogueClass() {
-            notifyExt.notifyIfNotExist("autosavePremBusy",, 'Premiere appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            notifyExt.showIfNotExist("autosavePremBusy",, 'Premiere appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
 
@@ -529,14 +489,14 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.premWindow.saveCheck {
-            notifyExt.notifyIfNotExist("autosavepremSaveCheck",, 'Premiere save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            notifyExt.showIfNotExist("autosavepremSaveCheck",, 'Premiere save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             ; tool.Cust("Premiere save not required, cancelling")
             return
         }
 
         if !prem.isEditTabActive() {
             errorLog(TargetError("The Premiere 'Edit' tab is not currently selected, or the Premiere window could not be found. The save attempt was aborted", -1))
-            notifyExt.notifyIfNotExist("autosavepremEdit",, "The Premiere 'Edit' tab is not currently selected, or the Premiere window could not be found. The save attempt was aborted", 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            notifyExt.showIfNotExist("autosavepremEdit",, "The Premiere 'Edit' tab is not currently selected, or the Premiere window could not be found. The save attempt was aborted", 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
 
@@ -545,16 +505,16 @@ class adobeAutoSave extends count {
         name := WinGet.Title()
         if ("ahk_exe " currentProg = prem.winTitle && (name != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1))
-            notifyExt.notifyIfNotExist("autosavepremBusier",, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            notifyExt.showIfNotExist("autosavepremBusier",, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
 
+        if !this.premUIA := premUIA_Values.initialise()
+            return
+
         ;// get active UIA panel
         if WinActive(prem.winTitle) {
-            try {
-                this.premUIAEl := prem.__createUIAelement()
-                this.origPanelFocus := this.premUIAEl.activeElement
-            }
+            this.origPanelFocus := premUIA_Values.__activeElementPath()
         }
 
         ;// checking idle status
@@ -565,7 +525,7 @@ class adobeAutoSave extends count {
         ;// checking if prem is the originally active window
         if (this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe") && this.restartPlayback = true
             this.__checkPremPlayback()
-        notifyExt.notifyIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
+        notifyExt.showIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
         this.saveAttemptNotify := true
         ; tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
 
@@ -575,7 +535,7 @@ class adobeAutoSave extends count {
             sleep 500
             return
         }
-        notifyExt.notifyIfNotExist("autosavepremFailed",, 'PremiereRemote failed to save, falling back`nto a manual save attempt.', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark dur=5 bdr=0xE96969 show=Fade@250 hide=Fade@250')
+        notifyExt.showIfNotExist("autosavepremFailed",, 'PremiereRemote failed to save, falling back`nto a manual save attempt.', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark dur=5 bdr=0xE96969 show=Fade@250 hide=Fade@250')
 
         try {
             block.On()
@@ -630,7 +590,7 @@ class adobeAutoSave extends count {
 
         ;// checking for save dialogue box
         if !this.__checkDialogueClass("AfterFX") {
-            notifyExt.notifyIfNotExist("autosaveaeBusy",, 'AE appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            notifyExt.showIfNotExist("autosaveaeBusy",, 'AE appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
 
@@ -646,7 +606,7 @@ class adobeAutoSave extends count {
 
         ;// if save NOT required, exit early
         if !this.aeWindow.saveCheck {
-            notifyExt.notifyIfNotExist("autosaveaeSaveCheck",, 'AE save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            notifyExt.showIfNotExist("autosaveaeSaveCheck",, 'AE save not required, cancelling...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
 
@@ -656,7 +616,7 @@ class adobeAutoSave extends count {
             return
 
         if this.saveAttemptNotify = false && !Notify.Exist("autosavepremSaveAttempt")
-            notifyExt.notifyIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
+            notifyExt.showIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
 
         block.On()
         checkStuck()
@@ -765,9 +725,7 @@ class adobeAutoSave extends count {
         this.resetingSave  := false
 
         this.origPanelFocus := ""
-        try this.premUIAEl.AdobeEl := ""
-        try this.premUIAEl.activeElement := ""
-        this.premUIAEl      := false
+        this.premUIA := ""
         this.premRemoteSave := true
         checkstuck()
         (this.resetAlreadyWaited = true) ? this.closeNotifys() : SetTimer((*) => (this.closeNotifys()), -4500)

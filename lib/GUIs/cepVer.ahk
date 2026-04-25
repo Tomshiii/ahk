@@ -16,8 +16,8 @@ class cepVer extends tomshiBasic {
 
     titleVar := "Which Versions would you like to enable?"
     Versions := Map(
-        "< v24", "11",
-        "v25+",  "12"
+        ; "< v24", "11",
+        "v26+",  "12" ;(12 is actually v25+ but my repo starts at 26.2)
     )
 
     selectVers(*) {

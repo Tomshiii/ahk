@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Code is maintained for the version of Premiere listed below
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 26.0.2
+ * @premVer 26.2
  * @author tomshi
- * @date 2026/04/17
- * @version 2.3.50
+ * @date 2026/04/24
+ * @version 2.4.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,6 +32,7 @@
 #Include Classes\notifyExt.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Other\UIA\UIA.ahk
+#Include Other\WinEvent.ahk
 #Include Functions\getHotkeys.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\delayFuncs.ahk
@@ -60,6 +61,8 @@ class Prem {
             }
         }
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
+        if VerCompare(this.currentSetVer, this.minVer) < 0
+            this.currentSetVer := this.minVer
         try this.defaultTheme     := this.UserSettings.premDefaultTheme
         try this.useSwapSequences := this.UserSettings.use_swapSequences
         try {
@@ -84,24 +87,27 @@ class Prem {
 
         if A_ScriptName = "Core Functionality.ahk" {
             if (this.useSwapSequences = true || this.useSwapSequences = "true")
-                SetTimer(prem.__setCurrSeq.Bind(this), this.prevSeqDelay)
+                SetTimer(this.__setCurrSeq.Bind(this), this.prevSeqDelay)
 
             ;// check for premremote and NPM before setting timer
             extensionsPath := A_AppData "\Adobe\CEP\extensions"
             remotePath     := extensionsPath "\PremiereRemote"
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
             if DirExist(remotePath) && (getNPM != false && getNPM != "")
-                SetTimer(prem.checkRemote.Bind(this), 2000)
+                SetTimer(this.checkRemote.Bind(this), 2000)
+
+            if !WinEvent.IsRegistered("Close", this.exeTitle)
+                WinEvent.Close((*) => this.__resetUIAobj(), this.exeTitle)
 
             ;// toggle multicam when audio effect windows become active
-            if !WinEvent.IsRegistered("Active", "Clip Fx Editor " prem.exeTitle)
-                WinEvent.Active((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
-            if !WinEvent.IsRegistered("Close", "Clip Fx Editor " prem.exeTitle)
-                WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " prem.exeTitle)), "Clip Fx Editor " prem.exeTitle)
+            if !WinEvent.IsRegistered("Active", "Clip Fx Editor " this.exeTitle)
+                WinEvent.Active((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " this.exeTitle)), "Clip Fx Editor " this.exeTitle)
+            if !WinEvent.IsRegistered("Close", "Clip Fx Editor " this.exeTitle)
+                WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " this.exeTitle)), "Clip Fx Editor " this.exeTitle)
         }
-
     }
 
+    static minVer := "26.2"
     static UserSettings := ""
     static currentSetVer := ""
     static spectrumUI_Version := "25.0"
@@ -229,7 +235,6 @@ class Prem {
     static setUI() {
         switch  {
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.UI := "Spectrum"
-            case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0: this.UI := "preSpectrum"
             default: this.UI := this.defaultUI
         }
     }
@@ -308,11 +313,6 @@ class Prem {
                     this.theme := this.defaultTheme
                     this.__setTimelineCol("Spectrum", this.theme) ;// defaults to this.defaultTheme
                 }
-			case "preSpectrum":
-                sleep 50
-                notifyExt.notifyIfNotExist('preSpectrum',, 'Theme selection for pre-Spectrum UI is not automatic and will be set within ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
-                this.theme := this.defaultTheme
-                this.__setTimelineCol("preSpectrum", this.theme)
         }
 
         ;// other values
@@ -326,9 +326,6 @@ class Prem {
                 this.editTabX := 154, this.editTabY := 35
                 ;// keyframes
                 this.keyframeGrey := 0xb0b0b0, this.keyframeBlue := 0x4096f3
-			case "preSpectrum":
-                ;// set timeline and playhead colours
-                this.playhead := 0x2D8CEB, this.focusColour := 0x2D8CEB, this.secondChannel := 55, this.valueBlue := 0x205cce, this.effCtrlSegment := 21
         }
     }
 
@@ -373,57 +370,6 @@ class Prem {
         }
         return true
     }
-
-    /**
-     * A function to create a UIA element for Premiere Pro
-     * @param {Boolean} [getActive=true] determines whether this function will check the currently active panel. Note; leaving this as true can add anywhere from `60-1000ms` of delay depending on how busy Premiere currently is and is best left as `false` if performance is the goal or the active element isn't needed
-     * @returns {Object}
-     * ```
-     * createEl := this.__createUIAelement()
-     * createEl.AdobeEl       ;// the UIA element created from the Premiere Pro window
-     * createEl.activeElement ;// the UIA string of the currently active element
-     * ```
-     */
-    static __createUIAelement(getActive := true) {
-        premName := WinGet.PremName()
-        AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space this.winTitle,, false)
-        currentEl := (getActive = true) ? AdobeEl.GetUIAPath(UIA.GetFocusedElement()) : ""
-        return {AdobeEl: AdobeEl, activeElement: currentEl}
-    }
-
-    /**
-     * A function to cut repeat code when attempting to retrieve coordinates of a Control. This function will use the UIA class to determine all coordinates of the passed in UIA element.
-     * @param {String} UIA_Element the UIA string to isolate the premiere panel you wish to operate on. Can be passed in manually as a string such as `"YwY"` or as a pre-set variable via the `premUIA` class
-     * @param {Boolean} [tooltip=true] whether or not this function should provide a tooltip to alert the user on failure. Defaults to `true`
-     * @param {Object} passIn pass in your own UIA element so this function doesn't need to create another one
-     * @param {Boolean} [getActive=true] determine whether you wish for `__createUIAelement()` to also retrieve the active panel. Note: doing so can add anywhere from `100ms` to `1s` of latency depending on Premiere
-     * @returns {Object/false} returns an object containing all values recieved via `ControlGetPos` as well as the UIA object that can continue to be operated on. If the function cannot determine the controls position, it will return boolean `false`
-     * ```
-     * effCtrl := this.__uiaCtrlPos(premUIA.effectControls)
-     * effCtrl.x
-     * effCtrl.y
-     * effCtrl.width
-     * effCtrl.height
-     * effCtrl.classNN
-     * effCtrl.uiaVar ;// returns -> uiaVar := ControlGetClassNN(AdobeEl.ElementFromPath(premUIA.effectControls).GetControlId())
-     * effCtrl.activeElement
-     * ```
-     */
-    static __uiaCtrlPos(UIA_Element, tooltip := true, passIn?, getActive := true) {
-        try {
-            if !IsSet(passIn)
-                UIAel := this.__createUIAelement(getActive)
-            else
-                UIAel := passIn
-            ClassNN  := ControlGetClassNN(UIAel.AdobeEl.ElementFromPath(UIA_Element).GetControlId())
-            ControlGetPos(&toolx, &tooly, &width, &height, ClassNN)
-        } catch {
-            errorLog(UnsetError("Couldn't get the ClassNN of the desired panel", -1),, tooltip)
-            return false
-        }
-        return {x: toolx, y: tooly, width: width, height: height, classNN: ClassNN, uiaVar: UIAel.AdobeEl, activeElement: (getActive = true) ? UIAel.activeElement : false}
-    }
-
     /**
      * This function checks for the existence of [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main). Can also check for the existence of a specific function within the `index.tsx` file
      * @param {String} [checkFunc=""] the name of the function you wish to check for
@@ -544,7 +490,7 @@ class Prem {
         if A_ScriptName != "Core Functionality.ahk" {
             activeObj := CLSID_Objs.clone("prem")
             if activeObj.remoteActive = "loading" {
-                notifyExt.notifyIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
             if !activeObj.remoteActive {
@@ -553,7 +499,7 @@ class Prem {
             }
         } else {
             if this.remoteActive = "loading" {
-                notifyExt.notifyIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
             if !this.remoteActive {
@@ -756,9 +702,8 @@ class Prem {
      * @returns {Boolean|String} returns boolean or `"active"` if timeline was the active window
      */
     static saveAndFocusTimeline() {
-        uiaVals := CLSID_Objs.load("premUIA_Values")
-        uiaVals.initialise()
-        premUIA := this.__createUIAelement()
+        if !uiaVals := premUIA_Values.initialise()
+            return
         saveAttempt := this.save()
         if (saveAttempt = false || saveAttempt = "timeout" || saveAttempt = "timeout_nosave") {
             SendEvent("^s")
@@ -771,7 +716,7 @@ class Prem {
                 return false
             }
         }
-        if premUIA.activeElement == uiaVals.timeline {
+        if !premUIA_Values.__isUiaElementActive("timeline") {
             tool.Cust("Premiere should automatically refocus the timeline")
             sleep 1000
             return "active"
@@ -802,18 +747,17 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
-        if !IsSet(effCtrlNN) {
+        if !premUIA := premUIA_Values.initialise() {
             block.Off()
             return
         }
+        effCtrlNN := premUIA.UIA_Objs["effectControls"]
+
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
-            this().__loremipsum({x: effCtrlNN.x, y: effCtrlNN.y}, {width: effCtrlNN.width, height: effCtrlNN.height}, &eyeX, &eyeY)
+            this().__loremipsum({x: effCtrlNN.location.x, y: effCtrlNN.location.y}, {width: effCtrlNN.location.w, height: effCtrlNN.location.h}, &eyeX, &eyeY)
         /** this is simply to cut needing to repeat this code below */
         effectbox() {
-            effCtrlNN.uiaVar.ElementFromPath(premUIA.effectsPanel).SetFocus()
+            effCtrlNN.SetFocus()
             if !this().__findBox()
                 return
             SendInput("^a" "+{BackSpace}")
@@ -823,7 +767,7 @@ class Prem {
                 if WinExist("Delete Item") {
                     SendInput("{Esc}")
                     sleep 100
-                    effCtrlNN.uiaVar.ElementFromPath(premUIA.effectsPanel).SetFocus()
+                    effCtrlNN.SetFocus()
                     if !this().__findBox()
                         return
                     SendInput("^a" "+{BackSpace}")
@@ -945,17 +889,14 @@ class Prem {
         ;// button was only added in specrum UI
         if VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0
             return
-        coord.client()
+        coord.s()
         block.On()
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try progNN := this.__uiaCtrlPos(premUIA.programMon,,, false)
-        if !IsSet(progNN) {
-            errorLog(TargetError("Could not determine UIA object", -1))
+        if !premUIA := premUIA_Values.initialise() {
             block.Off()
             return
         }
-        if PixelGetColor(progNN.x+15, progNN.y+(progNN.height-10)) != this.iconHighlight {
+        progNN := premUIA.UIA_Objs["programMon"]
+        if PixelGetColor(progNN.location.x+15, progNN.location.y+(progNN.location.h-10)) != this.iconHighlight {
             block.Off()
             return
         }
@@ -977,16 +918,14 @@ class Prem {
         ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
         ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
         ;You can plug your own x distance in by changing the value below
-        coord.client()
+        coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
-        if !IsSet(effCtrlNN) {
+        if !premUIA := premUIA_Values.initialise() {
             block.Off()
             return
         }
+        effCtrlNN := premUIA.UIA_Objs["effectControls"]
         this.__focusTimeline() ;focuses the timeline
         if !this.__checkPremRemoteDir("isSelected") {
             if !this.checkNoClips(effCtrlNN, &x, &y) {
@@ -1002,11 +941,9 @@ class Prem {
             keys.allWait()
             return
         }
-        motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
+        motionPos := {x: effCtrlNN.location.x+57, y: effCtrlNN.location.y+62}
         switch this.UI {
             case "Spectrum": effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
-            ;// old ui
-			case "preSpectrum": effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
         }
         startPos := {x: motionPos.x+15, y: motionPos.y+this.effCtrlSegment}
         for i, v in effCtrlArr {
@@ -1024,7 +961,7 @@ class Prem {
         }
 
         ;// determining the edge of the pixel search (otherwise it might grab the playhead)
-        if !ImageSearch(&collapseX, &collapseY, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/ksa.ECDivide), effCtrlNN.y+50, "*2 " ptf.Premiere "effCtrlCollapse.png") {
+        if !ImageSearch(&collapseX, &collapseY, effCtrlNN.location.x, effCtrlNN.location.y, effCtrlNN.location.x + (effCtrlNN.location.w/ksa.ECDivide), effCtrlNN.location.y+50, "*2 " ptf.Premiere "effCtrlCollapse.png") {
             block.Off()
             errorLog(TargetError("Failed to find the edge of the Effect Controls window", -1),, 1)
             keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
@@ -1047,8 +984,6 @@ class Prem {
                 ;// check version - pre Spectrum UI will need to start imagesearch higher
                 ;// spectrum ui
                 case "Spectrum": startSegment := this.effCtrlSegment*.25, endSegment := this.effCtrlSegment*.75
-                ;// old ui
-			    case "preSpectrum": startSegment := this.effCtrlSegment*.55, endSegment := this.effCtrlSegment*.55
             }
             ;// searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
             if !ImageSearch(&x2, &y2, startPos.x, startPos.y - startSegment, startPos.x + 1500, startPos.y + endSegment, "*2 " ptf.Premiere "reset.png") {
@@ -1101,9 +1036,10 @@ class Prem {
         blocker.On(,, "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}" activationKeys)
         this.stopPlayback()
         sleep 50
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try premEl := this.__createUIAelement(false)
+        if !premUIA := premUIA_Values.initialise() {
+            blocker.Off()
+            return
+        }
 
         switch window {
             case ksa.timelineWindow:
@@ -1120,25 +1056,13 @@ class Prem {
                 */
                 this.__focusTimeline()
 
-                ;// old method focusing another panel then refocusing the timeline
-                /* try {
-                    ;// If you ever use the multi camera view, the current method of doing things is required as otherwise there is a potential for premiere to get stuck within a multicam nest for whatever reason. Doing it this way however, is unfortunately slower.
-                    ;// hopefully one day adobe fixes this bug @link https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
-                    ;// if you do not use the multiview window simply replace the below line with `this.__focusTimeline()` or `premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()`
-                    premEl.AdobeEl.ElementFromPath(premUIA.effectControls).SetFocus()
-                    premEl.AdobeEl.ElementFromPath(premUIA.timeline).SetFocus()
-                } catch {
-                    SendEvent(ksa.effectControls)
-                    Sleep(50)
-                    this.__focusTimeline()
-                }*/
             case ksa.effectControls:
                 try {
-                    premEl.AdobeEl.ElementFromPath(premUIA.effectControls).SetFocus()
+                    premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
                     Sleep(25)
-                    premEl.AdobeEl.ElementFromPath(premUIA.programMonitor).SetFocus()
+                    premUIA.AdobeEl.UIA_obj["programMon"].SetFocus()
                     Sleep(25)
-                    premEl.AdobeEl.ElementFromPath(premUIA.effectControls).SetFocus()
+                    premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
                     Sleep(50)
                     delaySI(20, "^a", ksa.deselectAll)
                 }
@@ -1154,11 +1078,11 @@ class Prem {
 
     /** checks to see if there are any clips selected */
     static checkNoClips(UIA_obj, &x, &y) {
-        if ImageSearch(&x, &y, UIA_obj.x, UIA_obj.y, UIA_obj.x + (UIA_obj.width/KSA.ECDivide), UIA_obj.y + UIA_obj.height, "*2 " ptf.Premiere "noclips.png") {
+        if ImageSearch(&x, &y, UIA_obj.location.x, UIA_obj.location.y, UIA_obj.location.x + (UIA_obj.location.w/KSA.ECDivide), UIA_obj.location.y + UIA_obj.location.h, "*2 " ptf.Premiere "noclips.png") {
             SendInput(KSA.selectAtPlayhead)
             sleep 50
             ;// checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-            if ImageSearch(&x, &y, UIA_obj.x, UIA_obj.y, UIA_obj.x + (UIA_obj.width/KSA.ECDivide), UIA_obj.y + UIA_obj.height, "*2 " ptf.Premiere "noclips.png")
+            if ImageSearch(&x, &y, UIA_obj.location.x, UIA_obj.location.y, UIA_obj.location.x + (UIA_obj.location.w/KSA.ECDivide), UIA_obj.location.y + UIA_obj.location.h, "*2 " ptf.Premiere "noclips.png")
                 return false
         }
         return true
@@ -1169,16 +1093,14 @@ class Prem {
      */
     static movepreview()
     {
-        coord.client()
+        coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
-        if !IsSet(effCtrlNN) {
+        if !premUIA := premUIA_Values.initialise() {
             block.Off()
             return
         }
+        effCtrlNN := premUIA.UIA_Objs["effectControls"]
         this.__focusTimeline() ;focuses the timeline
         sleep 25
         if !this.__checkPremRemoteDir("isSelected") {
@@ -1195,7 +1117,7 @@ class Prem {
             keys.allWait()
             return
         }
-        motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
+        motionPos := {x: effCtrlNN.location.x+57, y: effCtrlNN.location.y+62}
         MouseMove(motionPos.x + 25, motionPos.y+5)
         SendInput("{Click}")
         sleep 50
@@ -1235,7 +1157,7 @@ class Prem {
             return true
         }
 
-        progClassNN := ControlGetClassNN(effCtrlNN.uiaVar.ElementFromPath(premUIA.programMon).GetControlId()) ;gets the ClassNN value of the effects control window
+        progClassNN := ControlGetClassNN(premUIA.UIA_Objs["programMon"].GetControlId()) ;gets the ClassNN value of the effects control window
         previewWin := obj.CtrlPos(progClassNN)
         if !IsObject(previewWin)
             return
@@ -1282,15 +1204,13 @@ class Prem {
     static reset()
     {
         keys.allWait()
-        coord.client()
+        coord.s()
         block.On()
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
-        if !IsSet(effCtrlNN) {
+        if !premUIA := premUIA_Values.initialise() {
             block.Off()
             return
         }
+        effCtrlNN := premUIA.UIA_Objs["effectControls"]
         this.__focusTimeline() ;focuses the timeline
         if !this.__checkPremRemoteDir("isSelected") {
             if !this.checkNoClips(effCtrlNN, &x, &y) {
@@ -1307,7 +1227,7 @@ class Prem {
             return
         }
         MouseGetPos(&xpos, &ypos)
-        motionPos := {x: effCtrlNN.x+57, y: effCtrlNN.y+62}
+        motionPos := {x: effCtrlNN.location.x+57, y: effCtrlNN.location.y+62}
         if !obj.imgSrchMulti({x1: motionPos.x, x2: motionPos.x+700, y1: motionPos.y-20, y2: motionPos.y+40},, &xcol, &ycol, ptf.Premiere "reset.png", ptf.Premiere "reset_2.png") {
             block.Off()
             errorLog(Error("Could not find reset image", -1),, 1)
@@ -1330,13 +1250,11 @@ class Prem {
         MouseGetPos(&xpos, &ypos)
         coord.s()
         block.On()
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
-        if !IsSet(effCtrlNN) {
+        if !premUIA := premUIA_Values.initialise() {
             block.Off()
             return
         }
+        effCtrlNN := premUIA.UIA_Objs["effectControls"]
         this.__focusTimeline()
         if !this.__checkPremRemoteDir("isSelected") {
             if !this.checkNoClips(effCtrlNN, &x, &y) {
@@ -1354,7 +1272,7 @@ class Prem {
         }
 
         ;// finds the scale value you want to adjust, then finds the value adjustment to the right of it
-        if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.y + effCtrlNN.height},, &x, &y
+        if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.location.y + effCtrlNN.location.h},, &x, &y
             , ptf.Premiere property ".png"
             , ptf.Premiere property "2.png"
             , ptf.Premiere property "3.png"
@@ -1419,31 +1337,29 @@ class Prem {
             blocker.Off()
             return -1
         }
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try effCtrlNN := this.__uiaCtrlPos(premUIA.effectControls,,, false)
-        if !IsSet(effCtrlNN) {
+        if !premUIA := premUIA_Values.initialise() {
             blocker.Off()
             return false
         }
+        effCtrlNN := premUIA.UIA_Objs["effectControls"]
 
         try {
             funcExist := this.__checkPremRemoteDir("isSelected")
             switch funcExist {
                 case false:
-                    if !funcExist && ImageSearch(&x3, &y3, effCtrlNN.x, effCtrlNN.y, effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), effCtrlNN.y + effCtrlNN.height, "*2 " ptf.Premiere "noclips.png") { ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+                    if !funcExist && ImageSearch(&x3, &y3, effCtrlNN.location.x, effCtrlNN.location.y, effCtrlNN.location.x + (effCtrlNN.location.w/KSA.ECDivide), effCtrlNN.location.y + effCtrlNN.location.h, "*2 " ptf.Premiere "noclips.png") { ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                     delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                     this().__fxPanel()
-                    if !obj.imgSrchMulti({x1: effCtrlNN.x, y1: effCtrlNN.y, x2: effCtrlNN.x + (effCtrlNN.width/KSA.ECDivide), y1: effCtrlNN.y + effCtrlNN.height},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
+                    if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.location.w/KSA.ECDivide), y1: effCtrlNN.location.y + effCtrlNN.location.h},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
                         blocker.Off()
-                        notifyExt.notifyIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                        notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
                 }
                 case true:
                     if !this.__remoteFunc('isSelected', true) {
                         blocker.Off()
-                        notifyExt.notifyIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                        notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
 
@@ -1451,7 +1367,7 @@ class Prem {
         } catch {
             blocker.Off()
             errorLog(UnsetError("ClassNN wasn't given a value", -1))
-            notifyExt.notifyIfNotExist("premNoClassNN",,"ClassNN wasn't given a value",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            notifyExt.showIfNotExist("premNoClassNN",,"ClassNN wasn't given a value",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return
         }
         sleep 100
@@ -1488,7 +1404,7 @@ class Prem {
             return
         }
 
-        if this.timelineVals = false {
+        if !this.timelineVals {
             this.__setTimelineValues()
             return
         }
@@ -1516,27 +1432,23 @@ class Prem {
 
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
 		if (descernTitle || currTimelineStatus != 1) && title != "Audio Gain" {
-            premUIA := CLSID_Objs.load("premUIA_Values")
-            premUIA.initialise()
-            try createEl   := this.__createUIAelement(true)
-            try toolsNN    := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
-            if (!IsSet(createEl) || !IsSet(toolsNN)) {
+            if !premUIA := premUIA_Values.initialise() {
                 ih.Stop(), star_ih.Stop()
                 errorLog(TargetError('Creating UIA element failed'))
                 return
             }
-            textStatus := ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png")
+            textStatus := premUIA_Values.isToolSelected("textTool")
 
             switch {
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
-                    if createEl.activeElement !== premUIA.effectControls {
+                    if !premUIA_Values.__isUiaElementActive('effectControls') {
                         ih.Stop(), star_ih.Stop()
                         SendInput(sendOnFail star_ih.Input)
                         tool.Cust("If you are attempting to adjust audio;`nThe timeline is not currently in focus", 2000)
                         return
                     }
                     needsTimelineFocus := true
-                case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && createEl.activeElement == premUIA.programMon:
+                case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && premUIA_Values.__isUiaElementActive('programMon'):
                     ih.Stop(), star_ih.Stop()
                     SendInput(sendOnFail star_ih.Input)
                     return
@@ -1590,14 +1502,14 @@ class Prem {
         else {
             if title = "Audio Gain" {
                 errorLog(MethodError("Levels cannot be adjusted while the gain window is open", -1))
-                notifyExt.notifyIfNotExist("premLevelsGain", 'Levels cannot be adjusted while the gain window is open.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
+                notifyExt.showIfNotExist("premLevelsGain", 'Levels cannot be adjusted while the gain window is open.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
                 block.Off()
                 return
             }
             levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
             if levels != true && levels != "true" {
                 errorLog(MethodError("Unexpected response", -1), "sent value: " String(which sendGain) " Response: " levels " - Type: " Type(levels))
-                notifyExt.notifyIfNotExist("premLevelKeyframe", 'prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
+                notifyExt.showIfNotExist("premLevelKeyframe", 'prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
                 block.Off()
                 return
             }
@@ -1607,8 +1519,11 @@ class Prem {
 
     /** This function will determine if the timeline is already focused or not. If it isn't, it will focus it. */
 	static __focusTimeline() {
-        check := this.timelineFocusStatus()
-        if check != false
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
+        if this.timelineFocusStatus() = true
             return
         sleep 1
         SendEvent(KSA.timelineWindow)
@@ -1635,7 +1550,6 @@ class Prem {
                 return
             SetTimer(rdisable, -50)
         }
-        useUIA := false
 
         if this.__OSwindow() && WinActive(this.winTitle) {
             SendInput("{Escape}")
@@ -1645,7 +1559,8 @@ class Prem {
         if !coordObj := obj.MousePos()
             return
         ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
-        if !this.__setTimelineValues() {
+        if !this.timelineVals {
+            this.__setTimelineValues()
             return
         }
 
@@ -1655,18 +1570,14 @@ class Prem {
             return
         }
 
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        ;// create UIA element so we can focus the timeline more efficiently later
-        try {
-            premUIAEl := this.__createUIAelement(false)
-            useUIA := true
+        if !premUIA := premUIA_Values.initialise() {
+            SetTimer(rdisable, 0)
+            return
         }
-        premUIAEl := IsSet(premUIAEl) ? premUIAEl.AdobeEl  : false
 
-        SetTimer(again.Bind(timeout, useUIA, premUIAEl), -400)
-        again(timeout, useUIA, premUIAEl)
-        again(timeout, useUIA, el) {
+        SetTimer(again.Bind(timeout), -400)
+        again(timeout)
+        again(timeout) {
             ;// we check for the defined value `ksa.DragKeywait` here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
             isKey := false
             i := 0
@@ -1685,20 +1596,8 @@ class Prem {
                 return
             }
 
-            status := this.timelineFocusStatus()
-            if status != true {
-                if useUIA = true && premUIAEl != false {
-                    try premUIAEl.ElementFromPath(premUIA.timeline).SetFocus()
-                    catch {
-                        this.__focusTimeline()
-                        __finish()
-                        return
-                    }
-                    sleep 400 ;// if you don't sleep here premiere will not properly let go of lbutton until the timer fires up to 400ms later
-                }
-                else
-                    this.__focusTimeline()
-            }
+            if !this.timelineFocusStatus()
+                return
 
             __finish()
 
@@ -1722,10 +1621,14 @@ class Prem {
      * @returns {Trilean} true/false/-1. `-1` indicates that the timeline coordinates could not be determined.
      */
     static timelineFocusStatus() {
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return -1
+        }
         if !this.__setTimelineValues()
             return -1
         origcoord := A_CoordModePixel, returnCoord() => A_CoordModePixel := origcoord
-        coord.client(, false)
+        coord.s()
         if PixelGetColor(this.timelineRawX-1, this.timelineRawY+10) = this.focusColour {
             returnCoord()
             return true
@@ -1734,44 +1637,21 @@ class Prem {
         return false
     }
 
-    static __checkAlwaysUIA() {
-        userSettings := CLSID_Objs.load("UserSettings")
-        if userSettings.Always_Check_UIA = true {
-            if userSettings.Set_UIA_Limit_Daily = true && userSettings.UIA_Daily_Limit_Day = A_YDay
-                return false
-            premUIA := CLSID_Objs.load("premUIA_Values")
-            userSettings.UIA_Daily_Limit_Day := A_YDay
-            return premUIA
-        }
-        return false
-    }
-
     /**
-     * ### Note: This function will evaluate the premiere timeline coordinates based off the `Client` coordmode. This cannot be changed.
+     * ### Note: This function will evaluate the premiere timeline coordinates based off the `screen` coordmode. This cannot be changed.
      * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
      * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values. Defaults to true. Sends tooltips on `WhichToolTip` 11/12/13
      * @returns {Boolean} `true/false`
      */
     static getTimeline(tools := true) {
-        try {
-            if WinGetClass("A") = "DroverLord - Window Class" ;// if you're focused on a window that isn't the main premiere window, controlgetclassnn will retrieve different values
-                switchTo.Premiere() ;// so we have to bring focus back to the main window first
-        } catch {
-            errorLog(UnsetError("Unable to determine the active window", -1),, 1)
-            return false
-        }
-        ;// because we're using UIA we shouldn't need to focus the timeline to grab information about it
-        ; SendInput(KSA.timelineWindow)
-        ; SendInput(KSA.timelineWindow)
-        sleep 75
-        coord.client()
+        coord.s()
 
         ;// this block is called if the function originates from a script that isn't `Core Functionality.ahk`
-        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+        if A_ScriptName != "Core Functionality.ahk" {
             try {
                 activeObj := CLSID_Objs.clone("prem")
                 if activeObj.__checkTimelineValues() {
-                    coord.client()
+                    coord.s()
                     this.timelineRawX     := activeObj.timelineRawX,     this.timelineRawY     := activeObj.timelineRawY
                     this.timelineXValue   := activeObj.timelineXValue,   this.timelineYValue   := activeObj.timelineYValue
                     this.timelineXControl := activeObj.timelineXControl, this.timelineYControl := activeObj.timelineYControl
@@ -1780,56 +1660,53 @@ class Prem {
                 }
             } catch {
                 Critical("Off")
-                notifyExt.notifyIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                notifyExt.showIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 return false
             }
         }
 
-        checkUIA := this.__checkAlwaysUIA()
-        premUIA := (checkUIA = false) ? CLSID_Objs.load("premUIA_Values") : checkUIA
-        if !premUIA.initialise() {
+        if !premUIA := premUIA_Values.initialise() {
             keys.allWait()
             return false
         }
-        try timelineNN := this.__uiaCtrlPos(premUIA.timeline,,, false)
-        if !premUIA.HasProp("timeline") || !IsSet(timelineNN) || timelineNN = false
-            return false
+        timelineNN := premUIA.UIA_Objs['timeline']
 
         ;// determine how much to account for the column left of the timeline based on premiere version
-        xAddMap := Map("lessThan" this.spectrumUI_Version, 236, this.spectrumUI_Version, 204,
-                        "default", 206)
-        switch {
-            case (VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0) && !(VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0): xAdd := xAddMap["lessThan" this.spectrumUI_Version]
-            case xAddMap.Has(this.currentSetVer): xAdd := xAddMap[this.currentSetVer]
-            default: xAdd := xAddMap["default"]
+        xAddMap := Map("26.2", 204)
+        for k, v in xAddMap {
+            if VerCompare(this.currentSetVer, k) >= 0 {
+                xAdd := v
+                continue
+            }
+            break
         }
 
         Critical()
-        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+        if A_ScriptName != "Core Functionality.ahk" {
             try {
                 ;// we're setting the Core Functionality object (and this object) with the timeline coords - this will allow other scripts to retrieve them without needing to set them again
                 activeObj := CLSID_Objs.load("prem")
-                coord.client()
-                activeObj.timelineRawX     := this.timelineRawX     := timelineNN.x
-                activeObj.timelineRawY     := this.timelineRawY     := timelineNN.y
-                activeObj.timelineXValue   := this.timelineXValue   := timelineNN.x + timelineNN.width - 22  ;accounting for the scroll bars on the right side of the timeline
-                activeObj.timelineYValue   := this.timelineYValue   := timelineNN.y + 46                     ;accounting for the area at the top of the timeline that you can drag to move the playhead
-                activeObj.timelineXControl := this.timelineXControl := timelineNN.x + xAdd                   ;accounting for the column to the left of the timeline
-                activeObj.timelineYControl := this.timelineYControl := timelineNN.y + timelineNN.height - 25 ;accounting for the scroll bars at the bottom of the timeline
+                coord.s()
+                activeObj.timelineRawX     := this.timelineRawX     := timelineNN.location.x
+                activeObj.timelineRawY     := this.timelineRawY     := timelineNN.location.y
+                activeObj.timelineXValue   := this.timelineXValue   := timelineNN.location.x + timelineNN.location.w - 22  ;accounting for the scroll bars on the right side of the timeline
+                activeObj.timelineYValue   := this.timelineYValue   := timelineNN.location.y + 46                          ;accounting for the area at the top of the timeline that you can drag to move the playhead
+                activeObj.timelineXControl := this.timelineXControl := timelineNN.location.x + xAdd                        ;accounting for the column to the left of the timeline
+                activeObj.timelineYControl := this.timelineYControl := timelineNN.location.y + timelineNN.location.h - 25  ;accounting for the scroll bars at the bottom of the timeline
                 activeObj.timelineVals     := this.timelineVals     := true
                 activeObj := ""
                 Critical("Off")
             } catch {
                 activeObj := ""
                 Critical("Off")
-                notifyExt.notifyIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                notifyExt.showIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 keys.allWait()
                 return false
             }
         }
         if tools = true {
-            notifyExt.notifyIfNotExist("premTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=6 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
+            notifyExt.showIfNotExist("premTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=6 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
         }
         return true
     }
@@ -1839,37 +1716,34 @@ class Prem {
         this.timelineVals := false, this.timelineRawX := 0, this.timelineRawY := 0, this.timelineXValue := 0, this.timelineYValue := 0, this.timelineXControl := 0, this.timelineYControl := 0
     }
 
+    /** reset various values to simulate reload */
+    static __resetUIAobj(*) {
+        if WinExist(this.exeTitle)
+            return
+        try {
+            premUIA := CLSID_Objs.load("determineUIA")
+            premUIA.beenSet   := false
+            premUIA.isRunning := false
+            premUIA.UIA_Objs  := Map()
+            premUIA.UIA_Path  := Map()
+            premUIA.AdobeEl   := false
+            premUIA := ""
+
+            premObj := CLSID_Objs.load("prem")
+            premObj.__resetTimelineVals()
+            premObj.RClickIsActive := false
+        }
+    }
+
     /**
-     * Getting back to the selection tool while you're editing text or in other edge case scenarios can be quite painful.
-     * This function will instead attempt to warp to the selection tool on your toolbar and presses it instead. If that fails it will focus the toolbar and send the hotkey instead.
+     * This function will attempt to select the desired tool using UIA.
+     * @param {String} [tool=selectionTool] the name of the tool. Must correspond to a tool set within `Premiere_UIA.ahk` or the function will throw.
      */
-    static selectionTool() {
-        MouseGetPos(&xpos, &ypos)
-        sleep 50
-        block.On()
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try toolsNN := this.__uiaCtrlPos(premUIA.tools,,, false)
-        if !IsSet(toolsNN) {
-            block.Off()
-            errorLog(UnsetError("Couldn't create UIA object", -2),, true)
+    static selectTool(tool := "selectionTool") {
+        if !premUIA := premUIA_Values.initialise()
             return
-        }
-        if ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection_2.png") {
-            block.Off()
-            return
-        }
-        if ImageSearch(&x, &y, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "selection.png") {
-            coord.client("Mouse", false)
-            MouseMove(x, y)
-            SendInput("{Click}")
-            MouseMove(xpos, ypos)
-            SendInput(KSA.programMonitor)
-            block.Off()
-            return
-        }
-        block.Off()
-        errorLog(TargetError("Couldn't find the selection tool"), "Used the selection hotkey instead", true)
+        if !premUIA_Values.isToolSelected(tool)
+            try premUIA.UIA_Objs[tool].Click()
     }
 
     /**
@@ -1899,16 +1773,12 @@ class Prem {
             SendInput(command)
             return
         }
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try createEl := this.__createUIAelement(false)
-        try toolsNN  := this.__uiaCtrlPos(premUIA.tools, false, createEl, false)
-        if !IsSet(createEl) || !IsSet(toolsNN) {
-            errorLog(TargetError('Creating UIA element failed'))
+        if !premUIA := premUIA_Values.initialise()
             return
-        }
-        if !toolsNN || SubStr(createEl.activeElement, 1, StrLen(createEl.activeElement)-3) = premUIA.project ||
-            ImageSearch(&xx, &yy, toolsNN.x, toolsNN.y, toolsNN.x + toolsNN.width, toolsNN.y + toolsNN.height, "*2 " ptf.Premiere "text.png") {
+        toolsNN := premUIA.UIA_Objs["tools"]
+        activePath := premUIA_Values.__activeElementPath()
+        textStatus := premUIA_Values.isToolSelected("textTool")
+        if !toolsNN || SubStr(activePath, 1, StrLen(activePath)-3) = premUIA.UIA_Path["project"] || textStatus {
             __sendOrig()
             return
         }
@@ -1954,9 +1824,17 @@ class Prem {
      * @returns {Boolean}
      */
     static __checkTimelineValues() {
+        try premObj := CLSID_Objs.load("prem")
+        catch {
+            premObj := ""
+            premObj.timelineVals := false
+        }
         if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
-            (this.timelineVals = false)
+            (this.timelineVals = false || premObj.timelineVals = false) {
+            premObj := ""
             return false
+        }
+        premObj := ""
         return true
     }
 
@@ -1965,8 +1843,12 @@ class Prem {
      * @param {Integer} timout how many `seconds` you want to wait before this function times out
      */
     static __waitForTimeline(timeout := 5) {
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
         loop timeout {
-            if this.timelineFocusStatus() != true {
+            if !this.timelineFocusStatus() {
                 this.__focusTimeline()
                 sleep 1000
                 continue
@@ -2158,8 +2040,14 @@ class Prem {
     static delayPlayback(delayMS?) {
         this.defaultDelay := IsSet(delayMS) ? delayMS : this.defaultDelay
         delayMS := IsSet(delayMS) ? delayMS : this.defaultDelay
+        if !this.__checkTimelineValues() {
+            this.getTimeline(false)
+            return
+        }
+        if !this.timelineFocusStatus()
+            return
         __sendSpace() => (SendEvent(ksa.playStop))
-        if !this.timelineFocusStatus() || (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
+        if (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
             ((A_PriorKey = ksa.premRipplePrev || A_PriorKey = ksa.premRippleNext) && (this.delayTime >= delayMS) || this.delayTime = 0) {
                 __sendSpace()
                 return
@@ -2174,6 +2062,10 @@ class Prem {
      */
     static rippleTrim(pauseFirst := true, delay := 50) {
         Critical()
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
         ;// ensure the user isn't typing
         if CaretGetPos(&x, &y) || !this.timelineFocusStatus() {
             SendInput(A_ThisHotkey)
@@ -2247,7 +2139,7 @@ class Prem {
             ;// versions 25.4 and greater. They now focus the reset button when you tab
             case VerCompare(this.currentSetVer, "25.5") >= 0: delaySI(50, "{Tab 2}", anch1, "{Tab}", anch2, "{Enter}")
             ;// versions below 25.4
-            case VerCompare(this.currentSetVer, "25.4") < 0: delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
+            ; case VerCompare(this.currentSetVer, "25.4") < 0: delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
         }
 
         clip.delayReturn(clipb.storedClip)
@@ -2477,7 +2369,7 @@ class Prem {
             errorLog(MethodError("Some PremiereRemote functions are missing. Aborting", -1),,, true)
             return
         }
-        coord.client()
+        coord.s()
         if !origMouse := obj.MousePos() {
             blocker.Off()
             return
@@ -2506,13 +2398,11 @@ class Prem {
             }
         }
 
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        try sourceMonNN := this.__uiaCtrlPos(premUIA.sourceMon,,, false)
-        if !IsSet(sourceMonNN) {
+        if !premUIA := premUIA_Values.initialise() {
             blocker.Off()
             return
         }
+        sourceMonNN := premUIA.UIA_Objs["sourceMon"]
         prefixTitle := "sourceMon_"
         found := false
         loop 10 {
@@ -2520,7 +2410,7 @@ class Prem {
             if !FileExist(ptf.Premiere prefixTitle audOrVid indexNum ".png")
                 break
             heightNum := (A_Index = 1) ? 0.7 : Max(Round(0.7-Number(Format("0.{1}", indexNum-1)), 1), 0.1)
-            if !ImageSearch(&sourceX, &sourceY, sourceMonNN.x, sourceMonNN.y+(sourceMonNN.height*heightNum), sourceMonNN.x+sourceMonNN.width, sourceMonNN.y+sourceMonNN.height, "*2 " ptf.Premiere prefixTitle audOrVid indexNum ".png")
+            if !ImageSearch(&sourceX, &sourceY, sourceMonNN.location.x, sourceMonNN.location.y+(sourceMonNN.location.h*heightNum), sourceMonNN.location.x+sourceMonNN.location.w, sourceMonNN.location.y+sourceMonNN.location.h, "*2 " ptf.Premiere prefixTitle audOrVid indexNum ".png")
                 continue
             found := true
             break
@@ -2554,7 +2444,7 @@ class Prem {
     static __layerDividerCheck(coords) {
         dividerCheck := PixelGetColor(this.timelineRawX+5, coords.y)
         if dividerCheck = this.layerDivider {
-            notifyExt.notifyIfNotExist("premLayerDivider",, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+            notifyExt.showIfNotExist("premLayerDivider",, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
             return false
         }
         return true
@@ -2604,6 +2494,10 @@ class Prem {
             if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
                 SetCapsLockState('AlwaysOff')
         }
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
         SetDefaultMouseSpeed(0)
         SetStoreCapsLockMode(true)
         InstallKeybdHook(true, true)
@@ -2619,7 +2513,7 @@ class Prem {
             __resetCaps(storeHotkey, capslockState)
             return
         }
-        coord.client()
+        coord.s()
         blocker := block_ext()
         blocker.On()
 
@@ -2661,7 +2555,7 @@ class Prem {
                 KeyWait("LAlt", "L")
                 tool.Cust("",,,, 9)
                 move.setMouseClip()
-                coord.client() ;// clipMouse changes the coordmode to "mouse"
+                coord.s() ;// clipMouse changes the coordmode to "mouse"
                 if !newCoords := obj.MousePos() {
                     return
                 }
@@ -2726,9 +2620,14 @@ class Prem {
         if WinGet.Title() != getTitle.winTitle
             return
 
+        if !this.timelineVals {
+            this.__setTimelineValues()
+            return
+        }
+
         keys.allWait(2)
         block.On()
-        coord.client()
+        coord.s()
 
         origMouseCords := obj.MousePos()
         if !origMouseCords || (!this.timelineFocusStatus() && !this.__checkCoords(origMouseCords)) {
@@ -2832,7 +2731,7 @@ class Prem {
         getTitle := WinGet.PremName()
         if WinGet.Title() != getTitle.winTitle || (audOrVid != "aud" && audOrVid != "vid")
             return false
-        coord.client()
+        coord.s()
         if !this.__checkTimelineValues()
             return false
         if !mid := this.__getlayerMid(, &midDivY)
@@ -2867,7 +2766,7 @@ class Prem {
         if WinGet.Title() != getTitle.winTitle
             return false
 
-        coord.client()
+        coord.s()
         if !this.__checkTimelineValues()
             return false
         if !midDivY {
@@ -2934,6 +2833,7 @@ class Prem {
 
             return
         }
+        premUIA := premUIA_Values.initialise()
         if allExcept != true && allExcept != false && allExcept != "all" {
             ;// throw
             errorLog(PropertyError("Parameter allExcept unaccepted value", allExcept),,, true)
@@ -2980,7 +2880,7 @@ class Prem {
         blocker := block_ext()
         blocker.On(, "{LCtrl}{RCtrl}{LAlt}{RAlt}{LWin}{RWin}", "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}")
         SetDefaultMouseSpeed(0)
-        coord.client()
+        coord.s()
         if !this.__setTimelineValues() {
             blocker.Off()
             return
@@ -3018,7 +2918,8 @@ class Prem {
                 }
             }
         }
-        SendInput(ksa.selectionPrem)
+        ; SendInput(ksa.selectionPrem)
+        this.selectTool()
         sleep 16
         if !origMouseCords := obj.MousePos() {
             blocker.Off()
@@ -3061,7 +2962,7 @@ class Prem {
             }
             if track+offset < 1 {
                 blocker.Off()
-                notifyExt.notifyIfNotExist("premIncorrectTrackIndex", 'toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
+                notifyExt.showIfNotExist("premIncorrectTrackIndex", 'toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
                 errorLog(ValueError("Desired track must be greater than 1", -1))
                 return
             }
@@ -3130,7 +3031,7 @@ class Prem {
                         checkStuck()
                         blocker.Off()
                         this.ignoreKey := false
-                        notifyExt.notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                        notifyExt.showIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         return
                     }
                     if ignore != false && A_Index-offset >= ignore
@@ -3162,12 +3063,12 @@ class Prem {
                         checkStuck()
                         blocker.Off()
                         this.ignoreKey := false
-                        notifyExt.notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                        notifyExt.showIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         return
                     }
                     if ignore != false && A_Index-offset >= ignore {
                         if (track+offset >= ignore+offset)
-                            notifyExt.notifyIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Selected Track is greater than set ``Ignore value``',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                            notifyExt.showIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Selected Track is greater than set ``Ignore value``',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         break
                     }
                     layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
@@ -3191,16 +3092,15 @@ class Prem {
 
     /**
 	 * Set internal colour variables based on the version of Premiere Pro the user currently has set within `settingsGUI()`
-	 * @param {String} UI which UI version should be used. Currently accepts `Spectrum` & `preSpectrum`
+	 * @param {String} UI which UI version should be used. Currently accepts `Spectrum`
      * @param {String} theme which theme the user wishes to use. Currently accepts `darkest`
-     * @returns {Map/Mip/Array}
 	 */
 	static __setTimelineCol(UI, theme) {
         timelineCol := Mip()
         timelineColArr := []
         if !timelineColours.%UI%.HasProp(theme) {
             sleep 50
-            notifyExt.notifyIfNotExist("timelineThemeNotSet",, '``timelineColours {`` does not have values set for the requested theme: ' theme '. Reverting to "' this.defaultTheme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            notifyExt.showIfNotExist("timelineThemeNotSet",, '``timelineColours {`` does not have values set for the requested theme: ' theme '. Reverting to "' this.defaultTheme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             theme := (timelineColours.%UI%.has(this.defaultTheme)) ? this.defaultTheme : "darkest"
             this.theme := theme
         }
@@ -3232,7 +3132,6 @@ class Prem {
                         this.transitionHandleInsideSquare := 0x6D6D6D
                         this.transitionHandleHalfSquare := 0x000000
                 }
-            ;// may change over time
         }
 	}
 
@@ -3250,7 +3149,7 @@ class Prem {
         }
 
         SetDefaultMouseSpeed(0)
-        coord.client()
+        coord.s()
         if !this.__setTimelineValues()
 			return
 
@@ -3286,8 +3185,8 @@ class Prem {
         if !allButtons || allButtons = -1 {
             blocker.Off()
             switch allButtons {
-                case false: notifyExt.notifyIfNotExist("premInvalidLayerVals", 'prem.disableAllMuteSolo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case -1: notifyExt.notifyIfNotExist("premMiddleDivider", 'prem.disableAllMuteSolo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case false: notifyExt.showIfNotExist("premInvalidLayerVals", 'prem.disableAllMuteSolo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case -1: notifyExt.showIfNotExist("premMiddleDivider", 'prem.disableAllMuteSolo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
             }
             return
         }
@@ -3315,7 +3214,7 @@ class Prem {
      */
     static soloVideo(soloInverseDisable := "solo") {
         SetDefaultMouseSpeed(0)
-        coord.client()
+        coord.s()
 
         if soloInverseDisable = "disable" && this.__checkPremRemoteDir('enableAllVideoTracks') {
             this.__remoteFunc('enableAllVideoTracks')
@@ -3353,8 +3252,8 @@ class Prem {
         if !allButtons || allButtons = -1 {
             blocker.Off()
             switch allButtons {
-                case false: notifyExt.notifyIfNotExist("premInvalidLayerVals", 'prem.soloVideo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case -1: notifyExt.notifyIfNotExist("premMiddleDivider", 'prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case false: notifyExt.showIfNotExist("premInvalidLayerVals", 'prem.soloVideo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case -1: notifyExt.showIfNotExist("premMiddleDivider", 'prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
             }
             return
         }
@@ -3409,10 +3308,9 @@ class Prem {
             return
         if !this.__setTimelineValues()
 			return
-        premEl := this.__createUIAelement()
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
-        if premEl.activeElement = premUIA.project {
+        if !premUIA := premUIA_Values.initialise()
+            return
+        if premUIA_Values.__activeElementPath() = premUIA.UIA_Path["project"] {
             SendInput(labelHotkey)
             return
         }
@@ -3431,8 +3329,6 @@ class Prem {
     static deleteEmptyTracks() {
         if !WinActive(this.winTitle) ;// this is here in the event the user calls this func from `HotkeylessAHK` - otherwise it'll throw an error if prem isn't active
             return
-        premUIA := CLSID_Objs.load("premUIA_Values")
-        premUIA.initialise()
         SendInput(ksa.deleteEmptyTracksAll)
     }
 
@@ -3454,54 +3350,10 @@ class Prem {
             chkQual := true
         toggle := this.__remoteFunc('toggleLinearColour', true, "enableMaxRenderQual=" chkQual)
         switch toggle {
-            case "failure": notifyExt.notifyIfNotExist("premFailLinColour",, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red')
+            case "failure": notifyExt.showIfNotExist("premFailLinColour",, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red')
             default:
                 state := (toggle = true) ? "Enabled" : "Disabled"
-                notifyExt.notifyIfNotExist("premLinColour",, 'Toggling Linear Colour successful.`nNew setting: ' state,,,, 'dur=4 bc=Black bdr=Aqua')
-        }
-    }
-
-    /**
-     * A function that attempts to hide the top/bottom bars as well as the titlebar to try and retrieve some screen real estate back.
-     *
-     * This function will store the class values of the bars that is hiding so that the function can be recalled to unhide them. This does however mean that if the script is reloaded while they are hidden,  you will no longer be able to unhide the top/bottom bars within premiere as it will not be able to find them.
-     *
-     * The function will still attempt to unhide the window Title bar, but to retrieve the navigation bars within Premiere, the program will need to be closed/reopened
-     * @link https://github.com/TaranVH/2nd-keyboard/blob/12ab6c7daf4f0b6a954245c9f82c2a6846b7f6a4/ALL_MULTIPLE_KEYBOARD_ASSIGNMENTS.ahk#L2229-L2262
-     * @param {Integer} [justTitleBar=false] determines whether to hide **just** the window title bar, or the navigation panels as well. Defaults to `true`
-     */
-    static pseudoFS(justTitleBar := false) {
-        if justTitleBar = true {
-            WinSetStyle("^0x800000", this.class)
-            __redraw()
-            return
-        }
-        topObjPath := {T:33,CN:"DroverLord - Window Class", i:13}
-        bottomObjPath := {T:33,CN:"DroverLord - Window Class", i:-1}, {T:33}
-        if !IsSet(bot) || !IsSet(top) {
-            try {
-                bottomObj := this.__uiaCtrlPos(bottomObjPath,,, false)
-                topObj    := this.__uiaCtrlPos(topObjPath,,, false)
-            } catch {
-                WinSetStyle("^0x800000", this.class)
-                __redraw()
-                return
-            }
-        }
-        static bot := bottomObj.classNN
-        static top := topObj.classNN
-
-        ;// hide Premiere Pro top navigation bar
-        ControlSetStyle("^0x10000000", top, this.class)
-        ;// hide Premiere Pro Bottom Bar
-        ControlSetStyle("^0x10000000", bot, this.class)
-        ;// hide Title Bar
-        WinSetStyle("^0x800000", this.class)
-        __redraw()
-
-        __redraw() {
-            WinRedraw(this.class)
-            WinShow(this.class)
+                notifyExt.showIfNotExist("premLinColour",, 'Toggling Linear Colour successful.`nNew setting: ' state,,,, 'dur=4 bc=Black bdr=Aqua')
         }
     }
 
@@ -3683,13 +3535,13 @@ class Prem {
         checkImport := this.__checkPremRemoteFunc('importFile')
         checkIsSequence := this.__checkPremRemoteFunc('selectionIsSequence')
         if !checkDir || !checkImport || !checkIsSequence {
-            notifyExt.notifyIfNotExist('premRenderRemoteFuncs',, 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            notifyExt.showIfNotExist('premRenderRemoteFuncs',, 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return
         }
         presetPath := ptf.Backups "\Adobe Backups\Media Encoder\Presets"
 
         if !this.__remoteFunc('selectionIsSequence', true) {
-            notifyExt.notifyIfNotExist('premSelectionNotSeq',, 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
+            notifyExt.showIfNotExist('premSelectionNotSeq',, 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
             return
         }
 
@@ -3700,7 +3552,7 @@ class Prem {
 
         projPath   := WinGet.ProjPath()
         if !projPath {
-            notifyExt.notifyIfNotExist('premRenderProjPath',, 'Could not determine the current project path', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            notifyExt.showIfNotExist('premRenderProjPath',, 'Could not determine the current project path', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return
         }
         renderPath := WinGet.pathU(projPath.Dir "\..\" outputPath)
@@ -3708,14 +3560,14 @@ class Prem {
             DirCreate(renderPath)
 
         if !FileExist(presetPath "\" presetName) && !FileExist(presetPath "\" presetName ".epr") {
-            notifyExt.notifyIfNotExist('premRenderPresetPath',, 'Could not determine the desired render preset:`n' presetPath "\" presetName, 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
+            notifyExt.showIfNotExist('premRenderPresetPath',, 'Could not determine the desired render preset:`n' presetPath "\" presetName, 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             this.save()
             return
         }
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
         file := this.__remoteFunc('renderInPrem', true, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
         if checkbool(addToProj) && (file != false) && FileExist(file) {
-            notifyExt.notifyIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
+            notifyExt.showIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
             sleep 1000
             this.__remoteFunc('importFile',, "filePath=" StrReplace(file, "\", "/"), "importAsStills=0")
             logger := log()
@@ -3724,25 +3576,11 @@ class Prem {
         this.save()
     }
 
-    static resetCoreFuncVals() {
-        try WinEvent.Stop()
-        try {
-            premVals := CLSID_Objs.load("premUIA_Values")
-            premVals.beenSet := false
-
-            isRun := CLSID_Objs.load("uiaCheckRunning")
-            isRun.isRunning := false
-
-            premObj := CLSID_Objs.load("prem")
-            premObj.__resetTimelineVals()
-            premObj.RClickIsActive := false
-        }
-    }
-
     __Delete() {
 		try {
-            WinEvent.Stop("Active", prem.exeTitle " Clip Fx Editor")
-            WinEvent.Stop("Close", prem.exeTitle " Clip Fx Editor")
+            WinEvent.Stop("Active", this.exeTitle " Clip Fx Editor")
+            WinEvent.Stop("Close",  this.exeTitle " Clip Fx Editor")
+            WinEvent.Stop("Close",  this.exeTitle)
         }
 	}
 

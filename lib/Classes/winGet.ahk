@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/03/26
- * @version 1.7.8
+ * @date 2026/04/20
+ * @version 1.7.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -191,7 +191,7 @@ class WinGet {
         try {
             ;// attempt to pull the year from the title
             if InStr(SubStr(progCheck, 1, 27), "(Beta)",, 1, 1) {
-                return "(Beta)"
+                return " (Beta)"
             }
             UserSettings := CLSID_Objs.load("UserSettings")
             switch which {
@@ -244,6 +244,7 @@ class WinGet {
             }
             titleCheck := InStr(progCheck, title)
             saveCheck := (SubStr(progCheck, -1, 1) = "*") ? true : false
+            ; MsgBox(progCheck "`n" adobeYear "`n" title "`n" titleCheck "`n" saveCheck)
             return {winTitle: progCheck, titleCheck: titleCheck, saveCheck: saveCheck}
         } catch as e {
             block.Off()

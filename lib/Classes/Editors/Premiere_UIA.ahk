@@ -1,327 +1,229 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/04/17
- * @version 2.2.11
+ * @date 2026/04/24
+ * @version 3.0.9
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
 #Include Classes\ptf.ahk
-#Include Classes\winget.ahk
-#Include Classes\switchTo.ahk
-#Include Classes\errorLog.ahk
 #Include Classes\settings.ahk
 #Include Classes\Editors\Premiere.ahk
-#Include Classes\tool.ahk
 #Include Classes\CLSID_Objs.ahk
-#Include Functions\checkStuck.ahk
 #Include Classes\notifyExt.ahk
-#Include Functions\detect.ahk
+#Include Functions\isObjHasProp.ahk
 #Include Other\UIA\UIA.ahk
-#Include Other\JSON.ahk
 #Include Other\Notify\Notify.ahk
-#Include Other\WinEvent.ahk
 ; }
 
-;// [Table of Contents]
-;//!
-/**
-timeline              - The timeline panel
-effectControls        - The effects control panel
-tools                 - The tools panel
-programMonitor        - The Program monitor panel
-sourceMonitor         - The Source monitor panel
-effectsPanel          - The Effects panel
-*/
-
-Class premUIA_Values {
+class premUIA_Values {
     static __New() {
         if A_ScriptName = "Core Functionality.ahk" {
-            UserSettings := UserPref(true)
+            this.UserSettings := UserPref(true)
         } else {
-            try UserSettings := CLSID_Objs.load("UserSettings")
+            try this.UserSettings := CLSID_Objs.clone("UserSettings")
             catch {
-                UserSettings := UserPref(true)
+                this.UserSettings := UserPref(true)
             }
-        }
-        this.setVer := UserSettings.premVer
-        currentPremVer  := StrReplace(UserSettings.premVer, ".", "_")
-        readJSON := FileRead(this.valueINI)
-        if FileExist(this.valueINI) && readJSON != "" {
-            try this.allVals := JSON.parse(readJSON,, false)
-            catch {
-                block.Off()
-                ;// throw
-                errorLog(Error("Parsing JSON Data Failed"), this.valueINI,, true)
-            }
-        }
-        this.currentVer := currentPremVer
-        this.baseVer    := SubStr(this.currentVer, 1, InStr(this.currentVer, "_",, 1, 1)-1)
-
-        if A_ScriptName = "Core Functionality.ahk" {
-            return
         }
     }
 
-    static valueINI   := ptf.SupportFiles "\UIA\values.ini"
-    static currentVer := false
-    static setVer     := false
-    static allValls   := false
-    static baseVer    := false
-    static currentPremVer := ""
-    static beenSet    := false
+    static isRunning := false
+    static beenSet   := false
 
-    static windowHotkeys := Map(
-        "effectControls",   ksa.effectControls,
-        "effectsPanel",     ksa.effectsWindow,
-        "programMon",       ksa.programMonitor,
-        "sourceMon",        ksa.sourceMonitor,
-        "timeline",         ksa.timelineWindow,
-        "tools",            ksa.toolsWindow,
-        "project",          ksa.projectsWindow
-    )
-    static successCount := 0
-    static initialise(doChecks := true, override := false) {
-        if ((!doChecks && override = false) || !this.beenSet || (override = true)) {
-            vals := this.__setNewVal()
-            block.Off()
-            return vals
-        }
+    static UIA_Objs := Map()
+    static UIA_Path := Map()
+    static AdobeEl  := false
+    static determineUIA_PID := false
 
-        if !this.allVals.HasOwnProp(this.currentVer) && !this.allVals.HasOwnProp(this.baseVer) {
-            if WinExist(prem.winTitle) {
-                block.On()
-                vals := this.__setNewVal()
-                checkStuck()
-                block.Off()
-                return vals
-            }
-            block.Off()
-            errorLog(UnsetError("Current Version has no values set.", -1),,, true)
-            return false
+    static UserSettings := ""
+
+    static __activeElementPath(returnObj := false) {
+        if !WinActive(prem.winTitle) {
+            return -1
         }
+        if !uiaEl := this.initialise()
+            return -1
+        focusedEl := UIA.GetFocusedElement()
+        try focusedPath := uiaEl.AdobeEl.GetUIAPath(focusedEl, true)
+        return ((returnObj = false) ? focusedPath ?? "" : {uiaEl: uiaEl, Path: focusedPath, focusedEl: focusedEl})
     }
 
-    /**
-     * This function turns the parsed json data into class variables so the user may call on them as an extension of the class object
-     */
-    static __setClassVal() {
-        if !prem.__checkDialogueClass()
-            return
-        if !this.allVals.HasOwnProp(this.currentVer) && this.allVals.HasOwnProp(this.baseVer)
-            this.currentVer := this.baseVer
-        if ObjOwnPropCount(this.allVals.%this.currentVer%) != this.windowHotkeys.Count {
-            errorLog(Error("The user is currently missing UIA values. Please set new values to ensure proper function."))
-            notifyExt.notifyIfNotExist("UIAmissingVals",, 'The user is currently missing UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400')
-        }
-        for k, v in this.allVals.%this.currentVer%.Ownprops() {
-            this.%k% := v
-        }
+    static __isUiaElementActive(elementPath) {
+        focusedPath := this.__activeElementPath(true)
+        if !isObjHasProp(focusedPath, 'Path', -1) || focusedPath.Path = -1
+            return -1
+        return (focusedPath.uiaEl.UIA_Path[elementPath]=focusedPath)
     }
 
-    /**
-     * This function handles creating new json entries in the `values.ini` files
-     */
-    static __setNewVal() {
-        Critical()
-        try activeObj := CLSID_Objs.load("uiaCheckRunning")
-        catch {
-            block.Off()
-            Critical("Off")
-            Exit()
+    static isToolSelected(element) {
+        if !WinActive(prem.winTitle) {
+            return -1
         }
-        if activeObj.HasOwnProp('isRunning') && activeObj.isRunning = true {
-            block.Off()
-            Critical("Off")
-            notifyExt.notifyIfNotExist("UIAisRunning",, "Attempting to set UIA values is already in process.`nPlease wait.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
-            sleep 250
-            Exit()
-        }
-        ; detect(false, 2) ;// incase the user is midreload while attempting to set values
-        activeObj.isRunning := true
+        if !uiaEl := this.initialise()
+            return -1
+        return (uiaEl.UIA_Objs[element].value = "Selected" ? true : false)
+    }
 
-        if !prem.__checkDialogueClass() {
-            block.Off()
-            activeObj.isRunning := false
-            return false
+    static setObjs() {
+        Critical('On')
+        notifyExt.deleteIfExist("premUIAGenTree")
+        notifyExt.deleteIfExist("premUIAGenTreeWarning")
+        notifyExt.deleteIfExist("UIAretrieveComplete")
+        notifyExt.deleteIfExist("determineUIAFailed")
+        if !Notify.Exist("premUIAGenTree") {
+            premExe := 'C:\Program Files\Adobe\Adobe Premiere Pro ' this.UserSettings.prem_year '\Adobe Premiere Pro.exe'
+            img := FileExist(premExe) ? premExe : 'C:\Windows\System32\imageres.dll|icon80'
+            /* Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning') */
+            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }
 
-        premName := WinGet.PremName()
-        if !premName.winTitle {
-            block.Off()
-            activeObj.isRunning := false
-            errorLog(UnsetError("Couldn't determine Premiere winTitle", -1))
-            return false
+        try premName := WinGet.PremName()
+        if (!isObjHasProp(premName, 'titleCheck', false) && isObjHasProp(premName, 'titleCheck', -1)) || premName.titleCheck != true {
+            notifyExt.deleteIfExist("premUIAGenTree")
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            throw Error("Failed to retrieve Premiere title.")
         }
-        if prem.__checkPremRemoteDir('premVer') {
+        premObj := CLSID_Objs.clone("prem")
+        if premObj.remoteActive = "loading" {
+            notifyExt.deleteIfExist("premUIAGenTree")
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            throw Error("Socket")
+        }
+        if !premObj.remoteActive {
+            notifyExt.deleteIfExist("premUIAGenTree")
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            errorLog(Error("A socket connection could not be established", -1),, true)
+            throw Error("Socket")
+        }
+
+        currentVer := prem.__remoteFunc('premVer', true)
+        if !currentVer
+            throw Error("Failed to return Premiere Version")
+        if VerCompare(currentVer, prem.minVer) < 0 {
+            notifyExt.deleteIfExist("premUIAGenTree")
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            throw MethodError("This version of Premiere is not supported.`nThe minimum supported version is: " prem.minVer "`nThe user has: " currentVer)
+        }
+        __TryCatchUIAobj(name, objOrPath, errorCode, pathName := "") {
             try {
-                premVerVal := prem.__remoteFunc('premVer', true)
-                if premVerVal == -1 {
-                    block.Off()
-                    activeObj.isRunning := false
-                    return false
+                switch objOrPath {
+                    case "obj":  temp := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:name})
+                    case "path": temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true)
+                    case "premObj": temp := this.AdobeEl.FindCachedElement({Type:"Pane", Type:"TabItem", LocalizedType:"pane", LocalizedType:"tab item", Name:name})
+                    case "projObj": temp := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:name, matchmode:"Substring"})
                 }
-                if !premVerVal
-                    throw
-                appVer := "v" premVerVal
-
-                if (this.setVer != appVer) && (this.setVer ".0" != appVer) {
-                    notifyExt.notifyIfNotExist("UIAwrongVer",, 'The currently set version of Premiere does not match the application version.`nConsider adjusting the set version in settingsGUI() and then reloading`n`nSet Version: ' this.setVer ".0 || Premiere Version: " appVer, 'C:\Windows\System32\imageres.dll|icon227', 'Windows Notify Messaging',, 'theme=Dark dur=10 bdr=Red maxW=400')
-                    block.Off()
-                    activeObj.isRunning := false
-                    return false
-                }
+                return temp
             } catch {
-                errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``. If PremiereRemote was not installed it is highly recommended for maximum compatibility with my functions.")
-                notifyExt.notifyIfNotExist("PremRemoteIfNotInstalled",, 'If PremiereRemote was not installed it is highly recommended for maximum compatibility with my functions.', ,,, 'POS=BC bc=0x220606 bdr=0xC72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500 dur=7')
-                notifyExt.notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'dur=8 POS=BC bc=0xC72424 bdr=0xE98D8D show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
-                /*
-                ;// shouldn't really need to abort here, stops things that don't require UIA from working
-                block.Off()
-                activeObj.isRunning := false
-                return
-                */
+                throw UnsetError("throw code:" errorCode,, errorCode)
             }
         }
-        ; WinEvent.Exist((*) => (prem.dismissWarning(), switchTo.Premiere(), sleep(250)), "DroverLord - Overlay Window ahk_class DroverLord - Window Class")
-
-        AdobeEl  := UIA.ElementFromHandle(premName.winTitle A_Space prem.winTitle,, false)
         try {
-            currentVers  := JSON.parse(FileRead(ptf.SupportFiles "\UIA\values.ini"),, false)
-            originalVers := JSON.stringify(currentVers)
-        } catch {
-            block.Off()
-            activeObj.isRunning := false
-            ;// throw
-            errorLog(Error("Parsing JSON Data Failed", -1),,, true)
-        }
-
-        if !WinActive(prem.winTitle)
-            switchTo.Premiere()
-
-        block.On()
-        ;// we need to ensure playback here is halted, otherwise UIA is SUPER unresponsive
-        ;// and for whatever reason known only to the adobe devs some hotkeys no longer function globally
-        ;// if they contain any modifiers, so we have to do a check here to see if the user has any in their set hotkey
-        if !InStr(ksa.shuttleStop, "+") && !InStr(ksa.shuttleStop, "^") && !InStr(ksa.shuttleStop, "!") && !InStr(ksa.shuttleStop, "Ctrl") && !InStr(ksa.shuttleStop, "Shift") && !InStr(ksa.shuttleStop, "Alt") {
-            SendInput(ksa.shuttleStop)
-        } else {
+            premCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "Type", "Name", "Value", "ClassName", "AutomationId", "BoundingRectangle"],, "Descendants") ;// all necessary for `GetUIAPath()`
             try {
-                delaySI(80, this.windowHotkeys["effectControls"], this.windowHotkeys["programMon"])
-                sleep 150
-                currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
-                progMon := prem.__uiaCtrlPos(currentEl,,, false)
-                programMonX1 := progMon.x+100, programMonX2 := progMon.x + progMon.width-100, programMonY1 := (progMon.y+progMon.height)*0.7,  programMonY2 := progMon.y + progMon.height + 150
-
-                if ImageSearch(&x, &y, programMonX1, programMonY1, programMonX2, programMonY2, "*2 " ptf.Premiere "stop.png") {
-                    Click(, x, y)
-                    sleep 150
-                }
+                this.AdobeEl := UIA.ElementFromHandle(prem.winTitle, premCacheRequest, false)
             } catch {
-                block.off()
-                activeObj.isRunning := false
-                errorLog(Error("UIA Values could not be determined. Please try again later"))
-                notifyExt.notifyIfNotExist("UIAnotDetermined",, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
-                return false
+                throw UnsetError("throw code:701")
             }
-        }
 
-        if !currentVers.HasOwnProp(this.currentVer) {
-            currentVers.%this.currentVer% := {}
-            for currentPanel in this.windowHotkeys {
-                currentVers.%this.currentVer%.%currentPanel% := {}
-            }
-        }
+            this.UIA_Objs["timeline"]       := __TryCatchUIAobj("Timeline", "obj", "702")
+            this.UIA_Path["timeline"]       := __TryCatchUIAobj("Timeline", "path", "702", "timeline")
+            this.UIA_Objs["effectControls"] := __TryCatchUIAobj("Effect Controls", "obj", "703")
+            this.UIA_Path["effectControls"] := __TryCatchUIAobj("Effect Controls", "path", "703", "effectControls")
+            this.UIA_Objs["effectsPanel"]   := __TryCatchUIAobj("Effects", "obj", "704")
+            this.UIA_Path["effectsPanel"]   := __TryCatchUIAobj("Effects", "path", "704", "effectsPanel")
+            this.UIA_Objs["programMon"]     := __TryCatchUIAobj("Program Monitor", "obj", "705")
+            this.UIA_Path["programMon"]     := __TryCatchUIAobj("Program Monitor", "path", "705", "programMon")
+            this.UIA_Objs["sourceMon"]      := __TryCatchUIAobj("Source Monitor", "obj", "706")
+            this.UIA_Path["sourceMon"]      := __TryCatchUIAobj("Source Monitor", "path", "706", "sourceMon")
+            this.UIA_Objs["tools"]          := __TryCatchUIAobj("Tools", "obj", "707")
+            this.UIA_Path["tools"]          := __TryCatchUIAobj("Tools", "path", "707", "tools")
+            this.UIA_Objs["project"]        := __TryCatchUIAobj("Project:", "projObj", "708")
+            this.UIA_Path["project"]        := __TryCatchUIAobj("Project:", "path", "708", "project")
+            this.UIA_Objs["premRemote"]     := __TryCatchUIAobj("PremiereRemote", "premObj", "709")
+            this.UIA_Path["premRemote"]     := __TryCatchUIAobj("PremiereRemote", "path", "709", "premRemote")
 
-        notifyExt.notifyIfNotExist("UIAattemptControls",, 'Attempting to retrieve Premiere UIA Coordinates`nInputs will be temporarily disabled', 'C:\Windows\System32\imageres.dll|icon169',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
-
-        checkDupes := Map()
-        hasDupes   := false
-        for currentPanel, currHotkey in this.windowHotkeys {
-            if WinExist("Save Project " prem.winTitle) {
-                block.Off()
-                activeObj.isRunning := false
-                try Notify.Destroy("UIAattemptControls")
-                notifyExt.notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
-                errorLog(TargetError("Premiere save window is currently open. Aborting", -1))
-                return -1
-            }
-            SendInput(currHotkey)
-            sleep 50
-            try currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
-            catch {
-                if WinExist("DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
-                    prem.dismissWarning()
-                    switchTo.Premiere()
-                    if currentPanel != "timeline"
-                        SendInput(currHotkey)
-                    else
-                        delaySI(50, this.windowHotkeys["effectControls"], currHotkey) ;// if timeline is already active, it'll swap sequences which is annoying
-                    sleep 50
-                    try currentEl := AdobeEl.GetUIAPath(UIA.GetFocusedElement())
-                    catch {
-                        block.Off()
-                        activeObj.isRunning := false
-                        try Notify.Destroy("UIAattemptControls")
-                        errorLog(Error("UIA Values could not be determined. Please try again later"))
-                        notifyExt.notifyIfNotExist("UIAnotDetermined",, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
-                        return false
-                    }
+            ;// Tools
+            tools := Map(
+                "selectionTool", "Selection Tool",
+                "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
+                "rippleEdit", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
+                "razorTool", "Razor Tool",
+                "slipTool", ["Slip Tool", "Slide Tool"],
+                "penTool", "Pen Tool",
+                "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
+                "handTool", ["Hand Tool", "Zoom Tool"],
+                "textTool", ["Type Tool", "Vertical Type Tool"]
+            )
+            for k, v in tools {
+                switch Type(v), false {
+                    case "Array":
+                        for v2 in v {
+                            try this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v2, matchmode:"Substring"})
+                            catch {
+                                continue
+                            }
+                            this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
+                            errorLog(UnsetError("Failed to find tool: " k))
+                        }
+                    default:
+                        this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v, matchmode:"Substring"}), this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
+                        errorLog(UnsetError("Failed to find tool: " k))
                 }
             }
-            if !IsSet(currentEl) {
-                block.Off()
-                activeObj.isRunning := false
-                try Notify.Destroy("UIAattemptControls")
-                errorLog(Error("UIA Values could not be determined. Please try again later"))
-                notifyExt.notifyIfNotExist("UIAnotDetermined",, "UIA Values could not be determined. Please try again later", A_WinDir '\system32\shell32.dll|Icon28',,, 'POS=BR DUR=6 MALI=CENTER IW=25 BC=7A3030 show=Fade@250 hide=Fade@250 maxW=400')
-                return false
-            }
-            if checkDupes.Has(currentEl) {
-                hasDupes := true
-            }
-            checkDupes.Set(currentEl, true)
-            currentVers.%this.currentVer%.%currentPanel% := currentEl
-            this.successCount += 1
-        }
-        if hasDupes = true {
-            errorLog(Error("The function may have set duplicate UIA values. Please set new values to ensure proper function."))
-            notifyExt.notifyIfNotExist("UIAhasDupes",, 'The function may have set duplicate UIA values.`nPlease set new values to ensure proper function.', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Battery Critical',, 'theme=Dark dur=6 bdr=Red maxW=400')
-        }
-        checkStuck(["XButton1", "XButton2", "Ctrl", "Shift", "Alt", "RButton", "LButton"])
-        block.Off()
-        this.allVals := currentVers
-        this.__setClassVal()
-        try Notify.Destroy("UIAattemptControls")
-        if this.successCount != this.windowHotkeys.Count {
-            notifyExt.notifyIfNotExist("UIAfailedControls", 'Error Setting Control', 'Some controls may have failed to be set!`nPlease reload and try again or you may encounter errors', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Message Nudge',, 'theme=Chestnut show=Fade@250 hide=Fade@250 maxW=400')
-        }
-        notifyExt.notifyIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", A_WinDir '\system32\shell32.dll|icon270',,, 'dur=6 mali=Center show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
-        this.successCount := 0
-        this.beenSet := true
-        if JSON.stringify(currentVers) == originalVers {
-            activeObj.isRunning := false
-            return true
+        } catch as e {
+            try errorLog(Error(e.Message, e.What, e.Extra))
+            notifyExt.deleteIfExist("premUIAGenTree")
+            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            this.AdobeEl   := false
+            this.UIA_Objs  := Map()
+            this.UIA_Path  := Map()
+            this.beenSet := false
+            this.isRunning := false
+            throw ValueError(e.Message,, e.Extra)
         }
 
-        if !DirExist(A_Temp "\tomshi")
-            DirCreate(A_Temp "\tomshi")
-        tempPath := A_Temp "\tomshi\json_values.ini"
-        if FileExist(tempPath)
-            FileDelete(tempPath)
-        FileAppend(JSON.stringify(currentVers), tempPath)
-        try FileMove(tempPath, this.valueINI, true)
-        activeObj.isRunning := false
+        notifyExt.deleteIfExist("premUIAGenTree")
+        notifyExt.deleteIfExist("premUIAGenTreeWarning")
+        notifyExt.deleteIfExist("determiningUIA")
+        notifyExt.showIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", img,,, 'dur=3 bdr=0x5B009F show=Fade@225 hide=Fade@250 maxW=400')
         return true
     }
 
-    __Delete() {
-        block.Off()
-        activeObj := CLSID_Objs.load("uiaCheckRunning")
-        activeObj.isRunning := false
+    static determineUIA_Exist() {
+        try {
+            ComObjActive(CLSID_Objs["determineUIA"])
+            return true
+        } catch {
+            return false
+        }
+    }
 
-        premVals := CLSID_Objs.load("premUIA_Values")
-        premVals.beenSet := false
+    static initialise() {
+        Critical('On')
+        scriptLoc := ptf.SupportFiles "\determineUIA.ahk"
+        determineUIAExist := this.determineUIA_Exist()
+
+        if !determineUIAExist {
+            Run(scriptLoc)
+            Critical('Off')
+            return false
+        }
+
+        uiaObj := CLSID_Objs.load("determineUIA")
+        switch {
+            case uiaObj.isRunning:
+                notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+                Critical('Off')
+                return false
+            case uiaObj.beenSet:
+                Critical('Off')
+                return uiaObj
+            default:
+                ;// registered but not yet started - shouldn't normally happen
+                Critical('Off')
+                return false
+        }
     }
 }

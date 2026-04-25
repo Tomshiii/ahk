@@ -166,5 +166,14 @@
       "true": "`checklist.ahk` will create a hotkey to start/stop the timer. (Shift & Media_Play_Pause)",
       "false": "`checklist.ahk` will no longer create a hotkey to start/stop the timer."
     }
+  },
+
+  "________newSection": " UIA",
+  "UIAonLoad": {
+    "title": " Set UIA Values on Load",
+    "tooltip": {
+      "true": "Premiere UIA values will be set briefly after loading",
+      "false": "Premiere UIA values wont be set after loading and will need to be set manually"
+    }
   }
 }

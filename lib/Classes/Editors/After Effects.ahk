@@ -1,10 +1,10 @@
 /************************************************************************
  * @description A library of useful After Effects functions to speed up common tasks
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
- * @aeVer 26.0
+ * @aeVer 26.2
  * @author tomshi
- * @date 2026/02/16
- * @version 1.3.2
+ * @date 2026/04/21
+ * @version 1.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -44,6 +44,7 @@ class AE {
         }
     }
 
+    static minVer := "22.6"
     static spectrumUI_Version := "25.0"
 
     static exeTitle := Editors.AE.winTitle

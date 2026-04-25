@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/04/20
- * @version 1.8.12
+ * @date 2026/04/21
+ * @version 1.8.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -207,7 +207,7 @@ class Startup {
                     this.UserSettings := UserPref(true)
                     return
                 }
-                notifyExt.notifyIfNotExist("settingsReload", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+                notifyExt.showIfNotExist("settingsReload", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
                 SetTimer((*) => reset.reset(), -3000)
                 Sleep(5000)
                 return
@@ -696,7 +696,7 @@ class Startup {
         __notifyVers() {
             notify_premBeta := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? " (Beta)" : ""
             notify_aeBeta   := (this.UserSettings.aeIsBeta = true   || this.UserSettings.aeIsBeta = "true")   ? " (Beta)"   : ""
-            try notifyExt.notifyIfNotExist("currentAdobeVers", 'Currently Set Adobe Versions',"Adobe Versions - `nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`n   🖌️ Theme: " prem.theme "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer, 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=7 pos=TR bdr=0xD50000')
+            try notifyExt.showIfNotExist("currentAdobeVers", 'Currently Set Adobe Versions',"Adobe Versions - `nPremiere Pro" notify_premBeta ": " this.UserSettings.premVer "`n   🖌️ Theme: " prem.theme "`nAfter Effects" notify_aeBeta ": " this.UserSettings.aeVer, 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=7 pos=TR bdr=0xD50000')
         }
         if !this.UserSettings.adobeExeOverride
             return
@@ -761,7 +761,7 @@ class Startup {
             this.UserSettings := ""
             if !this.__checkForReloadAttempt("adobeVerOverride")
                 return
-            notifyExt.notifyIfNotExist("settingsReload", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+            notifyExt.showIfNotExist("settingsReload", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
             SetTimer((*) => reset.reset(), -3000)
             Sleep(5000)
             return
@@ -782,6 +782,8 @@ class Startup {
         adobeProgs := ["ae", "prem"] ;, "ps"
         needsRefresh := false
         for v in adobeProgs {
+            if VerCompare(SubStr(this.UserSettings.%v%Ver, 2), %v%.minVer) < 0
+                this.UserSettings.%v%Ver := "v" %v%.minVer
             currVer := SubStr(this.UserSettings.%v%Ver, 1, 3)
             currentFile := basePath "\" v "\" currVer ".json"
             previousFile := basePath "\" v "\v" (Number(SubStr(currVer, 2, 2))-1) ".json"
@@ -819,7 +821,7 @@ class Startup {
             errorLog(TargetError("Cannot find generateAdobeSym.ahk"), "The user will need to manually run the script to regenerate symlinks",, true)
             return
         }
-        notifyExt.notifyIfNotExist("settingsReload", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Adobe versions have been updated, a reload may be required.', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+        notifyExt.showIfNotExist("settingsReload", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Adobe versions have been updated, a reload may be required.', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
         return
     }
 
@@ -866,8 +868,6 @@ class Startup {
 
         submenuUIA := Menu()
         submenuUIA.Add("Open UIA Script", (*) => Run(ptf.lib "\Other\UIA\UIA.ahk"))
-        submenuUIA.Add("Open Prem_UIA Values", (*) => editScript(ptf.rootDir "\Support Files\UIA\values.ini"))
-        submenuUIA.Add("Set Prem_UIA Values", (*) => WinExist(prem.winTitle) ? (uiaVals := CLSID_Objs.load("premUIA_Values"), uiaVals.initialise(, true)) : MsgBox("Premiere needs to be open for this option to function correctly!"))
 
         A_TrayMenu.Insert(startingVal "&", "UIA", submenuUIA)
         startingVal++
@@ -884,7 +884,7 @@ class Startup {
         hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
         switch {
             case hotkeyHWND:
-                notifyExt.notifyIfNotExist("traymenuHotkeylessOpen",, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
+                notifyExt.showIfNotExist("traymenuHotkeylessOpen",, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
                 __enableHotkeyless()
             case !hotkeyHWND && !FileExist(ptf['HotkeylessAHK']):
                 submenuHotkeyless.Disable("Open HotkeylessAHK")
@@ -893,11 +893,11 @@ class Startup {
             case !hotkeyHWND && FileExist(ptf['HotkeylessAHK']):
                 try Run(ptf['HotkeylessAHK'])
                 if !winExt.WaitRegex(hotkeylessTitle,, 2, ignore) {
-                    notifyExt.notifyIfNotExist("traymenuHotkeylessClosed",, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
+                    notifyExt.showIfNotExist("traymenuHotkeylessClosed",, 'HotkeylessAHK is currently: Closed',, 'Windows Default',, 'theme=Dark dur=6 bdr=0xFF6F55 show=Fade@50 hide=Fade@250 maxW=400 pos=TR')
                     __disableHotkeyless()
                 }
                 else {
-                    notifyExt.notifyIfNotExist("traymenuHotkeylessOpen",, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
+                    notifyExt.showIfNotExist("traymenuHotkeylessOpen",, 'HotkeylessAHK is currently: Open',, 'Windows Information Bar',, 'theme=Dark dur=6 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400 pos=TR')
                     __enableHotkeyless()
                 }
         }
@@ -963,7 +963,7 @@ class Startup {
                         return
                     }
                     try Run(ptf['HotkeylessAHK'])
-                    notifyExt.notifyIfNotExist("traymenuHotkeylessReboot",, 'HotkeylessAHK has been rebooted', 'C:\Windows\System32\imageres.dll|icon253',,, 'theme=Dark dur=4 bdr=Gray show=Fade@250 hide=Fade@250 maxW=400')
+                    notifyExt.showIfNotExist("traymenuHotkeylessReboot",, 'HotkeylessAHK has been rebooted', 'C:\Windows\System32\imageres.dll|icon253',,, 'theme=Dark dur=4 bdr=Gray show=Fade@250 hide=Fade@250 maxW=400')
             }
         }
     }
@@ -1077,7 +1077,7 @@ class Startup {
             string := getHTML(url)
             if string = -1 {
                 ; tool.Tray({title: "libUpdateCheck() encountered an issue", text: "lib may have incorrect url:`n" url})
-                notifyExt.notifyIfNotExist("libupdateError", 'Error: libUpdateCheck() encountered an issue', "The requested lib may have incorrect url.`nLib: " name "`nURL: " url, 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                notifyExt.showIfNotExist("libupdateError", 'Error: libUpdateCheck() encountered an issue', "The requested lib may have incorrect url.`nLib: " name "`nURL: " url, 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 errorLog(Error(A_ThisFunc " encountered an issue with the specified url", -1), url)
                 return {version: 0}
             }
@@ -1376,12 +1376,12 @@ class Startup {
         }
         if changes = false
             return
-        notifyExt.notifyIfNotExist("gitbranchApplied",, 'Recent Github changes have been applied.`nA reload is recommended!', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=Purple')
+        notifyExt.showIfNotExist("gitbranchApplied",, 'Recent Github changes have been applied.`nA reload is recommended!', 'C:\Windows\System32\imageres.dll|icon176', 'Windows Battery Low',, 'bdr=Purple')
         if MsgBox("Github changes have been applied.`nWould you like to reload all scripts now?", "Would you like to reload?", "4132") != "Yes"
             return
         if !this.__checkForReloadAttempt("gitBranchCheck")
             return
-        notifyExt.notifyIfNotExist("gitbranchReloading", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'A reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
+        notifyExt.showIfNotExist("gitbranchReloading", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'A reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
         SetTimer((*) => reset.reset(), -3000)
         Sleep(5000)
         return
@@ -1395,7 +1395,7 @@ class Startup {
         this.__createTrackReloads()
         readIni := IniRead(this.trackReloadsIni, "Track", funcName, A_YYYY "_" A_MM "_" A_DD)
         if readIni = A_YYYY "_" A_MM "_" A_DD {
-            notifyExt.notifyIfNotExist("checkMultipleReloads",, funcName '() appears to be attempting to reload multiple times, this may be because something is stopping it from progressing forward.`n`nThis function will no longer reload today, if this was unintentional it is recommended you report this issue on Github as a bug, otherwise a manual reload is required.', 'C:\Windows\System32\imageres.dll|icon80',,, 'dur=10 pos=BR bdr=0xD50000 maxW=400')
+            notifyExt.showIfNotExist("checkMultipleReloads",, funcName '() appears to be attempting to reload multiple times, this may be because something is stopping it from progressing forward.`n`nThis function will no longer reload today, if this was unintentional it is recommended you report this issue on Github as a bug, otherwise a manual reload is required.', 'C:\Windows\System32\imageres.dll|icon80',,, 'dur=10 pos=BR bdr=0xD50000 maxW=400')
             if !IsObject(this.UserSettings)
                 this.UserSettings := UserPref(true)
             return false

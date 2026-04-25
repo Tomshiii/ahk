@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/04/17
- * @version 1.1.2
+ * @date 2026/04/18
+ * @version 1.1.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -159,7 +159,7 @@ class explorer {
      */
     static selectFileInOpenWindow(fullPath, checkAgain := false) {
         if !WinActive("ahk_exe explorer.exe") {
-            notifyExt.notifyIfNotExist("explorerNotActive",, 'Windows explorer is not the active window so a selection could not be made', 'C:\Windows\System32\imageres.dll|icon4', 'Speech Misrecognition',, 'theme=Dark dur=5 bdr=Red maxW=400')
+            notifyExt.showIfNotExist("explorerNotActive",, 'Windows explorer is not the active window so a selection could not be made', 'C:\Windows\System32\imageres.dll|icon4', 'Speech Misrecognition',, 'theme=Dark dur=5 bdr=Red maxW=400')
             return false
         }
         hwnd := WinExist("A")

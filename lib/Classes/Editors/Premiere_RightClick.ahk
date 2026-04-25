@@ -1,9 +1,9 @@
 /************************************************************************
  * @description move the Premere Pro playhead to the cursor
- * @premVer 26.0
+ * @premVer 26.2
  * @author tomshi, taranVH
- * @date 2026/04/17
- * @version 2.4.15
+ * @date 2026/04/24
+ * @version 2.4.20
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -167,6 +167,7 @@ class rbuttonPrem {
 		;// then we check to see if it's relatively close to the cursors position
 		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
 			block.On()
+			prem.selectTool("selectionTool")
 			SendInput(KSA.selectionPrem)
 			MouseMove(xcol, ycol)
 			SendInput("{LButton Down}")
@@ -272,7 +273,7 @@ class rbuttonPrem {
 	}
 
 	/**
-	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton2</kbd>).
+	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton1</kbd>).
 	 * This function has built in checks for <kbd>LButton</kbd> & <kbd>XButton2</kbd> by default during activation - this can be overwritten by using the `playbackKeys` parameter.
 	 * This function should work as intended on both the old UI and the Spectrum UI assuming you use the default darkest themeing for both UI versions. Other themes will require the user to add additional colour values to `timelineColours {`
 	 *
@@ -298,15 +299,14 @@ class rbuttonPrem {
 		;// which can cause A_ThisHotkey to become something else other than RButton (ie. <!3)
 		;// If this happens, some code later on will throw because GetKeyState doesn't know how to handle
 		;// a hotkey that has modifiers in it; eg. `&`/`<`/`!` etc
-		try (chkVar := GetKeyState(A_ThisHotkey), chkVar := GetKeyState(A_ThisHotkey, "P"))
+		this.sendHotkey := (IsSet(sendOnFailure)) ? sendOnFailure : "{Blind}{" A_ThisHotkey "}"
+		currHotkey := A_ThisHotkey
+		try (chkVar := GetKeyState(currHotkey), chkVar := GetKeyState(currHotkey, "P"))
 		catch {
-			if IsSet(sendOnFailure)
-				SendInput(sendOnFailure)
+			SendInput(this.sendHotkey)
 			return
 		}
 
-		this.sendHotkey := (IsSet(sendOnFailure)) ? sendOnFailure : "{" A_ThisHotkey "}"
-		currHotkey := A_ThisHotkey
 
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
@@ -349,7 +349,7 @@ class rbuttonPrem {
 		}
 
 		;// set coord mode and grab the cursor position
-		coord.client()
+		coord.s()
 		if !origMouse := obj.MousePos()
 			return
 
@@ -357,9 +357,9 @@ class rbuttonPrem {
 		this.__HotkeySet([this.playbackKeys.play, this.playbackKeys.speed])
 
 		;// checks to see whether the timeline position has been located
-		if !prem.__setTimelineValues() {
-			SendInput(this.sendHotkey)
-			this.__exit()
+		if !prem.__checkTimelineValues() {
+			; SendInput(this.sendHotkey)
+			(!this.premObj.timelineVals) ? (prem.__setTimelineValues(), this.__exit()) : prem.__setTimelineValues()
 		}
 
 		;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
@@ -404,13 +404,6 @@ class rbuttonPrem {
 			this.__exit()
 		}
 
-		;// testing the removal of the below
-		/* this.premUIA := CLSID_Objs.load("premUIA_Values")
-		if !this.premUIA.initialise() {
-			this.__exit()
-		} */
-		; try premEl := prem.__createUIAelement(false)
-
 		;// we send a single input here so that in the event UIA is slow to respond because of premiere
 		;// the cursor will still move if the user taps the activation hotkey
 		SendInput(ksa.playheadtoCursor)
@@ -420,26 +413,20 @@ class rbuttonPrem {
 			ckDir := prem.__checkPremRemoteDir("getActiveSequence"), ckFunc := prem.__checkPremRemoteFunc("focusSequence")
 			if !ckDir || !ckFunc {
 				useRemote := false
-				notifyExt.notifyIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
+				notifyExt.showIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
 			} else {
 
 				if !this.origSeq := prem.__remoteFunc("getActiveSequence", true) {
 					useRemote := false
 					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
-					notifyExt.notifyIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
+					notifyExt.showIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
 					this.__exit() */
-					notifyExt.notifyIfNotExist("RClickpremRemoteFailed",, 'PremiereRemote failed to retrieve the currently active sequence.`nFalling back to older method', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=400')
+					notifyExt.showIfNotExist("RClickpremRemoteFailed",, 'PremiereRemote failed to retrieve the currently active sequence.`nFalling back to older method', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=400')
 				}
 			}
 		}
 
-		;// focuses the timeline
 		prem.__focusTimeline()
-		;// testing the removal of the below
-		/* try premEl.AdobeEl.ElementFromPath(this.premUIA.timeline).SetFocus()
-		catch {
-			prem.__focusTimeline()
-		} */
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
 		while GetKeyState(currHotkey, "P") {

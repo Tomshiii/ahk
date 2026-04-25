@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2026/04/17
- * @version 1.2.3
+ * @date 2026/04/18
+ * @version 1.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -24,7 +24,7 @@ class ffmpeg {
     doAlert := true
 
     /** generates a tooltip to alert the user the process has completed */
-    __finished() => (this.doAlert=true) ? notifyExt.notifyIfNotExist("ffmpegComplete",, 'ffmpeg process has completed!', 'C:\Windows\System32\imageres.dll|icon19', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
+    __finished() => (this.doAlert=true) ? notifyExt.showIfNotExist("ffmpegComplete",, 'ffmpeg process has completed!', 'C:\Windows\System32\imageres.dll|icon19', 'Speech Disambiguation',, 'dur=4 bdr=Lime show=Fade@250 hide=Fade@250 maxW=400') : ""
 
     /**
      * Retrieves the path of an active windows explorer process

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/03/20
- * @version 1.3.4
+ * @date 2026/04/23
+ * @version 1.4.2
  ***********************************************************************/
 
 class UserPref {
@@ -37,15 +37,15 @@ class UserPref {
         "autosave_always_save", "true", "autosave_restart_playback", "false",
         "checklist_hotkeys", "true", "checklist_tooltip", "true", "checklist_wait", "false",
         "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
-        "Always_Check_UIA", "true", "Set_UIA_Limit_Daily", "disabled",
         "Use_Thio_MButton", "false", "Use_MButton", "true",
         "Use_swapSequences", "true",
+        "Set_UIA_on_load", "true",
 
         ;// [Adjust]
         "adobe_GB", 45, "adobe_FS", 2,
         "autosave_MIN",  5, "game_SEC",  2, "multi_SEC", 5,
-        "prem_year", 2025, "ae_year", 2025, "ps_year", 2025,
-        "premVer", "v25.0", "aeVer", "v25.0", "psVer", "25.5", "resolveVer", "v18.5",
+        "prem_year", 2026, "ae_year", 2026, "ps_year", 2026,
+        "premVer", "v26.2", "aeVer", "v26.0", "psVer", "25.5", "resolveVer", "v18.5",
         "premIsBeta", "false", "aeIsBeta", "false", "psIsBeta", "false",
         "premCache", A_AppData "\Adobe\Common", "aeCache", A_AppData "\Adobe\Common",
         "premDefaultTheme", "Darkest", "premPrevSeqDelay", "1.5", "premSwapSequencesLimit", 3,
@@ -236,8 +236,7 @@ class UserPref {
                     checklist wait={}
                     disc disable autoreply={}
                     adobeExeOverride={}
-                    Always Check UIA={}
-                    Set UIA Limit Daily={}
+                    Set UIA on load={}
                     Use Thio MButton={}
                     Use MButton={}
                     Use swapSequences={}
