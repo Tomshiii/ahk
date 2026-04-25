@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/04/24
- * @version 2.4.6
+ * @date 2026/04/25
+ * @version 2.4.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1706,7 +1706,7 @@ class Prem {
             }
         }
         if tools = true {
-            notifyExt.showIfNotExist("premTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=6 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
+            notifyExt.showIfNotExist("premTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=3 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
         }
         return true
     }

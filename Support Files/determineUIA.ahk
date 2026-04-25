@@ -2,7 +2,7 @@
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
  * @date 2026/04/25
- * @version 1.0.3
+ * @version 1.0.3.1
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -93,7 +93,7 @@ premUIAobj.isRunning := false
 premUIAobj.beenSet   := true
 premUIAobj := ""
 __deleteUIA()
-SetTimer((*) => (__deleteUIA()), -500)
+SetTimer((*) => (__deleteUIA()), -2500)
 
 didReload := isReload(getReload ?? false)
 if WinExist(prem.winTitle) && !didReload {
