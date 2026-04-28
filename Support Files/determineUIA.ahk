@@ -2,7 +2,7 @@
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
  * @date 2026/04/28
- * @version 1.0.4
+ * @version 1.0.5
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -106,8 +106,14 @@ if !WinEvent.IsRegistered("Close", prem.exeTitle)
 __doubleCheckExit(*) {
     ;// prem is really weird and I guess fires the 'close' winevent doing seemingly meaningless things
     ;// this check will stop it from exiting prematurely
-    if !WinExist(prem.winTitle)
+    if !WinExist(prem.winTitle) && !WinExist(prem.class) {
+        try {
+            premObj := CLSID_Objs.load("prem")
+            premObj.__resetTimelineVals()
+            premObj.RClickIsActive := false
+        }
         ExitApp()
+    }
 }
 OnExit(_onExit.Bind(allRegister))
 _onExit(*) {

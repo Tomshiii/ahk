@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/04/25
- * @version 2.4.6.1
+ * @date 2026/04/28
+ * @version 2.4.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -95,9 +95,6 @@ class Prem {
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
             if DirExist(remotePath) && (getNPM != false && getNPM != "")
                 SetTimer(this.checkRemote.Bind(this), 2000)
-
-            if !WinEvent.IsRegistered("Close", this.exeTitle)
-                WinEvent.Close((*) => this.__resetUIAobj(), this.exeTitle)
 
             ;// toggle multicam when audio effect windows become active
             if !WinEvent.IsRegistered("Active", "Clip Fx Editor " this.exeTitle)
@@ -1714,25 +1711,6 @@ class Prem {
     /** resets internal values for the timeline */
     static __resetTimelineVals() {
         this.timelineVals := false, this.timelineRawX := 0, this.timelineRawY := 0, this.timelineXValue := 0, this.timelineYValue := 0, this.timelineXControl := 0, this.timelineYControl := 0
-    }
-
-    /** reset various values to simulate reload */
-    static __resetUIAobj(*) {
-        if WinExist(this.exeTitle)
-            return
-        try {
-            premUIA := CLSID_Objs.load("determineUIA")
-            premUIA.beenSet   := false
-            premUIA.isRunning := false
-            premUIA.UIA_Objs  := Map()
-            premUIA.UIA_Path  := Map()
-            premUIA.AdobeEl   := false
-            premUIA := ""
-
-            premObj := CLSID_Objs.load("prem")
-            premObj.__resetTimelineVals()
-            premObj.RClickIsActive := false
-        }
     }
 
     /**
