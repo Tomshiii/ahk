@@ -13,9 +13,13 @@ if !IsSet(override) || (override != false && override != "false") {
         return
 }
 
+if !DirExist(installedPath "\host\src")
+    DirCreate(installedPath "\host\src")
 loop files backupPath "\*.tsx", "F" {
     FileCopy(A_LoopFileFullPath, installedPath "\host\src\*.*", true)
 }
+if !DirExist(installedPath "\typings")
+    DirCreate(installedPath "\typings")
 loop files backupPath "\typings\*.ts", "F" {
     FileCopy(A_LoopFileFullPath, installedPath "\typings\*.*", true)
 }

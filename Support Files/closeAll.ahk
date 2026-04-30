@@ -9,15 +9,20 @@
 Critical()
 Notify.DestroyAll()
 try incChecklist := A_Args[1]
+try ignore := A_Args[2]
 
 if !Notify.Exist("reloadAllAlert")
     Notify.Show(, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237', 'Windows Startup',, 'pos=TL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400 tag=closeAllAlert')
     ; notifyExt.showIfNotExist("closeAllAlert",, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237', 'Windows Startup',, 'pos=TL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400') ;// don't use func here now that Core Functionality.ahk calls the notify gui otherwise it instantly closes
-resetter := reset(false, false)
+resetter := reset(false)
+coreFuncTitle   := "Core Functionality.ahk ahk_class AutoHotkey"
+coreFuncHWND    := winExt.ExistRegex(coreFuncTitle,, resetter.ignoreString,, true)
 activeWindows := resetter.__getList()
 ; logger := Log()
 for v in activeWindows {
     if !getInfo := resetter.__parseInfo(v, incChecklist ?? false)
+        continue
+    if IsSet(ignore) && getInfo.scriptName = ignore
         continue
     if WM.timerScripts.Has(getInfo.scriptName) {
         justName := StrReplace(getInfo.scriptName, ".ahk", "",,, 1)
@@ -36,8 +41,6 @@ for v in activeWindows {
     try WinClose(checkPID)
 }
 Critical("Off")
-coreFuncTitle   := "Core Functionality.ahk ahk_class AutoHotkey"
-coreFuncHWND    := winExt.ExistRegex(coreFuncTitle,, resetter.ignoreString,, true)
 __checkClose(hwnd, title) {
     if hwnd {
         ProcessClose(hwnd)

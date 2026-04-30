@@ -6,7 +6,8 @@
 
 ;// this script is just to rebuild the webserver for `PremiereRemote` as
 ;// any time you change anything in the `index` file, you need to rebuild it
-
+try keepWin := A_Args[1]
+try Hide := A_Args[2]
 dir     := A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\"
 command := "npm run build"
 
@@ -15,7 +16,9 @@ if !DirExist(dir) {
     return
 }
 
-cmd.run(, false, true, command, dir)
-if WinExist(Editors.Premiere.winTitle) {
-    MsgBox("The PremiereRemote extension will need to be closed and reopened within Premiere",, "T1.5")
+cmd.run(, false, IsSet(keepWin) ? keepWin : true, command, dir, IsSet(Hide) ? "Hide" : "")
+if !IsSet(Hide) {
+    if WinExist(Editors.Premiere.winTitle) {
+        MsgBox("The PremiereRemote extension will need to be closed and reopened within Premiere",, "T1.5")
+    }
 }

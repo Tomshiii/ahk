@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/04/25
- * @version 1.1.5
+ * @date 2026/04/30
+ * @version 1.1.6
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -59,8 +59,9 @@ class installGUI extends Gui {
         this.AddButton("x0 y0 w0 h0 Hidden vEmptyDir", "Change Dir")
         ;// rest of GUI
         this.AddText("xs+25 ys+20 Section", "Choose Installation Directory:")
-        this.AddEdit("-Wrap ReadOnly r1 vInstallDir w300", this.InstallDir)
-        this.AddButton("x+10 yp-2 vChangeDir", "Change Dir").OnEvent("Click", (*) => this.__changeDir())
+        opt := (DirExist(prevPath := FileRead(this.prevInstall))) ? "+Disabled" : ""
+        this.AddEdit("-Wrap ReadOnly r1 vInstallDir w300 " opt, (!opt) ? this.InstallDir : prevPath)
+        this.AddButton("x+10 yp-2 vChangeDir " opt, "Change Dir").OnEvent("Click", (*) => this.__changeDir())
         this.AddButton("y+5 xp+21 w65 vInstallButton", "Install").OnEvent("Click", (*) => this.__Install())
         SendMessage(0x160C,, true, this["InstallButton"].hwnd, this) ; BCM_SETSHIELD := 0x160C
         this.AddProgress("Smooth xs yp+3 w300 vProgress Section")
@@ -174,6 +175,7 @@ class installGUI extends Gui {
                 this.__addLogEntry("deleting ``" name "``")
             }
             __after("yes.value.zip")
+            __after("nodejs.exe")
             FileDelete(A_WorkingDir '\yes.value.zip')
             sleep 100
         }
@@ -199,7 +201,7 @@ class installGUI extends Gui {
 
         __patchInstall() {
             ;// add closeAll.ahk
-            try RunWait(this.prevInstallLoc "\Support Files\closeAll.ahk")
+            try RunWait(this.prevInstallLoc "\Support Files\closeAll.ahk 1 " A_ScriptName)
 
             SetWorkingDir(A_Temp "\tomshi\yes.value")
             this.__addLogEntry("unzipping release contents")
@@ -210,8 +212,18 @@ class installGUI extends Gui {
                 throw(Error("Unable to Unzip install files. Please try the installation again.", -1))
             }
             this.__setProgress(65) ;// hard setting to 65 here
-            ;//! MOVE LIB FILES INTO POSITION
-            ;//! MOVE EVERYTHING ELSE INTO OTHER POSITION
+            loop files A_WorkingDir "\*", "FD" {
+                this.__addLogEntry("moving: " A_LoopFileName)
+                if A_LoopFileName = "lib" {
+                    if DirExist(A_Appdata "\tomshi\lib")
+                        DirDelete(A_Appdata "\tomshi\lib")
+                    DirMove(A_LoopFileFullPath, A_Appdata "\tomshi")
+                    continue
+                }
+                SplitPath(A_LoopFileFullPath, &name, &dir)
+                (InStr(A_LoopFileAttrib, "D")) ? DirMove(A_LoopFileFullPath, this.InstallDir "\" name) : FileMove(A_LoopFileFullPath, this.InstallDir "\" name)
+            }
+            DirDelete(A_Temp "\tomshi")
 
 
             ;//! finished
@@ -222,7 +234,9 @@ class installGUI extends Gui {
             this.GetPos(&oldX, &oldY, &oldWidth, &oldHeight)
             try Run(this.InstallDir "\Support Files\Release Assets\installPackagesGUI.ahk",,, &PID)
             try WinMove(oldX, oldY, oldWidth, oldHeight, "ahk_pid " PID)
+            try Run(this.InstallDir "\Support Files\Release Assets\Core Functionality.ahk")
             this.Destroy()
+            return
         }
 
         /** this function handles the entire install sequence of the installer */
@@ -232,10 +246,10 @@ class installGUI extends Gui {
             if FileExist(A_Appdata "\tomshi\version") {
                 readVer := FileRead(A_Appdata "\tomshi\version")
                 compareVers := VerCompare(readVer, "yes.value")
-                switch compareVers {
-                    case 1: ;// installed version is newer
+                switch {
+                    case (compareVers > 0): ;// installed version is newer
                         throw PropertyError("Installed version is already newer.")
-                    case 0:
+                    case (compareVers = 0):
                         throw PropertyError("This version is already installed.")
                 }
             }
@@ -244,6 +258,9 @@ class installGUI extends Gui {
             if IsSet(readPrevLoc)
                 this.prevInstallLoc := readPrevLoc
             installDirExist := (DirExist(readPrevLoc) = true) ? true : false
+            if FileExist(A_Appdata "\tomshi\installDir") {
+                FileDelete(A_Appdata "\tomshi\installDir")
+            }
             FileAppend(this.installDir "\Tomshi AHK", A_Appdata "\tomshi\installDir")
             if !this.hasAttempted {
                 this.__addLogEditBox()
@@ -259,7 +276,7 @@ class installGUI extends Gui {
             if A_IsCompiled = 1
                 this.__installDump()
             this.__setProgress(35) ;// hard setting to 35 here
-            if installDirExist {
+            if installDirExist && (IsSet(readVer) && VerCompare(readVer, "v2.18.0") > 0) {
                 this.__patchInstall()
                 return
             }
@@ -294,6 +311,13 @@ class installGUI extends Gui {
             this.__addLogEntry("handling settings.ini file")
             __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\baseLineSettings.ahk", "failed to generate updated settings.ini file")
 
+            if !this.nodeInstalled() {
+                this.__addLogEntry("installing nodejs")
+                RunWait(this.InstallDir "\nodejs.exe")
+                sleep 100
+            }
+            this.__addLogEntry("installing PremiereRemote")
+            RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk")
             this.__deleteInstallFiles()
             this.__setProgress(80)
             try Run(this.InstallDir "\Core Functionality.ahk")
@@ -301,19 +325,6 @@ class installGUI extends Gui {
             ;// set current adobe versions in settings.ini
             this.__addLogEntry("setting current adobe versions in settings.ini")
             __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk", "failed to set current adobe versions")
-            ;// replace premRemote stuff
-            premRemoteDir := A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src"
-            if DirExist(premRemoteDir) {
-                this.__addLogEntry("backing up previous PremiereRemote files")
-                if !DirExist(premRemoteDir "\backup")
-                    DirCreate(premRemoteDir "\backup")
-                loop files premRemoteDir "\*.*", "F" {
-                    FileCopy(A_LoopFileFullPath, premRemoteDir "\backup\*.*", true)
-                }
-                this.__addLogEntry("copying over new PremiereRemote files")
-                try Run(this.InstallDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk false")
-                try Run(this.InstallDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk", this.InstallDir, "Hide")
-            }
             this.__setProgress(90)
             ;// creating initialise shortcut
             startupScript := this.InstallDir "\PC Startup\Initialise.ahk"
@@ -322,13 +333,10 @@ class installGUI extends Gui {
             ;//! finished
             this.__setProgress(100)
             this["Progress"].opt("CLime")
-
-            ;// run next GUI and destroy this one
-            this.GetPos(&oldX, &oldY, &oldWidth, &oldHeight)
-            try Run(this.InstallDir "\Support Files\Release Assets\installPackagesGUI.ahk",,, &PID)
-            try WinMove(oldX, oldY, oldWidth, oldHeight, "ahk_pid " PID)
             this.Destroy()
         }
+
+        nodeInstalled() => (RegRead("HKLM\SOFTWARE\Node.js", "Version", 0))
 }
 
 ;// steps

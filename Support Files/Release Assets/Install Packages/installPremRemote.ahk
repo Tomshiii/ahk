@@ -4,7 +4,6 @@
 #Include Classes\ptf.ahk
 #Include Classes\cmd.ahk
 #Include Functions\unzip.ahk
-#Include GUIs\cepVer.ahk
 ; }
 
 ;//! This script will NOT complete without NodeJS already being installed
@@ -26,16 +25,15 @@ extensionsPath := A_AppData "\Adobe\CEP\extensions"
 remotePath     := extensionsPath "\PremiereRemote"
 
 if DirExist(remotePath) {
-    if MsgBox("PremiereRemote appears to already be installed!`nWould you like to update .tsx files?`n`n(keep in mind this may override any custom functions you've created, but not updating may result in errors with my scripts.)`nIt is recommended you make a backup of the following directory:`n" A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src\",, 'YesNo Icon?') = "No"
-        return
-    Run(A_WorkingDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replaceAndReset.ahk")
+    /* if MsgBox("PremiereRemote appears to already be installed!`nWould you like to update .tsx files?`n`n(keep in mind this may override any custom functions you've created, but not updating may result in errors with my scripts.)`nIt is recommended you make a backup of the following directory:`n" A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src\",, 'YesNo Icon?') = "No"
+        return */
+    RunWait(ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk false")
+    RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk 0 1")
     return
 }
 
 ;// registry key required to run unsigned extensions within Premiere Pro
-cepSelect := cepVer()
-WinWait(cepSelect.Title)
-WinWaitClose(cepSelect.Title)
+RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode")
 
 if !DirExist(remotePath)
     DirCreate(remotePath)
@@ -49,20 +47,10 @@ FileDelete(extensionsPath "\premExtract.zip")
 DirDelete(extensionsPath "\.premRemoteExtract", 1)
 
 ;// build the project
-cmd.run(,,, "npm i", remotePath "\client")
-cmd.run(,,, "npm i", remotePath "\host")
+cmd.run(,, false, "npm i", remotePath "\client", "Hide")
+cmd.run(,, false, "npm i", remotePath "\host", "Hide")
 
 ;// then copy files from install
-BackupLocation := A_WorkingDir "\Backups\Adobe Backups\Premiere\PremiereRemote"
-if !DirExist(remotePath "\typings")
-    DirCreate(remotePath "\typings")
-loop files BackupLocation "\typings\*.ts", "F" {
-    FileCopy(A_LoopFileFullPath, remotePath "\typings\*.*", true)
-}
-if !DirExist(remotePath "\host\src")
-    DirCreate(remotePath "\host\src")
-loop files BackupLocation "\*.tsx", "F" {
-    FileCopy(A_LoopFileFullPath, remotePath "\host\src\" A_loopfilename, true)
-}
-cmd.run(,,, "npm run build", remotePath "\host")
+RunWait(ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk false")
+cmd.run(,, false, "npm run build", remotePath "\host", "Hide")
 ExitApp()

@@ -246,6 +246,8 @@ cleanUpInstall(A_WorkingDir "\release\" yes.Value)
 if FileExist(A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini")
     IniWrite("", A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini", "Settings", "favoritePaths")
 
+Download("https://nodejs.org/dist/latest/win-x64/node.exe", A_WorkingDir "\release\" yes.Value "\nodejs.exe")
+
 ;// zipping the temp repo
 zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 
