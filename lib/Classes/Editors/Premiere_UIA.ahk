@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/04/25
- * @version 3.0.10
+ * @date 2026/04/30
+ * @version 3.0.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -73,8 +73,7 @@ class premUIA_Values {
         notifyExt.deleteIfExist("UIAretrieveComplete")
         notifyExt.deleteIfExist("determineUIAFailed")
         if !Notify.Exist("premUIAGenTree") {
-            premExe := 'C:\Program Files\Adobe\Adobe Premiere Pro ' this.UserSettings.prem_year '\Adobe Premiere Pro.exe'
-            img := FileExist(premExe) ? premExe : 'C:\Windows\System32\imageres.dll|icon80'
+            img := ptf.Icons "\prprj.ico"
             /* Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning') */
             Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }
@@ -164,12 +163,20 @@ class premUIA_Values {
                             catch {
                                 continue
                             }
-                            this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
-                            errorLog(UnsetError("Failed to find tool: " k))
+                            try this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
+                            catch {
+                                errorLog(UnsetError("Failed to find tool: " k))
+                                throw(UnsetError("Failed to find tool: " k))
+                            }
                         }
                     default:
-                        this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v, matchmode:"Substring"}), this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
-                        errorLog(UnsetError("Failed to find tool: " k))
+                        try {
+                            this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v, matchmode:"Substring"})
+                            this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
+                        } catch {
+                            errorLog(UnsetError("Failed to find tool: " k))
+                            throw(UnsetError("Failed to find tool: " k))
+                        }
                 }
             }
         } catch as e {
@@ -215,7 +222,16 @@ class premUIA_Values {
             return false
         }
 
-        uiaObj := CLSID_Objs.load("determineUIA")
+        try uiaObj := CLSID_Objs.load("determineUIA")
+        catch {
+            errorLog(TargetError("Script could not interact with ``determineUIA.ahk``. Script will reload.", -1))
+            try WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk")
+            if determineScript := winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey",,,, true)
+                try winExt.CloseRegex(determineScript,,,, true)
+            sleep 500
+            Run(ptf.SupportFiles "\determineUIA.ahk")
+            return false
+        }
         switch {
             case uiaObj.isRunning:
                 notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")

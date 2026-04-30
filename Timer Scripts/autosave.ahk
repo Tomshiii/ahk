@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/04/22
- * @version 2.2.19
+ * @date 2026/04/30
+ * @version 2.2.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -71,7 +71,7 @@ class adobeAutoSave extends count {
         try {
             ; this.premUIA.initialise(false) ;// don't do this or every reload it'll force attempt trying to set them
             ;// attempt to grab user settings
-            this.UserSettings    := CLSID_Objs.load("UserSettings")
+            this.UserSettings    := CLSID_Objs.clone("UserSettings")
             this.ms              := (this.UserSettings.autosave_MIN * 60000)
             this.beep            := this.UserSettings.autosave_beep
             this.checkMouse      := this.UserSettings.autosave_check_mouse
@@ -699,7 +699,7 @@ class adobeAutoSave extends count {
         InstallMouseHook(true)
         isCoreFunc := winExt.ExistRegex("Core Functionality.ahk")
         if isCoreFunc {
-            premObj := CLSID_Objs.load("prem")
+            premObj := CLSID_Objs.clone("prem")
             if premObj.RClickIsActive = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true {
                 InstallMouseHook(false)
                 premObj := ""

@@ -41,12 +41,12 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 class adobeTimer extends count {
     __New() {
         try {
-            UserSettings := CLSID_Objs.load("UserSettings")
+            UserSettings := CLSID_Objs.clone("UserSettings")
             ;// open settings instance and start timer
             fire_frequency := UserSettings.adobe_FS
             this.fire := (fire_frequency * 1000)
             this.premName := "Premiere" Editors.__determinePremName(false)
-            this.premObj := CLSID_Objs.load("prem")
+            this.premObj := CLSID_Objs.clone("prem")
         }
 
         super.__New(this.fire)

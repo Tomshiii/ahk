@@ -151,7 +151,7 @@ activeScripts()
 
     checkScripts(*)
     {
-        UserSettings := CLSID_Objs.load("UserSettings")
+        UserSettings := CLSID_Objs.clone("UserSettings")
         if winExt.ExistRegex(UserSettings.MainScriptName ".ahk is Suspended",,,, true)
             winExt.WaitCloseRegex(UserSettings.MainScriptName ".ahk is Suspended",,,,, true)
 

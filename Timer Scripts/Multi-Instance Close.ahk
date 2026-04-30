@@ -38,7 +38,7 @@ class stopper {
 
 check()
 {
-    static UserSettings := CLSID_Objs.load("UserSettings")
+    static UserSettings := CLSID_Objs.clone("UserSettings")
     value := winExt.ListRegex("ahk_class AutoHotkey",,,, true)
     windows := ""
     for window in value{

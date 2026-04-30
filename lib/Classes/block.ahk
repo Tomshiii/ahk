@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2025/12/27
- * @version 1.4.1
+ * @date 2026/04/30
+ * @version 1.4.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -28,7 +28,7 @@ class block {
             }
         if args = "on" || args = "off"
             {
-                UserSettings := CLSID_Objs.load("UserSettings")
+                UserSettings := CLSID_Objs.clone("UserSettings")
                 checkIni := UserSettings.block_aware
                 if checkIni = "false"
                     {

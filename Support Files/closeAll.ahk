@@ -46,6 +46,8 @@ __checkClose(hwnd, title) {
         hwnd := winExt.ExistRegex(title,, resetter.ignoreString,, true)
         if hwnd {
             try WinClose(hwnd)
+            if hwnd := winExt.ExistRegex(title,, resetter.ignoreString,, true)
+                try winExt.CloseRegex(hwnd,,,, true)
         }
     }
 }

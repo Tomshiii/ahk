@@ -64,7 +64,7 @@ ExitFunc(ExitReason, ExitCode) {
 
 class gameCheckTimer extends count {
     __New() {
-        this.UserSettings := CLSID_Objs.load("UserSettings")
+        this.UserSettings := CLSID_Objs.clone("UserSettings")
         this.mainScript := this.UserSettings.MainScriptName
         super.__New(-(this.UserSettings.game_SEC * 1000))
         super.start()

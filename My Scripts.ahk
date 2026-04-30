@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.9
+;\\v2.35.10
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -67,18 +67,7 @@ A_MaxHotkeysPerInterval := 400         ;BE VERY CAREFUL WITH THIS SETTING. If yo
 A_MenuMaskKey := "vkD7"				   ;necessary for `alt_menu_acceleration_disabler.ahk` to work correctly
 TraySetIcon(ptf.Icons "\myscript.png") ;changes the icon this script uses in the taskbar
 
-OnError(checkRPC)
 OnExit(__exit)
-checkRPC(err, *) {
-    /* Extra   := (err.HasProp('Extra'))   ? err.Extra   : "", File    := (err.HasProp('File'))    ? err.File    : ""
-    Line    := (err.HasProp('Line'))    ? err.Line    : "", Message := (err.HasProp('Message')) ? err.Message : ""
-    Stack   := (err.HasProp('Stack'))   ? err.Stack   : "", What    := (err.HasProp('What'))    ? err.What    : ""
-    errorLog(Error("Handler caught error: " err.Message, err.what, err.Extra), "File: " err.file " | Line: " err.Line) */
-    if err.Message = "(0x800706BA) The RPC server is unavailable." {
-        errorLog(TargetError("Script could not interact with ``Core Functionality.ahk``. Script will now close.", -1))
-        ExitApp()
-    }
-}
 __exit(ExitReason, ExitCode) {
     try WinEvent.Stop()
     if ExitReason = "Shutdown"

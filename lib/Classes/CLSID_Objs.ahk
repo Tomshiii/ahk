@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/04/24
- * @version 1.1.13
+ * @date 2026/04/30
+ * @version 1.1.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -88,33 +88,39 @@ class CLSID_Objs {
                     try {
                         return ComObjActive(((inClass = true) ? CLSID_Objs[clsid] : clsid))
                     } finally {
-                        if Notify.Exist("mutexLock_" clsid)
-                            try Notify.Destroy("mutexLock_" clsid)
+                        /* if Notify.Exist("mutexLock_" clsid)
+                            try Notify.Destroy("mutexLock_" clsid) */
                         mtx.Release()
                         notifyExt.destroyDupes("mutexLock_" clsid)
                     }
                 case WAIT_TIMEOUT:
                     notifyExt.showIfNotExist("mutexLock_" clsid,, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
-                    errorLog(TimeoutError('Timeout waiting for lock on: ' objName))
+                    errorLog(TimeoutError('Timeout waiting for lock on: ' objName, -2))
                     sleep 500
                     return false
                 case WAIT_FAILED:
-                    throw OSError()
+                    errorLog(TimeoutError('Failed waiting for lock on: ' objName, -2))
+                    throw OSError('Failed waiting for lock on: ' objName, -2)
                     ; ExitApp()
             }
         } catch as e {
             throw e
         } finally {
-            mtx.Close()
+            try mtx.Close()
         }
     }
 
     /** syntatic sugar to call `clsid_objs.load()`, clone the object, the sever the connection to the original object */
     static clone(clsid, inClass := true) {
+        Critical('On')
         this.checkCoreFunc()
-        baseObj := this.load(clsid, inClass)
+        try baseObj := this.load(clsid, inClass)
+        catch {
+            return false
+        }
         clonedObj := baseObj.clone()
         baseObj := ""
+        Critical('Off')
         return clonedObj
     }
 }

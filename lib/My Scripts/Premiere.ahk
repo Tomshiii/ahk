@@ -3,6 +3,7 @@
 #Include KSA\Keyboard Shortcut Adjustments.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\Editors\Premiere.ahk
+#Include Classes\Editors\Premiere_UIA.ahk
 #Include Classes\keys.ahk
 #Include Classes\winget.ahk
 #Include Classes\notifyExt.ahk
@@ -94,6 +95,15 @@ Space:: ;// make space more useful by closing certain windows
 				SendInput("{Enter}")
 				return
 			}
+	}
+	if GetKeyState("CapsLock") || GetKeyState("CapsLock", "P") {
+		if !prem.selectTool("selectionTool")
+			return
+		prem.__focusTimeline()
+		sleep 50
+		SendInput("{Space}")
+		SetCapsLockState('AlwaysOff')
+		return
 	}
 	timelineStatus := prem.timelineFocusStatus()
 	if !timelineStatus || CaretGetPos(&x, &y) {

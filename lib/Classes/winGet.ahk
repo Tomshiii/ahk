@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/04/20
- * @version 1.7.9
+ * @date 2026/04/30
+ * @version 1.7.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,12 +20,22 @@
 class WinGet {
 
     static __New() {
+        ;// we do this here so constant calls to `__determineAdobeYear()` don't lock up the mutex
+        if A_ScriptName = "Core Functionality.ahk" {
+            this.UserSettings := UserPref(true)
+        } else {
+            try this.UserSettings := CLSID_Objs.clone("UserSettings")
+            catch {
+                this.UserSettings := UserPref(true)
+            }
+        }
         ignoreText := ""
         for k, v in this.explorerIgnoreMap {
             ignoreText .= "ahk_class " k "|"
         }
         this.ignoreExplorerRegex := ignoreText
     }
+    static UserSettings := ""
     static ignoreExplorerRegex := ""
 
     /** A map containing common win explorer class names that some functions may wish to ignore */
@@ -148,12 +158,17 @@ class WinGet {
             check := WinGetProcessName("A")
             ignore := (check = "AutoHotkey64.exe") ? WinGetTitle(check) : ""
             title := WinGetTitle("A",, ignore)
-            if this.isProc(title) || !IsSet(title) || title = "" || title = "Program Manager"
+            if !IsSet(title) || !title || title = "Program Manager" {
+                ; title := WinGetTitle(check) ;// I think some prem functions more or less expect a false return if the "A" attempt doesn't populate to signify that another window within prem has focus
+                ;// I just want to return early here to reduce false positive logging
+                return false
+            }
+            if this.isProc(title)
                 throw
             return title
         } catch {
             block.Off()
-            errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1), "title: " (IsSet(title)? title : "title was not set"))
+            errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1), "title: " (IsSet(title)? title "`n" check "`n" ignore : "title was not set"))
             return false
         }
     }
@@ -187,13 +202,12 @@ class WinGet {
      * @param {String} which which program the user is attempting to find the name of. Must be either `AE` or `Premiere`
      * @returns {String} the YYYY of the currently open adobe program
      */
-    __determineAdobeYear(progCheck, which) {
+    __determineAdobeYear(progCheck, which, UserSettings) {
         try {
             ;// attempt to pull the year from the title
             if InStr(SubStr(progCheck, 1, 27), "(Beta)",, 1, 1) {
                 return " (Beta)"
             }
-            UserSettings := CLSID_Objs.load("UserSettings")
             switch which {
                 case "AE":       determineYear := SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), SubStr(A_YYYY, 1, 2),, 1, 1), 4)
                 case "Premiere": determineYear := (VerCompare(SubStr(UserSettings.premVer, 2), "26.0") >= 0) ? "" : SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), SubStr(A_YYYY, 1, 2),, 1, 1), 4)
@@ -227,7 +241,7 @@ class WinGet {
      * @param {VarRef} saveCheck
      * @param {Boolean} [ttips=true]
      */
-    __AdobeName(which, &progCheck?, &titleCheck?, &saveCheck?, ttips := true) {
+    __AdobeName(which, &progCheck?, &titleCheck?, &saveCheck?, ttips := true, UserSettings := "") {
         if (which != "AE" && which != "Premiere") {
             ;// throw
             errorLog(ValueError("Incorrect Parameter (#1) Passed to function", -1, which), "Parameter must be 'AE' or 'Premiere'",, 1)
@@ -236,7 +250,7 @@ class WinGet {
             if !WinExist(editors.%which%.winTitle)
                 return {winTitle: false, titleCheck: -1, saveCheck: -1}
             progCheck := this.__determineAdobeTitle(which)
-            adobeYear := this.__determineAdobeYear(progCheck, which)
+            adobeYear := this.__determineAdobeYear(progCheck, which, UserSettings)
             switch which {
                 ;// we add the " -" to accomodate a window that is literally just called "Adobe -- [Year]"
                 case "AE":       title := "Adobe After Effects " adobeYear " -"
@@ -271,7 +285,7 @@ class WinGet {
      * ```
      */
     static PremName(&premCheck?, &titleCheck?, &saveCheck?, ttips := true) {
-        premiere := this().__AdobeName("Premiere", &premCheck?, &titleCheck?, &saveCheck?, ttips)
+        premiere := this().__AdobeName("Premiere", &premCheck?, &titleCheck?, &saveCheck?, ttips, this.UserSettings)
         if !premiere.winTitle
             return false
         return {winTitle: premiere.winTitle, titleCheck: premiere.titleCheck, saveCheck: premiere.saveCheck}

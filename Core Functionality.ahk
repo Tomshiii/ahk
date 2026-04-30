@@ -15,6 +15,7 @@
 #Include *i Classes\ptf.ahk
 #Include *i Classes\CLSID_Objs.ahk
 #Include *i Classes\WM.ahk
+#Include *i Classes\errorLog.ahk
 #Include *i Other\ObjRegisterActive.ahk
 #Include *i Other\WinEvent.ahk
 #Include *i Classes\Editors\Premiere.ahk
@@ -63,5 +64,18 @@ revoke(allRegister, *) {
     try WinEvent.Stop()
     for v in allRegister {
         try ObjRegisterActive(v.obj, "")
+    }
+}
+
+OnError(checkRPC)
+checkRPC(err, *) {
+    Extra   := (err.HasProp('Extra'))   ? err.Extra   : "", File    := (err.HasProp('File'))    ? err.File    : ""
+    Line    := (err.HasProp('Line'))    ? err.Line    : "", Message := (err.HasProp('Message')) ? err.Message : ""
+    Stack   := (err.HasProp('Stack'))   ? err.Stack   : "", What    := (err.HasProp('What'))    ? err.What    : ""
+    errorLog(Error("Handler caught error: " err.Message, err.what, err.Extra), "File: " err.file " | Line: " err.Line)
+    if err.Message = "(0x800706BA) The RPC server is unavailable." {
+        errorLog(TargetError("Script could not interact with ``RPC Server``.", what, Extra), stack)
+        Run(ptf.SupportFiles "\reloadAll.ahk")
+        ; ExitApp()
     }
 }

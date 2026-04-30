@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/04/21
- * @version 1.8.13
+ * @date 2026/04/30
+ * @version 1.8.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -53,7 +53,7 @@ class Startup {
         ;// get release version of scripts
         this.MyRelease := this.__getMainRelease()
         ;// populate settings variables
-        this.UserSettings := CLSID_Objs.load("UserSettings")
+        this.UserSettings := CLSID_Objs.clone("UserSettings")
 
         try didReload := A_Args[1]
         this.isReload := isReload(didReload ?? false)

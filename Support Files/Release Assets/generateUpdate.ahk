@@ -32,7 +32,7 @@ if WinExist("Ahk2Exe for AutoHotkey")
 ;// backup adobe stuff
 ;//! premiere
 
-UserSettings := CLSID_Objs.load("UserSettings")
+UserSettings := CLSID_Objs.clone("UserSettings")
 
 ;//* PremiereRemote
 RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\backupPremRemote.ahk"))

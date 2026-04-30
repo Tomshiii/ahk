@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2026/04/18
- * @version 1.7.4
+ * @date 2026/04/30
+ * @version 1.7.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -44,8 +44,9 @@ class discord {
     static path     := ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe"
 
     static surroundActive := false
-
     static checkingUnread := false
+    static discordEl := false
+    static discCacheRequest := false
 
     /**
      * This function uses UIA to look for buttons within the right click context menu and automatically clicks the one you're after, allowing the user to more quickly navigate the UI.
@@ -54,26 +55,25 @@ class discord {
      */
     static button(button)
     {
-        keys.allWait(2)
-        MouseGetPos(&x, &y, &win)
-        if WinGetProcessName(win) != WinGetProcessName(this.winTitle)
-            return
-
         if !currentTitle := WinGet.Title()
             return
 
         blocker := block_ext()
         blocker.On()
 
-        static discCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "LocalizedControlType", "AutomationId", "Name"],, 5)
-        try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, discCacheRequest)
-        if !IsSet(DiscordEl) || !IsObject(DiscordEl) || !DiscordEl {
+        if !this.discordEl {
+            try {
+                this.discCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "LocalizedControlType", "AutomationId", "Name"],, 5)
+                this.DiscordEl := UIA.ElementFromHandle(this.exeTitle, this.discCacheRequest)
+            }
+        }
+        if !this.DiscordEl || !IsObject(this.DiscordEl) {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             blocker.Off()
             return
         }
         SendInput("{RButton}") ;// this opens the right click context menu on the message you're hovering over
-        try discMenu := DiscordEl.WaitElement({LocalizedType:"menu", AutomationId:"message"}, 800,,,,, discCacheRequest)
+        try discMenu := this.DiscordEl.WaitElement({LocalizedType:"menu", AutomationId:"message"}, 800,,,,, this.discCacheRequest)
         if !IsSet(discMenu) || !IsObject(discMenu) || !discMenu {
             icon := (FileExist(EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico")) ? EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico" : ""
             errorLog(TargetError("Could not determine discord right click menu", -1))
@@ -81,16 +81,15 @@ class discord {
             blocker.Off()
             return
         }
-        static discMenu := discMenu.BuildUpdatedCache(discCacheRequest)
 
 
         switch button {
             case "reply":
-                UserSettings := CLSID_Objs.load("UserSettings")
+                UserSettings := CLSID_Objs.clone("UserSettings")
                 disableAutoReplyPing := UserSettings.disc_disable_autoreply
                 UserSettings := ""
                 try {
-                    quickSwitch := DiscordEl.FindCachedElement({LocalizedType:"button", Name:"Open Quick Switcher"}) ;// the top bar of discord (ie. in dm's has the disc icon & "Direct Messages")
+                    quickSwitch := this.DiscordEl.FindCachedElement({LocalizedType:"button", Name:"Open Quick Switcher"}) ;// the top bar of discord (ie. in dm's has the disc icon & "Direct Messages")
                     dms := quickSwitch.FindCachedElement({LocalizedType:"text", Name:"Direct Messages"})
 
                 } catch {
@@ -112,7 +111,7 @@ class discord {
                     blocker.Off()
                     return
                 }
-                try DiscordEl.WaitElement({LocalizedType:"button", Name:"Mention ON"}, 800).ControlClick()
+                try this.DiscordEl.WaitElement({LocalizedType:"button", Name:"Mention ON"}, 800).ControlClick()
                 ;// get rid of the annoying popup window
                 MouseMove(2, 2, 1, "R")
                 MouseMove(-2, -2, 1, "R")
@@ -146,12 +145,13 @@ class discord {
             return
         WinGetPos(&xpos, &ypos, &width, &height, this.winTitle)
         saveY := ypos
-        try DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
-        if !IsSet(DiscordEl) || !IsObject(DiscordEl) || !DiscordEl {
+        if !this.DiscordEl
+            try this.DiscordEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle)
+        if !this.DiscordEl || !IsObject(this.DiscordEl) {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             return
         }
-        try header  := DiscordEl.FindElement({Type: "50026 (Group)", Name: "Channel header", LocalizedType: "region"})
+        try header  := this.DiscordEl.FindElement({Type: "50026 (Group)", Name: "Channel header", LocalizedType: "region"})
         try directM := header.FindElement({LocalizedType: "text", Name: "Direct Message"})
         try groupDM := header.FindElement({LocalizedType: "text", Name: "Group DM"})
         headerText := ((IsSet(directM) && IsObject(directM)) || (IsSet(groupDM) && IsObject(groupDM))) ? true : false
@@ -170,29 +170,29 @@ class discord {
         switch which {
             case "servers":
                 getServerName := (headerText = true || !InStr(currentTitle, "|") && SubStr(currentTitle, 1, 1) = "@") ? "Direct Messages" : SubStr(currentTitle, start := InStr(currentTitle, "|", , -1) + 2, StrLen(currentTitle) - (start + 9))
-                activeServer := DiscordEl.FindElement({Type:"TreeItem", LocalizedType: "tree item", Name: getServerName, matchmode:"Substring"})
+                activeServer := this.DiscordEl.FindElement({Type:"TreeItem", LocalizedType: "tree item", Name: getServerName, matchmode:"Substring"})
                 findFirstGrey := __findGrey(xpos, ypos, true)
                 if !findFirstGrey
                     return
                 serverY := (getServerName = "Direct Messages") ? activeServer.location.y + 1 : activeServer.location.y + 1
                 if findFirstGrey.y != serverY {
                     __findGrey(xpos, ypos)
-                    try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}, 2000).ControlClick()
+                    try this.DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}, 2000).ControlClick()
                     return
                 }
                 ypos := activeServer.location.y + activeServer.location.h + 2
                 __findGrey(xpos, ypos, height)
-                try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}, 2000).ControlClick()
+                try this.DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}, 2000).ControlClick()
                 return
             case "channels":
                 if headerText = true {
                     errorLog(TargetError("You're currently in Direct Messages, Channels don't exist.", -1),, true)
                     return
                 }
-                getLoc := DiscordEl.FindElement({LocalizedType: "group", AutomationId: "channels"})
+                getLoc := this.DiscordEl.FindElement({LocalizedType: "group", AutomationId: "channels"})
 
                 __findGrey(getLoc.location.x, getLoc.location.y, getLoc.location.h)
-                try DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}, 2000).ControlClick()
+                try this.DiscordEl.WaitElement({Name: "Mark as Read", LocalizedType: "button"}, 2000).ControlClick()
                 return
         }
     }

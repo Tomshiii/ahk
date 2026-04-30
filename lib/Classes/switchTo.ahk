@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2026/04/18
- * @version 1.4.5
+ * @date 2026/04/30
+ * @version 1.4.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -243,7 +243,7 @@ class switchTo {
                 Run(AE.path)
             } catch {
                 try {
-                    UserSettings := CLSID_Objs.load("UserSettings")
+                    UserSettings := CLSID_Objs.clone("UserSettings")
                     if !generateAdobeShortcut(UserSettings, "Adobe After Effects", UserSettings.ae_year) {
                         UserSettings := ""
                         throw
@@ -515,7 +515,7 @@ class switchTo {
             Run(path)
         } catch {
             try {
-                UserSettings := CLSID_Objs.load("UserSettings")
+                UserSettings := CLSID_Objs.clone("UserSettings")
                 if !generateAdobeShortcut(UserSettings, which, UserSettings.%year%_year) {
                     UserSettings := ""
                     throw

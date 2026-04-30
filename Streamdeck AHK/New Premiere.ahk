@@ -53,7 +53,7 @@ templatesDir := SelectedFolder "\_project files\templates"
 mainTemplate := "W:\_Assets\Plugins & Presets\Mogrts & Presets\Main Channel AE Templates\Regular videos\The Boys Main Channel - Regular Template.aep"
 hauntTemplate := "W:\_Assets\Plugins & Presets\Mogrts & Presets\Main Channel AE Templates\Haunted videos\The Boys Main Channel - Haunted Template.aep"
 try {
-    UserSettings := CLSID_Objs.load("UserSettings")
+    UserSettings := CLSID_Objs.clone("UserSettings")
     aeIco := A_ProgramFiles "\Adobe\Adobe After Effects " UserSettings.ae_year "\Support Files\UXP\plugins\com.adobe.ccx.start\images\thumbs\AEFT_aep.ico"
 }
 if !IsSet(aeIco)

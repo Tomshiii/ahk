@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/04/28
- * @version 2.4.7
+ * @date 2026/04/29
+ * @version 2.4.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,7 +55,7 @@ class Prem {
         if A_ScriptName = "Core Functionality.ahk" {
             this.UserSettings := UserPref(true)
         } else {
-            try this.UserSettings := CLSID_Objs.load("UserSettings")
+            try this.UserSettings := CLSID_Objs.clone("UserSettings")
             catch {
                 this.UserSettings := UserPref(true)
             }
@@ -578,20 +578,34 @@ class Prem {
             this._scanTitle := title
             try this._scan := ShinsImageScanClass(title)
             catch {
-                errorLog(UnsetError("ShinsImageScanClass failed to be set", -1))
+                errorLog(UnsetError("ShinsImageScanClass failed to be set", -1), "title: " title)
                 return false
             }
             this._scan.autoUpdate := 0
-            this._scan.Update()
+            try this._scan.Update()
+            catch {
+                errorLog(MethodError("ShinsImageScanClass failed.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
+                return false
+            }
             return true
         }
         if this._scanTitle != title {
             this._scanTitle := title
             this._scan.hwnd := WinExist(title)
-            this._scan.Update()
+            if !this._scan.hwnd || !this._scanTitle
+                return false
+            try this._scan.Update()
+            catch {
+                errorLog(MethodError("ShinsImageScanClass failed.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
+                return false
+            }
             return true
         }
-        this._scan.Update()
+        try this._scan.Update()
+            catch {
+                errorLog(MethodError("ShinsImageScanClass failed.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
+                return false
+            }
         return true
     }
 
@@ -1719,9 +1733,14 @@ class Prem {
      */
     static selectTool(tool := "selectionTool") {
         if !premUIA := premUIA_Values.initialise()
-            return
-        if !premUIA_Values.isToolSelected(tool)
+            return false
+        if premUIA_Values.isToolSelected(tool) = false {
             try premUIA.UIA_Objs[tool].Click()
+            catch {
+                return false
+            }
+        }
+        return true
     }
 
     /**
@@ -1805,7 +1824,7 @@ class Prem {
         try premObj := CLSID_Objs.load("prem")
         catch {
             premObj := ""
-            premObj.timelineVals := false
+            return false
         }
         if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
             (this.timelineVals = false || premObj.timelineVals = false) {

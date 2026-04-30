@@ -13,6 +13,7 @@ You may notice that gathering UIA information is no longer (practically) instant
 - 📋 UIA values will now be reset on Premiere close
 - 📋 Changed `prem.selectionTool()` => `prem.selectTool()`
     - Can now set any tool set within `Premiere_UIA.ahk`
+- ✅ Fixed `isEditTabActive()` throwing in some circumstances
 
 ### 📝 `startup {`
 - ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing

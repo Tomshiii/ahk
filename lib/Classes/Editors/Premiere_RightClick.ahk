@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.2
  * @author tomshi, taranVH
- * @date 2026/04/24
- * @version 2.4.20
+ * @date 2026/04/30
+ * @version 2.4.21
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -203,7 +203,11 @@ class rbuttonPrem {
 	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
 
 	/** Reset class variables */
-	__resetClicks() => (this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.premObj.RClickIsActive := false, this.premObj := {})
+	__resetClicks() {
+		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := ""
+		try this.premObj.RClickIsActive := false
+		try this.premObj := {}
+	}
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {
@@ -340,7 +344,10 @@ class rbuttonPrem {
 		;try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class") ;// prem has fixed the issue of it spamming the error... for now
 		try WinEvent.NotActive((*) => (checkstuck(), this.__exit()), prem.exeTitle,, "Save Project ahk_exe Adobe Premiere Pro.exe")
 		InstallMouseHook(1)
-		this.premObj := CLSID_Objs.load("prem")
+		try this.premObj := CLSID_Objs.load("prem")
+		catch {
+			return
+		}
 		this.premObj.RClickIsActive := true
 
 		;// check for stuck keys
