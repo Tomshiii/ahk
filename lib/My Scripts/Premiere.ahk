@@ -138,10 +138,10 @@ Enter:: ;// close windows by double tapping enter
 			activePath := premUIA_Values.__activeElementPath()
             textStatus := premUIA_Values.isToolSelected("textTool")
 			switch {
-				case (activePath !== premUIA.UIA_Objs["programMon"]):
+				case (activePath !== premUIA.UIA_Objs["programMonitor"]):
 					SendInput("{" A_ThisHotkey "}")
 					return
-				case (currTimelineStatus != true && activePath == premUIA.UIA_Objs["programMon"] && textStatus != false):
+				case (currTimelineStatus != true && activePath == premUIA.UIA_Objs["programMonitor"] && textStatus != false):
 					if !GetKeyState("Shift") && !GetKeyState("Shift", "P") { ;// this check shouldn't be necessary but.. just incase
 						SendInput("{Escape}")
 						prem.selectionTool()
@@ -433,7 +433,7 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 			__cleanup()
 			return
 		}
-		progmon := premUIA.UIA_Objs["programMon"]
+		progmon := premUIA.UIA_Objs["programMonitor"]
 		if __within(origMouse, progmon) {
 			if A_Cursor != "Unknown" {
 				block.On()
