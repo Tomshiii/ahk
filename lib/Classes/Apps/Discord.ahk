@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2026/04/30
- * @version 1.7.5
+ * @date 2026/05/01
+ * @version 1.7.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -64,7 +64,7 @@ class discord {
         if !this.discordEl {
             try {
                 this.discCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "LocalizedControlType", "AutomationId", "Name"],, 5)
-                this.DiscordEl := UIA.ElementFromHandle(this.exeTitle, this.discCacheRequest)
+                this.DiscordEl := UIA.ElementFromHandle(this.exeTitle, this.discCacheRequest, false)
             }
         }
         if !this.DiscordEl || !IsObject(this.DiscordEl) {

@@ -5,7 +5,7 @@
 if !WinExist("ahk_exe EXCEL.EXE")
     return
 
-rowNum := InputBox("Enter row number for the ``Total Remaining`` row.", "Total Remaining Row #", "H130")
+rowNum := InputBox("Enter row number for the ``Total Remaining`` row.", "Total Remaining Row #", "H100")
 
 if rowNum.result = "Cancel"
     return
@@ -21,9 +21,8 @@ try {
 }
 
 startCell := xl.ActiveCell
-column := ["C", "C", "C", "H"]
+column := ["C", "H", "C", "H"]
 for i, v in column {
     targetCell := startCell.Offset(0, i-1)
-
-    targetCell.Formula := Format("='{1}'!${2}${3}", A_YYYY, v, rowNum.value, rowNum.value, v)
+    targetCell.Formula := Format("='{1}'!${2}${3}", A_YYYY, v, (A_Index=1||A_Index=4) ? rowNum.value : rowNum.value-2)
 }
