@@ -59,8 +59,12 @@ class installGUI extends Gui {
         this.AddButton("x0 y0 w0 h0 Hidden vEmptyDir", "Change Dir")
         ;// rest of GUI
         this.AddText("xs+25 ys+20 Section", "Choose Installation Directory:")
-        opt := (DirExist(prevPath := FileRead(this.prevInstall))) ? "+Disabled" : ""
-        this.AddEdit("-Wrap ReadOnly r1 vInstallDir w300 " opt, (!opt) ? this.InstallDir : prevPath)
+        try tryRead := (FileExist(this.prevInstall)) ? FileRead(this.prevInstall) : ""
+        catch {
+            try tryRead := ""
+        }
+        opt := (DirExist(FileRead(this.prevInstall))) ? "+Disabled" : ""
+        this.AddEdit("-Wrap ReadOnly r1 vInstallDir w300 " opt, (!opt) ? this.InstallDir : tryRead)
         this.AddButton("x+10 yp-2 vChangeDir " opt, "Change Dir").OnEvent("Click", (*) => this.__changeDir())
         this.AddButton("y+5 xp+21 w65 vInstallButton", "Install").OnEvent("Click", (*) => this.__Install())
         SendMessage(0x160C,, true, this["InstallButton"].hwnd, this) ; BCM_SETSHIELD := 0x160C
@@ -254,10 +258,11 @@ class installGUI extends Gui {
                 }
             }
             FileAppend("yes.value", A_Appdata "\tomshi\version")
-            try readPrevLoc := FileRead(this.prevInstall)
-            if IsSet(readPrevLoc)
-                this.prevInstallLoc := readPrevLoc
-            installDirExist := (DirExist(readPrevLoc) = true) ? true : false
+            try this.prevInstallLoc := FileRead(this.prevInstall)
+            catch {
+                this.prevInstall := ""
+            }
+            installDirExist := (DirExist(this.prevInstallLoc) = true) ? true : false
             if FileExist(A_Appdata "\tomshi\installDir") {
                 FileDelete(A_Appdata "\tomshi\installDir")
             }
