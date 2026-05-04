@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/04/30
- * @version 3.0.11
+ * @date 2026/05/04
+ * @version 3.0.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,6 +12,9 @@
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\notifyExt.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\block.ahk
+#Include KSA\Keyboard Shortcut Adjustments.ahk
 #Include Functions\isObjHasProp.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\Notify\Notify.ahk
@@ -119,6 +122,16 @@ class premUIA_Values {
             }
         }
         try {
+            if !WinActive(prem.winTitle) || !WinActive(prem.class)
+                switchTo.Premiere()
+            blocker := block_ext()
+            blocker.On()
+            keys := ["effectControls", "effectsWindow", "programMonitor", "sourceMonitor", "toolsWindow", "projectsWindow", "timelineWindow"]
+            for v in keys {
+                SendInput(ksa.%v%)
+                sleep 25
+            }
+            blocker.Off()
             premCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "Type", "Name", "Value", "ClassName", "AutomationId", "BoundingRectangle"],, "Descendants") ;// all necessary for `GetUIAPath()`
             try {
                 this.AdobeEl := UIA.ElementFromHandle(prem.winTitle, premCacheRequest, false)
@@ -126,22 +139,22 @@ class premUIA_Values {
                 throw UnsetError("throw code:701")
             }
 
-            this.UIA_Objs["timeline"]       := __TryCatchUIAobj("Timeline", "obj", "702")
-            this.UIA_Path["timeline"]       := __TryCatchUIAobj("Timeline", "path", "702", "timeline")
-            this.UIA_Objs["effectControls"] := __TryCatchUIAobj("Effect Controls", "obj", "703")
-            this.UIA_Path["effectControls"] := __TryCatchUIAobj("Effect Controls", "path", "703", "effectControls")
-            this.UIA_Objs["effectsPanel"]   := __TryCatchUIAobj("Effects", "obj", "704")
-            this.UIA_Path["effectsPanel"]   := __TryCatchUIAobj("Effects", "path", "704", "effectsPanel")
-            this.UIA_Objs["programMon"]     := __TryCatchUIAobj("Program Monitor", "obj", "705")
-            this.UIA_Path["programMon"]     := __TryCatchUIAobj("Program Monitor", "path", "705", "programMon")
-            this.UIA_Objs["sourceMon"]      := __TryCatchUIAobj("Source Monitor", "obj", "706")
-            this.UIA_Path["sourceMon"]      := __TryCatchUIAobj("Source Monitor", "path", "706", "sourceMon")
-            this.UIA_Objs["tools"]          := __TryCatchUIAobj("Tools", "obj", "707")
-            this.UIA_Path["tools"]          := __TryCatchUIAobj("Tools", "path", "707", "tools")
-            this.UIA_Objs["project"]        := __TryCatchUIAobj("Project:", "projObj", "708")
-            this.UIA_Path["project"]        := __TryCatchUIAobj("Project:", "path", "708", "project")
-            this.UIA_Objs["premRemote"]     := __TryCatchUIAobj("PremiereRemote", "premObj", "709")
-            this.UIA_Path["premRemote"]     := __TryCatchUIAobj("PremiereRemote", "path", "709", "premRemote")
+            this.UIA_Objs["timelineWindow"]  := __TryCatchUIAobj("Timeline", "obj", "702")
+            this.UIA_Path["timelineWindow"]  := __TryCatchUIAobj("Timeline", "path", "702", "timelineWindow")
+            this.UIA_Objs["effectControls"]  := __TryCatchUIAobj("Effect Controls", "obj", "703")
+            this.UIA_Path["effectControls"]  := __TryCatchUIAobj("Effect Controls", "path", "703", "effectControls")
+            this.UIA_Objs["effectsWindow"]   := __TryCatchUIAobj("Effects", "obj", "704")
+            this.UIA_Path["effectsWindow"]   := __TryCatchUIAobj("Effects", "path", "704", "effectsWindow")
+            this.UIA_Objs["programMonitor"]  := __TryCatchUIAobj("Program Monitor", "obj", "705")
+            this.UIA_Path["programMonitor"]  := __TryCatchUIAobj("Program Monitor", "path", "705", "programMonitor")
+            this.UIA_Objs["sourceMonitor"]   := __TryCatchUIAobj("Source Monitor", "obj", "706")
+            this.UIA_Path["sourceMonitor"]   := __TryCatchUIAobj("Source Monitor", "path", "706", "sourceMonitor")
+            this.UIA_Objs["toolsWindow"]     := __TryCatchUIAobj("Tools", "obj", "707")
+            this.UIA_Path["toolsWindow"]     := __TryCatchUIAobj("Tools", "path", "707", "toolsWindow")
+            this.UIA_Objs["projectsWindow"]  := __TryCatchUIAobj("Project:", "projObj", "708")
+            this.UIA_Path["projectsWindow"]  := __TryCatchUIAobj("Project:", "path", "708", "projectsWindow")
+            this.UIA_Objs["premRemote"]      := __TryCatchUIAobj("PremiereRemote", "premObj", "709")
+            this.UIA_Path["premRemote"]      := __TryCatchUIAobj("PremiereRemote", "path", "709", "premRemote")
 
             ;// Tools
             tools := Map(

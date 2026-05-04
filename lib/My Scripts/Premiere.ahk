@@ -135,7 +135,6 @@ Enter:: ;// close windows by double tapping enter
 				SendInput("{" A_ThisHotkey "}")
             	return
 			}
-			toolsNN := premUIA.UIA_Objs["tools"]
 			activePath := premUIA_Values.__activeElementPath()
             textStatus := premUIA_Values.isToolSelected("textTool")
 			switch {

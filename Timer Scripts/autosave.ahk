@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/04/30
- * @version 2.2.20
+ * @date 2026/05/04
+ * @version 2.2.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -444,14 +444,14 @@ class adobeAutoSave extends count {
                     loop 3 {
                         ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
                         if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
-                            try this.premUIA.UIA_Objs["timeline"].SetFocus()
+                            prem.__focusTimeline()
                             sleep 100
                             SendEvent(KSA.playStop)
                             continue
                         }
                         break
                     }
-                    try this.premUIA.UIA_Objs["timeline"].SetFocus()
+                    prem.__focusTimeline()
                 default:
                     if this.premRemoteSave = false
                         WinActivate("ahk_exe " this.origWindow)

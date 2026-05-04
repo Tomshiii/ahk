@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/04/29
- * @version 2.4.8
+ * @date 2026/05/04
+ * @version 2.4.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -906,7 +906,7 @@ class Prem {
             block.Off()
             return
         }
-        progNN := premUIA.UIA_Objs["programMon"]
+        progNN := premUIA.UIA_Objs["programMonitor"]
         if PixelGetColor(progNN.location.x+15, progNN.location.y+(progNN.location.h-10)) != this.iconHighlight {
             block.Off()
             return
@@ -1071,7 +1071,7 @@ class Prem {
                 try {
                     premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
                     Sleep(25)
-                    premUIA.AdobeEl.UIA_obj["programMon"].SetFocus()
+                    premUIA.AdobeEl.UIA_obj["programMonitor"].SetFocus()
                     Sleep(25)
                     premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
                     Sleep(50)
@@ -1168,7 +1168,7 @@ class Prem {
             return true
         }
 
-        progClassNN := ControlGetClassNN(premUIA.UIA_Objs["programMon"].GetControlId()) ;gets the ClassNN value of the effects control window
+        progClassNN := ControlGetClassNN(premUIA.UIA_Objs["programMonitor"].GetControlId()) ;gets the ClassNN value of the effects control window
         previewWin := obj.CtrlPos(progClassNN)
         if !IsObject(previewWin)
             return
@@ -1681,7 +1681,7 @@ class Prem {
             keys.allWait()
             return false
         }
-        timelineNN := premUIA.UIA_Objs['timeline']
+        timelineNN := premUIA.UIA_Objs['timelineWindow']
 
         ;// determine how much to account for the column left of the timeline based on premiere version
         xAddMap := Map("26.2", 204)
@@ -1772,7 +1772,7 @@ class Prem {
         }
         if !premUIA := premUIA_Values.initialise()
             return
-        toolsNN := premUIA.UIA_Objs["tools"]
+        toolsNN := premUIA.UIA_Objs["toolsWindow"]
         activePath := premUIA_Values.__activeElementPath()
         textStatus := premUIA_Values.isToolSelected("textTool")
         if !toolsNN || SubStr(activePath, 1, StrLen(activePath)-3) = premUIA.UIA_Path["project"] || textStatus {
@@ -2399,7 +2399,7 @@ class Prem {
             blocker.Off()
             return
         }
-        sourceMonNN := premUIA.UIA_Objs["sourceMon"]
+        sourceMonNN := premUIA.UIA_Objs["sourceMonitor"]
         prefixTitle := "sourceMon_"
         found := false
         loop 10 {
