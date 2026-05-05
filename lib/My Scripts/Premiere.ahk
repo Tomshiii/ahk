@@ -75,6 +75,14 @@ $Tab::
 			SendInput(sendMod "{Tab}")
 			return
 	}
+	try {
+		premUIA := premUIA_Values.initialise()
+		if premUIA.__isUiaElementActive("effectControls", premUIA) = true {
+			sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
+			SendInput(sendMod "{Tab}")
+			return
+		}
+	}
 	prem.swapPreviousSequence()
 }
 
@@ -135,16 +143,16 @@ Enter:: ;// close windows by double tapping enter
 				SendInput("{" A_ThisHotkey "}")
             	return
 			}
-			activePath := premUIA_Values.__activeElementPath()
-            textStatus := premUIA_Values.isToolSelected("textTool")
+			activePath := premUIA_Values.__activeElementPath(, premUIA)
+            textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
 			switch {
-				case (activePath !== premUIA.UIA_Objs["programMonitor"]):
+				case (InStr(activePath, premUIA.UIA_Path["programMonitor"]) != 1):
 					SendInput("{" A_ThisHotkey "}")
 					return
-				case (currTimelineStatus != true && activePath == premUIA.UIA_Objs["programMonitor"] && textStatus != false):
+				case (currTimelineStatus != true && (InStr(activePath, premUIA.UIA_Path["programMonitor"]) = 1)  && textStatus != false):
 					if !GetKeyState("Shift") && !GetKeyState("Shift", "P") { ;// this check shouldn't be necessary but.. just incase
 						SendInput("{Escape}")
-						prem.selectionTool()
+						prem.selectTool("selectionTool")
 						sleep 50
 						prem.__focusTimeline()
 						return
@@ -225,9 +233,8 @@ SC03A & LButton:: ;// lock vertical movement while adjusting keyframe handles
 	origCoord := obj.MousePos()
 	if !premUIA := premUIA_Values.initialise()
 		return
-	activePath := premUIA_Values.__activeElementPath()
 
-	if activePath !== premUIA.UIA_Objs["effectControls"] {
+	if !premUIA_Values.__isUiaElementActive("effectControls", premUIA) {
 		__resetCaps(storeHotkey, capslockState)
 		return
 	}

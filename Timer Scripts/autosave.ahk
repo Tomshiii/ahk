@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/05/04
- * @version 2.2.21
+ * @date 2026/05/05
+ * @version 2.2.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -507,14 +507,6 @@ class adobeAutoSave extends count {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1))
             notifyExt.showIfNotExist("autosavepremBusier",, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
-        }
-
-        if !this.premUIA := premUIA_Values.initialise()
-            return
-
-        ;// get active UIA panel
-        if WinActive(prem.winTitle) {
-            this.origPanelFocus := premUIA_Values.__activeElementPath()
         }
 
         ;// checking idle status

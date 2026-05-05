@@ -32,6 +32,7 @@ multiRemoteStop := stopper()
 
 class stopper {
     __remoteStop() {
+        Persistent()
         try SetTimer(check, 0)
     }
 }

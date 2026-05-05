@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/04
- * @version 2.4.9
+ * @date 2026/05/05
+ * @version 2.4.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -727,7 +727,7 @@ class Prem {
                 return false
             }
         }
-        if !premUIA_Values.__isUiaElementActive("timeline") {
+        if !premUIA_Values.__isUiaElementActive("timelineWindow", uiaVals) {
             tool.Cust("Premiere should automatically refocus the timeline")
             sleep 1000
             return "active"
@@ -1448,18 +1448,18 @@ class Prem {
                 errorLog(TargetError('Creating UIA element failed'))
                 return
             }
-            textStatus := premUIA_Values.isToolSelected("textTool")
+            textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
 
             switch {
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
-                    if !premUIA_Values.__isUiaElementActive('effectControls') {
+                    if !premUIA_Values.__isUiaElementActive('effectControls', premUIA) {
                         ih.Stop(), star_ih.Stop()
                         SendInput(sendOnFail star_ih.Input)
                         tool.Cust("If you are attempting to adjust audio;`nThe timeline is not currently in focus", 2000)
                         return
                     }
                     needsTimelineFocus := true
-                case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && premUIA_Values.__isUiaElementActive('programMon'):
+                case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && premUIA_Values.__isUiaElementActive('programMonitor', premUIA):
                     ih.Stop(), star_ih.Stop()
                     SendInput(sendOnFail star_ih.Input)
                     return
@@ -1734,7 +1734,7 @@ class Prem {
     static selectTool(tool := "selectionTool") {
         if !premUIA := premUIA_Values.initialise()
             return false
-        if premUIA_Values.isToolSelected(tool) = false {
+        if premUIA_Values.isToolSelected(tool, premUIA) = false {
             try premUIA.UIA_Objs[tool].Click()
             catch {
                 return false
@@ -1773,9 +1773,9 @@ class Prem {
         if !premUIA := premUIA_Values.initialise()
             return
         toolsNN := premUIA.UIA_Objs["toolsWindow"]
-        activePath := premUIA_Values.__activeElementPath()
-        textStatus := premUIA_Values.isToolSelected("textTool")
-        if !toolsNN || SubStr(activePath, 1, StrLen(activePath)-3) = premUIA.UIA_Path["project"] || textStatus {
+        projActive := premUIA_Values.__isUiaElementActive("projectsWindow", premUIA)
+        textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
+        if !toolsNN || (projActive = true) || textStatus {
             __sendOrig()
             return
         }
@@ -3307,7 +3307,7 @@ class Prem {
 			return
         if !premUIA := premUIA_Values.initialise()
             return
-        if premUIA_Values.__activeElementPath() = premUIA.UIA_Path["project"] {
+        if premUIA_Values.__isUiaElementActive("projectsWindow", premUIA) {
             SendInput(labelHotkey)
             return
         }

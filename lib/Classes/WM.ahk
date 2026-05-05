@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2026/04/22
- * @version 1.3.8
+ * @date 2026/05/05
+ * @version 1.3.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -74,7 +74,8 @@ class WM {
         try {
             RetValue := SendMessage(0x004A, 0, CopyDataStruct,, scriptTitle " ahk_class AutoHotkey",,,, timeout) ; 0x004A is WM_COPYDATA.
         } catch {
-            tool.Cust("SendMessage timed out")
+            tool.Cust("SendMessage timed out: " scriptTitle)
+            errorLog(TimeoutError("SendMessage timed out: " scriptTitle, -2))
             returnDct()
             Critical("Off")
             return false

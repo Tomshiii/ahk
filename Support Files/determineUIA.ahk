@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/04/28
- * @version 1.0.5
+ * @date 2026/05/05
+ * @version 1.0.6
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -29,6 +29,12 @@ for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }
 
+try {
+    coreIsActive := CLSID_Objs.load("determineActive")
+    coreIsActive.isRunning := true
+    coreIsActive := ""
+    SetTimer(__resetIsActive, -15000)
+}
 premUIAobj := CLSID_Objs.load("determineUIA")
 premUIAobj.isRunning := true
 
@@ -92,6 +98,8 @@ try {
 premUIAobj.isRunning := false
 premUIAobj.beenSet   := true
 premUIAobj := ""
+
+__resetIsActive()
 __deleteUIA()
 SetTimer((*) => (__deleteUIA()), -2500)
 
@@ -123,6 +131,13 @@ _onExit(*) {
     }
 }
 
+__resetIsActive(*) {
+    try {
+        coreIsActive := CLSID_Objs.load("determineActive")
+        coreIsActive.isRunning := false
+        coreIsActive := ""
+    }
+}
 
 __deleteUIA() {
     notifyExt.deleteIfExist("premUIAGenTree")

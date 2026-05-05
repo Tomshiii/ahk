@@ -50,4 +50,5 @@ This release brings support for `Premiere 26.2+`. This required a rather extensi
 - 📋 `KSA` values are now shared using `Core Functionality.ahk`
 
 ## Other Changes
-- ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate`, `setreamdeck_opt.ahk`
+- ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate`, `Streamdeck_opt.ahk`
+- ✅ Fixed `Multi-Instance Close.ahk` stalling `reloadAll.ahk`

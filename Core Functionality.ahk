@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/04/25
- * @version 1.0.10
+ * @date 2026/05/05
+ * @version 1.0.11
  ***********************************************************************/
 
 #SingleInstance Force
@@ -41,6 +41,7 @@ TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 UserSettings := UserPref()
 premiere := prem
 Loading := {isLoading: true}
+determineActive := {isRunning: false}
 
 allRegister := [{obj:premiere, name: "prem"}, {obj: UserSettings, name: "UserSettings"}, {obj: Loading, name: "Loading"}]
 for v in allRegister {

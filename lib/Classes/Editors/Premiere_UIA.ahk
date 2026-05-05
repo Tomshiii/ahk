@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/05/04
- * @version 3.0.12
+ * @date 2026/05/05
+ * @version 3.0.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -42,29 +42,31 @@ class premUIA_Values {
 
     static UserSettings := ""
 
-    static __activeElementPath(returnObj := false) {
-        if !WinActive(prem.winTitle) {
+    static __activeElementPath(returnObj := false, UIAobj?) {
+        if !WinActive(prem.winTitle) && !WinActive(prem.class) {
             return -1
         }
-        if !uiaEl := this.initialise()
+        uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
+        if !uiaEl
             return -1
         focusedEl := UIA.GetFocusedElement()
         try focusedPath := uiaEl.AdobeEl.GetUIAPath(focusedEl, true)
         return ((returnObj = false) ? focusedPath ?? "" : {uiaEl: uiaEl, Path: focusedPath, focusedEl: focusedEl})
     }
 
-    static __isUiaElementActive(elementPath) {
-        focusedPath := this.__activeElementPath(true)
+    static __isUiaElementActive(elementPath, UIAobj?) {
+        focusedPath := this.__activeElementPath(true, (IsSet(UIAobj) ? UIAobj : ""))
         if !isObjHasProp(focusedPath, 'Path', -1) || focusedPath.Path = -1
             return -1
-        return (focusedPath.uiaEl.UIA_Path[elementPath]=focusedPath)
+        return (IsSet(UIAobj) ? (InStr(focusedPath.Path, UIAobj.UIA_Path[elementPath]) = 1) : (InStr(focusedPath.Path, focusedPath.uiaEl.UIA_Path[elementPath]) = 1))
     }
 
-    static isToolSelected(element) {
-        if !WinActive(prem.winTitle) {
+    static isToolSelected(element, UIAobj?) {
+        if !WinActive(prem.winTitle) && !WinActive(prem.class) {
             return -1
         }
-        if !uiaEl := this.initialise()
+        uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
+        if !uiaEl
             return -1
         return (uiaEl.UIA_Objs[element].value = "Selected" ? true : false)
     }
@@ -122,7 +124,7 @@ class premUIA_Values {
             }
         }
         try {
-            if !WinActive(prem.winTitle) || !WinActive(prem.class)
+            if !WinActive(prem.winTitle) && !WinActive(prem.class)
                 switchTo.Premiere()
             blocker := block_ext()
             blocker.On()
@@ -237,11 +239,19 @@ class premUIA_Values {
 
         try uiaObj := CLSID_Objs.load("determineUIA")
         catch {
+            try {
+                coreIsActive := CLSID_Objs.load("determineActive")
+                if coreIsActive.isRunning = true
+                    return
+            }
             errorLog(TargetError("Script could not interact with ``determineUIA.ahk``. Script will reload.", -1))
             try WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk")
+            sleep 100
             if determineScript := winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey",,,, true)
                 try winExt.CloseRegex(determineScript,,,, true)
             sleep 500
+            if determineScript := winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey",,,, true)
+                return false
             Run(ptf.SupportFiles "\determineUIA.ahk")
             return false
         }
