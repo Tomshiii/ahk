@@ -131,6 +131,12 @@ Enter:: ;// close windows by double tapping enter
 				prem.escFxMenu()
 			return
 		case (WinGet.Title() == "Save Project"): return
+		case WinExist("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME"):
+			try class := WinGetClass("A")
+			if (IsSet(class) && class ~= "^\{?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\}?$") {
+				SendInput("{" A_ThisHotkey "}")
+				return
+			}
 		default:
 			if prem.timelineVals = false {
 				prem.__setTimelineValues()
@@ -149,7 +155,7 @@ Enter:: ;// close windows by double tapping enter
 				case (InStr(activePath, premUIA.UIA_Path["programMonitor"]) != 1):
 					SendInput("{" A_ThisHotkey "}")
 					return
-				case (currTimelineStatus != true && (InStr(activePath, premUIA.UIA_Path["programMonitor"]) = 1)  && textStatus != false):
+				case (currTimelineStatus != true && (InStr(activePath, premUIA.UIA_Path["programMonitor"]) = 1) && textStatus = true):
 					if !GetKeyState("Shift") && !GetKeyState("Shift", "P") { ;// this check shouldn't be necessary but.. just incase
 						SendInput("{Escape}")
 						prem.selectTool("selectionTool")

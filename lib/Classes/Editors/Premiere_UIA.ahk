@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/05/05
- * @version 3.0.13
+ * @date 2026/05/06
+ * @version 3.0.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -68,7 +68,8 @@ class premUIA_Values {
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
         if !uiaEl
             return -1
-        return (uiaEl.UIA_Objs[element].value = "Selected" ? true : false)
+        try returnVal := (uiaEl.UIA_Objs[element].value = "Selected" ? true : false)
+        return (IsSet(returnVal) && (returnVal = true || returnVal = false) ? returnVal : -1)
     }
 
     static setObjs() {

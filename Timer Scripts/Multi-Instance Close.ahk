@@ -22,8 +22,8 @@ TraySetIcon(ptf.Icons "\M-I_C.png")
 
 startupTray()
 
-;// open settings instance
-SetTimer(check, -50)
+UserSettings := CLSID_Objs.clone("UserSettings")
+SetTimer(check, (UserSettings.multi_SEC * 1000))
 
 
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
@@ -39,7 +39,6 @@ class stopper {
 
 check()
 {
-    static UserSettings := CLSID_Objs.clone("UserSettings")
     value := winExt.ListRegex("ahk_class AutoHotkey",,,, true)
     windows := ""
     for window in value{
@@ -57,16 +56,18 @@ check()
                 tool.Cust("Closing multiple instance of : " script.Name, 3000)
                 try {
                     Critical()
-                    orig := detect()
-                    WinClose(window)
-                    resetOrigDetect(orig)
+                    ProcessClose(window)
+                    window := winExt.ExistRegex(script.Name,,,, true)
+                    if window {
+                        try winExt.CloseRegex(window,,,, true)
+                        ; try WinClose(hwnd)
+                    }
                     Critical("Off")
                 }
             }
         windows .= script.Name "`n"
     }
     windows := ""
-    SetTimer(, -(UserSettings.multi_SEC * 1000))
 }
 
 ;defining what happens if the script is somehow opened a second time and the function is forced to close

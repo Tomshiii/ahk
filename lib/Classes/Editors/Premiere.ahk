@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/05
- * @version 2.4.10
+ * @date 2026/05/06
+ * @version 2.4.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1043,14 +1043,12 @@ class Prem {
             if KeyWait("MButton", timeoutVal " D")
                 return
         }
+        if !premUIA := premUIA_Values.initialise()
+            return
         blocker := block_ext()
         blocker.On(,, "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}" activationKeys)
         this.stopPlayback()
         sleep 50
-        if !premUIA := premUIA_Values.initialise() {
-            blocker.Off()
-            return
-        }
 
         switch window {
             case ksa.timelineWindow:

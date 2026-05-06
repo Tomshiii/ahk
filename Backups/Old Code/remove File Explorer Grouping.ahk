@@ -1,0 +1,2 @@
+RegWrite(0, "REG_DWORD", "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "UseAutoGrouping")
+;// https://allthings.how/turn-off-file-grouping-in-windows-explorer-in-windows-11/
