@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/05/08
- * @version 1.1.8
+ * @version 1.1.9
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -266,7 +266,8 @@ class installGUI extends Gui {
             if FileExist(A_Appdata "\tomshi\installDir") {
                 FileDelete(A_Appdata "\tomshi\installDir")
             }
-            FileAppend(this.installDir, A_Appdata "\tomshi\installDir")
+            installPathStr := (SubStr(this.InstallDir, -1, 1) = "\") ? SubStr(this.InstallDir, 1, StrLen(this.InstallDir)-1) : this.InstallDir
+            FileAppend(installPathStr, A_Appdata "\tomshi\installDir")
             if !this.hasAttempted {
                 this.__addLogEditBox()
             }
