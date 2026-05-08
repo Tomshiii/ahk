@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/04/30
- * @version 1.1.6
+ * @date 2026/05/08
+ * @version 1.1.7
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -266,7 +266,7 @@ class installGUI extends Gui {
             if FileExist(A_Appdata "\tomshi\installDir") {
                 FileDelete(A_Appdata "\tomshi\installDir")
             }
-            FileAppend(this.installDir "\Tomshi AHK", A_Appdata "\tomshi\installDir")
+            FileAppend(this.installDir, A_Appdata "\tomshi\installDir")
             if !this.hasAttempted {
                 this.__addLogEditBox()
             }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/04/23
- * @version 1.4.2
+ * @date 2026/05/08
+ * @version 1.4.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,7 +41,7 @@ class UserPref {
     defaults := Map(
         ;// [Settings]
         "update_check", "true", "beta_update_check", "false", "package_update_check", "true", "lib_update_check", "true", "ahk_update_check", "true", "update_adobe_vers", "true", "update_git", "false",
-        "dark_mode", "",
+        "dark_mode", "false",
         "run_at_startup", "false", "show_adobe_vers_startup", "true",
         "autosave_beep", "true", "autosave_check_checklist", "true", "autosave_save_override", "true", "autosave_check_mouse", "true",
         "autosave_always_save", "true", "autosave_restart_playback", "false",
