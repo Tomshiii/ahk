@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/05/06
- * @version 3.0.14
+ * @date 2026/05/08
+ * @version 3.0.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -51,7 +51,7 @@ class premUIA_Values {
             return -1
         focusedEl := UIA.GetFocusedElement()
         try focusedPath := uiaEl.AdobeEl.GetUIAPath(focusedEl, true)
-        return ((returnObj = false) ? focusedPath ?? "" : {uiaEl: uiaEl, Path: focusedPath, focusedEl: focusedEl})
+        return ((returnObj = false) ? focusedPath ?? "" : {uiaEl: uiaEl, Path: focusedPath ?? "", focusedEl: focusedEl})
     }
 
     static __isUiaElementActive(elementPath, UIAobj?) {
@@ -129,6 +129,7 @@ class premUIA_Values {
                 switchTo.Premiere()
             blocker := block_ext()
             blocker.On()
+            SendInput(ksa.shuttleStop)
             keys := ["effectControls", "effectsWindow", "programMonitor", "sourceMonitor", "toolsWindow", "projectsWindow", "timelineWindow"]
             for v in keys {
                 SendInput(ksa.%v%)
@@ -220,8 +221,10 @@ class premUIA_Values {
             return true
         } catch {
             title := "determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
-            scriptExist := winExt.TitleRegex(title,,,, true)
-            if !scriptExist
+            scriptTitle := winExt.TitleRegex(title,,,, true)
+            if !scriptTitle
+                return false
+            if !winExt.ExistRegex(scriptTitle,,,, true)
                 return false
             return true
         }
@@ -243,7 +246,7 @@ class premUIA_Values {
             try {
                 coreIsActive := CLSID_Objs.load("determineActive")
                 if coreIsActive.isRunning = true
-                    return
+                    return false
             }
             errorLog(TargetError("Script could not interact with ``determineUIA.ahk``. Script will reload.", -1))
             try WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk")
@@ -261,7 +264,7 @@ class premUIA_Values {
                 notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
                 Critical('Off')
                 return false
-            case uiaObj.beenSet:
+            case uiaObj.beenSet && !uiaObj.isRunning:
                 Critical('Off')
                 return uiaObj
             default:

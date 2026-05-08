@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/05/05
- * @version 1.0.11
+ * @date 2026/05/08
+ * @version 1.0.12
  ***********************************************************************/
 
 #SingleInstance Force
@@ -50,8 +50,14 @@ for v in allRegister {
 Loading.isLoading := false
 
 
-if UserSettings.Set_UIA_on_load = true && (isReload(getReload ?? false) || !premUIA_Values.determineUIA_Exist())
-    SetTimer((*) => (__tryFunc(prem.__setTimelineValues()), __tryFunc(prem.getTimeline(false))), -3000)
+if UserSettings.Set_UIA_on_load = true && (isReload(getReload ?? false))
+    SetTimer(doStartup, -3000)
+doStartup(*) {
+    if !premUIA_Values.determineUIA_Exist() {
+        __tryFunc(prem.__setTimelineValues())
+        __tryFunc(prem.getTimeline(false))
+    }
+}
 __tryFunc(tryFunc*) {
     for v in tryFunc {
         if Type(v) = "Func"

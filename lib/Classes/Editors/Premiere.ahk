@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/06
- * @version 2.4.11
+ * @date 2026/05/08
+ * @version 2.4.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -479,8 +479,11 @@ class Prem {
         }
 
         checkPrem := WinGet.PremName()
-        checkType := (Type(checkPrem) != "Object"), checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
-        if !checkPrem || checkType || checkTitle || checkCanSave {
+        checkType := (Type(checkPrem) != "Object")
+        if !checkPrem || checkType
+            return false
+        checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
+        if  checkTitle || checkCanSave {
             return false
         }
 
@@ -573,39 +576,40 @@ class Prem {
         return this._scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
     }
 
-    static setShinsIMG(title := "") {
+    static setShinsIMG(title) {
         if !this._scan {
             this._scanTitle := title
-            try this._scan := ShinsImageScanClass(title)
+            try this._scan := ShinsImageScanClass(this._scanTitle)
             catch {
-                errorLog(UnsetError("ShinsImageScanClass failed to be set", -1), "title: " title)
+                errorLog(UnsetError("ShinsImageScanClass failed to be set.", -1), "title: " title)
                 return false
             }
             this._scan.autoUpdate := 0
             try this._scan.Update()
             catch {
-                errorLog(MethodError("ShinsImageScanClass failed.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
+                errorLog(MethodError("ShinsImageScanClass failed to update. Had not been set.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
                 return false
             }
             return true
         }
-        if this._scanTitle != title {
+        hwnd := WinExist(title)
+        if this._scanTitle != title || this._scan.hwnd != hwnd {
             this._scanTitle := title
-            this._scan.hwnd := WinExist(title)
+            this._scan.hwnd := WinExist(this._scanTitle)
             if !this._scan.hwnd || !this._scanTitle
                 return false
             try this._scan.Update()
             catch {
-                errorLog(MethodError("ShinsImageScanClass failed.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
+                errorLog(MethodError("ShinsImageScanClass failed to update. Was set but different values were present.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
                 return false
             }
             return true
         }
         try this._scan.Update()
-            catch {
-                errorLog(MethodError("ShinsImageScanClass failed.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
-                return false
-            }
+        catch {
+            errorLog(MethodError("ShinsImageScanClass failed to update. Was already set", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
+            return false
+        }
         return true
     }
 
@@ -666,30 +670,41 @@ class Prem {
         }
 
         ;// func won't continue until this premiereremote func finishes (saving completes)
+        blocker := block_ext()
+        blocker.On(false)
+        SetTimer((*) => blocker.Off(), -250)
         if !this.__remoteFunc("saveProj", true) {
             __stopCallbacks()
+            blocker.Off()
             return false
         }
         __stopCallbacks()
 
         if !andWait {
+            blocker.Off()
             return true
         }
 
         ;// waiting for save dialogue to open & close
         if !state.hasAppeared {
+            blocker.Off()
             return "timeout_nosave"
         }
         if !state.hasClosed {
+            blocker.Off()
             return "timeout"
         }
 
-        if checkAmount = 0
+        if checkAmount = 0 {
+            blocker.Off()
             return true
+        }
         if origSeq = "" {
+            blocker.Off()
             errorLog(Error("Premiere failed to retrieve the originally active sequence before saving. Aborting"))
             return true
         }
+        blocker.Off()
         sleep checkSeqTime
         loop checkAmount {
             currentSeq := this.__remoteFunc("getActiveSequence", true)
@@ -727,7 +742,7 @@ class Prem {
                 return false
             }
         }
-        if !premUIA_Values.__isUiaElementActive("timelineWindow", uiaVals) {
+        if !uiaVals.__isUiaElementActive("timelineWindow", uiaVals) {
             tool.Cust("Premiere should automatically refocus the timeline")
             sleep 1000
             return "active"
@@ -1446,18 +1461,18 @@ class Prem {
                 errorLog(TargetError('Creating UIA element failed'))
                 return
             }
-            textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
+            textStatus := premUIA.isToolSelected("textTool", premUIA)
 
             switch {
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
-                    if !premUIA_Values.__isUiaElementActive('effectControls', premUIA) {
+                    if !premUIA.__isUiaElementActive('effectControls', premUIA) {
                         ih.Stop(), star_ih.Stop()
                         SendInput(sendOnFail star_ih.Input)
                         tool.Cust("If you are attempting to adjust audio;`nThe timeline is not currently in focus", 2000)
                         return
                     }
                     needsTimelineFocus := true
-                case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && premUIA_Values.__isUiaElementActive('programMonitor', premUIA):
+                case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && premUIA.__isUiaElementActive('programMonitor', premUIA):
                     ih.Stop(), star_ih.Stop()
                     SendInput(sendOnFail star_ih.Input)
                     return
@@ -1732,7 +1747,7 @@ class Prem {
     static selectTool(tool := "selectionTool") {
         if !premUIA := premUIA_Values.initialise()
             return false
-        if premUIA_Values.isToolSelected(tool, premUIA) = false {
+        if premUIA.isToolSelected(tool, premUIA) = false {
             try premUIA.UIA_Objs[tool].Click()
             catch {
                 return false
@@ -1771,8 +1786,8 @@ class Prem {
         if !premUIA := premUIA_Values.initialise()
             return
         toolsNN := premUIA.UIA_Objs["toolsWindow"]
-        projActive := premUIA_Values.__isUiaElementActive("projectsWindow", premUIA)
-        textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
+        projActive := premUIA.__isUiaElementActive("projectsWindow", premUIA)
+        textStatus := premUIA.isToolSelected("textTool", premUIA)
         if !toolsNN || (projActive = true) || textStatus {
             __sendOrig()
             return
@@ -3305,7 +3320,7 @@ class Prem {
 			return
         if !premUIA := premUIA_Values.initialise()
             return
-        if premUIA_Values.__isUiaElementActive("projectsWindow", premUIA) {
+        if premUIA.__isUiaElementActive("projectsWindow", premUIA) {
             SendInput(labelHotkey)
             return
         }
@@ -3561,12 +3576,26 @@ class Prem {
         }
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
         file := this.__remoteFunc('renderInPrem', true, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
+        this.save()
         if checkbool(addToProj) && (file != false) && FileExist(file) {
             notifyExt.showIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
-            sleep 1000
-            this.__remoteFunc('importFile',, "filePath=" StrReplace(file, "\", "/"), "importAsStills=0")
             logger := log()
             logger.Append("Attempted to import: " StrReplace(file, "\", "/"))
+            ;// poll until Premiere's main thread is free
+            __waitFree() {
+                loop 20 {
+                    sleep 1000
+                    if (this.__remoteFunc('isMainThreadFree', true) = true)
+                        return true
+                }
+                return false
+            }
+            if !__waitFree() {
+                this.save()
+                return
+            }
+            if !this.__remoteFunc('importFile', true, "filePath=" StrReplace(file, "\", "/"), "importAsStills=0")
+                return
         }
         this.save()
     }

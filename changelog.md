@@ -13,9 +13,14 @@ This release brings support for `Premiere 26.2+`. This required a rather extensi
 ***
 
 ## Functions
-- ✅ Fixed `winget.PremName()` failing to determine `beta` titles correctly
 - ✅ Fixed `settingsGUI()` not generating the proper `Premiere` shortcut when the `beta` checkbox is deselected
 - ✏️ Added `checkINI()`
+
+### 📝 `WinGet {`
+
+📍 `PremName()`
+- ✅ Fixed function failing to determine `beta` titles correctly
+- ✅ Fixed function sometimes thinking `Premiere` isn't open
 
 ### 📝 `prem {`
 - ❗ Support for `v26.2`

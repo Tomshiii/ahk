@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/05/05
- * @version 1.0.6
+ * @date 2026/05/08
+ * @version 1.0.7
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -40,8 +40,7 @@ premUIAobj.isRunning := true
 
 try {
     if !premUIAobj.setObjs() {
-        __deleteUIA()
-        ExitApp()
+        __doExit(premUIAobj)
     }
 } catch as e {
     ;// error codes
@@ -70,39 +69,50 @@ try {
     switch {
         case InStr(e.Message, "This version of Premiere is not supported."):
             __deleteUIA()
-            throw MethodError(e.Message)
+            __resetIsActive()
+            __resetObj(premUIAobj)
+            for v in allRegister {
+                try ObjRegisterActive(v.obj, "")
+            }
+            try SetTimer(__resetIsActive, 0)
+            __resetTimelineVals()
+            throw MethodError("This version of Premiere is not supported.", e.what)
         case InStr(e.Message, "Failed to return Premiere Version"):
+            __deleteUIA()
+            errorLog(UnsetError("Determining Premiere's version failed, causing UIA value retrieval to abort.", -2))
             notifyExt.showIfNotExist("UIApremNotReady",, "Determining Premiere's version failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
-            __deleteUIA()
-            ExitApp()
+            __doExit(premUIAobj)
         case InStr(e.Message, "Socket"):
+            __deleteUIA()
             notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-            __deleteUIA()
-            ExitApp()
+            __doExit(premUIAobj)
         case InStr(e.Message, "Failed to retrieve Premiere title."):
-            notifyExt.showIfNotExist("UIApremTitleFailed",, "Determining Premiere's title failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
             __deleteUIA()
-            ExitApp()
+            errorLog(UnsetError("Determining Premiere's title failed, causing UIA value retrieval to abort.", -2))
+            notifyExt.showIfNotExist("UIApremTitleFailed",, "Determining Premiere's title failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+            __doExit(premUIAobj)
         case codePos := InStr(e.Message, "throw code:"):
             __deleteUIA()
             code := SubStr(e.Message, (codePos+StrLen("throw code:")))
             codeArr := StrSplit(code, ["`r", "`n"])
             throwString := (codes.Has(codeArr[1])) ? codes.Get(codeArr[1]) : "error code: " codeArr[1]
-            throw ValueError(throwString)
+            errorLog(ValueError(throwString))
+            notifyExt.showIfNotExist("UIApanelFail",, throwString,,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+            ; throw ValueError(throwString)
+            __doExit(premUIAobj)
         default:
+            errorLog(ValueError(e.Message, -2))
             __deleteUIA()
-            throw e
+            notifyExt.showIfNotExist("UIAgenericFail",, "Determining UIA values failed. ``determineUIA.ahk`` will safetly abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+            __doExit(premUIAobj)
+            ; throw e
     }
 }
 
-premUIAobj.isRunning := false
-premUIAobj.beenSet   := true
-premUIAobj := ""
-
+__resetObj(premUIAobj)
 __resetIsActive()
 __deleteUIA()
 SetTimer((*) => (__deleteUIA()), -2500)
-
 didReload := isReload(getReload ?? false)
 if WinExist(prem.winTitle) && !didReload {
     SetTimer((*) => (prem.__setTimelineValues(), prem.getTimeline(false)), -2500)
@@ -115,19 +125,18 @@ __doubleCheckExit(*) {
     ;// prem is really weird and I guess fires the 'close' winevent doing seemingly meaningless things
     ;// this check will stop it from exiting prematurely
     if !WinExist(prem.winTitle) && !WinExist(prem.class) {
-        try {
-            premObj := CLSID_Objs.load("prem")
-            premObj.__resetTimelineVals()
-            premObj.RClickIsActive := false
-        }
+        __doExit(premUIAobj)
         ExitApp()
     }
 }
-OnExit(_onExit.Bind(allRegister))
-_onExit(*) {
-    WinEvent.Stop("Close", prem.exeTitle)
-    for v in allRegister {
-        try ObjRegisterActive(v.obj, "")
+
+__resetObj(premUIAobj) {
+    if !IsSet(premUIA) || (IsSet(premUIA) && Type(premUIA) != "ComObject")
+        premUIAobj := CLSID_Objs.load("determineUIA")
+    try {
+        premUIAobj.isRunning := false
+        premUIAobj.beenSet   := true
+        premUIAobj := ""
     }
 }
 
@@ -139,8 +148,44 @@ __resetIsActive(*) {
     }
 }
 
+__resetTimelineVals() {
+    try {
+        premObj := CLSID_Objs.load("prem")
+        premObj.__resetTimelineVals()
+        premObj.RClickIsActive := false
+    }
+}
+
 __deleteUIA() {
     notifyExt.deleteIfExist("premUIAGenTree")
     notifyExt.deleteIfExist("premUIAGenTreeWarning")
     notifyExt.deleteIfExist("determiningUIA")
+}
+
+__doExit(premUIAobj) {
+    __deleteUIA()
+    __resetIsActive()
+    __resetObj(premUIAobj)
+    __resetTimelineVals()
+    try SetTimer(__resetIsActive, 0)
+
+    if WinEvent.IsRegistered("Close", prem.exeTitle)
+        try WinEvent.Stop("Close", prem.exeTitle)
+    for v in allRegister {
+        try ObjRegisterActive(v.obj, "")
+    }
+    ExitApp()
+}
+
+
+
+OnExit(_onExit.Bind(allRegister))
+_onExit(allRegister, *) {
+    try getReload := A_Args.Get(1)
+    if !isReload(getReload ?? "")
+        errorLog(Error("determineUIA.ahk has exited"))
+    WinEvent.Stop("Close", prem.exeTitle)
+    for v in allRegister {
+        try ObjRegisterActive(v.obj, "")
+    }
 }

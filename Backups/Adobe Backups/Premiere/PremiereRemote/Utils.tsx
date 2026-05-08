@@ -479,70 +479,97 @@ export class Utils {
     }
 
     static renderInPrem(outputPath: string, presetPath: string) {
-    if (!this.selectionIsSequence()) return false;
-    var selected = app.getCurrentProjectViewSelection();
-    var projectItem = selected[0];
+      if (!this.selectionIsSequence()) return false;
+      var selected = app.getCurrentProjectViewSelection();
+      var projectItem = selected[0];
 
-    var sequence = null;
-    for (var i = 0; i < app.project.sequences.numSequences; i++) {
-      if (app.project.sequences[i].projectItem.nodeId === projectItem.nodeId) {
-        sequence = app.project.sequences[i];
-        break;
-      }
-    }
-    if (!sequence) return false;
-
-    outputPath = outputPath.replace(/\//g, "\\");
-    presetPath = presetPath.replace(/\//g, "\\");
-
-    var presetFile = new File(presetPath);
-    var extension = null;
-    var fileTypeValue = null; // Store the actual value for error message
-
-    if (presetFile.open("r")) {
-      var content = presetFile.read();
-      presetFile.close();
-
-      var match = content.match(/<ExporterFileType>(\d+)<\/ExporterFileType>/);
-      if (match) {
-        var fileType = parseInt(match[1]);
-        fileTypeValue = fileType; // Save for later
-
-        switch(fileType) {
-          case 1299148630: // 'Mqv ' - QuickTime MOV
-            extension = ".mov";
-            break;
-          case 1212503619: // 'Hdmt' - H.265/HEVC MP4
-            alert("Rendering h265 programmatically is unfortunately impossible.")
-            return false;
-          case 1211250228: // 'Hdv4' - H.264 MP4
-            extension = ".mp4";
-            break;
+      var sequence = null;
+      for (var i = 0; i < app.project.sequences.numSequences; i++) {
+        if (app.project.sequences[i].projectItem.nodeId === projectItem.nodeId) {
+          sequence = app.project.sequences[i];
+          break;
         }
       }
+      if (!sequence) return false;
+
+      outputPath = outputPath.replace(/\//g, "\\");
+      presetPath = presetPath.replace(/\//g, "\\");
+
+      var presetFile = new File(presetPath);
+      var extension = null;
+      var fileTypeValue = null; // Store the actual value for error message
+
+      if (presetFile.open("r")) {
+        var content = presetFile.read();
+        presetFile.close();
+
+        var match = content.match(/<ExporterFileType>(\d+)<\/ExporterFileType>/);
+        if (match) {
+          var fileType = parseInt(match[1]);
+          fileTypeValue = fileType; // Save for later
+
+          switch(fileType) {
+            case 1299148630: // 'Mqv ' - QuickTime MOV
+              extension = ".mov";
+              break;
+            case 1212503619: // 'Hdmt' - H.265/HEVC MP4
+              alert("Rendering h265 programmatically is unfortunately impossible.")
+              return false;
+            case 1211250228: // 'Hdv4' - H.264 MP4
+              extension = ".mp4";
+              break;
+          }
+        }
+      }
+
+      if (!extension) {
+        alert("No extension defined for the current preset. ExporterFileType: " + fileTypeValue);
+        return false;
+      }
+
+      var baseName = sequence.name;
+      var finalPath = outputPath + "\\" + baseName;
+      var counter = 1;
+
+      while (this.fileExists(finalPath, extension)) {
+        finalPath = outputPath + "\\" + baseName + "_" + counter;
+        counter++;
+      }
+
+      sequence.exportAsMediaDirect(finalPath + extension, presetPath, 1);
+      var stable = this.waitForFileStable(finalPath + extension, 1000, 120000);
+      if (!stable) return false;
+      $.sleep(500)
+      return finalPath + extension;
     }
-
-    if (!extension) {
-      alert("No extension defined for the current preset. ExporterFileType: " + fileTypeValue);
-      return false;
-    }
-
-    var baseName = sequence.name;
-    var finalPath = outputPath + "\\" + baseName;
-    var counter = 1;
-
-    while (this.fileExists(finalPath, extension)) {
-      finalPath = outputPath + "\\" + baseName + "_" + counter;
-      counter++;
-    }
-
-    sequence.exportAsMediaDirect(finalPath + extension, presetPath, 1);
-    return finalPath + extension;
-  }
 
     static fileExists(basePath, ext) {
       var file = new File(basePath + ext);
       return file.exists;
+    }
+
+    static waitForFileStable(filePath: string, intervalMs: number, maxWaitMs: number): boolean {
+      var file = new File(filePath);
+      var elapsed = 0;
+      var lastSize = -1;
+
+      while (elapsed < maxWaitMs) {
+        $.sleep(intervalMs);
+        elapsed += intervalMs;
+
+        if (!file.exists) continue;
+
+        // ExtendScript File doesn't expose size directly, so re-open each time
+        file.open("r");
+        var currentSize = file.length;
+        file.close();
+
+        if (currentSize > 0 && currentSize === lastSize) {
+          return true; // Size stable — write is complete
+        }
+        lastSize = currentSize;
+      }
+      return false;
     }
 
     // just fyi this function is ai slop through and through

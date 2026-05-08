@@ -27,7 +27,7 @@ __checkClose(hwnd, title) {
     if title = "determineUIA.ahk" {
         WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk")
     }
-    if hwnd {
+    if WinExist(hwnd) {
         ProcessClose(hwnd)
         hwnd := winExt.ExistRegex(title,,,, true)
         if hwnd {
@@ -60,8 +60,10 @@ for v in list {
     try pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""), false)
 }
 
-for v in listArr {
+for i, v in listArr {
     __checkClose(v.PID, v.scriptName " ahk_class AutoHotkey")
+    if v.scriptName = "determineUIA.ahk"
+        listArr.RemoveAt(i)
 }
 
 if coreFunc := winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,,, true) {

@@ -355,7 +355,7 @@ export const host = {
   },
 
   importFile: function(filePath: string, importAsStills: string) {
-    app.project.importFiles([filePath], true, app.project.rootItem, Boolean(importAsStills));
+    return app.project.importFiles([filePath], false, app.project.rootItem, Boolean(importAsStills));
   },
 
   getPref: function(pref: string) {
@@ -412,6 +412,17 @@ export const host = {
       selection[i].disabled = shouldDisable;
     }
     return true
+  },
+
+  isMainThreadFree: function() {
+    try {
+        // app.project.documentID is a trivial property read
+        // that still requires main thread access
+        var id = app.project.documentID;
+        return true;
+    } catch(e) {
+        return false;
+    }
   }
 };
 

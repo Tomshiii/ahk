@@ -65,18 +65,19 @@ $Tab::
 			SendInput("{Tab}")
 			return
 		case winExt.ExistRegex(titles):
-			sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
+			sendMod := (GetKeyState("Shift", "P") || GetKeyState("Shift")) ? "+" : ""
 			SendInput(sendMod "{Tab}")
 			return
 		case CaretGetPos(&x, &y):
 			/* if !isDoubleClick()
 				return */
-			sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
+			sendMod := (GetKeyState("Shift", "P") || GetKeyState("Shift")) ? "+" : ""
 			SendInput(sendMod "{Tab}")
 			return
 	}
 	try {
-		premUIA := premUIA_Values.initialise()
+		if !premUIA := premUIA_Values.initialise()
+			return
 		if premUIA.__isUiaElementActive("effectControls", premUIA) = true {
 			sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
 			SendInput(sendMod "{Tab}")
@@ -124,6 +125,7 @@ Space:: ;// make space more useful by closing certain windows
 NumpadEnter::
 Enter:: ;// close windows by double tapping enter
 {
+	titles := "Audio Gain " prem.winTitle "|"
 	switch {
 		case isIn("Clip Fx Editor"), isIn("Track Fx Editor"):
 			delaySI(75, "{Tab}", "+{Tab}") ;// ensures the enter doesn't toggle enable/disabling
@@ -137,20 +139,23 @@ Enter:: ;// close windows by double tapping enter
 				SendInput("{" A_ThisHotkey "}")
 				return
 			}
+		case winExt.ExistRegex(titles):
+			SendInput("{" A_ThisHotkey "}")
+			return
 		default:
-			if prem.timelineVals = false {
-				prem.__setTimelineValues()
-				return
-			}
 			;// if I'm typing and I hit enter I want typing to be finished
 			;// ie. the text box is deselected and the text tool is swapped back to the selection tool
-			currTimelineStatus := prem.timelineFocusStatus()
 			if !premUIA := premUIA_Values.initialise() {
 				SendInput("{" A_ThisHotkey "}")
             	return
 			}
-			activePath := premUIA_Values.__activeElementPath(, premUIA)
-            textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
+			if prem.timelineVals = false {
+				prem.__setTimelineValues()
+				return
+			}
+			currTimelineStatus := prem.timelineFocusStatus()
+			activePath := premUIA.__activeElementPath(, premUIA)
+            textStatus := premUIA.isToolSelected("textTool", premUIA)
 			switch {
 				case (InStr(activePath, premUIA.UIA_Path["programMonitor"]) != 1):
 					SendInput("{" A_ThisHotkey "}")
@@ -240,7 +245,7 @@ SC03A & LButton:: ;// lock vertical movement while adjusting keyframe handles
 	if !premUIA := premUIA_Values.initialise()
 		return
 
-	if !premUIA_Values.__isUiaElementActive("effectControls", premUIA) {
+	if !premUIA.__isUiaElementActive("effectControls", premUIA) {
 		__resetCaps(storeHotkey, capslockState)
 		return
 	}

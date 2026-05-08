@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/04/30
- * @version 1.7.10
+ * @date 2026/05/08
+ * @version 1.7.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -247,7 +247,10 @@ class WinGet {
             errorLog(ValueError("Incorrect Parameter (#1) Passed to function", -1, which), "Parameter must be 'AE' or 'Premiere'",, 1)
         }
         try {
-            if !WinExist(editors.%which%.winTitle)
+            __getClass(which) {
+                return ((which = "Premiere") ? prem.class : AE.class)
+            }
+            if !WinExist(editors.%which%.winTitle) && !WinExist(__getClass(which))
                 return {winTitle: false, titleCheck: -1, saveCheck: -1}
             progCheck := this.__determineAdobeTitle(which)
             adobeYear := this.__determineAdobeYear(progCheck, which, UserSettings)
