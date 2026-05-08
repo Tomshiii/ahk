@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/04/30
- * @version 1.8.14
+ * @date 2026/05/08
+ * @version 1.8.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -718,8 +718,8 @@ class Startup {
         aeExeVer   := FileExist(aeExeLocation)   ? FileGetExtendedProp(aeExeLocation,, "System.Software.ProductVersion")["System.Software.ProductVersion"]   : aeNotFound   := true
 
         ;// remove ".0"
-        premExeVer := SubStr(premExeVer, premFinalDot := InStr(premExeVer, ".",, -1), 2) = ".0" ? SubStr(premExeVer, 1, premFinalDot-1) : premExeVer
-        aeExeVer   := SubStr(aeExeVer, aeFinalDot     := InStr(aeExeVer, ".",, -1), 2)   = ".0" ? SubStr(aeExeVer, 1, aeFinalDot-1)     : aeExeVer
+        premExeVer := SubStr(premExeVer, premFinalDot := InStr(premExeVer, ".",, -1), 2) = ".0" ? SubStr(premExeVer, 1, premFinalDot-1) : this.UserSettings.premVer
+        aeExeVer   := SubStr(aeExeVer, aeFinalDot     := InStr(aeExeVer, ".",, -1), 2)   = ".0" ? SubStr(aeExeVer, 1, aeFinalDot-1)     : this.UserSettings.aeVer
 
         if premExeVer = false && aeExeVer = false {
             this.UserSettings.show_adobe_vers_startup := false

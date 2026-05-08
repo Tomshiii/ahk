@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/05/08
- * @version 1.1.9
+ * @version 1.1.10
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -322,12 +322,13 @@ class installGUI extends Gui {
                 RunWait(this.InstallDir "\nodejs.exe")
                 sleep 100
             }
-            this.__addLogEntry("installing PremiereRemote")
-            RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk")
             this.__deleteInstallFiles()
             this.__setProgress(80)
             try Run(this.InstallDir "\Core Functionality.ahk")
             this.__addLogEntry("running Core Functionality.ahk")
+            sleep 1500
+            this.__addLogEntry("installing PremiereRemote")
+            RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk")
             ;// set current adobe versions in settings.ini
             this.__addLogEntry("setting current adobe versions in settings.ini")
             __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk", "failed to set current adobe versions")
