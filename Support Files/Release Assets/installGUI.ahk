@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/05/08
- * @version 1.1.7
+ * @version 1.1.8
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -61,9 +61,9 @@ class installGUI extends Gui {
         this.AddText("xs+25 ys+20 Section", "Choose Installation Directory:")
         try tryRead := (FileExist(this.prevInstall)) ? FileRead(this.prevInstall) : ""
         catch {
-            try tryRead := ""
+            tryRead := ""
         }
-        opt := (DirExist(FileRead(this.prevInstall))) ? "+Disabled" : ""
+        opt := (FileExist(this.prevInstall) && (DirExist(FileRead(this.prevInstall)))) ? "+Disabled" : ""
         this.AddEdit("-Wrap ReadOnly r1 vInstallDir w300 " opt, (!opt) ? this.InstallDir : tryRead)
         this.AddButton("x+10 yp-2 vChangeDir " opt, "Change Dir").OnEvent("Click", (*) => this.__changeDir())
         this.AddButton("y+5 xp+21 w65 vInstallButton", "Install").OnEvent("Click", (*) => this.__Install())
