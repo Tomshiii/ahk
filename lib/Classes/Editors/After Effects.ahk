@@ -10,6 +10,7 @@
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
 #Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\Settings.ahk
 #Include Classes\block.ahk
 #Include Classes\coord.ahk
 #Include Classes\ptf.ahk
@@ -31,12 +32,16 @@ class AE {
         if A_ScriptName = "Core Functionality.ahk" {
             UserSettings := UserPref(true)
         } else {
-            try UserSettings := CLSID_Objs.clone("UserSettings")
-            catch {
+            CLSID_Objs.waitCoreFuncs(2)
+            try {
+                UserSettings := CLSID_Objs.clone("UserSettings")
+                if !UserSettings || Type(UserSettings) != "ComObject"
+                    UserSettings := UserPref(true)
+            } catch {
                 UserSettings := UserPref(true)
             }
         }
-        this.currentSetVer := SubStr(UserSettings.aeVer, 2)
+        this.currentSetVer  := SubStr(UserSettings.aeVer, 2)
         this.currentYearVer := SubStr(UserSettings.aeVer, 2, 2)
 
         ;// ensure minimum version
