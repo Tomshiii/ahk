@@ -4,6 +4,6 @@
 #Include Classes\Settings.ahk
 ; }
 
-UserSettings := UserPref(true)
+UserSettings := UserPref(true, true)
 UserSettings.__delAll()
 ExitApp()

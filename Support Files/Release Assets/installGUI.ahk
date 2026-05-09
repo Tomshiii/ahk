@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/05/09
- * @version 1.1.11
+ * @version 1.1.12
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -310,7 +310,7 @@ class installGUI extends Gui {
                 throw TargetError("Failed to move lib folder")
             /** This function cuts repeat code for dealing with some first time settings */
             __runSettingsInstall(filename, catchText, workingDir := "") {
-                try RunWait(filename, workingDir)
+                try RunWait(Format('explorer.exe "{1}"', filename), workingDir)
                 catch
                     this.__addLogEntry(catchText)
             }
@@ -325,7 +325,8 @@ class installGUI extends Gui {
             }
             this.__deleteInstallFiles()
             this.__setProgress(80)
-            try Run(this.InstallDir "\Core Functionality.ahk")
+            ;// stops core func getting run as admin
+            Run(Format('explorer.exe "{1}"', this.InstallDir "\Core Functionality.ahk"))
             this.__addLogEntry("running Core Functionality.ahk")
             sleep 1500
             this.__addLogEntry("installing PremiereRemote")

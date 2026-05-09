@@ -13,7 +13,7 @@
 installDir := FileRead(A_Appdata "\tomshi\installDir")
 SetWorkingDir(installDir)
 
-getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
+getNPM := RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
 if !getNPM {
     ;// throw
     errorLog(TargetError("NodeJS is not currently installed. Please install NodeJS before continuing.", -1),,, 1)
