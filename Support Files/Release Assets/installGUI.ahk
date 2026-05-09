@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/05/09
- * @version 1.1.12
+ * @version 1.1.13
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -310,7 +310,7 @@ class installGUI extends Gui {
                 throw TargetError("Failed to move lib folder")
             /** This function cuts repeat code for dealing with some first time settings */
             __runSettingsInstall(filename, catchText, workingDir := "") {
-                try RunWait(Format('explorer.exe "{1}"', filename), workingDir)
+                try RunWait(filename, workingDir)
                 catch
                     this.__addLogEntry(catchText)
             }
