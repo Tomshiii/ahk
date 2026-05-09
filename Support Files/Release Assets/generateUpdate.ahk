@@ -246,7 +246,23 @@ cleanUpInstall(A_WorkingDir "\release\" yes.Value)
 if FileExist(A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini")
     IniWrite("", A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini", "Settings", "favoritePaths")
 
-Download("https://nodejs.org/dist/latest/win-x64/node.exe", A_WorkingDir "\release\" yes.Value "\nodejs.exe")
+downloadNode() {
+    ; Get latest LTS version string
+    version := ""
+    whr := ComObject("WinHttp.WinHttpRequest.5.1")
+    whr.Open("GET", "https://nodejs.org/dist/index.json", false)
+    whr.Send()
+    ; Parse out first LTS version - find "lts" that isn't false
+    json := whr.ResponseText
+    ; crude but effective extraction
+    RegExMatch(json, '"version":"(v[\d.]+)"[^}]+"lts":"', &m)
+    version := m[1]
+
+    url := "https://nodejs.org/dist/" . version . "/node-" . version . "-x64.msi"
+    dest := A_WorkingDir "\release\" yes.Value "\nodejs.msi"
+    Download(url, dest)
+}
+downloadNode()
 
 ;// zipping the temp repo
 zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
