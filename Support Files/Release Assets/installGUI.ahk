@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/05/10
- * @version 1.1.14
+ * @version 1.1.15
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -41,6 +41,10 @@ instance.Show('w' instance.TotalWidth " Center")
 
 class installGUI extends Gui {
     __New() {
+        this.ahkPath := this.__findAHK()
+        if !this.ahkPath {
+            throw MemberError("AHK is not installed.")
+        }
         super.__New("+Resize +MinSize100x170 -MinimizeBox -MaximizeBox", "Install Tomshi AHK")
         SetTimer(() => this.Opt("-Resize"), -10)
         this.SetFont("S11")
@@ -83,6 +87,7 @@ class installGUI extends Gui {
         TitleFore  := 'c3F627F'
         TotalWidth := 450
 
+        ahkPath       := false
         InstallDir    := A_WorkingDir "\Tomshi AHK\"
         progress      := 0
         isDetected    := false
@@ -322,6 +327,7 @@ class installGUI extends Gui {
                 dest := this.InstallDir "\nodejs.msi"
                 RunWait('msiexec.exe /i "' . dest . '" /qn /norestart',, "Hide")
                 sleep 100
+                FileDelete(dest)
             }
             this.__deleteInstallFiles()
             this.__setProgress(80)
@@ -389,7 +395,8 @@ class installGUI extends Gui {
             NumPut("UInt", 104, si, 0)
             pi := Buffer(24, 0)
 
-            cmd := A_AhkPath ' "' script '"'
+            ahkPath := this.ahkPath
+            cmd := '"' ahkPath '" "' script '"'
 
             ret := DllCall("advapi32\CreateProcessWithTokenW",
                 "Ptr", hDupToken,
@@ -407,6 +414,18 @@ class installGUI extends Gui {
                 return false
             DllCall("CloseHandle", "Ptr", hDupToken)
             return true
+        }
+
+        __findAHK() {
+            for _, path in [
+                A_ProgramFiles "\AutoHotkey\v2\AutoHotkey64.exe",
+                A_ProgramFiles "\AutoHotkey\AutoHotkey64.exe"
+            ] {
+                if FileExist(path) {
+                    return path
+                }
+            }
+            return false
         }
 
         nodeInstalled() => (RegRead("HKLM\SOFTWARE\Node.js", "Version", 0))
