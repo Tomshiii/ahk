@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/05/09
- * @version 1.1.13
+ * @date 2026/05/10
+ * @version 1.1.14
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -325,9 +325,11 @@ class installGUI extends Gui {
             }
             this.__deleteInstallFiles()
             this.__setProgress(80)
-            ;// stops core func getting run as admin
-            Run(Format('explorer.exe "{1}"', this.InstallDir "\Core Functionality.ahk"))
             this.__addLogEntry("running Core Functionality.ahk")
+            ;// stops core func getting run as admin
+            if !this.runAsUser(this.InstallDir "\Core Functionality.ahk") {
+                throw TargetError("Failed to run Core Functionality.ahk")
+            }
             sleep 1500
             this.__addLogEntry("installing PremiereRemote")
             __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk", "failed to install PremiereRemote")
@@ -343,6 +345,68 @@ class installGUI extends Gui {
             this.__setProgress(100)
             this["Progress"].opt("CLime")
             this.Destroy()
+        }
+
+        ;// complete transparency, this is an ai slop function. dll stuff unfortunately goes well outside my understanding
+        ;// but I needed a way to run `Core Functionality.ahk` without getting
+        ;// automatically elevated
+        runAsUser(script) {
+            pid := 0
+            for proc in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process Where Name='explorer.exe'")
+                pid := proc.ProcessId
+
+            if !pid
+                return false
+
+            ; Request more access rights on the process
+            hProcess := DllCall("OpenProcess", "UInt", 0x1000, "Int", 0, "UInt", pid, "Ptr")
+            if !hProcess
+                return false
+
+            ; Open token with duplicate + query + assign primary rights
+            hToken := 0
+            if !DllCall("OpenProcessToken", "Ptr", hProcess, "UInt", 0xE, "Ptr*", &hToken) {
+                DllCall("CloseHandle", "Ptr", hProcess)
+                return false
+            }
+            DllCall("CloseHandle", "Ptr", hProcess)
+
+            ; Duplicate the token as a primary token
+            hDupToken := 0
+            if !DllCall("advapi32\DuplicateTokenEx",
+            "Ptr", hToken,
+            "UInt", 0x02000000,
+            "Ptr", 0,
+            "UInt", 2,
+            "UInt", 1,
+            "Ptr*", &hDupToken) {
+                DllCall("CloseHandle", "Ptr", hToken)
+                return false
+            }
+            DllCall("CloseHandle", "Ptr", hToken)
+
+            si := Buffer(104, 0)
+            NumPut("UInt", 104, si, 0)
+            pi := Buffer(24, 0)
+
+            cmd := A_AhkPath ' "' script '"'
+
+            ret := DllCall("advapi32\CreateProcessWithTokenW",
+                "Ptr", hDupToken,
+                "UInt", 0,
+                "Ptr", 0,
+                "Str", cmd,
+                "UInt", 0x10,
+                "Ptr", 0,
+                "Ptr", 0,
+                "Ptr", si,
+                "Ptr", pi,
+                "Int")
+
+            if !ret
+                return false
+            DllCall("CloseHandle", "Ptr", hDupToken)
+            return true
         }
 
         nodeInstalled() => (RegRead("HKLM\SOFTWARE\Node.js", "Version", 0))
