@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/05/10
- * @version 1.1.15
+ * @version 1.1.16
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -184,8 +184,9 @@ class installGUI extends Gui {
                 this.__addLogEntry("deleting ``" name "``")
             }
             __after("yes.value.zip")
-            __after("nodejs.exe")
             FileDelete(A_WorkingDir '\yes.value.zip')
+            __after("nodejs.msi")
+            FileDelete(this.InstallDir '\nodejs.msi')
             sleep 100
         }
 
@@ -327,7 +328,6 @@ class installGUI extends Gui {
                 dest := this.InstallDir "\nodejs.msi"
                 RunWait('msiexec.exe /i "' . dest . '" /qn /norestart',, "Hide")
                 sleep 100
-                FileDelete(dest)
             }
             this.__deleteInstallFiles()
             this.__setProgress(80)
@@ -338,10 +338,12 @@ class installGUI extends Gui {
             }
             sleep 1500
             this.__addLogEntry("installing PremiereRemote")
-            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk", "failed to install PremiereRemote")
+            if !this.runAsUser(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk") {
+                throw MethodError("Failed to install PremiereRemote")
+            }
             ;// set current adobe versions in settings.ini
             this.__addLogEntry("setting current adobe versions in settings.ini")
-            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk", "failed to set current adobe versions")
+            try this.runAsUser(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk")
             this.__setProgress(90)
             ;// creating initialise shortcut
             startupScript := this.InstallDir "\PC Startup\Initialise.ahk"
