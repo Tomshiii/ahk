@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/05/11
- * @version 3.0.16
+ * @version 3.0.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,7 +16,6 @@
 #Include Classes\block.ahk
 #Include KSA\Keyboard Shortcut Adjustments.ahk
 #Include Functions\isObjHasProp.ahk
-#Include Functions\loadXML.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\Notify\Notify.ahk
 ; }
@@ -79,22 +78,19 @@ class premUIA_Values {
         notifyExt.deleteIfExist("premUIAGenTreeWarning")
         notifyExt.deleteIfExist("UIAretrieveComplete")
         notifyExt.deleteIfExist("determineUIAFailed")
-        isBeta := this.UserSettings.premIsBeta
-        betaString := (isBeta != false && isBeta != "false") ? "Adobe Premiere Pro (Beta) Prefs" : "Adobe Premiere Pro Prefs"
-        try premPrefs := prem.__remoteFunc('premPrefs', true) . betaString
-        catch {
-            throw UnsetError("throw code:720" ,, "720")
-        }
-        if !FileExist(premPrefs) {
-            throw UnsetError("throw code:721" ,, "721")
-        }
-        try loadSettings := loadXML(FileRead(premPrefs))
-        catch {
-            throw UnsetError("throw code:722" ,, "722")
-        }
-        binLabelInTab := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/MZ.Prefs.ShowProjectAndBinLabelInTab")
-        if !binLabelInTab.text || binLabelInTab.text = "false" {
-            throw UnsetError("throw code:723" ,, "723")
+        ;// this setting must be enabled or UIA will fail to find the project window
+        if !prem.__remoteFunc('getProperty', true, "property=MZ.Prefs.ShowProjectAndBinLabelInTab") {
+            set := false
+            loop 5 {
+                prem.__remoteFunc('setProperty',, "property=MZ.Prefs.ShowProjectAndBinLabelInTab", "value=true", "persistent=true")
+                sleep 1000
+                if prem.__remoteFunc('getProperty', true, "property=MZ.Prefs.ShowProjectAndBinLabelInTab") != "false" {
+                    set := true
+                    break
+                }
+            }
+            if !set
+                throw UnsetError("throw code:720" ,, "720")
         }
         if !Notify.Exist("premUIAGenTree") {
             img := ptf.Icons "\prprj.ico"

@@ -32,6 +32,26 @@ export const host = {
     return app.getPProPrefPath;
   },
 
+  getProperty: function(property: string) {
+    if (app.properties.doesPropertyExist(property)) {
+      return app.properties.getProperty(property);
+    }
+    return false;
+  },
+
+  setProperty: function(property: string, value: any, persistent: string) {
+    if (app.properties.doesPropertyExist(property)) {
+      if (app.properties.isPropertyReadOnly(property)) {
+        alert('Could not rename property "' + property + '" because it is read-only.');
+        return;
+      } else {
+          var pers = persistent == "false" ? false : true
+          app.properties.setProperty(property, value, pers, false);
+          return;
+      }
+    }
+  },
+
   saveProj: function () {
     return !!app.project.save();
   },
