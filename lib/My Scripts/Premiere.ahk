@@ -408,6 +408,8 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 	catch {
 		return
 	}
+	if InStr(A_ThisHotkey, "F14")
+		return
 
 	__cleanup() => (checkStuck(["Ctrl", "MButton", "LButton", "WheelUp", "WheelDown"]), prem.MButtonPanning := false)
 	if prem.MButtonPanning = true {
@@ -539,9 +541,9 @@ F14 & MButton::
 		return
 	if !prem.__remoteFunc('isSelected', true) {
 		tool.Cust("nothing is selected")
+		KeyWait(kwait)
 		return
 	}
-	KeyWait(kwait)
 	prem.__remoteFunc('toggleEnabled')
 }
 F14 & LButton::

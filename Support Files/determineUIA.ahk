@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/05/08
- * @version 1.0.7
+ * @date 2026/05/11
+ * @version 1.0.8
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -46,6 +46,10 @@ try {
     ;// error codes
     /**
      * 701 - initialising UIA element
+     * 720 - Failed to determine the Premiere settings file
+     * 721 - Premiere settings file does not exist or has been moved
+     * 722 - Failed to read Premiere settings xml file
+     * 723 - User has setting disabled
      * 702 - Timeline
      * 703 - Effect Controls
      * 704 - Effects
@@ -65,7 +69,7 @@ try {
      * 718 - Type Tool
      */
 
-    Codes := Map("701", "Failed initialising UIA element", "702", "Failed determining the Timeline", "703", "Failed determining the Effect Controls Panel", "704", "Failed determining the Effects Panel", "705", "Failed determining the Program Monitor", "706", "Failed determining the Source Monitor", "707", "Failed determining the Tools Panel", "708", "Failed determining the Project", "709", "Couldn't find PremiereRemote", "710", "Selection Tool", "711", "Track Select Forward/Track Select Backward Tool", "712", "Ripple Edit/Rolling Edit/Rate Stretch/Remix Tool", "713", "Razor Tool", "714", "Slip/Slide Tool", "715", "Pen Tool", "716", "Shape Tool", "717", "Hand/Zoom Tool", "718", "Type Tool")
+    Codes := Map("701", "Failed initialising UIA element", "702", "Failed determining the Timeline", "703", "Failed determining the Effect Controls Panel", "704", "Failed determining the Effects Panel", "705", "Failed determining the Program Monitor", "706", "Failed determining the Source Monitor", "707", "Failed determining the Tools Panel", "708", "Failed determining the Project", "709", "Couldn't find PremiereRemote", "710", "Selection Tool", "711", "Track Select Forward/Track Select Backward Tool", "712", "Ripple Edit/Rolling Edit/Rate Stretch/Remix Tool", "713", "Razor Tool", "714", "Slip/Slide Tool", "715", "Pen Tool", "716", "Shape Tool", "717", "Hand/Zoom Tool", "718", "Type Tool", "720", "Failed to determine the Premiere settings file", "721", "Premiere settings file does not exist or has been moved", "722", "Failed to read Premiere settings xml file", "723", 'User has setting disabled. Please enable;`nPreferences > General > Show "Project:" and "Bin:" in Project panel Tab`nThen reboot Premiere and try again')
     switch {
         case InStr(e.Message, "This version of Premiere is not supported."):
             __deleteUIA()

@@ -8,8 +8,12 @@ This release brings support for `Premiere 26.2+`. This required a rather extensi
 <img width="527" height="212" alt="Adobe_Premiere_Pro_X5naawl7SI_2" src="https://github.com/user-attachments/assets/ee8b9ec6-b9dd-4583-870f-9a19c47c15f6" />
 
 ## > `PremiereRemote`
-> [!Important]
-> My repo now *requires* the installation of `PremiereRemote`. The installer will now come bundled with `nodejs` and then handle all installation processes for the user.
+- [`PremiereRemote`](<https://github.com/sebinside/PremiereRemote>) is now **required**. And will be installed during installation of my repo.
+    - As a result, `nodejs` will be bundled alongside my repo and installed for the user if not available prior.
+
+> [!Warning]
+> It should be noted the installation process for `PremiereRemote` requires a registry edit. If the user would like to know details about why this adjustment is required, they can read the installation requirements for PremiereRemote<sup>[[1]](<https://github.com/sebinside/PremiereRemote/tree/main#installation>)</sup>.  
+> If the user would like to see the exact change the installation process is making, they can check the installation script.<sup>[[2]](<https://github.com/Tomshiii/ahk/blob/77f79732ce12e6cb6e714b576ec72eff70ba8ba1/Support%20Files/Release%20Assets/Install%20Packages/installPremRemote.ahk#L36>)</sup>
 ***
 
 ## Functions
@@ -55,5 +59,5 @@ This release brings support for `Premiere 26.2+`. This required a rather extensi
 - 📋 `KSA` values are now shared using `Core Functionality.ahk`
 
 ## Other Changes
-- ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate`, `Streamdeck_opt.ahk`
+- ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate\`, `Streamdeck_opt.ahk`, `..\Streamdeck AHK/PremiereRemote/enable unsigned extensions.ahk`
 - ✅ Fixed `Multi-Instance Close.ahk` stalling `reloadAll.ahk`

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2026/01/23
- * @version 1.3.0.1
+ * @date 2026/05/11
+ * @version 1.3.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -80,7 +80,7 @@ class VSCode {
         if script = 0 && A_ThisHotkey = KSA.testHotkey  || A_ThisHotkey = KSA.functionHotkey {
             switch A_ThisHotkey {
                 case KSA.testHotkey:
-                    delaySI(50, "{Down 6}{Enter}", "{Down 24}{Enter}")
+                    delaySI(50, "{Down 6}{Enter}", "{Down 23}{Enter}")
                     __closeOut("The test file has been selected")
                     return
                 case KSA.functionHotkey:

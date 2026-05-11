@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/05/08
- * @version 3.0.15
+ * @date 2026/05/11
+ * @version 3.0.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,7 @@
 #Include Classes\block.ahk
 #Include KSA\Keyboard Shortcut Adjustments.ahk
 #Include Functions\isObjHasProp.ahk
+#Include Functions\loadXML.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\Notify\Notify.ahk
 ; }
@@ -78,6 +79,23 @@ class premUIA_Values {
         notifyExt.deleteIfExist("premUIAGenTreeWarning")
         notifyExt.deleteIfExist("UIAretrieveComplete")
         notifyExt.deleteIfExist("determineUIAFailed")
+        isBeta := this.UserSettings.premIsBeta
+        betaString := (isBeta != false && isBeta != "false") ? "Adobe Premiere Pro (Beta) Prefs" : "Adobe Premiere Pro Prefs"
+        try premPrefs := prem.__remoteFunc('premPrefs', true) . betaString
+        catch {
+            throw UnsetError("throw code:720" ,, "720")
+        }
+        if !FileExist(premPrefs) {
+            throw UnsetError("throw code:721" ,, "721")
+        }
+        try loadSettings := loadXML(FileRead(premPrefs))
+        catch {
+            throw UnsetError("throw code:722" ,, "722")
+        }
+        binLabelInTab := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/MZ.Prefs.ShowProjectAndBinLabelInTab")
+        if !binLabelInTab.text || binLabelInTab.text = "false" {
+            throw UnsetError("throw code:723" ,, "723")
+        }
         if !Notify.Exist("premUIAGenTree") {
             img := ptf.Icons "\prprj.ico"
             /* Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning') */

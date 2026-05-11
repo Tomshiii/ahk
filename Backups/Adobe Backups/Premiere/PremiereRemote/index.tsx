@@ -28,6 +28,10 @@ export const host = {
     return app.version
   },
 
+  premPrefs: function() {
+    return app.getPProPrefPath;
+  },
+
   saveProj: function () {
     return !!app.project.save();
   },
