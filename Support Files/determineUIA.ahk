@@ -2,7 +2,7 @@
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
  * @date 2026/05/11
- * @version 1.0.9
+ * @version 1.0.9.1
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -98,7 +98,7 @@ try {
             codeArr := StrSplit(code, ["`r", "`n"])
             throwString := (codes.Has(codeArr[1])) ? codes.Get(codeArr[1]) : "error code: " codeArr[1]
             errorLog(ValueError(throwString))
-            notifyExt.showIfNotExist("UIApanelFail",, throwString,,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+            notifyExt.showIfNotExist("UIApanelFail",, throwString, ptf.Icons "\prprj.ico",,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
             ; throw ValueError(throwString)
             __doExit(premUIAobj)
         default:
