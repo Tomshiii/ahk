@@ -24,7 +24,7 @@ DirCreate(SelectedFolder "\_proj\videos")
 
 ;// == _project files
 loop files SelectedFolder "\_project files\*.*", 'FD' {
-    allowed := Map("Motion Graphics Template Media", true, "Premiere Composer Files", true, "AC Footage", "Main Channel AE Templates", true, "Adobe Premiere Pro Captured and Generated", true)
+    allowed := Map("Motion Graphics Template Media", true, "Premiere Composer Files", true, "AC Footage", true, "Main Channel AE Templates", true, "Adobe Premiere Pro Captured and Generated", true)
     if allowed.Has(A_LoopFileName)
         try DirCopy(A_LoopFileFullPath, SelectedFolder "\_proj\_project files\" A_LoopFileName)
     if A_LoopFileExt = "prproj" || A_LoopFileExt = "aep"
