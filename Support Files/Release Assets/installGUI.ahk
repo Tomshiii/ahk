@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/05/10
- * @version 1.1.16
+ * @date 2026/05/12
+ * @version 1.1.17
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -163,16 +163,12 @@ class installGUI extends Gui {
 
         /** this function handles including the files in the .exe as well as extracting them when the user runs the installation process */
         __installDump(patch := false) {
-            __after(name) {
-
-            }
             this.__addLogEntry(Format("extracting ``{}``", "yes.value.zip"))
             if patch = true {
                 if !DirExist(A_Temp "\tomshi\yes.value")
                     DirCreate(A_Temp "\tomshi\yes.value")
 
                 FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_Temp "\tomshi\yes.value", 1)
-                __after("yes.value.zip")
                 return
             }
             FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
@@ -213,39 +209,50 @@ class installGUI extends Gui {
             ;// add closeAll.ahk
             try RunWait(this.prevInstallLoc "\Support Files\closeAll.ahk 1 " A_ScriptName)
 
+            if !DirExist(A_Temp "\tomshi\yes.value")
+                DirCreate(A_Temp "\tomshi\yes.value")
             SetWorkingDir(A_Temp "\tomshi\yes.value")
             this.__addLogEntry("unzipping release contents")
-            if this.__unzip(A_WorkingDir "\yes.value.zip", A_WorkingDir) != true {
+            if this.__unzip(A_WorkingDir "\yes.value.zip", A_WorkingDir "\yes.value") != true {
                 DirDelete(A_Temp "\tomshi\yes.Value")
+                try FileDelete(this.InstallDir "\yes.value.zip")
                 this.__setProgress(100)
                 this["Progress"].opt("CRed")
                 throw(Error("Unable to Unzip install files. Please try the installation again.", -1))
             }
-            this.__setProgress(65) ;// hard setting to 65 here
+            this.__setProgress(40)
+            if !this.nodeInstalled() && FileExist(A_WorkingDir "\yes.value\nodejs.msi") {
+                this.__installNode(A_WorkingDir "\yes.value\nodejs.msi")
+            }
+            this.__setProgress(50)
+            if FileExist(A_WorkingDir "\yes.value\nodejs.msi")
+                FileDelete(A_WorkingDir "\yes.value\nodejs.msi")
             loop files A_WorkingDir "\*", "FD" {
                 this.__addLogEntry("moving: " A_LoopFileName)
                 if A_LoopFileName = "lib" {
                     if DirExist(A_Appdata "\tomshi\lib")
                         DirDelete(A_Appdata "\tomshi\lib")
-                    DirMove(A_LoopFileFullPath, A_Appdata "\tomshi")
+                    DirMove(A_LoopFileFullPath, A_Appdata "\tomshi\lib")
                     continue
                 }
                 SplitPath(A_LoopFileFullPath, &name, &dir)
-                (InStr(A_LoopFileAttrib, "D")) ? DirMove(A_LoopFileFullPath, this.InstallDir "\" name) : FileMove(A_LoopFileFullPath, this.InstallDir "\" name)
+                (InStr(A_LoopFileAttrib, "D")) ? DirMove(A_LoopFileFullPath, this.InstallDir "\" name, 2) : FileMove(A_LoopFileFullPath, this.InstallDir "\" name, true)
             }
-            DirDelete(A_Temp "\tomshi")
+            this.__setProgress(60)
+            this.__baselineSettings()
+            this.__setProgress(70)
+            this.__runCoreFunc()
+            this.__setProgress(80)
+            this.__installPremRemote()
+            this.__setProgress(90)
+            this.__adjustVersion()
 
+            DirDelete(A_Temp "\tomshi")
 
             ;//! finished
             this.__setProgress(100)
             this["Progress"].opt("CLime")
 
-            ;// run next GUI and destroy this one
-            this.GetPos(&oldX, &oldY, &oldWidth, &oldHeight)
-            try Run(this.InstallDir "\Support Files\Release Assets\installPackagesGUI.ahk",,, &PID)
-            try WinMove(oldX, oldY, oldWidth, oldHeight, "ahk_pid " PID)
-            try Run(this.InstallDir "\Support Files\Release Assets\Core Functionality.ahk")
-            this.Destroy()
             return
         }
 
@@ -262,6 +269,7 @@ class installGUI extends Gui {
                     case (compareVers = 0):
                         throw PropertyError("This version is already installed.")
                 }
+                FileDelete(A_Appdata "\tomshi\version")
             }
             FileAppend("yes.value", A_Appdata "\tomshi\version")
             try this.prevInstallLoc := FileRead(this.prevInstall)
@@ -287,7 +295,7 @@ class installGUI extends Gui {
             this.__setProgress(10)
             if A_IsCompiled = 1
                 this.__installDump()
-            this.__setProgress(35) ;// hard setting to 35 here
+            this.__setProgress(305) ;// hard setting to 35 here
             if installDirExist && (IsSet(readVer) && VerCompare(readVer, "v2.18.0") > 0) {
                 this.__patchInstall()
                 return
@@ -299,7 +307,7 @@ class installGUI extends Gui {
                 this["Progress"].opt("CRed")
                 throw(Error("Unable to Unzip install files", -1))
             }
-            this.__setProgress(65) ;// hard setting to 65 here
+            this.__setProgress(40)
             ;// move lib folder
             this.__addLogEntry("moving lib files")
             DirMove(this.InstallDir "\lib", A_AppData "\tomshi\lib", 2)
@@ -312,35 +320,21 @@ class installGUI extends Gui {
                 dirMoved := true
                 break
             }
+            this.__setProgress(50)
             if !dirMoved
                 throw TargetError("Failed to move lib folder")
-            /** This function cuts repeat code for dealing with some first time settings */
-            __runSettingsInstall(filename, catchText, workingDir := "") {
-                try RunWait(filename, workingDir)
-                catch
-                    this.__addLogEntry(catchText)
-            }
-            this.__addLogEntry("handling settings.ini file")
-            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\baseLineSettings.ahk", "failed to generate updated settings.ini file")
-
+            this.__baselineSettings()
+            this.__setProgress(60)
             if !this.nodeInstalled() {
-                this.__addLogEntry("installing nodejs")
-                dest := this.InstallDir "\nodejs.msi"
-                RunWait('msiexec.exe /i "' . dest . '" /qn /norestart',, "Hide")
-                sleep 100
+                this.__installNode(this.InstallDir "\nodejs.msi")
             }
+            this.__setProgress(70)
             this.__deleteInstallFiles()
+            this.__runCoreFunc()
             this.__setProgress(80)
-            this.__addLogEntry("running Core Functionality.ahk")
-            ;// stops core func getting run as admin
-            if !this.runAsUser(this.InstallDir "\Core Functionality.ahk") {
-                throw TargetError("Failed to run Core Functionality.ahk")
-            }
-            sleep 1500
-            this.__addLogEntry("installing PremiereRemote")
-            if !this.runAsUser(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk") {
-                throw MethodError("Failed to install PremiereRemote")
-            }
+            this.__installPremRemote()
+            this.__setProgress(85)
+
             ;// set current adobe versions in settings.ini
             this.__addLogEntry("setting current adobe versions in settings.ini")
             try this.runAsUser(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk")
@@ -348,11 +342,54 @@ class installGUI extends Gui {
             ;// creating initialise shortcut
             startupScript := this.InstallDir "\PC Startup\Initialise.ahk"
             FileCreateShortcut(startupScript, A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\Initialise.ahk - Shortcut.lnk")
+            this.__adjustVersion()
 
             ;//! finished
             this.__setProgress(100)
             this["Progress"].opt("CLime")
             this.Destroy()
+        }
+
+        /** This function cuts repeat code for dealing with some first time settings */
+        __runSettingsInstall(filename, catchText, workingDir := "") {
+            try RunWait(filename, workingDir)
+            catch
+                this.__addLogEntry(catchText)
+        }
+
+        __baselineSettings() {
+            this.__addLogEntry("handling settings.ini file")
+            this.__runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\baseLineSettings.ahk", "failed to generate updated settings.ini file")
+        }
+
+        __adjustVersion() {
+            if FileExist(A_MyDocuments "\toshi\settings.ini")
+                IniWrite("yes.value", A_MyDocuments "\toshi\settings.ini", "Track", "version")
+        }
+
+        __installPremRemote() {
+            if !FileExist(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk") {
+                throw TargetError("Couldn't find installPremRemote.ahk")
+            }
+            this.__addLogEntry("installing PremiereRemote")
+            if !this.runAsUser(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk") {
+                throw MethodError("Failed to install PremiereRemote")
+            }
+        }
+
+        __installNode(path) {
+            this.__addLogEntry("installing nodejs")
+                RunWait('msiexec.exe /i "' . path . '" /qn /norestart',, "Hide")
+                sleep 100
+        }
+
+        __runCoreFunc() {
+            this.__addLogEntry("running Core Functionality.ahk")
+            ;// stops core func getting run as admin
+            if !this.runAsUser(this.InstallDir "\Core Functionality.ahk") {
+                throw TargetError("Failed to run Core Functionality.ahk")
+            }
+            sleep 1500
         }
 
         ;// complete transparency, this is an ai slop function. dll stuff unfortunately goes well outside my understanding
