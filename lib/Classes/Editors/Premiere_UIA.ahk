@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/05/11
- * @version 3.0.17
+ * @date 2026/05/13
+ * @version 3.0.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -78,20 +78,6 @@ class premUIA_Values {
         notifyExt.deleteIfExist("premUIAGenTreeWarning")
         notifyExt.deleteIfExist("UIAretrieveComplete")
         notifyExt.deleteIfExist("determineUIAFailed")
-        ;// this setting must be enabled or UIA will fail to find the project window
-        if !prem.__remoteFunc('getProperty', true, "property=MZ.Prefs.ShowProjectAndBinLabelInTab") {
-            set := false
-            loop 5 {
-                prem.__remoteFunc('setProperty',, "property=MZ.Prefs.ShowProjectAndBinLabelInTab", "value=true", "persistent=true")
-                sleep 1000
-                if prem.__remoteFunc('getProperty', true, "property=MZ.Prefs.ShowProjectAndBinLabelInTab") != "false" {
-                    set := true
-                    break
-                }
-            }
-            if !set
-                throw UnsetError("throw code:720" ,, "720")
-        }
         if !Notify.Exist("premUIAGenTree") {
             img := ptf.Icons "\prprj.ico"
             /* Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning') */

@@ -87,7 +87,7 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 e::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Tint")
 d::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Horizontal%20Flip")
 c::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Vertical%20Flip")
-End::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lumetri%20Color")
+End::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=RX%2011%20Dialogue%20Isolate")
 
 w::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Drop%20Shadow")
 s::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Crop")
