@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/05/08
- * @version 1.4.3
+ * @date 2026/05/13
+ * @version 1.4.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,6 +34,16 @@ class UserPref {
         this.__setSett()
         this.__setAdjust()
         this.__setTrack()
+
+        if A_ScriptName = "Core Functionality.ahk" {
+            if !FileExist(A_AppData "\tomshi\version")
+                throw TargetError("version file has been moved or deleted")
+            ver := FileRead(A_AppData "\tomshi\version")
+            if this.version != ver {
+                this.version := ver
+                IniWrite(ver, this.SettingsFile, "Track", "version")
+            }
+        }
     }
 
     ;// defaults
