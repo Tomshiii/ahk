@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/08
- * @version 2.4.12
+ * @date 2026/05/13
+ * @version 2.4.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -43,6 +43,7 @@
 #Include Functions\isBool.ahk
 #Include Functions\checkbool.ahk
 #Include Functions\isObjHasProp.ahk
+#Include Functions\determineAdobeVer.ahk
 #Include Other\Notify\Notify.ahk
 #Include Other\ShinsImageScanClass.ahk
 #Include Other\Array.ahk
@@ -61,8 +62,13 @@ class Prem {
             }
         }
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
-        if VerCompare(this.currentSetVer, this.minVer) < 0
-            this.currentSetVer := this.minVer
+        ;// ensure minimum version
+        if (regInstalledVer := determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"}, this.UserSettings)) != false {
+            if VerCompare(regInstalledVer.version, this.minVer) < 0 {
+                ;// throw
+                errorLog(TargetError("Installed version of Premiere is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true)
+            }
+        }
         try this.defaultTheme     := this.UserSettings.premDefaultTheme
         try this.useSwapSequences := this.UserSettings.use_swapSequences
         try {
@@ -85,7 +91,7 @@ class Prem {
             this.__determineTheme()
         }
 
-        if A_ScriptName = "Core Functionality.ahk" {
+        if A_ScriptName = "Core Functionality.ahk" && (regInstalledVer != false) {
             if (this.useSwapSequences = true || this.useSwapSequences = "true")
                 SetTimer(this.__setCurrSeq.Bind(this), this.prevSeqDelay)
 

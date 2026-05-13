@@ -18,7 +18,7 @@ This release brings support for `Premiere 26.2+`. This required a rather extensi
 
 ## Functions
 - ✅ Fixed `settingsGUI()` not generating the proper `Premiere` shortcut when the `beta` checkbox is deselected
-- ✏️ Added `checkINI()`
+- ✏️ Added `checkINI()`, `determineAdobeVer()`
 
 ### 📝 `WinGet {`
 
