@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/03/20
- * @version 1.3.4
+ * @date 2026/05/14
+ * @version 1.3.5
  ***********************************************************************/
 
 class UserPref {
@@ -10,20 +10,29 @@ class UserPref {
         if !FileExist(this.installDir) {
             throw TargetError("lib files have not been installed.")
         }
-        if !FileExist(this.SettingsFile)
-            {
-                this.workingDir := FileRead(this.installDir)
-                SetWorkingDir(this.workingDir)
-                this.defaults["working_dir"] := A_WorkingDir
-                this.__createIni()
-                Run(A_ScriptFullPath)
-            }
+        if !FileExist(this.SettingsFile) {
+            this.workingDir := FileRead(this.installDir)
+            SetWorkingDir(this.workingDir)
+            this.defaults["working_dir"] := A_WorkingDir
+            this.__createIni()
+            Run(A_ScriptFullPath)
+        }
         if (A_ScriptName != "Core Functionality.ahk" && override = false)
             return
         ;// initialise settings variables
         this.__setSett()
         this.__setAdjust()
         this.__setTrack()
+
+        if A_ScriptName = "Core Functionality.ahk" {
+            if !FileExist(A_AppData "\tomshi\version")
+                throw TargetError("version file has been moved or deleted")
+            ver := FileRead(A_AppData "\tomshi\version")
+            if this.version != ver {
+                this.version := ver
+                IniWrite(ver, this.SettingsFile, "Track", "version")
+            }
+        }
     }
 
     ;// defaults
@@ -31,7 +40,7 @@ class UserPref {
     defaults := Map(
         ;// [Settings]
         "update_check", "true", "beta_update_check", "false", "package_update_check", "true", "lib_update_check", "true", "ahk_update_check", "true", "update_adobe_vers", "true", "update_git", "false",
-        "dark_mode", "",
+        "dark_mode", "false",
         "run_at_startup", "false", "show_adobe_vers_startup", "true",
         "autosave_beep", "true", "autosave_check_checklist", "true", "autosave_save_override", "true", "autosave_check_mouse", "true",
         "autosave_always_save", "true", "autosave_restart_playback", "false",
@@ -44,8 +53,8 @@ class UserPref {
         ;// [Adjust]
         "adobe_GB", 45, "adobe_FS", 2,
         "autosave_MIN",  5, "game_SEC",  2, "multi_SEC", 5,
-        "prem_year", 2025, "ae_year", 2025, "ps_year", 2025,
-        "premVer", "v25.0", "aeVer", "v25.0", "psVer", "25.5", "resolveVer", "v18.5",
+        "prem_year", 2026, "ae_year", 2026, "ps_year", 2026,
+        "premVer", "v26.0", "aeVer", "v26.0", "psVer", "25.5", "resolveVer", "v18.5",
         "premIsBeta", "false", "aeIsBeta", "false", "psIsBeta", "false",
         "premCache", A_AppData "\Adobe\Common", "aeCache", A_AppData "\Adobe\Common",
         "premDefaultTheme", "Darkest", "premPrevSeqDelay", "1.5", "premSwapSequencesLimit", 3,

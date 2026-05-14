@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/03/23
- * @version 1.1.4
+ * @date 2026/05/14
+ * @version 1.1.5
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -78,6 +78,7 @@ class installGUI extends Gui {
         TitleFore  := 'c3F627F'
         TotalWidth := 450
 
+        ahkPath       := false
         InstallDir    := A_WorkingDir "\Tomshi AHK\"
         progress      := 0
         isDetected    := false
@@ -188,13 +189,21 @@ class installGUI extends Gui {
 
         /** this function handles the entire install sequence of the installer */
         __Install(*) {
+            this.ahkPath := this.__findAHK()
+            if !this.ahkPath {
+                throw MemberError("AHK is not installed.")
+            }
             if DirExist(A_AppData "\tomshi\lib")
                 DirDelete(A_AppData "\tomshi\lib", true)
             if !DirExist(A_AppData "\tomshi")
                 DirCreate(A_AppData "\tomshi")
             if FileExist(A_Appdata "\tomshi\installDir")
                 FileDelete(A_Appdata "\tomshi\installDir")
-            FileAppend(this.installDir "\Tomshi AHK", A_Appdata "\tomshi\installDir")
+            installPathStr := (SubStr(this.InstallDir, -1, 1) = "\") ? SubStr(this.InstallDir, 1, StrLen(this.InstallDir)-1) : this.InstallDir
+            FileAppend(installPathStr, A_Appdata "\tomshi\installDir")
+            if FileExist(A_Appdata "\tomshi\version")
+                FileDelete(A_Appdata "\tomshi\version")
+            FileAppend("yes.value", A_Appdata "\tomshi\version")
             amount := 0
             if !this.hasAttempted {
                 this.__addLogEditBox()
@@ -254,8 +263,7 @@ class installGUI extends Gui {
             }
             this.__deleteInstallFiles()
             this.__setProgress(80)
-            try Run(this.InstallDir "\Core Functionality.ahk")
-            this.__addLogEntry("running Core Functionality.ahk")
+            this.__runCoreFunc()
             /** This function cuts repeat code for dealing with some first time settings */
             __runSettingsInstall(filename, catchText, workingDir := "") {
                 try RunWait(filename, workingDir)
@@ -264,14 +272,10 @@ class installGUI extends Gui {
             }
 
             ;// set correct working dir in settings.ini
-            this.__addLogEntry("generating updated settings.ini file")
-            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallSettings.ahk", "failed to generate updated settings.ini file")
-            ;// do initial startup functions
-            this.__addLogEntry("running initial startup functions for proper settings file")
-            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\doStartup.ahk", "failed to run initial startup functions", this.installDir)
+            this.__baselineSettings()
             ;// set current adobe versions in settings.ini
             this.__addLogEntry("setting current adobe versions in settings.ini")
-            __runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk", "failed to set current adobe versions")
+            this.runAsUser(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk")
             ;// replace premRemote stuff
             premRemoteDir := A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src"
             if DirExist(premRemoteDir) {
@@ -299,6 +303,102 @@ class installGUI extends Gui {
             try Run(this.InstallDir "\Support Files\Release Assets\installPackagesGUI.ahk",,, &PID)
             try WinMove(oldX, oldY, oldWidth, oldHeight, "ahk_pid " PID)
             this.Destroy()
+        }
+
+        /** This function cuts repeat code for dealing with some first time settings */
+        __runSettingsInstall(filename, catchText, workingDir := "") {
+            try RunWait(filename, workingDir)
+            catch
+                this.__addLogEntry(catchText)
+        }
+
+        __baselineSettings() {
+            this.__addLogEntry("handling settings.ini file")
+            this.__runSettingsInstall(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallSettings.ahk", "failed to generate updated settings.ini file")
+        }
+
+        __runCoreFunc() {
+            this.__addLogEntry("running Core Functionality.ahk")
+            ;// stops core func getting run as admin
+            if !this.runAsUser(this.InstallDir "\Core Functionality.ahk") {
+                throw TargetError("Failed to run Core Functionality.ahk")
+            }
+            sleep 1500
+        }
+
+        ;// complete transparency, this is an ai slop function. dll stuff unfortunately goes well outside my understanding
+        ;// but I needed a way to run `Core Functionality.ahk` without getting
+        ;// automatically elevated
+        runAsUser(script) {
+            pid := 0
+            for proc in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process Where Name='explorer.exe'")
+                pid := proc.ProcessId
+
+            if !pid
+                return false
+
+            ; Request more access rights on the process
+            hProcess := DllCall("OpenProcess", "UInt", 0x1000, "Int", 0, "UInt", pid, "Ptr")
+            if !hProcess
+                return false
+
+            ; Open token with duplicate + query + assign primary rights
+            hToken := 0
+            if !DllCall("OpenProcessToken", "Ptr", hProcess, "UInt", 0xE, "Ptr*", &hToken) {
+                DllCall("CloseHandle", "Ptr", hProcess)
+                return false
+            }
+            DllCall("CloseHandle", "Ptr", hProcess)
+
+            ; Duplicate the token as a primary token
+            hDupToken := 0
+            if !DllCall("advapi32\DuplicateTokenEx",
+            "Ptr", hToken,
+            "UInt", 0x02000000,
+            "Ptr", 0,
+            "UInt", 2,
+            "UInt", 1,
+            "Ptr*", &hDupToken) {
+                DllCall("CloseHandle", "Ptr", hToken)
+                return false
+            }
+            DllCall("CloseHandle", "Ptr", hToken)
+
+            si := Buffer(104, 0)
+            NumPut("UInt", 104, si, 0)
+            pi := Buffer(24, 0)
+
+            ahkPath := this.ahkPath
+            cmd := '"' ahkPath '" "' script '"'
+
+            ret := DllCall("advapi32\CreateProcessWithTokenW",
+                "Ptr", hDupToken,
+                "UInt", 0,
+                "Ptr", 0,
+                "Str", cmd,
+                "UInt", 0x10,
+                "Ptr", 0,
+                "Ptr", 0,
+                "Ptr", si,
+                "Ptr", pi,
+                "Int")
+
+            if !ret
+                return false
+            DllCall("CloseHandle", "Ptr", hDupToken)
+            return true
+        }
+
+        __findAHK() {
+            for _, path in [
+                A_ProgramFiles "\AutoHotkey\v2\AutoHotkey64.exe",
+                A_ProgramFiles "\AutoHotkey\AutoHotkey64.exe"
+            ] {
+                if FileExist(path) {
+                    return path
+                }
+            }
+            return false
         }
 }
 
