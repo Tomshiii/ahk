@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off a combo ini file
  * @author tomshi
- * @date 2026/04/30
- * @version 1.2.4
+ * @date 2026/04/31
+ * @version 1.2.5
  ***********************************************************************/
 
 ;{ \\ #Includes
@@ -74,5 +74,7 @@ class KeyShortAdjust {
         }
     }
 }
-if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,,, true)
-    KSA := CLSID_Objs.clone("KSA")
+if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,,, true) {
+    if !KSA := CLSID_Objs.clone("KSA")
+        KSA := KeyShortAdjust(true)
+}
