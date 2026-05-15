@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2026/05/05
- * @version 1.3.9
+ * @date 2026/05/15
+ * @version 1.3.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -60,7 +60,7 @@ class WM {
      * @param {Integer} timeout time in `ms` you want the function to wait before timing out
      * @return the response from the target window
      */
-    static Send_WM_COPYDATA(str, scriptTitle, timeout := 4000) {
+    static Send_WM_COPYDATA(str, scriptTitle, timeout := 4000, doTooltips := true) {
         CopyDataStruct := Buffer(3*A_PtrSize)  ; Set up the structure's memory area.
         ; First set the structure's cbData member to the size of the string, including its zero terminator:
         SizeInBytes := (StrLen(str) + 1) * 2
@@ -74,7 +74,8 @@ class WM {
         try {
             RetValue := SendMessage(0x004A, 0, CopyDataStruct,, scriptTitle " ahk_class AutoHotkey",,,, timeout) ; 0x004A is WM_COPYDATA.
         } catch {
-            tool.Cust("SendMessage timed out: " scriptTitle)
+            if doTooltips
+                tool.Cust("SendMessage timed out: " scriptTitle)
             errorLog(TimeoutError("SendMessage timed out: " scriptTitle, -2))
             returnDct()
             Critical("Off")

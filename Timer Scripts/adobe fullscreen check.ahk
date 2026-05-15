@@ -70,8 +70,10 @@ class adobeTimer extends count {
             this.__fs(WinGet.AEName(,,, false), "After Effects")
     }
 
+    ;// called by WM.ahk - calling this function will automatically close the script as without the timer
+    ;// the script is no longer persistent
     __remoteStop() {
-        try super.stop()
+        this.stop()
         this.count := 0
         return
     }

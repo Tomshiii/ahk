@@ -25,7 +25,7 @@ listArr := []
 coreFuncObj := unset
 __checkClose(hwnd, title) {
     if title = "determineUIA.ahk" {
-        WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk")
+        WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk", 1000, false)
     }
     if WinExist(hwnd) {
         ProcessClose(hwnd)
@@ -51,13 +51,13 @@ for v in list {
     if WM.timerScripts.Has(itemObj.scriptName) {
         justName := StrReplace(itemObj.scriptName, ".ahk", "",,, 1)
         justName := StrReplace(justName, A_Space, "_")
-        try WM.Send_WM_COPYDATA(justName "_stop," WM.timerScripts[itemObj.scriptName], itemObj.scriptName)
+        try WM.Send_WM_COPYDATA(justName "_stop," WM.timerScripts[itemObj.scriptName], itemObj.scriptName, -1, false)
     }
     if itemObj.scriptName = "HotkeylessAHK.ahk" {
         RunWait(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\closeHotkeylessAHK.ahk")
         continue
     }
-    try pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""), false)
+    ; try pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""), false)
 }
 
 for i, v in listArr {

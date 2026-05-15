@@ -1,3 +1,6 @@
+;// this script is hard coded & designed for MY setup (it specifically pauses My Scripts.ahk)
+;// if you use other scripts, you will need to edit this script for your own setup
+
 #SingleInstance Force
 ListLines(0)
 KeyHistory(0)
@@ -97,10 +100,6 @@ class gameCheckTimer extends count {
                     this.which := true
                 }
         }
-        this.interval := -(this.UserSettings.game_SEC * 1000)
-        this.stop()
-        this.count := 0
-        this.start()
     }
 
     __Delete() => super.stop()

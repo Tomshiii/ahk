@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/04/24
- * @version 2.4.12
+ * @date 2026/05/15
+ * @version 2.4.13
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -213,7 +213,6 @@ settingsGUI()
     darkToggle(*)
     {
         ToolTip("")
-        darkToggleVal := settingsGUI["darkCheck"].Value
         UserSettings.dark_mode := (settingsGUI["darkCheck"].Value = 1) ? true : false
         settingsGUI["darkCheck"].ToolTip := (settingsGUI["darkCheck"].Value = 1) ? setJSON.dark.tooltip.true : setJSON.dark.tooltip.false
         if (settingsGUI["darkCheck"].Value = 1) {

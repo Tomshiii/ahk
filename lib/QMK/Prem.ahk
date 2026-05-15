@@ -26,7 +26,7 @@ SC027::prem.movepreview() ;press then hold this hotkey and drag to move position
 ; /::
 
 
-o::prem.preset("audio_basic")
+o::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=RX%2011%20Dialogue%20Isolate")
 l::prem.valuehold("Scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
 .::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Transform")
@@ -87,7 +87,7 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 e::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Tint")
 d::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Horizontal%20Flip")
 c::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Vertical%20Flip")
-End::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=RX%2011%20Dialogue%20Isolate")
+End::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lumetri%20Color")
 
 w::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Drop%20Shadow")
 s::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Crop")

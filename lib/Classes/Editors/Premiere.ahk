@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/13
- * @version 2.4.13
+ * @date 2026/05/15
+ * @version 2.4.13.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3539,7 +3539,10 @@ class Prem {
      * This function is mostly expecting my project folder structure, or more accurately, expects that the current project file is within a subfolder, and that the root folder of your project is one folder back in the tree.
      *
      * ### Note
-     * Due to technical limitations, this function will currently only properly index filenames (& import after rendering) for certain `h264`/`h264`/`mov` files.
+     * > Due to technical limitations, this function will currently only properly index filenames (& import after rendering) for certain `h264`/`h264`/`mov` files.
+     *
+     * ### Note
+     * > Due to issues with Premiere, this function may just inadvertently fail to import files and cause the UI to no longer be able to import anything or save. Thanks prem
      * @param {String} [outputPath] the output folder. (this is AFTER the root folder, ie. if my project file is in `W:\work\airbnb\_project files` and I pass `timeline renders`, the file will be rendered to `W:\work\airbnb\timeline renders\`)
      * @param {String} [presetName] the name of a preset file contained within `..\Backups\Adobe Backups\Media Encoder\Presets`. A custom path cannot be given, it must be within that folder
      * @param {Boolean} [addToProj=true] whether you wish for the resulting file to be imported into the current project after rendering
@@ -3585,8 +3588,8 @@ class Prem {
         this.save()
         if checkbool(addToProj) && (file != false) && FileExist(file) {
             notifyExt.showIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
-            logger := log()
-            logger.Append("Attempted to import: " StrReplace(file, "\", "/"))
+            /* logger := log()
+            logger.Append("Attempted to import: " StrReplace(file, "\", "/")) */
             ;// poll until Premiere's main thread is free
             __waitFree() {
                 loop 20 {

@@ -19,6 +19,7 @@ This release brings support for `Premiere 26.2+`. This required a rather extensi
 ## Functions
 - ✅ Fixed `settingsGUI()` not generating the proper `Premiere` shortcut when the `beta` checkbox is deselected
 - ✏️ Added `checkINI()`, `determineAdobeVer()`
+- 📋 `WM.Send_WM_COPYDATA()` now accepts param `doTooltips`
 
 ### 📝 `WinGet {`
 
@@ -32,7 +33,7 @@ This release brings support for `Premiere 26.2+`. This required a rather extensi
 - 📋 Changed `prem.selectionTool()` => `prem.selectTool()`
     - Can now set any tool set within `Premiere_UIA.ahk`
 - ✅ Fixed `isEditTabActive()` throwing in some circumstances
-
+s
 ### 📝 `startup {`
 - ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing
 - ✅ Fixed `updateChecker()` throwing if the user attempted to download an update from the GUI
@@ -60,4 +61,4 @@ This release brings support for `Premiere 26.2+`. This required a rather extensi
 
 ## Other Changes
 - ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate\`, `Streamdeck_opt.ahk`, `..\Streamdeck AHK/PremiereRemote/enable unsigned extensions.ahk`
-- ✅ Fixed `Multi-Instance Close.ahk` stalling `reloadAll.ahk`
+- ✅ Fixed `Multi-Instance Close.ahk`, `adobe fullscreen check.ahk` & `gameCheck.ahk` stalling `reloadAll.ahk`/`closeAll.ahk`

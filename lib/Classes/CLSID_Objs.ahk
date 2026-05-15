@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/05/05
- * @version 1.1.15
+ * @date 2026/05/15
+ * @version 1.1.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -116,10 +116,12 @@ class CLSID_Objs {
     static clone(clsid, inClass := true) {
         Critical('On')
         this.checkCoreFunc()
-        try baseObj := this.load(clsid, inClass)
+        baseObj := this.load(clsid, inClass)
+        /* try baseObj := this.load(clsid, inClass)
         catch {
+            errorLog(Error("Failed to load clsid: " clsid))
             return false
-        }
+        } */
         clonedObj := baseObj.clone()
         baseObj := ""
         Critical('Off')
