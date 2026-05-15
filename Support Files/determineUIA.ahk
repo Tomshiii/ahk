@@ -1,15 +1,18 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/05/13
- * @version 1.0.9.2
+ * @date 2026/05/15
+ * @version 1.0.10
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
+#Include Classes\ptf.ahk
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\Editors\Premiere_UIA.ahk
 #Include Classes\CLSID_Objs.ahk
+#Include Classes\errorLog.ahk
 #Include Classes\notifyExt.ahk
+#Include Classes\WM.ahk
 #Include Functions\isReload.ahk
 #Include Other\ObjRegisterActive.ahk
 #Include Other\WinEvent.ahk
@@ -80,7 +83,7 @@ try {
             throw MethodError("This version of Premiere is not supported.", e.what)
         case InStr(e.Message, "Failed to return Premiere Version"):
             __deleteUIA()
-            errorLog(UnsetError("Determining Premiere's version failed, causing UIA value retrieval to abort.", -2))
+            errorLog(UnsetError("Determining Premiere's version failed, causing UIA value retrieval to abort.", -1))
             notifyExt.showIfNotExist("UIApremNotReady",, "Determining Premiere's version failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
             __doExit(premUIAobj)
         case InStr(e.Message, "Socket"):
@@ -89,7 +92,7 @@ try {
             __doExit(premUIAobj)
         case InStr(e.Message, "Failed to retrieve Premiere title."):
             __deleteUIA()
-            errorLog(UnsetError("Determining Premiere's title failed, causing UIA value retrieval to abort.", -2))
+            errorLog(UnsetError("Determining Premiere's title failed, causing UIA value retrieval to abort.", -1))
             notifyExt.showIfNotExist("UIApremTitleFailed",, "Determining Premiere's title failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
             __doExit(premUIAobj)
         case codePos := InStr(e.Message, "throw code:"):
@@ -102,7 +105,7 @@ try {
             ; throw ValueError(throwString)
             __doExit(premUIAobj)
         default:
-            errorLog(ValueError(e.Message, -2))
+            errorLog(ValueError(e.Message, -1))
             __deleteUIA()
             notifyExt.showIfNotExist("UIAgenericFail",, "Determining UIA values failed. ``determineUIA.ahk`` will safetly abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
             __doExit(premUIAobj)

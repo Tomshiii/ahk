@@ -1,16 +1,22 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/05/13
- * @version 1.4.4
+ * @date 2026/05/15
+ * @version 1.4.5
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Functions\checkINI.ahk
+#Include *i Classes\CLSID_Objs.ahk
 ; }
 
 class UserPref {
+    /**
+     * @param [override=false]
+     * @param [checkVals=false]
+     * @constructor
+     */
     __New(override := false, checkVals := false) {
         if !FileExist(this.installDir) {
             throw TargetError("lib files have not been installed.")
@@ -22,14 +28,20 @@ class UserPref {
             FileDelete(tempFile)
         }
         if !FileExist(this.SettingsFile) {
-            this.workingDir := FileRead(this.installDir)
-            SetWorkingDir(this.workingDir)
-            this.defaults["working_dir"] := A_WorkingDir
             this.__createIni()
-            Run(A_ScriptFullPath)
+            ; Run(A_ScriptFullPath)
         }
-        if (A_ScriptName != "Core Functionality.ahk" && override = false)
-            return
+        if A_ScriptName != "Core Functionality.ahk" {
+            switch override {
+                case false: return
+                case true:
+                    try {
+                        userSet := CLSID_Objs.load("UserSettings")
+                        userSet.__delAll()
+                        userSet := ""
+                    }
+            }
+        }
         ;// initialise settings variables
         this.__setSett()
         this.__setAdjust()
@@ -231,80 +243,86 @@ class UserPref {
         if FileExist(filelocation)
             FileDelete(filelocation)
         FileAppend("
-                (
-                    [Settings]
-                    update check={}
-                    beta update check={}
-                    ahk update check={}
-                    update adobe vers={}
-                    update git={}
-                    package update check={}
-                    lib update check={}
-                    dark mode={}
-                    run at startup={}
-                    show adobe vers startup={}
-                    autosave beep={}
-                    autosave check checklist={}
-                    autosave save override={}
-                    autosave check mouse={}
-                    autosave always save={}
-                    autosave restart playback={}
-                    tooltip={}
-                    checklist hotkeys={}
-                    checklist tooltip={}
-                    checklist wait={}
-                    disc disable autoreply={}
-                    adobeExeOverride={}
-                    Set UIA on load={}
-                    Use Thio MButton={}
-                    Use MButton={}
-                    Use swapSequences={}
+        (
+            [Settings]
+            update check={}
+            beta update check={}
+            ahk update check={}
+            update adobe vers={}
+            update git={}
+            package update check={}
+            lib update check={}
+            dark mode={}
+            run at startup={}
+            show adobe vers startup={}
+            autosave beep={}
+            autosave check checklist={}
+            autosave save override={}
+            autosave check mouse={}
+            autosave always save={}
+            autosave restart playback={}
+            tooltip={}
+            checklist hotkeys={}
+            checklist tooltip={}
+            checklist wait={}
+            disc disable autoreply={}
+            adobeExeOverride={}
+            Set UIA on load={}
+            Use Thio MButton={}
+            Use MButton={}
+            Use swapSequences={}
 
-                    [Adjust]
-                    adobe GB={}
-                    adobe FS={}
-                    autosave MIN={}
-                    game SEC={}
-                    multi SEC={}
-                    prem year={}
-                    ae year={}
-                    ps year={}
-                    premVer={}
-                    premIsBeta={}
-                    premSwapSequencesLimit={}
-                    aeVer={}
-                    aeIsBeta={}
-                    psVer={}
-                    psIsBeta={}
-                    resolveVer={}
-                    premCache={}
-                    aeCache={}
-                    premDefaultTheme={}
-                    alternate MButton Key={}
-                    premPrevSeqDelay={}
+            [Adjust]
+            adobe GB={}
+            adobe FS={}
+            autosave MIN={}
+            game SEC={}
+            multi SEC={}
+            prem year={}
+            ae year={}
+            ps year={}
+            premVer={}
+            premIsBeta={}
+            premSwapSequencesLimit={}
+            aeVer={}
+            aeIsBeta={}
+            psVer={}
+            psIsBeta={}
+            resolveVer={}
+            premCache={}
+            aeCache={}
+            premDefaultTheme={}
+            alternate MButton Key={}
+            premPrevSeqDelay={}
 
-                    [Track]
-                    adobe temp={}
-                    UIA Daily Limit Day={}
-                    first check={}
-                    block aware={}
-                    monitor alert={}
-                    skipVersion={}
-                    version={}
-                )", filelocation)
-                ;// replace {}
-                workingFile := FileRead(filelocation)
-                eachLine := StrSplit(workingFile, ["`n", "`r"])
-                currentSection := ""
-                for v in eachLine {
-                    if v = ""
-                        continue
-                    if InStr(v, "[") && InStr(v, "]") {
-                        currentSection := SubStr(v, 2, StrLen(v)-2)
-                        continue
-                    }
-                    splitLine := StrSplit(v, "=")
-                    IniWrite(this.__getDefault(splitLine[1]), filelocation, currentSection, splitLine[1])
-                }
+            [Track]
+            adobe temp={}
+            UIA Daily Limit Day={}
+            first check={}
+            block aware={}
+            monitor alert={}
+            skipVersion={}
+            version={}
+        )", filelocation)
+        ;// replace {}
+        workingFile := FileRead(filelocation)
+        eachLine := StrSplit(workingFile, ["`n", "`r"])
+        currentSection := ""
+        for v in eachLine {
+            if v = ""
+                continue
+            if InStr(v, "[") && InStr(v, "]") {
+                currentSection := SubStr(v, 2, StrLen(v)-2)
+                continue
+            }
+            splitLine := StrSplit(v, "=")
+            IniWrite(this.__getDefault(splitLine[1]), filelocation, currentSection, splitLine[1])
+        }
+    }
+
+    __Delete() {
+        if A_ScriptName != "Core Functionality.ahk"
+            return
+        try this.__delAll()
     }
 }

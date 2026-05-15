@@ -1,13 +1,19 @@
 # <> Release 2.18.0 - Premiere 26.2+ Support
-## > `UIA`
-This release brings support for `Premiere 26.2+`. This required a rather extensive rewrite to all `UIA` related code and as such removes compatibility with Premiere versions prior to `26.2`.  
+# 🔸UIA
+This release brings support for `Premiere 26.2+`.  
+This required a rather extensive rewrite to all `UIA` related code and as such removes compatibility with Premiere versions prior to `26.2`.  
 
 > [!Important]
-> You may notice that gathering UIA information is no longer *(practically)* instant; this was in large part the reason this release required my UIA related code to be rewritten from the ground up. As it can take upwards of 5-10s to generate, the UIA tree is now generated once and is then shared amongst all scripts as they require it.  
+> You may notice that gathering UIA information is no longer *(practically)* instant; this was in large part the reason this release required my UIA related code to be rewritten from the ground up.  
+> As it can take upwards of 5-10s to generate, the UIA tree is now generated once and is then shared amongst all scripts as they require it.  
 
 <img width="527" height="212" alt="Adobe_Premiere_Pro_X5naawl7SI_2" src="https://github.com/user-attachments/assets/ee8b9ec6-b9dd-4583-870f-9a19c47c15f6" />
 
-## > `PremiereRemote`
+# 🔸Patches
+Following some groundwork laid in previous releases, versions beyond Release 2.18.0 will now be able to be installed as a `patch` instead of **requiring** the user to completely reinstall the repo.  
+In the future this will hopefully allow me to release critical fixes a little quicker instead of somewhat incentivising myself to wait for a larger update.
+
+# 🔸PremiereRemote
 - [`PremiereRemote`](<https://github.com/sebinside/PremiereRemote>) is now **required**. And will be installed during installation of my repo.
     - As a result, `nodejs` will be bundled alongside my repo and installed for the user if not available prior.
 
@@ -28,7 +34,7 @@ This release brings support for `Premiere 26.2+`. This required a rather extensi
 - ✅ Fixed function sometimes thinking `Premiere` isn't open
 
 ### 📝 `prem {`
-- ❗ Support for `v26.2`
+- ❗ Support for `v26.2+`
 - 📋 UIA values will now be reset on Premiere close
 - 📋 Changed `prem.selectionTool()` => `prem.selectTool()`
     - Can now set any tool set within `Premiere_UIA.ahk`
@@ -54,11 +60,11 @@ s
     - ✅ Fixes `Notify` windows called during `HotkeylessAHK` functions causing the script to hang if they are still active once the function has finished executing
 
 ### 📝 `KSA {`
+- ❗ `KSA` values are now shared using `Core Functionality.ahk`
 - 📋 Moved the active `Keyboard Shortcuts.ini` file to `A_MyDocuments\tomshi\Keyboard Shortcuts.ini`
     - Moved the template file from `..\Support Files\KSA` => `A_AppData\tomshi\lib\KSA`
     - Will check the user's current ini file against the template
-- 📋 `KSA` values are now shared using `Core Functionality.ahk`
 
 ## Other Changes
-- ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate\`, `Streamdeck_opt.ahk`, `..\Streamdeck AHK/PremiereRemote/enable unsigned extensions.ahk`
+- ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate\`, `Streamdeck_opt.ahk`, `..\Streamdeck AHK\PremiereRemote\enable unsigned extensions.ahk`
 - ✅ Fixed `Multi-Instance Close.ahk`, `adobe fullscreen check.ahk` & `gameCheck.ahk` stalling `reloadAll.ahk`/`closeAll.ahk`

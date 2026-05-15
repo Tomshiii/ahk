@@ -110,28 +110,26 @@ loop files ptf.rootDir "\Logs\*.txt", "R"
     FileDelete(A_LoopFileFullPath)
 
 ;// ask what version we're bumping to
-currentVer := getLocalVer()
+currentVer := FileRead(A_AppData "\tomshi\version")
 initialValue := InStr(currentVer, ".",,, 2) ? SubStr(currentVer, 1, InStr(currentVer, ".",,, -1)) "x" : currentVer ".x"
 yes := InputBox("", "version", "W100 H80", initialValue)
 if yes.Result = "Cancel"
     return
 if !DirExist(A_WorkingDir "\release\" yes.Value)
     DirCreate(A_WorkingDir "\release\" yes.Value)
+if FileExist(A_AppData "\tomshi\version")
+    FileDelete(A_AppData "\tomshi\version")
+FileAppend(yes.Value, A_AppData "\tomshi\version")
 
 ;// check for pre release tags
 pre   := InStr(yes.value, "pre",, 1, 1), beta  := InStr(yes.value, "beta",, 1, 1), alpha := InStr(yes.value, "alpha",, 1, 1)
 
-/**
- * This function will grab the release version from the `My Scripts.ahk` file itself.
- * This function makes it so I don't have to change this variable manually every release
- *
- * @param {VarRef} oldVer passes back the version the scripts are currently on
- */
-getVer(&oldVer)
+
+getVer()
 {
     ;// replace the old version number in My Scripts.ahk
     releaseString := FileRead(ptf.rootDir "\My Scripts.ahk")
-    lastVer := getLocalVer()
+    lastVer := currentVer
     newFile := StrReplace(releaseString, lastVer, yes.value, 1,, 1)
 
     ;// update ahk_ver
@@ -154,8 +152,8 @@ getVer(&oldVer)
         verStart := InStr(ReadFile, "v2.", 1, startPos, 1)
         end := InStr(ReadFile, "`r",, verStart, 1)
         wholeString := SubStr(ReadFile, startPos, end - startPos)
-        oldVer := SubStr(ReadFile, verStart, end - verStart)
-        newValue := StrReplace(wholeString, oldVer, yes.value, 1,, 1)
+        currentVer := SubStr(ReadFile, verStart, end - verStart)
+        newValue := StrReplace(wholeString, currentVer, yes.value, 1,, 1)
         ReplacedFile := StrReplace(ReadFile, wholeString, newValue, 1,, 1)
         FileAppend(ReplacedFile, A_WorkingDir "\" file ".ahk")
         FileMove(A_WorkingDir "\" file ".ahk", ptf.rootDir "\" file ".ahk", 1)
@@ -163,7 +161,7 @@ getVer(&oldVer)
     search("QMK Keyboard")
     search("Resolve_Example")
 }
-getVer(&oldVer)
+getVer()
 
 ;// dealing with the changelog
 changelog := FileRead(ptf.rootDir "\changelog.md")
@@ -177,10 +175,10 @@ loop files ptf.rootDir "\Backups\Changelogs\*", "F"
             name: {}
             loopDir: {}
             newFileDir: {}
-            oldVer: {}
+            currentVer: {}
 
-        )", name, loopDir, newFileDir, oldVer)) */
-        if InStr(name, LTrim(oldVer, "v"), 1, 1, 1)
+        )", name, loopDir, newFileDir, currentVer)) */
+        if InStr(name, LTrim(currentVer, "v"), 1, 1, 1)
             break
     }
 
@@ -202,12 +200,12 @@ else
             name: {}
             loopDir: {}
             newFileDir: {}
-            oldVer: {}
+            currentVer: {}
             removeFiletype: {}
             verChangeLog: {}
             verNew: {}
 
-        )", name, loopDir, newFileDir, oldVer, removeFiletype, verChangeLog, verNew)) */
+        )", name, loopDir, newFileDir, currentVer, removeFiletype, verChangeLog, verNew)) */
     }
 
 if !pre && !InStr(yes.value, "alpha") && !beta && !alpha && !InStr(name, Trim(yes.value, "v"), 1, 1, 1)
@@ -299,12 +297,11 @@ FileDelete(A_Temp "\tomshi\newCompile.ahk")
 currentDir := ""
 getverNum() {
     num := LTrim(yes.value, "v")
-    dot := false
-    finalNum := ""
+    dot := InStr(num, ".",,, 2)
     beta := InStr(num, "beta")
     alpha := InStr(num, "alpha")
     pre := InStr(num, "pre")
-    if beta != false || alpha != false || pre != false {
+    if (beta != false || alpha != false || pre != false) && !dot {
         if beta != false
             return (SubStr(num, 1, beta-1))
         if alpha != false
@@ -312,35 +309,21 @@ getverNum() {
         if pre != false
             return (SubStr(num, 1, pre-1))
     }
-    loop StrLen(num) {
-        loopField := SubStr(num, A_Index, 1)
-        if IsNumber(loopField) || (loopField = ".") {
-            if loopField = "." {
-                switch dot {
-                    case true:  break
-                    case false: dot := true
-                }
-            }
-            finalNum := finalNum loopField
-        }
-    }
-    return finalNum
+    return (dot != false ? SubStr(num, 1, (dot-1)) : num)
 }
 verNum := getverNum()
 
 ;// using logic to determine where to place this release
 if !DirExist(A_WorkingDir "\" verNum ".x")
     DirCreate(A_WorkingDir "\" verNum ".x")
-if (InStr(yes.value, "pre") || InStr(yes.value, "beta") || InStr(yes.value, "alpha")) && !DirExist(A_WorkingDir "\" verNum ".x\pre")
-    DirCreate(A_WorkingDir "\" verNum ".x\pre")
-preCheck := (pre != false || beta != false || alpha != false) ? true : false
-switch preCheck {
-    case 0:
-        FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\" yes.value ".exe", 1)
-        currentDir := A_WorkingDir "\" verNum ".x\"
-    default:
-        FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\pre\" yes.value ".exe", 1)
-        currentDir := A_WorkingDir "\" verNum ".x\pre\"
+if (InStr(yes.value, "pre") || InStr(yes.value, "beta") || InStr(yes.value, "alpha")) {
+    if !DirExist(A_WorkingDir "\" verNum ".x\pre")
+        DirCreate(A_WorkingDir "\" verNum ".x\pre")
+    FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\pre\" yes.value ".exe", 1)
+    currentDir := A_WorkingDir "\" verNum ".x\pre\"
+} else {
+    FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\" yes.value ".exe", 1)
+    currentDir := A_WorkingDir "\" verNum ".x\"
 }
 
 ;// closing any uneeded programs ready for completion

@@ -6,11 +6,15 @@
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\notifyExt.ahk
 #Include Other\Notify\Notify.ahk
+#Include GUIs\tomshiBasic.ahk
 ;
 
 #SingleInstance Ignore
 
-if WinExist(prem.winTitle) {
+gdrive_backup := "G:\Shared drives\The Boys\9. ASSETS\4. Editor Assets\_Backups\_Project Backups\Tom"
+nas_work      := "N:\_Backups\_Project Backups\Tom"
+
+if WinExist(prem.winTitle) || WinExist(prem.class) {
     try {
         path := WinGet.ProjPath()
         defaultDir := path.dir
@@ -18,16 +22,17 @@ if WinExist(prem.winTitle) {
         ;// same as below
         defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
     }
-}
-else
+} else {
     defaultDir := (WinActive("ahk_exe explorer.exe") && WinActive("ahk_class CabinetWClass")) ? explorer.getPath() : ""
+}
 if !projectFolder := FileSelect("D 3", defaultDir, "Select Folder Containing Project Files")
     return
-sd := SD_Opt()
-if !DirExist(sd.backupFolder) {
-    notifyExt.showIfNotExist("backupProjSetOpt",, 'You can set your backup location in;`n..\Support Files\Streamdeck Files\options.ini', 'C:\Windows\System32\imageres.dll|icon77', 'Windows Balloon',, 'dur=6 show=Fade@250 hide=Fade@250 bdr=0xC72424')
+if !DirExist(gdrive_backup) {
+    notifyExt.showIfNotExist("backupProjSetOpt",, "Default backup location doesn't exist", 'C:\Windows\System32\imageres.dll|icon77', 'Windows Balloon',, 'dur=6 show=Fade@250 hide=Fade@250 bdr=0xC72424')
     if !backupFolder := FileSelect("D 3", defaultDir, "Select Location you wish to Backup to")
         return
+} else {
+    backupFolder := gdrive_backup
 }
 
 additionalDir := []

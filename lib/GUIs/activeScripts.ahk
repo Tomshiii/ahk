@@ -152,7 +152,7 @@ activeScripts()
     checkScripts(*)
     {
         loop scripts.Length {
-            try MyGui[scripts[A_Index]].Value := winExt.ExistRegex(names[scripts[A_Index + 1]] " - AutoHotkey",,,, true) ? 1 : 0
+            try MyGui[scripts[A_Index]].Value := winExt.ExistRegex(names[scripts[A_Index]] " - AutoHotkey",,,, true) ? 1 : 0
         }
         SetTimer(, -100)
     }

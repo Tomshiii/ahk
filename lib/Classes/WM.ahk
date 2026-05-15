@@ -2,7 +2,7 @@
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
  * @date 2026/05/15
- * @version 1.3.10
+ * @version 1.3.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -57,7 +57,8 @@ class WM {
      * The reply is 1 if the target window processed the message, or 0 if it ignored it.
      * @param {String} str is the string you wish to send
      * @param {String} scriptTitle the title of the script you wish to target. The passed string must be the entire filename (including the `.ahk` extension)
-     * @param {Integer} timeout time in `ms` you want the function to wait before timing out
+     * @param {Integer} [timeout=4000] time in `ms` you want the function to wait before timing out. A negative number will instantly time out
+     * @param {Boolean} [doTooltips=true] determine whether you wish for a tooltip to be presented on timeout. Will also log any timeouts.
      * @return the response from the target window
      */
     static Send_WM_COPYDATA(str, scriptTitle, timeout := 4000, doTooltips := true) {
@@ -74,9 +75,10 @@ class WM {
         try {
             RetValue := SendMessage(0x004A, 0, CopyDataStruct,, scriptTitle " ahk_class AutoHotkey",,,, timeout) ; 0x004A is WM_COPYDATA.
         } catch {
-            if doTooltips
+            if doTooltips {
                 tool.Cust("SendMessage timed out: " scriptTitle)
-            errorLog(TimeoutError("SendMessage timed out: " scriptTitle, -2))
+                errorLog(TimeoutError("SendMessage timed out: " scriptTitle, -2))
+            }
             returnDct()
             Critical("Off")
             return false
