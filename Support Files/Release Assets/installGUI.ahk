@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/05/12
- * @version 1.1.17
+ * @date 2026/05/15
+ * @version 1.1.17.1
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -295,7 +295,7 @@ class installGUI extends Gui {
             this.__setProgress(10)
             if A_IsCompiled = 1
                 this.__installDump()
-            this.__setProgress(305) ;// hard setting to 35 here
+            this.__setProgress(30)
             if installDirExist && (IsSet(readVer) && VerCompare(readVer, "v2.18.0") > 0) {
                 this.__patchInstall()
                 return

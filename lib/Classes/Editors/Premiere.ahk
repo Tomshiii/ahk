@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/05/15
- * @version 2.4.13.1
+ * @version 2.4.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -60,6 +60,12 @@ class Prem {
             catch {
                 this.UserSettings := UserPref(true)
             }
+        }
+        nodeInstalled   := RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
+        remoteInstalled := DirExist(A_AppData "\Adobe\CEP\extensions\PremiereRemote")
+        if !nodeInstalled || !remoteInstalled {
+            throwStr := (!nodeInstalled && !remoteInstalled) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!nodeInstalled && remoteInstalled) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")
+            throw TargetError(throwStr, -1)
         }
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
         ;// ensure minimum version

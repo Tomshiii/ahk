@@ -35,6 +35,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 
 ### 📝 `prem {`
 - ❗ Support for `v26.2+`
+- ❗ Will now check for `Node.js` & `PremiereRemote` at runtime
 - 📋 UIA values will now be reset on Premiere close
 - 📋 Changed `prem.selectionTool()` => `prem.selectTool()`
     - Can now set any tool set within `Premiere_UIA.ahk`
