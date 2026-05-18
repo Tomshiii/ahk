@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/05/15
- * @version 1.1.17.1
+ * @date 2026/05/18
+ * @version 1.1.18
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -67,7 +67,7 @@ class installGUI extends Gui {
         catch {
             tryRead := ""
         }
-        opt := (FileExist(this.prevInstall) && (DirExist(FileRead(this.prevInstall)))) ? "+Disabled" : ""
+        opt := (FileExist(this.prevInstall) && (DirExist(tryRead))) ? "+Disabled" : ""
         this.AddEdit("-Wrap ReadOnly r1 vInstallDir w300 " opt, (!opt) ? this.InstallDir : tryRead)
         this.AddButton("x+10 yp-2 vChangeDir " opt, "Change Dir").OnEvent("Click", (*) => this.__changeDir())
         this.AddButton("y+5 xp+21 w65 vInstallButton", "Install").OnEvent("Click", (*) => this.__Install())
@@ -95,6 +95,7 @@ class installGUI extends Gui {
         libRootDir    := A_AppData "\tomshi\"
         prevInstall   := this.libRootDir "\installDir"
         prevInstallLoc := ""
+        isPatcher := false
 
         hasAttempted  := false
         names := Map("Backups", 1, "changelog.md", 1, "checklist.ahk", 1, "lib", 1,
@@ -180,9 +181,11 @@ class installGUI extends Gui {
                 this.__addLogEntry("deleting ``" name "``")
             }
             __after("yes.value.zip")
-            FileDelete(A_WorkingDir '\yes.value.zip')
+            if FileExist(A_WorkingDir '\yes.value.zip')
+                FileDelete(A_WorkingDir '\yes.value.zip')
             __after("nodejs.msi")
-            FileDelete(this.InstallDir '\nodejs.msi')
+            if FileExist(this.InstallDir '\nodejs.msi')
+                FileDelete(this.InstallDir '\nodejs.msi')
             sleep 100
         }
 
@@ -210,7 +213,7 @@ class installGUI extends Gui {
             try RunWait(this.prevInstallLoc "\Support Files\closeAll.ahk 1 " A_ScriptName)
 
             if !DirExist(A_Temp "\tomshi\yes.value")
-                DirCreate(A_Temp "\tomshi\yes.value")
+                throw TargetError
             SetWorkingDir(A_Temp "\tomshi\yes.value")
             this.__addLogEntry("unzipping release contents")
             if this.__unzip(A_WorkingDir "\yes.value.zip", A_WorkingDir "\yes.value") != true {
@@ -221,6 +224,9 @@ class installGUI extends Gui {
                 throw(Error("Unable to Unzip install files. Please try the installation again.", -1))
             }
             this.__setProgress(40)
+            if !this.nodeInstalled() && !FileExist(A_WorkingDir "\yes.value\nodejs.msi") {
+                throw TargetError("Node is not installed and installer cannot be found. Try the full installer.")
+            }
             if !this.nodeInstalled() && FileExist(A_WorkingDir "\yes.value\nodejs.msi") {
                 this.__installNode(A_WorkingDir "\yes.value\nodejs.msi")
             }
@@ -274,7 +280,7 @@ class installGUI extends Gui {
             FileAppend("yes.value", A_Appdata "\tomshi\version")
             try this.prevInstallLoc := FileRead(this.prevInstall)
             catch {
-                this.prevInstall := ""
+                this.prevInstallLoc := ""
             }
             installDirExist := (DirExist(this.prevInstallLoc) = true) ? true : false
             if FileExist(A_Appdata "\tomshi\installDir") {
@@ -293,14 +299,15 @@ class installGUI extends Gui {
             }
             sleep 300
             this.__setProgress(10)
-            if A_IsCompiled = 1
-                this.__installDump()
-            this.__setProgress(30)
-            if installDirExist && (IsSet(readVer) && VerCompare(readVer, "v2.18.0") > 0) {
+            if (installDirExist && (IsSet(readVer) && VerCompare(readVer, "v2.18.0") > 0)) || this.isPatcher = true{
+                if A_IsCompiled = 1
+                    this.__installDump(true)
                 this.__patchInstall()
                 return
             }
-
+            if A_IsCompiled = 1
+                this.__installDump()
+            this.__setProgress(30)
             this.__addLogEntry("unzipping release contents")
             if this.__unzip(A_WorkingDir "\yes.value.zip", this.InstallDir) != true {
                 this.__setProgress(100)

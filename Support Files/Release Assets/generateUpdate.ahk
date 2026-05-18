@@ -244,6 +244,8 @@ cleanUpInstall(A_WorkingDir "\release\" yes.Value)
 if FileExist(A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini")
     IniWrite("", A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini", "Settings", "favoritePaths")
 
+DirCopy(A_WorkingDir "\release\" yes.Value, A_WorkingDir "\release\" yes.Value "-patch")
+
 downloadNode() {
     ; Get latest LTS version string
     version := ""
@@ -264,19 +266,34 @@ downloadNode()
 
 ;// zipping the temp repo
 zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
+zip2 := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value "-patch")
 
 ;// copying a file that will get compiled into the release exe
 ;// this copied script deals with extracting all the files from the exe itself
 ;// it will then run `releaseGUI.ahk` to provide the user with some install options
 ;//! checkout the code in this script if you're cautious/curious about the release.exe
 FileCopy(ptf.SupportFiles "\Release Assets\installGUI.ahk", A_WorkingDir "\release\" yes.value ".ahk")
+FileCopy(ptf.SupportFiles "\Release Assets\installGUI.ahk", A_WorkingDir "\release\" yes.value "-patch.ahk")
 
 ;// doing string manipulation to replace some values in the above script with the actual release ver
-readFi := FileRead(A_WorkingDir "\release\" yes.value ".ahk")
-replaceFileVer := StrReplace(readFi, "Version yes.value", "Version " Trim(yes.value, "v"))
-replaceYes := StrReplace(replaceFileVer, "yes.value", yes.value, 1)
-FileDelete(A_WorkingDir "\release\" yes.value ".ahk")
-FileAppend(replaceYes, A_WorkingDir "\release\" yes.value ".ahk")
+replaceVer(A_WorkingDir "\release\" yes.value ".ahk")
+replaceVer(A_WorkingDir "\release\" yes.value "-patch.ahk")
+replaceVer(filepath) {
+    readFi := FileRead(filepath)
+    if InStr(filepath, "-patch") {
+        repValSearch := 'FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_Temp "\tomshi\yes.value", 1)'
+        repVal := Format('FileInstall("E:\Github\ahk\releases\release\{}-patch.zip", A_Temp "\tomshi\{}", 1)', yes.Value)
+        delSearch := 'FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)'
+        patherSearch := 'isPatcher := false'
+        readFi := StrReplace(readFi, repValSearch, repVal)
+        readFi := StrReplace(readFi, delSearch, "")
+        readFi := StrReplace(readFi, patherSearch, 'isPatcher := true')
+    }
+    replaceFileVer := StrReplace(readFi, "Version yes.value", "Version " Trim(yes.value, "v"))
+    replaceYes := StrReplace(replaceFileVer, "yes.value", yes.value, 1)
+    FileDelete(filepath)
+    FileAppend(replaceYes, filepath)
+}
 
 ;// opening & using the compiler
 if !FileExist(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe") {
@@ -287,12 +304,16 @@ if !FileExist(ptf.ProgFi "\AutoHotkey\Compiler\Ahk2Exe.exe") {
         return
 }
 releaseCompile := FileRead(A_ScriptDir "\release_Compile.ahk")
-newCompile := Format(releaseCompile, yes.value, A_AhkVersion)
-if !DirExist(A_Temp "\tomshi")
-    DirCreate(A_Temp "\tomshi")
-FileAppend(newCompile, A_Temp "\tomshi\newCompile.ahk")
-RunWait(A_Temp "\tomshi\newCompile.ahk")
-FileDelete(A_Temp "\tomshi\newCompile.ahk")
+doCompile(yes.value)
+doCompile(yes.value "-patch")
+doCompile(version) {
+    newCompile := Format(releaseCompile, version, A_AhkVersion)
+    if !DirExist(A_Temp "\tomshi")
+        DirCreate(A_Temp "\tomshi")
+    FileAppend(newCompile, A_Temp "\tomshi\newCompile.ahk")
+    RunWait(A_Temp "\tomshi\newCompile.ahk")
+    FileDelete(A_Temp "\tomshi\newCompile.ahk")
+}
 
 currentDir := ""
 getverNum() {
@@ -320,9 +341,11 @@ if (InStr(yes.value, "pre") || InStr(yes.value, "beta") || InStr(yes.value, "alp
     if !DirExist(A_WorkingDir "\" verNum ".x\pre")
         DirCreate(A_WorkingDir "\" verNum ".x\pre")
     FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\pre\" yes.value ".exe", 1)
+    FileMove(A_WorkingDir "\release\" yes.value "-patch.exe", A_WorkingDir "\" verNum ".x\pre\" yes.value "-patch.exe", 1)
     currentDir := A_WorkingDir "\" verNum ".x\pre\"
 } else {
     FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\" yes.value ".exe", 1)
+    FileMove(A_WorkingDir "\release\" yes.value "-patch.exe", A_WorkingDir "\" verNum ".x\" yes.value "-patch.exe", 1)
     currentDir := A_WorkingDir "\" verNum ".x\"
 }
 
@@ -333,7 +356,7 @@ if WinExist(currentDir,, "ahk_group Browsers")
 else
     Run("explore " currentDir)
 WinWait(verNum ".x",, 3)
-if DirExist(A_WorkingDir "\release") && FileExist(currentDir yes.value ".exe")
+if DirExist(A_WorkingDir "\release") && FileExist(currentDir yes.value ".exe") && FileExist(currentDir yes.value "-patch.exe")
     DirDelete(A_WorkingDir "\release", 1)
 else
     {

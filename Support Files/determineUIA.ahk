@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/05/15
- * @version 1.0.10
+ * @date 2026/05/18
+ * @version 1.0.11
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -16,8 +16,9 @@
 #Include Functions\isReload.ahk
 #Include Other\ObjRegisterActive.ahk
 #Include Other\WinEvent.ahk
-#NoTrayIcon
+; #NoTrayIcon
 
+TraySetIcon(ptf.Icons "\determineUIA.png")
 try getReload := A_Args.Get(1)
 Persistent()
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
