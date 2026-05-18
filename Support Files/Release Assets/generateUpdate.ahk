@@ -244,6 +244,9 @@ cleanUpInstall(A_WorkingDir "\release\" yes.Value)
 if FileExist(A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini")
     IniWrite("", A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDialogPathSelector-Settings.ini", "Settings", "favoritePaths")
 
+;// wipe `My Scripts.ahk`
+FileCopy(A_WorkingDir "\release\" yes.Value "\Support Files\Release Assets\Install Packages\My Scripts-template.ahk", A_WorkingDir "\release\" yes.Value "\My Scripts.ahk", true)
+
 DirCopy(A_WorkingDir "\release\" yes.Value, A_WorkingDir "\release\" yes.Value "-patch")
 
 downloadNode() {
