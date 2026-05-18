@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2026/05/18
- * @version 1.9.0
+ * @version 1.9.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -249,51 +249,26 @@ class Startup {
                 down(*) {
                     this.UserSettings.__delAll()
                     MyGui.Opt("Disabled -AlwaysOnTop")
-                    yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`nA backup will be performed after downloading and placed in the \Backups folder but it is recommended you do one for yourself as well.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
+                    versionDl := (VerCompare(version, "2.18.0") > 0) ? version "-patch.exe" : version ".exe"
+                    yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
                     if yousure = "Cancel" {
                         MyGui.Opt("-Disabled")
                         return
                     }
                     MyGui.Destroy()
-                    if !downloadLocation := FileSelect("D",, "Where do you wish to download Release " version)
-                        return
+                    if DirExist(A_Temp "\tomshi\update")
+                        DirDelete(A_Temp "\tomshi\update")
+                    DirCreate(A_Temp "\tomshi\update")
+                    downloadLocation := A_Temp "\tomshi\update"
 
-                    if !type := this.__exeOrzip(version)
-                        return
-
-                    if FileExist(downloadLocation "\" version "." type) {
-                        file := MsgBox("File already exists.`n`nDo you want to override it?", "File already exists", "4 32 4096")
-                        if file = "No"
-                            return
-                        FileDelete(downloadLocation "\" version "." type)
+                    if FileExist(downloadLocation "\" versionDl) {
+                        FileDelete(downloadLocation "\" versionDl)
                     }
 
                     tool.tray({text: "Updated scripts are downloading", title: "Downloading...", options: 17})
-                    Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" version "." type, downloadLocation "\" version "." type)
-                    Run(downloadLocation "\")
-
-                    if DirExist(A_Temp "\" this.MyRelease)
-                        DirDelete(A_Temp "\" this.MyRelease, 1)
-                    if DirExist(ptf.rootDir "\Backups\Script Backups\" this.MyRelease) {
-                        newbackup := MsgBox("You already have a backup of Release " this.MyRelease "`nDo you wish to override it and make a new backup?", "Error! Backup already exists", "4 32 4096")
-                        if newbackup != "Yes" {
-                            ToolTip("")
-                            TrayTip()
-                            return
-                        }
-                        DirDelete(ptf.rootDir "\Backups\Script Backups\" this.MyRelease, 1)
-                    }
-                    try {
-                        tool.tray({text: "Your current scripts are being backed up!", title: "Backing Up...", options: 17})
-                        DirCopy(ptf.rootDir, A_Temp "\" this.MyRelease)
-                        DirMove(A_Temp "\" this.MyRelease, ptf.rootDir "\Backups\Script Backups\" this.MyRelease, "1")
-                        if DirExist(A_Temp "\" this.MyRelease)
-                            DirDelete(A_Temp "\" this.MyRelease, 1)
-                        tool.Cust("Your current scripts have successfully backed up to the '\Backups\Script Backups\" this.MyRelease "' folder", 3000,,, this.startupTtpNum)
-                    } catch {
-                        errorLog(Error("There was an error trying to backup your current scripts"),, {ttip: this.startupTtpNum})
-                        return
-                    }
+                    Download("https://github.com/Tomshiii/ahk/releases/download/" version "/" versionDl, downloadLocation "\" versionDl)
+                    Run(downloadLocation "\" versionDl)
+                    closegui()
                     return
                 }
                 closegui(*) {
