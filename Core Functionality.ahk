@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/05/15
- * @version 1.0.15
+ * @date 2026/05/18
+ * @version 1.0.16
  ***********************************************************************/
 
 #SingleInstance Force
@@ -39,7 +39,7 @@ SetWorkingDir(installDir)
 Persistent()
 TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 
-UserSettings    := UserPref()
+UserSettings    := UserPref(, true)
 KSA             := KeyShortAdjust(true)
 premiere        := prem
 Loading         := {isLoading: true}

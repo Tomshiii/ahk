@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/05/09
- * @version 1.8.16
+ * @date 2026/05/18
+ * @version 1.9.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -118,8 +118,6 @@ class Startup {
      * This function checks whether the user is on a late enough version of windows to use dark mode
      */
     __checkDark() {
-        if this.UserSettings.dark_mode != ""
-            return this.UserSettings.dark_mode
         if (VerCompare(A_OSVersion, "10.0.17763") < 0) {
             this.UserSettings.dark_mode := "disabled"
             if !this.__checkForReloadAttempt("checkDark")
@@ -129,133 +127,6 @@ class Startup {
         }
         this.UserSettings.dark_mode := true
         return "true"
-    }
-
-    /**
-     * This function handles checking `settings.ini` on a new release of the repo and ensures all values are present and set.
-     * It will also automatically add new values to an existing settings file if it isn't currently present.
-     *
-     */
-    generate() {
-        if this.isReload != false ;checks if script was reloaded
-            return
-        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
-        ;// checking to see if the users OS version is high enough to support dark mode
-        darkCheck := this.__checkDark()
-
-        genNewMap() => newMap := Mip()
-        ensureSpaces(inpString) => StrReplace(inpString, "_", A_Space)
-        result(res) {
-            switch res {
-                case true: return "true"
-                case false: return "false"
-                default: return res
-            }
-        }
-
-        allSettings := genNewMap(), allAdjust := genNewMap(), allTrack  := genNewMap()
-        for v in StrSplit(IniRead(ptf["settings"]), "`n") {
-            for k, v2 in valArr := StrSplit(IniRead(ptf["settings"], v), ["=", "`n", "`r"]) {
-                if Mod(k, 2) = 0
-                    continue
-                all%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
-            }
-        }
-
-        ;// checking to see if the settings folder location exists
-        if FileExist(this.UserSettings.SettingsFile) {
-            tempDir := A_Temp "\tomshi"
-            tempSettingsPath := tempDir "\temp_settings.ini"
-            if !DirExist(tempDir)
-                DirCreate(tempDir)
-            if FileExist(tempSettingsPath)
-                FileDelete(tempSettingsPath)
-            this.UserSettings.__createIni(tempSettingsPath)
-            tempSettings := genNewMap(), tempAdjust := genNewMap(), tempTrack  := genNewMap()
-            tempCountSettings := genNewMap(), tempCountAdjust := genNewMap(), tempCountTrack  := genNewMap()
-            for v in StrSplit(IniRead(tempSettingsPath), "`n") {
-                for k, v2 in valArr := StrSplit(IniRead(tempSettingsPath, v), ["=", "`n", "`r"]) {
-                    if Mod(k, 2) = 0
-                        continue
-                    if !all%v%.has(ensureSpaces(v2)) {
-                        temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
-                        continue
-                    }
-                    temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
-                    tempCount%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
-                }
-            }
-
-            ;// this check ensures that the function will prematurely return if the release version in the settings.ini is the same as the current release AND
-            ;// that the amount of settings all line up, AND
-            ;// that the settings names all line up -- otherwise the function will continue so that it may add/adjust missing settings values
-            if (this.UserSettings.defaults.Count != (allSettings.Count + allAdjust.Count + allTrack.Count) || this.UserSettings.defaults.Count != (tempCountSettings.Count + tempCountAdjust.Count + tempCountTrack.Count)) || (VerCompare(this.MyRelease, this.UserSettings.version) > 0) {
-                FileDelete(this.UserSettings.SettingsFile)
-                FileMove(tempSettingsPath, this.UserSettings.SettingsFile)
-                setSection(tempSettings, allSettings, "Settings")
-                setSection(tempAdjust, allAdjust, "Adjust")
-                setSection(tempTrack, allTrack, "Track", true)
-                sleep 1000
-                if !this.__checkForReloadAttempt("generate") {
-                    this.UserSettings := UserPref(true)
-                    return
-                }
-                notifyExt.showIfNotExist("settingsReload", StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()", 'Settings.ini has been adjusted, a reload will now be attempted', 'C:\Windows\System32\imageres.dll|icon252',,, 'dur=3 pos=TR bdr=0xD50000')
-                SetTimer((*) => reset.reset(), -3000)
-                Sleep(5000)
-                return
-            }
-            if FileExist(tempSettingsPath)
-                FileDelete(tempSettingsPath)
-        }
-
-        ;// generate new settings
-        ;// [settings]
-        /**
-         * This function is to cut reduce code
-         * It enumerates through an array from `UserPref {` and compares it against an array created earlier
-         * It handles adding new values to settings.ini if they're listed above but not present in settings.ini
-         */
-        setSection(userSettingsArr, startupArr, iniSection, track := false) {
-            if (userSettingsArr.Count != startupArr.Count) {
-                tempSett := userSettingsArr.Clone()
-                for k, v in startupArr {
-                    if tempSett.Has(k)
-                        tempSett.Delete(k)
-                }
-                if tempSett.Count > 0 {
-                    for k, v in tempSett {
-                        IniWrite(userSettingsArr.Get(k), this.UserSettings.SettingsFile, iniSection, k)
-                    }
-                }
-            }
-            switch track {
-                case true:
-                    for k, v in userSettingsArr {
-                        ;// set version number
-                        if k = "version" {
-                            this.UserSettings.%k% := this.MyRelease
-                            continue
-                        }
-                        if k = "first_check" || k = "block_aware" {
-                            returnBool(input) {
-                                switch input {
-                                    case "true":      return true
-                                    case "false":     return false
-                                    default:          return input
-                                }
-                            }
-                            this.UserSettings.%k% := returnBool(startupArr.Get(k))
-                            continue
-                        }
-                        this.UserSettings.%k% := (startupArr.Has(k)) ? startupArr.Get(k) : userSettingsArr.Get(k)
-                    }
-                default:
-                    for k, v in userSettingsArr {
-                        this.UserSettings.%k% := (startupArr.Has(k)) ? startupArr.Get(k) : userSettingsArr.Get(k)
-                    }
-            }
-        }
     }
 
     /**
@@ -511,75 +382,6 @@ class Startup {
                     return
                 cmd.run(true, false, false, nonChocoUpdateCommand)
         }
-    }
-
-    /**
-     * This function checks to see if it is the first time the user is running this script. If so, they are then given some general information regarding the script as well as a prompt to check out some useful hotkeys.
-     */
-    firstCheck() {
-        ;The variable names in this function are an absolute mess. I'm not going to pretend like they make any sense AT ALL. But it works so uh yeah.
-        if this.isReload != false
-            return
-        this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
-        if WinExist("Scripts Release ")
-            WinWaitClose("Scripts Release ")
-        if this.UserSettings.first_check != false ;how the function tracks whether this is the first time the user is running the script or not
-            return
-        firstCheckGUI := tomshiBasic(,, "-Resize AlwaysOnTop", "Scripts Release " this.MyRelease)
-        ;set title
-        titleText := "Welcome to Tomshi's AHK Scripts : Release " this.MyRelease
-        titleWidth := 430 + ((StrLen(this.MyRelease)-4)*8)
-        Title := firstCheckGUI.Add("Text", "X8 R1.5 W" titleWidth, titleText)
-        Title.SetFont("S15")
-        ;text
-        bodyText := firstCheckGUI.Add("Text", "W550 X8 Center", "
-        (
-            Congratulations!
-            You've gotten my main script to load without any runtime errors! (hopefully).
-            You've taken the first step to really getting the most out of these scripts!
-
-            This script alone isn't everything my repo of scripts has to offer, heading into ``Handy Hotkeys`` below and finding the hotkey for the current active scripts will show you some of the other scripts available to you!
-            Beyond those scripts there is also everything in the ``
-        )" A_WorkingDir "
-        (
-            \Streamdeck AHK\`` directory that provides even more functionality.
-
-            The purpose of these scripts is to speed up both editing (mostly within the Adobe suite of programs) and random interactions with a computer. Listing off everything these scripts are capable of would take more screen real estate than you likely have and so all I can do is point you towards the comments for individual hotkeys/functions in the hopes that they explain everything for me.
-            These scripts are heavily catered to my pc/setup and as a result may run into issues on other systems (for example I have no idea how they will perform on lower end systems). Feel free to create an issue on the github for any massive problems or even consider tweaking the code to be more universal and try a pull request. I make no guarantees I will merge any PR's as these scripts are still for my own setup at the end of the day but I do actively try to make my code as flexible as possible to accommodate as many outliers as I can.
-
-            The below ``Handy Hotkeys`` outlines some hotkeys that are available to use anywhere within windows and are a great place to get started when trying to navigate the power of these scripts! (note: they still only scratch the surface, a large chunk of my scripts are specific to programs and will only activate if said program is the current active window)
-
-            The below ``Settings`` GUI can be accessed at anytime by right clicking ``My Scripts.ahk`` on the taskbar or by pressing ``#F1`` (by default).
-        )")
-        ;buttons
-        firstCheckGUI.AddButton("X200 Y+8", "Settings").OnEvent("Click", settings)
-        todoButton := firstCheckGUI.AddButton("X+10", "What to Do").OnEvent("Click", (*) => todoGUI())
-        firstCheckGUI.AddButton("X+10", "Handy Hotkeys").OnEvent("Click", (*) => hotkeysGUI())
-        firstCheckGUI.AddButton("X+10", "Close").OnEvent("Click", close)
-
-        firstCheckGUI.OnEvent("Escape", close.Bind(this))
-        firstCheckGUI.OnEvent("Close", close.Bind(this))
-        close(*) {
-            this.UserSettings.first_check := true ;tracks the fact the first time screen has been closed. These scripts will now not prompt the user again
-            firstCheckGUI.Destroy()
-            RunWait(A_ScriptFullPath)
-            return
-        }
-        settings(*) {
-            WinSetAlwaysOnTop(0, "Scripts Release " this.MyRelease)
-            settingsGUI()
-            WinWait("Settings " this.MyRelease)
-            WinActivate("Settings " this.MyRelease)
-            WinWaitClose("Settings " this.MyRelease)
-            WinSetAlwaysOnTop(1, "Scripts Release " this.MyRelease)
-        }
-
-        firstCheckGUI.Show("AutoSize")
-
-        ;centering the title
-        title.GetPos(,, &width)
-        firstCheckGUI.GetClientPos(,, &guiWidth)
-        title.Move((guiWidth-width)/2)
     }
 
     /**
@@ -1424,15 +1226,14 @@ class Startup {
     }
     __Delete(*) {
         detect(false, 2)
-        try this.UserSettings.__delAll()
         try {
+            tool.Cust("",,,, this.alertTtipNum) ;// just incase
             if !FileExist(this.trackReloadsIni)
                 this.__createTrackReloads()
             this.__resetReloadTracking()
             this.UserSettings := ""
             this.alertTimer := false
             this.activeFunc := ""
-            tool.Cust("",,,, this.alertTtipNum) ;// just incase
         }
     }
 }

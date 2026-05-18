@@ -1,12 +1,13 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/05/15
- * @version 1.4.5
+ * @date 2026/05/18
+ * @version 1.4.6
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
+#Include Classes\Mip.ahk
 #Include Functions\checkINI.ahk
 #Include *i Classes\CLSID_Objs.ahk
 ; }
@@ -48,13 +49,7 @@ class UserPref {
         this.__setTrack()
 
         if A_ScriptName = "Core Functionality.ahk" {
-            if !FileExist(A_AppData "\tomshi\version")
-                throw TargetError("version file has been moved or deleted")
-            ver := FileRead(A_AppData "\tomshi\version")
-            if this.version != ver {
-                this.version := ver
-                IniWrite(ver, this.SettingsFile, "Track", "version")
-            }
+            this.doValChecks()
         }
     }
 
@@ -161,9 +156,10 @@ class UserPref {
      * Any whitespace is converted to "_"
      * @param {String} section is the section you wish to be read from
      * @param {Array} arr is the desired array you wish to push to
+     * @param {String} [settingsFile=this.settingsFile] which settings file you wish to be used during the `IniRead`
      */
-    __fillArr(section, arr) {
-        allSettings   := IniRead(this.SettingsFile, section)
+    __fillArr(section, arr, settingsFile := this.SettingsFile) {
+        allSettings   := IniRead(settingsFile, section)
         splitSettings := StrSplit(allSettings, ["=", "`n", "`r"])
         for k, v in splitSettings {
             if Mod(k, 2) = 0
@@ -185,10 +181,93 @@ class UserPref {
         }
     }
 
+    /**
+     * This function checks whether the user is on a late enough version of windows to use dark mode
+     */
+    __checkDark() {
+        if (VerCompare(A_OSVersion, "10.0.17763") < 0) {
+            this.dark_mode := "disabled"
+            this.__del(this.Settings_, "Settings")
+            return "disabled"
+        }
+        this.dark_mode := true
+        this.__del(this.Settings_, "Settings")
+        return "true"
+    }
+
+    __setVersion() {
+        if !FileExist(A_AppData "\tomshi\version")
+            throw TargetError("version file has been moved or deleted")
+        ver := FileRead(A_AppData "\tomshi\version")
+        if this.version != ver {
+            this.version := ver
+            IniWrite(ver, this.SettingsFile, "Track", "version")
+        }
+    }
+
+    doValChecks() {
+        this.__setVersion()
+        this.__checkDark()
+
+        genNewMap() => newMap := Mip()
+        ensureSpaces(inpString) => StrReplace(inpString, "_", A_Space)
+        result(res) {
+            switch res {
+                case true: return "true"
+                case false: return "false"
+                default: return res
+            }
+        }
+        allSettings := genNewMap(), allAdjust := genNewMap(), allTrack  := genNewMap()
+        for v in StrSplit(IniRead(this.SettingsFile), "`n") {
+            for k, v2 in valArr := StrSplit(IniRead(this.SettingsFile, v), ["=", "`n", "`r"]) {
+                if Mod(k, 2) = 0
+                    continue
+                all%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
+            }
+        }
+
+        tempDir := A_Temp "\tomshi"
+        tempSettingsPath := tempDir "\temp_settings.ini"
+        if !DirExist(tempDir)
+            DirCreate(tempDir)
+        if FileExist(tempSettingsPath)
+            FileDelete(tempSettingsPath)
+        this.__createIni(tempSettingsPath)
+        tempSettings := genNewMap(), tempAdjust := genNewMap(), tempTrack  := genNewMap()
+        tempCountSettings := genNewMap(), tempCountAdjust := genNewMap(), tempCountTrack  := genNewMap()
+        for v in StrSplit(IniRead(tempSettingsPath), "`n") {
+            for k, v2 in valArr := StrSplit(IniRead(tempSettingsPath, v), ["=", "`n", "`r"]) {
+                if Mod(k, 2) = 0
+                    continue
+                if !all%v%.has(ensureSpaces(v2)) {
+                    temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
+                    continue
+                }
+                temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
+                tempCount%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
+            }
+        }
+
+        if (this.defaults.Count != (allSettings.Count + allAdjust.Count + allTrack.Count) || this.defaults.Count != (tempCountSettings.Count + tempCountAdjust.Count + tempCountTrack.Count)) {
+            FileDelete(this.SettingsFile)
+            this.__createIni()
+            this.Settings_ := []
+            this.Adjust_ := []
+            this.Track_ := []
+            this.__setSett(tempSettingsPath)
+            this.__setAdjust(tempSettingsPath)
+            this.__setTrack(tempSettingsPath)
+            this.__delAll()
+        }
+        if FileExist(tempSettingsPath)
+            FileDelete(tempSettingsPath)
+    }
+
     ;// [Settings]
     Settings_ := []
-    __setSett() {
-        this.__fillArr("Settings", this.Settings_)
+    __setSett(settingsFile := this.SettingsFile) {
+        this.__fillArr("Settings", this.Settings_, settingsFile)
         ;// create variables
         for v in this.Settings_ {
             this.%v% := this.__convertToBool(this.__convertToKey(v), "Settings")
@@ -196,18 +275,18 @@ class UserPref {
     }
     ;// [Adjust]
     Adjust_ := []
-    __setAdjust() {
-        this.__fillArr("Adjust", this.Adjust_)
+    __setAdjust(settingsFile := this.SettingsFile) {
+        this.__fillArr("Adjust", this.Adjust_, settingsFile)
         ;// create variables
         for v in this.Adjust_ {
             defaultVal := this.__getDefault(v)
-            this.%v% := IniRead(this.SettingsFile, "Adjust", this.__convertToKey(v), defaultVal)
+            this.%v% := IniRead(settingsFile, "Adjust", this.__convertToKey(v), defaultVal)
         }
     }
     ;// [Track]
     Track_ := []
-    __setTrack() {
-        this.__fillArr("Track", this.Track_)
+    __setTrack(settingsFile := this.SettingsFile) {
+        this.__fillArr("Track", this.Track_, settingsFile)
         ;// create variables
         for v in this.Track_ {
             switch v {
@@ -215,13 +294,13 @@ class UserPref {
                     this.%v% := this.__convertToBool(this.__convertToKey(v), "Track")
                 case "version":
                     defaultVal := this.__getDefault(v)
-                    value := IniRead(this.SettingsFile, "Track", this.__convertToKey(v), defaultVal)
+                    value := IniRead(settingsFile, "Track", this.__convertToKey(v), defaultVal)
                     origVal := value
                     this.__checkPreReleaseTag(value)
                     this.%v% := (value != origVal) ? value : origVal
                 default:
                     defaultVal := this.__getDefault(v)
-                    this.%v% := IniRead(this.SettingsFile, "Track", this.__convertToKey(v), defaultVal)
+                    this.%v% := IniRead(settingsFile, "Track", this.__convertToKey(v), defaultVal)
             }
         }
     }
@@ -240,6 +319,11 @@ class UserPref {
             throw (ValueError("Incorrect number of Parameters passed to function.", -1)) ;// don't add errorlog to this function, keep it no dependencies */
         if !DirExist(this.SettingsDir)
             DirCreate(this.SettingsDir)
+        SplitPath(filelocation,, &setDir)
+        if setDir != this.SettingsDir {
+            if !DirExist(setDir)
+                DirCreate(setDir)
+        }
         if FileExist(filelocation)
             FileDelete(filelocation)
         FileAppend("

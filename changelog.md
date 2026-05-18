@@ -27,11 +27,6 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ✏️ Added `checkINI()`, `determineAdobeVer()`
 - 📋 `WM.Send_WM_COPYDATA()` now accepts param `doTooltips`
 
-### 📝 `WinGet {`
-
-📍 `PremName()`
-- ✅ Fixed function failing to determine `beta` titles correctly
-- ✅ Fixed function sometimes thinking `Premiere` isn't open
 
 ### 📝 `prem {`
 - ❗ Support for `v26.2+`
@@ -44,11 +39,13 @@ In the future this will hopefully allow me to release critical fixes a little qu
 ### 📝 `startup {`
 - ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing
 - ✅ Fixed `updateChecker()` throwing if the user attempted to download an update from the GUI
+- ❌ Removed `generate()`, `firstCheck()`
 
 ### 📝 `Settings {`
 - ✏️ Added `Set_UIA_on_load`
 - ❌ Removed `Always_Check_UIA`, `Set_UIA_Limit_Daily`, `MainScriptName`
 - 📋 Will now check the user's `.ini` file against a fresh template during the `Core Functionality.ahk` initialisation flow
+    - 📋 `Core Functionality.ahk` will now ensure stale values are removed
 
 ### 📝 `notifyExt {`
 - ❗Added class `notifyExt {`
@@ -65,6 +62,12 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - 📋 Moved the active `Keyboard Shortcuts.ini` file to `A_MyDocuments\tomshi\Keyboard Shortcuts.ini`
     - Moved the template file from `..\Support Files\KSA` => `A_AppData\tomshi\lib\KSA`
     - Will check the user's current ini file against the template
+
+### 📝 `WinGet {`
+
+📍 `PremName()`
+- ✅ Fixed function failing to determine `beta` titles correctly
+- ✅ Fixed function sometimes thinking `Premiere` isn't open
 
 ## Other Changes
 - ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate\`, `Streamdeck_opt.ahk`, `..\Streamdeck AHK\PremiereRemote\enable unsigned extensions.ahk`
