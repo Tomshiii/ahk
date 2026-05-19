@@ -2,6 +2,7 @@
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\Settings.ahk
 #Include Classes\CLSID_Objs.ahk
+#Include Functions\checkBool.ahk
 #Include Other\FileGetExtendedProp.ahk
 ; }
 
@@ -24,7 +25,7 @@ determineAdobeVer(exeNames, UserSettings?) {
         }
     }
     whichBeta := InStr(exeNames.baseName, "Premiere") ? UserSettings.premIsBeta : UserSettings.aeIsBeta
-    whichExe := (whichBeta = false) ? exeNames.baseName : exeNames.beta
+    whichExe := (checkBool(whichBeta) = false) ? exeNames.baseName : exeNames.beta
     regInstalledVer := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\" whichExe,, 0)
     if (regInstalledVer != false && regInstalledVer != "0") && SubStr(regInstalledVer, 1, 1) = '"' && SubStr(regInstalledVer, -1, 1) = '"'
         regInstalledVer := SubStr(regInstalledVer, 2, StrLen(regInstalledVer)-2)
