@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/05/18
- * @version 1.4.6
+ * @date 2026/05/19
+ * @version 1.4.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -158,11 +158,14 @@ class UserPref {
      * @param {Array} arr is the desired array you wish to push to
      * @param {String} [settingsFile=this.settingsFile] which settings file you wish to be used during the `IniRead`
      */
-    __fillArr(section, arr, settingsFile := this.SettingsFile) {
+    __fillArr(section, arr, settingsFile := this.SettingsFile, setFromClass := false) {
         allSettings   := IniRead(settingsFile, section)
         splitSettings := StrSplit(allSettings, ["=", "`n", "`r"])
         for k, v in splitSettings {
             if Mod(k, 2) = 0
+                continue
+            ;// stops `Core Functionality.ahk` from wiping back to default
+            if setFromClass = true && this.HasOwnProp(StrReplace(v, A_Space, "_"))
                 continue
             arr.Push(StrReplace(v, A_Space, "_"))
         }
@@ -266,29 +269,34 @@ class UserPref {
 
     ;// [Settings]
     Settings_ := []
-    __setSett(settingsFile := this.SettingsFile) {
-        this.__fillArr("Settings", this.Settings_, settingsFile)
+    __setSett(settingsFile := this.SettingsFile, setFromClass := false) {
+        this.__fillArr("Settings", this.Settings_, settingsFile, setFromClass)
         ;// create variables
         for v in this.Settings_ {
-            this.%v% := this.__convertToBool(this.__convertToKey(v), "Settings")
+            if !this.HasOwnProp(v)
+                this.%v% := this.__convertToBool(this.__convertToKey(v), "Settings")
         }
     }
     ;// [Adjust]
     Adjust_ := []
-    __setAdjust(settingsFile := this.SettingsFile) {
-        this.__fillArr("Adjust", this.Adjust_, settingsFile)
+    __setAdjust(settingsFile := this.SettingsFile, setFromClass := false) {
+        this.__fillArr("Adjust", this.Adjust_, settingsFile, setFromClass)
         ;// create variables
         for v in this.Adjust_ {
-            defaultVal := this.__getDefault(v)
-            this.%v% := IniRead(settingsFile, "Adjust", this.__convertToKey(v), defaultVal)
+            if !this.HasOwnProp(v) {
+                defaultVal := this.__getDefault(v)
+                this.%v% := IniRead(settingsFile, "Adjust", this.__convertToKey(v), defaultVal)
+            }
         }
     }
     ;// [Track]
     Track_ := []
-    __setTrack(settingsFile := this.SettingsFile) {
-        this.__fillArr("Track", this.Track_, settingsFile)
+    __setTrack(settingsFile := this.SettingsFile, setFromClass := false) {
+        this.__fillArr("Track", this.Track_, settingsFile, setFromClass)
         ;// create variables
         for v in this.Track_ {
+            if this.HasOwnProp(v)
+                continue
             switch v {
                 case "first_check", "block_aware":
                     this.%v% := this.__convertToBool(this.__convertToKey(v), "Track")

@@ -8,6 +8,7 @@
 #Include *i Other\Notify\Notify.ahk
 #Include *i Functions\deleteDotUnderscore.ahk
 #Include *i Functions\syncDirectories.ahk
+#Include *i Functions\detect.ahk
 
 ;// if the user has not generated the symlink yet this script will return
 try {
@@ -66,7 +67,6 @@ try {
 }
 
 ;//backups
-FileCopy(ptf.rootDir "\Support Files\Streamdeck Files\options.ini", ptf.rootDir "\Backups\Work\options.ini", 1)
 ; FileCopy(ptf.lib "\My Scripts\Not Editor.ahk", ptf.rootDir "\Backups\Work\Not Editor.ahk", 1)
 ; FileCopy(ptf.lib "\Classes\move.ahk", ptf.rootDir "\Backups\Work\move.ahk", 1)
 ; FileCopy(ptf.lib "\QMK\Work\Prem.ahk", ptf.rootDir "\Backups\Work\QMK\Work\Prem.ahk", 1)

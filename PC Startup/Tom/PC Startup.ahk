@@ -7,6 +7,7 @@
 #Include *i Classes\notifyExt.ahk
 #Include *i Other\Notify\Notify.ahk
 #Include *i Functions\syncDirectories.ahk
+#Include *i Functions\detect.ahk
 
 ;// if the user has not generated the symlink yet this script will return
 try {
