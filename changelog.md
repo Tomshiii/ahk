@@ -42,7 +42,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ❌ Removed `generate()`, `firstCheck()`
 
 ### 📝 `Settings {`
-- ✏️ Added `Set_UIA_on_load`
+- ✏️ Added `Set_UIA_on_reload`
 - ❌ Removed `Always_Check_UIA`, `Set_UIA_Limit_Daily`, `MainScriptName`
 - 📋 Will now check the user's `.ini` file against a fresh template during the `Core Functionality.ahk` initialisation flow
     - 📋 `Core Functionality.ahk` will now ensure stale values are removed

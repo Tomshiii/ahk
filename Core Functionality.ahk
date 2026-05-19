@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/05/18
- * @version 1.0.16
+ * @date 2026/05/19
+ * @version 1.0.17
  ***********************************************************************/
 
 #SingleInstance Force
@@ -52,7 +52,7 @@ for v in allRegister {
 Loading.isLoading := false
 
 
-if UserSettings.Set_UIA_on_load = true && (isReload(getReload ?? false))
+if UserSettings.Set_UIA_on_reload = true && (isReload(getReload ?? false))
     SetTimer(doStartup, -3000)
 doStartup(*) {
     if !premUIA_Values.determineUIA_Exist() {

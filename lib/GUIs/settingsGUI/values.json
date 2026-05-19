@@ -71,20 +71,6 @@
       "false": "`discord.button(`'DiscReply.png`')` will not disable the @ ping when replying"
     }
   },
-  "alwaysCheckUIA": {
-    "title": "`getTimeline()` Always Check UIA",
-    "tooltip": {
-      "true": "`getTimeline()` will set new UIA values on first use",
-      "false": "`getTimeline()` will not set new UIA values"
-    }
-  },
-  "setUIA_LimitDaily": {
-    "title": "Limit Daily",
-    "tooltip": {
-      "true": "`getTimeline()` will set new UIA values on first use once per day",
-      "false": "`getTimeline()` will always set new UIA values on first use"
-    }
-  },
   "show_adobe_vers_startup": {
     "title": "Show Adobe Versions at Startup",
     "tooltip": {
@@ -170,10 +156,10 @@
 
   "________newSection": " UIA",
   "UIAonLoad": {
-    "title": " Set UIA Values on Load",
+    "title": " Set UIA Values on Reload",
     "tooltip": {
-      "true": "Premiere UIA values will be set briefly after loading",
-      "false": "Premiere UIA values wont be set after loading and will need to be set manually"
+      "true": "Premiere UIA values will be set briefly after reloading",
+      "false": "Premiere UIA values will not be set after reloading and will need to be set manually"
     }
   }
 }

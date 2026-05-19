@@ -333,8 +333,8 @@ settingsGUI()
     settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
 
     ;// set UIA on load
-    settingsGUI.AddCheckbox("vUIAonLoad Checked" UserSettings.Set_UIA_on_load " Y+5", setJSON.UIAonLoad.title).OnEvent("Click", toggle.Bind("Set_UIA_on_load", "", ""))
-    settingsGUI["UIAonLoad"].ToolTip := (UserSettings.Set_UIA_on_load = true) ? setJSON.UIAonLoad.tooltip.true : setJSON.UIAonLoad.tooltip.false
+    settingsGUI.AddCheckbox("vUIAonReload Checked" UserSettings.Set_UIA_on_reload " Y+5", setJSON.UIAonReload.title).OnEvent("Click", toggle.Bind("Set_UIA_on_reload", "", ""))
+    settingsGUI["UIAonReload"].ToolTip := (UserSettings.Set_UIA_on_reload = true) ? setJSON.UIAonReload.tooltip.true : setJSON.UIAonReload.tooltip.false
 
     /**
      * This function handles logic for checkboxes that need to pop up a msgbox to alert the user that they need to reload `checklist.ahk`
