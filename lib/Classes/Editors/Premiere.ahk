@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/15
- * @version 2.4.14
+ * @date 2026/05/20
+ * @version 2.4.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -76,12 +76,11 @@ class Prem {
             }
         }
         try this.defaultTheme     := this.UserSettings.premDefaultTheme
-        try this.useSwapSequences := this.UserSettings.use_swapSequences
-        try {
-            this.prevSeqDelay := this.UserSettings.premPrevSeqDelay * 1000
-        } catch {
+        catch {
             this.defaultTheme := this.theme
         }
+        try this.useSwapSequences := this.UserSettings.use_swapSequences
+        try this.prevSeqDelay := this.UserSettings.premPrevSeqDelay * 1000
         this.setUI()
         if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try {
@@ -254,73 +253,73 @@ class Prem {
         switch this.UI {
             case "Spectrum":
                 filecheck := (FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs")) ? ptf['PremProfile'] "Adobe Premiere Pro Prefs" : ((FileExist(ptf['PremProfile'] "Adobe Premiere Prefs")) ? ptf['PremProfile'] "Adobe Premiere Prefs" : false)
-                if filecheck != false {
-                    loadSettings := loadXML(FileRead(filecheck))
-                    if !loadSettings {
-                        if !Notify.Exist('notDetermined') {
-                            Notify.Show('Premiere theme could not be determined. Settings file was busy', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
-                            errorLog(Error("Premiere theme could not be determined. File was busy", -1))
-                        }
-                        this.__setTimelineCol("Spectrum", this.defaultTheme)
-                        return
-                    }
-
-                    props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
-                    switch props.text {
-                        case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
-                        case "34.999999403953552": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
-                        case "80.000001192092896": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
-                        case "0":
-                            sleep 50
-                            if !Notify.Exist('notDeterminedIntZero') {
-                                Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDeterminedIntZero')
-                                errorLog(Error("Premiere theme could not be determined. Settings File int: " props.text, -1))
-                                setWithRemote := (this.__checkPremRemoteDir('setPref') && WinExist(this.winTitle) != 0)
-
-                                title := "Fix settings file"
-                                SetTimer(change_msgButton.Bind(title, "darkest", "dark", "light"), 16)
-                                setTheme := MsgBox("Set your theme. Which theme are you using?", title, "0x2 0x1000")
-                                WinWaitClose(title)
-                                switch setTheme {
-                                    case "Abort": ;// darkest
-                                        props.text := "7.9999998211860657"
-                                        loadSettings.save(filecheck)
-                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
-                                        this.theme := "darkest"
-                                    case "Retry": ;// dark
-                                        MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
-                                        props.text := "7.9999998211860657"
-                                        loadSettings.save(filecheck)
-                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
-                                        this.theme := "darkest"
-                                        /* props.text := "34.999999403953552"
-                                        loadSettings.save(filecheck)
-                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
-                                        this.theme := "dark" */
-                                    case "Ignore": ;// light
-                                        MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
-                                        props.text := "7.9999998211860657"
-                                        loadSettings.save(filecheck)
-                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
-                                        this.theme := "darkest"
-                                        /* props.text := "80.000001192092896"
-                                        loadSettings.save(filecheck)
-                                        (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
-                                        this.theme := "light" */
-                                }
-                            }
-                            this.__setTimelineCol("Spectrum", this.defaultTheme)
-                        default:
-                            sleep 50
-                            if !Notify.Exist('notDetermined') {
-                                Notify.Show('Premiere theme could not be determined.', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
-                                errorLog(Error("Premiere theme could not be determined.", -1))
-                            }
-                            this.__setTimelineCol("Spectrum", this.defaultTheme)
-                    }
-                } else {
+                if !filecheck {
                     this.theme := this.defaultTheme
                     this.__setTimelineCol("Spectrum", this.theme) ;// defaults to this.defaultTheme
+                    return
+                }
+                loadSettings := loadXML(FileRead(filecheck))
+                if !loadSettings {
+                    if !Notify.Exist('notDetermined') {
+                        Notify.Show('Premiere theme could not be determined. Settings file was busy', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
+                        errorLog(Error("Premiere theme could not be determined. File was busy", -1))
+                    }
+                    this.__setTimelineCol("Spectrum", this.defaultTheme)
+                    return
+                }
+
+                props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
+                switch props.text {
+                    case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
+                    case "34.999999403953552": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
+                    case "80.000001192092896": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
+                    case "0":
+                        sleep 50
+                        if !Notify.Exist('notDeterminedIntZero') {
+                            Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDeterminedIntZero')
+                            errorLog(Error("Premiere theme could not be determined. Settings File int: " props.text, -1))
+                            setWithRemote := (this.__checkPremRemoteDir('setPref') && WinExist(this.winTitle) != 0)
+
+                            title := "Fix settings file"
+                            SetTimer(change_msgButton.Bind(title, "darkest", "dark", "light"), 16)
+                            setTheme := MsgBox("Set your theme. Which theme are you using?", title, "0x2 0x1000")
+                            WinWaitClose(title)
+                            switch setTheme {
+                                case "Abort": ;// darkest
+                                    props.text := "7.9999998211860657"
+                                    loadSettings.save(filecheck)
+                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    this.theme := "darkest"
+                                case "Retry": ;// dark
+                                    MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
+                                    props.text := "7.9999998211860657"
+                                    loadSettings.save(filecheck)
+                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    this.theme := "darkest"
+                                    /* props.text := "34.999999403953552"
+                                    loadSettings.save(filecheck)
+                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
+                                    this.theme := "dark" */
+                                case "Ignore": ;// light
+                                    MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
+                                    props.text := "7.9999998211860657"
+                                    loadSettings.save(filecheck)
+                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    this.theme := "darkest"
+                                    /* props.text := "80.000001192092896"
+                                    loadSettings.save(filecheck)
+                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
+                                    this.theme := "light" */
+                            }
+                        }
+                        this.__setTimelineCol("Spectrum", this.defaultTheme)
+                    default:
+                        sleep 50
+                        if !Notify.Exist('notDetermined') {
+                            Notify.Show('Premiere theme could not be determined.', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
+                            errorLog(Error("Premiere theme could not be determined.", -1))
+                        }
+                        this.__setTimelineCol("Spectrum", this.defaultTheme)
                 }
         }
 

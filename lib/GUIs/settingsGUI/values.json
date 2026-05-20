@@ -155,7 +155,7 @@
   },
 
   "________newSection": " UIA",
-  "UIAonLoad": {
+  "UIAonReload": {
     "title": " Set UIA Values on Reload",
     "tooltip": {
       "true": "Premiere UIA values will be set briefly after reloading",

@@ -7,7 +7,8 @@
 ; }
 
 /**
- * determines the path/version of the installed version of Premiere of After Effects
+ * Determines the path/version of the installed version of Premiere of After Effects.
+ * This function will generally return information about the most recently installed year version for the given program. ie, if you have Premiere 2026 installed, then install 2025, it will return information about 2025
  * @link "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\"
  * @param {Object} exeNames must provide `{baseName: , beta: }` which are both the normal name and the beta name as found in the registry. ie; `{base: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"}`
  * @param {Object} [UserSettings=unset] if you've already set a `UserPref()` object, you can pass it through here, otherwise it will be generated
