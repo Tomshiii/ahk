@@ -36,7 +36,6 @@ $^Space::
 	readSpell := JSON.parse(FileRead(spellbookExcalFile))
 	activationKeys := readSpell["commands"]["excalibur.open"]["shortcut"]
 	if activationKeys["key"] != GetKeyName(arr[-1]) && activationKeys["ctrl"] != true {
-
 		block.Off()
 		return
 	}
@@ -48,7 +47,6 @@ $^Space::
 	}
 	sleep 250
 	block.Off()
-	return
 }
 
 LCtrl & Tab::
@@ -93,7 +91,11 @@ Space:: ;// make space more useful by closing certain windows
 		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"):
 			SendInput("{Enter}")
 			return
-		case isIn("Save Project"): return
+		case isIn("Save Project"):
+			if !CaretGetPos(&x, &y)
+				return
+			SendInput("{Space}")
+			return
 		case isIn("Clip Fx Editor - DeNoise"):
 			SendInput("{Enter}")
 			if IsSet(A_PriorKey) && isDoubleClick(750, "key")
