@@ -43,6 +43,18 @@ class premUIA_Values {
 
     static UserSettings := ""
 
+    /**
+     * Determine the UIA path of the active element
+     * @param {Boolean} [returnObj=false] determines whether the function returns an object containing multiple useful elements or just the UIA path as a string
+     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {String|Object|-1} if UIA element is unable to be set, will return `-1`. Else, depending on bool state of `returnObj` will either return a string containing just the UIA path string, or an object containing;
+     * ```
+     * obj := premUIA_Values(true)
+     * obj.uiaEl     ; the uia object returned by `initialise()`
+     * obj.Path      ; the UIA path of the active element
+     * obj.focusedEl ; the UIA element object itself
+     * ```
+     */
     static __activeElementPath(returnObj := false, UIAobj?) {
         if !WinActive(prem.winTitle) && !WinActive(prem.class) {
             return -1
@@ -55,6 +67,12 @@ class premUIA_Values {
         return ((returnObj = false) ? focusedPath ?? "" : {uiaEl: uiaEl, Path: focusedPath ?? "", focusedEl: focusedEl})
     }
 
+    /**
+     * Determines if a given UIA element path is the current active UIA element
+     * @param {String} [elementPath] the UIA element path you wish to check
+     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {Trilean} returns `-1` if UIA object is unable to be set, else returns bool
+     */
     static __isUiaElementActive(elementPath, UIAobj?) {
         focusedPath := this.__activeElementPath(true, (IsSet(UIAobj) ? UIAobj : ""))
         if !isObjHasProp(focusedPath, 'Path', -1) || focusedPath.Path = -1
@@ -62,17 +80,35 @@ class premUIA_Values {
         return (IsSet(UIAobj) ? (InStr(focusedPath.Path, UIAobj.UIA_Path[elementPath]) = 1) : (InStr(focusedPath.Path, focusedPath.uiaEl.UIA_Path[elementPath]) = 1))
     }
 
-    static isToolSelected(element, UIAobj?) {
+    /**
+     * Determines whether a given premiere tool is currently selected (using a UIA element)
+     * @param {String} [tool] the name of the tool you wish to check. Tool names are listed below
+     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {Trilean} returns `-1` if UIA object is unable to be set, else returns bool
+     * ```
+     * "selectionTool", "Selection Tool",
+     * "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
+     * "rippleEdit", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
+     * "razorTool", "Razor Tool",
+     * "slipTool", ["Slip Tool", "Slide Tool"],
+     * "penTool", "Pen Tool",
+     * "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
+     * "handTool", ["Hand Tool", "Zoom Tool"],
+     * "textTool", ["Type Tool", "Vertical Type Tool"]
+     * ```
+     */
+    static isToolSelected(tool, UIAobj?) {
         if !WinActive(prem.winTitle) && !WinActive(prem.class) {
             return -1
         }
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
         if !uiaEl
             return -1
-        try returnVal := (uiaEl.UIA_Objs[element].value = "Selected" ? true : false)
+        try returnVal := (uiaEl.UIA_Objs[tool].value = "Selected" ? true : false)
         return (IsSet(returnVal) && (returnVal = true || returnVal = false) ? returnVal : -1)
     }
 
+    /** sets UIA objects */
     static setObjs() {
         Critical('On')
         notifyExt.deleteIfExist("premUIAGenTree")
@@ -216,6 +252,10 @@ class premUIA_Values {
         return true
     }
 
+    /**
+     * Determines if `determineUIA.ahk` is open
+     * @returns {Boolean}
+     */
     static determineUIA_Exist() {
         try {
             ComObjActive(CLSID_Objs["determineUIA"])
@@ -231,6 +271,10 @@ class premUIA_Values {
         }
     }
 
+    /**
+     * Determines if UIA objects have been set and returns them if they have. If not, `determineUIA.ahk` will be run and this function will return early.
+     * @returns {false|ComObject}
+     */
     static initialise() {
         Critical('On')
         scriptLoc := ptf.SupportFiles "\determineUIA.ahk"
