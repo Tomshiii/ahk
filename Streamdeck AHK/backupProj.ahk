@@ -38,6 +38,8 @@ if !DirExist(gdrive_backup) {
 additionalDir := []
 nonFootage := []
 videosFolder := WinGet.pathU(projectFolder "\..\videos")
+projNameFolder := WinGet.pathU(projectFolder "\..")
+SplitPath(projNameFolder,, &projName)
 loop files videosFolder "\*", "D" {
     if A_LoopFileName != "footage" && A_LoopFileName != "proxies" && A_LoopFileName != "_proxies"
         nonFootage.Push(A_LoopFileName)
@@ -91,6 +93,7 @@ if nonFootage.Length >= 1 {
 ;// folders to backup
 autoSaves := ["Adobe After Effects Auto-Save", "Adobe After Effects Auto-Save (Beta)", "Adobe Premiere Pro Auto-Save", "Adobe Premiere Pro Auto-Save (Beta)"]
 backFolders := ["Adobe Premiere Pro Audio Previews", "Adobe Premiere Pro Captured and Generated", "AC Footage", "Motion Graphics Template Media", "Premiere Composer Files", "templates", "fills"]
+premProjs := []
 
 rootDir := SubStr(folder := WinGet.pathU(projectFolder "\..\"), -1, 1) = "\" ? SubStr(folder, 1, StrLen(folder)-1) : folder
 proj := obj.SplitPath(rootDir)
@@ -125,6 +128,16 @@ __doBackup(backupFolder, additionalDir) {
     for v in backFolders {
         if DirExist(projectFolder "\" v)
             try cmd.run(,,, Format('Robocopy "{1}" "{2}" /MIR /R:1', projectFolder "\" v, backupFolder "\_Additional Assets\proj dirs\" v),, "hide")
+    }
+
+    ;// object mask folders
+    loop files projectFolder "\*.prproj" {
+        SplitPath(A_LoopFileName,,,, &nameNoExt)
+        premProjs.Push(nameNoExt)
+    }
+    for v in premProjs {
+        if DirExist(projectFolder "\" v " Masks")
+            try cmd.run(,,, Format('Robocopy "{1}" "{2}" /MIR /R:1', projectFolder "\" v " Masks", backupFolder "\_Additional Assets\proj dirs\" v " Masks"),, "hide")
     }
 
     loop files rootDir "\videos\*", 'F' {
