@@ -44,6 +44,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 ### 📝 `Settings {`
 - ✏️ Added `Set_UIA_on_reload`
 - ❌ Removed `Always_Check_UIA`, `Set_UIA_Limit_Daily`, `MainScriptName`
+- ✅ Fixed not formatting `beta`/`alpha`/`pre` versions correctly
 - 📋 Will now check the user's `.ini` file against a fresh template during the `Core Functionality.ahk` initialisation flow
     - 📋 `Core Functionality.ahk` will now ensure stale values are removed
 - 📋 `updateChecker()` will now download and install patches for future versions

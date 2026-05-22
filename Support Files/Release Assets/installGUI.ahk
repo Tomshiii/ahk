@@ -68,6 +68,9 @@ class installGUI extends Gui {
             tryRead := ""
         }
         opt := (FileExist(this.prevInstall) && (DirExist(tryRead))) ? "+Disabled" : ""
+        if !opt && this.isPatcher = true {
+            throw TargetError("Previous install not detected. Please try the full installer.")
+        }
         this.AddEdit("-Wrap ReadOnly r1 vInstallDir w300 " opt, (!opt) ? this.InstallDir : tryRead)
         this.AddButton("x+10 yp-2 vChangeDir " opt, "Change Dir").OnEvent("Click", (*) => this.__changeDir())
         this.AddButton("y+5 xp+21 w65 vInstallButton", "Install").OnEvent("Click", (*) => this.__Install())
@@ -93,6 +96,7 @@ class installGUI extends Gui {
         isDetected    := false
         settingsDir   := A_MyDocuments "\tomshi\"
         libRootDir    := A_AppData "\tomshi\"
+        prevVer       := false
         prevInstall   := this.libRootDir "\installDir"
         prevInstallLoc := ""
         isPatcher := false
@@ -268,7 +272,13 @@ class installGUI extends Gui {
                 DirCreate(A_AppData "\tomshi")
             if FileExist(A_Appdata "\tomshi\version") {
                 readVer := FileRead(A_Appdata "\tomshi\version")
-                compareVers := VerCompare(readVer, "yes.value")
+                switch {
+                    case InStr(readVer, "beta"):  readVer := StrReplace(readVer, "beta", "-b.")
+                    case InStr(readVer, "alpha"): readVer := StrReplace(readVer, "alpha", "-a.")
+                    case InStr(readVer, "pre"):   readVer := StrReplace(readVer, "pre", "-p.")
+                }
+                this.prevVer := readVer
+                compareVers := VerCompare(this.prevVer, "yes.value")
                 switch {
                     case (compareVers > 0): ;// installed version is newer
                         throw PropertyError("Installed version is already newer.")
@@ -299,7 +309,7 @@ class installGUI extends Gui {
             }
             sleep 300
             this.__setProgress(10)
-            if (installDirExist && (IsSet(readVer) && VerCompare(readVer, "v2.18.0") > 0)) || this.isPatcher = true{
+            if (installDirExist && (this.prevVer != false && VerCompare(this.prevVer, "v2.18.0") > 0)) || (this.isPatcher = true) {
                 if A_IsCompiled = 1
                     this.__installDump(true)
                 this.__patchInstall()

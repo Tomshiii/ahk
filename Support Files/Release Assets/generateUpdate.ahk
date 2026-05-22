@@ -9,6 +9,7 @@
 #Include Functions\getLocalVer.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\getLocalVer.ahk
+#Include Functions\formatPreReleaseTag.ahk
 #Include Other\7zip\SevenZip.ahk
 #Include Classes\winGet.ahk
 #Include Classes\CLSID_Objs.ahk
@@ -33,7 +34,7 @@ if WinExist("Ahk2Exe for AutoHotkey")
 ;// backup adobe stuff
 ;//! premiere
 
-UserSettings := CLSID_Objs.clone("UserSettings")
+UserSettings := CLSID_Objs.load("UserSettings")
 
 ;//* PremiereRemote
 RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\backupPremRemote.ahk"))
@@ -120,7 +121,9 @@ if !DirExist(A_WorkingDir "\release\" yes.Value)
     DirCreate(A_WorkingDir "\release\" yes.Value)
 if FileExist(A_AppData "\tomshi\version")
     FileDelete(A_AppData "\tomshi\version")
-FileAppend(yes.Value, A_AppData "\tomshi\version")
+FileAppend(formatPreReleaseTag(yes.value), A_AppData "\tomshi\version")
+UserSettings.version := formatPreReleaseTag(yes.value)
+UserSettings.__delAll()
 
 ;// check for pre release tags
 pre   := InStr(yes.value, "pre",, 1, 1), beta  := InStr(yes.value, "beta",, 1, 1), alpha := InStr(yes.value, "alpha",, 1, 1)

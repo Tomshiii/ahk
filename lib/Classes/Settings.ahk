@@ -1,14 +1,15 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/05/19
- * @version 1.4.8
+ * @date 2026/05/22
+ * @version 1.4.9
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\Mip.ahk
 #Include Functions\checkINI.ahk
+#Include Functions\formatPreReleaseTag.ahk
 #Include *i Classes\CLSID_Objs.ahk
 ; }
 
@@ -81,7 +82,7 @@ class UserPref {
         ;// [Track]
         "adobe_temp", 0, "UIA_Daily_Limit_Day", 0,
         "first_check", "false", "block_aware", "false",
-        "version", "v2.0", "skipVersion", "v2.0",
+        "version", "v2.18.0", "skipVersion", "v2.0",
         "monitor_alert", "0"
     )
     ;// define settings location
@@ -168,19 +169,6 @@ class UserPref {
             if setFromClass = true && this.HasOwnProp(StrReplace(v, A_Space, "_"))
                 continue
             arr.Push(StrReplace(v, A_Space, "_"))
-        }
-    }
-
-    /**
-     * Checks the current version value for an `alpha` or `beta` tag and ensures it's formatted correctly so `VerCompare` will work as expected
-     */
-    __checkPreReleaseTag(value) {
-        if ((alpha := InStr(value, "alpha")) || (beta := InStr(value, "beta"))) {
-            which := (alpha != 0) ? "alpha" : "beta"
-            value := (SubStr(value, %which%-1, 1) != "-") ? SubStr(value, 1, %which%-1) "-" SubStr(value, %which%)
-                                                          : value
-            value := SubStr(value, pos := InStr(value, which)+StrLen(which)-1, 1) != "." ? SubStr(value, 1, pos) "." SubStr(value, pos+1)
-                                                          : value
         }
     }
 
@@ -303,9 +291,7 @@ class UserPref {
                 case "version":
                     defaultVal := this.__getDefault(v)
                     value := IniRead(settingsFile, "Track", this.__convertToKey(v), defaultVal)
-                    origVal := value
-                    this.__checkPreReleaseTag(value)
-                    this.%v% := (value != origVal) ? value : origVal
+                    this.%v% := formatPreReleaseTag(value)
                 default:
                     defaultVal := this.__getDefault(v)
                     this.%v% := IniRead(settingsFile, "Track", this.__convertToKey(v), defaultVal)
