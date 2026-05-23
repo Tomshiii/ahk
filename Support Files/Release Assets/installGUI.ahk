@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/05/18
- * @version 1.1.18
+ * @date 2026/05/23
+ * @version 1.1.19
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -379,6 +379,10 @@ class installGUI extends Gui {
                 throw TargetError("Couldn't find installPremRemote.ahk")
             }
             this.__addLogEntry("installing PremiereRemote")
+            extensionsPath := A_AppData "\Adobe\CEP\extensions"
+            if !DirExist(extensionsPath)
+                DirCreate(extensionsPath)
+            FileMove(this.InstallDir "\premExtract.zip", extensionsPath "\premExtract.zip")
             if !this.runAsUser(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk") {
                 throw MethodError("Failed to install PremiereRemote")
             }

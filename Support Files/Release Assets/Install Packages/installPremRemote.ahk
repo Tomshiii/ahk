@@ -20,13 +20,15 @@ if !getNPM {
     return
 }
 
-downloadURl    := "https://github.com/sebinside/PremiereRemote/archive/refs/heads/main.zip"
+downloadURl    := "https://github.com/sebinside/PremiereRemote/archive/refs/tags/v2.2.0.zip"
 extensionsPath := A_AppData "\Adobe\CEP\extensions"
 remotePath     := extensionsPath "\PremiereRemote"
 
 if DirExist(remotePath) {
     /* if MsgBox("PremiereRemote appears to already be installed!`nWould you like to update .tsx files?`n`n(keep in mind this may override any custom functions you've created, but not updating may result in errors with my scripts.)`nIt is recommended you make a backup of the following directory:`n" A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src\",, 'YesNo Icon?') = "No"
         return */
+    if FileExist(extensionsPath "\premExtract.zip")
+        FileDelete(extensionsPath "\premExtract.zip")
     RunWait(ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk false")
     RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk 0 1")
     return
@@ -37,7 +39,8 @@ RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebug
 
 if !DirExist(remotePath)
     DirCreate(remotePath)
-Download(downloadURl, extensionsPath "\premExtract.zip")
+if !FileExist(extensionsPath "\premExtract.zip")
+    Download(downloadURl, extensionsPath "\premExtract.zip")
 ;// unzip
 unzip(extensionsPath "\premExtract.zip", extensionsPath "\.premRemoteExtract\")
 DirMove(extensionsPath "\.premRemoteExtract\PremiereRemote-main", extensionsPath "\.premRemoteExtract\PremiereRemote", 1)

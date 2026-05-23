@@ -1,5 +1,6 @@
 ; { \\ #Includes
 #Include shared functions\cleanUpInstall.ahk
+#Include Install Packages\downloadNode.ahk
 
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\Settings.ahk
@@ -249,23 +250,8 @@ FileCopy(A_WorkingDir "\release\" yes.Value "\Support Files\Release Assets\Insta
 
 DirCopy(A_WorkingDir "\release\" yes.Value, A_WorkingDir "\release\" yes.Value "-patch")
 
-downloadNode() {
-    ; Get latest LTS version string
-    version := ""
-    whr := ComObject("WinHttp.WinHttpRequest.5.1")
-    whr.Open("GET", "https://nodejs.org/dist/index.json", false)
-    whr.Send()
-    ; Parse out first LTS version - find "lts" that isn't false
-    json := whr.ResponseText
-    ; crude but effective extraction
-    RegExMatch(json, '"version":"(v[\d.]+)"[^}]+"lts":"', &m)
-    version := m[1]
-
-    url := "https://nodejs.org/dist/" . version . "/node-" . version . "-x64.msi"
-    dest := A_WorkingDir "\release\" yes.Value "\nodejs.msi"
-    Download(url, dest)
-}
-downloadNode()
+downloadNode(A_WorkingDir "\release\" yes.Value "\nodejs.msi")
+Download("https://github.com/sebinside/PremiereRemote/archive/refs/tags/v2.2.0.zip", A_WorkingDir "\release\" yes.Value "\premExtract.zip")
 
 ;// zipping the temp repo
 zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
