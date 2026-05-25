@@ -3725,7 +3725,7 @@ class Prem {
     }
 
     /**
-     * This hotkey is (for the most part) designed to be activated from a streamdeck but should still work separately. It handles going through the `render and replace` process for the selected clip(s). If the selected clip is a video it will also automate the `Render and Replace` window, including setting the desired output path.
+     * This function is (for the most part) designed to be activated from a streamdeck but should still work separately. It handles going through the `render and replace` process for the selected clip(s). If the selected clip is a video it will also automate the `Render and Replace` window, including setting the desired output path.
      * @param {String/Boolean} [changeLabel] whether you wish for the selected clip to have its label colour changed. Will only change clips with a `mediatype` of `Video`
      * @param {String} [labelHotkey] the hotkey of the label colour you wish to change the selected clip to
      * @param {String} [dropPreset] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.

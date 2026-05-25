@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/05/13
- * @version 3.0.18
+ * @date 2026/05/25
+ * @version 3.0.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,7 +29,7 @@ class premUIA_Values {
             catch {
                 this.UserSettings := UserPref(true)
             }
-            try this.KSA := CLSID_Objs.clone("this.KSA")
+            try this.KSA := CLSID_Objs.clone("KSA")
         }
     }
 
