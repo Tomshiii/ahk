@@ -76,3 +76,4 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate\`, `Streamdeck_opt.ahk`, `enable unsigned extensions.ahk`, `render and replace.ahk`
 - ✅ Fixed numerous issues affecting installation
 - ✅ Fixed `Multi-Instance Close.ahk`, `adobe fullscreen check.ahk` & `gameCheck.ahk` stalling `reloadAll.ahk`/`closeAll.ahk`
+- 📋 `autosave.ahk` will now only check if the user is idle while attempting to save `Premiere` if it is the active window

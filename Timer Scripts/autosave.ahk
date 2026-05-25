@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/05/05
- * @version 2.2.22
+ * @date 2026/05/25
+ * @version 2.2.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -508,14 +508,16 @@ class adobeAutoSave extends count {
             return
         }
 
-        ;// checking idle status
-        checkIdle := this.__checkIdle()
-        if (this.idleAttempt = false || checkIdle = false || this.resetingSave = true)
-            return
+        if (this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe") {
+            ;// checking idle status
+            checkIdle := this.__checkIdle()
+            if (this.idleAttempt = false || checkIdle = false || this.resetingSave = true)
+                return
 
-        ;// checking if prem is the originally active window
-        if (this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe") && this.restartPlayback = true
-            this.__checkPremPlayback()
+            if this.restartPlayback = true
+                this.__checkPremPlayback()
+        }
+
         notifyExt.showIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
         this.saveAttemptNotify := true
         ; tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
