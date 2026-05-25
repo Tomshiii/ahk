@@ -21,7 +21,7 @@ isIn(title, ahk_exe?) {
 }
 
 ;// this hotkey is an attempt to stop inputs being sent through to premiere while waiting for excalibur to pop up
-$^Space::
+/* $^Space::
 {
 	spellbookExcalFile := A_AppData "\SpellBook\knights_of_the_editing_table.excalibur.json"
 	checkRemote := prem.__checkPremRemoteDir('isSelected')
@@ -47,7 +47,7 @@ $^Space::
 	}
 	sleep 250
 	block.Off()
-}
+} */
 
 LCtrl & Tab::
 Shift & Tab::
