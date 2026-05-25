@@ -146,6 +146,12 @@ export const host = {
     Utils.organiseProject();
   },
 
+  clipType: function() {
+    var selection = app.project.activeSequence.getSelection();
+    const mediaType = selection[0].mediaType
+    return mediaType
+  },
+
   /**
    * @swagger
    * /deselectAll:

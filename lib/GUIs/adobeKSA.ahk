@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a GUI designed to help the user easily replace their KSA.ini file
  * @author tomshi
- * @date 2025/12/27
- * @version 1.2.1
+ * @date 2026/05/25
+ * @version 1.2.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -31,7 +31,7 @@ class adobeKSA extends tomshiBasic {
     aeVerNumTrim := InStr(this.aeVerNum, ".",,, 2) ? SubStr(this.aeVerNum, 1, InStr(this.aeVerNum, ".",,, 2)-1) : this.aeVerNum
     defaultAEFolder := A_AppData "\Adobe\After Effects\" this.aeVerNumTrim "\aeks"
 
-    KSADir => ptf.rootDir "\Support Files\KSA"
+    KSADir => A_MyDocuments "\tomshi"
     KSA => this.KSADir "\Keyboard Shortcuts.ini"
     KSARead := ""
 

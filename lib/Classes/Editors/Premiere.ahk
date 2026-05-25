@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/20
- * @version 2.4.15
+ * @date 2026/05/25
+ * @version 2.4.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3612,6 +3612,162 @@ class Prem {
                 return
         }
         this.save()
+    }
+
+    /**
+     * Sets the `Source`, `Format` & `Preset` combo boxes in the `Render and Replace` window
+     * @param {String} [dropPreset] the preset you wish to select from the `Preset` dropdown list. Parameter must be one of the following (and is case sensitive);
+     * ```
+;// QuickTime
+"GoPro CineForm RGB 12-bit with alpha at Maximum Bit Depth"
+"GoPro CineForm RGB 12-bit with alpha"
+"GoPro CineForm YUV 10-bit"
+"Match Source - Apple ProRes 422 HQ"
+"Match Source - Apple ProRes 422 LT"
+"Match Source - Apple ProRes 422"
+"Match Source - Apple ProRes 4444"
+;// DNxHR/DNxHD
+"Match Source - DNxHD"
+;// MXF OP1a
+"Match Source - AVC-Intra"
+"Match Source - IMX"
+"Match Source - XAVC"
+"Match Source - XDCAM EX"
+"Match Source - XDCAM HD"
+     * ```
+     * @param {String} [dropSource="Sequence"] the selection you wish to use in the `Source` dropdown list. Defaults to `Sequence`. Parameter must be one of the following (and is case sensitive);
+     * ```
+"Sequence"
+"Individual Clips"
+"Preset"
+     * ```
+     * @param {String} [dropFormat="QuickTime"] the selection you wish to use in the `Format` dropdown list. Defaults to `QuickTime`. Parameter must be one of the following (and is case sensitive);
+     * ```
+"DNxHR/DNxHD MXF OP1a"
+"MXF OP1a"
+"QuickTime"
+     * ```
+     */
+    static setRnderRplcPreset(dropPreset, dropSource := "Sequence", dropFormat := "QuickTime") {
+        sources := Map("Sequence", true, "Individual Clips", true, "Preset", true)
+        formats := Map("DNxHR/DNxHD MXF OP1a", true, "MXF OP1a", true, "QuickTime", true)
+        presets := Map(
+            ;// QuickTime
+            "GoPro CineForm RGB 12-bit with alpha at Maximum Bit Depth", true,
+            "GoPro CineForm RGB 12-bit with alpha", true,
+            "GoPro CineForm YUV 10-bit", true,
+            "Match Source - Apple ProRes 422 HQ", true,
+            "Match Source - Apple ProRes 422 LT", true,
+            "Match Source - Apple ProRes 422", true,
+            "Match Source - Apple ProRes 4444", true,
+            ;// DNxHR/DNxHD
+            "Match Source - DNxHD", true,
+            ;// MXF OP1a
+            "Match Source - AVC-Intra", true,
+            "Match Source - IMX", true,
+            "Match Source - XAVC", true,
+            "Match Source - XDCAM EX", true,
+            "Match Source - XDCAM HD", true
+        )
+
+        if !presets.Has(dropPreset)
+            throw PropertyError("Incorrect Parameter Value", -1, dropPreset)
+        if !formats.Has(dropFormat)
+            throw PropertyError("Incorrect Parameter Value", -1, dropFormat)
+        if !sources.Has(dropSource)
+            throw PropertyError("Incorrect Parameter Value", -1, dropSource)
+
+        AdobeEl := UIA.ElementFromHandle("Render and Replace ahk_exe Adobe Premiere Pro.exe",, false)
+        _setComboBox(index, item) {
+            box := AdobeEl.FindElement({Type:"ComboBox", LocalizedType:"combo box"},, index)
+            if box.Value != item {
+                item := box.FindElement({Type:"ListItem", LocalizedType:"list item", Name: item})
+                item.select()
+            }
+            sleep 25
+        }
+
+        _setComboBox(1, dropSource) ;// source
+        _setComboBox(2, dropFormat) ;// format
+        _setComboBox(3, dropPreset) ;// preset
+    }
+
+    /**
+     * Sets the `Location` combo box to the desired path in the `Render and Replace` window
+     * @param {String} path the desired path you wish to use as the output location. (can also be set to `Next to Original Media`)
+     * @returns {Boolean}
+     */
+    static setRnderRplcPath(path) {
+        if path = "timeline renders" {
+            projPath := WinGet.ProjPath()
+            path := WinGet.pathU(projPath.Dir "\..\timeline renders")
+        }
+        coord.s()
+        SetDefaultMouseSpeed(0)
+        origPos := obj.MousePos()
+        AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
+        comb := AdobeEl.FindElement({Type:"ComboBox", LocalizedType:"combo box"},, 4)
+        if comb.name = path
+            return true
+        comb.Click()
+        if !WinWait("OS_PopupWindow " this.exeTitle,, 3)
+            return false
+        flyout := UIA.ElementFromHandle("OS_PopupWindow " this.exeTitle,, false)
+        item := flyout.FindElement({Type:"Text", LocalizedType:"text", Name:"Choose Location..."})
+        Send( "{Click " item.Location.x A_Space item.location.y "}")
+        MouseMove(origPos.x, origPos.y, 0)
+        if !WinWait("Select Folder " this.exeTitle,, 2)
+            return false
+        hwnd := WinExist("Select Folder " this.exeTitle)
+        explorer.navigateUsingAddressbar(path, hwnd)
+        SendInput("{Enter}")
+        return true
+    }
+
+    /**
+     * This hotkey is (for the most part) designed to be activated from a streamdeck but should still work separately. It handles going through the `render and replace` process for the selected clip(s). If the selected clip is a video it will also automate the `Render and Replace` window, including setting the desired output path.
+     * @param {String/Boolean} [changeLabel] whether you wish for the selected clip to have its label colour changed. Will only change clips with a `mediatype` of `Video`
+     * @param {String} [labelHotkey] the hotkey of the label colour you wish to change the selected clip to
+     * @param {String} [dropPreset] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
+     * @param {String} [dropSource] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
+     * @param {String} [dropFormat] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
+     * @param {String} [path] the parameter that will be passed to `prem.setRnderRplcPath()` and is the desired path you wish to use as the output location. (can also be set to `Next to Original Media`)
+     */
+    static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) {
+        LabelColour := labelHotkey
+        if !WinActive(this.winTitle)
+            return
+        clipType := this.__remoteFunc('clipType', true)
+        title := WinGet.PremName()
+        if title.saveCheck != false
+            attempt := this.saveAndFocusTimeline()
+        sleep 100
+        if checkBool(changeLabel) && clipType = "Video"
+            SendEvent(LabelColour)
+        sleep 50
+        SendEvent(KSA.premRndrReplce)
+        sleep 100
+        if !WinWait("Render and Replace " this.exeTitle,, 2) {
+            if (attempt ?? false) = "active" {
+                SendInput(KSA.premRndrReplce)
+                if !WinWait("Render and Replace " this.exeTitle,, 2) {
+                    tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")
+                    return
+                }
+            }
+        }
+        if clipType != "Video"
+            return
+        this.setRnderRplcPreset(dropPreset, dropSource, dropFormat)
+        if !this.setRnderRplcPath(path)
+            return
+        sleep 50
+        if !WinWaitActive("Render and Replace " this.exeTitle,, 2) {
+            try WinActivate("Render and Replace " this.exeTitle)
+            if !WinWaitActive("Render and Replace " this.exeTitle,, 2)
+                return
+        }
+        SendInput("{Enter}")
     }
 
     __Delete() {
