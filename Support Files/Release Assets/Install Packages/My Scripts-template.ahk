@@ -38,7 +38,6 @@ start.checkVersJSON()
 start.checkShortcuts()
 start.__Delete()
 start := ""
-errorLog({state:"empty"})
 
 #HotIf
 ; ...

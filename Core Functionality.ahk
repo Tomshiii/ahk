@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/05/19
- * @version 1.0.17
+ * @date 2026/05/27
+ * @version 1.0.18
  ***********************************************************************/
 
 #SingleInstance Force
@@ -50,6 +50,7 @@ for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }
 Loading.isLoading := false
+errorLog({state:"empty"})
 
 
 if UserSettings.Set_UIA_on_reload = true && (isReload(getReload ?? false))
