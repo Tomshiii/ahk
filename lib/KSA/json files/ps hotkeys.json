@@ -1,0 +1,23 @@
+{
+    "handTool": {
+        "hotkey": "h"
+    },
+    "penTool": {
+        "hotkey": "g"
+    },
+    "selectionTool": {
+        "hotkey": "v"
+    },
+    "zoomTool": {
+        "hotkey": "z"
+    },
+    "freeTransform": {
+        "hotkey": "^t"
+    },
+    "imageSize": {
+        "hotkey": "^!i"
+    },
+    "saveasCopy": {
+        "hotkey": "^!s"
+    }
+}

@@ -1,0 +1,63 @@
+{
+    "manInputEnd": {
+        "hotkey" :"NumpadEnter"
+    },
+    "speedHotkey": {
+        "hotkey" :"^d"
+    },
+
+
+    "______newSection": " discord",
+    "discHighlightChat": {
+        "hotkey": "{Blind}{sc0E9}"
+    },
+
+    "________newSection": " vscode",
+    "functionHotkey": {
+        "hotkey": "!e"
+    },
+    "testHotkey": {
+        "hotkey": "!t"
+    },
+    "focusWork": {
+        "hotkey": "^0"
+    },
+    "collapseFold": {
+        "hotkey": "^{F8}",
+        "withinVSCode": "workbench.files.action.collapseExplorerFolders"
+    },
+    "hideSideBar": {
+        "hotkey": "^b"
+    },
+
+    "focusExplorerWin": {
+        "hotkey": "^+e",
+        "withinVSCode": "you can find out what this is by hovering over the explorer tab"
+    },
+    "focusSourceWin": {
+        "hotkey": "^+g",
+        "withinVSCode": "you can find out what this is by hovering over the source control tab"
+    },
+    "focusCode": {
+        "hotkey": "^+`",
+        "withinVSCode": "you must set the keyboard shortcut 'Focus Active Editor Group' to what you list here"
+    },
+    "hideActivityBar": {
+        "hotkey": "^+{F9}",
+        "withinVSCode": "must set workbench.action.toggleActivityBarVisibility"
+    },
+
+    "_______newSection": " windows",
+    "minimiseHotkey": {
+        "hotkey": "RButton"
+    },
+    "maximiseHotkey": {
+        "hotkey": "F14"
+    },
+    "DragKeywait": {
+        "hotkey": "Xbutton2"
+    },
+    "longSkip": {
+        "hotkey": "F14"
+    }
+}

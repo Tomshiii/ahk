@@ -1,0 +1,72 @@
+{
+    "audioAE": {
+        "context": "CSwitchboard",
+        "command":  "ShowHideAudio",
+        "withinAE": "(Application > Window >) Show/Hide Audio Panel"
+    },
+    "effectsAE": {
+        "context": "CSwitchboard",
+        "command":  "ShowHideFxPal",
+        "withinAE": "(Application > Window >) Show/Hide Effects & Presets Panel"
+    },
+    "switchCompTimeline": {
+        "context": "CEggApp",
+        "command":  "OpenComp",
+        "withinAE": "(Application > ) Switch Between Composition/Timeline Panel"
+    },
+    "handAE": {
+        "context": "CEggAppTool",
+        "command":  "ToolHand",
+        "withinAE": "(Application >) Hand"
+    },
+    "selectionAE": {
+        "context": "CEggAppTool",
+        "command":  "ToolArrow",
+        "withinAE": "(Application >) Selection"
+    },
+    "nextKeyframe": {
+        "context": "CCompCompCmd",
+        "command":  "NextKeyframe",
+        "withinAE": "(Panels > Timeline Panels >) Go to Next Keyframe"
+    },
+    "previousKeyframe": {
+        "context": "CCompCompCmd",
+        "command":  "PrevKeyframe",
+        "withinAE": "(Panels > Timeline Panels >) Go to Previous Keyframe"
+    },
+    "scaleProp": {
+        "context": "CCompCompCmd",
+        "command":  "CompTwirlScale",
+        "withinAE": "(Panels > Timeline Panel >) Show/Hide Scale"
+    },
+    "positionProp": {
+        "context": "CCompCompCmd",
+        "command":  "CompTwirlPosition",
+        "withinAE": "(Panels > Timeline Panel >) Show/Hide Position"
+    },
+    "anchorpointProp": {
+        "context": "CCompCompCmd",
+        "command":  "CompTwirlAnchorPoint",
+        "withinAE": "(Panels > Timeline Panel >) Show/Hide Anchor Point or Position"
+    },
+    "opacityProp": {
+        "context": "CCompCompCmd",
+        "command":  "CompTwirlOpacity",
+        "withinAE": "(Panels > Timeline Panel >) Show/Hide Opacity"
+    },
+    "rotationProp": {
+        "context": "CCompCompCmd",
+        "command":  "CompTwirlRotation",
+        "withinAE": "(Panels > Timeline Panel >) Show/Hide Rotation and Orientation Properties"
+    },
+    "compSettings": {
+        "context": "CSwitchboard",
+        "command":  "CompSettings",
+        "withinAE": "(Application > Composition >) Composition Settings"
+    },
+    "adjustmentAE": {
+        "context": "CSwitchboard",
+        "command":  "NewEffectsLayer",
+        "withinAE": "(Application > Layer > New) New Adjustment Layer"
+    }
+}

@@ -1,0 +1,506 @@
+{
+    "scaleFrameSize": {
+        "hotkey": "^+1",
+        "command": "cmd.clip.scaletoframesize",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Aplication > Clip > Video Options) Scale to frame size"
+    },
+    "fitToFrame": {
+        "hotkey": "^+1",
+        "command": "cmd.clip.fittoframe",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Aplication > Clip > Video Options) Fit to frame"
+    },
+    "sourceMonitor": {
+        "hotkey": "^+2",
+        "command": "uif.window.Source Monitors",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Aplication > Window >) Source Monitor"
+    },
+    "programMonitor": {
+        "hotkey": "^+3",
+        "command": "uif.window.Program Monitors",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Aplication > Window >) Program Monitor"
+    },
+    "effectControls": {
+        "hotkey": "^+4",
+        "command": "uif.window.Effect Controls",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Window >) Effect Controls"
+    },
+    "mediaBrowser": {
+        "hotkey": "^+5",
+        "command": "uif.window.Media Browser",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Window >) Media Browser"
+    },
+    "projectsWindow": {
+        "hotkey": "^+6",
+        "command": "uif.window.Projects",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Window >) Projects"
+    },
+    "effectsWindow": {
+        "hotkey": "^+7",
+        "command": "uif.window.Effects",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Window >) Effects"
+    },
+    "toolsWindow": {
+        "hotkey": "^+8",
+        "command": "uif.window.Tools",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Window >) Tools"
+    },
+    "timelineWindow": {
+        "hotkey": "^+9",
+        "command": "uif.window.Timelines",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Window >) Timelines"
+    },
+    "handPrem": {
+        "hotkey": "h",
+        "command": "cmd.tools.10hand",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Hand Tool"
+    },
+    "selectionPrem": {
+        "hotkey": "v",
+        "command": "cmd.tools.01pointer",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Selection Tool"
+    },
+    "cutPrem": {
+        "hotkey": "c",
+        "command": "cmd.tools.06razor",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Razor Tool"
+    },
+    "findBox": {
+        "hotkey": "^b",
+        "command": "cmd.select.find.box",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Select Find Box"
+    },
+    "gainAdjust": {
+        "hotkey": "g",
+        "command": "cmd.clip.audiooptions.gain",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Clip > Audio Options >) Audio Gain"
+    },
+    "zoomOut": {
+        "hotkey": "+z",
+        "command": "cmd.zoom.out",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Sequence >) Zoom Out"
+    },
+    "newText": {
+        "hotkey": "^t",
+        "command": "cmd.graphics.add.text",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Grahpics > New Layer >) Text"
+    },
+    "nextEditPoint": {
+        "hotkey": "{Down}",
+        "command": "cmd.tlnav.next.edit.any.track",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Go to Next Edit Point on Any Track"
+    },
+    "previousEditPoint": {
+        "hotkey": "{Up}",
+        "command": "cmd.tlnav.prev.edit.any.track",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Go to Previous Edit Point on Any Track"
+    },
+    "premnextKeyframe": {
+        "hotkey": "^+{Up}",
+        "command": "cmd.clip.keyframe.selectnext",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Select next keyframe"
+    },
+    "prempreviousKeyframe": {
+        "hotkey": "^+{Down}",
+        "command": "cmd.clip.keyframe.selectprevious",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Select previous keyframe"
+    },
+    "selectedClipStart": {
+        "hotkey": "+{Home}",
+        "command": "cmd.transport.selectedclip.start",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Go to Selected Clip Start"
+    },
+    "selectedClipEnd": {
+        "hotkey": "+{End}",
+        "command": "cmd.transport.selectedclip.end",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Go to Selected Clip End"
+    },
+    "projItemEnd": {
+        "hotkey": "{End}",
+        "command": "cmd.project.move.end",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Panels > Project Panel >) Move Selection End"
+    },
+    "nudgeUp": {
+        "hotkey": "!{Up}",
+        "command": "cmd.timeline.nudge.up",
+        "context": "/PremiereData/shortcuts/context.timeline",
+        "withinPrem": "(Panels > Timeline Panel >) Nudge Clip Selection Up"
+    },
+    "nudgeDown": {
+        "hotkey": "!{Down}",
+        "command": "cmd.timeline.nudge.down",
+        "context": "/PremiereData/shortcuts/context.timeline",
+        "withinPrem": "(Panels > Timeline Panel >) Nudge Clip Selection Down"
+    },
+    "selectAtPlayhead": {
+        "hotkey": "d",
+        "command": "cmd.tlnav.select.clip.at.playhead",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Select Clip at Playhead"
+    },
+    "deselectAll": {
+        "hotkey": "^+a",
+        "command": "cmd.edit.deselectall",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Edit >) Deselect All"
+    },
+    "speedMenu": {
+        "hotkey": "^d",
+        "command": "cmd.clip.speed",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Clip >) Speed/Duration"
+    },
+    "playheadtoCursor": {
+        "hotkey": "`\\",
+        "command": "cmd.timeline.move.cti.to.cursor",
+        "context": "/PremiereData/shortcuts/context.timeline",
+        "withinPrem": "(Panels > Timeline Panel >) Move Playhead to Cursor"
+    },
+    "resetWorkspace": {
+        "hotkey": "!+0",
+        "command": "cmd.window.workspace.revert",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Window >) Reset to Saved Layout"
+    },
+    "speedUpPlayback": {
+        "hotkey": "l",
+        "command": "cmd.transport.shuttle.right",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Shuttle Right"
+    },
+    "speedUpIncrement": {
+        "hotkey": "+l",
+        "command": "cmd.transport.shuttle.slow.right",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Shuttle Slow Right"
+    },
+    "slowDownPlayback": {
+        "hotkey": "j",
+        "command": "cmd.transport.shuttle.left",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Shuttle Left"
+    },
+    "playStop": {
+        "hotkey": "{Space}",
+        "command": "cmd.transport.toggleplay",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Play-Stop Toggle"
+    },
+    "premIngest": {
+        "hotkey": "^i",
+        "command": "cmd.project.settings.ingestsettings",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > File > Project Settings >) Ingest Settings"
+    },
+    "shuttleStop": {
+        "hotkey": "k",
+        "command": "cmd.transport.shuttle.stop",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Shuttle Stop"
+    },
+    "adjustmentPrem": {
+        "hotkey": "^+-",
+        "command": "cmd.file.new.adjustmentlayer",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > File > New >) Adjustment Layer"
+    },
+    "premSafeMargins": {
+        "hotkey": "^{F8}",
+        "command": "cmd.monitor.togglesafearea",
+        "context": "/PremiereData/shortcuts/context.program.monitor",
+        "withinPrem": "(Panels > Program Monitor Panel >) Safe Margins"
+    },
+    "premLink": {
+        "hotkey": "^l",
+        "command": "cmd.clip.linkaudioandvideo",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Clip >) Link"
+    },
+    "premRenderInOut": {
+        "hotkey": "^+{F5}",
+        "command": "cmd.sequence.previewyellow",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Sequence >) Render Entire Work Area"
+    },
+    "premDelPrevInOut": {
+        "hotkey": "^+{F7}",
+        "command": "cmd.sequence.deleteworkareavideopreviews",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Sequence >) Delete Work Area Render Files"
+    },
+    "premDelPrevAll": {
+        "hotkey": "^+{F6}",
+        "command": "cmd.sequence.deletevideopreviews",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Sequence >) Delete Render Files"
+    },
+    "premRndrReplce": {
+        "hotkey": "^+{F8}",
+        "command": "cmd.clip.renderandreplace",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Clip >) Render and Replace"
+    },
+    "rplceAEComp": {
+        "hotkey": "^+{F9}",
+        "command": "cmd.clip.aeify",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(File > Adobe Dynamic Link >) Replace with After Effects Composition"
+    },
+    "premFrameHold": {
+        "hotkey": "^`",
+        "command": "cmd.clip.videooptions.addframehold",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Clip > Video Options) Add Frame Hold"
+    },
+    "premMakeSequence": {
+        "hotkey": "+u",
+        "command": "cmd.sequence.makesubsequence",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Sequence) Make Sequence"
+    },
+    "premRipplePrev": {
+        "hotkey": "q",
+        "command": "cmd.sequence.oneframeoffrippletrimpreviousedittoplayhead",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Ripple Trim Previous Edit to Playhead"
+    },
+    "premRippleNext": {
+        "hotkey": "w",
+        "command": "cmd.sequence.rippletrimnextedittoplayhead",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Ripple Trim Next Edit to Playhead"
+    },
+    "premRippleDelete": {
+        "hotkey": "+c",
+        "command": "cmd.edit.rippledelete",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Edit > ) Ripple Delete"
+    },
+    "premExportFrame": {
+        "hotkey": "^+e",
+        "command": "cmd.export.frame",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Export Frame"
+    },
+    "zoomMonitorIn": {
+        "hotkey": "+1",
+        "command": "cmd.zoom.player.in",
+        "context": "/PremiereData/shortcuts/context.program.monitor",
+        "withinPrem": "(Panels > Program Monitor Panel ) Zoom Monitor In"
+    },
+    "zoomMonitorOut": {
+        "hotkey": "+2",
+        "command": "cmd.zoom.player.out",
+        "context": "/PremiereData/shortcuts/context.program.monitor",
+        "withinPrem": "(Panels > Program Monitor Panel ) Zoom Monitor Out"
+    },
+    "zoomMonitorFit": {
+        "hotkey": "+3",
+        "command": "cmd.monitor.output.zoom.fit",
+        "context": "/PremiereData/shortcuts/context.program.monitor",
+        "withinPrem": "(Panels > Program Monitor Panel ) Zoom Monitor to Fit"
+    },
+    "selectFollowPlayhead": {
+        "hotkey": "^+{F10}",
+        "command": "cmd.sequence.selectionfollowsplayhead",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Sequence) Selection Follows Playhead"
+    },
+    "audioChannels": {
+        "hotkey": "+g",
+        "command": "cmd.clip.audiooptions.sourcechannelmappings",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Clip > Modify) Audio Channels"
+    },
+    "audioTimeUnits": {
+        "hotkey": "^+{F3}",
+        "command": "cmd.timeline.sequence.audiounits",
+        "context": "/PremiereData/shortcuts/context.timeline",
+        "withinPrem": "(Panels > Timeline Panel > Timeline Panel Menu ) Show Audio Time Units"
+    },
+    "clipColor": {
+        "hotkey": "^{F7}",
+        "command": "cmd.file.colorproperties",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Clip > Modify ) Color..."
+    },
+    "flattenMulti": {
+        "hotkey": "^!f",
+        "command": "cmd.clip.multicam.flatten",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Clip > Multi-Camera ) Flatten"
+    },
+    "enableDisable": {
+        "hotkey": "+e",
+        "command": "cmd.clip.enable",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Clip > ) Enable"
+    },
+    "modifyStartTime": {
+        "hotkey": "{F6}",
+        "command": "cmd.timeline.sequence.zeropoint",
+        "context": "/PremiereData/shortcuts/context.timeline",
+        "withinPrem": "(Panels > Timeline Panel > Timeline Panel Menu) Start Time..."
+    },
+    "revealExplorer": {
+        "hotkey": "^+u",
+        "command": "cmd.file.revealsystem",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Reveal In Explorer"
+    },
+    "toggleCropDirectManip": {
+        "hotkey": "+{F5}",
+        "command": "cmd.monitor.toggle.crop.dm",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Toggle Crop Direct Manipulation"
+    },
+    "toggleTransformDirectManip": {
+        "hotkey": "+{F6}",
+        "command": "cmd.timeline.show.direct.clip.manipulation",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Toggle Transform Direct Manipulation"
+    },
+    "stepBackOneFrame": {
+        "hotkey": "{Left}",
+        "command": "cmd.transport.step.back",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Step Back 1 Frame"
+    },
+    "stepForwardOneFrame": {
+        "hotkey": "{Right}",
+        "command": "cmd.transport.step.forward",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Step Forward 1 Frame"
+    },
+    "deleteEmptyTracksAll": {
+        "hotkey": "{F10}",
+        "command": "cmd.sequence.deletetracks.empty",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Delete Empty Tracks"
+    },
+    "toggleMultiCam": {
+        "hotkey": "+r",
+        "command": "cmd.multicam.toggle.multicam.view",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > ) Toggle Multi-Camera View"
+    },
+    "labelViolet": {
+        "hotkey": "^{F13}",
+        "command": "cmd.edit.label.0",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelIris": {
+        "hotkey": "^{F1}",
+        "command": "cmd.edit.label.1",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelCaribbean": {
+        "hotkey": "^{F2}",
+        "command": "cmd.edit.label.2",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelLavender": {
+        "hotkey": "^{F16}",
+        "command": "cmd.edit.label.3",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelCerulean": {
+        "hotkey": "^{F17}",
+        "command": "cmd.edit.label.4",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelForest": {
+        "hotkey": "^{F18}",
+        "command": "cmd.edit.label.5",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelRose": {
+        "hotkey": "^{F19}",
+        "command": "cmd.edit.label.6",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelMango": {
+        "hotkey": "^{F20}",
+        "command": "cmd.edit.label.7",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelPurple": {
+        "hotkey": "^{F21}",
+        "command": "cmd.edit.label.8",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelBlue": {
+        "hotkey": "^{F22}",
+        "command": "cmd.edit.label.9",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelTeal": {
+        "hotkey": "^{F23}",
+        "command": "cmd.edit.label.10",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelMagenta": {
+        "hotkey": "^{F3}",
+        "command": "cmd.edit.label.11",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelTan": {
+        "hotkey": "^{F6}",
+        "command": "cmd.edit.label.12",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelGreen": {
+        "hotkey": "^{F10}",
+        "command": "cmd.edit.label.13",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelRed": {
+        "hotkey": "^{F5}",
+        "command": "cmd.edit.label.14",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    },
+    "labelYellow": {
+        "hotkey": "^{F24}",
+        "command": "cmd.edit.label.15",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Edit > Label"
+    }
+}
