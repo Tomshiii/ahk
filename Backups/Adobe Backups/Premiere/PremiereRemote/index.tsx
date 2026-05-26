@@ -32,6 +32,10 @@ export const host = {
     return app.getPProPrefPath;
   },
 
+  premPrefsPath: function() {
+    return app.getAppPrefPath;
+  },
+
   getProperty: function(property: string) {
     if (app.properties.doesPropertyExist(property)) {
       return app.properties.getProperty(property);

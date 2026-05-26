@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/25
- * @version 2.4.16
+ * @date 2026/05/26
+ * @version 2.4.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3768,6 +3768,20 @@ class Prem {
                 return
         }
         SendInput("{Enter}")
+    }
+
+    /**
+     * A function to activate the Project panel and select the last item in the list. Useful after you've moved an item into another bin and premiere defaults to no selection afterwards
+     */
+    static goToLastProjPanelItem() {
+        if !WinActive(prem.winTitle)
+            return
+        premUIA := premUIA_Values.initialise()
+        if !premUIA.__isUiaElementActive("projectsWindow", premUIA) {
+            SendInput(ksa.projectsWindow)
+            sleep 50
+        }
+        SendInput(ksa.projItemEnd)
     }
 
     __Delete() {

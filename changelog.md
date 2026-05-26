@@ -32,7 +32,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ❗ Support for `v26.2+`
 - ❗ Will now check for `Node.js` & `PremiereRemote` at runtime
 - ✅ Fixed `isEditTabActive()` throwing in some circumstances
-- ✏️ Added `setRnderRplcPreset()`, `setRnderRplcPath()`, `renderAndReplace()`
+- ✏️ Added `setRnderRplcPreset()`, `setRnderRplcPath()`, `renderAndReplace()`, `goToLastProjPanelItem()`
 - 📋 UIA values will now be reset on Premiere close
 - 📋 Changed `prem.selectionTool()` => `prem.selectTool()`
     - Can now set any tool set within `Premiere_UIA.ahk`

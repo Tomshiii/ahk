@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside
- * @date 2026/05/25
- * @version 1.1.2
+ * @date 2026/05/26
+ * @version 1.1.3
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -50,6 +50,7 @@ Class CustomFunctions {
     deleteAllEmptyTracks()                                  => (prem.deleteEmptyTracks())
     renderSelection(outputPath, presetName, import := true) => (prem.renderProjectSelection(outputPath, presetName, import))
     setSettings(params := "")                               => (prem.__remoteFunc('setSeqSettings',, "params=" params))
+    goToLastProjPanelItem()                                 => (prem.goToLastProjPanelItem())
 
     renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) => (prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path))
 }
