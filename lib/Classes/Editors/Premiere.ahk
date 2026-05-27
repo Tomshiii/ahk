@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/26
- * @version 2.4.17
+ * @date 2026/05/27
+ * @version 2.4.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3647,8 +3647,10 @@ class Prem {
 "MXF OP1a"
 "QuickTime"
      * ```
+     * @param {UIA.IUIAutomationElement} [UIAObj] pass in a UIA element for reuse
+     * @param {UIA.IUIAutomationElement} [AdobeEl] pass back the UIA element for reuse
      */
-    static setRnderRplcPreset(dropPreset, dropSource := "Sequence", dropFormat := "QuickTime") {
+    static setRnderRplcPreset(dropPreset, dropSource := "Sequence", dropFormat := "QuickTime", UIAObj?, &AdobeEl?) {
         sources := Map("Sequence", true, "Individual Clips", true, "Preset", true)
         formats := Map("DNxHR/DNxHD MXF OP1a", true, "MXF OP1a", true, "QuickTime", true)
         presets := Map(
@@ -3677,11 +3679,13 @@ class Prem {
         if !sources.Has(dropSource)
             throw PropertyError("Incorrect Parameter Value", -1, dropSource)
 
-        AdobeEl := UIA.ElementFromHandle("Render and Replace ahk_exe Adobe Premiere Pro.exe",, false)
+        if !IsSet(UIAObj) || (IsSet(UIAObj) && Type(UIAObj) != "UIA.IUIAutomationElement") {
+            AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
+        }
         _setComboBox(index, item) {
-            box := AdobeEl.FindElement({Type:"ComboBox", LocalizedType:"combo box"},, index)
+            box := AdobeEl.FindElement({LocalizedType:"combo box"},, index)
             if box.Value != item {
-                item := box.FindElement({Type:"ListItem", LocalizedType:"list item", Name: item})
+                item := box.FindElement({LocalizedType:"list item", Name: item})
                 item.select()
             }
             sleep 25
@@ -3695,9 +3699,11 @@ class Prem {
     /**
      * Sets the `Location` combo box to the desired path in the `Render and Replace` window
      * @param {String} path the desired path you wish to use as the output location. (can also be set to `Next to Original Media`)
+     * @param {UIA.IUIAutomationElement} [UIAObj] pass in a UIA element for reuse
+     * @param {UIA.IUIAutomationElement} [AdobeEl] pass back the UIA element for reuse
      * @returns {Boolean}
      */
-    static setRnderRplcPath(path) {
+    static setRnderRplcPath(path, UIAObj?, &AdobeEl?) {
         if path = "timeline renders" {
             projPath := WinGet.ProjPath()
             path := WinGet.pathU(projPath.Dir "\..\timeline renders")
@@ -3705,15 +3711,17 @@ class Prem {
         coord.s()
         SetDefaultMouseSpeed(0)
         origPos := obj.MousePos()
-        AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
-        comb := AdobeEl.FindElement({Type:"ComboBox", LocalizedType:"combo box"},, 4)
+        if !IsSet(UIAObj) || (IsSet(UIAObj) && Type(UIAObj) != "UIA.IUIAutomationElement") {
+            AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
+        }
+        comb := AdobeEl.FindElement({LocalizedType:"combo box"},, 4)
         if comb.name = path
             return true
         comb.Click()
         if !WinWait("OS_PopupWindow " this.exeTitle,, 3)
             return false
         flyout := UIA.ElementFromHandle("OS_PopupWindow " this.exeTitle,, false)
-        item := flyout.FindElement({Type:"Text", LocalizedType:"text", Name:"Choose Location..."})
+        item := flyout.FindElement({LocalizedType:"text", Name:"Choose Location..."})
         Send( "{Click " item.Location.x A_Space item.location.y "}")
         MouseMove(origPos.x, origPos.y, 0)
         if !WinWait("Select Folder " this.exeTitle,, 2)
@@ -3734,7 +3742,6 @@ class Prem {
      * @param {String} [path] the parameter that will be passed to `prem.setRnderRplcPath()` and is the desired path you wish to use as the output location. (can also be set to `Next to Original Media`)
      */
     static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) {
-        LabelColour := labelHotkey
         if !WinActive(this.winTitle)
             return
         clipType := this.__remoteFunc('clipType', true)
@@ -3742,8 +3749,8 @@ class Prem {
         if title.saveCheck != false
             attempt := this.saveAndFocusTimeline()
         sleep 100
-        if checkBool(changeLabel) && clipType = "Video"
-            SendEvent(LabelColour)
+        if checkBool(changeLabel) && labelHotkey != "" && clipType = "Video"
+            SendEvent(labelHotkey)
         sleep 50
         SendEvent(KSA.premRndrReplce)
         sleep 100
@@ -3758,8 +3765,8 @@ class Prem {
         }
         if clipType != "Video"
             return
-        this.setRnderRplcPreset(dropPreset, dropSource, dropFormat)
-        if !this.setRnderRplcPath(path)
+        this.setRnderRplcPreset(dropPreset, dropSource, dropFormat,, &AdobeEl)
+        if !this.setRnderRplcPath(path, AdobeEl)
             return
         sleep 50
         if !WinWaitActive("Render and Replace " this.exeTitle,, 2) {
@@ -3767,7 +3774,7 @@ class Prem {
             if !WinWaitActive("Render and Replace " this.exeTitle,, 2)
                 return
         }
-        SendInput("{Enter}")
+        AdobeEl.FindElement({LocalizedType:"button", Name:"OK"}).Invoke()
     }
 
     /**

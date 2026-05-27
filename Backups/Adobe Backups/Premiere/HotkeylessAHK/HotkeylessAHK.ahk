@@ -52,5 +52,18 @@ Class CustomFunctions {
     setSettings(params := "")                               => (prem.__remoteFunc('setSeqSettings',, "params=" params))
     goToLastProjPanelItem()                                 => (prem.goToLastProjPanelItem())
 
-    renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) => (prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path))
+    renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) => (rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path))
+}
+
+;// === any functions/hotkeys that don't really make much sense anywhere else
+
+/** calls `prem.renderAndReplace()` then calls the `organiseProj` `PremiereRemote` function. Might not make sense for anyone else with a different prem bin structure */
+rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) {
+    prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path)
+    if !WinWait("Render and Replace Progress " prem.exeTitle,, 6)
+        return
+    if !WinWaitClose("Render and Replace Progress " prem.exeTitle,, 120)
+        return
+    sleep 1500
+    prem.__remoteFunc('organiseProj')
 }

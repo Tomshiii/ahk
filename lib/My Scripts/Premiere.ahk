@@ -323,7 +323,7 @@ $+d:: ;// deselect edit points after adding transitions
 	return
 }
 
-!w::prem.closeActiveSequence()
+; !w::prem.closeActiveSequence() ;// didn't realise `Application > File > Close` did this natively lol
 !+w::prem.closeActiveSequence(true)
 
 ;// this unfortunately causes tonnes of slowdown/lag on chunky timelines :( - I can only assume it's fighting with `__setCurrSeq()` as well

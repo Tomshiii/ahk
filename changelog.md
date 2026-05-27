@@ -30,6 +30,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 
 ### 📝 `prem {`
 - ❗ Support for `v26.2+`
+    - ❗ Removed support for versions below `v26.2`
 - ❗ Will now check for `Node.js` & `PremiereRemote` at runtime
 - ✅ Fixed `isEditTabActive()` throwing in some circumstances
 - ✏️ Added `setRnderRplcPreset()`, `setRnderRplcPath()`, `renderAndReplace()`, `goToLastProjPanelItem()`
