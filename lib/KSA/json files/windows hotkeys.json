@@ -47,6 +47,15 @@
         "withinVSCode": "must set workbench.action.toggleActivityBarVisibility"
     },
 
+
+    "_____newSection": " excalibur",
+    "excalLockVid": {
+        "hotkey": "^+["
+    },
+    "excalLockAud": {
+        "hotkey": "^+]"
+    },
+
     "_______newSection": " windows",
     "minimiseHotkey": {
         "hotkey": "RButton"
