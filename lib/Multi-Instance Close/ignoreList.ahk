@@ -4,7 +4,7 @@
 #Include Classes\Mip.ahk
 ; }
 
-ignorelist := Mip("checklist.ahk", 1, "launcher.ahk", 1)
+ignorelist := Mip("checklist.ahk", 1, "launcher.ahk", 1, "UIA.ahk", 1)
 
 ;// manually add any
 ignorelist.Set(ptf.rootDir "\Streamdeck AHK\Move project.ahk", 1)

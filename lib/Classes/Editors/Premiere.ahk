@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/05/28
- * @version 2.4.19
+ * @version 2.4.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3681,6 +3681,8 @@ class Prem {
 
         if !IsSet(UIAObj) || (IsSet(UIAObj) && Type(UIAObj) != "UIA.IUIAutomationElement") {
             AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
+        } else {
+            AdobeEl := UIAObj
         }
         _setComboBox(index, item) {
             box := AdobeEl.FindElement({LocalizedType:"combo box"},, index)
@@ -3713,6 +3715,8 @@ class Prem {
         origPos := obj.MousePos()
         if !IsSet(UIAObj) || (IsSet(UIAObj) && Type(UIAObj) != "UIA.IUIAutomationElement") {
             AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
+        } else {
+            AdobeEl := UIAObj
         }
         comb := AdobeEl.FindElement({LocalizedType:"combo box"},, 4)
         if comb.name = path
@@ -3791,6 +3795,28 @@ class Prem {
         delaySI(16, ksa.findBox, "{Delete}", "{Enter}") ;// clear any text in the findbox
         sleep 50
         SendInput(ksa.projItemEnd)
+    }
+
+    /**
+     * Set the blend mode of the currently selected clip.
+     * @param {String} [blendModeString] The name of the desired blend mode. Values include;
+     *
+     * `Normal`, `Dissolve`,
+     * `Darken`, `Multiply`, `Color Burn`, `Linear Burn`, `Darker Color`,
+     *
+     * `Lighten`, `Screen`, `Color Dodge`, `Linear Dodge (Add)`, `Lighter Color`,
+     *
+     * `Overlay`, `Soft Light`, `Hard Light`, `Vivid Light`, `Linear Light`, `Pin Light`, `Hard Mix`,
+     *
+     * `Difference`, `Exclusion`, `Subtract`, `Divide`, `Hue`, `Saturation`, `Color`, `Luminosity`
+     */
+    static setBlendMode(blendModeString) {
+        if !prem.__remoteFunc('isSelected', true)
+            return
+        premUIA := premUIA_Values.initialise()
+        effCont   := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        blendMode := effCont.FindElement({LocalizedType:"combo box"},, 2)
+        blendMode.FindElement({LocalizedType:"list item", Name:blendModeString}).Select()
     }
 
     __Delete() {

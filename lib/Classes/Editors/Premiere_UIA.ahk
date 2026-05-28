@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/05/25
- * @version 3.0.19
+ * @date 2026/05/28
+ * @version 3.0.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,6 +38,7 @@ class premUIA_Values {
 
     static UIA_Objs := Map()
     static UIA_Path := Map()
+    static UIA_Hwnd := Map()
     static AdobeEl  := false
     static determineUIA_PID := false
 
@@ -151,10 +152,10 @@ class premUIA_Values {
         __TryCatchUIAobj(name, objOrPath, errorCode, pathName := "") {
             try {
                 switch objOrPath {
-                    case "obj":  temp := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:name})
-                    case "path": temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true)
-                    case "premObj": temp := this.AdobeEl.FindCachedElement({Type:"Pane", Type:"TabItem", LocalizedType:"pane", LocalizedType:"tab item", Name:name})
-                    case "projObj": temp := this.AdobeEl.FindCachedElement({Type:"Pane", LocalizedType:"pane", Name:name, matchmode:"Substring"})
+                    case "obj":  temp := this.AdobeEl.FindCachedElement({LocalizedType:"pane", Name:name})
+                    case "path": temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true), this.UIA_Hwnd[pathName] := this.UIA_Objs[pathName].NativeWindowHandle
+                    case "premObj": temp := this.AdobeEl.FindCachedElement({LocalizedType:"pane", LocalizedType:"tab item", Name:name})
+                    case "projObj": temp := this.AdobeEl.FindCachedElement({LocalizedType:"pane", Name:name, matchmode:"Substring"})
                 }
                 return temp
             } catch {
@@ -196,7 +197,6 @@ class premUIA_Values {
             this.UIA_Path["projectsWindow"]  := __TryCatchUIAobj("Project:", "path", "708", "projectsWindow")
             this.UIA_Objs["premRemote"]      := __TryCatchUIAobj("PremiereRemote", "premObj", "709")
             this.UIA_Path["premRemote"]      := __TryCatchUIAobj("PremiereRemote", "path", "709", "premRemote")
-
             ;// Tools
             tools := Map(
                 "selectionTool", "Selection Tool",
