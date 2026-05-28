@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of file & directory paths. Stands for Point to File.
  * @author tomshi
- * @date 2026/03/20
- * @version 1.3.5
+ * @date 2026/05/28
+ * @version 1.3.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -125,8 +125,6 @@ class ptf {
     static __Item := Map(
         "settings",        this().UserSettings.SettingsFile,
         "monitorsINI",     this().UserSettings.SettingsDir "\monitors.ini",
-        "KSAini",          A_MyDocuments "\tomshi\Keyboard Shortcuts.ini",
-        "SDdirsINI",       this.SupportFiles "\Streamdeck Files\dirs.ini",
         "updateCheckGUI",  this.lib "\Other\WebView2\updateCheckGUI.ahk",
         "checklist",       this.rootDir "\checklist.ahk",
         "Game List",       this.lib "\gameCheck\games.txt",
@@ -149,17 +147,6 @@ class ptf {
         "SL_Chatbot",      this.Shortcuts "\Streamlabs Chatbot.lnk",
         "Phone Link",      this.Shortcuts "\Your Phone.lnk",
         "scriptStartup",   A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\Initialise.ahk - Shortcut.lnk",
-
-        ;programs
-        "LiveSplit",       "F:\Twitch\Splits\Splits\LiveSplit_1.7.6\LiveSplit.exe",
-        "LioranBoard",     this.LioranBoardDir "\LioranBoard Receiver.exe",
-
-        ;stream
-        "StreamINI",       this.Stream "\Streaming.ini",
-        "StreamAHK",       this.Stream "\Streaming.ahk",
-        "SongQUEUE",       this.Stream "\TomSongQueueue\Builds\SongQueuer.exe",
-        "SongDJ",          this.Stream "\TomSongQueueue\Builds\ApplicationDj.exe",
-        "Wii Music",       this.Stream "\TomSongQueueue\Sounds\Wii Music.mp3"
     )
 }
 

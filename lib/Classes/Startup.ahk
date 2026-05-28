@@ -2,14 +2,12 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/05/18
- * @version 1.9.1
+ * @date 2026/05/28
+ * @version 1.9.2
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
-#Include GUIs\todoGUI.ahk
-#Include GUIs\hotkeysGUI.ahk
 #Include GUIs\settingsGUI\settingsGUI.ahk
 #Include GUIs\activeScripts.ahk
 #Include GUIs\tomshiBasic.ahk

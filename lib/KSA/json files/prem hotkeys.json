@@ -1,9 +1,4 @@
 {
-    "scaleFrameSize": {
-        "command": "cmd.clip.scaletoframesize",
-        "context": "/PremiereData/shortcuts/context.global",
-        "withinPrem": "(Aplication > Clip > Video Options) Scale to frame size"
-    },
     "fitToFrame": {
         "command": "cmd.clip.fittoframe",
         "context": "/PremiereData/shortcuts/context.global",
@@ -116,7 +111,7 @@
     },
     "projItemEnd": {
         "command": "cmd.project.move.end",
-        "context": "/PremiereData/shortcuts/context.global",
+        "context": "/PremiereData/shortcuts/context.project",
         "withinPrem": "(Panels > Project Panel >) Move Selection End"
     },
     "nudgeUp": {
@@ -148,11 +143,6 @@
         "command": "cmd.timeline.move.cti.to.cursor",
         "context": "/PremiereData/shortcuts/context.timeline",
         "withinPrem": "(Panels > Timeline Panel >) Move Playhead to Cursor"
-    },
-    "resetWorkspace": {
-        "command": "cmd.window.workspace.revert",
-        "context": "/PremiereData/shortcuts/context.global",
-        "withinPrem": "(Application > Window >) Reset to Saved Layout"
     },
     "speedUpPlayback": {
         "command": "cmd.transport.shuttle.right",
@@ -235,7 +225,7 @@
         "withinPrem": "(Application > Sequence) Make Sequence"
     },
     "premRipplePrev": {
-        "command": "cmd.sequence.oneframeoffrippletrimpreviousedittoplayhead",
+        "command": "cmd.sequence.rippletrimpreviousedittoplayhead",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > ) Ripple Trim Previous Edit to Playhead"
     },
@@ -263,11 +253,6 @@
         "command": "cmd.zoom.player.out",
         "context": "/PremiereData/shortcuts/context.program.monitor",
         "withinPrem": "(Panels > Program Monitor Panel ) Zoom Monitor Out"
-    },
-    "zoomMonitorFit": {
-        "command": "cmd.monitor.output.zoom.fit",
-        "context": "/PremiereData/shortcuts/context.program.monitor",
-        "withinPrem": "(Panels > Program Monitor Panel ) Zoom Monitor to Fit"
     },
     "selectFollowPlayhead": {
         "command": "cmd.sequence.selectionfollowsplayhead",

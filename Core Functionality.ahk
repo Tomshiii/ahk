@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/05/27
- * @version 1.0.18
+ * @date 2026/05/28
+ * @version 1.0.19
  ***********************************************************************/
 
 #SingleInstance Force
@@ -25,6 +25,7 @@
 ; }
 try getReload := A_Args.Get(1)
 
+errorLog({state:"empty"})
 ;// this allows `notifyIfNotExist()` to send its prompts to Core Functionality
 ;// fixes notify GUIs hanging when called from `HotkeylessAHK`
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
@@ -40,7 +41,7 @@ Persistent()
 TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 
 UserSettings    := UserPref(, true)
-KSA             := KeyShortAdjust(true)
+KSA             := KeyShortAdjust()
 premiere        := prem
 Loading         := {isLoading: true}
 determineActive := {isRunning: false}
@@ -50,7 +51,6 @@ for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }
 Loading.isLoading := false
-errorLog({state:"empty"})
 
 
 if UserSettings.Set_UIA_on_reload = true && (isReload(getReload ?? false))

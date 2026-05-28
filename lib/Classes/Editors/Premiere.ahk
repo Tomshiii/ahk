@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/27
- * @version 2.4.18
+ * @date 2026/05/28
+ * @version 2.4.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -862,7 +862,7 @@ class Prem {
                 errorLog(Error("Couldn't find the graphics tab", -1),, 1)
                 return
             }
-            if ImageSearch(&x2, &y2, classObj.x, classObj.y, classObj.x + (widHeiObj.width/KSA.ECDivide), classObj.y + widHeiObj.height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
+            if ImageSearch(&x2, &y2, classObj.x, classObj.y, classObj.x + (widHeiObj.width/2), classObj.y + widHeiObj.height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
                 break
             sleep 100
         }
@@ -998,7 +998,7 @@ class Prem {
         }
 
         ;// determining the edge of the pixel search (otherwise it might grab the playhead)
-        if !ImageSearch(&collapseX, &collapseY, effCtrlNN.location.x, effCtrlNN.location.y, effCtrlNN.location.x + (effCtrlNN.location.w/ksa.ECDivide), effCtrlNN.location.y+50, "*2 " ptf.Premiere "effCtrlCollapse.png") {
+        if !ImageSearch(&collapseX, &collapseY, effCtrlNN.location.x, effCtrlNN.location.y, effCtrlNN.location.x + (effCtrlNN.location.w/2), effCtrlNN.location.y+50, "*2 " ptf.Premiere "effCtrlCollapse.png") {
             block.Off()
             errorLog(TargetError("Failed to find the edge of the Effect Controls window", -1),, 1)
             keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
@@ -1113,11 +1113,11 @@ class Prem {
 
     /** checks to see if there are any clips selected */
     static checkNoClips(UIA_obj, &x, &y) {
-        if ImageSearch(&x, &y, UIA_obj.location.x, UIA_obj.location.y, UIA_obj.location.x + (UIA_obj.location.w/KSA.ECDivide), UIA_obj.location.y + UIA_obj.location.h, "*2 " ptf.Premiere "noclips.png") {
+        if ImageSearch(&x, &y, UIA_obj.location.x, UIA_obj.location.y, UIA_obj.location.x + (UIA_obj.location.w/2), UIA_obj.location.y + UIA_obj.location.h, "*2 " ptf.Premiere "noclips.png") {
             SendInput(KSA.selectAtPlayhead)
             sleep 50
             ;// checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-            if ImageSearch(&x, &y, UIA_obj.location.x, UIA_obj.location.y, UIA_obj.location.x + (UIA_obj.location.w/KSA.ECDivide), UIA_obj.location.y + UIA_obj.location.h, "*2 " ptf.Premiere "noclips.png")
+            if ImageSearch(&x, &y, UIA_obj.location.x, UIA_obj.location.y, UIA_obj.location.x + (UIA_obj.location.w/2), UIA_obj.location.y + UIA_obj.location.h, "*2 " ptf.Premiere "noclips.png")
                 return false
         }
         return true
@@ -1307,7 +1307,7 @@ class Prem {
         }
 
         ;// finds the scale value you want to adjust, then finds the value adjustment to the right of it
-        if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.width/KSA.ECDivide), y2: effCtrlNN.location.y + effCtrlNN.location.h},, &x, &y
+        if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.width/2), y2: effCtrlNN.location.y + effCtrlNN.location.h},, &x, &y
             , ptf.Premiere property ".png"
             , ptf.Premiere property "2.png"
             , ptf.Premiere property "3.png"
@@ -1327,8 +1327,8 @@ class Prem {
         MouseMove(xcol + optional, ycol)
         keywait(waitHotkey)
         SendInput("{Click}")
-        ToolTip("manInput() is waiting for the " "'" KSA.manInputEnd "'" "`nkey to be pressed")
-        KeyWait(KSA.manInputEnd, "D") ;waits until the final hotkey is pressed before continuing
+        ToolTip("manInput() is waiting for the NumpadEnter key to be pressed")
+        KeyWait("{NumpadEnter}", "D") ;waits until the final hotkey is pressed before continuing
         ToolTip("")
         SendInput("{Enter}")
         MouseMove(xpos, ypos)
@@ -1382,10 +1382,10 @@ class Prem {
             funcExist := this.__checkPremRemoteDir("isSelected")
             switch funcExist {
                 case false:
-                    if !funcExist && ImageSearch(&x3, &y3, effCtrlNN.location.x, effCtrlNN.location.y, effCtrlNN.location.x + (effCtrlNN.location.w/KSA.ECDivide), effCtrlNN.location.y + effCtrlNN.location.h, "*2 " ptf.Premiere "noclips.png") { ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
+                    if !funcExist && ImageSearch(&x3, &y3, effCtrlNN.location.x, effCtrlNN.location.y, effCtrlNN.location.x + (effCtrlNN.location.w/2), effCtrlNN.location.y + effCtrlNN.location.h, "*2 " ptf.Premiere "noclips.png") { ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                     delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                     this().__fxPanel()
-                    if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.location.w/KSA.ECDivide), y1: effCtrlNN.location.y + effCtrlNN.location.h},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
+                    if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.location.w/2), y1: effCtrlNN.location.y + effCtrlNN.location.h},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
                         blocker.Off()
                         notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
@@ -3788,6 +3788,8 @@ class Prem {
             SendInput(ksa.projectsWindow)
             sleep 50
         }
+        delaySI(16, ksa.findBox, "{Delete}", "{Enter}") ;// clear any text in the findbox
+        sleep 50
         SendInput(ksa.projItemEnd)
     }
 

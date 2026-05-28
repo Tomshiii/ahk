@@ -7,7 +7,7 @@
 ;disceditHotkey;
 SC03A & e::discord.button("edit") ;edit the message you're hovering over
 ;discreplyHotkey;
-SC03A & r::discord.button("reply") ;reply to the message you're hovering over ;this reply hotkey has specific code just for it within the function. This activation hotkey needs to be defined in Keyboard Shortcuts.ini in the [Hotkeys] section
+SC03A & r::discord.button("reply") ;reply to the message you're hovering over ;this reply hotkey has specific code just for it within the function.
 ;discreactHotkey;
 SC03A & a::discord.button("react") ;add a reaction to the message you're hovering over
 ;discdeleteHotkey;

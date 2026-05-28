@@ -6,7 +6,6 @@
 #Include Classes\tool.ahk
 #Include GUIs\settingsGUI\settingsGUI.ahk
 #Include GUIs\activeScripts.ahk
-#Include GUIs\hotkeysGUI.ahk
 ; }
 
 ;// these are hotkeys that are supposed to fire everywhere that are EXEMPT from suspention
@@ -26,9 +25,6 @@ F12::KeyHistory  ;debugging
 
 ;activescriptsHotkey;
 #F2::activeScripts() ;This hotkey pulls up a GUI that gives information regarding all current active scripts, as well as offering the ability to close/open any of them by simply unchecking/checking the corresponding box
-
-;handyhotkeysHotkey;
-#h::hotkeysGUI() ;this hotkey pulls up a GUI showing some useful hotkeys at your disposal while using these scripts
 
 ;suspendHotkey;
 #+`:: ;this hotkey is to suspent THIS script. This is helpful when playing games as this script will try to fire and do whacky stuff while you're playing games

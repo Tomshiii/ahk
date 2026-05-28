@@ -1,12 +1,4 @@
 {
-    "manInputEnd": {
-        "hotkey" :"NumpadEnter"
-    },
-    "speedHotkey": {
-        "hotkey" :"^d"
-    },
-
-
     "______newSection": " discord",
     "discHighlightChat": {
         "hotkey": "{Blind}{sc0E9}"
@@ -47,16 +39,7 @@
         "withinVSCode": "must set workbench.action.toggleActivityBarVisibility"
     },
 
-
-    "_____newSection": " excalibur",
-    "excalLockVid": {
-        "hotkey": "^+["
-    },
-    "excalLockAud": {
-        "hotkey": "^+]"
-    },
-
-    "_______newSection": " windows",
+    "_______newSection": " misc",
     "minimiseHotkey": {
         "hotkey": "RButton"
     },

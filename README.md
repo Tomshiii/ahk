@@ -37,9 +37,6 @@ This repo is designed and maintained to work in the `ahk v2.0`. They will not fu
 In this section of the repo you will find a collection of lib files containing helpful functions, classes, GUIs & more! Some scripts rely on other lib files to function properly so make sure you pay attention to the top of each script, if it has any `#Include lib\path.ahk` then you will also need that file for the script to function properly!  
 Do note however that my scripts are designed and written to expect files to be where they're placed during the installation process of my repo. If you try to pluck out individual classes/code do so at your own risk and expect to run into some problems.
 
-#### [Keyboard Shortcuts.ini/Keyboard Shortcut Adjustments.ahk](https://github.com/Tomshiii/ahk/tree/main/Support%20Files/KSA)
-An ini file/ahk script combo for defining all keyboard shortcuts for programs that are then used within other scripts. Having them defined separately in an ini file allows for easy swapping of hotkeys without needing to dig through each and every macro/function that uses it.
-
 #### [<img width="16" height="16" src="https://github.com/user-attachments/assets/6c2d51da-34de-4917-8c05-61cfad3a6e56" /> My Scripts.ahk](https://github.com/Tomshiii/ahk/blob/main/My%20Scripts.ahk)
 This script is main script I use to define all of my own hotkeys. It is not recommended for the user to simply run my version of this script and it is highly encouraged that they create their own instead.
 

@@ -1,0 +1,8 @@
+{
+    "excalLockVid": {
+        "command": "fxsq.LockVideoTracks"
+    },
+    "excalLockAud": {
+        "command": "fxsq.LockAudioTracks"
+    }
+}

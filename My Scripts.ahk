@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.11
+;\\v2.35.12
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -49,7 +49,6 @@
 #Include Functions\multiKeyPress.ahk
 #Include GUIs\settingsGUI\settingsGUI.ahk
 #Include GUIs\activeScripts.ahk
-#Include GUIs\hotkeysGUI.ahk
 #Include Other\ObjRegisterActive.ahk
 #Include Other\ThioJoe\Scripts\ExplorerDialogPathSelector.ahk
 ;#Include Premiere_RightClick.ahk ;this file is included towards the bottom of the script - it was stopping the below `startup functions` from firing

@@ -26,6 +26,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ✅ Fixed `settingsGUI()` not generating the proper `Premiere` shortcut when the `beta` checkbox is deselected
 - ✏️ Added `checkINI()`, `determineAdobeVer()`
 - 📋 `WM.Send_WM_COPYDATA()` now accepts param `doTooltips`
+- ❌ Removed `hotkeysGUI()`
 
 
 ### 📝 `prem {`
@@ -41,7 +42,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 ### 📝 `startup {`
 - ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing
 - ✅ Fixed `updateChecker()` throwing if the user attempted to download an update from the GUI
-- ❌ Removed `generate()`, `firstCheck()`
+- ❌ Removed `generate()`, `firstCheck()`, `todoGUI()`
 
 ### 📝 `Settings {`
 - ✏️ Added `Set_UIA_on_reload`
@@ -63,9 +64,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 
 ### 📝 `KSA {`
 - ❗ `KSA` values are now shared using `Core Functionality.ahk`
-- 📋 Moved the active `Keyboard Shortcuts.ini` file to `A_MyDocuments\tomshi\Keyboard Shortcuts.ini`
-    - Moved the template file from `..\Support Files\KSA` => `A_AppData\tomshi\lib\KSA`
-    - Will check the user's current ini file against the template
+- ❗ `Premiere`, `After Effects` & `Photoshop` hotkeys are now automatically generated using the user's current keyboard shortcuts
 
 ### 📝 `WinGet {`
 
@@ -74,7 +73,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ✅ Fixed function sometimes thinking `Premiere` isn't open
 
 ## Other Changes
-- ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate\`, `Streamdeck_opt.ahk`, `enable unsigned extensions.ahk`, `render and replace.ahk`
+- ❌ Removed `..\Support Files\Streamdeck Files`, `..\Streamdeck AHK\run & activate\`, `Streamdeck_opt.ahk`, `enable unsigned extensions.ahk`, `render and replace.ahk`, `partDL.ahk`, `adobeKSA.ahk`
 - ✅ Fixed numerous issues affecting installation
 - ✅ Fixed `Multi-Instance Close.ahk`, `adobe fullscreen check.ahk` & `gameCheck.ahk` stalling `reloadAll.ahk`/`closeAll.ahk`
 - 📋 `autosave.ahk` will now only check if the user is idle while attempting to save `Premiere` if it is the active window

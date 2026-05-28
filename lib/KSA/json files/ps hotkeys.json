@@ -1,23 +1,22 @@
 {
     "handTool": {
-        "hotkey": "h"
+        "type": "tool",
+        "name": "Hand Tool"
     },
     "penTool": {
-        "hotkey": "g"
+        "type": "tool",
+        "name": "Pen Tool"
     },
     "selectionTool": {
-        "hotkey": "v"
+        "type": "tool",
+        "name": "Move Tool"
     },
     "zoomTool": {
-        "hotkey": "z"
+        "type": "tool",
+        "name": "Zoom Tool"
     },
     "freeTransform": {
-        "hotkey": "^t"
-    },
-    "imageSize": {
-        "hotkey": "^!i"
-    },
-    "saveasCopy": {
-        "hotkey": "^!s"
+        "type": "command",
+        "name": "Free Transform"
     }
 }

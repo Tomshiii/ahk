@@ -1,8 +1,8 @@
 /************************************************************************
- * @description parse premiere xml keyboard shortcut files
+ * @description parse premiere xml, excalibur xml, photoshop xml, and after effects ini keyboard shortcut files
  * @author tomshi
- * @date 2025/12/20
- * @version 1.2.0
+ * @date 2026/05/28
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,10 +23,11 @@ xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.
  */
 class adobeXML {
     __New(file) {
-        this.xml := loadXML(FileRead(file))
+        this.xml := loadXML(this.readFile := FileRead(file))
         if !this.xml
             return
     }
+    readFile := ""
     xml := ""
     buttonSelect := 1
 
@@ -77,13 +78,13 @@ class adobeXML {
     /**
      * takes premiere's virtual key value and returns the formatted key
      * @param {Integer} virtualKey the virtual key value retrieved from the xml file
-     * @returns {Boolean/String} returns `false` on failure or a string containing the name of the key
+     * @returns {String|Object} returns an object containing `{isSet: false}` on failure or a string containing the name of the key. The object is to avoid stings like; `+0` being interpreted as `false`
      */
     __convVirtToKey(virtualKey) {
         if this.knownVirtualKeys.Has(virtualKey)
             return this.knownVirtualKeys.Get(virtualKey)
         if StrLen(virtualKey) < 8
-            return false
+            return {isSet: false}
         val := SubStr((Format("{:x}", virtualKey)), -2)
         return StrLower(Chr(Integer("0x" . val)))
     }
@@ -144,8 +145,9 @@ class adobeXML {
     }
 
     /**
-     * Builds the AE hotkey
-     * @param {String} hotkey turns the shortcut file hotkey into an AHK readable hotkey
+     * Builds the AE hotkey from an ini value
+     * @param {String} hotkey turns the ini value of the desired hotkey into an AHK readable hotkey
+     * @returns {String} returns a string of the desired hotkey
      */
     __aeBuildHotkey(hotkey) {
         baseHotkey := SubStr(hotkey
@@ -157,6 +159,10 @@ class adobeXML {
         builtHotkey := InStr(baseHotkey, "Shift",, 1, 1) ? builtHotkey "+" : builtHotkey
 
         baseHotkey := this.__clearHotkey(baseHotkey)
+        return this.__generateAHKkeys(baseHotkey, builtHotkey)
+    }
+
+    __generateAHKkeys(baseHotkey, builtHotkey) {
         loop {
             nextKey := (plus := InStr(baseHotkey, "+",, 1, 1)) ? SubStr(baseHotkey, 1, InStr(baseHotkey, "+",, 1, 1))
                                                      : SubStr(baseHotkey, 1)
@@ -171,24 +177,38 @@ class adobeXML {
         return builtHotkey
     }
 
+    __excaliburBuildHotkey(keyMap) {
+        buildKey := ""
+        buildKey .= (keyMap["ctrl"] = true)   ? "^" : ""
+        buildKey .= (keyMap["alt"] = true)    ? "!" : ""
+        buildKey .= (keyMap["shift"] = true)  ? "+" : ""
+        checkKey := (this.AEKeyMap.Has(keyMap["key"])) ? this.AEKeyMap.Get(keyMap["key"]) : keyMap["key"]
+        checkKey := this.__wrapKey(checkKey)
+        return buildKey checkKey
+    }
+
     /**
      * Builds the hotkey for the desired xml path
      * @param {String} start the xml path of the desired hotkey. eg. `'/PremiereData/shortcuts/context.global'`
      * @param {String} codename the xml `codename` for the desired hotkey. eg. `"cmd.clip.scaletoframesize"`
      * @param {Integer} [selectWhichHotkey=1] in the event the user has multiple shortcuts defined, pick which one you wish to use. If this parameter is set to `false` the user will be prompted with a GUI to pick which to use
-     * @returns {String} returns complete hotkey. Returns `false` on failure
+     * @returns {String|Object} returns a string of the desired hotkey. Else returns an object containing `{isSet: false}` on failure this is to avoid stings like; `+0` being interpreted as `false`
      *
      * example
      * ```
-     * premXML := adobeXML(adobeKSA(false).__findPremiereShortcut())
+     * premXML := adobeXML("path\to\shortcutfile")
      * hotkeyVal := premXML.__premBuildHotkey("/PremiereData/shortcuts/context.global", "cmd.clip.aeify", 1)
      * ```
      */
     __premBuildHotkey(start, codename, selectWhichHotkey := 1) {
-        if codename = ""
-            return false
-        if !InStr(this.xml.text, codename)
-            return false
+        if codename = "" {
+            errorLog(ValueError("Codename for KSA is empty", -1))
+            return {isSet: false}
+        }
+        if !InStr(this.xml.text, codename) {
+            errorLog(ValueError("Incorrect command for KSA", -1, codename))
+            return {isSet: false}
+        }
 
         try {
             firstPrompt  := Format('{}/*[commandname="{}"]', start, codename)
@@ -216,14 +236,54 @@ class adobeXML {
                 secondPrompt := Format('{}[commandname="{}"]', start "/" getItemNum, codename)
                 getModifiers := this.__retriveModifiers(secondPrompt)
                 virtkey := this.__convVirtToKey(this.xml.selectSingleNode(secondPrompt "/virtualkey").text)
-                getKey  := (virtkey != false) ? virtkey : "false"
-                if getKey == "false"
-                    return false
+                getKey  := (virtkey != -1) ? virtkey : "false"
+                if getKey == "false" {
+                    return {isSet: false}
+                }
                 getKey := this.__wrapKey(getKey)
                 return (getModifiers getKey)
             }
-        } catch {
-            return false
+        } catch as e {
+            errorLog(e)
+            return {isSet: false}
         }
+
+    }
+
+    /**
+     * Builds the hotkey for the desired xml path. Does not currently have support for checking nested xml values (ie. `<taskspace name="Select and Mask">
+		<taskspace-tool name="Quick Selection Tool" type="1" key="1902867308">W</taskspace-tool>`)
+     * @param {String} [hotkeyType] the type of hotkey you're searching for. Will appear in the xml as `<tool ` or `<command `
+     * @param {String} [name] the `@name=` value for the desired hotkey. eg. `"Hand Tool"`
+     * @returns {String|Object} returns a string of the desired hotkey. Else returns an object containing `{isSet: false}` on failure this is to avoid stings like; `+0` being interpreted as `false`
+     * example
+     * ```
+     * psXML := adobeXML("path\to\shortcutfile")
+     * hotkeyVal := psXML.__psBuildHotkey("command", "Free Transform")
+     * ```
+     */
+    __psBuildHotkey(hotkeyType, name) {
+        if hotkeyType = "" {
+            errorLog(ValueError("hotkeyType for KSA is empty", -1))
+            return {isSet: false}
+        }
+        if !InStr(this.readFile, name) {
+            A_Clipboard := this.xml.text
+            errorLog(ValueError("Incorrect name for Photoshop command in KSA", -1, name))
+            return {isSet: false}
+        }
+
+        firstPrompt := Format("//{}[@name='{}']", hotkeyType, name)
+        getItemNodes := this.xml.selectNodes(firstPrompt)
+        firstHotkey := getItemNodes.item(0).text
+        if StrLen(firstHotkey) < 1
+            return {isSet: false}
+        if StrLen(firstHotkey) = 1
+            return StrLower(firstHotkey)
+        buildHotkey := InStr(firstHotkey, "Ctrl+",, 1, 1) ? "^" : firstHotkey
+        buildHotkey := InStr(buildHotkey, "Alt+",, 1, 1) ? "!" : buildHotkey
+        buildHotkey := InStr(buildHotkey, "Shift+",, 1, 1) ? "+" : buildHotkey
+        baseHotkey := this.__clearHotkey(firstHotkey)
+        return this.__generateAHKkeys(baseHotkey, buildHotkey)
     }
 }
