@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/05/28
- * @version 2.4.20
+ * @date 2026/05/29
+ * @version 2.4.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3616,7 +3616,7 @@ class Prem {
 
     /**
      * Sets the `Source`, `Format` & `Preset` combo boxes in the `Render and Replace` window
-     * @param {String} [dropPreset] the preset you wish to select from the `Preset` dropdown list. Parameter must be one of the following (and is case sensitive);
+     * @param {String} [dropPreset] the preset you wish to select from the `Preset` dropdown list. To use a custom preset, the parameter must begin with `Custom:` (and is case sensitive), else, parameter must be one of the following (and is case sensitive);
      * ```
 ;// QuickTime
 "GoPro CineForm RGB 12-bit with alpha at Maximum Bit Depth"
@@ -3641,7 +3641,7 @@ class Prem {
 "Individual Clips"
 "Preset"
      * ```
-     * @param {String} [dropFormat="QuickTime"] the selection you wish to use in the `Format` dropdown list. Defaults to `QuickTime`. Parameter must be one of the following (and is case sensitive);
+     * @param {String} [dropFormat="QuickTime"] the selection you wish to use in the `Format` dropdown list. Defaults to `QuickTime`. To use a custom preset, the parameter must begin with `Custom:` (and is case sensitive), else, parameter must be one of the following (and is case sensitive);
      * ```
 "DNxHR/DNxHD MXF OP1a"
 "MXF OP1a"
@@ -3671,10 +3671,10 @@ class Prem {
             "Match Source - XDCAM EX", true,
             "Match Source - XDCAM HD", true
         )
-
-        if !presets.Has(dropPreset)
+        customString := "Custom:"
+        if (SubStr(dropFormat, 1, StrLen(customString)) !== customString) && !presets.Has(dropPreset)
             throw PropertyError("Incorrect Parameter Value", -1, dropPreset)
-        if !formats.Has(dropFormat)
+        if (SubStr(dropFormat, 1, StrLen(customString)) !== customString) && !formats.Has(dropFormat)
             throw PropertyError("Incorrect Parameter Value", -1, dropFormat)
         if !sources.Has(dropSource)
             throw PropertyError("Incorrect Parameter Value", -1, dropSource)
@@ -3687,7 +3687,11 @@ class Prem {
         _setComboBox(index, item) {
             box := AdobeEl.FindElement({LocalizedType:"combo box"},, index)
             if box.Value != item {
-                item := box.FindElement({LocalizedType:"list item", Name: item})
+                try item := box.FindElement({LocalizedType:"list item", Name: item})
+                catch {
+                    ;// throw
+                    errorLog(TargetError("Could not find: " item, -1),,, true)
+                }
                 item.select()
             }
             sleep 25
@@ -3725,6 +3729,11 @@ class Prem {
         if !WinWait("OS_PopupWindow " this.exeTitle,, 3)
             return false
         flyout := UIA.ElementFromHandle("OS_PopupWindow " this.exeTitle,, false)
+        if path = "Next to Original Media" {
+            item := flyout.FindElement({LocalizedType:"text", Name:"Choose Location..."})
+            Send( "{Click " item.Location.x A_Space item.location.y "}")
+            return true
+        }
         item := flyout.FindElement({LocalizedType:"text", Name:"Choose Location..."})
         Send( "{Click " item.Location.x A_Space item.location.y "}")
         MouseMove(origPos.x, origPos.y, 0)
@@ -3732,7 +3741,8 @@ class Prem {
             return false
         hwnd := WinExist("Select Folder " this.exeTitle)
         explorer.navigateUsingAddressbar(path, hwnd)
-        SendInput("{Enter}")
+        selectFolderWin := UIA.ElementFromHandle(hwnd,, false)
+        selectFolderWin.FindElement({LocalizedType:"button", Name:"Select Folder", AutomationId:"1"}).Click()
         return true
     }
 

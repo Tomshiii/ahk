@@ -63,7 +63,7 @@ rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) 
     prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path)
     if !WinWait("Render and Replace Progress " prem.exeTitle,, 6)
         return
-    if !WinWaitClose("Render and Replace Progress " prem.exeTitle,, 120)
+    if !WinWaitClose("Render and Replace Progress " prem.exeTitle,, 15)
         return
     sleep 1500
     prem.__remoteFunc('organiseProj')
