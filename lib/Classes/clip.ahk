@@ -86,7 +86,8 @@ class clip {
 
     /**
      * This function runs a search of highlighted text.
-     * @param {String} [url="https://www.google.com/search?d&q="] the url (search engine) you wish to use. Provide everything before the part of the url that is your search quiry
+     * @param {String} [url="https://www.google.com/search?d&q="] the url (search engine) you wish to use. Provide everything before the part of the url that is your search quiry.
+     * @examples "https://duckduckgo.com/?t=ffab&q=", "https://www.google.com/search?d&q="
      * @param {String} [browser=""] the ability to define which browser you wish to run. You must use the string used to define the browser within cmd, ie; `firefox.exe` or `chrome.exe`. Leave unset to use the default browser set within windows.
      */
     static search(url := "https://www.google.com/search?d&q=", browser := "") {

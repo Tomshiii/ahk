@@ -41,7 +41,7 @@ videosFolder := WinGet.pathU(projectFolder "\..\videos")
 projNameFolder := WinGet.pathU(projectFolder "\..")
 SplitPath(projNameFolder,, &projName)
 loop files videosFolder "\*", "D" {
-    if A_LoopFileName != "footage" && A_LoopFileName != "proxies" && A_LoopFileName != "_proxies"
+    if A_LoopFileName != "footage" && A_LoopFileName != "_footage" && A_LoopFileName != "proxies" && A_LoopFileName != "_proxies"
         nonFootage.Push(A_LoopFileName)
 }
 if nonFootage.Length >= 1 {
@@ -144,9 +144,9 @@ __doBackup(backupFolder, additionalDir) {
         try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\videos\*.*", false)
     }
 
-    loop files rootDir "\videos\footage\*", 'F' {
+    /* loop files rootDir "\videos\footage\*", 'F' {
         try FileCopy(A_LoopFileFullPath, backupFolder "\_Additional Assets\videos\*.*", false)
-    }
+    } */
 
     /* you don't need to do these manually dumb dumb - if you set `Render Edit in Audition files to:` to `Scratch disk location for Captured Audio` they'll go to `Adobe Premiere Pro Captured and Generated`
     loop files rootDir "\videos\footage\*", 'FR' {

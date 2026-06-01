@@ -3,6 +3,12 @@
 #Include '%A_Appdata%\tomshi\lib'
 #Include *i Classes\CLSID_Objs.ahk
 
+if !ProcessExist("explorer.exe") {
+    WinWait("explorer.exe")
+    sleep 2000
+}
+
+
 if !FileExist(A_Appdata "\tomshi\installDir")
     return
 installDir := FileRead(A_Appdata "\tomshi\installDir")

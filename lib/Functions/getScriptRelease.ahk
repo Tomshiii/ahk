@@ -4,6 +4,7 @@
 #Include Classes\errorLog.ahk
 #Include Functions\getHTML.ahk
 #Include Functions\checkInternet.ahk
+#Include Functions\formatPreReleaseTag.ahk
 ; }
 
 /**
@@ -44,5 +45,5 @@ getScriptRelease(beta := false, &changeVer := "", user := "Tomshiii", repo := "a
             break
         }
     }
-    return ver
+    return formatPreReleaseTag(ver)
 }

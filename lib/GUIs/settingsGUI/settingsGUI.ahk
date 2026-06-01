@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/05/15
- * @version 2.4.13
+ * @date 2026/06/01
+ * @version 2.4.14
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -448,12 +448,17 @@ settingsGUI()
             WinSetAlwaysOnTop(1, "Scripts Release " version)
         ToolTip("")
         UserSettings.__delAll() ;// close the settings instance
-        sleep 50
+        sleep 500
         newSettings := FileRead(UserSettings.SettingsFile)
         UserSettings := ""
         if newSettings != initialSettings
             notifyExt.showIfNotExist("settingsGUI", "settingsGUI()", "Settings changes are being saved`nGUI cannot be reopened until this window disappears...", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=2 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
         if IsSet(butt) {
+            while !notify.Exist('settingsGUI') {
+                if A_index > 80
+                    break
+                sleep 25
+            }
             switch butt {
                 case "hard":
                     settingsGUI.Destroy()

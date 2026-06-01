@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/05/28
- * @version 1.9.2
+ * @date 2026/06/01
+ * @version 1.9.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -48,10 +48,10 @@ class Startup {
         ;// alert that startup functions are running
         this.alertTimer := true
         this.__alertTooltip()
-        ;// get release version of scripts
-        this.MyRelease := this.__getMainRelease()
         ;// populate settings variables
         this.UserSettings := CLSID_Objs.clone("UserSettings")
+        ;// get release version of scripts
+        this.MyRelease := this.UserSettings.version
 
         try didReload := A_Args[1]
         this.isReload := isReload(didReload ?? false)
@@ -211,31 +211,35 @@ class Startup {
                     }
                 }
 
+                UserSettings := CLSID_Objs.load("UserSettings")
+
                 ;set download button
                 MyGui["gitButton"].GetPos(&x)
-                MyGui.AddButton("Section X" x-85 " ys+13", "Download").OnEvent("Click", Down.Bind(this))
+                MyGui.AddButton("Section X" x-85 " ys+13", "Download").OnEvent("Click", Down)
                 ;set cancel button
-                MyGui.AddButton("Default X+5", "Cancel").OnEvent("Click", closegui.Bind(this))
+                MyGui.AddButton("Default X+5", "Cancel").OnEvent("Click", closegui)
                 ;set "skip this version" checkbox
-                MyGui.AddCheckbox("xs-175 Ys-30", "Skip this Version").OnEvent("Click", prompt.bind("skip"))
+                MyGui.AddCheckbox("xs-175 Ys-30", "Skip this Version").OnEvent("Click", (guiCtrl, *) => ((UserSettings.skipVersion := (guiCtrl.Value = 1) ? version : this.origSkipVer), UserSettings.__delAll()))
                 ;set "don't prompt again" checkbox
-                MyGui.AddCheckbox("xs-175 Y+5", "Don't prompt again").OnEvent("Click", prompt.bind("prompt"))
+                MyGui.AddCheckbox("xs-175 Y+5", "Don't prompt again").OnEvent("Click", (guiCtrl, *) => (UserSettings.update_check := guiCtrl.Value, UserSettings.__delAll()))
                 ;set beta checkbox
-                betaCheck := (this.UserSettings.beta_update_check = true)
+                betaCheck := (UserSettings.beta_update_check = true)
                     ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Pre-Releases")
                     : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Pre-Releases")
-                betaCheck.OnEvent("Click", prompt.bind("prerelease"))
+                betaCheck.OnEvent("Click", (guiCtrl, *) => (UserSettings.beta_update_check := guiCtrl.Value, UserSettings.__delAll(), sleep(500), Run(A_ScriptFullPath)))
 
                 MyGui.Show()
                 prompt(which, guiCtrl, *) {
                     switch which {
-                        case "prompt": this.UserSettings.update_check := (guiCtrl.Value = 0) ? true : false
+                        case "prompt": UserSettings.update_check := (guiCtrl.Value = 0) ? true : false
                         case "prerelease":
-                            this.UserSettings.beta_update_check := (guiCtrl.value = 0) ? false : true
-                            this.UserSettings.__delAll()
+                            UserSettings.beta_update_check := (guiCtrl.value = 0) ? false : true
+                            UserSettings.__delAll()
+                            sleep 500
                             Run(A_ScriptFullPath)
-                        case "skip": this.UserSettings.skipVersion := (guiCtrl.Value = 1) ? version : this.origSkipVer
+                        case "skip": UserSettings.skipVersion := (guiCtrl.Value = 1) ? version : this.origSkipVer
                     }
+                    UserSettings.__delAll()
                 }
                 githubButton(*) {
                     if !WinExist("Tomshiii/ahk") {
@@ -245,14 +249,8 @@ class Startup {
                     WinActivate("Tomshiii/ahk")
                 }
                 down(*) {
-                    this.UserSettings.__delAll()
                     MyGui.Opt("Disabled -AlwaysOnTop")
                     versionDl := (VerCompare(version, "2.18.0") > 0) ? version "-patch.exe" : version ".exe"
-                    yousure := MsgBox("If you have modified your scripts, overidding them with this download will result in a loss of data.`n`nPress Cancel to abort this automatic backup.", "Backup your scripts!", "1 48")
-                    if yousure = "Cancel" {
-                        MyGui.Opt("-Disabled")
-                        return
-                    }
                     MyGui.Destroy()
                     if DirExist(A_Temp "\tomshi\update")
                         DirDelete(A_Temp "\tomshi\update")
@@ -270,7 +268,6 @@ class Startup {
                     return
                 }
                 closegui(*) {
-                    this.UserSettings.__delAll()
                     MyGui.Destroy()
                     return
                 }
