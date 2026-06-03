@@ -13,7 +13,7 @@ This required a rather extensive rewrite to all `UIA` related code and as such r
 Following some groundwork laid in previous releases, versions beyond Release 2.18.0 will now be able to be installed as a `patch` instead of **requiring** the user to completely reinstall the repo.  
 In the future this will hopefully allow me to release critical fixes a little quicker instead of somewhat incentivising myself to wait for a larger update.
 
-# 🔸PremiereRemote
+# 🔸PremiereRemote & nodeJS
 - [`PremiereRemote`](<https://github.com/sebinside/PremiereRemote>) is now **required**. And will be installed during installation of my repo.
     - As a result, `nodejs` will be bundled alongside my repo and installed for the user if not available prior.
 

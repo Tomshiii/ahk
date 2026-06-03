@@ -33,6 +33,27 @@ x::x */
 ;searchgoogleHotkey;
 ^+c::clip.search("https://duckduckgo.com/?t=ffab&q=", "firefox.exe") ;runs a google search of highlighted text
 
+~^c::
+{
+	if !WinActive("ahk_class #32770 ahk_exe AutoHotkey64.exe")
+    	return
+	sleep 25
+	split := StrSplit(A_Clipboard, "`n")
+	try SplitPath(split[2],,, &ext)
+	catch {
+		return
+	}
+	if split[1] != "---------------------------`r" && ext != "ahk"
+		return
+	split.RemoveAt(split.Length-3, 3)
+	split.RemoveAt(1, 3)
+	newStr := ""
+	loop split.Length {
+		newStr .= split[A_Index]
+	}
+	A_Clipboard := newStr
+}
+
 ;capitaliseHotkey;
 SC03A & c::clip.capitilise()
 

@@ -1,14 +1,15 @@
 /************************************************************************
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
- * @date 2026/05/28
- * @version 2.0.0
+ * @date 2026/06/03
+ * @version 2.0.1
 ***********************************************************************/
 
 ;{ \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\adobeXML.ahk
+#Include Classes\Editors\Premiere.ahk
 #Include Functions\determineAdobeVer.ahk
 #Include Functions\loadXML.ahk
 #Include Other\JSON.ahk
