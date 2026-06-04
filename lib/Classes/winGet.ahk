@@ -2,7 +2,7 @@
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
  * @date 2026/06/04
- * @version 1.7.12
+ * @version 1.7.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,14 +20,15 @@
 class WinGet {
 
     static __New() {
-        this.UserSettings := CLSID_Objs.load("UserSettings")
         ignoreText := ""
         for k, v in this.explorerIgnoreMap {
             ignoreText .= "ahk_class " k "|"
         }
         this.ignoreExplorerRegex := ignoreText
     }
-    static UserSettings := ""
+    static UserSettings {
+        get =>  CLSID_Objs.load("UserSettings")
+    }
     static ignoreExplorerRegex := ""
 
     /** A map containing common win explorer class names that some functions may wish to ignore */

@@ -4,7 +4,7 @@
  * @aeVer 26.2
  * @author tomshi
  * @date 2026/06/04
- * @version 1.3.5
+ * @version 1.3.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,24 +29,23 @@
 class AE {
 
     static __New() {
-        UserSettings := CLSID_Objs.load("UserSettings")
-        this.currentSetVer  := SubStr(UserSettings.aeVer, 2)
-        this.currentYearVer := SubStr(UserSettings.aeVer, 2, 2)
-
         ;// ensure minimum version
-        if (regInstalledVer := determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"}, UserSettings)) != false {
-            if VerCompare(regInstalledVer.version, this.minVer) < 0 {
-                ;// throw
-                errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true)
+        if A_ScriptName != "Core Functionality.ahk" {
+            regInstalledVer := determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
+            switch regInstalledVer {
+                case false:
+                    errorLog(TargetError("After Effects is not currently installed or the incorrect version is set."),,, true)
+                default:
+                    if VerCompare(regInstalledVer.version, this.minVer) < 0 {
+                        ;// throw
+                        errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true)
+                    }
             }
         }
-
-        switch {
-            case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.focusColour := 0x066CE7
-			case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:  this.focusColour := 0x2D8CEB
-        }
     }
-
+    static UserSettings {
+        get => CLSID_Objs.load("UserSettings")
+    }
     static minVer := "22.6"
     static spectrumUI_Version := "25.0"
 
@@ -55,9 +54,20 @@ class AE {
     static class := Editors.AE.class
     static path := ptf["AE"]
 
-    static focusColour := 0x2D8CEB
-    static currentSetVer := ""
-    static currentYearVer := ""
+    static focusColour {
+        get {
+            switch {
+                case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: return 0x066CE7
+                case VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0:  return 0x2D8CEB
+            }
+        }
+    }
+    static currentSetVer {
+        get => SubStr(this.UserSettings.aeVer, 2)
+    }
+    static currentYearVer {
+        get =>  SubStr(this.UserSettings.aeVer, 2, 2)
+    }
 
     /** saves ae using CEP. Require's the correct year version to be set within `settingsGUI()` */
     static save() {

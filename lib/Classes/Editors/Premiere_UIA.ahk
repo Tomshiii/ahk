@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/06/04
- * @version 3.0.21
+ * @version 3.0.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -21,11 +21,6 @@
 ; }
 
 class premUIA_Values {
-    static __New() {
-        this.UserSettings := CLSID_Objs.load("UserSettings")
-        this.KSA := CLSID_Objs.clone("KSA")
-    }
-
     static isRunning := false
     static beenSet   := false
 
@@ -35,7 +30,12 @@ class premUIA_Values {
     static AdobeEl  := false
     static determineUIA_PID := false
 
-    static UserSettings := ""
+    static KSA {
+        get => CLSID_Objs.load("KSA")
+    }
+    static UserSettings {
+        get => CLSID_Objs.load("UserSettings")
+    }
 
     /**
      * Determine the UIA path of the active element

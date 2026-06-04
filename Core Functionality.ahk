@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/05/28
- * @version 1.0.19
+ * @date 2026/06/04
+ * @version 1.0.20
  ***********************************************************************/
 
 #SingleInstance Force
@@ -34,13 +34,14 @@ TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 try getReload := A_Args.Get(1)
 
 UserSettings    := UserPref(, true)
+ObjRegisterActive(UserSettings, CLSID_Objs["UserSettings"])
 KSA             := KeyShortAdjust()
 premiere        := prem
 Loading         := {isLoading: true}
 determineActive := {isRunning: false}
 
 
-allRegister := [{obj:premiere, name: "prem"}, {obj: UserSettings, name: "UserSettings"}, {obj:KSA, name: "KSA"}, {obj: Loading, name: "Loading"}, {obj: determineActive, name: "determineActive"}]
+allRegister := [{obj:premiere, name: "prem"}, {obj:KSA, name: "KSA"}, {obj: Loading, name: "Loading"}, {obj: determineActive, name: "determineActive"}]
 for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }

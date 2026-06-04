@@ -5,12 +5,13 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/06/04
- * @version 2.4.22
+ * @version 2.4.23
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
 #Include KSA\Keyboard Shortcut Adjustments.ahk
+#Include Classes\Settings.ahk
 #Include Classes\block.ahk
 #Include Classes\coord.ahk
 #Include Classes\ptf.ahk
@@ -53,27 +54,29 @@
 class Prem {
 
     static __New() {
-        this.UserSettings := CLSID_Objs.load("UserSettings")
         nodeInstalled   := RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
         remoteInstalled := DirExist(A_AppData "\Adobe\CEP\extensions\PremiereRemote")
         if !nodeInstalled || !remoteInstalled {
             throwStr := (!nodeInstalled && !remoteInstalled) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!nodeInstalled && remoteInstalled) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")
             throw TargetError(throwStr, -1)
         }
-        this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
-        ;// ensure minimum version
-        if (regInstalledVer := determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"}, this.UserSettings)) != false {
-            if VerCompare(regInstalledVer.version, this.minVer) < 0 {
-                ;// throw
-                errorLog(TargetError("Installed version of Premiere is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true)
+
+        if A_ScriptName != "Core Functionality.ahk" {
+            this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
+            ;// ensure minimum version
+            regInstalledVer := determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
+            switch regInstalledVer {
+                case false:
+                    errorLog(TargetError("Premiere is not currently installed or the incorrect version is set."),,, true)
+
+                default:
+                    if VerCompare(regInstalledVer.version, this.minVer) < 0 {
+                        ;// throw
+                        errorLog(TargetError("Installed version of Premiere is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true)
+                    }
             }
         }
-        try this.defaultTheme     := this.UserSettings.premDefaultTheme
-        catch {
-            this.defaultTheme := this.theme
-        }
-        try this.useSwapSequences := this.UserSettings.use_swapSequences
-        try this.prevSeqDelay := this.UserSettings.premPrevSeqDelay * 1000
+
         this.setUI()
         if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try {
@@ -89,7 +92,7 @@ class Prem {
             this.__determineTheme()
         }
 
-        if A_ScriptName = "Core Functionality.ahk" && (regInstalledVer != false) {
+        if A_ScriptName = "Core Functionality.ahk" {
             if (this.useSwapSequences = true || this.useSwapSequences = "true")
                 SetTimer(this.__setCurrSeq.Bind(this), this.prevSeqDelay)
 
@@ -109,20 +112,37 @@ class Prem {
     }
 
     static minVer := "26.2"
-    static UserSettings := ""
+    static KSA {
+        get => CLSID_Objs.load("KSA")
+    }
+    static UserSettings {
+        get => (A_ScriptName = "Core Functionality.ahk" ? UserPref(true) : CLSID_Objs.load("UserSettings"))
+    }
     static currentSetVer := ""
     static spectrumUI_Version := "25.0"
     static timelineCols := Mip()
     static timelineColArr := []
     static theme := "darkest"
-    static defaultTheme := ""
+    static defaultTheme {
+        get {
+            try return this.UserSettings.premDefaultTheme
+            catch {
+                return this.theme
+            }
+        }
+    }
     static UI := "Spectrum"
     static defaultUI := "Spectrum"
     static sequenceArr := []
     static resetSeqTimer := false
-    static prevSeqDelay := 1000
+    static prevSeqDelay {
+        get => (this.UserSettings.premPrevSeqDelay * 1000)
+
+    }
     static pauseSeqTimer := false
-    static useSwapSequences := true
+    static useSwapSequences {
+        get => this.UserSettings.use_swapSequences
+    }
     static remoteActive := "loading"
 
     static exeTitle := Editors.Premiere.winTitle
