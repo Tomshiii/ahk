@@ -7,6 +7,7 @@
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
+; #Warn VarUnset, StdOut
 
 try installDir := FileRead(A_AppData "\tomshi\installDir")
 SplitPath(A_LineFile,, &currentDir)

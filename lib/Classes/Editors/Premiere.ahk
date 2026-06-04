@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/06/04
- * @version 2.4.23
+ * @date 2026/06/05
+ * @version 2.4.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -116,7 +116,12 @@ class Prem {
         get => CLSID_Objs.load("KSA")
     }
     static UserSettings {
-        get => (A_ScriptName = "Core Functionality.ahk" ? UserPref(true) : CLSID_Objs.load("UserSettings"))
+        get {
+            try return CLSID_Objs.load("UserSettings")
+            catch {
+                return UserPref(true)
+            }
+        }
     }
     static currentSetVer := ""
     static spectrumUI_Version := "25.0"

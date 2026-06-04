@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.2
  * @author tomshi
- * @date 2026/06/04
- * @version 1.3.6
+ * @date 2026/06/05
+ * @version 1.3.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -44,7 +44,12 @@ class AE {
         }
     }
     static UserSettings {
-        get => CLSID_Objs.load("UserSettings")
+        get {
+            try CLSID_Objs.load("UserSettings")
+            catch {
+                UserPref(true)
+            }
+        }
     }
     static minVer := "22.6"
     static spectrumUI_Version := "25.0"

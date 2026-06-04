@@ -15,7 +15,10 @@
  * @returns {Object} `{path: "path\to\.exe", version: "v2x.y.z"}
  */
 determineAdobeVer(exeNames, UserSettings?) {
-    UserSettings := CLSID_Objs.clone("UserSettings")
+    try UserSettings := CLSID_Objs.clone("UserSettings")
+    catch {
+        UserSettings := UserPref(true)
+    }
     whichBeta := InStr(exeNames.baseName, "Premiere") ? UserSettings.premIsBeta : (InStr(exeNames.baseName, "After Effects") ? UserSettings.aeIsBeta : UserSettings.psIsBeta)
     whichExe := (checkBool(whichBeta) = false) ? exeNames.baseName : exeNames.beta
     regInstalledVer := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\" whichExe,, 0)
