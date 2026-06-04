@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.2
  * @author tomshi
- * @date 2026/05/13
- * @version 1.3.4
+ * @date 2026/06/04
+ * @version 1.3.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,18 +29,7 @@
 class AE {
 
     static __New() {
-        if A_ScriptName = "Core Functionality.ahk" {
-            UserSettings := UserPref(true)
-        } else {
-            CLSID_Objs.waitCoreFuncs(2)
-            try {
-                UserSettings := CLSID_Objs.clone("UserSettings")
-                if !UserSettings || Type(UserSettings) != "ComObject"
-                    UserSettings := UserPref(true)
-            } catch {
-                UserSettings := UserPref(true)
-            }
-        }
+        UserSettings := CLSID_Objs.load("UserSettings")
         this.currentSetVer  := SubStr(UserSettings.aeVer, 2)
         this.currentYearVer := SubStr(UserSettings.aeVer, 2, 2)
 

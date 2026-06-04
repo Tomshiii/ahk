@@ -15,16 +15,7 @@
  * @returns {Object} `{path: "path\to\.exe", version: "v2x.y.z"}
  */
 determineAdobeVer(exeNames, UserSettings?) {
-    if !IsSet(UserSettings) {
-        if A_ScriptName = "Core Functionality.ahk" {
-            UserSettings := UserPref(true)
-        } else {
-            try UserSettings := CLSID_Objs.clone("UserSettings")
-            catch {
-                UserSettings := UserPref(true)
-            }
-        }
-    }
+    UserSettings := CLSID_Objs.clone("UserSettings")
     whichBeta := InStr(exeNames.baseName, "Premiere") ? UserSettings.premIsBeta : (InStr(exeNames.baseName, "After Effects") ? UserSettings.aeIsBeta : UserSettings.psIsBeta)
     whichExe := (checkBool(whichBeta) = false) ? exeNames.baseName : exeNames.beta
     regInstalledVer := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\" whichExe,, 0)

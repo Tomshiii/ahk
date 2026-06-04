@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/05/28
- * @version 3.0.20
+ * @date 2026/06/04
+ * @version 3.0.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,15 +22,8 @@
 
 class premUIA_Values {
     static __New() {
-        if A_ScriptName = "Core Functionality.ahk" {
-            this.UserSettings := UserPref(true)
-        } else {
-            try this.UserSettings := CLSID_Objs.clone("UserSettings")
-            catch {
-                this.UserSettings := UserPref(true)
-            }
-            try this.KSA := CLSID_Objs.clone("KSA")
-        }
+        this.UserSettings := CLSID_Objs.load("UserSettings")
+        this.KSA := CLSID_Objs.clone("KSA")
     }
 
     static isRunning := false

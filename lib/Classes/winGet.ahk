@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/05/08
- * @version 1.7.11
+ * @date 2026/06/04
+ * @version 1.7.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,15 +20,7 @@
 class WinGet {
 
     static __New() {
-        ;// we do this here so constant calls to `__determineAdobeYear()` don't lock up the mutex
-        if A_ScriptName = "Core Functionality.ahk" {
-            this.UserSettings := UserPref(true)
-        } else {
-            try this.UserSettings := CLSID_Objs.clone("UserSettings")
-            catch {
-                this.UserSettings := UserPref(true)
-            }
-        }
+        this.UserSettings := CLSID_Objs.load("UserSettings")
         ignoreText := ""
         for k, v in this.explorerIgnoreMap {
             ignoreText .= "ahk_class " k "|"
@@ -210,7 +202,7 @@ class WinGet {
             }
             switch which {
                 case "AE":       determineYear := SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), SubStr(A_YYYY, 1, 2),, 1, 1), 4)
-                case "Premiere": determineYear := (VerCompare(SubStr(UserSettings.premVer, 2), "26.0") >= 0) ? "" : SubStr(progCheck, InStr(SubStr(progCheck, 1, 25), SubStr(A_YYYY, 1, 2),, 1, 1), 4)
+                case "Premiere": determineYear := ""
             }
         } catch {
             ;// fallback to `ptf {`

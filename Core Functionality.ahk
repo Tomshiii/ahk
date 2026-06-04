@@ -7,7 +7,15 @@
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
-#Warn VarUnset, StdOut
+
+try installDir := FileRead(A_AppData "\tomshi\installDir")
+SplitPath(A_LineFile,, &currentDir)
+if !IsSet(installDir) || currentDir != installDir {
+    throw TargetError("Installation has been moved, this will cause issues.`nMove the installation back or reinstall in the new location.",, installDir)
+}
+SetWorkingDir(installDir)
+Persistent()
+TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -25,32 +33,23 @@
 ; }
 try getReload := A_Args.Get(1)
 
-errorLog({state:"empty"})
-;// this allows `notifyIfNotExist()` to send its prompts to Core Functionality
-;// fixes notify GUIs hanging when called from `HotkeylessAHK`
-onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
-OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
-
-try installDir := FileRead(A_AppData "\tomshi\installDir")
-SplitPath(A_LineFile,, &currentDir)
-if !IsSet(installDir) || currentDir != installDir {
-    throw TargetError("Installation has been moved, this will cause issues.`nMove the installation back or reinstall in the new location.",, installDir)
-}
-SetWorkingDir(installDir)
-Persistent()
-TraySetIcon(installDir "\Support Files\Icons\core func.ico")
-
 UserSettings    := UserPref(, true)
 KSA             := KeyShortAdjust()
 premiere        := prem
 Loading         := {isLoading: true}
 determineActive := {isRunning: false}
 
+
 allRegister := [{obj:premiere, name: "prem"}, {obj: UserSettings, name: "UserSettings"}, {obj:KSA, name: "KSA"}, {obj: Loading, name: "Loading"}, {obj: determineActive, name: "determineActive"}]
 for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }
 Loading.isLoading := false
+errorLog({state:"empty"})
+;// this allows `notifyIfNotExist()` to send its prompts to Core Functionality
+;// fixes notify GUIs hanging when called from `HotkeylessAHK`
+onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
+OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 
 
 if UserSettings.Set_UIA_on_reload = true && (isReload(getReload ?? false))
