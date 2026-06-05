@@ -43,6 +43,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing
 - ✅ Fixed `updateChecker()` throwing if the user attempted to download an update from the GUI
 - ❌ Removed `generate()`, `firstCheck()`, `todoGUI()`
+- 📋 `updateChecker()` will now download and install patches for future versions
 
 ### 📝 `Settings {`
 - ✏️ Added `Set_UIA_on_reload`
@@ -50,7 +51,8 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ✅ Fixed not formatting `beta`/`alpha`/`pre` versions correctly
 - 📋 Will now check the user's `.ini` file against a fresh template during the `Core Functionality.ahk` initialisation flow
     - 📋 `Core Functionality.ahk` will now ensure stale values are removed
-- 📋 `updateChecker()` will now download and install patches for future versions
+- 📋 Changed values will now instantly write new value to `ini` file instead of relying on object cleanup.
+    - Should address issues with settings changes not sticking during reloads
 
 ### 📝 `notifyExt {`
 - ❗Added class `notifyExt {`

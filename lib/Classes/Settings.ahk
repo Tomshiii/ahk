@@ -1,28 +1,30 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/05/22
- * @version 1.4.9
+ * @date 2026/06/05
+ * @version 1.4.10
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\Mip.ahk
+#Include Classes\CLSID_Objs.ahk
+#Include Classes\errorLog.ahk
 #Include Functions\checkINI.ahk
 #Include Functions\formatPreReleaseTag.ahk
-#Include *i Classes\CLSID_Objs.ahk
 ; }
 
 class UserPref {
     /**
-     * @param [override=false]
-     * @param [checkVals=false]
+     * @param [override=false] for scripts other than `Core Functionality.ahk` if set to `true` will generate and return its own local settings instance
+     * @param [checkVals=false] when set to `true` will check the user's `settints.ini` file against a fresh template to ensure all properties are accounted for and stale properties are removed
      * @constructor
      */
     __New(override := false, checkVals := false) {
         if !FileExist(this.installDir) {
             throw TargetError("lib files have not been installed.")
         }
+        this._store := {}
         if FileExist(this.SettingsFile) && checkVals = true {
             tempFile := this.SettingsDir "\settings_temp"
             this.__createIni(tempFile)
@@ -34,15 +36,8 @@ class UserPref {
             ; Run(A_ScriptFullPath)
         }
         if A_ScriptName != "Core Functionality.ahk" {
-            switch override {
-                case false: return
-                case true:
-                    try {
-                        userSet := CLSID_Objs.load("UserSettings")
-                        userSet.__delAll()
-                        userSet := ""
-                    }
-            }
+            if override = false
+                return
         }
         ;// initialise settings variables
         this.__setSett()
@@ -104,6 +99,7 @@ class UserPref {
      * Convert boolean strings to proper boolean values
      * @param {String} key "true" or "false"
      * @param {String} section the section name of the ini file currently being read from
+     * @returns {Boolean|String} if the value is `"true"`/`"false"` returns `true`/`false`. If `"disabled"` or `"stop"`, returns those strings. Else returns the default value
      */
     __convertToBool(key, section) {
         default := this.__getDefault(key)
@@ -118,7 +114,8 @@ class UserPref {
 
     /**
      * Convert boolean values to boolean strings
-     * @param {Boolean} bool 1 or 0 (true/false)
+     * @param {Boolean} bool 1 or 0
+     * @returns {String} `"true"` or `"false"`
      */
     __convertToStr(bool) {
         switch bool {
@@ -134,66 +131,41 @@ class UserPref {
     __convertToKey(var) => StrReplace(var, "_", A_Space)
 
     /**
-     * This function is what the class will do on exit
-     * It will check the current settings stored in the object and will write that setting to file if it differs from the initial value
-     * @param {Array} arr the array you wish to enum through
-     * @param {String} section the corresponding section name in the settings ini file
-     */
-    __del(arr, section) {
-        for v in arr {
-            try {
-                writeVal := ((this.%v% = 1 || this.%v% = 0) && (section != "Adjust")) ? RTrim(this.__convertToStr(this.%v%), " ") : this.%v%
-                ;// Don't want a default value here, if something errors out during the deletion of the class, we don't want it
-                ;// returning back to the default value instead of leaving it how it currently is
-                prior_value := IniRead(this.SettingsFile, section, this.__convertToKey(v))
-                if writeVal != prior_value
-                    IniWrite(writeVal, this.SettingsFile, section, this.__convertToKey(v))
-            }
-        }
-    }
-
-    /**
      * This function reads an entire .ini section and pushes every key to the designated array
      * Any whitespace is converted to "_"
      * @param {String} section is the section you wish to be read from
      * @param {Array} arr is the desired array you wish to push to
      * @param {String} [settingsFile=this.settingsFile] which settings file you wish to be used during the `IniRead`
      */
-    __fillArr(section, arr, settingsFile := this.SettingsFile, setFromClass := false) {
+    __fillArr(section, arr, settingsFile := this.SettingsFile) {
         allSettings   := IniRead(settingsFile, section)
         splitSettings := StrSplit(allSettings, ["=", "`n", "`r"])
         for k, v in splitSettings {
             if Mod(k, 2) = 0
                 continue
-            ;// stops `Core Functionality.ahk` from wiping back to default
-            if setFromClass = true && this.HasOwnProp(StrReplace(v, A_Space, "_"))
-                continue
             arr.Push(StrReplace(v, A_Space, "_"))
         }
     }
 
-    /**
-     * This function checks whether the user is on a late enough version of windows to use dark mode
-     */
+    /** This function checks whether the user is on a late enough version of windows to use dark mode */
     __checkDark() {
         if (VerCompare(A_OSVersion, "10.0.17763") < 0) {
             this.dark_mode := "disabled"
-            this.__del(this.Settings_, "Settings")
             return "disabled"
         }
-        this.dark_mode := true
-        this.__del(this.Settings_, "Settings")
-        return "true"
+        return true
     }
 
+    /** ensures the current version is set correctly formatted */
     __setVersion() {
         if !FileExist(A_AppData "\tomshi\version")
             throw TargetError("version file has been moved or deleted")
-        ver := FileRead(A_AppData "\tomshi\version")
-        if this.version != ver {
-            this.version := ver
+        ver := formatPreReleaseTag(FileRead(A_AppData "\tomshi\version"))
+        currentSettingsVer := formatPreReleaseTag(IniRead(this.SettingsFile, "Track", "version", "v2.18.0"))
+        if currentSettingsVer != ver {
             IniWrite(ver, this.SettingsFile, "Track", "version")
         }
+        this.__defineProp("version", "Track", ver)
     }
 
     doValChecks() {
@@ -249,7 +221,6 @@ class UserPref {
             this.__setSett(tempSettingsPath)
             this.__setAdjust(tempSettingsPath)
             this.__setTrack(tempSettingsPath)
-            this.__delAll()
         }
         if FileExist(tempSettingsPath)
             FileDelete(tempSettingsPath)
@@ -257,60 +228,140 @@ class UserPref {
 
     ;// [Settings]
     Settings_ := []
-    __setSett(settingsFile := this.SettingsFile, setFromClass := false) {
-        this.__fillArr("Settings", this.Settings_, settingsFile, setFromClass)
+    __setSett(settingsFile := this.SettingsFile) {
+        this.__fillArr("Settings", this.Settings_, settingsFile)
         ;// create variables
         for v in this.Settings_ {
-            if !this.HasOwnProp(v)
-                this.%v% := this.__convertToBool(this.__convertToKey(v), "Settings")
+            if !this.HasOwnProp(v) {
+                if v = "dark_mode" {
+                    dark := this.__checkDark()
+                    this.__defineProp(v, "Settings", (dark = "disabled") ? "disabled" : this.__convertToBool(this.__convertToKey(v), "Settings"))
+                }
+                this.__defineProp(v, "Settings", this.__convertToBool(this.__convertToKey(v), "Settings"))
+            }
         }
     }
     ;// [Adjust]
     Adjust_ := []
-    __setAdjust(settingsFile := this.SettingsFile, setFromClass := false) {
-        this.__fillArr("Adjust", this.Adjust_, settingsFile, setFromClass)
-        ;// create variables
-        for v in this.Adjust_ {
-            if !this.HasOwnProp(v) {
-                defaultVal := this.__getDefault(v)
-                this.%v% := IniRead(settingsFile, "Adjust", this.__convertToKey(v), defaultVal)
-            }
+    __setAdjust(settingsFile := this.SettingsFile) {
+    this.__fillArr("Adjust", this.Adjust_, settingsFile)
+    for v in this.Adjust_ {
+        if !this.HasOwnProp(v) {
+            defaultVal := this.__getDefault(v)
+            newVal := IniRead(settingsFile, "Adjust", this.__convertToKey(v), defaultVal)
+            this.__defineProp(v, "Adjust", newVal)
         }
     }
+}
     ;// [Track]
     Track_ := []
-    __setTrack(settingsFile := this.SettingsFile, setFromClass := false) {
-        this.__fillArr("Track", this.Track_, settingsFile, setFromClass)
-        ;// create variables
-        for v in this.Track_ {
-            if this.HasOwnProp(v)
-                continue
-            switch v {
-                case "first_check", "block_aware":
-                    this.%v% := this.__convertToBool(this.__convertToKey(v), "Track")
-                case "version":
-                    defaultVal := this.__getDefault(v)
-                    value := IniRead(settingsFile, "Track", this.__convertToKey(v), defaultVal)
-                    this.%v% := formatPreReleaseTag(value)
-                default:
-                    defaultVal := this.__getDefault(v)
-                    this.%v% := IniRead(settingsFile, "Track", this.__convertToKey(v), defaultVal)
-            }
+    __setTrack(settingsFile := this.SettingsFile) {
+    this.__fillArr("Track", this.Track_, settingsFile)
+    for v in this.Track_ {
+        if this.HasOwnProp(v)
+            continue
+        switch v {
+            case "first_check", "block_aware":
+                this.__defineProp(v, "Track", this.__convertToBool(this.__convertToKey(v), "Track"))
+            case "version": this.__setVersion()
+            default:
+                defaultVal := this.__getDefault(v)
+                newVal := IniRead(settingsFile, "Track", this.__convertToKey(v), defaultVal)
+                this.__defineProp(v, "Track", newVal)
+        }
+    }
+}
+
+    __defineProp(v, section, initialValue) {
+        this._store.%v% := initialValue
+
+        this.DefineProp(v, {
+            Get: (self) => self._store.%v%,
+            Set: (self, value) => (self._store.%v% := value, self.__writeVal(v, section))
+        })
+    }
+
+    __writeVal(v, section) {
+        try {
+            writeVal := ((this.%v% = 1 || this.%v% = 0) && (section != "Adjust")) ? RTrim(this.__convertToStr(this.%v%), " ") : this.%v%
+            ;// Don't want a default value here, if something errors out during the deletion of the class, we don't want it
+            ;// returning back to the default value instead of leaving it how it currently is
+            prior_value := IniRead(this.SettingsFile, section, this.__convertToKey(v))
+            if writeVal != prior_value
+                IniWrite(writeVal, this.SettingsFile, section, this.__convertToKey(v))
+        } catch {
+            errorLog(ValueError("Failed writing new settings value in section: " section, -1, v))
         }
     }
 
-    __delAll() {
-        this.__del(this.Settings_, "Settings")
-        this.__del(this.Adjust_, "Adjust")
-        this.__del(this.Track_, "Track")
-    }
+    settingsTemplate := "
+    (
+        [Settings]
+        update check={}
+        beta update check={}
+        ahk update check={}
+        update adobe vers={}
+        update git={}
+        package update check={}
+        lib update check={}
+        dark mode={}
+        run at startup={}
+        show adobe vers startup={}
+        autosave beep={}
+        autosave check checklist={}
+        autosave save override={}
+        autosave check mouse={}
+        autosave always save={}
+        autosave restart playback={}
+        tooltip={}
+        checklist hotkeys={}
+        checklist tooltip={}
+        checklist wait={}
+        disc disable autoreply={}
+        adobeExeOverride={}
+        Set UIA on reload={}
+        Use Thio MButton={}
+        Use MButton={}
+        Use swapSequences={}
+
+        [Adjust]
+        adobe GB={}
+        adobe FS={}
+        autosave MIN={}
+        game SEC={}
+        multi SEC={}
+        prem year={}
+        ae year={}
+        ps year={}
+        premVer={}
+        premIsBeta={}
+        premSwapSequencesLimit={}
+        aeVer={}
+        aeIsBeta={}
+        psVer={}
+        psIsBeta={}
+        resolveVer={}
+        premCache={}
+        aeCache={}
+        premDefaultTheme={}
+        alternate MButton Key={}
+        premPrevSeqDelay={}
+
+        [Track]
+        adobe temp={}
+        UIA Daily Limit Day={}
+        first check={}
+        block aware={}
+        monitor alert={}
+        skipVersion={}
+        version={}
+    )"
 
     /**
      * This function generates a baseline settings.ini file
+     * @param [filelocation=this.SettingsFile] the location of the settings file to create. Defaults to `this.SettingsFile`
      */
     __createIni(filelocation := this.SettingsFile) {
-        /* if params.Length > this.defaults.Length
-            throw (ValueError("Incorrect number of Parameters passed to function.", -1)) ;// don't add errorlog to this function, keep it no dependencies */
         if !DirExist(this.SettingsDir)
             DirCreate(this.SettingsDir)
         SplitPath(filelocation,, &setDir)
@@ -320,68 +371,7 @@ class UserPref {
         }
         if FileExist(filelocation)
             FileDelete(filelocation)
-        FileAppend("
-        (
-            [Settings]
-            update check={}
-            beta update check={}
-            ahk update check={}
-            update adobe vers={}
-            update git={}
-            package update check={}
-            lib update check={}
-            dark mode={}
-            run at startup={}
-            show adobe vers startup={}
-            autosave beep={}
-            autosave check checklist={}
-            autosave save override={}
-            autosave check mouse={}
-            autosave always save={}
-            autosave restart playback={}
-            tooltip={}
-            checklist hotkeys={}
-            checklist tooltip={}
-            checklist wait={}
-            disc disable autoreply={}
-            adobeExeOverride={}
-            Set UIA on reload={}
-            Use Thio MButton={}
-            Use MButton={}
-            Use swapSequences={}
-
-            [Adjust]
-            adobe GB={}
-            adobe FS={}
-            autosave MIN={}
-            game SEC={}
-            multi SEC={}
-            prem year={}
-            ae year={}
-            ps year={}
-            premVer={}
-            premIsBeta={}
-            premSwapSequencesLimit={}
-            aeVer={}
-            aeIsBeta={}
-            psVer={}
-            psIsBeta={}
-            resolveVer={}
-            premCache={}
-            aeCache={}
-            premDefaultTheme={}
-            alternate MButton Key={}
-            premPrevSeqDelay={}
-
-            [Track]
-            adobe temp={}
-            UIA Daily Limit Day={}
-            first check={}
-            block aware={}
-            monitor alert={}
-            skipVersion={}
-            version={}
-        )", filelocation)
+        FileAppend(this.settingsTemplate, filelocation)
         ;// replace {}
         workingFile := FileRead(filelocation)
         eachLine := StrSplit(workingFile, ["`n", "`r"])
@@ -396,11 +386,5 @@ class UserPref {
             splitLine := StrSplit(v, "=")
             IniWrite(this.__getDefault(splitLine[1]), filelocation, currentSection, splitLine[1])
         }
-    }
-
-    __Delete() {
-        if A_ScriptName != "Core Functionality.ahk"
-            return
-        try this.__delAll()
     }
 }

@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/06/04
- * @version 1.9.4
+ * @date 2026/06/05
+ * @version 1.9.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -55,8 +55,6 @@ class Startup {
 
         try didReload := A_Args[1]
         this.isReload := isReload(didReload ?? false)
-
-        this.__checkDark()
     }
 
     ;// see if you can create function that reads product version of adobe .exe files to get their version and set in settings.ini
@@ -111,21 +109,6 @@ class Startup {
      * This function retrieves the release version the user is currently running
      */
     __getMainRelease() => getLocalVer()
-
-    /**
-     * This function checks whether the user is on a late enough version of windows to use dark mode
-     */
-    __checkDark() {
-        if (VerCompare(A_OSVersion, "10.0.17763") < 0) {
-            this.UserSettings.dark_mode := "disabled"
-            if !this.__checkForReloadAttempt("checkDark")
-                return
-            reset.reset()
-            return "disabled"
-        }
-        this.UserSettings.dark_mode := true
-        return "true"
-    }
 
     /**
      * determines whether to download the ahk exe or .zip folder
@@ -219,14 +202,14 @@ class Startup {
                 ;set cancel button
                 MyGui.AddButton("Default X+5", "Cancel").OnEvent("Click", closegui)
                 ;set "skip this version" checkbox
-                MyGui.AddCheckbox("xs-175 Ys-30", "Skip this Version").OnEvent("Click", (guiCtrl, *) => ((UserSettings.skipVersion := (guiCtrl.Value = 1) ? version : this.origSkipVer), UserSettings.__delAll()))
+                MyGui.AddCheckbox("xs-175 Ys-30", "Skip this Version").OnEvent("Click", (guiCtrl, *) => ((UserSettings.skipVersion := (guiCtrl.Value = 1) ? version : this.origSkipVer)))
                 ;set "don't prompt again" checkbox
-                MyGui.AddCheckbox("xs-175 Y+5", "Don't prompt again").OnEvent("Click", (guiCtrl, *) => (UserSettings.update_check := guiCtrl.Value, UserSettings.__delAll()))
+                MyGui.AddCheckbox("xs-175 Y+5", "Don't prompt again").OnEvent("Click", (guiCtrl, *) => (UserSettings.update_check := guiCtrl.Value))
                 ;set beta checkbox
                 betaCheck := (UserSettings.beta_update_check = true)
                     ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Pre-Releases")
                     : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Pre-Releases")
-                betaCheck.OnEvent("Click", (guiCtrl, *) => (UserSettings.beta_update_check := guiCtrl.Value, UserSettings.__delAll(), sleep(500), Run(A_ScriptFullPath)))
+                betaCheck.OnEvent("Click", (guiCtrl, *) => (UserSettings.beta_update_check := guiCtrl.Value, sleep(500), Run(A_ScriptFullPath)))
 
                 MyGui.Show()
                 prompt(which, guiCtrl, *) {
@@ -234,12 +217,10 @@ class Startup {
                         case "prompt": UserSettings.update_check := (guiCtrl.Value = 0) ? true : false
                         case "prerelease":
                             UserSettings.beta_update_check := (guiCtrl.value = 0) ? false : true
-                            UserSettings.__delAll()
                             sleep 500
                             Run(A_ScriptFullPath)
                         case "skip": UserSettings.skipVersion := (guiCtrl.Value = 1) ? version : this.origSkipVer
                     }
-                    UserSettings.__delAll()
                 }
                 githubButton(*) {
                     if !WinExist("Tomshiii/ahk") {

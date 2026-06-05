@@ -4,7 +4,7 @@
  * @aeVer 26.2
  * @author tomshi
  * @date 2026/06/05
- * @version 1.3.7
+ * @version 1.3.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,6 +29,10 @@
 class AE {
 
     static __New() {
+        try this.UserSettings := CLSID_Objs.load("UserSettings")
+        catch {
+            this.UserSettings := UserPref(true)
+        }
         ;// ensure minimum version
         if A_ScriptName != "Core Functionality.ahk" {
             regInstalledVer := determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
@@ -43,14 +47,7 @@ class AE {
             }
         }
     }
-    static UserSettings {
-        get {
-            try CLSID_Objs.load("UserSettings")
-            catch {
-                UserPref(true)
-            }
-        }
-    }
+    static UserSettings := ""
     static minVer := "22.6"
     static spectrumUI_Version := "25.0"
 

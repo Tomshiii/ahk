@@ -5,5 +5,4 @@
 ; }
 
 UserSettings := UserPref(true, true)
-UserSettings.__delAll()
 ExitApp()

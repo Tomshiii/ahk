@@ -26,6 +26,9 @@ __exit(ExitReason, ExitCode) {
         ExitApp()
 }
 
+#+r::reset.ext_reload() ;this reload script will attempt to reload all active ahk scripts, not only this main script
+#+^r::reset.reset()     ;this will hard rerun all active ahk scripts
+
 start := Startup()
 start.trayMen()
 start.oldLogs()

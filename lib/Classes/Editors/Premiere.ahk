@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/06/05
- * @version 2.4.24
+ * @version 2.4.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -54,6 +54,10 @@
 class Prem {
 
     static __New() {
+        try this.UserSettings := CLSID_Objs.load("UserSettings")
+        catch {
+            this.UserSettings := UserPref(true)
+        }
         nodeInstalled   := RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
         remoteInstalled := DirExist(A_AppData "\Adobe\CEP\extensions\PremiereRemote")
         if !nodeInstalled || !remoteInstalled {
@@ -115,14 +119,7 @@ class Prem {
     static KSA {
         get => CLSID_Objs.load("KSA")
     }
-    static UserSettings {
-        get {
-            try return CLSID_Objs.load("UserSettings")
-            catch {
-                return UserPref(true)
-            }
-        }
-    }
+    static UserSettings := ""
     static currentSetVer := ""
     static spectrumUI_Version := "25.0"
     static timelineCols := Mip()
