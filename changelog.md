@@ -24,6 +24,7 @@ In the future this will hopefully allow me to release critical fixes a little qu
 
 ## Functions
 - ✅ Fixed `settingsGUI()` not generating the proper `Premiere` shortcut when the `beta` checkbox is deselected
+- ✅ Fixed `CLSID_Objs.Clone()` only being a shallow clone
 - ✏️ Added `checkINI()`, `determineAdobeVer()`
 - 📋 `WM.Send_WM_COPYDATA()` now accepts param `doTooltips`
 - ❌ Removed `hotkeysGUI()`

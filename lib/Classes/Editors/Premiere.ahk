@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/06/05
- * @version 2.4.25
+ * @version 2.4.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -84,7 +84,7 @@ class Prem {
         this.setUI()
         if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try {
-                activeObj := CLSID_Objs.clone("prem")
+                activeObj := CLSID_Objs.load("prem")
                 this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
                 this.timelineCol := activeObj.timelineCol, this.timelineColArr := activeObj.timelineColArr
                 this.sequenceArr := activeObj.sequenceArr
@@ -1699,7 +1699,7 @@ class Prem {
         ;// this block is called if the function originates from a script that isn't `Core Functionality.ahk`
         if A_ScriptName != "Core Functionality.ahk" {
             try {
-                activeObj := CLSID_Objs.clone("prem")
+                activeObj := CLSID_Objs.load("prem")
                 if activeObj.__checkTimelineValues() {
                     coord.s()
                     this.timelineRawX     := activeObj.timelineRawX,     this.timelineRawY     := activeObj.timelineRawY

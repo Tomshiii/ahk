@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/05/15
- * @version 1.1.16
+ * @date 2026/06/05
+ * @version 1.1.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -112,17 +112,49 @@ class CLSID_Objs {
         }
     }
 
-    /** syntatic sugar to call `clsid_objs.load()`, clone the object, the sever the connection to the original object */
+    /**
+     * Recursively deep-clones a plain AHK object, severing all references
+     * @param {Object} obj the object to deep clone
+     * @returns {Object|Map|Array} a fully independent copy
+     */
+    static deepClone(obj) {
+        if !IsObject(obj)
+            return obj
+
+        switch Type(obj) {
+            case "Map":
+                newObj := Map()
+                newObj.CaseSense := obj.CaseSense
+                for k, v in obj
+                    newObj[k] := IsObject(v) ? this.deepClone(v) : v
+                return newObj
+            case "Array":
+                newObj := Array()
+                newObj.Length := obj.Length
+                loop obj.Length {
+                    if obj.Has(A_Index)
+                        newObj[A_Index] := IsObject(obj[A_Index]) ? this.deepClone(obj[A_Index]) : obj[A_Index]
+                }
+                return newObj
+            default:
+                newObj := Object()
+                for k, v in obj.OwnProps()
+                    newObj.DefineProp(k, {Value: IsObject(v) ? this.deepClone(v) : v})
+                return newObj
+        }
+    }
+
+    /**
+     * Loads a COM object, deep-clones its data into a plain AHK object, severs the COM connection
+     * @param {String} [clsid] the clsid of the object to clone
+     * @param {Boolean} [inClass=true] whether to check the value of param `clsid` from within the `CLSID_Objs` class map or not. Defaults to `true`
+     *
+     * */
     static clone(clsid, inClass := true) {
         Critical('On')
         this.checkCoreFunc()
         baseObj := this.load(clsid, inClass)
-        /* try baseObj := this.load(clsid, inClass)
-        catch {
-            errorLog(Error("Failed to load clsid: " clsid))
-            return false
-        } */
-        clonedObj := baseObj.clone()
+        clonedObj := this.deepClone(baseObj)
         baseObj := ""
         Critical('Off')
         return clonedObj
