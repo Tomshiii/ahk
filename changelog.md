@@ -42,9 +42,11 @@ In the future this will hopefully allow me to release critical fixes a little qu
 
 ### 📝 `startup {`
 - ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing
-- ✅ Fixed `updateChecker()` throwing if the user attempted to download an update from the GUI
 - ❌ Removed `generate()`, `firstCheck()`, `todoGUI()`
-- 📋 `updateChecker()` will now download and install patches for future versions
+
+📍 `updateChecker()`
+- ✅ Fixed function throwing if the user attempted to download an update from the GUI
+- 📋 Will now download and install patches for future versions
 
 ### 📝 `Settings {`
 - ✏️ Added `Set_UIA_on_reload`

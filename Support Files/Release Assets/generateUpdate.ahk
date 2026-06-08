@@ -123,7 +123,6 @@ if FileExist(A_AppData "\tomshi\version")
     FileDelete(A_AppData "\tomshi\version")
 FileAppend(formatPreReleaseTag(yes.value), A_AppData "\tomshi\version")
 UserSettings.version := formatPreReleaseTag(yes.value)
-UserSettings.__delAll()
 
 ;// check for pre release tags
 pre   := InStr(yes.value, "pre",, 1, 1), beta  := InStr(yes.value, "beta",, 1, 1), alpha := InStr(yes.value, "alpha",, 1, 1)
@@ -255,9 +254,9 @@ DirCopy(A_WorkingDir "\release\" yes.Value, A_WorkingDir "\release\" yes.Value "
 
 downloadNode(A_WorkingDir "\release\" yes.Value "\nodejs.msi")
 Download("https://github.com/sebinside/PremiereRemote/archive/refs/tags/v2.2.0.zip", A_WorkingDir "\release\" yes.Value "\premExtract.zip")
-
 ;// zipping the temp repo
 zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
+sleep 1000
 zip2 := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value "-patch")
 
 ;// copying a file that will get compiled into the release exe
@@ -273,13 +272,13 @@ replaceVer(A_WorkingDir "\release\" yes.value "-patch.ahk")
 replaceVer(filepath) {
     readFi := FileRead(filepath)
     if InStr(filepath, "-patch") {
-        repValSearch := 'FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_Temp "\tomshi\yes.value", 1)'
-        repVal := Format('FileInstall("E:\Github\ahk\releases\release\{}-patch.zip", A_Temp "\tomshi\{}", 1)', yes.Value)
+        repValSearch := 'FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_Temp "\tomshi\yes.value.zip", 1)'
+        repVal := 'FileInstall("E:\Github\ahk\releases\release\' yes.value '-patch.zip", A_Temp "\tomshi\yes.value.zip", 1)'
         delSearch := 'FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)'
-        patherSearch := 'isPatcher := false'
+        patcherSearch := 'isPatcher := false'
         readFi := StrReplace(readFi, repValSearch, repVal)
         readFi := StrReplace(readFi, delSearch, "")
-        readFi := StrReplace(readFi, patherSearch, 'isPatcher := true')
+        readFi := StrReplace(readFi, patcherSearch, 'isPatcher := true')
     }
     replaceFileVer := StrReplace(readFi, "Version yes.value", "Version " Trim(yes.value, "v"))
     replaceYes := StrReplace(replaceFileVer, "yes.value", yes.value, 1)
@@ -299,12 +298,12 @@ releaseCompile := FileRead(A_ScriptDir "\release_Compile.ahk")
 doCompile(yes.value)
 doCompile(yes.value "-patch")
 doCompile(version) {
-    newCompile := Format(releaseCompile, version, A_AhkVersion)
+    newCompile := Format(releaseCompile, version)
     if !DirExist(A_Temp "\tomshi")
         DirCreate(A_Temp "\tomshi")
-    FileAppend(newCompile, A_Temp "\tomshi\newCompile.ahk")
-    RunWait(A_Temp "\tomshi\newCompile.ahk")
-    FileDelete(A_Temp "\tomshi\newCompile.ahk")
+    FileAppend(newCompile, A_Temp "\tomshi\" version ".ahk")
+    RunWait(A_Temp "\tomshi\" version ".ahk")
+    FileDelete(A_Temp "\tomshi\" version ".ahk")
 }
 
 currentDir := ""

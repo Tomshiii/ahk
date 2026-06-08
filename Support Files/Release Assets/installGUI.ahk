@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/05/23
- * @version 1.1.19
+ * @date 2026/06/08
+ * @version 1.1.20
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -16,23 +16,6 @@ A_ScriptName := "yes.value"
 
 ;// setting version
 ;@Ahk2Exe-SetVersion yes.value
-
-;// requires admin
-;@Ahk2Exe-UpdateManifest 1
-
-;// forces Admin perms
-full_command_line := DllCall("GetCommandLine", "str")
-if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
-{
-    try
-    {
-        if A_IsCompiled
-            Run '*RunAs "' A_ScriptFullPath '" /restart'
-        else
-            Run '*RunAs "' A_AhkPath '" /restart "' A_ScriptFullPath '"'
-    }
-    ExitApp
-}
 
 ;// initiate GUI instance
 instance := installGUI()
@@ -173,7 +156,7 @@ class installGUI extends Gui {
                 if !DirExist(A_Temp "\tomshi\yes.value")
                     DirCreate(A_Temp "\tomshi\yes.value")
 
-                FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_Temp "\tomshi\yes.value", 1)
+                FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_Temp "\tomshi\yes.value.zip", 1)
                 return
             }
             FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
@@ -204,44 +187,64 @@ class installGUI extends Gui {
             SplitPath(zipPath,,, &checkZipPathExt)
             if checkZipPathExt != "zip"
                 throw TypeError("Requested folder is not a ZIP folder", -2, zipPath)
-            SplitPath(unzippedPath,, &unzippedPathDir)
-            if !DirExist(unzippedPathDir)
-                DirCreate(unzippedPathDir)
+            ; Ensure destination directory exists
+            if !DirExist(unzippedPath)
+                DirCreate(unzippedPath)
+
+            ; Shell COM needs fully resolved, backslash paths and the dirs to already exist
+            zipPath       := RTrim(zipPath, "\")
+            unzippedPath  := RTrim(unzippedPath, "\")
+
             psh := ComObject("Shell.Application")
-            psh.Namespace(unzippedPath).CopyHere(psh.Namespace(zipPath).items, 4|16)
+
+            zipFolder := psh.Namespace(zipPath)
+            if !IsObject(zipFolder)
+                throw TargetError("Shell could not open zip path: " zipPath, -1)
+
+            destFolder := psh.Namespace(unzippedPath)
+            if !IsObject(destFolder)
+                throw TargetError("Shell could not open destination path: " unzippedPath, -1)
+
+            destFolder.CopyHere(zipFolder.Items(), 4|16)
+
+            ;// copyHere is async - wait for extraction to complete
+            loop 60 {
+                sleep 500
+                if psh.Namespace(unzippedPath).Items().Count >= zipFolder.Items().Count
+                    break
+            }
+
             return true
         }
 
         __patchInstall() {
-            ;// add closeAll.ahk
             try RunWait(this.prevInstallLoc "\Support Files\closeAll.ahk 1 " A_ScriptName)
-
             if !DirExist(A_Temp "\tomshi\yes.value")
                 throw TargetError
-            SetWorkingDir(A_Temp "\tomshi\yes.value")
+            patchDir := A_Temp "\tomshi\yes.value"
             this.__addLogEntry("unzipping release contents")
-            if this.__unzip(A_WorkingDir "\yes.value.zip", A_WorkingDir "\yes.value") != true {
-                DirDelete(A_Temp "\tomshi\yes.Value")
+            if this.__unzip(A_Temp "\tomshi\yes.value.zip", A_Temp "\yes.value") != true {
+                try DirDelete(A_Temp "\tomshi\yes.Value", true)
                 try FileDelete(this.InstallDir "\yes.value.zip")
                 this.__setProgress(100)
                 this["Progress"].opt("CRed")
                 throw(Error("Unable to Unzip install files. Please try the installation again.", -1))
             }
             this.__setProgress(40)
-            if !this.nodeInstalled() && !FileExist(A_WorkingDir "\yes.value\nodejs.msi") {
+            if !this.nodeInstalled() && !FileExist(patchDir "\yes.value\nodejs.msi") {
                 throw TargetError("Node is not installed and installer cannot be found. Try the full installer.")
             }
-            if !this.nodeInstalled() && FileExist(A_WorkingDir "\yes.value\nodejs.msi") {
-                this.__installNode(A_WorkingDir "\yes.value\nodejs.msi")
+            if !this.nodeInstalled() && FileExist(patchDir "\yes.value\nodejs.msi") {
+                this.__installNode(patchDir "\yes.value\nodejs.msi")
             }
             this.__setProgress(50)
-            if FileExist(A_WorkingDir "\yes.value\nodejs.msi")
-                FileDelete(A_WorkingDir "\yes.value\nodejs.msi")
-            loop files A_WorkingDir "\*", "FD" {
+            if FileExist(patchDir "\yes.value\nodejs.msi")
+                FileDelete(patchDir "\yes.value\nodejs.msi")
+            loop files patchDir "\*", "FD" {
                 this.__addLogEntry("moving: " A_LoopFileName)
                 if A_LoopFileName = "lib" {
                     if DirExist(A_Appdata "\tomshi\lib")
-                        DirDelete(A_Appdata "\tomshi\lib")
+                        DirDelete(A_Appdata "\tomshi\lib", true)
                     DirMove(A_LoopFileFullPath, A_Appdata "\tomshi\lib")
                     continue
                 }
@@ -257,17 +260,19 @@ class installGUI extends Gui {
             this.__setProgress(90)
             this.__adjustVersion()
 
-            DirDelete(A_Temp "\tomshi")
+            DirDelete(A_Temp "\tomshi", true)
 
             ;//! finished
             this.__setProgress(100)
             this["Progress"].opt("CLime")
-
+            this.Destroy()
             return
         }
 
         /** this function handles the entire install sequence of the installer */
         __Install(*) {
+            if DirExist(A_Temp "\tomshi")
+                DirDelete(A_Temp "\tomshi", true)
             if !DirExist(A_AppData "\tomshi")
                 DirCreate(A_AppData "\tomshi")
             if FileExist(A_Appdata "\tomshi\version") {
@@ -310,13 +315,11 @@ class installGUI extends Gui {
             sleep 300
             this.__setProgress(10)
             if (installDirExist && (this.prevVer != false && VerCompare(this.prevVer, "v2.18.0") > 0)) || (this.isPatcher = true) {
-                if A_IsCompiled = 1
-                    this.__installDump(true)
+                this.__installDump(true)
                 this.__patchInstall()
                 return
             }
-            if A_IsCompiled = 1
-                this.__installDump()
+            this.__installDump()
             this.__setProgress(30)
             this.__addLogEntry("unzipping release contents")
             if this.__unzip(A_WorkingDir "\yes.value.zip", this.InstallDir) != true {
@@ -354,7 +357,8 @@ class installGUI extends Gui {
 
             ;// set current adobe versions in settings.ini
             this.__addLogEntry("setting current adobe versions in settings.ini")
-            try this.runAsUser(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk")
+            try RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\InstallPremOverride.ahk")
+            sleep 1000
             this.__setProgress(90)
             ;// creating initialise shortcut
             startupScript := this.InstallDir "\PC Startup\Initialise.ahk"
@@ -392,10 +396,13 @@ class installGUI extends Gui {
             extensionsPath := A_AppData "\Adobe\CEP\extensions"
             if !DirExist(extensionsPath)
                 DirCreate(extensionsPath)
-            FileMove(this.InstallDir "\premExtract.zip", extensionsPath "\premExtract.zip")
-            if !this.runAsUser(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk") {
+            if FileExist(this.InstallDir "\premExtract.zip")
+                FileMove(this.InstallDir "\premExtract.zip", extensionsPath "\premExtract.zip")
+            try RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk")
+            catch {
                 throw MethodError("Failed to install PremiereRemote")
             }
+            sleep 1500
         }
 
         __installNode(path) {
@@ -407,73 +414,12 @@ class installGUI extends Gui {
         __runCoreFunc() {
             this.__addLogEntry("running Core Functionality.ahk")
             ;// stops core func getting run as admin
-            if !this.runAsUser(this.InstallDir "\Core Functionality.ahk") {
+            try Run(this.InstallDir "\Core Functionality.ahk")
+            catch {
                 throw TargetError("Failed to run Core Functionality.ahk")
             }
             sleep 1500
-        }
-
-        ;// complete transparency, this is an ai slop function. dll stuff unfortunately goes well outside my understanding
-        ;// but I needed a way to run `Core Functionality.ahk` without getting
-        ;// automatically elevated
-        runAsUser(script) {
-            pid := 0
-            for proc in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process Where Name='explorer.exe'")
-                pid := proc.ProcessId
-
-            if !pid
-                return false
-
-            ; Request more access rights on the process
-            hProcess := DllCall("OpenProcess", "UInt", 0x1000, "Int", 0, "UInt", pid, "Ptr")
-            if !hProcess
-                return false
-
-            ; Open token with duplicate + query + assign primary rights
-            hToken := 0
-            if !DllCall("OpenProcessToken", "Ptr", hProcess, "UInt", 0xE, "Ptr*", &hToken) {
-                DllCall("CloseHandle", "Ptr", hProcess)
-                return false
-            }
-            DllCall("CloseHandle", "Ptr", hProcess)
-
-            ; Duplicate the token as a primary token
-            hDupToken := 0
-            if !DllCall("advapi32\DuplicateTokenEx",
-            "Ptr", hToken,
-            "UInt", 0x02000000,
-            "Ptr", 0,
-            "UInt", 2,
-            "UInt", 1,
-            "Ptr*", &hDupToken) {
-                DllCall("CloseHandle", "Ptr", hToken)
-                return false
-            }
-            DllCall("CloseHandle", "Ptr", hToken)
-
-            si := Buffer(104, 0)
-            NumPut("UInt", 104, si, 0)
-            pi := Buffer(24, 0)
-
-            ahkPath := this.ahkPath
-            cmd := '"' ahkPath '" "' script '"'
-
-            ret := DllCall("advapi32\CreateProcessWithTokenW",
-                "Ptr", hDupToken,
-                "UInt", 0,
-                "Ptr", 0,
-                "Str", cmd,
-                "UInt", 0x10,
-                "Ptr", 0,
-                "Ptr", 0,
-                "Ptr", si,
-                "Ptr", pi,
-                "Int")
-
-            if !ret
-                return false
-            DllCall("CloseHandle", "Ptr", hDupToken)
-            return true
+            try RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\waitCoreFunc.ahk")
         }
 
         __findAHK() {
@@ -490,12 +436,3 @@ class installGUI extends Gui {
 
         nodeInstalled() => (RegRead("HKLM\SOFTWARE\Node.js", "Version", 0))
 }
-
-;// steps
-
-;// - check if any scripts already exist in the target directory
-;//     - If they do, alert the user that attempting to override a previous install will probably break things
-;// - Extract files from within exe
-;// - Unzip any files
-;// - Generate a settings.ini file if it doesn't exist
-;// - If script noted an old install, Attempt to copy data from `ksa.ini` and streamdeck `options.ini` backups
