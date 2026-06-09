@@ -40,6 +40,10 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - 📋 Changed `prem.selectionTool()` => `prem.selectTool()`
     - Can now set any tool set within `Premiere_UIA.ahk`
 
+📍 `mousedrag()`
+- 📋 Now accepts param `dragWait` to adjust the expected release key
+- 📋 Will now focus the timeline if the cursor is within the timeline coordinates
+
 ### 📝 `startup {`
 - ✅ Fixed an issue with `updateCheckGUI.ahk` using outdated `WebView2` code and subsequently throwing
 - ❌ Removed `generate()`, `firstCheck()`, `todoGUI()`

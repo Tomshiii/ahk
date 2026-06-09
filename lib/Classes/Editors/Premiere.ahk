@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/06/05
- * @version 2.4.26
+ * @date 2026/06/09
+ * @version 2.4.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1581,7 +1581,6 @@ class Prem {
 	}
 
     /**
-     * ### This function contains `KSA` values that need to be set correctly, Most notibly `DragKeywait` needs to be set to the same key you use to ACTIVATE the function.
      * Press a button *(ideally a mouse button)*, this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
 
      * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensures the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
@@ -1589,9 +1588,10 @@ class Prem {
      * This function will timeout after 10s by default as a preventative measure for stuck keys
      * @param {String} tool is the hotkey you want the script to input to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
      * @param {String} toolorig is the hotkey you want the script to input to bring you back to your tool of choice (consider using KSA values)
-     * @param {Integer} timeout the number of `seconds` you want the function to wait before intentionally timing out. Defaults to `10`
+     * @param {Integer} [timeout=10] the number of `seconds` you want the function to wait before intentionally timing out. Defaults to `10`
+     * @param {String} [dragWait=KSA.DragKeywait] The hotkey this function will wait for release before finalising logic. Defaults to the `KSA` value `DragKeyWait`. It is not recommended to simply use `A_ThisHotkey` as quick actions can trip up ahk causing that value to get poisoned
     */
-    static mousedrag(premtool, toolorig, timeout := 10) {
+    static mousedrag(premtool, toolorig, timeout := 10, dragWait := ksa.DragKeywait) {
         if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
             return
         SetTimer(rdisable, -1)
@@ -1605,7 +1605,7 @@ class Prem {
             SendInput("{Escape}")
             this.__focusTimeline()
         }
-
+        coord.s()
         if !coordObj := obj.MousePos()
             return
         ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
@@ -1620,6 +1620,7 @@ class Prem {
             return
         }
 
+        this.__focusTimeline()
         if !premUIA := premUIA_Values.initialise() {
             SetTimer(rdisable, 0)
             return
@@ -1628,12 +1629,12 @@ class Prem {
         SetTimer(again.Bind(timeout), -400)
         again(timeout)
         again(timeout) {
-            ;// we check for the defined value `ksa.DragKeywait` here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
+            ;// we check for the defined value `dragWait` (`ksa.DragKeywait` by default) here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
             isKey := false
             i := 0
             hot := getHotkeysArr()
             for _, v in hot {
-                if GetKeyname(hot[(hot.Length+1)-A_Index]) = ksa.DragKeywait {
+                if GetKeyname(hot[(hot.Length+1)-A_Index]) = dragWait {
                     isKey := true
                     i := _
                     break
@@ -1654,7 +1655,7 @@ class Prem {
             __finish() {
                 ;// bc we're in a timer here, it's possible for another hotkey to start before this timer begins
                 ;// this check here avoids that scenario causing issues
-                activationKey := IsSet(activationKey) ? activationKey : ((i != 0) ? GetKeyName(hot[i]) : ksa.DragKeywait)
+                activationKey := IsSet(activationKey) ? activationKey : ((i != 0) ? GetKeyName(hot[i]) : dragWait)
                 if GetKeyState(activationKey, "P") {
                     SendInput(premtool "{LButton Down}")
                     KeyWait(activationKey, "T" timeout)
