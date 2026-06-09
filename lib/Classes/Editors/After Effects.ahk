@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.2
  * @author tomshi
- * @date 2026/06/05
- * @version 1.3.8
+ * @date 2026/06/09
+ * @version 1.3.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,17 +34,14 @@ class AE {
             this.UserSettings := UserPref(true)
         }
         ;// ensure minimum version
-        if A_ScriptName != "Core Functionality.ahk" {
-            regInstalledVer := determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
-            switch regInstalledVer {
-                case false:
-                    errorLog(TargetError("After Effects is not currently installed or the incorrect version is set."),,, true)
-                default:
-                    if VerCompare(regInstalledVer.version, this.minVer) < 0 {
-                        ;// throw
-                        errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true)
-                    }
-            }
+        regInstalledVer := determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
+        switch regInstalledVer {
+            case false:
+                (A_ScriptName != "Core Functionality.ahk" && !WinExist("- Tomshi Installer")) ? errorLog(TargetError("After Effects is not currently installed or the incorrect version is set."),,, true) : errorLog(TargetError("After Effects is not currently installed or the incorrect version is set."))
+            default:
+                if VerCompare(regInstalledVer.version, this.minVer) < 0 {
+                    (A_ScriptName != "Core Functionality.ahk" && !WinExist("- Tomshi Installer")) ? errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true) : errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer,, regInstalledVer.version))
+                }
         }
     }
     static UserSettings := ""

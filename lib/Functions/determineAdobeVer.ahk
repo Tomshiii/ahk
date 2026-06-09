@@ -12,7 +12,7 @@
  * @link "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\"
  * @param {Object} exeNames must provide `{baseName: , beta: }` which are both the normal name and the beta name as found in the registry. ie; `{baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"}`
  * @param {Object} [UserSettings=unset] if you've already set a `UserPref()` object, you can pass it through here, otherwise it will be generated
- * @returns {Object} `{path: "path\to\.exe", version: "v2x.y.z"}
+ * @returns {Object|false} `{path: "path\to\.exe", version: "v2x.y.z"}`
  */
 determineAdobeVer(exeNames, UserSettings?) {
     try UserSettings := CLSID_Objs.clone("UserSettings")

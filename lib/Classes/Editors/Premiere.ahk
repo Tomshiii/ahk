@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/06/09
- * @version 2.4.28
+ * @version 2.4.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -62,23 +62,29 @@ class Prem {
         remoteInstalled := DirExist(A_AppData "\Adobe\CEP\extensions\PremiereRemote")
         if !nodeInstalled || !remoteInstalled {
             throwStr := (!nodeInstalled && !remoteInstalled) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!nodeInstalled && remoteInstalled) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")
-            throw TargetError(throwStr, -1)
+            if A_ScriptName != "Core Functionality.ahk" && !WinExist("- Tomshi Installer")
+                throw TargetError(throwStr, -1)
+            else
+                errorLog(TargetError(throwStr, -1))
         }
 
-        if A_ScriptName != "Core Functionality.ahk" {
-            this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
-            ;// ensure minimum version
-            regInstalledVer := determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
-            switch regInstalledVer {
-                case false:
+        this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
+        ;// ensure minimum version
+        regInstalledVer := determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
+        switch regInstalledVer {
+            case false:
+                if A_ScriptName != "Core Functionality.ahk" && !WinExist("- Tomshi Installer") {
+                    ;// throw
                     errorLog(TargetError("Premiere is not currently installed or the incorrect version is set."),,, true)
+                } else {
+                    errorLog(TargetError("Premiere is not currently installed or the incorrect version is set."))
+                }
 
-                default:
-                    if VerCompare(regInstalledVer.version, this.minVer) < 0 {
-                        ;// throw
-                        errorLog(TargetError("Installed version of Premiere is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true)
-                    }
-            }
+            default:
+                if VerCompare(regInstalledVer.version, this.minVer) < 0 {
+                    ;// throw
+                    errorLog(TargetError("Installed version of Premiere is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true)
+                }
         }
 
         this.setUI()
@@ -96,7 +102,7 @@ class Prem {
             this.__determineTheme()
         }
 
-        if A_ScriptName = "Core Functionality.ahk" {
+        if A_ScriptName = "Core Functionality.ahk" && regInstalledVer != false && nodeInstalled != false && remoteInstalled != false  {
             if (this.useSwapSequences = true || this.useSwapSequences = "true")
                 SetTimer(this.__setCurrSeq.Bind(this), this.prevSeqDelay)
 

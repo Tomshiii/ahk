@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/06/04
- * @version 1.7.13
+ * @date 2026/06/09
+ * @version 1.7.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -27,7 +27,12 @@ class WinGet {
         this.ignoreExplorerRegex := ignoreText
     }
     static UserSettings {
-        get =>  CLSID_Objs.load("UserSettings")
+        get {
+            try return CLSID_Objs.load("UserSettings")
+            catch {
+                return UserPref(true)
+            }
+        }
     }
     static ignoreExplorerRegex := ""
 
