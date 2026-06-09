@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/06/09
- * @version 2.4.27
+ * @version 2.4.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -959,7 +959,8 @@ class Prem {
 
     /**
      * ## Warning
-     * ##### The activation key for this function needs to be a *single* key without any modifiers.
+     * - ##### The activation key for this function needs to be a *single* key without any modifiers.
+     * - ##### The `Motion` property must be visible for this function to work; the user can have unassigned masks above it, but that property must still be on the screen for logic to continue
      *
      * A function to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
      * @param {String} control is which control you wish to adjust. This parameter is CASE SENSETIVE!!. Valids options; `Position`, `Scale`, `Rotation`, `Opacity`
@@ -977,23 +978,17 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := premUIA.UIA_Objs["effectControls"]
-        this.__focusTimeline() ;focuses the timeline
-        if !this.__checkPremRemoteDir("isSelected") {
-            if !this.checkNoClips(effCtrlNN, &x, &y) {
-                block.Off()
-                errorLog(Error("No clips are selected", -1),, 1)
-                keys.allWait()
-                return
-            }
-        }
-        else if !this.__remoteFunc('isSelected', true) {
+        effCtrlNN   := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        try sourceButt := effCtrlNN.FindElement({LocalizedType:"button", Name:"Show/Hide Timeline View"})
+        try motionPos := effCtrlNN.FindElement({LocalizedType:"button", Name:"Toggle the effect on or off"})
+        if !this.__remoteFunc('isSelected', true) || !IsSet(sourceButt) || !IsSet(motionPos) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
             return
         }
-        motionPos := {x: effCtrlNN.location.x+57, y: effCtrlNN.location.y+62}
+        this.__focusTimeline() ;focuses the timeline
+        motionPos := {x: effCtrlNN.location.x+57, y: motionPos.location.y}
         switch this.UI {
             case "Spectrum": effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
         }
@@ -1011,17 +1006,7 @@ class Prem {
             startPos.y += (this.effCtrlSegment*i)-(this.effCtrlSegment*0.75)
             break
         }
-
-        ;// determining the edge of the pixel search (otherwise it might grab the playhead)
-        if !ImageSearch(&collapseX, &collapseY, effCtrlNN.location.x, effCtrlNN.location.y, effCtrlNN.location.x + (effCtrlNN.location.w/2), effCtrlNN.location.y+50, "*2 " ptf.Premiere "effCtrlCollapse.png") {
-            block.Off()
-            errorLog(TargetError("Failed to find the edge of the Effect Controls window", -1),, 1)
-            keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-            MouseMove(xpos, ypos)
-            return
-        }
-
-        if !PixelSearch(&xcol, &ycol, startPos.x, startPos.y, collapseX, startpos.y + (this.effCtrlSegment*.75), this.valueBlue, 6) {
+        if !PixelSearch(&xcol, &ycol, startPos.x, startPos.y, sourceButt.location.x+3, startpos.y + (this.effCtrlSegment*.75), this.valueBlue, 6) {
             block.Off()
             errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
             keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
