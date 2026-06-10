@@ -38,9 +38,8 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ✅ Fixed `valuehold()` failng due to any unassigned masks
 - ✏️ Added `setRnderRplcPreset()`, `setRnderRplcPath()`, `renderAndReplace()`, `goToLastProjPanelItem()`, `setBlendMode()`, `__determineMultiCam()`
 - 📋 UIA values will now be reset on Premiere close
-- 📋 Changed `selectionTool()` => `selectTool()`
+- 📋 Changed `prem.selectionTool()` => `prem.selectTool()`
     - Can now set any tool set within `Premiere_UIA.ahk`
-- 📋 `__getlayerMid()` now uses UIA to determine the middle divider instead of using `ImageSearch`
 - 📋 `__disableMulticamOnAudioEffect()` now uses UIA to determine if the `Multi-Cam View` is active or not
     - *the `Multi-Cam View button must be visible in the Program Monitor*
 
