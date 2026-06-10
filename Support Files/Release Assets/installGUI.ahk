@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/06/10
- * @version 1.1.23
+ * @version 1.1.24
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -85,11 +85,6 @@ class installGUI extends Gui {
         isPatcher := false
 
         hasAttempted  := false
-        names := Map("Backups", 1, "changelog.md", 1, "checklist.ahk", 1, "lib", 1,
-                    "LICENSE", 1, "Logs", 1, "My Scripts.ahk", 1, "PC Startup", 1,
-                    "QMK Keyboard.ahk", 1, "README.md", 1, "releases", 1, "Resolve_Example.ahk", 1,
-                    "Stream", 1, "Streamdeck AHK", 1, "Support Files", 1, "Timer Scripts", 1, "Core Functionality.ahk", 1
-                )
 
         tempLog := A_Temp "\tomshi\" A_YYYY "_" A_MM "_" A_DD "_log.txt"
 
