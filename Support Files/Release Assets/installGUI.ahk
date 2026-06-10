@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/06/10
- * @version 1.1.22
+ * @version 1.1.23
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -223,7 +223,7 @@ class installGUI extends Gui {
                 throw TargetError
             patchDir := A_Temp "\tomshi\yes.value"
             this.__addLogEntry("unzipping release contents")
-            if this.__unzip(A_Temp "\tomshi\yes.value.zip", A_Temp "\yes.value") != true {
+            if this.__unzip(A_Temp "\tomshi\yes.value.zip", patchDir) != true {
                 try DirDelete(A_Temp "\tomshi\yes.Value", true)
                 try FileDelete(this.InstallDir "\yes.value.zip")
                 this.__setProgress(100)
