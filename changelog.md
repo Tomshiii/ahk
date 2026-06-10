@@ -38,8 +38,9 @@ In the future this will hopefully allow me to release critical fixes a little qu
 - ✅ Fixed `valuehold()` failng due to any unassigned masks
 - ✏️ Added `setRnderRplcPreset()`, `setRnderRplcPath()`, `renderAndReplace()`, `goToLastProjPanelItem()`, `setBlendMode()`
 - 📋 UIA values will now be reset on Premiere close
-- 📋 Changed `prem.selectionTool()` => `prem.selectTool()`
+- 📋 Changed `selectionTool()` => `selectTool()`
     - Can now set any tool set within `Premiere_UIA.ahk`
+- 📋 `__getlayerMid()` now uses UIA to determine the middle divider instead of using `ImageSearch`
 
 📍 `mousedrag()`
 - 📋 Now accepts param `dragWait` to adjust the expected release key

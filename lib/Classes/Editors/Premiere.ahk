@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/06/09
- * @version 2.4.29
+ * @date 2026/06/10
+ * @version 2.4.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2479,13 +2479,32 @@ class Prem {
     }
 
     /**
-     * Determines the x/y pos of the middle divider for the current theme (if screenshots of the current theme exist)
-     * @param {VarRef} [] x/y values of middle divider
-     * @returns {boolean/VarRef} returns true/false for success of the imagesearch - if true will also return the x/y value of the middle divider
+     * Determines the x/y pos of the middle divider using UIA
+     * @param {VarRef} [] x/y/yBottom values of middle divider (left most x value, top y value, bottom y value)
+     * @returns {boolean/VarRef} returns true/false for success/failure - if true will also return the x/y/yBottom value of the middle divider
      */
-    static __getlayerMid(&midDivX?, &midDivY?) {
-        if !obj.imgSrchMulti({x1: this.timelineRawX+5, y1: this.timelineYValue, x2: this.timelineRawX+8, y2: this.timelineYControl},, &midDivX, &midDivY, ptf.Premiere "divider_" this.theme ".png", ptf.Premiere "divider_" this.theme "2.png")
+    static __getlayerMid(&midDivX?, &midDivY?, &midDivYBottom?) {
+        try {
+            premUIA := premUIA_Values.initialise()
+            timelineUIA   := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"])
+            children := timelineUIA.Children
+            ;// find the indices of both UI_InteractiveControlView elements
+            icvIndices := []
+            for i, child in children {
+                if child.Name == "UI_InteractiveControlView"
+                    icvIndices.Push(i)
+                if icvIndices.Length == 2
+                    break
+            }
+            ;// the `Toggle Track Lock` button immediately follows each ICV
+            vidLock := children[icvIndices[1] + 1]
+            audLock := children[icvIndices[2] + 1]
+            midDivX       := timelineUIA.Location.x
+            midDivY       := vidLock.Location.y + vidLock.Location.h
+            midDivYBottom := audLock.Location.y - 1
+        } catch {
             return false
+        }
         return true
     }
 
