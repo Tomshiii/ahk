@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/06/10
- * @version 2.4.32
+ * @version 2.4.33
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -58,11 +58,26 @@ class Prem {
         catch {
             this.UserSettings := UserPref(true)
         }
+        ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk"]
+        ignoreWinExist(ignoreWins) {
+            Critical()
+            dct := detect()
+            for v in ignoreWins {
+                if WinExist(v) {
+                    resetOrigDetect(dct)
+                    Critical("Off")
+                    return true
+                }
+            }
+            resetOrigDetect(dct)
+            Critical("Off")
+            return false
+        }
         nodeInstalled   := RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
         remoteInstalled := DirExist(A_AppData "\Adobe\CEP\extensions\PremiereRemote")
         if !nodeInstalled || !remoteInstalled {
             throwStr := (!nodeInstalled && !remoteInstalled) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!nodeInstalled && remoteInstalled) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")
-            if A_ScriptName != "Core Functionality.ahk" && !WinExist("- Tomshi Installer")
+            if A_ScriptName != "Core Functionality.ahk" && !ignoreWinExist(ignoreWins)
                 throw TargetError(throwStr, -1)
             else
                 errorLog(TargetError(throwStr, -1))
@@ -72,13 +87,7 @@ class Prem {
         ;// ensure minimum version
         regInstalledVer := determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
         switch regInstalledVer {
-            case false:
-                if A_ScriptName != "Core Functionality.ahk" && !WinExist("- Tomshi Installer") {
-                    ;// throw
-                    errorLog(TargetError("Premiere is not currently installed or the incorrect version is set."),,, true)
-                } else {
-                    errorLog(TargetError("Premiere is not currently installed or the incorrect version is set."))
-                }
+            case false: (A_ScriptName != "Core Functionality.ahk" && !ignoreWinExist(ignoreWins)) ?errorLog(TargetError("Premiere is not currently installed or the incorrect version is set."),,, true) : errorLog(TargetError("Premiere is not currently installed or the incorrect version is set."))
 
             default:
                 if VerCompare(regInstalledVer.version, this.minVer) < 0 {
@@ -88,7 +97,7 @@ class Prem {
         }
 
         this.setUI()
-        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) && !ignoreWinExist(ignoreWins) {
             try {
                 activeObj := CLSID_Objs.load("prem")
                 this.theme := activeObj.theme, this.defaultTheme := activeObj.theme

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/06/09
- * @version 1.1.21
+ * @date 2026/06/10
+ * @version 1.1.22
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -245,7 +245,7 @@ class installGUI extends Gui {
                 if A_LoopFileName = "lib" {
                     if DirExist(A_Appdata "\tomshi\lib")
                         DirDelete(A_Appdata "\tomshi\lib", true)
-                    DirMove(A_LoopFileFullPath, A_Appdata "\tomshi\lib")
+                    DirMove(A_LoopFileFullPath, A_Appdata "\tomshi\lib", 2)
                     continue
                 }
                 SplitPath(A_LoopFileFullPath, &name, &dir)
@@ -394,10 +394,18 @@ class installGUI extends Gui {
             }
             this.__addLogEntry("installing PremiereRemote")
             extensionsPath := A_AppData "\Adobe\CEP\extensions"
-            if !DirExist(extensionsPath)
-                DirCreate(extensionsPath)
-            if FileExist(this.InstallDir "\premExtract.zip")
-                FileMove(this.InstallDir "\premExtract.zip", extensionsPath "\premExtract.zip")
+            if !DirExist(extensionsPath) {
+                try DirCreate(extensionsPath)
+                catch {
+                    return
+                }
+            }
+            if FileExist(this.InstallDir "\premExtract.zip") && DirExist(extensionsPath) {
+                try FileMove(this.InstallDir "\premExtract.zip", extensionsPath "\premExtract.zip", true)
+                catch {
+                    return
+                }
+            }
             try RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk")
             catch {
                 throw MethodError("Failed to install PremiereRemote")
