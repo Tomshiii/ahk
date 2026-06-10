@@ -190,6 +190,8 @@ class premUIA_Values {
             this.UIA_Path["projectsWindow"]  := __TryCatchUIAobj("Project:", "path", "708", "projectsWindow")
             this.UIA_Objs["premRemote"]      := __TryCatchUIAobj("PremiereRemote", "premObj", "709")
             this.UIA_Path["premRemote"]      := __TryCatchUIAobj("PremiereRemote", "path", "709", "premRemote")
+            ; this.UIA_Objs["homeTab"]         := __TryCatchUIAobj("PremiereUnifiedHeaderTab", "obj", "719")
+            ; this.UIA_Objs["homeTab"]         := __TryCatchUIAobj("PremiereUnifiedHeaderTab", "path", "719", "homeTab")
             ;// Tools
             tools := Map(
                 "selectionTool", "Selection Tool",

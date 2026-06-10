@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/06/10
- * @version 2.4.30
+ * @version 2.4.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3511,6 +3511,30 @@ class Prem {
         this.__remoteFunc('closeActiveSequence',, "allExcept=" allExcept)
     }
 
+    /** determines if the `Multi-Camera View` button is selected. The button must be visible
+     * @returns {-1|Boolean} if `premUIA_Values` have not been set, will return `-1`, else `true/false`
+     */
+    static __determineMultiCam() {
+        if !premUIA := premUIA_Values.initialise()
+            return -1
+        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
+        try multCam := progMon.FindElement({LocalizedType:"button", Name:"Toggle Multi-Camera View", matchmode:"Substring"})
+        catch {
+            timersActive := (WinEvent.IsRegistered("Active", "Clip Fx Editor " this.exeTitle) || WinEvent.IsRegistered("Close", "Clip Fx Editor " this.exeTitle))
+            timerStr := (timersActive) ? "`n`nTimers will be stopped." : ""
+            errorLog(MethodError("Could not determine Multi-Camera View button. Might not be visible in Program Monitor", -1))
+            notifyExt.showIfNotExist("progMon_MultiCamButton",, "Could not determine Multi-Camera View button. May not be visible in Program Monitor." timerStr, 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
+            if timerStr {
+                try {
+                    WinEvent.Stop("Active", "Clip Fx Editor " this.exeTitle)
+                    WinEvent.Stop("Close", "Clip Fx Editor " this.exeTitle)
+                }
+            }
+            return
+        }
+        return ((multCam.State = 0) ? false : true)
+    }
+
     /**
      * Handles disabling multicam view if an audio effect window becomes active, then reenabling it if it was previously active once the window is closed.
      * This function is helpful as adjusting audio effects while the multicam view is active causes the program monitor to flicker like crazy
@@ -3527,20 +3551,13 @@ class Prem {
             return
         if which = "disable" && this.audioWaitClose = true
             return
-        if !this.setShinsIMG(getTitle.winTitle) {
-            this.audioWaitClose := false
-            return
-        }
         if which = "enable" && !this.prevMulticamState {
             this.audioWaitClose := false
             return
         }
-        try multicamEnabled := this._scan.Image(ptf.Premiere "\multicam_enabled.png")
-        catch {
-            errorLog(TargetError("failed to find the multicam image", -1))
-            this.audioWaitClose := false
+        multicamEnabled := this.__determineMultiCam()
+        if multicamEnabled = -1
             return
-        }
         switch which {
             case "disable":
                 this.audioWaitClose := true
