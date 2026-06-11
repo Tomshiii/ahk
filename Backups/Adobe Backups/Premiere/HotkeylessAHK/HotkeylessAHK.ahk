@@ -60,7 +60,8 @@ Class CustomFunctions {
 
 /** calls `prem.renderAndReplace()` then calls the `organiseProj` `PremiereRemote` function. Might not make sense for anyone else with a different prem bin structure */
 rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) {
-    prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path)
+    if !prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path)
+        return
     if !WinWait("Render and Replace Progress " prem.exeTitle,, 6)
         return
     if !WinWaitClose("Render and Replace Progress " prem.exeTitle,, 15)

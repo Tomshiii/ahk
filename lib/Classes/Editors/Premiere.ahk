@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/06/10
- * @version 2.4.33
+ * @date 2026/06/11
+ * @version 2.4.34
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3787,10 +3787,11 @@ class Prem {
      * @param {String} [dropSource] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
      * @param {String} [dropFormat] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
      * @param {String} [path] the parameter that will be passed to `prem.setRnderRplcPath()` and is the desired path you wish to use as the output location. (can also be set to `Next to Original Media`)
+     * @returns {Boolean} returns boolean `false` if; premiere isn't the active window, waiting for the `Render and Replace` window timed out, the user has an audio file selected, setting the render path failed
      */
     static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) {
         if !WinActive(this.winTitle)
-            return
+            return false
         clipType := this.__remoteFunc('clipType', true)
         title := WinGet.PremName()
         if title.saveCheck != false
@@ -3806,20 +3807,20 @@ class Prem {
                 SendInput(KSA.premRndrReplce)
                 if !WinWait("Render and Replace " this.exeTitle,, 2) {
                     tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")
-                    return
+                    return false
                 }
             }
         }
         if clipType != "Video"
-            return
+            return false
         this.setRnderRplcPreset(dropPreset, dropSource, dropFormat,, &AdobeEl)
         if !this.setRnderRplcPath(path, AdobeEl)
-            return
+            return false
         sleep 50
         if !WinWaitActive("Render and Replace " this.exeTitle,, 2) {
             try WinActivate("Render and Replace " this.exeTitle)
             if !WinWaitActive("Render and Replace " this.exeTitle,, 2)
-                return
+                return false
         }
         AdobeEl.FindElement({LocalizedType:"button", Name:"OK"}).Invoke()
     }
