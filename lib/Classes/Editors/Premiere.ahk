@@ -5,7 +5,7 @@
  * @premVer 26.2
  * @author tomshi
  * @date 2026/06/11
- * @version 2.4.34
+ * @version 2.4.35
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3713,7 +3713,10 @@ class Prem {
             throw PropertyError("Incorrect Parameter Value", -1, dropSource)
 
         if !IsSet(UIAObj) || (IsSet(UIAObj) && Type(UIAObj) != "UIA.IUIAutomationElement") {
-            AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
+            try AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
+            catch {
+                return false
+            }
         } else {
             AdobeEl := UIAObj
         }
@@ -3813,7 +3816,8 @@ class Prem {
         }
         if clipType != "Video"
             return false
-        this.setRnderRplcPreset(dropPreset, dropSource, dropFormat,, &AdobeEl)
+        if !this.setRnderRplcPreset(dropPreset, dropSource, dropFormat,, &AdobeEl)
+            return false
         if !this.setRnderRplcPath(path, AdobeEl)
             return false
         sleep 50
