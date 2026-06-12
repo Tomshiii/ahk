@@ -77,7 +77,13 @@ if coreFunc := winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,
     __checkClose(coreFunc, "Core Functionality.ahk ahk_class AutoHotkey")
 }
 
-Run(coreFuncObj.path A_Space (doReset ?? true))
+try Run(coreFuncObj.path A_Space (doReset ?? true))
+catch {
+    try Run(ptf.rootDir "\Core Functionality.ahk " (doReset ?? true))
+    catch {
+        return
+    }
+}
 
 if !CLSID_Objs.waitCoreFuncs(2) {
     sleep 2000
