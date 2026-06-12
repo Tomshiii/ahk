@@ -21,6 +21,16 @@
 ; }
 
 class premUIA_Values {
+    ;// current panels;
+    ;// All below native panels require a hotkey set within Premiere to activate
+        ;// timelineWindow  - Timeline Panel
+        ;// effectControls  - Effect Controls Panel
+        ;// effectsWindow   - Effects Panel
+        ;// programMonitor  - Program Monitor
+        ;// sourceMonitor   - Source Monitor
+        ;// toolsWindow     - Tools Panel
+        ;// projectsWindow  - Project Panel
+        ;// premRemote      - PremiereRemote Extension
     static isRunning := false
     static beenSet   := false
 

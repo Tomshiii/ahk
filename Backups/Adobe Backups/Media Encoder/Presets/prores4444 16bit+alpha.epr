@@ -1,26 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PremiereData Version="3">
-	<PresetName>cineform_12bit_alpha</PresetName>
+	<PresetName>prores4444 16bit+alpha</PresetName>
 	<PresetComments>Custom</PresetComments>
 	<PresetUserComments></PresetUserComments>
 	<PresetCreatorApp>Premiere Pro</PresetCreatorApp>
+	<PresetCreatorPostProc></PresetCreatorPostProc>
 	<ExporterName></ExporterName>
 	<ExporterClassID>1061109567</ExporterClassID>
 	<ExporterFileType>1299148630</ExporterFileType>
 	<ExportParamContainer ObjectRef="1"/>
-	<CaptionParamContainer ObjectRef="125"/>
-	<PresetID>ed3c1787-2dab-4536-89e0-88fc8c13054a</PresetID>
+	<PresetID>8aca2567-cb72-44e5-8e59-e715d722106f</PresetID>
 	<DoAudio>false</DoAudio>
 	<DoVideo>true</DoVideo>
+	<DoEmulation>false</DoEmulation>
 	<FolderDisplayPath></FolderDisplayPath>
 	<StandardFilters Version="1">
+		<CropState>false</CropState>
+		<CropRect>0,0,0,0</CropRect>
 		<CropType>0</CropType>
+		<DeinterlaceState>false</DeinterlaceState>
+		<UseMaximumRenderQuality>false</UseMaximumRenderQuality>
+		<UsePreview>false</UsePreview>
 		<UseFrameBlending>false</UseFrameBlending>
 		<CustomStartTime>-101606400000000000</CustomStartTime>
+		<RenderAlphaOnly>false</RenderAlphaOnly>
+		<MaximumFileSize>0</MaximumFileSize>
+		<UseProxiesForExport>false</UseProxiesForExport>
+		<DoExportCR>false</DoExportCR>
 		<TimeInterpolationType>0</TimeInterpolationType>
+		<Rotation>0.</Rotation>
 	</StandardFilters>
 	<ExportXMPOptionKey>10</ExportXMPOptionKey>
+	<IngestPreset>false</IngestPreset>
+	<IngestCopyEnabled>false</IngestCopyEnabled>
+	<IngestCopyPath></IngestCopyPath>
 	<IngestCopyVerificationType>-1</IngestCopyVerificationType>
+	<IngestTranscodeEnabled>false</IngestTranscodeEnabled>
+	<IngestTranscodePath></IngestTranscodePath>
+	<IngestTranscodePresetName></IngestTranscodePresetName>
+	<IngestTranscodeExporterModuleName></IngestTranscodeExporterModuleName>
+	<IngestNamingEnabled>false</IngestNamingEnabled>
+	<IngestNamingPreset></IngestNamingPreset>
+	<IngestMetadataEnabled>false</IngestMetadataEnabled>
+	<IngestMetadataPreset></IngestMetadataPreset>
+	<IngestPresetUserComments></IngestPresetUserComments>
+	<IngestAnalysisEnabled>false</IngestAnalysisEnabled>
 	<DoEffects>true</DoEffects>
 	<DoCaptions>true</DoCaptions>
 	<DoMetadata>true</DoMetadata>
@@ -81,7 +105,7 @@
 		<ContainedParamsVersion>1</ContainedParamsVersion>
 	</ExporterParamContainer>
 	<ExporterParam ObjectID="8" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamValue>1128679492</ParamValue>
+		<ParamValue>1634743416</ParamValue>
 		<ParamType>2</ParamType>
 		<ParamOrdinalValue>0</ParamOrdinalValue>
 		<ParamMaxValue>-1</ParamMaxValue>
@@ -134,15 +158,15 @@
 		<ParamType>7</ParamType>
 		<ParamOrdinalValue>0</ParamOrdinalValue>
 		<ParamIdentifier>ADBEVideoMatchSource</ParamIdentifier>
-		<ParamArbData Encoding="base64" Checksum="552177037">fxAAAA==</ParamArbData>
+		<ParamArbData Encoding="base64" Checksum="216632717">fRAAAA==</ParamArbData>
 	</ExporterParam>
 	<ExporterParam ObjectID="15" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamValue>4</ParamValue>
+		<ParamValue>100</ParamValue>
 		<ParamType>2</ParamType>
 		<ParamOrdinalValue>1</ParamOrdinalValue>
-		<ParamMinValue>1</ParamMinValue>
-		<ParamMaxValue>5</ParamMaxValue>
+		<ParamMaxValue>100</ParamMaxValue>
 		<ParamIsSlider>true</ParamIsSlider>
+		<ParamIsDisabled>true</ParamIsDisabled>
 		<ParamIdentifier>ADBEVideoQuality</ParamIdentifier>
 	</ExporterParam>
 	<ExporterParam ObjectID="16" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
@@ -179,10 +203,11 @@
 		<ParamValue>1,1</ParamValue>
 		<ParamType>11</ParamType>
 		<ParamOrdinalValue>6</ParamOrdinalValue>
+		<ParamConstrainedListIsOptional>true</ParamConstrainedListIsOptional>
 		<ParamIdentifier>ADBEVideoAspect</ParamIdentifier>
 	</ExporterParam>
 	<ExporterParam ObjectID="21" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamValue>100</ParamValue>
+		<ParamValue>203</ParamValue>
 		<ParamType>2</ParamType>
 		<ParamOrdinalValue>7</ParamOrdinalValue>
 		<ParamIdentifier>ADBEVideoGraphicsWhiteLuminance</ParamIdentifier>
@@ -213,7 +238,7 @@
 		<ParamIdentifier>ADBEMPEGVideoEncodingPerformanceParamUserSelected</ParamIdentifier>
 	</ExporterParam>
 	<ExporterParam ObjectID="26" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamValue>3</ParamValue>
+		<ParamValue>5</ParamValue>
 		<ParamType>2</ParamType>
 		<ParamOrdinalValue>12</ParamOrdinalValue>
 		<ParamIdentifier>ADBEVideoBitDepth</ParamIdentifier>
@@ -616,7 +641,6 @@
 		<ParamType>2</ParamType>
 		<ParamOrdinalValue>0</ParamOrdinalValue>
 		<ParamMaxValue>-1</ParamMaxValue>
-		<ParamIsDisabled>true</ParamIsDisabled>
 		<ParamIdentifier>ADBEAudioCodec</ParamIdentifier>
 	</ExporterParam>
 	<ExporterParam ObjectID="80" ClassID="d0f6b8af-8ddb-4381-acf8-3e817480d07d" Version="1">
@@ -912,78 +936,5 @@
 		<ParamType>6</ParamType>
 		<ParamOrdinalValue>6</ParamOrdinalValue>
 		<ParamIdentifier>ADBEAlternatesServerPath</ParamIdentifier>
-	</ExporterParam>
-	<ExporterParamContainer ObjectID="125" ClassID="5c20a4a5-5e7c-4032-85b8-26ad4531fe7b" Version="1">
-		<ParamContainerItems Version="1">
-			<ParamContainerItem Index="0" ObjectRef="126"/>
-		</ParamContainerItems>
-		<ContainedParamsVersion>1</ContainedParamsVersion>
-	</ExporterParamContainer>
-	<ExporterParam ObjectID="126" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamType>10</ParamType>
-		<ParamOrdinalValue>0</ParamOrdinalValue>
-		<ParamIdentifier>ADBECaptionTabGroup</ParamIdentifier>
-		<ParamName>Captions</ParamName>
-		<ExporterChildParams ObjectRef="127"/>
-	</ExporterParam>
-	<ExporterParamContainer ObjectID="127" ClassID="5c20a4a5-5e7c-4032-85b8-26ad4531fe7b" Version="1">
-		<ParamContainerItems Version="1">
-			<ParamContainerItem Index="0" ObjectRef="128"/>
-			<ParamContainerItem Index="1" ObjectRef="129"/>
-			<ParamContainerItem Index="2" ObjectRef="130"/>
-			<ParamContainerItem Index="3" ObjectRef="131"/>
-			<ParamContainerItem Index="4" ObjectRef="132"/>
-			<ParamContainerItem Index="5" ObjectRef="133"/>
-			<ParamContainerItem Index="6" ObjectRef="134"/>
-		</ParamContainerItems>
-		<ContainedParamsVersion>1</ContainedParamsVersion>
-	</ExporterParamContainer>
-	<ExporterParam ObjectID="128" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamValue>2</ParamValue>
-		<ParamType>2</ParamType>
-		<ParamOrdinalValue>0</ParamOrdinalValue>
-		<ParamIsDisabled>true</ParamIsDisabled>
-		<ParamIdentifier>ADBECaptionExportOption</ParamIdentifier>
-	</ExporterParam>
-	<ExporterParam ObjectID="129" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamValue>2</ParamValue>
-		<ParamType>2</ParamType>
-		<ParamOrdinalValue>1</ParamOrdinalValue>
-		<ParamIsDisabled>true</ParamIsDisabled>
-		<ParamIdentifier>ADBECaptionFormat</ParamIdentifier>
-	</ExporterParam>
-	<ExporterParam ObjectID="130" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamType>2</ParamType>
-		<ParamOrdinalValue>2</ParamOrdinalValue>
-		<ParamDontSerializeValue>true</ParamDontSerializeValue>
-		<ParamIsHidden>true</ParamIsHidden>
-		<ParamIdentifier>ADBEAvailableCaptions</ParamIdentifier>
-	</ExporterParam>
-	<ExporterParam ObjectID="131" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamValue>100</ParamValue>
-		<ParamType>2</ParamType>
-		<ParamOrdinalValue>3</ParamOrdinalValue>
-		<ParamIsDisabled>true</ParamIsDisabled>
-		<ParamIdentifier>ADBECaptionFrameRate</ParamIdentifier>
-	</ExporterParam>
-	<ExporterParam ObjectID="132" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
-		<ParamType>2</ParamType>
-		<ParamOrdinalValue>4</ParamOrdinalValue>
-		<ParamIsDisabled>true</ParamIsDisabled>
-		<ParamIdentifier>ADBECaptionStreamFormat</ParamIdentifier>
-	</ExporterParam>
-	<ExporterParam ObjectID="133" ClassID="d0f6b8af-8ddb-4381-acf8-3e817480d07d" Version="1">
-		<ParamType>1</ParamType>
-		<ParamOrdinalValue>5</ParamOrdinalValue>
-		<ParamIsDisabled>true</ParamIsDisabled>
-		<ParamIsHidden>true</ParamIsHidden>
-		<ParamIdentifier>ADBESRTIncludeStyling</ParamIdentifier>
-	</ExporterParam>
-	<ExporterParam ObjectID="134" ClassID="d0f6b8af-8ddb-4381-acf8-3e817480d07d" Version="1">
-		<ParamType>1</ParamType>
-		<ParamOrdinalValue>6</ParamOrdinalValue>
-		<ParamIsDisabled>true</ParamIsDisabled>
-		<ParamIsHidden>true</ParamIsHidden>
-		<ParamIdentifier>ADBEVTTIncludeTextFormattingID</ParamIdentifier>
 	</ExporterParam>
 </PremiereData>

@@ -258,6 +258,7 @@
 	"CompTimeZoomIn" = "(Z)(=)"
 	"CompTimeZoomOut" = "(Shift+Z)(-)"
 	"CompTimeZoomToggleFullCustom" = "(Shift+;)"
+	"CompTimeZoomWorkArea" = "()"
 	"CompToggleEffects" = "(E)"
 	"CompToggleEffectsAddState" = "(Shift+E)"
 	"CompToggleMaskFeathers" = "(F)"
@@ -486,6 +487,7 @@
 	"ToolText" = "(Ctrl+T)"
 
 ["CItem"]
+	"CopyFrameToClipboard" = "(Ctrl+Alt+Shift+F5)"
 	"FastPreviewsAdaptiveResolution" = "(Ctrl+Alt+2)"
 	"FastPreviewsAdaptiveResolutionKeyboard" = "()"
 	"FastPreviewsCalderRTEDraft3DKeyboard" = "(Ctrl+Alt+4)"
@@ -828,6 +830,7 @@
 	"CompTimeZoomIn" = "(=)"
 	"CompTimeZoomOut" = "(-)"
 	"CompTimeZoomToggleFullCustom" = "(Shift+;)"
+	"CompTimeZoomWorkArea" = "()"
 	"TimeSetIn" = "([)"
 	"TimeSetInRelative" = "(Shift+[)"
 	"TimeSetOut" = "(])"

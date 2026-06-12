@@ -132,7 +132,7 @@ getVer()
 {
     ;// replace the old version number in My Scripts.ahk
     releaseString := FileRead(ptf.rootDir "\My Scripts.ahk")
-    lastVer := currentVer
+    lastVer := getLocalVer(releaseString)
     newFile := StrReplace(releaseString, lastVer, yes.value, 1,, 1)
 
     ;// update ahk_ver

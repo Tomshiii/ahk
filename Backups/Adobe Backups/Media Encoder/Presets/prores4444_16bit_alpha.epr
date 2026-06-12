@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PremiereData Version="3">
+	<PresetName>prores4444_16bit_alpha</PresetName>
+	<PresetComments>Custom</PresetComments>
+	<PresetUserComments></PresetUserComments>
+	<PresetCreatorApp>Premiere Pro</PresetCreatorApp>
 	<ExporterName></ExporterName>
 	<ExporterClassID>1061109567</ExporterClassID>
 	<ExporterFileType>1299148630</ExporterFileType>
 	<ExportParamContainer ObjectRef="1"/>
 	<CaptionParamContainer ObjectRef="125"/>
-	<PresetID>bae935e6-7984-4977-9eec-9db707a54fbd</PresetID>
+	<PresetID>b2417da2-674c-4d5e-8923-57c9907791f4</PresetID>
 	<DoAudio>false</DoAudio>
 	<DoVideo>true</DoVideo>
 	<FolderDisplayPath></FolderDisplayPath>
@@ -20,10 +24,6 @@
 	<DoEffects>true</DoEffects>
 	<DoCaptions>true</DoCaptions>
 	<DoMetadata>true</DoMetadata>
-	<PresetName>prores4444 16bit+alpha</PresetName>
-	<PresetComments>Custom</PresetComments>
-	<PresetUserComments></PresetUserComments>
-	<PresetCreatorApp>Premiere Pro</PresetCreatorApp>
 	<ExporterParamContainer ObjectID="1" ClassID="5c20a4a5-5e7c-4032-85b8-26ad4531fe7b" Version="1">
 		<ParamContainerItems Version="1">
 			<ParamContainerItem Index="0" ObjectRef="2"/>
@@ -179,7 +179,6 @@
 		<ParamValue>1,1</ParamValue>
 		<ParamType>11</ParamType>
 		<ParamOrdinalValue>6</ParamOrdinalValue>
-		<ParamConstrainedListIsOptional>true</ParamConstrainedListIsOptional>
 		<ParamIdentifier>ADBEVideoAspect</ParamIdentifier>
 	</ExporterParam>
 	<ExporterParam ObjectID="21" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">

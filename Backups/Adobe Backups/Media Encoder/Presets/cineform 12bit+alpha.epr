@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PremiereData Version="3">
-	<PresetName>cineform_12bit_alpha</PresetName>
+	<PresetName>cineform 12bit+alpha</PresetName>
 	<PresetComments>Custom</PresetComments>
 	<PresetUserComments></PresetUserComments>
 	<PresetCreatorApp>Premiere Pro</PresetCreatorApp>
@@ -9,7 +9,7 @@
 	<ExporterFileType>1299148630</ExporterFileType>
 	<ExportParamContainer ObjectRef="1"/>
 	<CaptionParamContainer ObjectRef="125"/>
-	<PresetID>ed3c1787-2dab-4536-89e0-88fc8c13054a</PresetID>
+	<PresetID>84f451cf-e1fe-45e4-9f25-d4955fb7b14f</PresetID>
 	<DoAudio>false</DoAudio>
 	<DoVideo>true</DoVideo>
 	<FolderDisplayPath></FolderDisplayPath>
@@ -179,6 +179,7 @@
 		<ParamValue>1,1</ParamValue>
 		<ParamType>11</ParamType>
 		<ParamOrdinalValue>6</ParamOrdinalValue>
+		<ParamConstrainedListIsOptional>true</ParamConstrainedListIsOptional>
 		<ParamIdentifier>ADBEVideoAspect</ParamIdentifier>
 	</ExporterParam>
 	<ExporterParam ObjectID="21" ClassID="9f049ab7-d48f-43e9-a8ca-4d7f21233625" Version="1">
