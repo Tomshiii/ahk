@@ -7,9 +7,6 @@
 ; }
 
 ;//! This script will NOT complete without NodeJS already being installed
-
-;// this script must be called AFTER symlinks have been generated
-;// it requires cmd { & unzip()
 installDir := FileRead(A_Appdata "\tomshi\installDir")
 SetWorkingDir(installDir)
 
@@ -20,9 +17,11 @@ if !getNPM {
     return
 }
 
-downloadURl    := "https://github.com/sebinside/PremiereRemote/archive/refs/tags/v2.2.0.zip"
+remoteVersion  := "2.2.0"
+downloadURl    := "https://github.com/sebinside/PremiereRemote/archive/refs/tags/v" remoteVersion ".zip"
 extensionsPath := A_AppData "\Adobe\CEP\extensions"
 remotePath     := extensionsPath "\PremiereRemote"
+remoteFolder   := extensionsPath "\.premRemoteExtract\PremiereRemote-" remoteVersion
 
 if DirExist(remotePath) {
     /* if MsgBox("PremiereRemote appears to already be installed!`nWould you like to update .tsx files?`n`n(keep in mind this may override any custom functions you've created, but not updating may result in errors with my scripts.)`nIt is recommended you make a backup of the following directory:`n" A_AppData "\Adobe\CEP\extensions\PremiereRemote\host\src\",, 'YesNo Icon?') = "No"
@@ -43,7 +42,9 @@ if !FileExist(extensionsPath "\premExtract.zip")
     Download(downloadURl, extensionsPath "\premExtract.zip")
 ;// unzip
 unzip(extensionsPath "\premExtract.zip", extensionsPath "\.premRemoteExtract\")
-DirMove(extensionsPath "\.premRemoteExtract\PremiereRemote-main", extensionsPath "\.premRemoteExtract\PremiereRemote", 1)
+if !DirExist(remoteFolder)
+    throw TargetError("Error During Premiere Remote Installation. Incorrect version")
+DirMove(remoteFolder, extensionsPath "\.premRemoteExtract\PremiereRemote", 1)
 DirMove(extensionsPath "\.premRemoteExtract\PremiereRemote", extensionsPath, 1)
 ;// remove old files/dir
 FileDelete(extensionsPath "\premExtract.zip")

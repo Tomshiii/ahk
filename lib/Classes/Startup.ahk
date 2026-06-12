@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/06/05
- * @version 1.9.5
+ * @date 2026/06/12
+ * @version 1.9.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -589,7 +589,7 @@ class Startup {
         submenuSC.Add("Reload All Scripts", (*) => reset.ext_reload())
         submenuSC.Add("Hard Reset All Scripts", (*) => reset.reset())
         submenuSC.Add("keys.allUp()", (*) => keys.allUp())
-        submenuSC.Add("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\Initialise.ahk"))
+        submenuSC.Add("Open All Scripts", (*) => Run(ptf.rootDir "\PC Startup\Tom\Initialise_Tom.ahk"))
         submenuSC.Add("Close All Scripts", (*) => reset.ex_exit())
         A_TrayMenu.Insert(startingVal "&", "Script Control", submenuSC)
         startingVal++

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/06/10
- * @version 1.1.24
+ * @date 2026/06/12
+ * @version 1.1.25
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -251,7 +251,8 @@ class installGUI extends Gui {
             this.__setProgress(70)
             this.__runCoreFunc()
             this.__setProgress(80)
-            this.__installPremRemote()
+            if !this.__installPremRemote()
+                this.__addLogEntry("Failed to install PremiereRemote")
             this.__setProgress(90)
             this.__adjustVersion()
 
@@ -347,7 +348,8 @@ class installGUI extends Gui {
             this.__deleteInstallFiles()
             this.__runCoreFunc()
             this.__setProgress(80)
-            this.__installPremRemote()
+            if !this.__installPremRemote()
+                this.__addLogEntry("Failed to install PremiereRemote")
             this.__setProgress(85)
 
             ;// set current adobe versions in settings.ini
@@ -357,7 +359,7 @@ class installGUI extends Gui {
             this.__setProgress(90)
             ;// creating initialise shortcut
             startupScript := this.InstallDir "\PC Startup\Initialise.ahk"
-            FileCreateShortcut(startupScript, A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\Initialise.ahk - Shortcut.lnk")
+            ; FileCreateShortcut(startupScript, A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\Initialise.ahk - Shortcut.lnk")
             this.__adjustVersion()
 
             ;//! finished
@@ -392,20 +394,21 @@ class installGUI extends Gui {
             if !DirExist(extensionsPath) {
                 try DirCreate(extensionsPath)
                 catch {
-                    return
+                    return false
                 }
             }
             if FileExist(this.InstallDir "\premExtract.zip") && DirExist(extensionsPath) {
                 try FileMove(this.InstallDir "\premExtract.zip", extensionsPath "\premExtract.zip", true)
                 catch {
-                    return
+                    return false
                 }
             }
             try RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk")
             catch {
-                throw MethodError("Failed to install PremiereRemote")
+                return false
             }
             sleep 1500
+            return true
         }
 
         __installNode(path) {

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/06/11
- * @version 2.4.35
+ * @date 2026/06/12
+ * @version 2.4.36
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -58,7 +58,7 @@ class Prem {
         catch {
             this.UserSettings := UserPref(true)
         }
-        ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk"]
+        ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk", "installNode.ahk", "installPremRemote.ahk"]
         ignoreWinExist(ignoreWins) {
             Critical()
             dct := detect()
@@ -75,7 +75,7 @@ class Prem {
         }
         nodeInstalled   := RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
         remoteInstalled := DirExist(A_AppData "\Adobe\CEP\extensions\PremiereRemote")
-        if !nodeInstalled || !remoteInstalled {
+        if (!nodeInstalled || !remoteInstalled) && !ignoreWinExist(ignoreWins) {
             throwStr := (!nodeInstalled && !remoteInstalled) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!nodeInstalled && remoteInstalled) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")
             if A_ScriptName != "Core Functionality.ahk" && !ignoreWinExist(ignoreWins)
                 throw TargetError(throwStr, -1)
