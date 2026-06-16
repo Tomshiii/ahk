@@ -19,6 +19,8 @@ if !IsSet(UserSettings)
 
 SetWorkingDir(ptf.rootDir)
 
+Run(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\replaceHotkeyless.ahk")
+Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk false")
 Run(ptf.rootDir "\My Scripts.ahk")
 Run(ptf.rootDir "\..\ahk_work\QMK Keyboard.ahk")
 Run(ptf.TimerScripts "\Alt_menu_acceleration_DISABLER.ahk")

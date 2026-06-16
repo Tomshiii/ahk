@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/06/04
- * @version 3.0.22
+ * @date 2026/06/16
+ * @version 3.0.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -156,7 +156,12 @@ class premUIA_Values {
             try {
                 switch objOrPath {
                     case "obj":  temp := this.AdobeEl.FindCachedElement({LocalizedType:"pane", Name:name})
-                    case "path": temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true), this.UIA_Hwnd[pathName] := this.UIA_Objs[pathName].NativeWindowHandle
+                    case "path":
+                        switch pathName {
+                            case "timelineWindow":temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true), this.UIA_Hwnd[pathName] := this.UIA_Objs[pathName].Parent.NativeWindowHandle
+                            default: temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true), this.UIA_Hwnd[pathName] := this.UIA_Objs[pathName].NativeWindowHandle
+                        }
+
                     case "premObj": temp := this.AdobeEl.FindCachedElement({LocalizedType:"pane", LocalizedType:"tab item", Name:name})
                     case "projObj": temp := this.AdobeEl.FindCachedElement({LocalizedType:"pane", Name:name, matchmode:"Substring"})
                 }

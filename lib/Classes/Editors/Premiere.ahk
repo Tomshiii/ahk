@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/06/12
- * @version 2.4.36
+ * @date 2026/06/16
+ * @version 2.4.37
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2488,13 +2488,47 @@ class Prem {
     }
 
     /**
-     * Determines the x/y pos of the middle divider for the current theme (if screenshots of the current theme exist)
+     * Determines the x/y pos of the middle divider using UIA
      * @param {VarRef} [] x/y values of middle divider
-     * @returns {boolean/VarRef} returns true/false for success of the imagesearch - if true will also return the x/y value of the middle divider
+     * @returns {boolean/VarRef} returns `true`/`false` for success of the imagesearch - if true will also return the x/y/bottom y value of the middle divider as varrefs
      */
-    static __getlayerMid(&midDivX?, &midDivY?) {
-        if !obj.imgSrchMulti({x1: this.timelineRawX+5, y1: this.timelineYValue, x2: this.timelineRawX+8, y2: this.timelineYControl},, &midDivX, &midDivY, ptf.Premiere "divider_" this.theme ".png", ptf.Premiere "divider_" this.theme "2.png")
+    static __getlayerMid(&midDivX?, &midDivY?, &midDivYBottom?) {
+        try {
+            if !premUIA := premUIA_Values.initialise()
+                return false
+
+            ;// the timeline pane itself loses its hwnd if you swap sequences, so we have to use the container instead
+            timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"])
+            timelineUIA    := timelineWindow.FindElement({Name:"Timeline", LocalizedType:"pane"})
+            children       := timelineUIA.Children
+
+            icvIndices := []
+            for i, child in children {
+                if child.Name == "UI_InteractiveControlView" {
+                    ;// Check if any direct child is a text element - if so, skip it
+                    hasText := false
+                    for grandchild in child.Children {
+                        if grandchild.LocalizedType == "text" {
+                            hasText := true
+                            break
+                        }
+                    }
+                    if !hasText
+                        icvIndices.Push(i)
+                }
+                if icvIndices.Length == 2
+                    break
+            }
+            if icvIndices.Length < 2
+                return false
+
+            adjustVal     := 3 ;// the pixel difference between the top/bottom of the scroll bar control & the middle divider bar. May change in future versions
+            midDivX       := timelineUIA.Location.x
+            midDivY       := children[icvIndices[1]].Location.y + children[icvIndices[1]].Location.h + adjustVal
+            midDivYBottom := children[icvIndices[2]].Location.y - adjustVal
+        } catch {
             return false
+        }
         return true
     }
 
@@ -2506,17 +2540,17 @@ class Prem {
      * @param {Boolean} [showError=true] determine whether to show the `Notify {` error on failure. May be useful to disable this if systematically trying to determine all layer positions as it will show the error once it runs out of tracks
      * @returns {Boolean/Object} returns boolean `false` on failure or an object containing all coords on success
      */
-    static __getlayerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, showError?) {
+    static __getlayerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, &midDivBot?, showError?) {
         doNotify := IsSet(showError) && (showError=true || showError=false) ? showError : true
         topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineRawY, this.layerDivider)
         botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineYControl, this.layerDivider)
-        mid := (searchMid = true) ? this.__getlayerMid(&midDivX, &midDivY) : true
+        mid := (searchMid = true) ? this.__getlayerMid(&midDivX, &midDivY, &midDivBot) : true
         if (!topDiv || !botDiv || !mid) {
             if doNotify = true && !Notify.Exist("premLayerBounds")
                 Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424 tag=premLayerBounds')
             return false
         }
-        return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false}
+        return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false}
     }
 
     /**
@@ -2815,7 +2849,7 @@ class Prem {
         loop {
             if IsInteger(stopAt) && stopAt != false && A_Index > stopAt
                 break
-            if !getLayerPos := this.__getlayerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,, false)
+            if !getLayerPos := this.__getlayerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,,, false)
                 break
             current := Map()
             current["top"] := getLayerPos.topY, current["bot"] := getLayerPos.botY, current["mid"] := getLayerPos.topY+((getLayerPos.botY-getLayerPos.topY)/2)
