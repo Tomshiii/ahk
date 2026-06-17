@@ -400,6 +400,9 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 <!c::prem.__remoteFunc('closeClipSourceMon')
 <!+c::prem.__remoteFunc('closeAllClipSourceMon')
 
+!e::prem.__remoteFunc('setAllEnableDisabled',, "enabled=true")
+!d::prem.__remoteFunc('setAllEnableDisabled',, "enabled=false")
+
 ;// while cursor is within timeline;
 ; use MButton to Ctrl click (adjust edit points with mouse if left hand isn't on keyboard)
 ;// while cursor is within program monitor;
