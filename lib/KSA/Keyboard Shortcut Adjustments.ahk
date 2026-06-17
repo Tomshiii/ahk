@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
- * @date 2026/06/03
- * @version 2.0.1
+ * @date 2026/06/18
+ * @version 2.0.2
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -118,7 +118,7 @@ class KeyShortAdjust {
                 }
             case "ae":
                 dot := InStr(appVers.version, ".",,, 2)
-                yearVer := SubStr(appVers.version, 1, (dot != 0 ? dot-1 : ""))
+                yearVer := SubStr(appVers.version, 1, ((dot != 0 && dot != "") ? dot-1 : StrLen(appVers.version)))
                 aePrefsDir := A_AppData "\Adobe\After Effects\" yearVer
                 aePrefs := aePrefsDir "\Adobe After Effects " yearVer " Prefs.txt"
                 if FileExist(aePrefs) {
