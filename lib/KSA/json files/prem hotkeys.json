@@ -324,6 +324,11 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > ) Toggle Multi-Camera View"
     },
+    "togDupeFrameMarkers": {
+        "command": "cmd.timeline.show.duplicate.frames",
+        "context": "/PremiereData/shortcuts/context.timeline",
+        "withinPrem": "(Panels > Timeline Panel > )  Show Duplicate Frame Markers"
+    },
     "labelViolet": {
         "command": "cmd.edit.label.0",
         "context": "/PremiereData/shortcuts/context.global",

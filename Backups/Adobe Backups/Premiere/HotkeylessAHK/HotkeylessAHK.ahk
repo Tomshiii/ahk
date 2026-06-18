@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside
- * @date 2026/06/15
- * @version 1.1.5
+ * @date 2026/06/18
+ * @version 1.1.6
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -41,7 +41,7 @@ RunClient(serverPort, functionClassNames)
 
 Class CustomFunctions {
     changeLabel(label)                                      => (prem.changeLabel(label))
-    changeDupe(toggleHotkey)                                => (prem.changeDupeFrameMarkers(toggleHotkey))
+    changeDupe()                                            => (prem.changeDupeFrameMarkers())
     organiseProj()                                          => (prem.__remoteFunc('organiseProj'))
     setMarker(colour)                                       => (prem.__remoteFunc('setMarker',, "colour=" colour))
     moveToAssetBin(folder)                                  => (prem.__remoteFunc('moveToAssetsBin',, 'folderPath=' folder))

@@ -3387,15 +3387,14 @@ class Prem {
     /**
      * This function is a wrapper function to toggle `Show Duplicate Frame Markers` and is intended to be used with `HotkeylessAHK` (although isn't necessary)
      * @link https://github.com/sebinside/HotkeylessAHK
-     * @param {String} toggleHotkey the hotkey string that will be sent to `SendInput` to toggle the setting
      */
-    static changeDupeFrameMarkers(toggleHotkey) {
+    static changeDupeFrameMarkers() {
         if !WinActive(this.winTitle) ;// this is here in the event the user calls this func from `HotkeylessAHK` - otherwise it'll throw an error if prem isn't active
             return
         if !this.__setTimelineValues()
 			return
         this.__focusTimeline()
-        SendInput(toggleHotkey)
+        SendInput(ksa.togDupeFrameMarkers)
     }
 
     /**
