@@ -818,7 +818,7 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := premUIA.UIA_Objs["effectControls"]
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
 
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
             this().__loremipsum({x: effCtrlNN.location.x, y: effCtrlNN.location.y}, {width: effCtrlNN.location.w, height: effCtrlNN.location.h}, &eyeX, &eyeY)
@@ -973,6 +973,21 @@ class Prem {
     }
 
     /**
+     * Checks the `Effect Controls` window to ensure a clip is selected
+     * @param {UIA Object} [effCont] the effect controls UIA control. it is recommended to use `effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])` for an updated window
+     * @param {VarRef} [sourceButt?] pass back the `Show/Hide Timeline View` button control if it is found
+     * @param {VarRef} [motionPos?] pass back the `Toggle the effect on or off` button control if it is found
+     * @returns {Boolean}
+     */
+    static isClipSelected(effCont, &sourceButt?, &motionPos?) {
+        try sourceButt := effCont.FindElement({LocalizedType:"button", Name:"Show/Hide Timeline View"})
+        try motionPos  := effCont.FindElement({LocalizedType:"button", Name:"Toggle the effect on or off"})
+        if !this.__remoteFunc('isSelected', true) || !IsSet(sourceButt) || !IsSet(motionPos)
+            return false
+        return true
+    }
+
+    /**
      * ## Warning
      * - ##### The activation key for this function needs to be a *single* key without any modifiers.
      * - ##### The `Motion` property must be visible for this function to work; the user can have unassigned masks above it, but that property must still be on the screen for logic to continue
@@ -993,12 +1008,15 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN   := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
-        try sourceButt := effCtrlNN.FindElement({LocalizedType:"button", Name:"Show/Hide Timeline View"})
-        try motionPos := effCtrlNN.FindElement({LocalizedType:"button", Name:"Toggle the effect on or off"})
-        if !this.__remoteFunc('isSelected', true) || !IsSet(sourceButt) || !IsSet(motionPos) {
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        if !this.isClipSelected(effCtrlNN, &sourceButt, &motionPos) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
+            keys.allWait()
+            return
+        }
+        if !this.__setEffContScrollbar(effCtrlNN) {
+            block.Off()
             keys.allWait()
             return
         }
@@ -1126,18 +1144,6 @@ class Prem {
         blocker.Off()
     }
 
-    /** checks to see if there are any clips selected */
-    static checkNoClips(UIA_obj, &x, &y) {
-        if ImageSearch(&x, &y, UIA_obj.location.x, UIA_obj.location.y, UIA_obj.location.x + (UIA_obj.location.w/2), UIA_obj.location.y + UIA_obj.location.h, "*2 " ptf.Premiere "noclips.png") {
-            SendInput(KSA.selectAtPlayhead)
-            sleep 50
-            ;// checks for no clips again incase it has attempted to select 2 separate audio/video tracks
-            if ImageSearch(&x, &y, UIA_obj.location.x, UIA_obj.location.y, UIA_obj.location.x + (UIA_obj.location.w/2), UIA_obj.location.y + UIA_obj.location.h, "*2 " ptf.Premiere "noclips.png")
-                return false
-        }
-        return true
-    }
-
     /**
      * This function is to adjust the framing of a video within the preview window in premiere pro. Let go of this hotkey to confirm, simply tap this hotkey to reset values
      */
@@ -1150,20 +1156,17 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := premUIA.UIA_Objs["effectControls"]
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
         this.__focusTimeline() ;focuses the timeline
         sleep 25
-        if !this.__checkPremRemoteDir("isSelected") {
-            if !this.checkNoClips(effCtrlNN, &x, &y) {
-                block.Off()
-                errorLog(Error("No clips are selected", -1),, 1)
-                keys.allWait()
-                return
-            }
-        }
-        else if !this.__remoteFunc('isSelected', true) {
+        if !this.isClipSelected(effCtrlNN) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
+            keys.allWait()
+            return
+        }
+        if !this.__setEffContScrollbar(effCtrlNN) {
+            block.Off()
             keys.allWait()
             return
         }
@@ -1260,33 +1263,67 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := premUIA.UIA_Objs["effectControls"]
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        timelineAct := premUIA_Values.__isUiaElementActive('timelineWindow', premUIA)
         this.__focusTimeline() ;focuses the timeline
-        if !this.__checkPremRemoteDir("isSelected") {
-            if !this.checkNoClips(effCtrlNN, &x, &y) {
-                block.Off()
-                errorLog(Error("No clips are selected", -1),, 1)
-                keys.allWait()
-                return
-            }
-        }
-        else if !this.__remoteFunc('isSelected', true) {
+        if !this.isClipSelected(effCtrlNN) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
             return
         }
-        MouseGetPos(&xpos, &ypos)
-        motionPos := {x: effCtrlNN.location.x+57, y: effCtrlNN.location.y+62}
-        if !obj.imgSrchMulti({x1: motionPos.x, x2: motionPos.x+700, y1: motionPos.y-20, y2: motionPos.y+40},, &xcol, &ycol, ptf.Premiere "reset.png", ptf.Premiere "reset_2.png") {
+        if !this.__setEffContScrollbar(effCtrlNN) {
             block.Off()
-            errorLog(Error("Could not find reset image", -1),, 1)
+            keys.allWait()
             return
         }
-        MouseMove(xcol+2, ycol+2)
-        SendInput("{Click}")
-        MouseMove(xpos, ypos)
+        try {
+            reset := effCtrlNN.FindElement({LocalizedType:"button", Name:"Reset Effect"}).Invoke()
+        }
+        if timelineAct {
+            sleep 50
+            this.__focusTimeline() ;focuses the timeline
+        }
         block.Off()
+    }
+
+    /**
+     * Sets the Effect Controls scrollbar to its topmost value if it has been moved
+     * @param {UIA Object} [effCont] the effect controls UIA control. it is recommended to use `effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])` for an updated window
+     * @param {Integer} [mouseSpeed=0] the value to be passed to `SetDefaultMouseSpeed()`. Defaults to `0`
+     * @param {Integer} [timeout=1000] the time in `ms` you want to check to ensure the scrollbar has moved. Will check every `50ms`
+     * @returns {Boolean}
+     */
+    static __setEffContScrollbar(effCont, mouseSpeed := 0, timeout := 1000) {
+        SetDefaultMouseSpeed(mouseSpeed)
+        coord.s()
+        try scrollBar := effCont.FindElement({LocalizedType:"scroll bar", Name:"UI_ScrollBar"})
+        catch {
+            errorLog(Error("Failed to find the Effect Controls scrollbar", -1))
+            notifyExt.showIfNotExist("premEffContScrollbarFind",, 'Failed to find the Effect Controls scrollbar',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            return false
+        }
+        if scrollBar.value = 0
+            return true
+        getCoords := obj.MousePos()
+        Click(scrollBar.location.x + (scrollBar.location.w/2) A_Space scrollBar.location.y+1)
+        sleep 50
+        MouseMove(getCoords.x, getCoords.y, 1)
+
+        hasMoved := false
+        loop (50/timeout) {
+            if scrollBar.Value = 0 {
+                hasMoved := true
+                break
+            }
+            continue
+        }
+        if !hasMoved {
+            errorLog(Error("Failed to move the Effect Controls scrollbar", -1))
+            notifyExt.showIfNotExist("premEffContScrollbarMove",, 'Failed to move the Effect Controls scrollbar',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            return false
+        }
+        return true
     }
 
     /**
@@ -1304,23 +1341,19 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := premUIA.UIA_Objs["effectControls"]
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
         this.__focusTimeline()
-        if !this.__checkPremRemoteDir("isSelected") {
-            if !this.checkNoClips(effCtrlNN, &x, &y) {
-                block.Off()
-                errorLog(Error("No clips are selected", -1),, 1)
-                keys.allWait()
-                return
-            }
-        }
-        else if !this.__remoteFunc('isSelected', true) {
+        if !this.isClipSelected(effCtrlNN) {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
             return
         }
-
+        if !this.__setEffContScrollbar(effCtrlNN) {
+            block.Off()
+            keys.allWait()
+            return
+        }
         ;// finds the scale value you want to adjust, then finds the value adjustment to the right of it
         if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.width/2), y2: effCtrlNN.location.y + effCtrlNN.location.h},, &x, &y
             , ptf.Premiere property ".png"
@@ -1391,13 +1424,12 @@ class Prem {
             blocker.Off()
             return false
         }
-        effCtrlNN := premUIA.UIA_Objs["effectControls"]
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
 
         try {
-            funcExist := this.__checkPremRemoteDir("isSelected")
+            funcExist := this.isClipSelected(effCtrlNN)
             switch funcExist {
                 case false:
-                    if !funcExist && ImageSearch(&x3, &y3, effCtrlNN.location.x, effCtrlNN.location.y, effCtrlNN.location.x + (effCtrlNN.location.w/2), effCtrlNN.location.y + effCtrlNN.location.h, "*2 " ptf.Premiere "noclips.png") { ;checks to see if there aren't any clips selected as if it isn't, you'll start inputting values in the timeline instead of adjusting the gain
                     delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
                     this().__fxPanel()
                     if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.location.w/2), y1: effCtrlNN.location.y + effCtrlNN.location.h},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
@@ -1405,7 +1437,6 @@ class Prem {
                         notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                         return false
                     }
-                }
                 case true:
                     if !this.__remoteFunc('isSelected', true) {
                         blocker.Off()
@@ -3893,12 +3924,15 @@ class Prem {
      * `Difference`, `Exclusion`, `Subtract`, `Divide`, `Hue`, `Saturation`, `Color`, `Luminosity`
      */
     static setBlendMode(blendModeString) {
-        if !prem.__remoteFunc('isSelected', true)
+        if !premUIA := premUIA_Values.initialise()
             return
-        premUIA := premUIA_Values.initialise()
-        effCont   := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
-        blendMode := effCont.FindElement({LocalizedType:"combo box"},, 2)
-        blendMode.FindElement({LocalizedType:"list item", Name:blendModeString}).Select()
+        effCont := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        if !this.isClipSelected(effCont)
+            return
+        try {
+            blendMode := effCont.FindElement({LocalizedType:"combo box"},, 2)
+            blendMode.FindElement({LocalizedType:"list item", Name:blendModeString}).Select()
+        }
     }
 
     __Delete() {
