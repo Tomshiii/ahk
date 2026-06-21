@@ -43,14 +43,13 @@ export const host = {
     return false;
   },
 
-  setProperty: function(property: string, value: any, persistent: string) {
+  setProperty: function(property: string, value: any, persistent: string, createIfNotExist: string) {
     if (app.properties.doesPropertyExist(property)) {
       if (app.properties.isPropertyReadOnly(property)) {
         alert('Could not rename property "' + property + '" because it is read-only.');
         return;
       } else {
-          var pers = persistent == "false" ? false : true
-          app.properties.setProperty(property, value, pers, false);
+          app.properties.setProperty(property, value, Boolean(persistent), Boolean(createIfNotExist));
           return;
       }
     }
@@ -390,14 +389,6 @@ export const host = {
 
   importFile: function(filePath: string, importAsStills: string) {
     return app.project.importFiles([filePath], false, app.project.rootItem, Boolean(importAsStills));
-  },
-
-  getPref: function(pref: string) {
-    return app.properties.getProperty(pref);
-  },
-
-  setPref: function(pref: string, value: any, persistent: string, createIfNotExist: string) {
-    return app.properties.setProperty(pref, value, Boolean(persistent), Boolean(createIfNotExist));
   },
 
   closeClipSourceMon: function() {

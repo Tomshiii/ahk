@@ -28,7 +28,7 @@ if DirExist(remotePath) {
         return */
     if FileExist(extensionsPath "\premExtract.zip")
         FileDelete(extensionsPath "\premExtract.zip")
-    RunWait(ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk false")
+    RunWait(ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\cep\replacePremRemote.ahk false")
     RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk 0 1")
     return
 }
@@ -55,6 +55,6 @@ cmd.run(,, false, "npm i", remotePath "\client", "Hide")
 cmd.run(,, false, "npm i", remotePath "\host", "Hide")
 
 ;// then copy files from install
-RunWait(ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\replacePremRemote.ahk false")
+RunWait(ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\cep\replacePremRemote.ahk false")
 cmd.run(,, false, "npm run build", remotePath "\host", "Hide")
 ExitApp()

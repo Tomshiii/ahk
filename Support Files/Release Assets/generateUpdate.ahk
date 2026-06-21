@@ -37,7 +37,7 @@ if WinExist("Ahk2Exe for AutoHotkey")
 UserSettings := CLSID_Objs.load("UserSettings")
 
 ;//* PremiereRemote
-RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\backupPremRemote.ahk"))
+RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\cep\backupPremRemote.ahk"))
 
 ;//* KotET
 try DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)

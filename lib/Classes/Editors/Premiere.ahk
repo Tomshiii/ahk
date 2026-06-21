@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.2
  * @author tomshi
- * @date 2026/06/18
- * @version 2.4.38
+ * @date 2026/06/19
+ * @version 2.4.39
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -308,7 +308,7 @@ class Prem {
                         if !Notify.Exist('notDeterminedIntZero') {
                             Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDeterminedIntZero')
                             errorLog(Error("Premiere theme could not be determined. Settings File int: " props.text, -1))
-                            setWithRemote := (this.__checkPremRemoteDir('setPref') && WinExist(this.winTitle) != 0)
+                            setWithRemote := (this.__checkPremRemoteDir('setProperty') && WinExist(this.winTitle) != 0)
 
                             title := "Fix settings file"
                             SetTimer(change_msgButton.Bind(title, "darkest", "dark", "light"), 16)
@@ -318,27 +318,27 @@ class Prem {
                                 case "Abort": ;// darkest
                                     props.text := "7.9999998211860657"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "darkest"
                                 case "Retry": ;// dark
                                     MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
                                     props.text := "7.9999998211860657"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "darkest"
                                     /* props.text := "34.999999403953552"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "dark" */
                                 case "Ignore": ;// light
                                     MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
                                     props.text := "7.9999998211860657"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "darkest"
                                     /* props.text := "80.000001192092896"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setPref',, "pref=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "light" */
                             }
                         }
@@ -498,6 +498,27 @@ class Prem {
     }
 
     /**
+     * a helper function for `PremiereRemote` `__remote()` functions to sanitise their parameter string
+     * @returns {String} the completed parameter string
+     */
+    static __sanitiseParams(params) {
+        paramsString := ""
+        if params.Length >= 1 {
+            for k, v in params {
+                if k = 1 {
+                    paramsString := StrReplace(v, "&", "%26")
+                    if params.Length == 1
+                        break
+                    continue
+                }
+                replaceStr := StrReplace(v, "&", "%26")
+                paramsString := paramsString "&" replaceStr
+            }
+        }
+        return StrReplace(paramsString, A_Space, "%20")
+    }
+
+    /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) function
      * @param {String} whichFunc the function you wish to call
      * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window.
@@ -549,48 +570,64 @@ class Prem {
             }
         }
 
-        paramsString := ""
-        if params.Length >= 1 {
-            for k, v in params {
-                if k = 1 {
-                    paramsString := StrReplace(v, "&", "%26")
-                    if params.Length == 1
-                        break
-                    continue
-                }
-                replaceStr := StrReplace(v, "&", "%26")
-                paramsString := paramsString "&" replaceStr
-            }
-        }
-        paramsString := StrReplace(paramsString, A_Space, "%20")
+        paramsString := this.__sanitiseParams(params)
         sendcommand := Format('curl "http://localhost:8081/{1}?{2}"', whichFunc, String(paramsString))
         if !needResult {
             Run(sendcommand,, "Hide")
             return true
         }
-        else {
-            if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
-                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1),, true)
-                return false
-            }
-            try parse := JSON.parse(getResp)
-            catch {
-                errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
-                return false
-            }
-            switch {
-                case (!parse.has("result") && parse.has("message")):
-                    errorLog(ValueError(parse["message"],-1), whichFunc "_" paramsString)
-                    MsgBox("prem.__remoteFunc() failed.`n`nMessaeg: " parse["message"] "`nPassed Params:" paramsString)
-                    return false
-                case parse.has("result") && parse["result"] != "true" && parse["result"] != "false":
-                    return parse["result"]
-                case parse.has("result") && isBool(parse["result"]):
-                    return(parse["result"] = "true" ? true : false)
-                default:
-                    return((parse.has("result")) ? parse["result"] : false)
-            }
+        if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
+            errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1),, true)
+            return false
         }
+        try parse := JSON.parse(getResp)
+        catch {
+            errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
+            return false
+        }
+        switch {
+            case (!parse.has("result") && parse.has("message")):
+                errorLog(ValueError(parse["message"],-1), whichFunc "_" paramsString)
+                MsgBox("prem.__remoteFunc() failed.`n`nMessage: " parse["message"] "`nPassed Params:" paramsString)
+                return false
+            case parse.has("result") && parse["result"] != "true" && parse["result"] != "false":
+                return parse["result"]
+            case parse.has("result") && isBool(parse["result"]):
+                return(parse["result"] = "true" ? true : false)
+            default:
+                return((parse.has("result")) ? parse["result"] : false)
+        }
+    }
+
+    /**
+     * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) uxp function. This function is in testing as `PremiereRemote` uxp functionality is still in development
+     * @param {String} whichFunc the function you wish to call. **must include the file name**, eg. `common/getActiveSequenceName`
+     * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window.
+     * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
+     *
+     * ## Warning
+     *
+     * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
+     * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead. This function will attempt to rectify the issue itself but again, relying on such could result in issues.
+     * @returns {String} if the user sets `needResult` to `true` this function will return a string containing the response. The response will have its surrounding `"` quotes removed (eg. `fd75a385-7c84-48af-b6ee-a6c5a69c4c24` *not* `"fd75a385-7c84-48af-b6ee-a6c5a69c4c24"`)
+     */
+    static __remoteUXP(whichFunc, needResult := false, params*) {
+        paramsString := prem.__sanitiseParams(params)
+        sendcommand := Format('curl -X GET "http://localhost:8084/{1}?{2}"', whichFunc, String(paramsString))
+        if !needResult {
+            Run(sendcommand,, "Hide")
+            return true
+        }
+        getResp := cmd.result(sendcommand)
+        try parse := JSON.parse(getResp)
+        if !IsSet(parse) && getResp != ""
+            return ((SubStr(getResp, 1, 1) = '"' && SubStr(getResp, -1, 1) = '"') ? SubStr(getResp, 2, StrLen(getResp)-2) : getResp)
+        if parse.Has("error") {
+            errorLog(ValueError(parse["error"],-1), whichFunc "_" paramsString)
+            MsgBox("prem.__remoteUXP() failed.`n`nError: " parse["error"] "`nFunction:" whichFunc "`nPassed Params:" paramsString)
+            return false
+        }
+        return false
     }
 
     static _scan := ""
@@ -1539,16 +1576,14 @@ class Prem {
                     SendInput(sendOnFail star_ih.Input)
                     return
             }
-		}
-
-        ih.Wait()
-        star_ih.Stop()
-
-        if !checkSelected && title != "Audio Gain" {
-            ih.Stop()
+		} else if !checkSelected && title != "Audio Gain" {
+            ih.Stop(), star_ih.Stop()
             errorLog(TargetError("No clip selected. Cancelling"),, {time: 2000})
             return
         }
+
+        ih.Wait()
+        star_ih.Stop()
 
         switch {
             case ih.EndReason = "Timeout":

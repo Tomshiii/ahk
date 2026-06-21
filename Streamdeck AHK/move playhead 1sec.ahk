@@ -10,12 +10,7 @@
 if !WinActive(prem.winTitle)
     return
 
-if !prem.__checkPremRemoteDir('movePlayhead') {
-    errorLog(Error("This script requires PremiereRemote", -1),, true)
-    return
-}
-
 if GetKeyState("LCtrl", "P")
-    prem.__remoteFunc("movePlayhead",, "subtract=true", "seconds=1")
+    prem.__remoteUXP("custom/movePlayhead",, "subtract=true", "seconds=1")
 else
-    prem.__remoteFunc("movePlayhead",, "subtract=false", "seconds=1")
+    prem.__remoteUXP("custom/movePlayhead",, "subtract=false", "seconds=1")
