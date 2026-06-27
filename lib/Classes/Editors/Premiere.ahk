@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Code is maintained for the version of Premiere listed below
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 26.2
+ * @premVer 26.3
  * @author tomshi
- * @date 2026/06/19
- * @version 2.4.39
+ * @date 2026/06/27
+ * @version 2.4.40
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3967,6 +3967,17 @@ class Prem {
             blendMode := effCont.FindElement({LocalizedType:"combo box"},, 2)
             blendMode.FindElement({LocalizedType:"list item", Name:blendModeString}).Select()
         }
+    }
+
+    /**
+     * returns a list of all video/audio effects available in UXP
+     * @returns {String}
+     */
+    static listAllUXPEffects() {
+        t := prem.__remoteUXP('custom/listAllAvailableEffects', true)
+        t := StrReplace(t, "||", "`n")
+        t := StrReplace(t, "|", "`n")
+        return t
     }
 
     __Delete() {

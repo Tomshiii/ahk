@@ -1,6 +1,6 @@
 /************************************************************************
  * @description move the Premere Pro playhead to the cursor
- * @premVer 26.2
+ * @premVer 26.3
  * @author tomshi, taranVH
  * @date 2026/04/30
  * @version 2.4.21

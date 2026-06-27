@@ -16,7 +16,7 @@ const { Constants } = ppro;
 
 /**
  * Returns the guid of the active sequence
- * @returns The guid
+ * @returns {string | null} The guid string
  */
 export async function getActiveSequenceID(): Promise<string | null> {
     const sequence = await getActiveSequence();
@@ -27,7 +27,7 @@ export async function getActiveSequenceID(): Promise<string | null> {
 
 /**
  * return the project path
- * @returns project path
+ * @returns {string | null} project path
  */
 export async function getProjPath(): Promise<string | null> {
     const project = await ppro.Project.getActiveProject();
@@ -40,7 +40,7 @@ export async function getProjPath(): Promise<string | null> {
 
 /**
  * return the project name
- * @returns project Name
+ * @returns {string | null} project Name
  */
 export async function getProjName(): Promise<string | null> {
     const project = await ppro.Project.getActiveProject();
@@ -50,7 +50,7 @@ export async function getProjName(): Promise<string | null> {
 
 /**
  * return premiere's version
- * @returns premiere version
+ * @returns {string} premiere version
  */
 export async function getPremVer(): Promise<string> {
     const { host } = require("uxp");
@@ -59,7 +59,7 @@ export async function getPremVer(): Promise<string> {
 
 /**
  * return the source montior item name
- * @returns name of the file open in the source monitor
+ * @returns {string} name of the file open in the source monitor
  */
 export async function getSourceMonitorName(): Promise<string> {
     const item = await ppro.SourceMonitor.getProjectItem();
@@ -68,7 +68,7 @@ export async function getSourceMonitorName(): Promise<string> {
 
 /**
  * return the selected clip type
- * @returns the clip type for the first item in the currently selected trackitem
+ * @returns {string | null} the clip type for the first item in the currently selected trackitem
  */
 export async function getTrackClipType(): Promise<string | null> {
     const sequence = await getActiveSequence();
@@ -89,13 +89,14 @@ export async function getTrackClipType(): Promise<string | null> {
         case "3": return "Preview";
         case "4": return "Feedback";
     }
+    return(String(type));
 }
 
 /**
  * returns selected project item type
- * @returns selected project item clip type
+ * @returns {string | null} selected project item clip type
  */
-export async function getClipType(): Promise<string | null> {
+export async function getProjectItemClipType(): Promise<string | null> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return null;
 

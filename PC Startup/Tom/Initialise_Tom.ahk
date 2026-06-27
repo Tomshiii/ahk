@@ -14,7 +14,7 @@ if !FileExist(A_Appdata "\tomshi\installDir")
 installDir := FileRead(A_Appdata "\tomshi\installDir")
 
 Run(installDir "\Core Functionality.ahk")
-if !CLSID_Objs.waitCoreFuncs(2) {
+if !CLSID_Objs.waitCoreFuncs(6) {
     sleep 2000
     try CLSID_Objs.load("Loading")
     catch {
