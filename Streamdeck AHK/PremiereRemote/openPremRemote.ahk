@@ -10,4 +10,5 @@
 if !WinActive(Editors.Premiere.winTitle)
     return
 
-delaySI(25, "!w", "{Down 2}", "{Right}", "{Up 3}", "{Enter}")
+; delaySI(25, "!w", "{Down 2}", "{Right}", "{Up 3}", "{Enter}")
+MenuSelect(Editors.Premiere.winTitle,, "Window", "Extensions", "PremiereRemote")

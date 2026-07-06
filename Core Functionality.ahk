@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/06/04
- * @version 1.0.21
+ * @date 2026/07/06
+ * @version 1.0.22
  ***********************************************************************/
 
 #SingleInstance Force
@@ -42,9 +42,10 @@ KSA             := KeyShortAdjust()
 premiere        := prem
 Loading         := {isLoading: true}
 determineActive := {isRunning: false}
+premSlots       := {}
 
 
-allRegister := [{obj:premiere, name: "prem"}, {obj:KSA, name: "KSA"}, {obj: Loading, name: "Loading"}, {obj: determineActive, name: "determineActive"}]
+allRegister := [{obj:premiere, name: "prem"}, {obj:KSA, name: "KSA"}, {obj: Loading, name: "Loading"}, {obj: determineActive, name: "determineActive"}, {obj: premSlots, name: "premSlots"}]
 for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }

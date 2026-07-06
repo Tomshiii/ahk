@@ -327,7 +327,7 @@
     "togDupeFrameMarkers": {
         "command": "cmd.timeline.show.duplicate.frames",
         "context": "/PremiereData/shortcuts/context.timeline",
-        "withinPrem": "(Panels > Timeline Panel > )  Show Duplicate Frame Markers"
+        "withinPrem": "(Panels > Timeline Panel > ) Show Duplicate Frame Markers"
     },
     "labelViolet": {
         "command": "cmd.edit.label.0",

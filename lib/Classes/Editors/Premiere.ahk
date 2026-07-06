@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/06/27
- * @version 2.4.40
+ * @date 2026/07/06
+ * @version 2.4.41
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -45,6 +45,7 @@
 #Include Functions\checkbool.ahk
 #Include Functions\isObjHasProp.ahk
 #Include Functions\determineAdobeVer.ahk
+#Include Functions\base64Encode.ahk
 #Include Other\Notify\Notify.ahk
 #Include Other\ShinsImageScanClass.ahk
 #Include Other\Array.ahk
@@ -2949,8 +2950,8 @@ class Prem {
      * @param {Integer} [track=A_ThisHotkey] The track you wish to operate on. If this parameter is not just an integer it will attempt to do a rudimentary check on the activation hotkey, expecting a number to be the final activation key in the chain
      * @param {String} [audOrVid=false] determine whether to operate on the audio or video tracks. By default this value is set to `false` and it is determined purely by the user's cursor position. otherwise set to either `"vid"` or `"aud"`
      * @param {Integer} [offset=0] Allows the user to offset the track number, ie. if their `track` number is `1` and offset is `1` the function will operate on track `2`. Useful to skip multicam tracks
-     * @param {Boolean/String} [allExcept=false] This value may be `true`, `false` OR `"all"`. Setting this value to `true` will toggle the status of every track *except* the desired track. Leaving this value as `false` will only toggle the desired track(s). Setting this value to `"all"` will toggle all tracks beyond the user's `offset`. Defaults to `false`.
-     * @param {Integer} [ignore=false] This parameter will determine if `allExcept - "all"` or `allExcept - true` will ignore any tracks. If provided with an integer, any tracks greater than that value (plus your offset) will be ignored. eg. if `offset` is set to `1` and `ignore` is set to `8` tracks `9` and beyond will be ignored
+     * @param {Boolean | String} [allExcept=false] This value may be `true`, `false` OR `"all"`. Setting this value to `true` will toggle the status of every track *except* the desired track. Leaving this value as `false` will only toggle the desired track(s). Setting this value to `"all"` will toggle all tracks beyond the user's `offset`. Defaults to `false`.
+     * @param {Integer | String} [ignore=false] This parameter will determine if `allExcept - "all"` or `allExcept - true` will ignore any tracks. If provided with an `integer` (1->9), any tracks greater than that value (plus your offset) will be ignored. eg. if `offset` is set to `1` and `ignore` is set to `8` tracks `9` and beyond will be ignored. Alternatively, this parameter can be set to `settings` and then the value store in `settings.ini - toggleEnabled_ignore` will be used instead. This value can be adjusted within `settingsGUI()`
      */
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false, ignore := false) {
         ;// avoid attempting to fire unless main window is active
@@ -3156,11 +3157,21 @@ class Prem {
 
         whichTracks := []
         hasMap := Map()
-        enabledState := unset
+        origIgnore := ignore
+        if ignore = "settings" {
+            try ignore := this.UserSettings.toggleEnabled_ignore
+            catch {
+                errorLog(TargetError("Failed to determine settings value: toggleEnabled_ignore"))
+                notifyExt.showIfNotExist("premignoreSetting", 'prem.toggleEnabled()', '"Failed to determine settings value: toggleEnabled_ignore"',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
+                return
+            }
+        }
 
         MouseMove(origMouseCords.x-10, origMouseCords.y, 0)
         switch allExcept {
             case "all":
+                if origIgnore = "settings"
+                    ignore += track-offset
                 for k, v in allLayers {
                     if (offset != 0 && A_Index <= offset)
                         continue
@@ -3978,6 +3989,55 @@ class Prem {
         t := StrReplace(t, "||", "`n")
         t := StrReplace(t, "|", "`n")
         return t
+    }
+
+    /**
+     * Save effects so they can be easily pasted later. Will also save custom keyframes/values. Simply select a clip and call the function.
+     * ### [!Warning]
+     * ### These slots are saved within `Core Functionality.ahk` and as such require it to be running.
+     * @param {Boolean} [save=true] whether you wish to save the current clip, or paste the saved effect
+     * @param {Integer} [slot=1] which slot you wish to call/save to
+     */
+    static effectSlot(save := true, slot := 1) {
+        ; validateTypes(["Integer", "Integer"], save, slot) ;breaks hotkeylessahk
+        try slots := CLSID_Objs.load("premSlots")
+        catch {
+            notifyExt.showIfNotExist('premEffectSlotFailed',, "Failed to retrieve slots object from Core Functionality.ahk",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            return
+        }
+        if !slots.HasProp(slot) && checkBool(save) == false {
+            notifyExt.showIfNotExist('premEffectSlotNoneSaved',, "No data saved in slot",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            return
+        }
+        switch checkBool(save) {
+            case true:
+                t := prem.__remoteFunc('saveEffectSlotJSON', true)
+                if InStr(t, "error") {
+                    __checkErrors(t)
+                    return
+                }
+                try json.parse(t)
+                catch {
+                    __checkErrors(t)
+                    return
+                }
+                try slots.%slot% := t
+                notifyExt.showIfNotExist('premEffectSlotSaved',, "Effects Saved to slot: " slot)
+            case false:
+                stringg := Base64Encode(slots.%slot%)
+                t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                __checkErrors(t)
+                return
+        }
+
+        __checkErrors(response) {
+            switch {
+                case (InStr(response, "ERROR: ") || InStr(response, "EvalScript error.") || InStr(response, "FAILED")):
+                    notifyExt.showIfNotExist('premEffectERROR',, response,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                    errorLog(Error(response, -1))
+                    return
+            }
+        }
     }
 
     __Delete() {

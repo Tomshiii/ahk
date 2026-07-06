@@ -2,6 +2,15 @@ import { Utils } from "./Utils";
 import { MarkerUtils } from "./MarkerUtils";
 import { EffectUtils } from "./EffectUtils";
 
+// JSON genuinely exists at runtime in ExtendScript -- this just tells
+// TypeScript about it without pulling in the rest of the ES5 lib
+// (which would type-check other ES5 methods that don't actually
+// exist in ExtendScript's ES3-based engine).
+declare const JSON: {
+    stringify(value: any): string;
+    parse(text: string): any;
+};
+
 /**
  * ALL functions defined here are visible via the localhost service.
  */
@@ -15,6 +24,73 @@ export const host = {
    *                       For more information, please have a look at the index.js file.
    */
   kill: function () { },
+
+  applyEffectSlotJSON: function(data: string) {
+    var jsonStr;
+    try {
+        jsonStr = Utils.base64Decode(data);
+    } catch (e) {
+        return "ERROR at base64Decode: " + e.toString();
+    }
+
+    var effects;
+    try {
+        effects = JSON.parse(jsonStr);
+    } catch (e) {
+        return "ERROR at JSON.parse: " + e.toString() + " | jsonStr=" + jsonStr;
+    }
+
+    try {
+        app.enableQE();
+    } catch (e) {
+        return "ERROR at enableQE: " + e.toString();
+    }
+
+    var seq, selection;
+    try {
+        seq = app.project.activeSequence;
+        selection = seq.getSelection();
+    } catch (e) {
+        return "ERROR at getSelection: " + e.toString();
+    }
+    if (!selection || selection.length === 0) return "ERROR: no clip selected";
+
+    var targetTrackItem = selection[0];
+
+    var qeTargetClip;
+    try {
+        qeTargetClip = EffectUtils.findQEClipForTrackItem(targetTrackItem);
+    } catch (e) {
+        return "ERROR at findQEClipForTrackItem: " + e.toString();
+    }
+    if (!qeTargetClip) return "ERROR: could not locate QE clip for selected trackItem";
+
+    var results;
+    try {
+        results = EffectUtils.applyEffectsToClip(targetTrackItem, qeTargetClip, effects);
+    } catch (e) {
+        return "ERROR at applyEffectsToClip: " + e.toString();
+    }
+
+    return "DONE:\n" + results.join("\n");
+  },
+
+  saveEffectSlotJSON: function() {
+      try {
+          app.enableQE();
+          var seq = app.project.activeSequence;
+          var selection = seq.getSelection();
+          if (!selection || selection.length === 0) return "ERROR: no clip selected";
+
+          var trackItem = selection[0];
+          var effects = EffectUtils.copyEffectsFromClip(trackItem);
+
+          return JSON.stringify(effects);
+      } catch (e) {
+          return "ERROR in saveSelectedClipEffects: " + e.toString();
+      }
+  },
+
 
   projPath: function () {
     return app.project.path

@@ -1,5 +1,22 @@
 import { Utils } from "./Utils";
 
+interface EffectEntry {
+    matchName: string;
+    displayName?: string;
+    properties: PropertyEntry[];
+}
+interface PropertyEntry {
+    displayName: string;
+    isTimeVarying: boolean;
+    value?: any;
+    keyframes?: { time: string; value: any }[];
+}
+var SKIPPED_MATCH_NAMES: { [key: string]: boolean } = {
+    "Internal Volume Stereo": true,
+    "Internal Channel Volume Stereo": true,
+    "Internal Volume Mono": true
+};
+
 export class EffectUtils {
 
     static changeAudioLevel(clip: TrackItem, levelInDb: number) {
@@ -184,4 +201,226 @@ export class EffectUtils {
 
       alert(effectsList);
     }
-  }
+
+    static findQEClipForTrackItem(trackItem: any) {
+        app.enableQE();
+
+        var trackIndex = this.getTrackIndexForTrackItem(trackItem);
+        if (trackIndex === -1) {
+            alert("getTrackIndexForTrackItem returned -1 for mediaType=" + trackItem.mediaType + ", nodeId=" + trackItem.nodeId);
+            return null;
+        }
+
+        var qeSeq = qe.project.getActiveSequence();
+        var qeTrack = (trackItem.mediaType === "Video")
+            ? qeSeq.getVideoTrackAt(trackIndex)
+            : qeSeq.getAudioTrackAt(trackIndex);
+
+        var targetTicks = Number(trackItem.start.ticks);
+        var maxProbe = 5000;
+        var scanned = [];
+
+        for (var i = 0; i < maxProbe; i++) {
+            var qeItem;
+            try {
+                qeItem = qeTrack.getItemAt(i);
+            } catch (e) {
+                break;
+            }
+            if (!qeItem) break;
+
+            try {
+                scanned.push(Number(qeItem.start.ticks));
+                if (Number(qeItem.start.ticks) === targetTicks) {
+                    return qeItem;
+                }
+            } catch (e) {
+                // gap
+            }
+        }
+
+        return null;
+    }
+
+    static getTrackIndexForTrackItem(trackItem: any) {
+      var seq = app.project.activeSequence;
+      var tracks = (trackItem.mediaType === "Video") ? seq.videoTracks : seq.audioTracks;
+
+      for (var t = 0; t < tracks.numTracks; t++) {
+          var track = tracks[t];
+          for (var c = 0; c < track.clips.numItems; c++) {
+              if (track.clips[c].nodeId === trackItem.nodeId) {
+                  return t;
+              }
+          }
+      }
+      return -1;
+    }
+
+    static applyEffectsToClip(targetTrackItem: any, qeTargetClip: any, effectData: EffectEntry[]) {
+        var results: string[] = [];
+
+        for (var e = 0; e < effectData.length; e++) {
+            var fx = effectData[e];
+
+            var isSkipped = false;
+            try {
+                isSkipped = !!SKIPPED_MATCH_NAMES[fx.matchName];
+            } catch (skipErr) {
+                results.push(fx.matchName + ": SKIPPED_MATCH_NAMES check FAILED -- " + skipErr.toString());
+            }
+            if (isSkipped) {
+                results.push(fx.matchName + ": SKIPPED (excluded by design)");
+                continue;
+            }
+
+            try {
+                var isAudio = targetTrackItem.mediaType === "Audio";
+                var lookupKey = fx.displayName || fx.matchName;
+                var qeEffect = null;
+
+                try {
+                    qeEffect = isAudio
+                        ? qe.project.getAudioEffectByName(lookupKey)
+                        : qe.project.getVideoEffectByName(lookupKey, true);
+                } catch (lookupErr) {
+                    results.push(fx.matchName + ": FAILED at getEffectByName with key='" + lookupKey + "' -- " + lookupErr.toString());
+                    continue;
+                }
+
+                if (!qeEffect) {
+                    results.push(fx.matchName + ": SKIPPED (effect lookup returned nothing)");
+                    continue;
+                }
+
+                // Snapshot existing component count BEFORE adding, so we can
+                // reliably identify which one is the new instance afterward --
+                // don't assume it lands at the end or any particular index.
+                var beforeCount = targetTrackItem.components.numItems;
+
+                try {
+                    if (isAudio) {
+                        qeTargetClip.addAudioEffect(qeEffect);
+                    } else {
+                        qeTargetClip.addVideoEffect(qeEffect);
+                    }
+                } catch (addErr) {
+                    results.push(fx.matchName + ": FAILED at addEffect -- " + addErr.toString());
+                    continue;
+                }
+
+                var afterCount = targetTrackItem.components.numItems;
+                if (afterCount <= beforeCount) {
+                    results.push(fx.matchName + ": FAILED (added via QE but component count didn't increase)");
+                    continue;
+                }
+
+                // Find the new component: the one with this matchName that
+                // wasn't present in the pre-add snapshot. Since matchName isn't
+                // unique when duplicates exist, compare by identity/index diff
+                // instead of by matchName lookup.
+                var targetComp = null;
+                if (afterCount === beforeCount + 1) {
+                    // simplest case: components collection grew by exactly one,
+                    // so the new one should be the one at the new highest index
+                    // whose matchName matches what we just added
+                    for (var c = afterCount - 1; c >= 0; c--) {
+                        if (targetTrackItem.components[c].matchName === fx.matchName) {
+                            targetComp = targetTrackItem.components[c];
+                            break;
+                        }
+                    }
+                }
+
+                if (!targetComp) {
+                    results.push(fx.matchName + ": FAILED (added via QE but could not identify new component afterward)");
+                    continue;
+                }
+
+                for (var j = 0; j < fx.properties.length && j < targetComp.properties.numItems; j++) {
+                    var savedProp = fx.properties[j];
+                    var liveProp = targetComp.properties[j];
+                    try {
+                        if (savedProp.isTimeVarying && savedProp.keyframes) {
+                            if (!liveProp.isTimeVarying()) liveProp.setTimeVarying(true);
+                            for (var k = 0; k < savedProp.keyframes.length; k++) {
+                                var kf = savedProp.keyframes[k];
+                                var t = new Time();
+                                t.ticks = String(kf.time);
+                                liveProp.addKey(t);
+                                liveProp.setValueAtKey(t, kf.value, true);
+                            }
+                        } else if (savedProp.value !== undefined) {
+                            liveProp.setValue(savedProp.value, true);
+                        }
+                    } catch (propErr) {
+                        results.push(fx.matchName + "." + savedProp.displayName + ": property error -- " + propErr.toString());
+                    }
+                }
+
+                results.push(fx.matchName + ": OK");
+            } catch (fxErr) {
+                results.push((fx ? fx.matchName : "?") + ": FAILED -- " + fxErr.toString());
+            }
+        }
+
+        return results;
+    }
+
+    static copyEffectsFromClip(sourceTrackItem: any) {
+        var effects: EffectEntry[] = [];
+
+        for (var i = 0; i < sourceTrackItem.components.numItems; i++) {
+            var comp = sourceTrackItem.components[i];
+            if (!comp.properties) {
+                alert("comp[" + i + "] (" + comp.matchName + ") has no properties collection at all");
+                continue;
+            }
+
+            if (!comp) {
+                alert("component[" + i + "] is null/undefined, skipping");
+                continue;
+            }
+
+            if (SKIPPED_MATCH_NAMES[comp.matchName]) continue;
+
+            var props: PropertyEntry[] = [];
+
+            for (var j = 0; j < comp.properties.numItems; j++) {
+                var p = comp.properties[j];
+
+                if (!p) {
+                    alert("comp[" + i + "] (" + comp.matchName + ") property[" + j + "] is null/undefined, skipping");
+                    continue;
+                }
+
+                try {
+                    var entry: PropertyEntry = {
+                        displayName: p.displayName,
+                        isTimeVarying: p.isTimeVarying()
+                    };
+
+                    if (entry.isTimeVarying) {
+                        var keys = p.getKeys();
+                        entry.keyframes = [];
+                        if (keys) {
+                            for (var k = 0; k < keys.length; k++) {
+                                var key = keys[k];
+                                if (!key) continue;
+                                entry.keyframes.push({ time: key.ticks, value: p.getValueAtKey(key) });
+                            }
+                        }
+                    } else {
+                        entry.value = p.getValue();
+                    }
+                    props.push(entry);
+                } catch (propErr) {
+                    alert("comp[" + i + "] (" + comp.matchName + ") property[" + j + "] (" + p.displayName + ") threw: " + propErr.toString());
+                }
+            }
+
+            effects.push({ matchName: comp.matchName, displayName: comp.displayName, properties: props });
+        }
+        return effects;
+    }
+}

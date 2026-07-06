@@ -64,8 +64,16 @@ class set_Edit_Val {
         textControl: "MICText",                         Bind: "Multi-Instance Close.ahk",
         objName: "--",                                  UpDownOpt: "Range1-999"
     }
+    toggleEnabledIgnore := {
+        control: "toggleEnabledIgnore",                 EditPos: "xs Y+4",
+        scriptText: "``prem.toggleEnabled()``",         textPos: "X+5 Y+-26",
+        otherText: " ``ignore`` value",                 otherTextPos: "Y+2",
+        iniInput: "toggleEnabled_ignore",               colour: "c753288",
+        textControl: "toggleEnabledIgnore_txt",         Bind: "",
+        objName: "--",                                  UpDownOpt: "Range1-999"
+    }
 
-    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.premPrev, this.premSeq, this.MIC]
+    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.premPrev, this.premSeq, this.MIC, this.toggleEnabledIgnore]
     static control := []
     static EditPos := []
     static scriptText := []

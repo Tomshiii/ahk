@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/06/05
- * @version 1.1.17
+ * @date 2026/07/06
+ * @version 1.1.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -53,7 +53,8 @@ class CLSID_Objs {
         "determineUIA",    "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}",
         "KSA",             "{A6A98BC1-C523-4F2E-8CB9-839106A6C8E1}",
         "Loading",         "{DFEF77D2-D0BE-4F54-BAF8-D0B456F6D959}",
-        "determineActive", "{FB43A603-D55E-4615-8558-2BF1644CD4EC}"
+        "determineActive", "{FB43A603-D55E-4615-8558-2BF1644CD4EC}",
+        "premSlots",       "{307A7C63-03F9-49D4-AE34-F8196809D22C}"
     )
 
     /** a quick and dirty function to wait for `Core Functionality.ahk` to finish loading */

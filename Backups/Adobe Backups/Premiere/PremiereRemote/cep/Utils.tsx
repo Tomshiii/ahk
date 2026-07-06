@@ -808,4 +808,24 @@ export class Utils {
         alert("Error inspecting '" + (typeof inspectPath !== 'undefined' ? inspectPath : 'unknown') + "': " + e.toString());
       }
     }
+
+  static base64Decode(input: string){
+    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+    var output = "";
+    var i = 0;
+    while (i < input.length) {
+        var enc1 = chars.indexOf(input.charAt(i++));
+        var enc2 = chars.indexOf(input.charAt(i++));
+        var enc3 = chars.indexOf(input.charAt(i++));
+        var enc4 = chars.indexOf(input.charAt(i++));
+        var chr1 = (enc1 << 2) | (enc2 >> 4);
+        var chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+        var chr3 = ((enc3 & 3) << 6) | enc4;
+        output += String.fromCharCode(chr1);
+        if (enc3 !== 64) output += String.fromCharCode(chr2);
+        if (enc4 !== 64) output += String.fromCharCode(chr3);
+    }
+    return output;
   }
+}
