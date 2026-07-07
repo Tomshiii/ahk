@@ -51,7 +51,7 @@ n::unassigned()
 #MaxThreadsBuffer false
 ;Space::unassigned()
 
-t::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Gaussian%20Blur")
+t::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Gaussian%20Blur%20(Legacy)")
 y:: ;this hotkey will fill the frame to fit the window
 {
 	prem.__focusTimeline()

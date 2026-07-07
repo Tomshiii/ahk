@@ -578,3 +578,12 @@ WheelDown::
 	}
 	SendInput("{" A_ThisHotkey "}")
 }
+
+/** trim script alerts */
+~^c::
+{
+	if !WinActive("ahk_exe Adobe Premiere Pro.exe")
+    	return
+	sleep 25
+	clip.__scriptSplit(A_Clipboard)
+}

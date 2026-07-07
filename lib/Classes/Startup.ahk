@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2026/07/07
- * @version 1.9.7
+ * @version 1.9.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -487,18 +487,23 @@ class Startup {
         }
 
         operatePrem := false, operateAE := false
+
         if !premNotFound {
             if VerCompare(premExeVer, StrReplace(this.UserSettings.premVer, "v", "")) != 0 || ptf.PremYearVer != setPremYear {
                 operatePrem := true
-                this.UserSettings.premVer   := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
-                this.UserSettings.prem_year := SubStr(A_YYYY, 1, 2) setPremYear
+                try liveSettings := CLSID_Objs.load('UserSettings')
+                liveSettings.premVer   := premExeVer != false ? "v" premExeVer : this.UserSettings.premVer
+                liveSettings.prem_year := SubStr(A_YYYY, 1, 2) setPremYear
+                liveSettings := ""
             }
         }
         if !aeNotFound {
             if VerCompare(aeExeVer, StrReplace(this.UserSettings.aeVer, "v", "")) != 0  || ptf.aeYearVer != setAEYear {
                 operateAE := true
-                this.UserSettings.aeVer     := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
-                this.UserSettings.ae_year   := SubStr(A_YYYY, 1, 2) setAEYear
+                try liveSettings := CLSID_Objs.load('UserSettings')
+                liveSettings.aeVer     := aeExeVer != false   ? "v" aeExeVer   : this.UserSettings.aeVer
+                liveSettings.ae_year   := SubStr(A_YYYY, 1, 2) setAEYear
+                liveSettings := ""
             }
         }
         if this.UserSettings.show_adobe_vers_startup = true

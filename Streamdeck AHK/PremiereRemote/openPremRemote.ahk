@@ -2,6 +2,7 @@
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\ptf.ahk
 #Include Functions\delaySI.ahk
+#Include Classes\winGet.ahk
 ; }
 
 ;// this script just reopens an extension window within premiere as anytime you change
@@ -11,4 +12,5 @@ if !WinActive(Editors.Premiere.winTitle)
     return
 
 ; delaySI(25, "!w", "{Down 2}", "{Right}", "{Up 3}", "{Enter}")
-MenuSelect(Editors.Premiere.winTitle,, "Window", "Extensions", "PremiereRemote")
+n := WinGet.PremName()
+MenuSelect(n.winTitle,, "Window", "Extensions", "PremiereRemote")

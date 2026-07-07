@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to encapsulate often used functions to manipulate the clipboard or interact with highlighted text
  * @author tomshi
- * @date 2025/12/20
- * @version 1.1.0
+ * @date 2026/07/07
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -156,5 +156,22 @@ class clip {
         this.Wait(store.storedClip)
         SendInput("{ctrl down}v{ctrl up}")
         this.delayReturn(store.storedClip)
+    }
+
+    static __scriptSplit(clip) {
+        split := StrSplit(clip, "`n")
+        try SplitPath(split[2],,, &ext)
+        catch {
+            return
+        }
+        if split[1] != "---------------------------`r" && ext != "ahk"
+            return
+        split.RemoveAt(split.Length-3, 3)
+        split.RemoveAt(1, 3)
+        newStr := ""
+        loop split.Length {
+            newStr .= split[A_Index]
+        }
+        A_Clipboard := newStr
     }
 }

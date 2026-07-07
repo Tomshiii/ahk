@@ -1,5 +1,6 @@
 /**
  * @fileoverview Tomshi functions
+ * @version 1.0.2
  */
 
 import { getActiveSequence } from "./common";
@@ -1411,4 +1412,261 @@ export async function listAllAvailableEffects(): Promise<string> {
     console.log("all video match names:", vidMatchNames);
     console.log("all audio match names:", audMatchNames);
     return "VIDEO:||" + vidMatchNames.join("|") + "||AUDIO:||" + audMatchNames.join("|");
+}
+
+const SKIPPED_MATCH_NAMES: { [key: string]: boolean } = {
+    "AE.ADBE Motion": true,
+    "AE.ADBE Opacity": true,
+    "AE.ADBE Anchor Point": true,
+    "Internal Volume Stereo": true,
+    "Internal Channel Volume Stereo": true,
+    "Internal Volume Mono": true,
+};
+
+interface PropertyEntry {
+    displayName: string;
+    isTimeVarying: boolean;
+    value?: any;
+    keyframes?: { time: string; value: any }[];
+}
+
+interface EffectEntry {
+    matchName: string;
+    displayName?: string;
+    properties: PropertyEntry[];
+}
+
+/**
+ * saves all effects on a selected clip (minus defaults) to a json string and returns it
+ * @returns {string}
+ */
+export async function saveEffectSlotJSON(): Promise<string> {
+    try {
+        const sequence = await getActiveSequence();
+        if (!sequence) return "ERROR: no active sequence";
+
+        const selection = await sequence.getSelection();
+        if (!selection) return "ERROR: no selection";
+
+        const items = await selection.getTrackItems();
+        if (!items || items.length === 0) return "ERROR: no clip selected";
+
+        const payload: { mediaType: string, effects: EffectEntry[] }[] = [];
+
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const mediaType = item.constructor.name === "VideoClipTrackItem" ? "Video" : "Audio";
+
+            const chain = await item.getComponentChain();
+            if (!chain) continue;
+
+            const componentCount = await chain.getComponentCount();
+            const effects: EffectEntry[] = [];
+
+            for (let c = 0; c < componentCount; c++) {
+                const component = await chain.getComponentAtIndex(c);
+                const matchName = await component.getMatchName();
+                if (SKIPPED_MATCH_NAMES[matchName]) continue;
+
+                const displayName = await component.getDisplayName();
+                const paramCount = await component.getParamCount();
+                const properties: PropertyEntry[] = [];
+
+                for (let j = 0; j < paramCount; j++) {
+                    const param = await component.getParam(j);
+                    const paramDisplayName = param.displayName;
+                    const isTimeVarying = await param.isTimeVarying();
+
+                    const entry: PropertyEntry = { displayName: paramDisplayName, isTimeVarying };
+
+                    if (isTimeVarying) {
+                        const tickTimes = await param.getKeyframeListAsTickTimes();
+                        entry.keyframes = [];
+                        for (const tickTime of tickTimes) {
+                            const kfValue = await param.getValueAtTime(tickTime);
+                            entry.keyframes.push({
+                                time: tickTime.ticks,
+                                value: (kfValue as any)?.value ?? kfValue,
+                            });
+                        }
+                    } else {
+                        const startValue = await param.getStartValue();
+                        entry.value = (startValue?.value as any)?.value ?? startValue;
+                    }
+
+                    properties.push(entry);
+                }
+
+                effects.push({ matchName, displayName, properties });
+            }
+
+            payload.push({ mediaType, effects });
+        }
+
+        return JSON.stringify(payload);
+    } catch (e: any) {
+        return "ERROR in saveEffectSlotJSON: " + e.toString();
+    }
+}
+
+/**
+ * applies effects from a base64 encoded json string
+ * @param {string} [data] a base64 encoded string containing json data for what effects to apply
+ * @returns {string}
+ */
+export async function applyEffectSlotJSON(data: string): Promise<string> {
+    let payload: { mediaType: string, effects: EffectEntry[] }[];
+    try {
+        const jsonStr = atob(data).replace(/\\"/g, '"');
+        payload = JSON.parse(jsonStr);
+    } catch (e: any) {
+        return "ERROR at decode/parse: " + e.toString();
+    }
+
+    const project = await ppro.Project.getActiveProject();
+    if (!project) return "ERROR: no active project";
+
+    const sequence = await getActiveSequence();
+    if (!sequence) return "ERROR: no active sequence";
+
+    const selection = await sequence.getSelection();
+    if (!selection) return "ERROR: no selection";
+
+    const items = await selection.getTrackItems();
+    if (!items || items.length === 0) return "ERROR: no clip selected";
+
+    const allResults: string[] = [];
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const mediaType = item.constructor.name === "VideoClipTrackItem" ? "Video" : "Audio";
+        const isVideo = mediaType === "Video";
+
+        // find matching bucket
+        const bucket = payload.find(b => b.mediaType === mediaType);
+        if (!bucket) {
+            allResults.push(`[${mediaType}]: SKIPPED (no saved effects for this media type)`);
+            continue;
+        }
+
+        const chain = await item.getComponentChain();
+        if (!chain) {
+            allResults.push(`[${mediaType}]: ERROR no component chain`);
+            continue;
+        }
+
+        for (const fx of bucket.effects) {
+            if (SKIPPED_MATCH_NAMES[fx.matchName]) {
+                allResults.push(`[${mediaType}] ${fx.matchName}: SKIPPED`);
+                continue;
+            }
+
+            try {
+                let component: any = null;
+                if (isVideo) {
+                    try {
+                        component = await ppro.VideoFilterFactory.createComponent(fx.matchName);
+                    } catch {
+                        allResults.push(`[${mediaType}] ${fx.matchName}: FAILED (video effect not found)`);
+                        continue;
+                    }
+                } else {
+                    try {
+                        component = await ppro.AudioFilterFactory.createComponentByDisplayName(fx.displayName ?? fx.matchName, item);
+                    } catch {
+                        try {
+                            component = await ppro.AudioFilterFactory.createComponent(fx.matchName, item);
+                        } catch {
+                            allResults.push(`[${mediaType}] ${fx.matchName}: FAILED (audio effect not found)`);
+                            continue;
+                        }
+                    }
+                }
+
+                if (!component) {
+                    allResults.push(`[${mediaType}] ${fx.matchName}: FAILED (component is null)`);
+                    continue;
+                }
+
+                project.lockedAccess(() => {
+                    project.executeTransaction((compoundAction) => {
+                        compoundAction.addAction(chain.createInsertComponentAction(component, 2));
+                    }, "Insert Effect");
+                });
+
+                await new Promise(resolve => setTimeout(resolve, 200));
+
+                const newChain = await item.getComponentChain();
+                const newCount = await newChain.getComponentCount();
+                let newComponent: any = null;
+                for (let c = newCount - 1; c >= 0; c--) {
+                    const comp = await newChain.getComponentAtIndex(c);
+                    const mn = await comp.getMatchName();
+                    if (mn === fx.matchName) {
+                        newComponent = comp;
+                        break;
+                    }
+                }
+
+                if (!newComponent) {
+                    allResults.push(`[${mediaType}] ${fx.matchName}: FAILED (could not find inserted component)`);
+                    continue;
+                }
+
+                const paramCount = await newComponent.getParamCount();
+                const paramData: { param: any, keyframes?: { keyframe: any }[], staticKeyframe?: any }[] = [];
+
+                for (let j = 0; j < fx.properties.length && j < paramCount; j++) {
+                    const savedProp = fx.properties[j];
+                    const param = await newComponent.getParam(j);
+
+                    if (savedProp.isTimeVarying && savedProp.keyframes) {
+                        const keyframes: { keyframe: any }[] = [];
+                        for (const kf of savedProp.keyframes) {
+                            const tickTime = ppro.TickTime.createWithTicks(String(kf.time));
+                            const keyframe = await param.createKeyframe(kf.value);
+                            keyframe.position = tickTime;
+                            keyframes.push({ keyframe });
+                        }
+                        paramData.push({ param, keyframes });
+                    } else if (savedProp.value !== undefined) {
+                        try {
+                            const coerced = typeof savedProp.value === "boolean"
+                                ? savedProp.value
+                                : typeof savedProp.value === "string" && !isNaN(Number(savedProp.value))
+                                    ? Number(savedProp.value)
+                                    : savedProp.value;
+                            const keyframe = await param.createKeyframe(coerced);
+                            paramData.push({ param, staticKeyframe: keyframe });
+                        } catch { }
+                    }
+                }
+
+                project.lockedAccess(() => {
+                    project.executeTransaction((compoundAction) => {
+                        for (const pd of paramData) {
+                            try {
+                                if (pd.keyframes) {
+                                    compoundAction.addAction(pd.param.createSetTimeVaryingAction(true));
+                                    for (const { keyframe } of pd.keyframes) {
+                                        compoundAction.addAction(pd.param.createAddKeyframeAction(keyframe));
+                                        compoundAction.addAction(pd.param.createSetValueAction(keyframe, false));
+                                    }
+                                } else if (pd.staticKeyframe) {
+                                    compoundAction.addAction(pd.param.createSetTimeVaryingAction(false));
+                                    compoundAction.addAction(pd.param.createSetValueAction(pd.staticKeyframe, false));
+                                }
+                            } catch { }
+                        }
+                    }, "Restore Effect Params");
+                });
+
+                allResults.push(`[${mediaType}] ${fx.matchName}: OK`);
+            } catch (e: any) {
+                allResults.push(`[${mediaType}] ${fx.matchName}: FAILED -- ${e.toString()}`);
+            }
+        }
+    }
+
+    return "DONE:\n" + allResults.join("\n");
 }

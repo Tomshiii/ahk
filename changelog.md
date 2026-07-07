@@ -2,12 +2,18 @@
 
 ## Functions
 - ✏️ Added `Base64Encode()`
-- ✅ Fixed `startup.adobeVerOverride()` failing to update versions properly
 - ✅ Fixed `premUIA_Values.setObjs()` failing to build the UIA tree if there are any floating panels
 
 ### 📝 `prem {`
 - ✏️ Added `effectSlot()`
 - 📋 `toggleEnabled()` now accepts `"settings"` in parameter `ignore`
+
+### 📝 `startup {`
+
+📍 `adobeVerOverride()`
+- ✅ Fixed failing to update versions properly
+- ✅ Fixed function not properly updating `UserSettings`
+
 
 ## Other Changes
 - ✅ Fixed <kbd>MButton</kbd> getting disabled in some instances due to a settings mismatch with `Thio's MButton Script`
