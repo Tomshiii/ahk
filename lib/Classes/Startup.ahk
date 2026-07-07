@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/06/12
- * @version 1.9.6
+ * @date 2026/07/07
+ * @version 1.9.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -468,12 +468,18 @@ class Startup {
         aeExeLocation   := (this.UserSettings.aeIsBeta = true || this.UserSettings.aeIsBeta = "true")   ? A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX (Beta).exe" : A_ProgramFiles "\Adobe\" aeFolder "\Support Files\AfterFX.exe"
 
         premExeVer := false, aeExeVer := false
-        (FileExist(premExeLocation)) ? FileGetExtendedProp(premExeLocation,, "System.Software.ProductVersion")["System.Software.ProductVersion"] : premNotFound := true
-        (FileExist(aeExeLocation))   ? FileGetExtendedProp(aeExeLocation,, "System.Software.ProductVersion")["System.Software.ProductVersion"]   : aeNotFound   := true
+        (FileExist(premExeLocation)) ? premExeVer := FileGetExtendedProp(premExeLocation,, "System.Software.ProductVersion")["System.Software.ProductVersion"] : premNotFound := true
+        (FileExist(aeExeLocation))   ? aeExeVer   := FileGetExtendedProp(aeExeLocation,, "System.Software.ProductVersion")["System.Software.ProductVersion"]   : aeNotFound   := true
 
         ;// remove ".0"
-        premExeVer := SubStr(premExeVer, premFinalDot := InStr(premExeVer, ".",, -1), 2) = ".0" ? SubStr(premExeVer, 1, premFinalDot-1) : this.UserSettings.premVer
-        aeExeVer   := SubStr(aeExeVer, aeFinalDot     := InStr(aeExeVer, ".",, -1), 2)   = ".0" ? SubStr(aeExeVer, 1, aeFinalDot-1)     : this.UserSettings.aeVer
+        try premExeVer := SubStr(premExeVer, premFinalDot := InStr(premExeVer, ".",, -1), 2) = ".0" ? SubStr(premExeVer, 1, premFinalDot-1) : premExeVer
+        catch {
+            premExeVer := this.UserSettings.premVer
+        }
+        try aeExeVer   := SubStr(aeExeVer, aeFinalDot     := InStr(aeExeVer, ".",, -1), 2)   = ".0" ? SubStr(aeExeVer, 1, aeFinalDot-1)     : aeExeVer
+        catch {
+            aeExeVer   := this.UserSettings.aeVer
+        }
 
         if premExeVer = false && aeExeVer = false {
             this.UserSettings.show_adobe_vers_startup := false

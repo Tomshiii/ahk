@@ -2,6 +2,8 @@
 
 ## Functions
 - ✏️ Added `Base64Encode()`
+- ✅ Fixed `startup.adobeVerOverride()` failing to update versions properly
+- ✅ Fixed `premUIA_Values.setObjs()` failing to build the UIA tree if there are any floating panels
 
 ### 📝 `prem {`
 - ✏️ Added `effectSlot()`
@@ -9,6 +11,7 @@
 
 ## Other Changes
 - ✅ Fixed <kbd>MButton</kbd> getting disabled in some instances due to a settings mismatch with `Thio's MButton Script`
+- ✅ Fixed `generateAdobeShortcut.ahk` throwing when passed an object instead of a `ComObject`
 - ✏️ Added setting `toggleEnabled_ignore`
 - ✏️ Added initial support for the `UXP` version of `PremiereRemote`
     - All possible functions have been ported<sup>[[list]](<https://github.com/users/Tomshiii/projects/1?pane=issue&itemId=202913119>)

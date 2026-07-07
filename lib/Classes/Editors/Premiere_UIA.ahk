@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/06/16
- * @version 3.0.23
+ * @date 2026/07/07
+ * @version 3.0.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -60,7 +60,8 @@ class premUIA_Values {
      * ```
      */
     static __activeElementPath(returnObj := false, UIAobj?) {
-        if !WinActive(prem.winTitle) && !WinActive(prem.class) {
+        try n := WinGet.PremName()
+        if !WinActive(prem.winTitle) && !WinActive(prem.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
             return -1
         }
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
@@ -102,7 +103,8 @@ class premUIA_Values {
      * ```
      */
     static isToolSelected(tool, UIAobj?) {
-        if !WinActive(prem.winTitle) && !WinActive(prem.class) {
+        try n := WinGet.PremName()
+        if !WinActive(prem.winTitle) && !WinActive(prem.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
             return -1
         }
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
@@ -184,7 +186,9 @@ class premUIA_Values {
             blocker.Off()
             premCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "Type", "Name", "Value", "ClassName", "AutomationId", "BoundingRectangle"],, "Descendants") ;// all necessary for `GetUIAPath()`
             try {
-                this.AdobeEl := UIA.ElementFromHandle(prem.winTitle, premCacheRequest, false)
+                try n := winget.PremName()
+                title := (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") ? n.wintitle A_Space prem.winTitle : prem.winTitle
+                this.AdobeEl := UIA.ElementFromHandle(title, premCacheRequest, false)
             } catch {
                 throw UnsetError("throw code:701")
             }

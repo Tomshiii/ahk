@@ -15,7 +15,7 @@
  * @returns {Boolean} returns `false` if the desired file directory does not exist else `true`
  */
 generateAdobeShortcut(userSettingsObj, adobeName, adobeYear) {
-    validateTypes([["UserPref", "ComObject"]], userSettingsObj)
+    validateTypes([["UserPref", "ComObject", "Object"]], userSettingsObj)
     if adobeName != "Adobe Premiere Pro" && adobeName != "Adobe Premiere" && adobeName != "Adobe After Effects" && adobeName != "Adobe Photoshop" {
         ;// throw
         errorLog(ValueError("Incorrect Value set in Parameter #2", -1, adobeName),,, 1)

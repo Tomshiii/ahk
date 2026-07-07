@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/06
- * @version 2.4.41
+ * @date 2026/07/07
+ * @version 2.4.42
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -613,6 +613,11 @@ class Prem {
      * @returns {String} if the user sets `needResult` to `true` this function will return a string containing the response. The response will have its surrounding `"` quotes removed (eg. `fd75a385-7c84-48af-b6ee-a6c5a69c4c24` *not* `"fd75a385-7c84-48af-b6ee-a6c5a69c4c24"`)
      */
     static __remoteUXP(whichFunc, needResult := false, params*) {
+        if !InStr(whichFunc, "/") {
+            errorLog(PropertyError('Parameter #1 does not contain path to desired file', -1), whichFunc)
+            MsgBox("prem.__remoteUXP() failed.`n`nParameter #1 does not contain path to desired file")
+            return false
+        }
         paramsString := prem.__sanitiseParams(params)
         sendcommand := Format('curl -X GET "http://localhost:8084/{1}?{2}"', whichFunc, String(paramsString))
         if !needResult {
