@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/07/07
- * @version 2.4.42
+ * @version 2.4.43
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3998,21 +3998,35 @@ class Prem {
 
     /**
      * Save effects so they can be easily pasted later. Will also save custom keyframes/values. Simply select a clip and call the function.
-     * ### [!Warning]
-     * ### These slots are saved within `Core Functionality.ahk` and as such require it to be running.
      * @param {Boolean} [save=true] whether you wish to save the current clip, or paste the saved effect
      * @param {Integer} [slot=1] which slot you wish to call/save to
+     * @param {Boolean} [saveToFile=false] determine whether you wish to use `Core Functionality` or write to disk to maintain saves between reloads
      */
-    static effectSlot(save := true, slot := 1) {
+    static effectSlot(save := true, slot := 1, saveToFile := false) {
         ; validateTypes(["Integer", "Integer"], save, slot) ;breaks hotkeylessahk
-        try slots := CLSID_Objs.load("premSlots")
-        catch {
-            notifyExt.showIfNotExist('premEffectSlotFailed',, "Failed to retrieve slots object from Core Functionality.ahk",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
-            return
-        }
-        if !slots.HasProp(slot) && checkBool(save) == false {
-            notifyExt.showIfNotExist('premEffectSlotNoneSaved',, "No data saved in slot",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
-            return
+        slotsDir := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\slots"
+        if !DirExist(slotsDir)
+            DirCreate(slotsDir)
+        slotFile := slotsDir "\" slot
+        switch checkBool(saveToFile) {
+            case false:
+                try slots := CLSID_Objs.load("premSlots")
+                catch {
+                    errorLog(MemoryError('Failed to retrieve slots object from Core Functionality.ahk', -1, slot))
+                    notifyExt.showIfNotExist('premEffectSlotFailed',, "Failed to retrieve slots object from Core Functionality.ahk",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                    return
+                }
+                if !slots.HasProp(slot) && checkBool(save) == false {
+                    errorLog(TargetError('No data saved in slot', -1, slot))
+                    notifyExt.showIfNotExist('premEffectSlotNoneSaved',, "No data saved in slot",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                    return
+                }
+            case true:
+                if checkBool(save) == false && !FileExist(slotFile) {
+                    errorLog(TargetError('No data saved in slot file specified', -1, slot))
+                    notifyExt.showIfNotExist('premEffectSlotNoneSaved',, "No data saved in slot file specified",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                    return
+                }
         }
         switch checkBool(save) {
             case true:
@@ -4026,11 +4040,41 @@ class Prem {
                     __checkErrors(t)
                     return
                 }
-                try slots.%slot% := t
+                switch checkBool(saveToFile) {
+                    case false:
+                        try slots.%slot% := t
+                        catch {
+                            errorLog(MethodError('Failed to save effects to Core Func slot', -1, slot))
+                            notifyExt.showIfNotExist('premEffectSlotFailedSave',, "Failed to save effects to Core Functionality slot: " slot,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                        }
+                    case true:
+                        try {
+                            if FileExist(slotFile)
+                                FileDelete(slotFile)
+                            FileAppend(t, slotFile)
+                        } catch {
+                            errorLog(MethodError('Failed to save effects to slot file', -1, slot))
+                            notifyExt.showIfNotExist('premEffectSlotFailedSave',, "Failed to save effects to slot file: " slot "`n" slotFile,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                            return
+                        }
+                }
                 notifyExt.showIfNotExist('premEffectSlotSaved',, "Effects Saved to slot: " slot)
+                return
             case false:
-                stringg := Base64Encode(slots.%slot%)
-                t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                switch checkBool(saveToFile) {
+                    case false:
+                        stringg := Base64Encode(slots.%slot%)
+                        t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                    case true:
+                        try {
+                            stringg := Base64Encode(FileRead(slotFile))
+                            t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                        } catch {
+                            errorLog(MethodError('Failed to read effects slot file', -1, slot))
+                            notifyExt.showIfNotExist('premEffectSlotFailedRead',, "Failed to read effects slot file: " slot "`n" slotFile,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                            return
+                        }
+                }
                 __checkErrors(t)
                 return
         }
