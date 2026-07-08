@@ -33,9 +33,9 @@ export const host = {
         return "ERROR at base64Decode: " + e.toString();
     }
 
-    var effects;
+    var payload;
     try {
-        effects = JSON.parse(jsonStr);
+        payload = JSON.parse(jsonStr);
     } catch (e) {
         return "ERROR at JSON.parse: " + e.toString() + " | jsonStr=" + jsonStr;
     }
@@ -55,24 +55,44 @@ export const host = {
     }
     if (!selection || selection.length === 0) return "ERROR: no clip selected";
 
-    var targetTrackItem = selection[0];
+    var allResults = [];
 
-    var qeTargetClip;
-    try {
-        qeTargetClip = EffectUtils.findQEClipForTrackItem(targetTrackItem);
-    } catch (e) {
-        return "ERROR at findQEClipForTrackItem: " + e.toString();
+    for (var i = 0; i < selection.length; i++) {
+        var targetTrackItem = selection[i];
+
+        var bucket = null;
+        for (var b = 0; b < payload.length; b++) {
+            if (payload[b].mediaType === targetTrackItem.mediaType) {
+                bucket = payload[b];
+                break;
+            }
+        }
+        if (!bucket) {
+            allResults.push("[" + targetTrackItem.mediaType + "]: SKIPPED (no saved effects for this media type)");
+            continue;
+        }
+
+        var qeTargetClip;
+        try {
+            qeTargetClip = EffectUtils.findQEClipForTrackItem(targetTrackItem);
+        } catch (e) {
+            allResults.push("[" + targetTrackItem.mediaType + "] ERROR at findQEClipForTrackItem: " + e.toString());
+            continue;
+        }
+        if (!qeTargetClip) {
+            allResults.push("[" + targetTrackItem.mediaType + "] ERROR: could not locate QE clip");
+            continue;
+        }
+
+        try {
+            var results = EffectUtils.applyEffectsToClip(targetTrackItem, qeTargetClip, bucket.effects);
+            allResults.push("[" + targetTrackItem.mediaType + "]:\n" + results.join("\n"));
+        } catch (e) {
+            allResults.push("[" + targetTrackItem.mediaType + "] ERROR at applyEffectsToClip: " + e.toString());
+        }
     }
-    if (!qeTargetClip) return "ERROR: could not locate QE clip for selected trackItem";
 
-    var results;
-    try {
-        results = EffectUtils.applyEffectsToClip(targetTrackItem, qeTargetClip, effects);
-    } catch (e) {
-        return "ERROR at applyEffectsToClip: " + e.toString();
-    }
-
-    return "DONE:\n" + results.join("\n");
+    return "DONE:\n" + allResults.join("\n\n");
   },
 
   saveEffectSlotJSON: function() {
@@ -82,10 +102,16 @@ export const host = {
           var selection = seq.getSelection();
           if (!selection || selection.length === 0) return "ERROR: no clip selected";
 
-          var trackItem = selection[0];
-          var effects = EffectUtils.copyEffectsFromClip(trackItem);
+          var payload = [];
+          for (var i = 0; i < selection.length; i++) {
+              var trackItem = selection[i];
+              payload.push({
+                  mediaType: trackItem.mediaType, // "Video" or "Audio"
+                  effects: EffectUtils.copyEffectsFromClip(trackItem)
+              });
+          }
 
-          return JSON.stringify(effects);
+          return JSON.stringify(payload);
       } catch (e) {
           return "ERROR in saveSelectedClipEffects: " + e.toString();
       }

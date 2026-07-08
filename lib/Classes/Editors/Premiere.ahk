@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/07
- * @version 2.4.43
+ * @date 2026/07/08
+ * @version 2.4.44
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -578,12 +578,18 @@ class Prem {
             return true
         }
         if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
-            errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1),, true)
+            if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
+                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1),, true)
+            else
+                errorLog(Error("1. remoteFunc was called but Premiere no longer appears to be open.", -1))
             return false
         }
         try parse := JSON.parse(getResp)
         catch {
-            errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
+            if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
+                errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
+            else
+                errorLog(Error("2. remoteFunc was called but Premiere no longer appears to be open.", -1))
             return false
         }
         switch {

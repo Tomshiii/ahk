@@ -587,3 +587,6 @@ WheelDown::
 	sleep 25
 	clip.__scriptSplit(A_Clipboard)
 }
+
+^!a::prem.__remoteFunc('setAllEnableDisabled',, "enabled=true")
+^!d::prem.__remoteFunc('setAllEnableDisabled',, "enabled=false")

@@ -12,6 +12,8 @@ interface PropertyEntry {
     keyframes?: { time: string; value: any }[];
 }
 var SKIPPED_MATCH_NAMES: { [key: string]: boolean } = {
+    "AE.ADBE Motion": true,
+    "AE.ADBE Opacity": true,
     "Internal Volume Stereo": true,
     "Internal Channel Volume Stereo": true,
     "Internal Volume Mono": true
@@ -87,58 +89,102 @@ export class EffectUtils {
       return clipInfo.clip.components[2].properties;
     }
 
-    static applyEffectOnAllSelectedClips(effectName: String) {
-      const activeSequence = app.project.activeSequence;
-      const selection = activeSequence.getSelection();
+    static _videoEffectCache: any = null;
 
-      for (let i = 0; i < selection.length; i++) {
-        const selectedClip = selection[i];
-        const isVideoClip = selectedClip.mediaType === "Video";
-
-        // Try to get the effect - might need matchName format
-        let effect = isVideoClip
-          ? qe.project.getVideoEffectByName(effectName)
-          : qe.project.getAudioEffectByName(effectName);
-
-        // If not found, try with "AE.ADBE" prefix
-        if (!effect) {
-          effect = qe.project.getVideoEffectByName("AE.ADBE " + effectName);
+    static resolveVideoEffect(effectName: string) {
+        if (!this._videoEffectCache) {
+            this._videoEffectCache = {};
+            const list = qe.project.getVideoEffectList();
+            for (let i = 0; i < list.length; i++) {
+            if (typeof list[i] === "string") {
+                this._videoEffectCache[list[i].toLowerCase()] = list[i];
+            }
+            }
         }
 
-        if (!effect) {
-          alert("Effect not found: " + effectName);
-          return false;
+        const target = effectName.toLowerCase();
+
+        const tryResolve = function(name: string) {
+            // list entries here are display names, so displayName mode (false) first
+            let effect = qe.project.getVideoEffectByName(name, false);
+            if (effect) return effect;
+            // fallback in case some entries in your version really are matchNames
+            return qe.project.getVideoEffectByName(name, true);
+        };
+
+        if (this._videoEffectCache[target]) {
+            const effect = tryResolve(this._videoEffectCache[target]);
+            if (effect) return effect;
         }
 
-        const trackIndex = this.findTrackIndexForClip(selectedClip, isVideoClip);
+        const candidates = [];
+        for (const key in this._videoEffectCache) {
+            if (key.indexOf(target) === -1) continue;
+            if (key.indexOf("legacy") !== -1 || key.indexOf("obsolete") !== -1 || key.indexOf(" obs") !== -1) continue;
+            candidates.push(this._videoEffectCache[key]);
+        }
 
-        if (trackIndex !== -1) {
-          const qeClip = isVideoClip
-            ? Utils.getQEVideoClipByStart(trackIndex, selectedClip.start.ticks)
-            : Utils.getQEAudioClipByStart(trackIndex, selectedClip.start.ticks);
+        for (let i = 0; i < candidates.length; i++) {
+            const effect = tryResolve(candidates[i]);
+            if (effect) return effect;
+        }
 
-          if (qeClip) {
+        return null;
+    }
+
+    static applyEffectOnAllSelectedClips(effectName: string) {
+        const activeSequence = app.project.activeSequence;
+        const selection = activeSequence.getSelection();
+
+        for (let i = 0; i < selection.length; i++) {
+            const selectedClip = selection[i];
+            const isVideoClip = selectedClip.mediaType === "Video";
+
+            const effect = isVideoClip
+                ? this.resolveVideoEffect(effectName)
+                : qe.project.getAudioEffectByName(effectName);
+
+            if (!effect) {
+                alert("Effect not found: " + effectName);
+                return false;
+            }
+
+            const trackIndex = this.findTrackIndexForClip(selectedClip, isVideoClip);
+            if (trackIndex === -1) continue;
+
+            const qeClip = isVideoClip
+                ? Utils.getQEVideoClipByStart(trackIndex, selectedClip.start.ticks)
+                : Utils.getQEAudioClipByStart(trackIndex, selectedClip.start.ticks);
+
+            if (!qeClip) continue;
+
+            const beforeCount = selectedClip.components.numItems;
+
             isVideoClip
-              ? qeClip.addVideoEffect(effect)
-              : qeClip.addAudioEffect(effect);
-          }
-          switch (effectName) {
-            case "Transform":
-              const transformProps = selectedClip.components[2].properties;
-              const uniform = transformProps[2];
+                ? qeClip.addVideoEffect(effect)
+                : qeClip.addAudioEffect(effect);
 
-              uniform.setValue(true, true);
-              if (selection.length == 1) {
-                selectedClip.setSelected(false, true);
-                selectedClip.setSelected(true, true);
-              }
-              break;
-            // case "":
-          }
+            const afterCount = selectedClip.components.numItems;
+            if (afterCount <= beforeCount) {
+                alert("Effect lookup succeeded but nothing was actually added for: " + effectName);
+                continue; // don't run the Transform-specific logic below on a clip that didn't get the effect
+            }
+
+            switch (effectName) {
+                case "Transform":
+                const transformProps = selectedClip.components[2].properties;
+                const uniform = transformProps[2];
+
+                uniform.setValue(true, true);
+                if (selection.length == 1) {
+                    selectedClip.setSelected(false, true);
+                    selectedClip.setSelected(true, true);
+                }
+                break;
+            }
         }
-      }
 
-      return true;
+        return true;
     }
 
     static findTrackIndexForClip(targetClip: any, isVideo: Boolean) {
@@ -276,15 +322,14 @@ export class EffectUtils {
 
             try {
                 var isAudio = targetTrackItem.mediaType === "Audio";
-                var lookupKey = fx.displayName || fx.matchName;
                 var qeEffect = null;
 
                 try {
                     qeEffect = isAudio
-                        ? qe.project.getAudioEffectByName(lookupKey)
-                        : qe.project.getVideoEffectByName(lookupKey, true);
+                        ? qe.project.getAudioEffectByName(fx.displayName || fx.matchName)
+                        : qe.project.getVideoEffectByName(fx.matchName, true);
                 } catch (lookupErr) {
-                    results.push(fx.matchName + ": FAILED at getEffectByName with key='" + lookupKey + "' -- " + lookupErr.toString());
+                    results.push(fx.matchName + ": FAILED at getEffectByName -- " + lookupErr.toString());
                     continue;
                 }
 
