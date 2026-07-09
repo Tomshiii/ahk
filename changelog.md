@@ -18,7 +18,7 @@
 ## Other Changes
 - ✅ Fixed <kbd>MButton</kbd> getting disabled in some instances due to a settings mismatch with `Thio's MButton Script`
 - ✅ Fixed `generateAdobeShortcut.ahk` throwing when passed an object instead of a `ComObject`
-- ✏️ Added setting `toggleEnabled_ignore`
+- ✏️ Added setting `toggleEnabled ignore`
 
 ### 📝 `PremiereRemote`
 - ✅ Fixed (hopefully) `applyEffectOnAllSelectedClips()` sometimes silently failing to add an effect

@@ -1125,6 +1125,16 @@ async function searchForItemByName(bin: any, name: string): Promise<any> {
  * @returns {boolean}
  */
 export async function loadInSourceMonitor(itemPath: string): Promise<boolean> {
+    const loadItem = await projItemByPath(itemPath);
+    return await ppro.SourceMonitor.openProjectItem(loadItem);
+}
+
+/**
+ * find and return the desired project item
+ * @param {string} [itemPath] itemPath can be just a filename or a full path like "_Assets/Footage/clip.mov"
+ * @returns {false | null | ProjectItem}
+ */
+export async function projItemByPath(itemPath: string): Promise<false | null | ProjectItem> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
 
@@ -1141,10 +1151,7 @@ export async function loadInSourceMonitor(itemPath: string): Promise<boolean> {
 
     if (!searchFolder) return false;
 
-    const projItem = await searchForItemByName(searchFolder, itemName);
-    if (!projItem) return false;
-
-    return await ppro.SourceMonitor.openProjectItem(projItem);
+    return await searchForItemByName(searchFolder, itemName);
 }
 
 /**

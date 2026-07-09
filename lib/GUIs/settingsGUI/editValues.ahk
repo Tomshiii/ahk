@@ -49,7 +49,7 @@ class set_Edit_Val {
         objName: "--",                             UpDownOpt: "Range1-60"
     }
     premSeq := {
-        control: "premSwq",                        EditPos: "xs Y+3",
+        control: "premSeq",                        EditPos: "xs Y+3",
         scriptText: "``swapPreviousSequence()``",  textPos: "X+5 Y+-28",
         otherText: " store timelines",             otherTextPos: "Y+-1",
         iniInput: "premSwapSequencesLimit",        colour: "c753288",
@@ -68,7 +68,7 @@ class set_Edit_Val {
         control: "toggleEnabledIgnore",                 EditPos: "xs Y+4",
         scriptText: "``prem.toggleEnabled()``",         textPos: "X+5 Y+-26",
         otherText: " ``ignore`` value",                 otherTextPos: "Y+2",
-        iniInput: "toggleEnabled_ignore",               colour: "c753288",
+        iniInput: "toggleEnabled ignore",               colour: "c753288",
         textControl: "toggleEnabledIgnore_txt",         Bind: "",
         objName: "--",                                  UpDownOpt: "Range1-999"
     }

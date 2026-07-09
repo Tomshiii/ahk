@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/07/06
- * @version 1.4.11
+ * @date 2026/07/09
+ * @version 1.4.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -347,7 +347,7 @@ class UserPref {
         premDefaultTheme={}
         alternate MButton Key={}
         premPrevSeqDelay={}
-        toggleEnabled_ignore={}
+        toggleEnabled ignore={}
 
         [Track]
         adobe temp={}

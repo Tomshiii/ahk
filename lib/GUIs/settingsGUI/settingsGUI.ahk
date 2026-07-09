@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/06/05
- * @version 2.4.15
+ * @date 2026/07/09
+ * @version 2.4.16
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -46,7 +46,6 @@ settingsGUI()
     readSet := FileRead(ptf.lib "\GUIs\settingsGUI\values.json")
     setJSON := JSON.parse(readSet,, false)
     UserSettings := CLSID_Objs.load("UserSettings")
-    initialSettings := FileRead(UserSettings.SettingsFile)
 
     ;// menubar
     FileMenu := Menu()

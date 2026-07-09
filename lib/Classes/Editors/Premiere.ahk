@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/08
- * @version 2.4.44
+ * @date 2026/07/09
+ * @version 2.4.45
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -4043,6 +4043,8 @@ class Prem {
                 }
                 try json.parse(t)
                 catch {
+                    errorLog(ValueError('Failed to parse JSON data', -1, slot))
+                    notifyExt.showIfNotExist('premEffectSlotJSONFailed',, "Failed to parse JSON data",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                     __checkErrors(t)
                     return
                 }
@@ -4050,8 +4052,9 @@ class Prem {
                     case false:
                         try slots.%slot% := t
                         catch {
-                            errorLog(MethodError('Failed to save effects to Core Func slot', -1, slot))
+                            errorLog(MemoryError('Failed to save effects to Core Func slot', -1, slot))
                             notifyExt.showIfNotExist('premEffectSlotFailedSave',, "Failed to save effects to Core Functionality slot: " slot,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                            return
                         }
                     case true:
                         try {
@@ -4064,13 +4067,18 @@ class Prem {
                             return
                         }
                 }
-                notifyExt.showIfNotExist('premEffectSlotSaved',, "Effects Saved to slot: " slot)
+                notifyExt.showIfNotExist('premEffectSlotSaved',, 'Effects saved to slot: ' slot, 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 bdr=Teal iw=26 show=Fade@250 hide=Fade@250 maxW=400')
                 return
             case false:
                 switch checkBool(saveToFile) {
                     case false:
                         stringg := Base64Encode(slots.%slot%)
-                        t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                        try t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                        catch {
+                            errorLog(MethodError('Failed to read effects slot file', -1, slot))
+                            notifyExt.showIfNotExist('premEffectSlotFailedRead',, "Failed to read effects slot file: " slot,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+                            return
+                        }
                     case true:
                         try {
                             stringg := Base64Encode(FileRead(slotFile))
@@ -4081,7 +4089,8 @@ class Prem {
                             return
                         }
                 }
-                __checkErrors(t)
+                if __checkErrors(t) != false
+                    notifyExt.showIfNotExist('premEffectSlotApplied',, 'Effects applied from slot: ' slot, 'C:\Windows\System32\imageres.dll|icon240',,, 'dur=4 bdr=Teal iw=26 show=Fade@250 hide=Fade@250 maxW=400')
                 return
         }
 
@@ -4090,8 +4099,9 @@ class Prem {
                 case (InStr(response, "ERROR: ") || InStr(response, "EvalScript error.") || InStr(response, "FAILED")):
                     notifyExt.showIfNotExist('premEffectERROR',, response,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                     errorLog(Error(response, -1))
-                    return
+                    return false
             }
+            return true
         }
     }
 
