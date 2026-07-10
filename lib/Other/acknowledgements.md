@@ -68,3 +68,7 @@
 <ins>TheArkive</ins>  
 `_socket.ahk`   => : https://github.com/TheArkive/Socket_ahk2/blob/master/_socket.ahk
 > LICENSE: N/A - Freely provided on Github
+
+<ins>owhs</ins>
+`FluentApp.ahk` => : https://www.autohotkey.com/boards/viewtopic.php?f=83&t=140577
+> LICENSE: N/A - Freely provided in a forum post

@@ -9,7 +9,7 @@
 #Include GUIs\tomshiBasic.ahk
 #Include GUIs\gameCheckGUI.ahk
 #Include GUIs\settingsGUI\editValues.ahk
-#Include GUIs\FluentApp.ahk   ;// Fluent theming base — save the boilerplate there
+#Include Other\FluentApp.ahk
 #Include Classes\dark.ahk
 #Include Classes\tool.ahk
 #Include Classes\ptf.ahk
@@ -55,54 +55,43 @@ settingsGUI()
         winTitle := ""
     }
 
-    version   := UserSettings.version
-    gameTitle := "Add game to gameCheck.ahk"
-    gameCheckSettingGUI := gameCheckGUI(version, winTitle, winProcc)
+    version := UserSettings.version
 
     if WinExist("Settings " version)
         return
 
-    SettingsApp(UserSettings, setJSON, version, gameCheckSettingGUI, gameTitle)
+    SettingsApp(UserSettings, setJSON, version, winTitle, winProcc)
 }
 
-
-; ════════════════════════════════════════════════════════════════════════════
-;   SettingsApp  –  extends FluentApp
-;
-;   Window : 880 × 640
-;   Sidebar: 0–180  (9 tabs + footer buttons)
-;   Content: 185–875
-;
-;   Sidebar tabs
-;     General · Updates · Scripts · Values · Appearance
-;     File · Open · Editors · Other
-; ════════════════════════════════════════════════════════════════════════════
 class SettingsApp extends FluentApp {
     ; ── Constructor ─────────────────────────────────────────────────────────
-    __New(UserSettings, setJSON, version, gameCheckGUI, gameTitle) {
+    __New(UserSettings, setJSON, version, winTitle, winProcc) {
         SettingsApp.Instance := this
         this.UserSettings    := UserSettings
         this.setJSON         := setJSON
         this.version         := version
-        this.gameCheckGUI    := gameCheckGUI
-        this.gameTitle       := gameTitle
+        this.winTitle        := winTitle
+        this.process         := winProcc
         ;// runtime refs populated on every (re)build
         this.NumRefs         := Map()          ;// ctrl-name → {Edit, UpDown}
         this.BetaToggle      := {State: false} ;// placeholder until BuildUpdatesPage runs
+        this.AdobeCtrls      := Map()          ;// "AE"/"Premiere" → {YearDDL, VerDDL, BetaToggle, CacheEdit, ...}
+        this.ThioCtrls       := ""             ;// {ThioToggle, MToggle, HotkeyEdit}
+        this.AddGameCtrls    := ""             ;// {TitleEdit, ProcessEdit}
         ;// theme seed — FluentApp.__New reads this.IsDark before building
-        this.IsDark          := true           ;// light mode is cooked. don't allow it
-        this.CurrentBackdropType := 3          ;// Acrylic default
+        this.IsDark          := true
         this.ActiveTab       := "General"
         this.ActiveSubPages  := Map()
+
+        this.row1 := 200
+        this.row2 := 540
         super.__New()
     }
 
-    ; ── RebuildUI override ──────────────────────────────────────────────────
-    ;// Full override: custom title, +AlwaysOnTop, 880×640, no menu bar.
     RebuildUI() {
         ;// FluentApp.__New() overwrites this.IsDark := true and this.ActiveTab := "Forms && Data"
         ;// before calling RebuildUI, so we re-anchor both from our own state here.
-        this.IsDark := (this.UserSettings.dark_mode = true)
+        this.IsDark := true
 
         if this.HasOwnProp("Gui") && this.Gui
             try this.Gui.Destroy()
@@ -122,23 +111,24 @@ class SettingsApp extends FluentApp {
         ;// reset per-build refs
         this.NumRefs       := Map()
         this.BetaToggle    := {State: false}
+        this.AdobeCtrls    := Map()
+        this.ThioCtrls     := ""
+        this.AddGameCtrls  := ""
 
         ;// ── Colour palette ────────────────────────────────────────────────
-        this.ThemeBg  := (VerCompare(A_OSVersion, "10.0.22000") >= 0)
-                            ? (this.IsDark ? "000000" : "FFFFFF")
-                            : (this.IsDark ? "1E1E1E" : "F3F3F3")
-        this.C_Txt    := this.IsDark ? "White"   : "000000"
-        this.C_SecTxt := this.IsDark ? "A0A0A0"  : "5D5D5D"
-        this.C_Panel  := this.IsDark ? "333333"  : "F3F3F3"
-        this.C_Inner  := this.IsDark ? "141414"  : "FFFFFF"
-        this.C_Head   := this.IsDark ? "2A2A2A"  : "EBEBEB"
-        this.C_List   := this.IsDark ? "1C1C1C"  : "FFFFFF"
-        this.C_Hover  := this.IsDark ? "1A1A1A"  : "E5E5E5"
-        this.C_Hover2 := this.IsDark ? "2A2A2A"  : "DCDCDC"
-        this.C_Click  := this.IsDark ? "101010"  : "D0D0D0"
+        this.ThemeBg  := 000000
+        this.C_Txt    := "White"
+        this.C_SecTxt := "A0A0A0"
+        this.C_Panel  := "333333"
+        this.C_Inner  := "141414"
+        this.C_Head   := "2A2A2A"
+        this.C_List   := "1C1C1C"
+        this.C_Hover  := "1A1A1A"
+        this.C_Hover2 := "2A2A2A"
+        this.C_Click  := "101010"
 
         ;// ── Create GUI ────────────────────────────────────────────────────
-        this.Gui := Gui("-Resize +AlwaysOnTop", "Settings " this.version)
+        this.Gui := Gui("-Resize", "Settings " this.version)
         this.Gui.OnEvent("Close",  (*) => this.OnClose())
         this.Gui.OnEvent("Escape", (*) => this.OnClose())
         this.Gui.BackColor := this.ThemeBg
@@ -146,11 +136,11 @@ class SettingsApp extends FluentApp {
         val := Buffer(4, 0)
         NumPut("Int", this.IsDark ? 1 : 0, val)
         DllCall("dwmapi\DwmSetWindowAttribute", "Ptr", this.Gui.Hwnd, "Int", 20, "Ptr", val, "Int", 4)
-        this.EnableBackdrop(this.Gui.Hwnd, this.CurrentBackdropType)
+        this.EnableBackdrop(this.Gui.Hwnd, 2)
 
         this.BuildUI()
 
-        this.Gui.Show("Center w880 h640")
+        this.Gui.Show("Center w960 h640")
         ;// FluentApp.__New() always writes this.ActiveTab := "Forms && Data" after our
         ;// __New() runs but before RebuildUI() is called.  Guard against that here so
         ;// the first paint isn't blank because SwitchTab() finds no matching page.
@@ -196,22 +186,29 @@ class SettingsApp extends FluentApp {
             return
     }
 
+    NavigateTo(fromPage, toPage) {
+        this.ClosePopup()
+        for ctrl in this.Pages[fromPage]
+            ctrl.Opt("Hidden")
+        for ctrl in this.Pages[toPage]
+            ctrl.Opt("-Hidden")
+        WinRedraw(this.Gui.Hwnd)
+        try ControlFocus(this.Dummy)
+    }
 
-    ; ════════════════════════════════════════════════════════════════════════
-    ;!  TOP-LEVEL UI LAYOUT
-    ;
-    ;  Sidebar tab y-positions (45 px intervals, 9 tabs):
-    ;   80  General      260  Appearance
-    ;   125 Updates      305  File
-    ;   170 Scripts      350  Open
-    ;   215 Values       395  Editors
-    ;                    440  Other
-    ;
-    ;  Footer (below last tab at y=476):
-    ;   y=486  separator   y=510  Hard Reset
-    ;   y=492  work-dir    y=543  Reload
-    ;                      y=576  Close
-    ; ════════════════════════════════════════════════════════════════════════
+    ;// Back-arrow + title combo for a detail page. Adds its controls to `page`.
+    AddSubPageHeader(page, backTo, title) {
+        this.Gui.SetFont("s10 w600 c0078D4", "Segoe UI")
+        back := this.Gui.Add("Text", "x220 y30 w110 h24 0x200 BackgroundTrans +E0x20", "←  Back")
+        back.OnEvent("Click", (*) => this.NavigateTo(page, backTo))
+        this.Hoverables[back.Hwnd] := {Ctrl: back, Normal: this.ThemeBg, Hover: this.C_Hover, Click: this.C_Click, Hovered: false}
+        this.CursorZones[back.Hwnd] := 32649
+
+        this.Gui.SetFont("s22 w600 c" this.C_Txt, "Segoe UI Variable Display")
+        ttl := this.Gui.Add("Text", "x220 y58 w500 h40 BackgroundTrans", title)
+
+        this.Pages[page].Push(back, ttl)
+    }
 
     BuildUI() {
         ;// ── Sidebar ────────────────────────────────────────────────────────
@@ -222,23 +219,15 @@ class SettingsApp extends FluentApp {
         this.Indicator := this.Gui.Add("Text", "x2 y86 w4 h24 Background0078D4")
 
         ;// Settings tabs
-        this.AddSidebarTab(80,  "General",    "General")
-        this.AddSidebarTab(125, "Updates",    "Updates")
-        this.AddSidebarTab(170, "Scripts",    "Scripts")
-        this.AddSidebarTab(215, "Values",     "Values")
-        this.AddSidebarTab(260, "Appearance", "Appearance")
-        ;// Former menu-bar sections
-        this.AddSidebarTab(305, "File",       "File")
-        this.AddSidebarTab(350, "Open",       "Open")
-        this.AddSidebarTab(395, "Editors",    "Editors")
-        this.AddSidebarTab(440, "Other",      "Other")
+        sep := 45
+        startSep := 80
+        this.AddSidebarTab(startSep,  "General",    "General")
+        this.AddSidebarTab(startSep+(sep*1), "Scripts",    "Scripts")
+        this.AddSidebarTab(startSep+(sep*2), "Values",     "Values")
+        this.AddSidebarTab(startSep+(sep*3), "Editors",    "Editors")
 
         ;// ── Sidebar footer ─────────────────────────────────────────────────
         this.Gui.Add("Text", "x0 y486 w180 h1 Background" this.C_Panel)
-
-        workDir := FileRead(A_AppData "\tomshi\installDir")
-        this.Gui.SetFont("s8 w400 c" this.C_SecTxt, "Segoe UI")
-        this.Gui.Add("Text", "x8 y492 w165 h14 BackgroundTrans", "📁 " workDir)
 
         this.AddSidebarButton(510, "💾  Hard Reset", this.OnClose.Bind(this, "hard"))
         this.AddSidebarButton(543, "🔄  Reload",     this.OnClose.Bind(this, "reload"))
@@ -250,14 +239,9 @@ class SettingsApp extends FluentApp {
 
         ;// ── Pages ─────────────────────────────────────────────────────────
         this.BuildGeneralPage()
-        this.BuildUpdatesPage()
         this.BuildScriptsPage()
         this.BuildValuesPage()
-        this.BuildAppearancePage()
-        this.BuildFilePage()
-        this.BuildOpenPage()
         this.BuildEditorsPage()
-        this.BuildOtherPage()
     }
 
     AddSidebarButton(y, text, callback) {
@@ -278,53 +262,52 @@ class SettingsApp extends FluentApp {
         this.InitPage("General")
         this.AddTitle("General", "General", "Startup and core behaviour settings.")
 
-        ;// Startup & Behaviour group  (dark mode lives in Appearance)
-        this.AddGroupBox("General", 200, 100, 335, 238, "Startup && Behaviour")
-        this.AddToggle("General", 220, 155, this.setJSON.startup.title,
+        ;// Startup & Behaviour group
+        startY := 100
+        this.AddGroupBox("General", this.row1, startY, 320, 238, "Startup && Behaviour")
+        this.AddToggle("General", this.row1+20, startY+55, this.setJSON.startup.title,
             (this.UserSettings.run_at_startup = true),         this.MakeCb("run at startup", ""))
-        this.AddToggle("General", 220, 197, this.setJSON.discAutoReply.title,
+        this.AddToggle("General", this.row1+20, startY+97, this.setJSON.discAutoReply.title,
             (this.UserSettings.disc_disable_autoreply = true), this.MakeCb("disc disable autoreply", ""))
-        this.AddToggle("General", 220, 239, this.setJSON.show_adobe_vers_startup.title,
+        this.AddToggle("General", this.row1+20, startY+139, this.setJSON.show_adobe_vers_startup.title,
             (this.UserSettings.show_adobe_vers_startup = true),this.MakeCb("show adobe vers startup", ""))
-        this.AddToggle("General", 220, 281, this.setJSON.adobeExeOverride.title,
+        this.AddToggle("General", this.row1+20, startY+181, this.setJSON.adobeExeOverride.title,
             (this.UserSettings.adobeExeOverride = true),       this.MakeCb("adobeExeOverride", ""))
 
-        ;// Premiere Pro group
-        this.AddGroupBox("General", 545, 100, 315, 120, "Premiere Pro")
-        this.AddToggle("General", 565, 155, this.setJSON.useSwapSequences.title,
-            (this.UserSettings.use_swapSequences = true), this.MakeCb("Use swapSequences", ""))
-    }
+        this.AddGroupBox("General", this.row2, startY, 330, 115, "Game Management")
+        this.AddButton("General", this.row2+20, startY+52, 290, "Add Game to gameCheck.ahk", "Secondary",
+            (*) => this.NavigateTo("General", "General_AddGame"))
 
-    ; ── Updates ─────────────────────────────────────────────────────────────
-    BuildUpdatesPage() {
-        this.InitPage("Updates")
-        this.AddTitle("Updates", "Updates", "Control how and when scripts check for updates.")
+        this.BuildAddGamePage("General_AddGame")
 
-        this.AddGroupBox("Updates", 200, 100, 660, 358, "Update Checks")
+        ;// updaates
+        updateStartX := this.row2
+        updateStartY := startY+127
+        this.AddGroupBox("General", updateStartX, updateStartY, 330, 358, "Update Checks")
 
         ;// updateCheck is 3-state — mapped to a dropdown (Active / Silent / Stopped)
         checkVal := this.UserSettings.update_check
         ddlIdx   := (checkVal = "stop") ? 3 : (checkVal = true) ? 1 : 2
         this.Gui.SetFont("s10 w400 c" this.C_Txt, "Segoe UI")
-        ucLbl := this.Gui.Add("Text", "x220 y153 w200 h22 0x200 BackgroundTrans", this.setJSON.updateCheck.title)
-        this.Pages["Updates"].Push(ucLbl)
-        this.UpdateCheckDDL := this.AddDropdown("Updates", 432, 146, 200,
+        ucLbl := this.Gui.Add("Text", "x" updateStartX+20 " y" updateStartY+58 " w200 h22 0x200 BackgroundTrans", this.setJSON.updateCheck.title)
+        this.Pages["General"].Push(ucLbl)
+        this.UpdateCheckDDL := this.AddDropdown("General", updateStartX+150, updateStartY+51, 100,
             ["Active", "Silent", "Stopped"], ddlIdx, this.OnUpdateCheckChange.Bind(this))
 
         ;// Beta toggle — disabled when update_check = "stop"
         betaOK := (checkVal != "stop") && (this.UserSettings.beta_update_check = true)
-        this.BetaToggle := this.AddToggle("Updates", 220, 198, "Check for Pre-Releases",
+        this.BetaToggle := this.AddToggle("General", updateStartX+20, updateStartY+102, "Check for Pre-Releases",
             betaOK, this.OnBetaToggle.Bind(this))
 
-        this.AddToggle("Updates", 220, 240, this.setJSON.ahkUpdate.title,
+        this.AddToggle("General", updateStartX+20, updateStartY+140, this.setJSON.ahkUpdate.title,
             (this.UserSettings.ahk_update_check = true),     this.MakeCb("ahk update check", ""))
-        this.AddToggle("Updates", 220, 282, this.setJSON.libUpdate.title,
+        this.AddToggle("General", updateStartX+20, updateStartY+182, this.setJSON.libUpdate.title,
             (this.UserSettings.lib_update_check = true),     this.MakeCb("lib update check", ""))
-        this.AddToggle("Updates", 220, 324, this.setJSON.packageUpdate.title,
+        this.AddToggle("General", updateStartX+20, updateStartY+224, this.setJSON.packageUpdate.title,
             (this.UserSettings.package_update_check = true), this.MakeCb("package update check", ""))
-        this.AddToggle("Updates", 220, 366, this.setJSON.versUpdate.title,
+        this.AddToggle("General", updateStartX+20, updateStartY+266, this.setJSON.versUpdate.title,
             (this.UserSettings.update_adobe_vers = true),    this.MakeCb("update adobe vers", ""))
-        this.AddToggle("Updates", 220, 408, this.setJSON.gitUpdate.title,
+        this.AddToggle("General", updateStartX+20, updateStartY+305, this.setJSON.gitUpdate.title,
             (this.UserSettings.update_git = true),           this.MakeCb("update git", ""))
     }
 
@@ -333,30 +316,39 @@ class SettingsApp extends FluentApp {
         this.InitPage("Scripts")
         this.AddTitle("Scripts", "Scripts", "Per-script behaviour toggles.")
 
+        startY := 100
         ;// autosave group
-        this.AddGroupBox("Scripts", 200, 100, 320, 268, "autosave.ahk")
-        this.AddToggle("Scripts", 220, 155, this.setJSON.autosaveAlwaysSave.title,
+        this.AddGroupBox("Scripts", this.row1, startY, 320, 268, "autosave.ahk")
+        this.AddToggle("Scripts", this.row1+20, startY+55, this.setJSON.autosaveAlwaysSave.title,
             (this.UserSettings.autosave_always_save = true),      this.MakeCb("autosave always save", "autosave"))
-        this.AddToggle("Scripts", 220, 196, this.setJSON.autosaveBeep.title,
+        this.AddToggle("Scripts", this.row1+20, startY+96, this.setJSON.autosaveBeep.title,
             (this.UserSettings.autosave_beep = true),             this.MakeCb("autosave beep", "autosave"))
-        this.AddToggle("Scripts", 220, 237, this.setJSON.autosaveMouse.title,
+        this.AddToggle("Scripts", this.row1+20, startY+137, this.setJSON.autosaveMouse.title,
             (this.UserSettings.autosave_check_mouse = true),      this.MakeCb("autosave check mouse", "autosave"))
-        this.AddToggle("Scripts", 220, 278, this.setJSON.autosaveOverride.title,
+        this.AddToggle("Scripts", this.row1+20, startY+178, this.setJSON.autosaveOverride.title,
             (this.UserSettings.autosave_save_override = true),    this.MakeCb("autosave save override", "autosave"))
-        this.AddToggle("Scripts", 220, 319, this.setJSON.autosaveRestartPlayback.title,
+        this.AddToggle("Scripts", this.row1+20, startY+219, this.setJSON.autosaveRestartPlayback.title,
             (this.UserSettings.autosave_restart_playback = true), this.MakeCb("autosave restart playback", "autosave"))
 
         ;// checklist group
-        this.AddGroupBox("Scripts", 200, 380, 320, 135, "checklist.ahk")
-        this.AddToggle("Scripts", 220, 430, this.setJSON.checklistHotkeys.title,
+        checkListY := startY+280
+        this.AddGroupBox("Scripts", this.row1, checkListY, 320, 135, "checklist.ahk")
+        this.AddToggle("Scripts", this.row1+20, checkListY+50, this.setJSON.checklistHotkeys.title,
             (this.UserSettings.checklist_hotkeys = true), this.MakeMsgboxCb("checklist hotkeys"))
-        this.AddToggle("Scripts", 220, 472, this.setJSON.checklistTooltip.title,
+        this.AddToggle("Scripts", this.row1+20, checkListY+98, this.setJSON.checklistTooltip.title,
             (this.UserSettings.checklist_tooltip = true), this.MakeMsgboxCb("checklist tooltip"))
 
         ;// UIA group
-        this.AddGroupBox("Scripts", 530, 100, 330, 120, "UIA")
-        this.AddToggle("Scripts", 550, 155, this.setJSON.UIAonReload.title,
+        this.AddGroupBox("Scripts", this.row2, startY, 330, 100, "UIA")
+        this.AddToggle("Scripts", this.row2+20, startY+55, this.setJSON.UIAonReload.title,
             (this.UserSettings.Set_UIA_on_reload = true), this.MakeCb("Set_UIA_on_reload", ""))
+
+        this.AddGroupBox("Scripts", this.row2, startY+120, 330, 115, "Scripts")
+        ;// was: this.MenuThio.Bind(this) — now swaps to an in-window detail page
+        this.AddButton("Scripts", this.row2+20, startY+180, 290, "Thio MButton Script", "Secondary",
+            (*) => this.NavigateTo("Scripts", "Scripts_Thio"))
+
+        this.BuildThioSubPage("Scripts_Thio")
     }
 
     ; ── Values ──────────────────────────────────────────────────────────────
@@ -364,7 +356,7 @@ class SettingsApp extends FluentApp {
         this.InitPage("Values")
         this.AddTitle("Values", "Numeric Values", "Adjust timing and rate settings for scripts.")
 
-        this.AddGroupBox("Values", 200, 100, 660, 406, "Edit Values")
+        this.AddGroupBox("Values", 200, 100, 660, 446, "Edit Values")
 
         set_Edit_Val.init()
         Loop set_Edit_Val().objs.Length {
@@ -407,74 +399,240 @@ class SettingsApp extends FluentApp {
         }
     }
 
-
-    ; ════════════════════════════════════════════════════════════════════════
-    ;!  PAGES — Appearance  (ported from FluentApp boilerplate)
-    ; ════════════════════════════════════════════════════════════════════════
-
-    BuildAppearancePage() {
-        this.InitPage("Appearance")
-        this.AddTitle("Appearance", "Appearance", "Customise glass materials and colour theme in real-time.")
-
-        ;// Backdrop Material Engine
-        this.AddGroupBox("Appearance", 200, 100, 660, 140, "Backdrop Material Engine")
-        materials := ["Mica (Standard)", "Acrylic (Frosted)", "Mica Alt (Tinted)", "System Theme"]
-        matIdx    := (this.CurrentBackdropType = 3) ? 2 : (this.CurrentBackdropType = 4) ? 3 : 1
-        this.AddDropdown("Appearance", 220, 150, 460, materials, matIdx, this.OnChangeBackdrop.Bind(this))
-
-        ;// Theme Engine  (dark mode toggle moved here from General)
-        this.AddGroupBox("Appearance", 200, 252, 660, 105, "Theme Engine")
-        this.AddToggle("Appearance", 220, 303, this.setJSON.dark.title,
-            (this.UserSettings.dark_mode = true), this.OnDarkToggle.Bind(this))
-    }
-
-
-    ; ════════════════════════════════════════════════════════════════════════
-    ;!  PAGES — Former menu-bar sections
-    ; ════════════════════════════════════════════════════════════════════════
-
-    ; ── File ────────────────────────────────────────────────────────────────
-    BuildFilePage() {
-        this.InitPage("File")
-        this.AddTitle("File", "File", "Script management actions.")
-
-        this.AddGroupBox("File", 200, 100, 460, 115, "Game Management")
-        this.AddButton("File", 220, 152, 300, "Add Game to gameCheck.ahk", "Secondary",
-            this.MenuAddGame.Bind(this))
-    }
-
-    ; ── Open ────────────────────────────────────────────────────────────────
-    BuildOpenPage() {
-        this.InitPage("Open")
-        this.AddTitle("Open", "Open", "Open files and documentation.")
-
-        this.AddGroupBox("Open", 200, 100, 460, 232, "Files && Resources")
-        this.AddButton("Open", 220, 152, 300, "Open settings.ini",      "Secondary", this.MenuOpenIni.Bind(this))
-        this.AddButton("Open", 220, 196, 300, "Settings Cheat Sheet",   "Secondary", this.OpenWiki.Bind(this, "cheat"))
-        this.AddButton("Open", 220, 240, 300, "Wiki Directory (Local)", "Secondary", this.OpenWiki.Bind(this, "local"))
-        this.AddButton("Open", 220, 284, 300, "Wiki (Web)",             "Secondary", this.OpenWiki.Bind(this, "web"))
-    }
-
     ; ── Editors ─────────────────────────────────────────────────────────────
     BuildEditorsPage() {
         this.InitPage("Editors")
         this.AddTitle("Editors", "Editors", "Configure Adobe application version settings.")
 
-        this.AddGroupBox("Editors", 200, 100, 460, 165, "Adobe Applications")
-        this.AddButton("Editors", 220, 152, 300, "After Effects Settings", "Secondary",
-            this.MenuAdobe.Bind(this, "AE"))
-        this.AddButton("Editors", 220, 196, 300, "Premiere Settings",      "Secondary",
-            this.MenuAdobe.Bind(this, "Premiere"))
+        this.AddGroupBox("Editors", this.row1, 100, 340, 165, "Adobe Applications")
+        ;// was: this.MenuAdobe.Bind(this, "AE"/"Premiere") — now swaps to in-window detail pages
+        this.AddButton("Editors", this.row1+20, 152, 300, "After Effects Settings", "Secondary",
+            (*) => this.NavigateTo("Editors", "Editors_AE"))
+        this.AddButton("Editors", this.row1+20, 196, 300, "Premiere Settings",      "Secondary",
+            (*) => this.NavigateTo("Editors", "Editors_Premiere"))
+
+        this.BuildAdobeSubPage("Editors_AE",       "AE")
+        this.BuildAdobeSubPage("Editors_Premiere", "Premiere")
     }
 
-    ; ── Other ───────────────────────────────────────────────────────────────
-    BuildOtherPage() {
-        this.InitPage("Other")
-        this.AddTitle("Other", "Other Settings", "Additional script configuration.")
+    ; ── Thio MButton Script ─────────────────────────────────────────────────
+    BuildThioSubPage(page) {
+        this.InitPage(page)
+        this.AddSubPageHeader(page, "Scripts", "Thio MButton Script Settings")
 
-        this.AddGroupBox("Other", 200, 100, 460, 115, "Scripts")
-        this.AddButton("Other", 220, 152, 300, "Thio MButton Script", "Secondary",
-            this.MenuThio.Bind(this))
+        this.AddGroupBox(page, this.row1, 130, 460, 190, "Thio MButton")
+
+        useThio := (this.UserSettings.Use_Thio_MButton = true)
+        thioToggle := this.AddToggle(page, this.row1+20, 176, this.setJSON.Use_Thio_MButton.title, useThio,
+            this.OnThioMButtonToggle.Bind(this))
+
+        ;// Use_MButton can never be physically true while Use_Thio_MButton is off — this
+        ;// clamps the toggle's *visual/initial* state regardless of what the ini says, and
+        ;// corrects the ini value itself if it was left in an inconsistent state.
+        useM := useThio && (this.UserSettings.Use_MButton = true)
+        if !useThio && this.UserSettings.Use_MButton != "disabled"
+            this.UserSettings.Use_MButton := "disabled"
+        mToggle := this.AddToggle(page, this.row1+20, 218, this.setJSON.Use_MButton.title, useM,
+            this.OnThioUseMButtonToggle.Bind(this))
+
+        this.Gui.SetFont("s10 w400 c" this.C_Txt, "Segoe UI")
+        hLbl  := this.Gui.Add("Text", "x" this.row1+20 " y268 w170 h22 0x200 BackgroundTrans", "Activation Hotkey")
+        hEdit := this.AddInput(page, 400, 261, 140, "")
+        hEdit.Text := this.UserSettings.alternate_MButton_Key
+        if useM
+            hEdit.Opt("+Disabled")
+        hEdit.OnEvent("Change", (ctrl, *) => this.UserSettings.alternate_MButton_Key := ctrl.Text)
+        this.Pages[page].Push(hLbl)
+
+        this.ThioCtrls := {ThioToggle: thioToggle, MToggle: mToggle, HotkeyEdit: hEdit}
+    }
+
+    OnThioMButtonToggle(state) {
+        this.UserSettings.Use_Thio_MButton := state
+        if !state {
+            ;// parent off → force child into its "disabled" ini state, matching original behaviour
+            this.UserSettings.Use_MButton := "disabled"
+            this.SetToggleState(this.ThioCtrls.MToggle, false)
+            ;// MToggle is now guaranteed off, so the hotkey field is always usable here
+            this.ThioCtrls.HotkeyEdit.Opt("-Disabled")
+        } else {
+            if this.UserSettings.Use_MButton = "disabled"
+                this.UserSettings.Use_MButton := "false"
+            ;// re-sync the hotkey field to whatever MToggle's current state actually is —
+            ;// this was the bug: previously nothing re-checked this when Thio was re-enabled,
+            ;// so the field stayed stuck until the user manually clicked Use MButton.
+            this.ThioCtrls.HotkeyEdit.Opt(this.ThioCtrls.MToggle.State ? "+Disabled" : "-Disabled")
+        }
+    }
+
+    OnThioUseMButtonToggle(state) {
+        if !this.ThioCtrls.ThioToggle.State {
+            ;// parent (Use_Thio_MButton) is off — ignore, mirrors the original's disabled checkbox
+            this.SetToggleState(this.ThioCtrls.MToggle, false)
+            return
+        }
+        this.UserSettings.Use_MButton := state
+        this.ThioCtrls.HotkeyEdit.Opt(state ? "+Disabled" : "-Disabled")
+    }
+
+    ; ── After Effects / Premiere ────────────────────────────────────────────
+    GetAdobeMeta(program) {
+        switch program {
+            case "Premiere":
+                return {
+                    Short:        "prem",
+                    ShortcutName: "Adobe Premiere Pro",
+                    YearIni:      "prem_year",
+                    VerIni:       "premVer",
+                    CacheIni:     "premcache",
+                    BetaIni:      "premIsBeta"
+                }
+            case "AE":
+                return {
+                    Short:        "ae",
+                    ShortcutName: "Adobe After Effects",
+                    YearIni:      "ae_year",
+                    VerIni:       "aeVer",
+                    CacheIni:     "aecache",
+                    BetaIni:      "aeIsBeta"
+                }
+        }
+    }
+
+    GetAdobeYears(short) {
+        jsonFolder := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers\" short
+        if !DirExist(jsonFolder "\")
+            errorLog(ValueError("Adobe json directory cannot be found", -1, jsonFolder),,, 1)
+        years := []
+        loop files jsonFolder "\*", "F"
+            years.Push(SubStr(A_Year, 1, 2) SubStr(A_LoopFileName, 2, 2))
+        return years.Sort("C").Reverse()
+    }
+
+    GetAdobeVersions(short, year) {
+        jsonFolder := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers\" short
+        if !DirExist(jsonFolder "\")
+            errorLog(ValueError("Adobe json directory cannot be found", -1, jsonFolder),,, 1)
+        supportedVersMap := JSON.parse(FileRead(jsonFolder "\v" SubStr(year, 3, 2) ".json"))
+        vers := []
+        for v in supportedVersMap
+            vers.Push(v)
+        return vers.Sort("C").Reverse()
+    }
+
+    BuildAdobeSubPage(page, program) {
+        meta := this.GetAdobeMeta(program)
+        this.InitPage(page)
+        this.AddSubPageHeader(page, "Editors", program = "AE" ? "After Effects Settings" : "Premiere Settings")
+
+        boxH := (program = "Premiere") ? 325 : 250
+        this.AddGroupBox(page, this.row1, 130, 460, boxH, "Version && Cache")
+
+        years   := this.GetAdobeYears(meta.Short)
+        yearVal := this.UserSettings.%meta.YearIni%
+        yearIdx := years.IndexOf(yearVal)
+        if !yearIdx
+            yearIdx := 1
+
+        this.Gui.SetFont("s10 w400 c" this.C_Txt, "Segoe UI")
+        yLbl := this.Gui.Add("Text", "x" this.row1+20 " y183 w100 h22 0x200 BackgroundTrans", "Year")
+        this.Pages[page].Push(yLbl)
+        yearDDL := this.AddDropdown(page, 340, 176, 200, years, yearIdx,
+            this.OnAdobeYearChange.Bind(this, program))
+
+        vers   := this.GetAdobeVersions(meta.Short, years[yearIdx])
+        verVal := this.UserSettings.%meta.VerIni%
+        verIdx := vers.IndexOf(verVal)
+        if !verIdx
+            verIdx := 1
+
+        vLbl := this.Gui.Add("Text", "x" this.row1+20 " y228 w100 h22 0x200 BackgroundTrans", "Version")
+        this.Pages[page].Push(vLbl)
+        verDDL := this.AddDropdown(page, 340, 221, 200, vers, verIdx,
+            this.OnAdobeVerChange.Bind(this, program))
+
+        betaState  := this.UserSettings.__convertToBool(meta.BetaIni, "Adjust")
+        betaToggle := this.AddToggle(page, 220, 271, "Is Beta Version?", betaState,
+            this.OnAdobeBetaToggle.Bind(this, program))
+
+        cacheVal := this.UserSettings.%meta.CacheIni%
+        cLbl := this.Gui.Add("Text", "x" this.row1+20 " y318 w100 h22 0x200 BackgroundTrans", "Cache Dir")
+        this.Pages[page].Push(cLbl)
+        cacheEdit := this.AddInput(page, 340, 311, 200, "")
+        cacheEdit.Text := cacheVal
+        cacheEdit.Opt("+ReadOnly")
+        this.AddButton(page, 550, 311, 90, "Select", "Secondary",
+            this.OnAdobeCacheSelect.Bind(this, program))
+
+        ctrls := {YearDDL: yearDDL, VerDDL: verDDL, BetaToggle: betaToggle, CacheEdit: cacheEdit}
+
+        if program = "Premiere" {
+            defaults := Map("Light", 1, "Dark", 2, "Darkest", 3)
+            idx := defaults.Has(this.UserSettings.premDefaultTheme) ? defaults[this.UserSettings.premDefaultTheme] : 1
+            tLbl := this.Gui.Add("Text", "x" this.row1+20 " y363 w100 h22 0x200 BackgroundTrans", "Theme Default")
+            this.Pages[page].Push(tLbl)
+            themeDDL := this.AddDropdown(page, 340, 356, 200, ["Light", "Dark", "Darkest"], idx,
+                this.OnPremThemeChange.Bind(this))
+            ctrls.ThemeDDL := themeDDL
+
+            swapState  := (this.UserSettings.use_swapSequences = true)
+            swapToggle := this.AddToggle(page, 220, 406, this.setJSON.useSwapSequences.title, swapState,
+                (state) => this.OnToggleSetting("Use swapSequences", "", state))
+            ctrls.SwapToggle := swapToggle
+        }
+
+        this.Gui.SetFont("s9 italic c" this.C_SecTxt, "Segoe UI")
+        note := this.Gui.Add("Text", "x" this.row1+20 " y" (130 + boxH + 10) " w440 h20 BackgroundTrans",
+            "*some settings will require a full reload to take effect")
+        this.Pages[page].Push(note)
+
+        this.AdobeCtrls[program] := ctrls
+    }
+
+    OnAdobeYearChange(program, val) {
+        meta  := this.GetAdobeMeta(program)
+        ctrls := this.AdobeCtrls[program]
+        this.UserSettings.%meta.YearIni% := val
+
+        vers := this.GetAdobeVersions(meta.Short, val)
+        ctrls.VerDDL.Items := vers
+        ctrls.VerDDL.Index := 1
+        ctrls.VerDDL.Value := vers[1]
+        ctrls.VerDDL.Lbl.Text := vers[1]
+        ctrls.VerDDL.Lbl.Redraw()
+        this.UserSettings.%meta.VerIni% := vers[1]
+
+        createTitle := "createShortcuts.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+        ignore := browser.vscode.winTitle
+        if winExt.ExistRegex(createTitle,, ignore,, true)
+            winExt.WaitCloseRegex(createTitle,,, ignore,, true)
+        Run(ptf.Shortcuts "\createShortcuts.ahk false")
+    }
+
+    OnAdobeVerChange(program, val) {
+        meta := this.GetAdobeMeta(program)
+        if InStr(val, "v") && InStr(val, ".")
+            this.UserSettings.%meta.VerIni% := val
+    }
+
+    OnAdobeBetaToggle(program, state) {
+        meta := this.GetAdobeMeta(program)
+        this.UserSettings.%meta.BetaIni% := this.UserSettings.__convertToStr(state)
+        generateAdobeShortcut(this.UserSettings, meta.ShortcutName, this.AdobeCtrls[program].YearDDL.Value)
+    }
+
+    OnAdobeCacheSelect(program, *) {
+        meta     := this.GetAdobeMeta(program)
+        progName := (program = "Premiere") ? editors.__determinePremName() : "Adobe After Effects"
+        slct := FileSelect("D",, "Select " progName " Cache Folder")
+        if slct = ""
+            return
+        this.UserSettings.%meta.CacheIni% := slct
+        this.AdobeCtrls[program].CacheEdit.Text := slct
+    }
+
+    OnPremThemeChange(val) {
+        this.UserSettings.premDefaultTheme := val
     }
 
 
@@ -492,11 +650,6 @@ class SettingsApp extends FluentApp {
     ; ════════════════════════════════════════════════════════════════════════
     ;!  EVENT HANDLERS
     ; ════════════════════════════════════════════════════════════════════════
-
-    OnDarkToggle(state) {
-        this.UserSettings.dark_mode := state
-        this.OnToggleTheme(state)   ;// inherited — sets IsDark, schedules RebuildUI in 10 ms
-    }
 
     /**
      * Generic toggle handler — mirrors the original toggle() logic.
@@ -580,7 +733,6 @@ class SettingsApp extends FluentApp {
         this.UserSettings.beta_update_check := state
     }
 
-    ;// Numeric edit-box change — mirrors original editCtrl()
     OnEditCtrl(script, ini, objName, ctrl, *) {
         iniVar := StrReplace(ini, A_Space, "_")
         this.UserSettings.%iniVar% := ctrl.text
@@ -611,7 +763,6 @@ class SettingsApp extends FluentApp {
     ;// Hard Reset / Reload / Close
     OnClose(action := "", *) {
         if WinExist("Scripts Release " this.version)
-            WinSetAlwaysOnTop(1, "Scripts Release " this.version)
         switch action {
             case "hard":
                 this.Gui.Destroy()
@@ -629,304 +780,97 @@ class SettingsApp extends FluentApp {
     }
 
 
-    ; ════════════════════════════════════════════════════════════════════════
-    ;!  ACTION FUNCTIONS  (called from page buttons)
-    ; ════════════════════════════════════════════════════════════════════════
+    ; ── Add Game to gameCheck.ahk ────────────────────────────────────────────
+    BuildAddGamePage(page) {
+        this.InitPage(page)
+        this.AddSubPageHeader(page, "General", "Add Game to gameCheck.ahk")
 
-    OpenWiki(which, *) {
-        openPage(title, link) {
-            if !checkInternet() {
-                tool.Cust("It doesn't appear like you have an active internet connection", 2.0)
-                tool.Cust("The page will run just incase", 2.0,, 20, 2)
-            }
-            WinExist(title) ? WinActivate(title) : Run(link)
-        }
-        switch which {
-            case "local":
-                if WinExist("Wiki explorer.exe")
-                    WinActivate("Wiki explorer.exe")
-                else if DirExist(ptf.Wiki "\Latest")
-                    Run(ptf.Wiki "\Latest")
-            case "web":
-                openPage("Home · Tomshiii/ahk Wiki",          "https://github.com/Tomshiii/ahk/wiki")
-            case "cheat":
-                openPage("settingsGUI() · Tomshiii/ahk Wiki", "https://github.com/Tomshiii/ahk/wiki/settingsGUI()")
-        }
+        this.Gui.SetFont("s10 w500 c" this.C_Txt, "Segoe UI")
+        info1 := this.Gui.Add("Text", "x220 y110 w440 BackgroundTrans",
+            "Format: GameTitle ahk_exe game.exe`nExample: Minecraft ahk_exe javaw.exe")
+
+        this.Gui.SetFont("s9 w500 c" this.C_SecTxt, "Segoe UI")
+        info2 := this.Gui.Add("Text", "x220 y150 w440 h90 BackgroundTrans",
+            "This attempts to grab the correct information from the active window before the settings GUI"
+            " was opened, and prefills the boxes below. If it's correct hit Add, otherwise enter the"
+            " correct information.`n`n*This info can also be found using WindowSpy, bundled with AHK.")
+
+        this.Pages[page].Push(info1, info2)
+
+        this.AddGroupBox(page, 200, 250, 460, 195, "Game Details")
+
+        this.Gui.SetFont("s10 w400 c" this.C_Txt, "Segoe UI")
+        tLbl := this.Gui.Add("Text", "x220 y308 w110 h22 0x200 BackgroundTrans", "Game Title")
+        this.Pages[page].Push(tLbl)
+        titleEdit := this.AddInput(page, 340, 305, 300, "")
+        titleEdit.Text := this.winTitle
+
+        pLbl := this.Gui.Add("Text", "x220 y353 w110 h22 0x200 BackgroundTrans", "Process Name")
+        this.Pages[page].Push(pLbl)
+        procEdit := this.AddInput(page, 340, 346, 300, "")
+        procEdit.Text := "ahk_exe " this.process
+
+        this.AddButton(page, 470, 395, 170, "Add to gameCheck.ahk", "Primary", this.OnAddGameClick.Bind(this))
+        ; this.AddButton(page, 495, 445, 145, "Cancel",               "Secondary", this.OnCancelGameClick.Bind(this))
+
+        this.AddGameCtrls := {TitleEdit: titleEdit, ProcessEdit: procEdit}
     }
 
-    MenuAddGame(*) {
-        closeEv(*) {
-            if WinExist("Settings " this.version) {
-                ExStyle := wingetExStyle("Settings " this.version)
-                if ExStyle & !0x8
-                    WinSetAlwaysOnTop(1, "Settings " this.version)
-                if !WinActive("Settings " this.version)
-                    WinActivate("Settings " this.version)
-            }
-            this.gameCheckGUI.Hide()
+    ;// mirrors gameCheckGUI.__checkGameList()
+    CheckGameList() {
+        if !FileExist(ptf["Game List"]) {
+            MsgBox("``Game List.ahk`` not found in the proper directory")
+            return false
         }
-        this.gameCheckGUI.Show("AutoSize")
-        this.gameCheckGUI.OnEvent("Close", closeEv)
-        WinSetAlwaysOnTop(0, "Settings " this.version)
-        this.Gui.Opt("+Disabled")
-        WinWaitClose(this.gameTitle)
-        if WinExist("Settings " this.version)
-            this.Gui.Opt("-Disabled")
+        return true
     }
 
-    MenuOpenIni(*) {
-        this.Gui.GetPos(&x, &y, &width, &height)
-        this.Gui.Opt("-AlwaysOnTop")
-        iniTitle := "settings.ini"
-        WinExist(iniTitle) ? refreshWin(iniTitle, this.UserSettings.SettingsFile)
-                           : Run("Notepad.exe " this.UserSettings.SettingsFile)
-        if !WinWait(iniTitle,, 3)
+    ;// mirrors gameCheckGUI.__checkForInput() — true = safe to add, false = duplicate found
+    CheckForInput(readGameCheck, listFormat) {
+        return !InStr(readGameCheck, listFormat, 1,, 1)
+    }
+
+    ;// mirrors gameCheckGUI.__appendInput() — returns true on confirmed success
+    AppendInput(listFormat) {
+        detect()
+        FileAppend(",`n" listFormat, ptf["Game List"])
+
+        ;// reloading gameCheck.ahk if it's running
+        if WinExist("gameCheck.ahk - AutoHotkey")
+            PostMessage 0x0111, 65303,,, "gameCheck.ahk - AutoHotkey"
+
+        ;// checking if it worked
+        readAgain := FileRead(ptf["Game List"])
+        return InStr(readAgain, listFormat, 1,, 1) ? true : false
+    }
+
+    ;// mirrors gameCheckGUI.__addButton_Click()
+    OnAddGameClick(*) {
+        titleVal := this.AddGameCtrls.TitleEdit.Text
+        procVal  := this.AddGameCtrls.ProcessEdit.Text
+
+        if !this.CheckGameList()
             return
-        WinMove(x + width - 8, y, 322, height - 2, iniTitle)
-        SetTimer(this.IniWait.Bind(this), 100)
-    }
 
-    IniWait() {
-        if !WinExist("Settings " this.version) {
-            SetTimer(, 0)
-            return
-        }
-        if !WinExist("settings.ini") && WinExist("Settings " this.version) {
-            this.Gui.Opt("+AlwaysOnTop")
-            SetTimer(, 0)
-        }
-    }
+        readGameCheck := FileRead(ptf["Game List"])
+        listFormat    := Format('{} {}', titleVal, procVal)
 
-    ; ── Thio MButton sub-GUI ────────────────────────────────────────────────
-    MenuThio(*) {
-        thioTitle := "Thio MButton Script Settings"
-        if WinExist(thioTitle) {
-            WinActivate(thioTitle)
-            return
-        }
-        thioGUI := tomshiBasic(,, "AlwaysOnTop +MinSize275x Owner", thioTitle)
-
-        thioGUI.AddCheckbox("vUse_Thio_MButton Checked" this.UserSettings.Use_Thio_MButton " Y+5",
-            this.setJSON.Use_Thio_MButton.title)
-            .OnEvent("Click", (ctrl, *) => (
-                this.UserSettings.Use_Thio_MButton := (ctrl.value = 1),
-                ctrl.value = 0
-                    ? (thioGUI["Use_MButton"].Opt("+Disabled"), this.UserSettings.Use_MButton := "disabled")
-                    : (thioGUI["Use_MButton"].Opt("-Disabled"), this.UserSettings.Use_MButton := "false")
-            ))
-        thioGUI["Use_Thio_MButton"].ToolTip := (this.UserSettings.Use_Thio_MButton = true)
-            ? this.setJSON.Use_Thio_MButton.tooltip.true
-            : this.setJSON.Use_Thio_MButton.tooltip.false
-
-        thioGUI.AddCheckbox("vUse_MButton Checked" this.UserSettings.Use_MButton " Y+5",
-            this.setJSON.Use_MButton.title)
-            .OnEvent("Click", (ctrl, *) => (
-                this.UserSettings.Use_MButton := (ctrl.value = 1),
-                ctrl.value = 1
-                    ? thioGUI["thioHotkey"].Opt("+Disabled")
-                    : thioGUI["thioHotkey"].Opt("-Disabled")
-            ))
-        thioGUI["Use_MButton"].ToolTip := (this.UserSettings.Use_MButton = true)
-            ? this.setJSON.Use_MButton.tooltip.true
-            : this.setJSON.Use_MButton.tooltip.false
-        thioGUI["Use_MButton"].Opt(this.UserSettings.Use_Thio_MButton = false ? "Disabled" : "")
-
-        thioGUI.Add("Text",, "Change activation hotkey: ")
-        thioGUI.Add("Edit", "vthioHotkey x+10 y+-20 w150", this.UserSettings.alternate_MButton_Key)
-            .OnEvent("Change", (ctrl, *) => this.UserSettings.alternate_MButton_Key := ctrl.value)
-        if thioGUI["Use_MButton"].value = true
-            thioGUI["thioHotkey"].Opt("Disabled")
-
-        thioGUI.Add("Button", "xp+98 y+10", "Close").OnEvent("Click", (*) => WinClose(thioTitle))
-
-        thioGUI.Show()
-        this.Gui.Opt("+Disabled")
-        WinGetPos(&x, &y,,, "Settings " this.version)
-        thioGUI.GetPos(,, &w)
-        thioGUI.Move(x - w + 5, y)
-        WinWaitClose(thioTitle)
-        this.Gui.Opt("-Disabled")
-    }
-
-    ; ── Adobe version sub-GUI ───────────────────────────────────────────────
-    MenuAdobe(program, *) {
-        switch program {
-            case "Premiere":
-                short         := "prem"
-                static premIsBeta := unset
-                adobeFullName := editors.__determinePremName()
-                shortcutName  := "Adobe Premiere Pro"
-                title         := "Premiere Settings"
-                yearIniName   := "prem_year"
-                iniInitYear   := this.UserSettings.prem_year
-                verIniName    := "premVer"
-                initVer       := this.UserSettings.premVer
-                genProg       := program
-                otherTitle    := "After Effects Settings"
-                static imageLoc := ptf.premSETver
-                path := A_ProgramFiles "\Adobe\" adobeFullName " " iniInitYear "\" shortcutName
-            case "AE":
-                short         := "ae"
-                static aeIsBeta := unset
-                adobeFullName := "Adobe After Effects"
-                shortcutName  := "Adobe After Effects"
-                title         := "After Effects Settings"
-                yearIniName   := "ae_year"
-                iniInitYear   := this.UserSettings.ae_year
-                verIniName    := "aeVer"
-                initVer       := this.UserSettings.aeVer
-                genProg       := "AE"
-                otherTitle    := "Premiere Settings"
-                static imageLoc := ptf.aeSETver
-                path := A_ProgramFiles "\Adobe\" adobeFullName " " iniInitYear "\Support Files\" shortcutName
-        }
-        if WinExist(title) {
-            WinActivate(title)
+        if !this.CheckForInput(readGameCheck, listFormat) {
+            MsgBox("The desired window is already in the list!", "Game already added! - gameCheck")
             return
         }
-        adobeGui := tomshiBasic(,, "+MinSize275x AlwaysOnTop Owner", title)
-        ctrlX := 120
 
-        adobeGui.AddText("Section", "Year: ")
-        __generateDropYear(genProg, &year, ctrlX)
-        adobeGui.AddText("xs y+10", "Version: ")
-        __generateDropVer(genProg, &ver, ctrlX)
-
-        adobeGui.AddText("xs y+10 Section", "Is Beta: ")
-        adobeGui.AddCheckbox("x+10 y+-20 vIsBeta Checked"
-            (%short%IsBeta ?? this.UserSettings.__convertToBool(short "IsBeta", "Adjust")), "Is Beta Version?")
-            .OnEvent("Click", (ctrl, *) => (
-                %short%IsBeta := ctrl.value,
-                this.UserSettings.%short%IsBeta := this.UserSettings.__convertToStr(ctrl.value),
-                __generateShortcut()
-            ))
-
-        if program != "Photoshop" {
-            adobeGui.AddText("xs y+12 Section", "Cache Dir: ")
-            cacheInit := short "cache"
-            cache := adobeGui.Add("Edit", "x" ctrlX " ys-3 r1 W150 ReadOnly", this.UserSettings.%cacheInit%)
-            cacheSelect := adobeGui.Add("Button", "vcacheBut x+5 w60 h27", "select")
-            cacheSelect.OnEvent("Click", __cacheslct.Bind(adobeFullName))
-            adobeGui["cacheBut"].GetPos(&cacheButX)
-        }
-        if program = "Premiere" {
-            defaults := Map("Light", "1", "Dark", "2", "Darkest", "3")
-            adobeGui.AddText("xs", "Theme Default: ")
-            adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose"
-                defaults.Get(this.UserSettings.premDefaultTheme) " vthemeDefaultPrem", ["Light", "Dark", "Darkest"])
-            adobeGui["themeDefaultPrem"].OnEvent("change", (ctrl, *) => this.UserSettings.premDefaultTheme := ctrl.Text)
-            adobeGui.AddCheckbox("vuseSwapSequences Checked" this.UserSettings.use_swapSequences " xs Y+15",
-                this.setJSON.useSwapSequences.title)
-                .OnEvent("Click", (ctrl, *) => this.OnToggleSetting("Use swapSequences", "", ctrl.value = 1))
-            adobeGui["useSwapSequences"].ToolTip := (this.UserSettings.use_swapSequences = true)
-                ? this.setJSON.useSwapSequences.tooltip.true
-                : this.setJSON.useSwapSequences.tooltip.false
+        if !this.AppendInput(listFormat) {
+            MsgBox("Game added unsuccesfully :(")
+            return
         }
 
-        adobeGui["IsBeta"].GetPos(&isBetaX)
-        closeX := IsSet(cacheButX) ? cacheButX : isBetaX
-        saveBut := adobeGui.Add("Button", "x" closeX, "close")
-        adobeGui.AddText("x" closeX - 175 " y+-30 Right BackgroundTrans",
-            "*some settings will require`na full reload to take effect").SetFont("s9 italic")
-        saveBut.OnEvent("Click", (*) => adobeGui.Destroy())
+        MsgBox("Game added succesfully!")
+        this.NavigateTo("General_AddGame", "General")
+    }
 
-        adobeGui.Show()
-        this.Gui.Opt("+Disabled")
-        WinGetPos(&x, &y,,, "Settings " this.version)
-        if WinExist(otherTitle)
-            WinGetPos(,,, &yearHeight, otherTitle)
-        adobeGui.GetPos(,, &width)
-        adobeGui.Move(x - width + 5, y)
-        WinWaitClose(title)
-        this.Gui.Opt("-Disabled")
-
-        ; ── Nested helpers (closures capture `this`, `short`, `iniInitYear`, etc.) ──
-
-        __editAdobeVer(ini, ctrl, *) {
-            iniV := StrReplace(ini, A_Space, "_")
-            if InStr(ctrl.Text, "v") && InStr(ctrl.Text, ".")
-                this.UserSettings.%iniV% := ctrl.Text
-        }
-
-        __generateShortcut() => generateAdobeShortcut(this.UserSettings, shortcutName, year.text)
-
-        __yearEventDropDown(*) {
-            ver.Delete()
-            jsonFolder := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers\" short
-            if !DirExist(jsonFolder "\")
-                errorLog(ValueError("Adobe json directory cannot be found", -1, jsonFolder),,, 1)
-            supportedVersMap := json.parse(FileRead(jsonFolder "\v" SubStr(year.Text, 3, 2) ".json"))
-            supportedVers := []
-            for v in supportedVersMap
-                supportedVers.Push(v)
-            supportedVers := supportedVers.Sort("C").Reverse()
-            ver.add(supportedVers)
-            if !supportedVers.Has(1)
-                return
-            ver.Choose(1)
-            this.UserSettings.%yearIniName% := year.text
-            createTitle := "createShortcuts.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
-            ignore := browser.vscode.winTitle
-            if winExt.ExistRegex(createTitle,, ignore,, true)
-                winExt.WaitCloseRegex(createTitle,,, ignore,, true)
-            Run(ptf.Shortcuts "\createShortcuts.ahk false")
-            __editAdobeVer(verIniName, ver)
-        }
-
-        __generateDropYear(program, &year, ctrlX) {
-            if (program != "AE" && program != "Premiere" && program != "Photoshop")
-                errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
-            jsonFolder := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers\" short
-            if !DirExist(jsonFolder "\")
-                errorLog(ValueError("Adobe json directory cannot be found", -1, jsonFolder),,, 1)
-            supportedYears := []
-            loop files jsonFolder "\*", "F"
-                supportedYears.Push(SubStr(A_Year, 1, 2) SubStr(A_LoopFileName, 2, 2))
-            supportedYears := supportedYears.Sort("C").Reverse()
-            try defaultIndex := supportedYears.IndexOf(iniInitYear)
-            if !IsSet(defaultIndex) || defaultIndex = 0
-                defaultIndex := 1
-            year := adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedYears)
-            year.OnEvent("Change", __yearEventDropDown)
-        }
-
-        __generateDropVer(program, &ver, ctrlX) {
-            if (program != "AE" && program != "Premiere" && program != "Photoshop")
-                errorLog(ValueError("Incorrect value in Parameter #1", -1, program),,, 1)
-            jsonFolder := ptf.SupportFiles "\Release Assets\Adobe SymVers\Vers\" short
-            if !DirExist(jsonFolder "\")
-                errorLog(ValueError("Adobe json directory cannot be found", -1, jsonFolder),,, 1)
-            supportedVersMap := JSON.parse(FileRead(jsonFolder "\v" SubStr(iniInitYear, 3, 2) ".json"))
-            supportedVers := []
-            for v in supportedVersMap
-                supportedVers.Push(v)
-            supportedVers := supportedVers.Sort("C").Reverse()
-            try defaultIndex := supportedVers.IndexOf(initVer)
-            if !IsSet(defaultIndex) || defaultIndex = 0
-                defaultIndex := 1
-            ver := adobeGui.Add("DropDownList", "x" ctrlX " y+-20 w100 Choose" defaultIndex, supportedVers)
-            doChange() {
-                iniV := StrReplace(verIniName, A_Space, "_")
-                if InStr(ver.Text, "v") && InStr(ver.Text, ".")
-                    this.UserSettings.%iniV% := ver.Text
-                imageLoc := ver.Text
-            }
-            ver.OnEvent("Change", (*) => doChange())
-        }
-
-        __cacheslct(progName, *) {
-            WinSetAlwaysOnTop(0, "Settings " this.version)
-            this.Gui.Opt("+Disabled")
-            slct := FileSelect("D",, "Select " progName " Cache Folder")
-            if slct = "" {
-                if WinExist("Settings " this.version)
-                    this.Gui.Opt("-Disabled")
-                return
-            }
-            this.UserSettings.%cacheInit% := slct
-            cache.Text := slct
-            if WinExist("Settings " this.version)
-                this.Gui.Opt("-Disabled")
-        }
+    ;// mirrors gameCheckGUI.__cancelButton_Click()
+    OnCancelGameClick(*) {
+        this.NavigateTo("General_AddGame", "General")
     }
 }

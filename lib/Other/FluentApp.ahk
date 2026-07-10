@@ -19,7 +19,7 @@ class FluentApp {
         OnMessage(0x0100, this.OnWM_KEYDOWN.Bind(this))  ; Keyboard Interaction Hook
 
         this.IsDark := true
-        this.CurrentBackdropType := 3
+        this.CurrentBackdropType := 2
         this.ActiveTab := "Forms && Data"
         this.ActiveSubPages := Map()
 

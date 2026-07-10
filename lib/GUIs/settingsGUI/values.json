@@ -65,7 +65,7 @@
     }
   },
   "discAutoReply": {
-    "title": "Disable Discord Reply Ping",
+    "title": "Disable Discord @ Ping When Replying",
     "tooltip": {
       "true": "`discord.button(`'DiscReply.png`')` will disable the @ ping automatically when replying",
       "false": "`discord.button(`'DiscReply.png`')` will not disable the @ ping when replying"
@@ -79,21 +79,21 @@
     }
   },
   "Use_Thio_MButton": {
-    "title": "Use Thio MButton",
+    "title": "Use Thio MButton Script",
     "tooltip": {
       "true": "MButton will activate extra functionality within Windows Explorer windows",
       "false": "Thio's MButton script will not be used in Windows Explorer"
     }
   },
   "Use_MButton": {
-    "title": "Use MButton",
+    "title": "Use MButton as Activation Key",
     "tooltip": {
       "true": "Thio's script will use MButton",
       "false": "Thio's script will use F14 (by default, can be changed in settings.ini)"
     }
   },
   "useSwapSequences": {
-    "title": "Use `prem.swapSequences()`",
+    "title": "Monitor Active Sequence",
     "tooltip": {
       "true": "The `prem {` class will monitor your currently active sequence and your previously active sequence\nso that you may swap between them",
       "false": "The `prem {` class will not monitor your active sequences"
@@ -103,51 +103,51 @@
   "________newSection": " autosave",
 
   "autosaveAlwaysSave": {
-    "title": "`autosave.ahk` Always Save",
+    "title": "Save Non Active Window",
     "tooltip": {
-      "true": "`autosave.ahk` will save regardless of the active window",
-      "false": "`autosave.ahk` will only save the active window"
+      "true": "will save regardless of the active window",
+      "false": "will only save the active window"
     }
   },
   "autosaveBeep": {
-    "title": "`autosave.ahk` Beep",
+    "title": "Beep During Save Attempt",
     "tooltip": {
-      "true": "`autosave.ahk` will beep to alert the user it is attempting to save",
-      "false": "`autosave.ahk` will no longer beep to alert the user that it is attempting to save"
+      "true": "will beep to alert the user it is attempting to save",
+      "false": "will no longer beep to alert the user that it is attempting to save"
     }
   },
   "autosaveMouse": {
-    "title": "`autosave.ahk` Check Mouse",
+    "title": "Check Mouse For Idle",
     "tooltip": {
-      "true": "`autosave.ahk` will check to ensure you haven't recently interacted with the mouse",
-      "false": "`autosave.ahk` will no longer check to ensure you haven't recently interacted with the mouse"
+      "true": "will check to ensure you haven't recently interacted with the mouse",
+      "false": "will no longer check to ensure you haven't recently interacted with the mouse"
     }
   },
   "autosaveOverride": {
-    "title": "`autosave.ahk` Save Override",
+    "title": "Manual Save Restarts Timer",
     "tooltip": {
-      "true": "Manually saving within Premiere/After Effects will reset `autosave.ahk` timer",
+      "true": "Manually saving within Premiere/After Effects will reset timer",
       "false": "Manually saving within Premiere/After Effects will have no effect on `autosave.ahk`"
     }
   },
   "autosaveRestartPlayback": {
-    "title": "`autosave.ahk` Restart Playback",
+    "title": "Restart Playback After Save",
     "tooltip": {
-      "true": "`autosave.ahk` will attempt to restart Premiere playback after a save attempt has been made",
-      "false": "`autosave.ahk` will not attempt to restart Premiere playback after a save attempt has been made"
+      "true": "will attempt to restart Premiere playback after a save attempt has been made",
+      "false": "will not attempt to restart Premiere playback after a save attempt has been made"
     }
   },
 
   "________newSection": " checklist",
   "checklistTooltip": {
-    "title": "`checklist.ahk` Tooltips",
+    "title": "Tooltip Reminders",
     "tooltip": {
       "true": "`checklist.ahk` will produce tooltips to remind you if you've paused the timer",
       "false": "`checklist.ahk` will no longer produce tooltips to remind you if you've paused the timer"
     }
   },
   "checklistHotkeys": {
-    "title": "`checklist.ahk` Create Hotkey",
+    "title": "Create Start/Stop Hotkey",
     "tooltip": {
       "true": "`checklist.ahk` will create a hotkey to start/stop the timer. (Shift & Media_Play_Pause)",
       "false": "`checklist.ahk` will no longer create a hotkey to start/stop the timer."
