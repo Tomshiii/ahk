@@ -454,21 +454,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.6897347</float>
-</prop.pair>
-<prop.pair>
-<key>Sub1</key>
-<prop.list>
-<prop.pair>
-<key>Splitter</key>
-<prop.list>
-<prop.pair>
-<key>Orient</key>
-<false/>
-</prop.pair>
-<prop.pair>
-<key>Place</key>
-<float>0.45819399</float>
+<float>0.3206459</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -517,11 +503,25 @@
 <key>Sub2</key>
 <prop.list>
 <prop.pair>
+<key>Splitter</key>
+<prop.list>
+<prop.pair>
+<key>Orient</key>
+<false/>
+</prop.pair>
+<prop.pair>
+<key>Place</key>
+<float>0.54329371</float>
+</prop.pair>
+<prop.pair>
+<key>Sub1</key>
+<prop.list>
+<prop.pair>
 <key>Frame</key>
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>1</int>
+<int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -558,14 +558,6 @@
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
-<key>Sub2Vis</key>
-<true/>
 </prop.pair>
 </prop.list>
 </prop.pair>
@@ -631,6 +623,14 @@
 </prop.list>
 </prop.pair>
 <prop.pair>
+<key>Sub2Vis</key>
+<true/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
 <key>Sub1Vis</key>
 <true/>
 </prop.pair>
@@ -660,7 +660,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.49365628</float>
+<float>0.51441753</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -670,7 +670,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>1</int>
+<int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
 <key>HidTabState-0</key>
@@ -979,7 +979,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.91046548</float>
+<float>0.82359916</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -993,7 +993,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.06805601</float>
+<float>0.075233981</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -1076,7 +1076,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;5&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;0&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -1207,8 +1207,8 @@
 <key>MinPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-32067</int>
-<int type='signed' size='32'>-32000</int>
+<int type='signed' size='32'>-68</int>
+<int type='signed' size='32'>-1</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -1520,8 +1520,106 @@
 </prop.list>
 </prop.pair>
 <prop.pair>
+<key>FrameReanim-3</key>
+<prop.list>
+<prop.pair>
+<key>HiddenTabs</key>
+<array>
+<array.type><string/></array.type>
+</array>
+</prop.pair>
+<prop.pair>
+<key>RemovedTabs</key>
+<array>
+<array.type><string/></array.type>
+<string>AE CEP Extension-com.markusbergelt.geolayers3.main</string>
+</array>
+</prop.pair>
+<prop.pair>
+<key>WinSerData</key>
+<string>&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;HasLeftBar&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;HasRightBar&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;HasStatBar&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;HasToolBar&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;Splitter&lt;/key&gt;
+&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;Orient&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;Place&lt;/key&gt;
+&lt;float&gt;0.5&lt;/float&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;Sub1&lt;/key&gt;
+&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;FrameProxy&lt;/key&gt;
+&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;HidTabState-0&lt;/key&gt;
+&lt;string&gt;&amp;lt;prop.list&amp;gt;
+&amp;lt;prop.pair&amp;gt;
+&amp;lt;key&amp;gt;FrameViewFlags&amp;lt;/key&amp;gt;
+&amp;lt;int type=&amp;apos;signed&amp;apos; size=&amp;apos;32&amp;apos;&amp;gt;4&amp;lt;/int&amp;gt;
+&amp;lt;/prop.pair&amp;gt;
+&amp;lt;/prop.list&amp;gt;
+&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;TabIDs&lt;/key&gt;
+&lt;array&gt;
+&lt;array.type&gt;&lt;string/&gt;&lt;/array.type&gt;
+&lt;string&gt;AE CEP Extension-com.markusbergelt.geolayers3.main&lt;/string&gt;
+&lt;/array&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;Sub1Vis&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;Sub2Vis&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;SzPos&lt;/key&gt;
+&lt;array&gt;
+&lt;array.type&gt;&lt;int type=&apos;signed&apos; size=&apos;32&apos;/&gt;&lt;/array.type&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;2323&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;154&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;917&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;717&lt;/int&gt;
+&lt;/array&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+</string>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
 <key>FrameReanimMax</key>
-<int type='unsigned' size='32'>3</int>
+<int type='unsigned' size='32'>4</int>
 </prop.pair>
 <prop.pair>
 <key>WorkspaceBaseVersion</key>

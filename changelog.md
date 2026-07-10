@@ -1,4 +1,4 @@
-# <> Release 2.18.x - 
+# <> Release 2.18.1 - Rudimentary UXP 'Support'
 
 > [!Warning]
 > I am aware of an issue that may cause some (seemingly unrelated) scripts to throw if `Premiere` or `After Effects` is not installed. This was originally designed to be intentional behaviour to stop the user from attempting to use functions for a program they didn't even have installed.  
