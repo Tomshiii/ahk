@@ -944,7 +944,7 @@ export async function organiseProject(): Promise<void> {
 
 /**
  * adjust component parameters of the selected clips
- * @param {number} [componentIndex]
+ * @param {number} [componentIndex] unassigned masks is `0`, `Motion` is `1`
  * @param {number} [paramIndex]
  * @param {number | string | boolean} [value]
  * @returns {void}
@@ -970,7 +970,9 @@ export async function setClipComponentParam(
     let coercedValue: any;
     if (typeof value === "string" && value.includes(",")) {
         const parts = value.split(",").map(Number);
-        coercedValue = await ppro.PointF(parts[0], parts[1]);
+        const settings = await sequence.getSettings();
+        const frameRect = await settings.getVideoFrameRect();
+        coercedValue = await ppro.PointF(Number(parts[0] / frameRect.width), Number(parts[1] / frameRect.height));
     } else if (value === "true" || value === "false") {
         coercedValue = value === "true";
     } else if (!isNaN(Number(value))) {

@@ -16,7 +16,7 @@ if fil['requiredPermissions']['localFileSystem'] != "fullAccess" {
     fil['requiredPermissions']['localFileSystem'] := "fullAccess"
     FileAppend(json.stringify(fil), dir "\manifest_temp.json")
     FileDelete(manifest)
-    FileMove(dir "\manifest_temp.json", manifest)
+    FileMove(dir "\manifest_temp.json", manifest, true)
 }
 
 ;// ======= docker =======

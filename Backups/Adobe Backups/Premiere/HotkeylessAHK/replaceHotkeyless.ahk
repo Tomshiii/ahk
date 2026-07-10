@@ -1,11 +1,11 @@
-SplitPath(A_LineFile,, &thisDir)
-SetWorkingDir(thisDir)
 
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\winget.ahk
 ; }
 
+SplitPath(A_LineFile,, &thisDir)
+SetWorkingDir(thisDir)
 hotkeylessFile := A_WorkingDir "\HotkeylessAHK.ahk"
 desiredFolder := WinGet.pathU(A_WorkingDir "..\..\..\..\..\..\HotkeylessAHK-3.0.0")
 if !DirExist(desiredFolder)

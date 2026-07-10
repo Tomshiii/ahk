@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/09
- * @version 2.4.45
+ * @date 2026/07/10
+ * @version 2.4.46
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -121,7 +121,7 @@ class Prem {
             remotePath     := extensionsPath "\PremiereRemote"
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
             if DirExist(remotePath) && (getNPM != false && getNPM != "")
-                SetTimer(this.checkRemote.Bind(this), 2000)
+                SetTimer(this.checkRemote.Bind(this, this.portCEP), 2000)
 
             ;// toggle multicam when audio effect windows become active
             if !WinEvent.IsRegistered("Active", "Clip Fx Editor " this.exeTitle)
@@ -162,6 +162,8 @@ class Prem {
         get => this.UserSettings.use_swapSequences
     }
     static remoteActive := "loading"
+    static portCEP := 8081
+    static portUXP := 8084
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
@@ -249,12 +251,12 @@ class Prem {
 
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
-    static checkRemote() {
+    static checkRemote(port := 8081) {
         if !WinExist(this.winTitle)
             return
         try {
             sock := winsock("probe", (s,e,c) => this.probeCB(s,e,c), "IPV4")
-            sock.Connect("localhost", 8081)
+            sock.Connect("localhost", port)
         } catch {
             errorLog(TargetError("Couldn't probe localhost", -1))
             return
@@ -3854,9 +3856,14 @@ class Prem {
             sleep 25
         }
 
-        _setComboBox(1, dropSource) ;// source
-        _setComboBox(2, dropFormat) ;// format
-        _setComboBox(3, dropPreset) ;// preset
+        try {
+            _setComboBox(1, dropSource) ;// source
+            _setComboBox(2, dropFormat) ;// format
+            _setComboBox(3, dropPreset) ;// preset
+        } catch {
+            return false
+        }
+        return true
     }
 
     /**
@@ -3937,10 +3944,14 @@ class Prem {
         }
         if clipType != "Video"
             return false
-        if !this.setRnderRplcPreset(dropPreset, dropSource, dropFormat,, &AdobeEl)
+        if !this.setRnderRplcPreset(dropPreset, dropSource, dropFormat,, &AdobeEl) {
+            errorLog(MethodError("preset failed", -1))
             return false
-        if !this.setRnderRplcPath(path, AdobeEl)
+        }
+        if !this.setRnderRplcPath(path, AdobeEl) {
+            errorLog(MethodError("path failed", -1))
             return false
+        }
         sleep 50
         if !WinWaitActive("Render and Replace " this.exeTitle,, 2) {
             try WinActivate("Render and Replace " this.exeTitle)
@@ -4004,12 +4015,15 @@ class Prem {
 
     /**
      * Save effects so they can be easily pasted later. Will also save custom keyframes/values. Simply select a clip and call the function.
-     * @param {Boolean} [save=true] whether you wish to save the current clip, or paste the saved effect
-     * @param {Integer} [slot=1] which slot you wish to call/save to
-     * @param {Boolean} [saveToFile=false] determine whether you wish to use `Core Functionality` or write to disk to maintain saves between reloads
+     * @param {Boolean} [save=true] whether you wish to save the current selected clip effects, or paste the saved effect
+     * @param {Integer} [slot=1] which slot you wish to call/save from/to
+     * @param {Boolean} [saveToFile=false] determines whether you wish to use `Core Functionality` or write to disk to maintain saves between reloads
      */
     static effectSlot(save := true, slot := 1, saveToFile := false) {
         ; validateTypes(["Integer", "Integer"], save, slot) ;breaks hotkeylessahk
+        notifs := ['premEffectSlotFailed', 'premEffectSlotNoneSaved', 'premEffectSlotJSONFailed', 'premEffectSlotSaved', 'premEffectSlotPreSend', 'premEffectSlotFailedRead', 'premEffectSlotApplied', 'premEffectERROR']
+        for v in notifs
+            notifyExt.deleteIfExist(v)
         slotsDir := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\slots"
         if !DirExist(slotsDir)
             DirCreate(slotsDir)
@@ -4070,12 +4084,14 @@ class Prem {
                 notifyExt.showIfNotExist('premEffectSlotSaved',, 'Effects saved to slot: ' slot, 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 bdr=Teal iw=26 show=Fade@250 hide=Fade@250 maxW=400')
                 return
             case false:
+                notifyExt.showIfNotExist('premEffectSlotPreSend',, "Sending saved effects...", 'C:\Windows\System32\shell32.dll|icon134',,, 'dur=0 bdr=Teal iw=26 show=Fade@250 hide=Fade@250 maxW=400')
                 switch checkBool(saveToFile) {
                     case false:
                         stringg := Base64Encode(slots.%slot%)
                         try t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
                         catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
+                            notifyExt.deleteIfExist('premEffectSlotPreSend')
                             notifyExt.showIfNotExist('premEffectSlotFailedRead',, "Failed to read effects slot file: " slot,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                             return
                         }
@@ -4085,12 +4101,14 @@ class Prem {
                             t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
                         } catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
+                            notifyExt.deleteIfExist('premEffectSlotPreSend')
                             notifyExt.showIfNotExist('premEffectSlotFailedRead',, "Failed to read effects slot file: " slot "`n" slotFile,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                             return
                         }
                 }
+                notifyExt.deleteIfExist('premEffectSlotPreSend')
                 if __checkErrors(t) != false
-                    notifyExt.showIfNotExist('premEffectSlotApplied',, 'Effects applied from slot: ' slot, 'C:\Windows\System32\imageres.dll|icon240',,, 'dur=4 bdr=Teal iw=26 show=Fade@250 hide=Fade@250 maxW=400')
+                    notifyExt.showIfNotExist('premEffectSlotApplied',, 'Effects applied from slot: ' slot, 'C:\Windows\System32\imageres.dll|icon240',,, 'dur=4 bdr=Teal iw=26 show=Fade@250 hide=Fade@250 maxW=400', true)
                 return
         }
 
