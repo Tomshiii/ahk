@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/10
- * @version 2.4.46
+ * @date 2026/07/15
+ * @version 2.4.47
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -4050,7 +4050,7 @@ class Prem {
         }
         switch checkBool(save) {
             case true:
-                t := prem.__remoteFunc('saveEffectSlotJSON', true)
+                t := this.__remoteFunc('saveEffectSlotJSON', true)
                 if InStr(t, "error") {
                     __checkErrors(t)
                     return
@@ -4088,7 +4088,7 @@ class Prem {
                 switch checkBool(saveToFile) {
                     case false:
                         stringg := Base64Encode(slots.%slot%)
-                        try t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                        try t := this.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
                         catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
                             notifyExt.deleteIfExist('premEffectSlotPreSend')
@@ -4098,7 +4098,7 @@ class Prem {
                     case true:
                         try {
                             stringg := Base64Encode(FileRead(slotFile))
-                            t := prem.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                            t := this.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
                         } catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
                             notifyExt.deleteIfExist('premEffectSlotPreSend')
