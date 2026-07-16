@@ -1,3 +1,10 @@
+import { EffectEntry } from "./EffectUtils"; // adjust path/filename to wherever EffectEntry actually lives
+interface XmlRecord { tag: string; content: string; }
+declare const JSON: {
+    stringify(value: any): string;
+    parse(text: string): any;
+};
+
 export class Utils {
     static ticksPerSecond = 254016000000;
 
@@ -828,4 +835,168 @@ export class Utils {
     }
     return output;
   }
+
+  static buildXmlIndex(xml: string): { [id: string]: XmlRecord } {
+    var index: { [id: string]: XmlRecord } = {};
+    var openTagRe = /<([A-Za-z0-9_]+)([^>]*)>/g;
+    var m: RegExpExecArray | null;
+    while ((m = openTagRe.exec(xml)) !== null) {
+        var fullTag = m[0];
+        if (fullTag.charAt(fullTag.length - 2) === "/") continue;
+        if (fullTag.charAt(1) === "/") continue;
+
+        var tagName = m[1];
+        var attrs = m[2];
+        var idMatch = attrs.match(/\bObjectID="(\d+)"/);
+        if (!idMatch) continue;
+
+        var startIdx = (openTagRe as any).lastIndex; // cast: lastIndex isn't in this project's RegExp lib typing, but exists at runtime
+        var closeTag = "</" + tagName + ">";
+        var endIdx = xml.indexOf(closeTag, startIdx);
+        if (endIdx === -1) continue;
+
+        index[idMatch[1]] = { tag: tagName, content: xml.substring(startIdx, endIdx) };
+        (openTagRe as any).lastIndex = endIdx + closeTag.length; // same cast here
+    }
+    return index;
+}
+
+static extractTag(content: string, tagName: string): string | null {
+    var re = new RegExp("<" + tagName + "(?:\\s[^>]*)?>([\\s\\S]*?)<\\/" + tagName + ">");
+    var m = content.match(re);
+    return m ? m[1] : null;
+}
+
+static extractRef(content: string, tagName: string): string | null {
+    var re = new RegExp("<" + tagName + "\\s+ObjectRef=\"(\\d+)\"\\s*\\/>");
+    var m = content.match(re);
+    return m ? m[1] : null;
+}
+
+static extractAllRefs(content: string, containerTag: string, itemTag: string): string[] {
+    var container = this.extractTag(content, containerTag);
+    if (!container) return [];
+    var re = new RegExp("<" + itemTag + "\\s+Index=\"(\\d+)\"\\s+ObjectRef=\"(\\d+)\"\\s*\\/>", "g");
+    var results: { index: number; ref: string }[] = [];
+    var m: RegExpExecArray | null;
+    while ((m = re.exec(container)) !== null) {
+        results.push({ index: Number(m[1]), ref: m[2] });
+    }
+    results.sort(function (a, b) { return a.index - b.index; });
+    var refs: string[] = [];
+    for (var i = 0; i < results.length; i++) refs.push(results[i].ref);
+    return refs;
+}
+
+static paramName(content: string): string {
+    return this.extractTag(content, "Name") || this.extractTag(content, "n") || "";
+}
+
+static parseStartKeyframeValue(raw: string | null): any {
+    if (!raw) return undefined;
+    var rawValue = raw.split(",")[1];
+    if (rawValue === "true") return true;
+    if (rawValue === "false") return false;
+    var num = Number(rawValue);
+    return isNaN(num) ? rawValue : num;
+}
+
+static prfpsetXmlToBuckets(xmlText: string): { mediaType: string, effects: EffectEntry[] }[] {
+    var index = this.buildXmlIndex(xmlText);
+    var buckets: { [mediaType: string]: EffectEntry[] } = {};
+
+    for (var id in index) {
+        var rec = index[id];
+        if (rec.tag !== "FilterPresetItem") continue;
+
+        var presetRefs = this.extractAllRefs(rec.content, "FilterPresets", "FilterPreset");
+        for (var pi = 0; pi < presetRefs.length; pi++) {
+            var presetRec = index[presetRefs[pi]];
+            if (!presetRec) continue;
+
+            var matchName = this.extractTag(presetRec.content, "FilterMatchName") || "";
+            var anchorInPoint = this.extractTag(presetRec.content, "AnchorInPoint") || "0";
+            var anchorOutPoint = this.extractTag(presetRec.content, "AnchorOutPoint") || anchorInPoint;
+
+            var componentRef = this.extractRef(presetRec.content, "Component");
+            var componentRec = componentRef ? index[componentRef] : null;
+            if (!componentRec) continue;
+
+            var mediaType = componentRec.tag === "VideoFilterComponent" ? "Video" : "Audio";
+            var innerBlock = this.extractTag(componentRec.content, "Component") || componentRec.content;
+            var displayName = this.extractTag(innerBlock, "DisplayName") || "";
+
+            var properties: any[] = [];
+            var paramRefs = this.extractAllRefs(innerBlock, "Params", "Param");
+            for (var pr = 0; pr < paramRefs.length; pr++) {
+                var paramRec = index[paramRefs[pr]];
+                if (!paramRec) {
+                    properties.push({ displayName: "", isTimeVarying: false, value: undefined });
+                    continue;
+                }
+                var name = this.paramName(paramRec.content);
+                var isTimeVarying = (this.extractTag(paramRec.content, "IsTimeVarying") || "false") === "true";
+
+                if (isTimeVarying) {
+                    var keyframesRaw = this.extractTag(paramRec.content, "Keyframes") || "";
+                    var keyframes: any[] = [];
+                    var entries = keyframesRaw.split(";");
+                    for (var e = 0; e < entries.length; e++) {
+                        var entry = entries[e].replace(/^\s+|\s+$/g, "");
+                        if (!entry) continue;
+                        var parts = entry.split(",");
+                        var time = parts[0];
+                        var rawValue = parts[1];
+                        var value: any;
+                        if (rawValue === "true") value = true;
+                        else if (rawValue === "false") value = false;
+                        else {
+                            var num = Number(rawValue);
+                            value = isNaN(num) ? rawValue : num;
+                        }
+                        keyframes.push({ time: time, value: value });
+                    }
+                    properties.push({ displayName: name, isTimeVarying: true, keyframes: keyframes });
+                } else {
+                    var startKeyframeRaw = this.extractTag(paramRec.content, "StartKeyframe");
+                    properties.push({ displayName: name, isTimeVarying: false, value: this.parseStartKeyframeValue(startKeyframeRaw) });
+                }
+            }
+
+            if (!buckets[mediaType]) buckets[mediaType] = [];
+            buckets[mediaType].push({ matchName: matchName, displayName: displayName, anchorInPoint: anchorInPoint, anchorOutPoint: anchorOutPoint, properties: properties } as any);
+        }
+    }
+
+    var result: { mediaType: string, effects: EffectEntry[] }[] = [];
+    for (var mt in buckets) {
+        result.push({ mediaType: mt, effects: buckets[mt] });
+    }
+    return result;
+}
+
+/**
+ * reads a file path off disk, or falls back to treating the input as a
+ * base64-encoded JSON string (for backwards compatibility with old callers)
+ */
+static readAndDecodeText(filePathOrData) {
+    var file = new File(filePathOrData);
+    if (file.exists) {
+        file.encoding = "UTF-8";
+        file.open("r");
+        var text = file.read();
+        file.close();
+        return this.parsePayloadText(text);
+    }
+    var decoded = this.base64Decode(filePathOrData);
+    return this.parsePayloadText(decoded);
+}
+
+static parsePayloadText(text) {
+    var trimmed = text.replace(/^\s+/, "");
+    if (trimmed.indexOf("<?xml") === 0 || trimmed.indexOf("<PremiereData") === 0) {
+        return this.prfpsetXmlToBuckets(text);
+    }
+    return JSON.parse(trimmed);
+}
 }

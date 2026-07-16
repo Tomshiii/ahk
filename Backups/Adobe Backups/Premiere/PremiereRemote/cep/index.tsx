@@ -11,6 +11,8 @@ declare const JSON: {
     parse(text: string): any;
 };
 
+interface XmlRecord { tag: string; content: string; }
+
 /**
  * ALL functions defined here are visible via the localhost service.
  */
@@ -26,19 +28,13 @@ export const host = {
   kill: function () { },
 
   applyEffectSlotJSON: function(data: string) {
-    var jsonStr;
+     var payload;
     try {
-        jsonStr = Utils.base64Decode(data);
+        payload = Utils.readAndDecodeText(data);
     } catch (e) {
-        return "ERROR at base64Decode: " + e.toString();
+        return "ERROR at decode/parse: " + e.toString();
     }
-
-    var payload;
-    try {
-        payload = JSON.parse(jsonStr);
-    } catch (e) {
-        return "ERROR at JSON.parse: " + e.toString() + " | jsonStr=" + jsonStr;
-    }
+    if (!payload) return "ERROR: could not read/parse preset data";
 
     try {
         app.enableQE();

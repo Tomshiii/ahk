@@ -1,9 +1,11 @@
 import { Utils } from "./Utils";
 
-interface EffectEntry {
+export interface EffectEntry {
     matchName: string;
-    displayName?: string;
+    displayName: string;
     properties: PropertyEntry[];
+    anchorInPoint?: string;
+    anchorOutPoint?: string;
 }
 interface PropertyEntry {
     displayName: string;
@@ -17,6 +19,10 @@ var SKIPPED_MATCH_NAMES: { [key: string]: boolean } = {
     "Internal Volume Stereo": true,
     "Internal Channel Volume Stereo": true,
     "Internal Volume Mono": true
+};
+declare const JSON: {
+    stringify(value: any): string;
+    parse(text: string): any;
 };
 
 export class EffectUtils {
@@ -305,6 +311,7 @@ export class EffectUtils {
 
     static applyEffectsToClip(targetTrackItem: any, qeTargetClip: any, effectData: EffectEntry[]) {
         var results: string[] = [];
+        var TICKS_PER_SECOND = 254016000000;
 
         for (var e = 0; e < effectData.length; e++) {
             var fx = effectData[e];
@@ -366,9 +373,6 @@ export class EffectUtils {
                 // instead of by matchName lookup.
                 var targetComp = null;
                 if (afterCount === beforeCount + 1) {
-                    // simplest case: components collection grew by exactly one,
-                    // so the new one should be the one at the new highest index
-                    // whose matchName matches what we just added
                     for (var c = afterCount - 1; c >= 0; c--) {
                         if (targetTrackItem.components[c].matchName === fx.matchName) {
                             targetComp = targetTrackItem.components[c];
@@ -388,12 +392,34 @@ export class EffectUtils {
                     try {
                         if (savedProp.isTimeVarying && savedProp.keyframes) {
                             if (!liveProp.isTimeVarying()) liveProp.setTimeVarying(true);
+                            results.push(fx.matchName + "." + savedProp.displayName + ": isTimeVarying after set = " + liveProp.isTimeVarying());
+
+                            var hasAnchors = fx.anchorInPoint !== undefined && fx.anchorOutPoint !== undefined;
+                            var anchorIn, originalSpan, scaleRatio;
+
+                            if (hasAnchors) {
+                                anchorIn = Number(fx.anchorInPoint);
+                                var anchorOut = Number(fx.anchorOutPoint);
+                                originalSpan = anchorOut - anchorIn;
+                                var clipDurationTicks = Number(targetTrackItem.duration.ticks);
+                                scaleRatio = originalSpan > 0 ? (clipDurationTicks / originalSpan) : 1;
+                            }
+
                             for (var k = 0; k < savedProp.keyframes.length; k++) {
                                 var kf = savedProp.keyframes[k];
                                 var t = new Time();
-                                t.ticks = String(kf.time);
-                                liveProp.addKey(t);
-                                liveProp.setValueAtKey(t, kf.value, true);
+
+                                if (hasAnchors) {
+                                    var relativeOffsetTicks = Number(kf.time) - anchorIn;
+                                    var scaledOffsetTicks = relativeOffsetTicks * scaleRatio;
+                                    t.seconds = scaledOffsetTicks / TICKS_PER_SECOND;
+                                } else {
+                                    t.seconds = Number(kf.time) / TICKS_PER_SECOND;
+                                }
+
+                                var addResult = liveProp.addKey(t);
+                                var setResult = liveProp.setValueAtKey(t, kf.value, true);
+                                results.push(fx.matchName + "." + savedProp.displayName + " kf" + k + ": t.seconds=" + t.seconds + " addKey=" + addResult + " setValueAtKey=" + setResult);
                             }
                         } else if (savedProp.value !== undefined) {
                             liveProp.setValue(savedProp.value, true);
