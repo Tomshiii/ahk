@@ -1,9 +1,7 @@
 /**
  * @fileoverview Tomshi functions for basic property returns
  */
-
-import { getActiveSequenceName } from "./common";
-import { getActiveSequence } from "./common";
+import * as common from "./common";
 
 import type {
     premierepro,
@@ -19,7 +17,7 @@ const { Constants } = ppro;
  * @returns {string | null} The guid string
  */
 export async function getActiveSequenceID(): Promise<string | null> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return null;
     const guid = String(sequence.guid)
     return guid;
@@ -71,7 +69,7 @@ export async function getSourceMonitorName(): Promise<string> {
  * @returns {string | null} the clip type for the first item in the currently selected trackitem
  */
 export async function getTrackClipType(): Promise<string | null> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return null;
 
     const selection = await sequence.getSelection();
@@ -89,7 +87,7 @@ export async function getTrackClipType(): Promise<string | null> {
         case "3": return "Preview";
         case "4": return "Feedback";
     }
-    return(String(type));
+    return (String(type));
 }
 
 /**

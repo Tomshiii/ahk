@@ -5,7 +5,7 @@
 const lfs = storage.localFileSystem;
 
 import { storage } from 'uxp';
-import { getActiveSequence } from "./common";
+import * as common from "./common";
 import * as prop from "./properties";
 import * as helpers from "./helperfuncs";
 
@@ -29,11 +29,7 @@ import * as uxp from "uxp";
  * @returns {void}
  */
 export async function initSequenceTracking(): Promise<void> {
-    const project = await ppro.Project.getActiveProject();
-    if (!project) return;
-
-    // add currently active sequence as a starting point
-    const active = await project.getActiveSequence();
+   const active = await common.getActiveSequence();
     if (active) openSequences.add(active.guid.toString());
 
     ppro.EventManager.addEventListener(ppro.SequenceEvent.ACTIVATED, (e: any) => {
@@ -102,7 +98,8 @@ export async function openSequence(ID: string): Promise<boolean> {
  */
 export async function closeActiveSequence(): Promise<void> {
     const activeProj = await ppro.Project.getActiveProject();
-    const seq = await getActiveSequence();
+    const seq = await common.getActiveSequence();
+    if (!seq) return;
     return activeProj.closeSequence(seq);
 }
 
@@ -113,7 +110,7 @@ export async function closeActiveSequence(): Promise<void> {
  * @returns {void}
  */
 export async function movePlayhead(subtract: boolean, seconds: number): Promise<void> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
     const settings = await sequence.getSettings();
@@ -138,7 +135,7 @@ export async function movePlayhead(subtract: boolean, seconds: number): Promise<
  * @returns {void}
  */
 export async function movePlayheadFrames(subtract: boolean, frames: number): Promise<void> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
     const settings = await sequence.getSettings();
@@ -175,7 +172,7 @@ export async function closeAllClipSourceMon(): Promise<any> {
  * @returns {void}
  */
 export async function deselectAll(): Promise<void> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
     return await sequence.clearSelection();
@@ -188,13 +185,13 @@ export async function deselectAll(): Promise<void> {
  */
 export async function setZeroPoint(frames: number): Promise<void> {
     const project = await ppro.Project.getActiveProject();
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
     const settings = await sequence.getSettings();
     const frameRate = settings.getVideoFrameRate(); // synchronous method call
     const offset = ppro.TickTime.createWithFrameAndFrameRate(frames, frameRate);
 
-     project.lockedAccess(() => {
+    project.lockedAccess(() => {
         project.executeTransaction((compoundAction) => {
             compoundAction.addAction(
                 sequence.createSetZeroPointAction(offset)
@@ -208,7 +205,7 @@ export async function setZeroPoint(frames: number): Promise<void> {
  * @returns {boolean}
  */
 export async function isSelected(): Promise<boolean> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return false;
     const selection = await sequence.getSelection();
     const items = await selection.getTrackItems();
@@ -222,7 +219,7 @@ export async function isSelected(): Promise<boolean> {
  * @returns {TrackItemSelection}
  */
 export async function isSelectedReturn(): Promise<TrackItemSelection> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return false;
     const selection = await sequence.getSelection();
     const items = await selection.getTrackItems();
@@ -236,7 +233,7 @@ export async function isSelectedReturn(): Promise<TrackItemSelection> {
  * @returns {boolean}
  */
 export async function isClipEnabled(): Promise<boolean> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return false;
 
     const items = isSelectedReturn();
@@ -284,7 +281,7 @@ export async function toggleEnabled(): Promise<void> {
  * @returns {String | null}
  */
 export async function getAudioTracks(): Promise<string | null> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return null;
 
     return String(await sequence.getAudioTrackCount());
@@ -295,7 +292,7 @@ export async function getAudioTracks(): Promise<string | null> {
  * @returns {String | null}
  */
 export async function getVideoTracks(): Promise<string | null> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return null;
 
     return String(await sequence.getVideoTrackCount());
@@ -613,7 +610,7 @@ export async function setupProjBin(): Promise<void> {
  * @returns {void}
  */
 export async function unhideAllVideoTracks(): Promise<void> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
     const trackCount = await sequence.getVideoTrackCount();
@@ -628,7 +625,7 @@ export async function unhideAllVideoTracks(): Promise<void> {
  * @returns {void}
  */
 export async function unmuteAllTracks(): Promise<void> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
     const trackCount = await sequence.getAudioTrackCount();
@@ -649,7 +646,7 @@ export async function setSeqSettings(params: string): Promise<string | void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
 
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
     const settings = await sequence.getSettings();
@@ -740,7 +737,7 @@ export async function toggleLinearColour(enableMaxRenderQual: boolean): Promise<
     const project = await ppro.Project.getActiveProject();
     if (!project) return "failure";
 
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return "failure";
 
     const settings = await sequence.getSettings();
@@ -961,7 +958,7 @@ export async function setClipComponentParam(
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
 
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
     const selection = await sequence.getSelection();
@@ -1005,7 +1002,7 @@ export async function setClipComponentParam(
             for (const { param, keyframe } of paramData) {
                 try {
                     compoundAction.addAction(param.createSetValueAction(keyframe, true));
-                } catch(e) {
+                } catch (e) {
                     console.log("error:", e);
                 }
             }
@@ -1030,7 +1027,7 @@ export async function changeAllAudioLevels(levelInDb: number): Promise<void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
 
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
     const selection = await sequence.getSelection();
@@ -1169,7 +1166,7 @@ export async function setMarker(colour: string): Promise<void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
 
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
     const playerPosition = await sequence.getPlayerPosition();
@@ -1302,7 +1299,7 @@ export async function applyEffectOnAllSelectedClips(effectName: string): Promise
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
 
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return false;
 
     const selection = await sequence.getSelection();
@@ -1335,20 +1332,20 @@ export async function applyEffectOnAllSelectedClips(effectName: string): Promise
                 try {
                     component = await videoFilterFactory.createComponent(name);
                     if (component) break;
-                } catch(e) {
+                } catch (e) {
                     console.log(`video createComponent(${name}) failed:`, e);
                 }
             }
         } else {
             try {
                 component = await audioFilterFactory.createComponentByDisplayName(effectName, item);
-            } catch(e) {
+            } catch (e) {
                 console.log(`audio createComponentByDisplayName failed:`, e);
             }
             if (!component) {
                 try {
                     component = await audioFilterFactory.createComponent(effectName, item);
-                } catch(e) {
+                } catch (e) {
                     console.log(`audio createComponent failed:`, e);
                 }
             }
@@ -1368,7 +1365,7 @@ export async function applyEffectOnAllSelectedClips(effectName: string): Promise
             for (const { chain, component } of clipData) {
                 try {
                     compoundAction.addAction(chain.createInsertComponentAction(component, 2));
-                } catch(e) {
+                } catch (e) {
                     console.log("transaction error:", e);
                 }
             }
@@ -1383,7 +1380,7 @@ export async function applyEffectOnAllSelectedClips(effectName: string): Promise
  * @returns {string}
  */
 export async function listEffectsOnSelectedClip(): Promise<string | false> {
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return false;
 
     const selection = await sequence.getSelection();
@@ -1455,7 +1452,7 @@ interface EffectEntry {
  */
 export async function saveEffectSlotJSON(): Promise<string> {
     try {
-        const sequence = await getActiveSequence();
+        const sequence = await common.getActiveSequence();
         if (!sequence) return "ERROR: no active sequence";
 
         const selection = await sequence.getSelection();
@@ -1587,7 +1584,7 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return "ERROR: no active project";
 
-    const sequence = await getActiveSequence();
+    const sequence = await common.getActiveSequence();
     if (!sequence) return "ERROR: no active sequence";
 
     const selection = await sequence.getSelection();

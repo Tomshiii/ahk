@@ -7,11 +7,9 @@ import { EffectUtils } from "./EffectUtils";
 // (which would type-check other ES5 methods that don't actually
 // exist in ExtendScript's ES3-based engine).
 declare const JSON: {
-    stringify(value: any): string;
-    parse(text: string): any;
+  stringify(value: any): string;
+  parse(text: string): any;
 };
-
-interface XmlRecord { tag: string; content: string; }
 
 /**
  * ALL functions defined here are visible via the localhost service.
@@ -27,90 +25,90 @@ export const host = {
    */
   kill: function () { },
 
-  applyEffectSlotJSON: function(data: string) {
-     var payload;
+  applyEffectSlotJSON: function (data: string) {
+    var payload;
     try {
-        payload = Utils.readAndDecodeText(data);
+      payload = Utils.readAndDecodeText(data);
     } catch (e) {
-        return "ERROR at decode/parse: " + e.toString();
+      return "ERROR at decode/parse: " + e.toString();
     }
     if (!payload) return "ERROR: could not read/parse preset data";
 
     try {
-        app.enableQE();
+      app.enableQE();
     } catch (e) {
-        return "ERROR at enableQE: " + e.toString();
+      return "ERROR at enableQE: " + e.toString();
     }
 
     var seq, selection;
     try {
-        seq = app.project.activeSequence;
-        selection = seq.getSelection();
+      seq = app.project.activeSequence;
+      selection = seq.getSelection();
     } catch (e) {
-        return "ERROR at getSelection: " + e.toString();
+      return "ERROR at getSelection: " + e.toString();
     }
     if (!selection || selection.length === 0) return "ERROR: no clip selected";
 
     var allResults = [];
 
     for (var i = 0; i < selection.length; i++) {
-        var targetTrackItem = selection[i];
+      var targetTrackItem = selection[i];
 
-        var bucket = null;
-        for (var b = 0; b < payload.length; b++) {
-            if (payload[b].mediaType === targetTrackItem.mediaType) {
-                bucket = payload[b];
-                break;
-            }
+      var bucket = null;
+      for (var b = 0; b < payload.length; b++) {
+        if (payload[b].mediaType === targetTrackItem.mediaType) {
+          bucket = payload[b];
+          break;
         }
-        if (!bucket) {
-            allResults.push("[" + targetTrackItem.mediaType + "]: SKIPPED (no saved effects for this media type)");
-            continue;
-        }
+      }
+      if (!bucket) {
+        allResults.push("[" + targetTrackItem.mediaType + "]: SKIPPED (no saved effects for this media type)");
+        continue;
+      }
 
-        var qeTargetClip;
-        try {
-            qeTargetClip = EffectUtils.findQEClipForTrackItem(targetTrackItem);
-        } catch (e) {
-            allResults.push("[" + targetTrackItem.mediaType + "] ERROR at findQEClipForTrackItem: " + e.toString());
-            continue;
-        }
-        if (!qeTargetClip) {
-            allResults.push("[" + targetTrackItem.mediaType + "] ERROR: could not locate QE clip");
-            continue;
-        }
+      var qeTargetClip;
+      try {
+        qeTargetClip = EffectUtils.findQEClipForTrackItem(targetTrackItem);
+      } catch (e) {
+        allResults.push("[" + targetTrackItem.mediaType + "] ERROR at findQEClipForTrackItem: " + e.toString());
+        continue;
+      }
+      if (!qeTargetClip) {
+        allResults.push("[" + targetTrackItem.mediaType + "] ERROR: could not locate QE clip");
+        continue;
+      }
 
-        try {
-            var results = EffectUtils.applyEffectsToClip(targetTrackItem, qeTargetClip, bucket.effects);
-            allResults.push("[" + targetTrackItem.mediaType + "]:\n" + results.join("\n"));
-        } catch (e) {
-            allResults.push("[" + targetTrackItem.mediaType + "] ERROR at applyEffectsToClip: " + e.toString());
-        }
+      try {
+        var results = EffectUtils.applyEffectsToClip(targetTrackItem, qeTargetClip, bucket.effects);
+        allResults.push("[" + targetTrackItem.mediaType + "]:\n" + results.join("\n"));
+      } catch (e) {
+        allResults.push("[" + targetTrackItem.mediaType + "] ERROR at applyEffectsToClip: " + e.toString());
+      }
     }
 
     return "DONE:\n" + allResults.join("\n\n");
   },
 
-  saveEffectSlotJSON: function() {
-      try {
-          app.enableQE();
-          var seq = app.project.activeSequence;
-          var selection = seq.getSelection();
-          if (!selection || selection.length === 0) return "ERROR: no clip selected";
+  saveEffectSlotJSON: function () {
+    try {
+      app.enableQE();
+      var seq = app.project.activeSequence;
+      var selection = seq.getSelection();
+      if (!selection || selection.length === 0) return "ERROR: no clip selected";
 
-          var payload = [];
-          for (var i = 0; i < selection.length; i++) {
-              var trackItem = selection[i];
-              payload.push({
-                  mediaType: trackItem.mediaType, // "Video" or "Audio"
-                  effects: EffectUtils.copyEffectsFromClip(trackItem)
-              });
-          }
-
-          return JSON.stringify(payload);
-      } catch (e) {
-          return "ERROR in saveSelectedClipEffects: " + e.toString();
+      var payload = [];
+      for (var i = 0; i < selection.length; i++) {
+        var trackItem = selection[i];
+        payload.push({
+          mediaType: trackItem.mediaType, // "Video" or "Audio"
+          effects: EffectUtils.copyEffectsFromClip(trackItem)
+        });
       }
+
+      return JSON.stringify(payload);
+    } catch (e) {
+      return "ERROR in saveSelectedClipEffects: " + e.toString();
+    }
   },
 
 
@@ -122,33 +120,33 @@ export const host = {
     return app.project.name
   },
 
-  premVer: function() {
+  premVer: function () {
     return app.version
   },
 
-  premPrefs: function() {
+  premPrefs: function () {
     return app.getPProPrefPath;
   },
 
-  premPrefsPath: function() {
+  premPrefsPath: function () {
     return app.getAppPrefPath;
   },
 
-  getProperty: function(property: string) {
+  getProperty: function (property: string) {
     if (app.properties.doesPropertyExist(property)) {
       return app.properties.getProperty(property);
     }
     return false;
   },
 
-  setProperty: function(property: string, value: any, persistent: string, createIfNotExist: string) {
+  setProperty: function (property: string, value: any, persistent: string, createIfNotExist: string) {
     if (app.properties.doesPropertyExist(property)) {
       if (app.properties.isPropertyReadOnly(property)) {
         alert('Could not rename property "' + property + '" because it is read-only.');
         return;
       } else {
-          app.properties.setProperty(property, value, Boolean(persistent), Boolean(createIfNotExist));
-          return;
+        app.properties.setProperty(property, value, Boolean(persistent), Boolean(createIfNotExist));
+        return;
       }
     }
   },
@@ -157,19 +155,19 @@ export const host = {
     return !!app.project.save();
   },
 
-  getActiveSequence: function() {
+  getActiveSequence: function () {
     return app.project.activeSequence.sequenceID;
   },
 
-  focusSequence: function(ID: string) {
+  focusSequence: function (ID: string) {
     app.project.openSequence(ID);
   },
 
-  renderPreviews: function() {
+  renderPreviews: function () {
     qe.project.getActiveSequence().renderAll();
   },
 
-  sourceMonName: function() {
+  sourceMonName: function () {
     const varr = app.sourceMonitor.getProjectItem();
     return varr.name;
   },
@@ -194,7 +192,7 @@ export const host = {
     return true;
   }, */
 
-  loadInSourceMonitor: function(itemPath: string) {
+  loadInSourceMonitor: function (itemPath: string) {
     // itemPath can be just a filename or a full path like "_Assets/Footage/clip.mov"
 
     // Find the last slash (backslash or forward slash)
@@ -243,11 +241,11 @@ export const host = {
     return true;
   },
 
-  organiseProj: function() {
+  organiseProj: function () {
     Utils.organiseProject();
   },
 
-  clipType: function() {
+  clipType: function () {
     var selection = app.project.activeSequence.getSelection();
     const mediaType = selection[0].mediaType
     return mediaType
@@ -259,7 +257,7 @@ export const host = {
    *      get:
    *          description: Deselects all video and audio clips
    */
-  deselectAll: function() {
+  deselectAll: function () {
     MarkerUtils.deselectAll();
   },
 
@@ -274,35 +272,35 @@ export const host = {
    *                in: path
    *                type: number
    */
-  changeAudioLevels: function(level: string) {
+  changeAudioLevels: function (level: string) {
     return EffectUtils.changeAllAudioLevels(parseFloat(level));
   },
 
-  setZoomOfCurrentClip: function(zoomLevel: string, xPos: string, yPos: string, anchorX: string, anchorY: string) {
+  setZoomOfCurrentClip: function (zoomLevel: string, xPos: string, yPos: string, anchorX: string, anchorY: string) {
     Utils.setZoomOfCurrentClip(parseFloat(zoomLevel), parseFloat(xPos), parseFloat(yPos), parseFloat(anchorX), parseFloat(anchorY));
   },
 
-  setScale: function(scale: string) {
+  setScale: function (scale: string) {
     Utils.setScaleOfCurrentClip(parseFloat(scale));
   },
 
-  getProxyToggle: function() {
+  getProxyToggle: function () {
     return app.getEnableProxies();
   },
 
-  setProxies: function(toggle: string) {
+  setProxies: function (toggle: string) {
     app.setEnableProxies(parseInt(toggle));
   },
 
-  setZeroPoint: function(tick: string) {
+  setZeroPoint: function (tick: string) {
     app.project.activeSequence.setZeroPoint(tick);
   },
 
-  movePlayhead: function(subtract: string, seconds: string) {
+  movePlayhead: function (subtract: string, seconds: string) {
     Utils.movePlayhead(subtract, parseInt(seconds));
   },
 
-  movePlayheadFrames: function(subtract: string, frames: string) {
+  movePlayheadFrames: function (subtract: string, frames: string) {
     Utils.movePlayheadFrames(subtract, parseInt(frames));
   },
 
@@ -314,31 +312,31 @@ export const host = {
     return Utils.isSelected();
   },
 
-  toggleLinearColour: function(enableMaxRenderQual: boolean) {
+  toggleLinearColour: function (enableMaxRenderQual: boolean) {
     return Utils.toggleLinearColour(enableMaxRenderQual);
   },
 
-  toggleEnabled: function() {
+  toggleEnabled: function () {
     Utils.toggleEnabled();
   },
 
-  isClipEnabled: function() {
+  isClipEnabled: function () {
     return Utils.isClipEnabled();
   },
 
-  getAudioTracks: function() {
+  getAudioTracks: function () {
     return Utils.getAudioTracks();
   },
 
-  getVideoTracks: function() {
+  getVideoTracks: function () {
     return Utils.getVideoTracks();
   },
 
-  closeActiveSequence: function(allExcept: boolean) {
+  closeActiveSequence: function (allExcept: boolean) {
     const activeSequence = app.project.activeSequence;
 
     if (!activeSequence) {
-        return;
+      return;
     }
 
     const activeID = activeSequence.sequenceID;
@@ -348,107 +346,107 @@ export const host = {
     switch (allExcept == true) {
       case false:
         for (let i = 0; i < numSequences; i++) {
-            const seq = allSequences[i];
-            if (seq.sequenceID === activeID) {
-                seq.close(); // Close the sequence tab
-                return;
-            }
+          const seq = allSequences[i];
+          if (seq.sequenceID === activeID) {
+            seq.close(); // Close the sequence tab
+            return;
+          }
         }
         break;
       case true:
         for (let i = 0; i < numSequences; i++) {
-            const seq = allSequences[i];
-            if (seq.sequenceID !== activeID) {
-                seq.close(); // Close the sequence tab
-                continue;
-            }
+          const seq = allSequences[i];
+          if (seq.sequenceID !== activeID) {
+            seq.close(); // Close the sequence tab
+            continue;
+          }
         }
         break;
     }
   },
 
   // @link : https://github.com/Adobe-CEP/Samples/blob/fbc2f2fc090b41a07f07f9fffe2043d9bafb4988/PProPanel/jsx/PPRO/Premiere.jsx#L425
-  searchForBinWithName : function(nameToFind: string, inFolder?: ProjectItem) {
+  searchForBinWithName: function (nameToFind: string, inFolder?: ProjectItem) {
     if (!inFolder) {
       var inFolder = app.project.rootItem
     }
-		// deep-search a folder by name in project
-		var deepSearchBin = function (inFolder) {
-			if (inFolder && inFolder.name === nameToFind && inFolder.type === 2) {
-				return inFolder;
-			} else {
-				for (var i = 0; i < inFolder.children.numItems; i++) {
-					if (inFolder.children[i] && inFolder.children[i].type === 2) {
-						var foundBin = deepSearchBin(inFolder.children[i]);
-						if (foundBin) {
-							return foundBin;
-						}
-					}
-				}
-			}
-		};
-		return deepSearchBin(inFolder);
-	},
+    // deep-search a folder by name in project
+    var deepSearchBin = function (inFolder) {
+      if (inFolder && inFolder.name === nameToFind && inFolder.type === 2) {
+        return inFolder;
+      } else {
+        for (var i = 0; i < inFolder.children.numItems; i++) {
+          if (inFolder.children[i] && inFolder.children[i].type === 2) {
+            var foundBin = deepSearchBin(inFolder.children[i]);
+            if (foundBin) {
+              return foundBin;
+            }
+          }
+        }
+      }
+    };
+    return deepSearchBin(inFolder);
+  },
 
   // @link : https://github.com/Adobe-CEP/Samples/blob/fbc2f2fc090b41a07f07f9fffe2043d9bafb4988/PProPanel/jsx/PPRO/Premiere.jsx#L1119
   // @link : https://chatgpt.com/s/t_6924520380ec8191882f7441c64f1251
-  searchForItemByName: function(bin: ProjectItem, name: string) {
+  searchForItemByName: function (bin: ProjectItem, name: string) {
     for (var i = 0; i < bin.children.numItems; i++) {
-        var child = bin.children[i];
+      var child = bin.children[i];
 
-        if (!child) continue;
+      if (!child) continue;
 
-        // Match file
-        if (child.type !== ProjectItemType.BIN && child.name === name) {
-            return child;
-        }
+      // Match file
+      if (child.type !== ProjectItemType.BIN && child.name === name) {
+        return child;
+      }
 
-        // Search inside sub-bins
-        if (child.type === ProjectItemType.BIN) {
-            var found = this.searchForItemByName(child, name);
-            if (found) return found;
-        }
+      // Search inside sub-bins
+      if (child.type === ProjectItemType.BIN) {
+        var found = this.searchForItemByName(child, name);
+        if (found) return found;
+      }
     }
     return null;
   },
 
-  setMarker: function(colour: string) {
+  setMarker: function (colour: string) {
     return MarkerUtils.setMarker(colour);
   },
 
-  applyEffectOnAllSelectedClips: function(effect: string) {
+  applyEffectOnAllSelectedClips: function (effect: string) {
     return EffectUtils.applyEffectOnAllSelectedClips(effect);
   },
 
-  listEffectsOnSelectedClip: function() {
+  listEffectsOnSelectedClip: function () {
     return EffectUtils.listEffectsOnSelectedClip();
   },
 
-  isPlaying: function() {
+  isPlaying: function () {
     return Utils.isPlaying();
   },
 
-  checkObjParams: function() {
+  checkObjParams: function () {
     Utils.checkObjParams();
   },
 
-  checkFuncParams: function(inspectPath: string) {
+  checkFuncParams: function (inspectPath: string) {
     Utils.checkFuncParams(inspectPath);
   },
 
-  startPlayback: function() {
+  startPlayback: function () {
     qe.startPlayback();
   },
 
-  togglePlayback: function() {
+  togglePlayback: function () {
     qe.project.getActiveSequence().multicam.stop();
   },
 
-  isSequence: function() {
+  isSequence: function () {
     Utils.isSequence();
   },
 
-  moveToAssetsBin: function(folderPath: any) {
+  moveToAssetsBin: function (folderPath: any) {
     // Navigate to or create a folder path in the project panel
     // Examples: `_Sequences`, `_Assets\\01_Other`, `_Assets/Footage/Raw/Day1`
     var selected = app.getCurrentProjectViewSelection();
@@ -465,64 +463,64 @@ export const host = {
     Utils.moveToFolder(selected, targetFolder);
   },
 
-  enableAllVideoTracks: function() {
+  enableAllVideoTracks: function () {
     Utils.enableAllVideoTracks();
   },
 
-  unmuteAllMutedTracks: function() {
+  unmuteAllMutedTracks: function () {
     Utils.unmuteAllMutedTracks();
   },
 
-  getClipTrackIndex: function() {
+  getClipTrackIndex: function () {
     return Utils.getClipTrackIndex();
   },
 
-  renderInPrem: function(outputPath: string, presetPath: string) {
+  renderInPrem: function (outputPath: string, presetPath: string) {
     return Utils.renderInPrem(outputPath, presetPath);
   },
 
-  selectionIsSequence: function() {
+  selectionIsSequence: function () {
     return Utils.selectionIsSequence();
   },
 
-  importFile: function(filePath: string, importAsStills: string) {
+  importFile: function (filePath: string, importAsStills: string) {
     return app.project.importFiles([filePath], false, app.project.rootItem, Boolean(importAsStills));
   },
 
-  closeClipSourceMon: function() {
+  closeClipSourceMon: function () {
     app.sourceMonitor.closeClip();
   },
 
-  closeAllClipSourceMon: function() {
+  closeAllClipSourceMon: function () {
     app.sourceMonitor.closeAllClips();
   },
 
   // this function expects a `|` delimited list of param/value pairs; x-y-z|x2-y-z2 where `x` is the name of the setting in premiere's settings object, `y` is the new value, `z` is either `true`/`false` to determine if the `y` value should be interpreted as a number instead of as a string
   // params/values must be distinguished by `-` and settings must be separated by `|`.
   // ie. videoFrameHeight-2160-true|videoFrameWidth-3840-true|videoFrameRate-29.97-true
-  setSeqSettings: function(params: string) {
+  setSeqSettings: function (params: string) {
     // alert(params)
     const currentSequence = app.project.activeSequence;
     var currSettings = currentSequence.getSettings();
     // alert(String(currSettings.videoFrameRate))
 
     for (const v of params.split("|")) {
-        var split = v.split("-")
-        // alert(split[0] + split[1])
-        if (split[0] == "videoFrameRate") {
-          var newFrameRate = new Time();
-          newFrameRate.seconds = 1 / Number(split[1])
-          currSettings.videoFrameRate = newFrameRate;
-          continue
-        }
-        currSettings[split[0]] = (split[2] == "false") ? split[1] : Number(split[1])
+      var split = v.split("-")
+      // alert(split[0] + split[1])
+      if (split[0] == "videoFrameRate") {
+        var newFrameRate = new Time();
+        newFrameRate.seconds = 1 / Number(split[1])
+        currSettings.videoFrameRate = newFrameRate;
+        continue
+      }
+      currSettings[split[0]] = (split[2] == "false") ? split[1] : Number(split[1])
     }
     var setNewVal = currentSequence.setSettings(currSettings);
-    if(setNewVal == false)
-        return "failure"
+    if (setNewVal == false)
+      return "failure"
   },
 
-  setAllEnableDisabled: function(enabled: string) {
+  setAllEnableDisabled: function (enabled: string) {
     if (!Utils.isSelected())
       return false
 
@@ -537,14 +535,14 @@ export const host = {
     return true
   },
 
-  isMainThreadFree: function() {
+  isMainThreadFree: function () {
     try {
-        // app.project.documentID is a trivial property read
-        // that still requires main thread access
-        var id = app.project.documentID;
-        return true;
-    } catch(e) {
-        return false;
+      // app.project.documentID is a trivial property read
+      // that still requires main thread access
+      var id = app.project.documentID;
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 };
