@@ -114,6 +114,9 @@ class SettingsApp extends FluentApp {
         this.AdobeCtrls    := Map()
         this.ThioCtrls     := ""
         this.AddGameCtrls  := ""
+        this.ScrollState   := Map()
+        this.DetailPageOpen := false
+        this.ActiveScrollDrag := ""
 
         ;// ── Colour palette ────────────────────────────────────────────────
         this.ThemeBg  := 000000
@@ -186,14 +189,317 @@ class SettingsApp extends FluentApp {
             return
     }
 
+    ;// AddSlider override ────────────────────────────────────────────────────
+    ;// Identical to FluentApp's version but returns obj — the base class builds it
+    ;// then never hands it back, so callers have no way to reference the slider
+    ;// afterwards (needed here for OnSliderChange's value readout + SetSliderEnabled).
+    AddSlider(page, x, y, w, minVal, maxVal, step, defaultVal, text := "", callback := "") {
+        yPos := y
+        if (text != "") {
+            this.Gui.SetFont("s10 w400 c" this.C_Txt, "Segoe UI")
+            lbl := this.Gui.Add("Text", "x" x " y" yPos " w" (w-40) " h20 BackgroundTrans", text)
+            this.Gui.SetFont("s10 w600 c" this.C_SecTxt, "Segoe UI")
+            valLbl := this.Gui.Add("Text", "x" (x+w-40) " y" yPos " w40 h20 Right BackgroundTrans", defaultVal)
+            yPos += 24
+            this.Pages[page].Push(lbl, valLbl)
+        } else {
+            valLbl := ""
+        }
+
+        trackY := yPos + 6
+        track := this.Gui.Add("Text", "x" x " y" trackY " w" w " h6 Background" this.C_Head)
+
+        pct := (defaultVal - minVal) / (maxVal - minVal)
+        fillW := Integer(Max(1, w * pct))
+        fill := this.Gui.Add("Text", "x" x " y" trackY " w" fillW " h6 Background0078D4")
+
+        thumbX := Integer(x + fillW - 8)
+        thumb := this.Gui.Add("Text", "x" thumbX " y" (trackY - 5) " w16 h16 Background0078D4")
+
+        hitbox := this.Gui.Add("Text", "x" x " y" (trackY-10) " w" w " h26 BackgroundTrans")
+
+        obj := { Min: minVal, Max: maxVal, Step: step, Val: defaultVal, X: x, Y: trackY, W: w, Track: track, Fill: fill, Thumb: thumb, ValLbl: valLbl, Cb: callback }
+
+        this.Sliders.Push(obj)
+
+        this.CursorZones[hitbox.Hwnd] := 32649
+        this.CursorZones[track.Hwnd] := 32649
+        this.CursorZones[fill.Hwnd] := 32649
+        this.CursorZones[thumb.Hwnd] := 32649
+
+        this.Pages[page].Push(track, fill, thumb, hitbox)
+        return obj
+    }
+
     NavigateTo(fromPage, toPage) {
         this.ClosePopup()
         for ctrl in this.Pages[fromPage]
             ctrl.Opt("Hidden")
         for ctrl in this.Pages[toPage]
             ctrl.Opt("-Hidden")
+        ;// track whether we're inside a "detail" page (Thio/AE/Premiere/AddGame) —
+        ;// those aren't scrollable, so wheel events shouldn't try to scroll whatever
+        ;// main tab is still nominally this.ActiveTab underneath them
+        this.DetailPageOpen := !this.IsTopLevelPage(toPage)
+        this.ReclipScroll(toPage)
         WinRedraw(this.Gui.Hwnd)
         try ControlFocus(this.Dummy)
+    }
+
+    IsTopLevelPage(page) => ["General", "Scripts", "Editors"].IndexOf(page) > 0
+
+    ;// Wraps the inherited SwitchTab to (1) mark that we've left any detail page, and
+    ;// (2) re-apply scroll clipping — SwitchTab's generic show/hide would otherwise
+    ;// un-hide controls that were scrolled out of view before the tab was last left.
+    SwitchTab(targetPage) {
+        this.DetailPageOpen := false
+        super.SwitchTab(targetPage)
+        this.ReclipScroll(targetPage)
+    }
+
+    ;// Routes wheel events to page-scroll when appropriate, otherwise defers to the
+    ;// inherited behaviour (popup-menu scrolling).
+    OnMouseWheel(wParam, lParam, msg, hwnd) {
+        if (this.HasOwnProp("Pop") && this.Pop && this.PopMaxScroll > 0)
+            return super.OnMouseWheel(wParam, lParam, msg, hwnd)
+
+        if !this.DetailPageOpen && this.HasOwnProp("ScrollState") && this.ScrollState.Has(this.ActiveTab) {
+            delta := (wParam >> 16) & 0xFFFF
+            if (delta > 0x7FFF)
+                delta -= 0x10000
+            dir := (delta > 0) ? -1 : 1
+            this.ScrollPage(this.ActiveTab, dir)
+            return 0
+        }
+    }
+
+    ;// Click-drag on the scrollbar track/thumb. Checked first; falls through to the
+    ;// inherited handler (sliders, toggles, dropdown popups, hover clicks, etc.) when
+    ;// the click wasn't on an active scrollbar.
+    OnLButtonDown(wParam, lParam, msg, hwnd) {
+        if !this.DetailPageOpen && this.HasOwnProp("ScrollState") && this.ScrollState.Has(this.ActiveTab) {
+            state := this.ScrollState[this.ActiveTab]
+            if state.HasOwnProp("Thumb") && state.MaxScroll > 0 {
+                DllCall("GetCursorPos", "Ptr", pt := Buffer(8))
+                DllCall("ScreenToClient", "Ptr", this.Gui.Hwnd, "Ptr", pt)
+                mX := NumGet(pt, 0, "Int"), mY := NumGet(pt, 4, "Int")
+                state.Track.GetPos(&tX, &tY, &tW, &tH)
+                if (mX >= tX - 6 && mX <= tX + tW + 6 && mY >= state.ViewTop && mY <= state.ViewBottom) {
+                    state.Thumb.GetPos(,&thY,, &thH)
+                    this.ActiveScrollDrag := {Page: this.ActiveTab, State: state, GrabOffset: mY - thY}
+                    DllCall("SetCapture", "Ptr", this.Gui.Hwnd)
+                    this.UpdateScrollDragFromMouse()
+                    return
+                }
+            }
+        }
+        super.OnLButtonDown(wParam, lParam, msg, hwnd)
+    }
+
+    OnMouseMove(wParam, lParam, msg, hwnd) {
+        if this.ActiveScrollDrag {
+            this.UpdateScrollDragFromMouse()
+            return
+        }
+        super.OnMouseMove(wParam, lParam, msg, hwnd)
+    }
+
+    OnLButtonUp(wParam, lParam, msg, hwnd) {
+        if this.ActiveScrollDrag {
+            this.ActiveScrollDrag := ""
+            DllCall("ReleaseCapture")
+            return
+        }
+        super.OnLButtonUp(wParam, lParam, msg, hwnd)
+    }
+
+    UpdateScrollDragFromMouse() {
+        drag  := this.ActiveScrollDrag
+        state := drag.State
+
+        avail := (state.ViewBottom - state.ViewTop) - state.ThumbH
+        if avail <= 0
+            return
+
+        DllCall("GetCursorPos", "Ptr", pt := Buffer(8))
+        DllCall("ScreenToClient", "Ptr", this.Gui.Hwnd, "Ptr", pt)
+        mY := NumGet(pt, 4, "Int")
+
+        thumbY := Min(Max(state.ViewTop, mY - drag.GrabOffset), state.ViewTop + avail)
+        pct := (thumbY - state.ViewTop) / avail
+        newScrollY := Round(pct * state.MaxScroll)
+
+        if newScrollY != state.ScrollY {
+            state.ScrollY := newScrollY
+            this.ReclipScroll(drag.Page)
+        }
+        state.Thumb.Move(, thumbY)
+    }
+
+    ; ════════════════════════════════════════════════════════════════════════
+    ;!  VIRTUAL SCROLLING (single-window; see explanation in chat re: native
+    ;!  ScrollableGui vs. this custom-drawn slider system)
+    ; ════════════════════════════════════════════════════════════════════════
+
+    ;// Captures the Y-position/height of every control pushed to this.Pages[page] from
+    ;// index `fromIdx` (1-based) to the end of the array at call time, and sets up
+    ;// vertical-scroll clipping for that range within [viewTop, viewBottom]. Also finds
+    ;// any Fluent sliders among them so their cached hit-test Y can be kept in sync.
+    ;// Call this once, after all of a page's scrollable content has been added.
+    MakeScrollable(page, fromIdx, viewTop, viewBottom) {
+        ctrls := this.Pages[page]
+        entries := []
+        maxBottom := viewTop
+        loop ctrls.Length - fromIdx + 1 {
+            idx := fromIdx + A_Index - 1
+            ctrl := ctrls[idx]
+            ctrl.GetPos(&cx, &cy, &cw, &ch)
+            entries.Push({Ctrl: ctrl, BaseX: cx, BaseY: cy, W: cw, H: ch})
+            if (cy + ch > maxBottom)
+                maxBottom := cy + ch
+        }
+
+        ;// sliders need their obj.Y kept in sync separately — that's the field
+        ;// OnLButtonDown/UpdateSliderFromMouse hit-test against, and it's cached on
+        ;// the slider obj itself rather than re-read from the control each time.
+        sliderRefs := []
+        for obj in this.Sliders {
+            if (obj.Y >= viewTop - 40 && obj.Y <= maxBottom + 40)
+                sliderRefs.Push({Obj: obj, BaseY: obj.Y})
+        }
+
+        viewH     := viewBottom - viewTop
+        contentH  := maxBottom - viewTop
+        maxScroll := Max(0, contentH - viewH)
+
+        state := {Entries: entries, SliderRefs: sliderRefs, ViewTop: viewTop, ViewBottom: viewBottom,
+            MaxScroll: maxScroll, ScrollY: 0}
+
+        if maxScroll > 0 {
+            trackX := this.row2 + 340
+            track := this.Gui.Add("Text", "x" trackX " y" viewTop " w4 h" viewH " Background" this.C_Head)
+            thumbH := Max(24, viewH * (viewH / contentH))
+            thumb := this.Gui.Add("Text", "x" trackX " y" viewTop " w4 h" thumbH " Background0078D4")
+            state.Track  := track
+            state.Thumb  := thumb
+            state.ThumbH := thumbH
+            this.Pages[page].Push(track, thumb)
+        }
+
+        if !this.HasOwnProp("ScrollState")
+            this.ScrollState := Map()
+        this.ScrollState[page] := state
+    }
+
+    ;// Scrolls `page` by `dir` (-1/+1) one step, re-clips its controls, and moves the thumb.
+    ScrollPage(page, dir) {
+        state := this.ScrollState[page]
+        if state.MaxScroll <= 0
+            return
+        step := 40
+        newY := Max(0, Min(state.MaxScroll, state.ScrollY + dir * step))
+        if newY = state.ScrollY
+            return
+        state.ScrollY := newY
+        this.ReclipScroll(page)
+        if state.HasOwnProp("Thumb") {
+            avail := (state.ViewBottom - state.ViewTop) - state.ThumbH
+            state.Thumb.Move(, state.ViewTop + (avail * (state.ScrollY / state.MaxScroll)))
+        }
+    }
+
+    ;// Re-applies the current scroll offset to `page`'s tracked controls. Uses
+    ;// BeginDeferWindowPos/EndDeferWindowPos to move+show/hide everything in one
+    ;// atomic batch (this combination — no per-pixel SetWindowRgn clipping, no raw
+    ;// InvalidateRect — is the version that measured flicker-free; both attempts at
+    ;// adding real clipping introduced new glitches I couldn't diagnose without
+    ;// running this, so I'm not re-attempting it here). A control is only hidden
+    ;// once it's entirely outside [ViewTop, ViewBottom]; BuildScriptsPage keeps the
+    ;// fixed header topmost in z-order (BringToFront) so it can't be painted over.
+    ;// Controls that just transitioned hidden→visible get an explicit .Redraw() —
+    ;// AHK's own control method, the same one already used for sliders/toggles
+    ;// elsewhere in this file — since DeferWindowPos's SHOWWINDOW flag alone wasn't
+    ;// reliably forcing these plain Text controls to repaint their content.
+    ;// Also re-syncs any sliders' cached hit-test Y. Safe to call on any page (no-op
+    ;// if it isn't scrollable).
+    ReclipScroll(page) {
+        if !this.HasOwnProp("ScrollState") || !this.ScrollState.Has(page)
+            return
+        state := this.ScrollState[page]
+
+        static SWP_NOSIZE := 0x0001, SWP_NOZORDER := 0x0004, SWP_NOACTIVATE := 0x0010
+        static SWP_SHOWWINDOW := 0x0040, SWP_HIDEWINDOW := 0x0080
+
+        hdwp := DllCall("BeginDeferWindowPos", "Int", state.Entries.Length, "Ptr")
+        for entry in state.Entries {
+            y := entry.BaseY - state.ScrollY
+            visible := !((y + entry.H < state.ViewTop) || (y > state.ViewBottom))
+            flags := SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | (visible ? SWP_SHOWWINDOW : SWP_HIDEWINDOW)
+            hdwp := DllCall("DeferWindowPos", "Ptr", hdwp, "Ptr", entry.Ctrl.Hwnd, "Ptr", 0,
+                "Int", entry.BaseX, "Int", y, "Int", 0, "Int", 0, "UInt", flags, "Ptr")
+
+            entry.NewlyVisible := visible && !(entry.HasOwnProp("WasVisible") && entry.WasVisible)
+            entry.WasVisible := visible
+        }
+        DllCall("EndDeferWindowPos", "Ptr", hdwp)
+
+        for entry in state.Entries
+            if entry.NewlyVisible
+                entry.Ctrl.Redraw()
+
+        for ref in state.SliderRefs
+            ref.Obj.Y := ref.BaseY - state.ScrollY
+    }
+
+    ;// Pulls "Range<low>-<high>" out of an UpDown options string (e.g. "vfoo Range0-500 w50").
+    ;// Falls back to AutoHotkey's own UpDown default (0-100) when Range isn't specified.
+    ParseUpDownRange(upOpt) {
+        if RegExMatch(upOpt, "i)Range(-?\d+)-(-?\d+)", &m)
+            return {Min: Integer(m[1]), Max: Integer(m[2])}
+        return {Min: 0, Max: 100}
+    }
+
+    ;// Dims/undims a slider to indicate enabled state. NOTE: like the Fluent toggles
+    ;// elsewhere in this file, this is visual only — the slider remains draggable even
+    ;// while "disabled" (same caveat as the Thio toggles further down).
+    SetSliderEnabled(obj, enabled) {
+        color := enabled ? "0078D4" : this.C_Panel
+        obj.Fill.Opt("Background" color)
+        obj.Thumb.Opt("Background" color)
+        obj.Fill.Redraw()
+        obj.Thumb.Redraw()
+    }
+
+    ;// Slider-change handler — replaces the old OnEditCtrl() now that the numeric
+    ;// Values fields are Fluent sliders instead of Edit+UpDown.
+    OnSliderChange(script, ini, objName, valLbl, val) {
+        valLbl.Text := val
+        valLbl.Redraw()
+
+        iniVar := StrReplace(ini, A_Space, "_")
+        this.UserSettings.%iniVar% := val
+
+        if ini = "premPrevSeqDelay" {
+            if winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+                try {
+                    activeObj := CLSID_Objs.load("prem")
+                    activeObj.prevSeqDelay  := (val * 1000)
+                    activeObj.resetSeqTimer := true
+                    activeObj := ""
+                } catch {
+                    activeObj := ""
+                    notifyExt.showIfNotExist("settingsGUIswapSeq", "settingsGUI()",
+                        "Could not update ``prem.swapSequences()``. A reload may be required",
+                        ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",,
+                        "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
+                }
+            }
+            return
+        }
+
+        ignoreScripts := Mip("Multi-Instance Close.ahk", true, "gameCheck.ahk", true)
+        if winExt.ExistRegex(script " - AutoHotkey",,,, true) && script != "" && !ignoreScripts.Has(script)
+            WM.Send_WM_COPYDATA(iniVar "," val "," objName, script)
     }
 
     ;// Back-arrow + title combo for a detail page. Adds its controls to `page`.
@@ -223,8 +529,7 @@ class SettingsApp extends FluentApp {
         startSep := 80
         this.AddSidebarTab(startSep,  "General",    "General")
         this.AddSidebarTab(startSep+(sep*1), "Scripts",    "Scripts")
-        this.AddSidebarTab(startSep+(sep*2), "Values",     "Values")
-        this.AddSidebarTab(startSep+(sep*3), "Editors",    "Editors")
+        this.AddSidebarTab(startSep+(sep*2), "Editors",    "Editors")
 
         ;// ── Sidebar footer ─────────────────────────────────────────────────
         this.Gui.Add("Text", "x0 y486 w180 h1 Background" this.C_Panel)
@@ -240,7 +545,6 @@ class SettingsApp extends FluentApp {
         ;// ── Pages ─────────────────────────────────────────────────────────
         this.BuildGeneralPage()
         this.BuildScriptsPage()
-        this.BuildValuesPage()
         this.BuildEditorsPage()
     }
 
@@ -314,7 +618,10 @@ class SettingsApp extends FluentApp {
     ; ── Scripts ─────────────────────────────────────────────────────────────
     BuildScriptsPage() {
         this.InitPage("Scripts")
-        this.AddTitle("Scripts", "Scripts", "Per-script behaviour toggles.")
+        this.AddTitle("Scripts", "Scripts", "Per-script behaviour toggles && numeric values.")
+
+        ;// everything from here down scrolls as one body — the header above stays fixed
+        scrollStart := this.Pages["Scripts"].Length + 1
 
         startY := 100
         ;// autosave group
@@ -349,17 +656,17 @@ class SettingsApp extends FluentApp {
             (*) => this.NavigateTo("Scripts", "Scripts_Thio"))
 
         this.BuildThioSubPage("Scripts_Thio")
-    }
 
-    ; ── Values ──────────────────────────────────────────────────────────────
-    BuildValuesPage() {
-        this.InitPage("Values")
-        this.AddTitle("Values", "Numeric Values", "Adjust timing and rate settings for scripts.")
-
-        this.AddGroupBox("Values", 200, 100, 660, 446, "Edit Values")
-
+        ;// ── Numeric Values (moved here from the old Values tab, UpDowns swapped for sliders) ──
         set_Edit_Val.init()
-        Loop set_Edit_Val().objs.Length {
+        itemCount := set_Edit_Val().objs.Length
+        itemH     := 74
+        groupTop  := checkListY + 135 + 15                    ;// 15px below the checklist group
+        groupW    := (this.row2 + 330) - this.row1            ;// spans both columns above
+        groupH    := 50 + (itemCount * itemH) + 10
+        this.AddGroupBox("Scripts", this.row1, groupTop, groupW, groupH, "Numeric Values")
+
+        Loop itemCount {
             iniK    := set_Edit_Val.iniInput[A_Index]
             iniVar  := StrReplace(iniK, A_Space, "_")
             initVal := this.UserSettings.%iniVar%
@@ -370,33 +677,48 @@ class SettingsApp extends FluentApp {
             upOpt   := set_Edit_Val.UpDownOpt[A_Index]
             bindScr := set_Edit_Val.Bind[A_Index]
             objName := set_Edit_Val.objName[A_Index]
+            range   := this.ParseUpDownRange(upOpt)
 
-            yPos  := 152 + (A_Index - 1) * 50
-            xEdit := 598
+            yPos := groupTop + 50 + (A_Index - 1) * itemH
 
-            ;// coloured script label + grey suffix
+            ;// coloured script label + live numeric readout (mirrors the old lbl/edit pairing)
             this.Gui.SetFont("s10 w600 " colour, "Segoe UI")
-            lbl := this.Gui.Add("Text", "x220 y" yPos " w355 h20 BackgroundTrans", sText)
-            this.Gui.SetFont("s9 w400 c" this.C_SecTxt, "Segoe UI")
-            sfx := this.Gui.Add("Text", "x220 y" (yPos + 20) " w220 h15 BackgroundTrans", sOther)
+            lbl := this.Gui.Add("Text", "x" (this.row1+20) " y" yPos " w" (groupW-160) " h20 BackgroundTrans", sText)
+            this.Gui.SetFont("s10 w600 c" this.C_SecTxt, "Segoe UI")
+            valLbl := this.Gui.Add("Text", "x" (this.row1+groupW-100) " y" yPos " w80 h20 Right BackgroundTrans", initVal)
+            this.Pages["Scripts"].Push(lbl, valLbl)
 
-            ;// styled border + Edit + UpDown
-            bdr := this.Gui.Add("Text", "x" xEdit " y" (yPos - 1) " w66 h30 Background" this.C_Panel)
-            edt := this.Gui.Add("Edit",
-                "x" (xEdit + 1) " y" yPos " w50 h28 -E0200 Number v" ctrl " Background" this.C_Inner " c" this.C_Txt)
-            DllCall("uxtheme\SetWindowTheme", "Ptr", edt.Hwnd,
-                "Str", this.IsDark ? "DarkMode_Explorer" : "Explorer", "Ptr", 0)
-            upd := this.Gui.Add("UpDown", upOpt, initVal)
+            sliderObj := this.AddSlider("Scripts", this.row1+20, yPos+26, groupW-40, range.Min, range.Max, 1, initVal, "",
+                this.OnSliderChange.Bind(this, bindScr, iniK, objName, valLbl))
+
+            ;// grey suffix
+            this.Gui.SetFont("s9 w400 c" this.C_SecTxt, "Segoe UI")
+            sfx := this.Gui.Add("Text", "x" (this.row1+20) " y" (yPos+50) " w" (groupW-40) " h15 BackgroundTrans", sOther)
+            this.Pages["Scripts"].Push(sfx)
 
             ;// premPrev depends on useSwapSequences
             if ctrl = "premPrev" && (this.UserSettings.use_swapSequences = false
                                   || this.UserSettings.use_swapSequences = "false")
-                edt.Opt("+Disabled")
+                this.SetSliderEnabled(sliderObj, false)
 
-            edt.OnEvent("Change", this.OnEditCtrl.Bind(this, bindScr, iniK, objName))
-            this.NumRefs[ctrl] := {Edit: edt, UpDown: upd}
-            this.Pages["Values"].Push(lbl, sfx, bdr, edt, upd)
+            this.NumRefs[ctrl] := {Slider: sliderObj}
         }
+
+        this.MakeScrollable("Scripts", scrollStart, 100, 630)
+
+        ;// keep the fixed title/subtitle painted on top of the scrollable body always —
+        ;// they were added first (so start out at the *back* of the z-order), and a
+        ;// scrolled control's uncropped bounds can momentarily overlap their screen
+        ;// position while straddling the view boundary. z-order beats clip math here.
+        loop scrollStart - 1
+            this.BringToFront(this.Pages["Scripts"][A_Index])
+    }
+
+    ;// Moves a control to the front of the z-order among its window's siblings.
+    BringToFront(ctrl) {
+        static SWP_NOMOVE := 0x0002, SWP_NOSIZE := 0x0001, SWP_NOACTIVATE := 0x0010
+        DllCall("SetWindowPos", "Ptr", ctrl.Hwnd, "Ptr", 0, "Int", 0, "Int", 0, "Int", 0, "Int", 0,
+            "UInt", SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE)
     }
 
     ; ── Editors ─────────────────────────────────────────────────────────────
@@ -671,9 +993,9 @@ class SettingsApp extends FluentApp {
                 return
 
             case "Use swapSequences":
-                ;// sync the premPrev numeric edit
+                ;// sync the premPrev slider
                 if this.NumRefs.Has("premPrev")
-                    this.NumRefs["premPrev"].Edit.Opt(state ? "-Disabled" : "+Disabled")
+                    this.SetSliderEnabled(this.NumRefs["premPrev"].Slider, state)
                 ;// notify live prem object if Core Functionality is running
                 origDetect := detect()
                 if WinExist("Core Functionality.ahk") {
@@ -733,32 +1055,7 @@ class SettingsApp extends FluentApp {
         this.UserSettings.beta_update_check := state
     }
 
-    OnEditCtrl(script, ini, objName, ctrl, *) {
-        iniVar := StrReplace(ini, A_Space, "_")
-        this.UserSettings.%iniVar% := ctrl.text
 
-        if ini = "premPrevSeqDelay" {
-            if winExt.ExistRegex("Core Functionality.ahk",,,, true) {
-                try {
-                    activeObj := CLSID_Objs.load("prem")
-                    activeObj.prevSeqDelay  := (ctrl.text * 1000)
-                    activeObj.resetSeqTimer := true
-                    activeObj := ""
-                } catch {
-                    activeObj := ""
-                    notifyExt.showIfNotExist("settingsGUIswapSeq", "settingsGUI()",
-                        "Could not update ``prem.swapSequences()``. A reload may be required",
-                        ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",,
-                        "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
-                }
-            }
-            return
-        }
-
-        ignoreScripts := Mip("Multi-Instance Close.ahk", true, "gameCheck.ahk", true)
-        if winExt.ExistRegex(script " - AutoHotkey",,,, true) && script != "" && !ignoreScripts.Has(script)
-            WM.Send_WM_COPYDATA(iniVar "," ctrl.text "," objName, script)
-    }
 
     ;// Hard Reset / Reload / Close
     OnClose(action := "", *) {
