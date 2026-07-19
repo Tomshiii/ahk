@@ -29,7 +29,7 @@ import * as uxp from "uxp";
  * @returns {void}
  */
 export async function initSequenceTracking(): Promise<void> {
-   const active = await common.getActiveSequence();
+    const active = await common.getActiveSequence();
     if (active) openSequences.add(active.guid.toString());
 
     ppro.EventManager.addEventListener(ppro.SequenceEvent.ACTIVATED, (e: any) => {
@@ -1159,7 +1159,7 @@ export async function projItemByPath(itemPath: string): Promise<false | null | P
 
 /**
  * add a marker to the current frame
- * @param {number} [colour] the index value of the desired colour
+ * @param {string} [colour] the index value of the desired colour
  * @returns {void}
  */
 export async function setMarker(colour: string): Promise<void> {
@@ -1173,16 +1173,33 @@ export async function setMarker(colour: string): Promise<void> {
     const colourIndex = parseInt(colour);
     const settings = await sequence.getSettings();
     const frameRate = settings.getVideoFrameRate();
-    const tolerance = 0.001;
 
     const selection = await sequence.getSelection();
     const items = selection ? await selection.getTrackItems() : [];
 
     if (!items || items.length === 0) {
-        // no selection — add sequence marker at playhead
         const alignedPos = playerPosition.alignToFrame(frameRate);
         const sequenceMarkers = await ppro.Markers.getMarkers(sequence);
         if (!sequenceMarkers) return;
+
+        const existingList = sequenceMarkers.getMarkers();
+        let existingMarker = null;
+        for (const marker of existingList) {
+            const markerStart = marker.getStart();
+            if (markerStart.ticks === alignedPos.ticks) {
+                existingMarker = marker;
+                break;
+            }
+        }
+
+        if (existingMarker) {
+            project.lockedAccess(() => {
+                project.executeTransaction((compoundAction) => {
+                    compoundAction.addAction(existingMarker.createSetColorByIndexAction(colourIndex));
+                }, "Set Sequence Marker Color");
+            });
+            return;
+        }
 
         project.lockedAccess(() => {
             project.executeTransaction((compoundAction) => {
@@ -1202,7 +1219,7 @@ export async function setMarker(colour: string): Promise<void> {
         let newMarker = null;
         for (const marker of updatedList) {
             const markerStart = marker.getStart();
-            if (Math.abs(markerStart.seconds - alignedPos.seconds) <= tolerance) {
+            if (markerStart.ticks === alignedPos.ticks) {
                 newMarker = marker;
                 break;
             }
@@ -1230,12 +1247,23 @@ export async function setMarker(colour: string): Promise<void> {
         const clipProjItem = await ppro.ClipProjectItem.cast(projItem);
         if (!clipProjItem) continue;
 
+        // check if this project item is actually a sequence (multicam)
+        let markerOwner: any = clipProjItem;
+
+        const isMulticam = clipProjItem.isMulticamClip();
+        const isSeq = clipProjItem.isSequence();
+
+        if (isMulticam || isSeq) {
+            const seq = await clipProjItem.getSequence();
+            if (seq) markerOwner = seq;
+        }
+
         const startTime = await items[i].getStartTime();
         const inPoint = await items[i].getInPoint();
         const rawClipPos = inPoint.add(playerPosition.subtract(startTime));
         const clipPos = rawClipPos.alignToFrame(frameRate);
 
-        const markers = await ppro.Markers.getMarkers(clipProjItem);
+        const markers = await ppro.Markers.getMarkers(markerOwner);
         if (!markers) continue;
 
         const existingMarkers = markers.getMarkers();
@@ -1243,7 +1271,7 @@ export async function setMarker(colour: string): Promise<void> {
 
         for (const marker of existingMarkers) {
             const markerStart = marker.getStart();
-            if (Math.abs(markerStart.seconds - clipPos.seconds) <= tolerance) {
+            if (markerStart.ticks === clipPos.ticks) {
                 existingMarker = marker;
                 break;
             }
@@ -1269,12 +1297,12 @@ export async function setMarker(colour: string): Promise<void> {
             });
 
             await new Promise(resolve => setTimeout(resolve, 200));
-            const updatedMarkers = await ppro.Markers.getMarkers(clipProjItem);
+            const updatedMarkers = await ppro.Markers.getMarkers(markerOwner);
             const updatedList = updatedMarkers.getMarkers();
             let newMarker = null;
             for (const marker of updatedList) {
                 const markerStart = marker.getStart();
-                if (Math.abs(markerStart.seconds - clipPos.seconds) <= tolerance) {
+                if (markerStart.ticks === clipPos.ticks) {
                     newMarker = marker;
                     break;
                 }

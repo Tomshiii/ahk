@@ -9,55 +9,62 @@ declare global {
 export class MarkerUtils {
 
   static setMarker(colour: string) {
-    // Get the active sequence
     var activeSequence = app.project.activeSequence;
-
-    // Get the current selection
     var selection = activeSequence.getSelection();
 
     Utils.fixPlayHeadPosition();
 
-    // Get playhead position
     const playheadTime = activeSequence.getPlayerPosition().seconds;
 
-    // Loop through all selected items
+    // no selection — add sequence marker
+    if (!selection || selection.length === 0) {
+      var seqMarkers = activeSequence.markers;
+      var existingSeqMarker = null;
+      var tolerance = 0.001;
+
+      for (var j = 0; j < seqMarkers.numMarkers; j++) {
+        var seqMarker = seqMarkers[j];
+        if (Math.abs(seqMarker.start.seconds - playheadTime) <= tolerance) {
+          existingSeqMarker = seqMarker;
+          break;
+        }
+      }
+
+      if (existingSeqMarker) {
+        existingSeqMarker.setColorByIndex(parseInt(colour));
+      } else {
+        var newSeqMarker = seqMarkers.createMarker(playheadTime);
+        newSeqMarker.setColorByIndex(parseInt(colour));
+      }
+      return;
+    }
+
+    // clips selected — add clip markers
     for (var i = 0; i < selection.length; i++) {
       var trackItem = selection[i];
 
-      // Check if this is a track item (clip) and has a project item
       if (trackItem.mediaType && trackItem.projectItem) {
-
-        // Calculate the marker position within the source media
         const clipInPoint = trackItem.inPoint.seconds;
         const clipStart = trackItem.start.seconds;
         const markerPositionInSource = clipInPoint + (playheadTime - clipStart);
 
-        // Get existing markers
         var markers = trackItem.projectItem.getMarkers();
-
-        // Check if a marker already exists at this exact position
         var existingMarker = null;
-        var tolerance = 0.001; // Very small tolerance for floating-point precision
+        var tolerance = 0.001;
 
         for (var j = 0; j < markers.numMarkers; j++) {
           var marker = markers[j];
-          var existingTime = marker.start.seconds;
-
-          if (Math.abs(existingTime - markerPositionInSource) <= tolerance) {
+          if (Math.abs(marker.start.seconds - markerPositionInSource) <= tolerance) {
             existingMarker = marker;
             break;
           }
         }
 
         if (existingMarker) {
-          // Update existing marker's color
           existingMarker.setColorByIndex(parseInt(colour));
         } else {
-          // Create new marker
           var newMarker = markers.createMarker(markerPositionInSource);
-
-          // Set marker properties including color
-          newMarker.setColorByIndex(parseInt(colour)); // 0-7 for different colors
+          newMarker.setColorByIndex(parseInt(colour));
         }
       }
     }
