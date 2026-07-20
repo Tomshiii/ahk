@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include shared\funcs.ahk
 #Include '%A_Appdata%\tomshi\lib'
 #Include Other\JSON.ahk
 ; }
@@ -31,21 +32,3 @@ __runAndWait(uxpAHK, uxpFile)
 
 RunWait("replacePremRemote.ahk false")
 Run("resetBuild.ahk")
-
-
-
-;// ================================================
-
-__runAndWait(ahkExe, filepath, minimise := true, timeout := 3, sleepTime := 5000) {
-    if !WinExist(ahkExe) {
-        if !FileExist(filepath)
-            return
-        Run(filepath)
-        if !WinWait(ahkExe,, timeout)
-            return
-        sleep sleepTime ;// needs time to boot
-        if minimise {
-            try WinMinimize(ahkExe)
-        }
-    }
-}

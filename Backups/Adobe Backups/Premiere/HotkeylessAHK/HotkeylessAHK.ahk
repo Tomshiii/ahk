@@ -44,6 +44,7 @@ Class CustomFunctions {
     changeDupe()                                             => (prem.changeDupeFrameMarkers())
     organiseProj()                                           => (prem.__remoteFunc('organiseProj'))
     setMarker(colour)                                        => (prem.__remoteFunc('setMarker',, "colour=" colour))
+    removeMarker()                                           => (prem.__remoteFunc('removeMarkerAtPlayhead'))
     moveToAssetBin(folder)                                   => (prem.__remoteFunc('moveToAssetsBin',, 'folderPath=' folder))
     toggleLinearColour(enableMaxRenderQual)                  => (prem.toggleLinearColour(enableMaxRenderQual))
     renderPreviews()                                         => (prem.renderPreviewsInOut())

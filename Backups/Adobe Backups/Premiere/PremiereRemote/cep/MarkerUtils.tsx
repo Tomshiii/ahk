@@ -70,6 +70,66 @@ export class MarkerUtils {
     }
   }
 
+  static removeMarkerAtPlayhead(): void {
+    const activeSequence = app.project.activeSequence;
+    const selection = activeSequence.getSelection();
+
+    Utils.fixPlayHeadPosition();
+
+    const ticksPerFrame = parseInt(activeSequence.getSettings().videoFrameRate.ticks);
+    const playheadTicks = parseInt(activeSequence.getPlayerPosition().ticks);
+    const playheadFrame = this.ticksToFrame(playheadTicks, ticksPerFrame);
+
+    if (!selection || selection.length === 0) {
+      const seqMarkers = activeSequence.markers;
+      const match = this.findMarkerAtFrame(seqMarkers, playheadFrame, ticksPerFrame);
+
+      if (match) {
+        seqMarkers.deleteMarker(match);
+      }
+      return;
+    }
+
+    for (var i = 0; i < selection.length; i++) {
+      const trackItem = selection[i];
+      if (!trackItem.mediaType || !trackItem.projectItem) continue;
+
+      const clipInPointTicks = parseInt(trackItem.inPoint.ticks);
+      const clipStartTicks = parseInt(trackItem.start.ticks);
+      const markerPositionTicks = clipInPointTicks + (playheadTicks - clipStartTicks);
+      const markerPositionFrame = this.ticksToFrame(markerPositionTicks, ticksPerFrame);
+
+      const markers = trackItem.projectItem.getMarkers();
+      const match = this.findMarkerAtFrame(markers, markerPositionFrame, ticksPerFrame);
+
+      if (match) {
+        markers.deleteMarker(match);
+      }
+    }
+  }
+
+  /**
+   * Converts a raw tick value to a frame index (rounded to nearest frame).
+   */
+  static ticksToFrame(ticks: number, ticksPerFrame: number): number {
+    return Math.round(ticks / ticksPerFrame);
+  }
+
+  /**
+   * Finds a marker whose start time falls on the exact same frame index
+   * as targetFrame. No tolerance window — adjacent frames never match.
+   */
+  static findMarkerAtFrame(markers: any, targetFrame: number, ticksPerFrame: number): any | null {
+    for (var j = 0; j < markers.numMarkers; j++) {
+      const markerTicks = parseInt(markers[j].start.ticks);
+      const markerFrame = this.ticksToFrame(markerTicks, ticksPerFrame);
+      if (markerFrame === targetFrame) {
+        return markers[j];
+      }
+    }
+    return null;
+  }
+
   static getMarkerItemInMarkerFolder(
     markerColor: string
   ): undefined | ProjectItem {

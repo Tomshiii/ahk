@@ -414,6 +414,10 @@ export const host = {
     return MarkerUtils.setMarker(colour);
   },
 
+  removeMarkerAtPlayhead: function () {
+    return MarkerUtils.removeMarkerAtPlayhead();
+  },
+
   applyEffectOnAllSelectedClips: function (effect: string) {
     return EffectUtils.applyEffectOnAllSelectedClips(effect);
   },

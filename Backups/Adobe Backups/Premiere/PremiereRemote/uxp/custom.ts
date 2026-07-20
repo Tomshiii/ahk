@@ -1319,6 +1319,104 @@ export async function setMarker(colour: string): Promise<void> {
 }
 
 /**
+ * remove marker closest to the playhead (the playhead can park inbetween frames)
+ */
+export async function removeMarkerAtPlayhead(): Promise<void> {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) return;
+
+    const sequence = await common.getActiveSequence();
+    if (!sequence) return;
+
+    const playerPosition = await sequence.getPlayerPosition();
+    const settings = await sequence.getSettings();
+    const frameRate = settings.getVideoFrameRate();
+    const alignedPos = playerPosition.alignToFrame(frameRate);
+
+    const selection = await sequence.getSelection();
+    const items = selection ? await selection.getTrackItems() : [];
+
+    if (!items || items.length === 0) {
+        // remove sequence marker
+        const sequenceMarkers = await ppro.Markers.getMarkers(sequence);
+        if (!sequenceMarkers) return;
+
+        const existingList = sequenceMarkers.getMarkers();
+        const match = findMarkerAtFrame(existingList, alignedPos, frameRate);
+
+        if (match) {
+            project.lockedAccess(() => {
+                project.executeTransaction((compoundAction) => {
+                    compoundAction.addAction(sequenceMarkers.createRemoveMarkerAction(match));
+                }, "Remove Sequence Marker");
+            });
+        }
+        return;
+    }
+
+    const processedIds = new Set<string>();
+
+    for (let i = 0; i < items.length; i++) {
+        const projItem = await items[i].getProjectItem();
+        if (!projItem) continue;
+
+        const itemId = await projItem.getId();
+        if (processedIds.has(itemId.toString())) continue;
+        processedIds.add(itemId.toString());
+
+        const clipProjItem = await ppro.ClipProjectItem.cast(projItem);
+        if (!clipProjItem) continue;
+
+        let markerOwner: any = clipProjItem;
+        const isMulticam = clipProjItem.isMulticamClip();
+        const isSeq = clipProjItem.isSequence();
+        if (isMulticam || isSeq) {
+            const seq = await clipProjItem.getSequence();
+            if (seq) markerOwner = seq;
+        }
+
+        const startTime = await items[i].getStartTime();
+        const inPoint = await items[i].getInPoint();
+        const rawClipPos = inPoint.add(playerPosition.subtract(startTime));
+        const clipPos = rawClipPos.alignToFrame(frameRate);
+
+        const markers = await ppro.Markers.getMarkers(markerOwner);
+        if (!markers) continue;
+
+        const existingMarkers = markers.getMarkers();
+        const match = findMarkerAtFrame(existingMarkers, clipPos, frameRate);
+
+        if (match) {
+            project.lockedAccess(() => {
+                project.executeTransaction((compoundAction) => {
+                    compoundAction.addAction(markers.createRemoveMarkerAction(match));
+                }, "Remove Marker");
+            });
+        }
+    }
+}
+
+/**
+ * Finds a marker that starts on the exact same frame as targetTime.
+ * Both the marker's start time and targetTime are aligned to the frame
+ * grid before comparing, so this checks "same frame" rather than
+ * "close enough" — no tolerance constant needed.
+ */
+function findMarkerAtFrame(
+    markerList: any[],
+    targetTime: any, // already frame-aligned Time object (alignedPos or clipPos)
+    frameRate: any
+): any | null {
+    for (const marker of markerList) {
+        const markerAligned = marker.getStart().alignToFrame(frameRate);
+        if (markerAligned.ticks === targetTime.ticks) {
+            return marker;
+        }
+    }
+    return null;
+}
+
+/**
  * apply effects to all selected clips
  * @param {string} [effectName] the name of the effect
  * @returns {boolean}

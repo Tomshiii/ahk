@@ -1,4 +1,5 @@
 ; { \\ #Includes
+#Include shared\funcs.ahk
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\cmd.ahk
 #Include Classes\winext.ahk
@@ -22,44 +23,37 @@ sleep 1000
 
 ;// reload premremote in devTools
 devTools := "ahk_exe Adobe UXP Developer Tools.exe"
-if WinExist(devTools) {
-    WinActivate("Adobe UXP Developer Tools" A_Space devTools)
-    premRemote := UIA.ElementFromHandle("Adobe UXP Developer Tools" A_Space devTools,, false)
-    premRow := premRemote.FindElement({LocalizedType:"row", Name:"Premiere Pro"})
-    ; premRemote := premRemote.FindElement({LocalizedType:"item", Name:"de.sebinside.premiereremote"})
-    children := premRow.Children
 
-    index := 0
-    offset := 3
-    for i, child in children {
-        if child.Name == "de.sebinside.premiereremote" {
-            index := i
-            break
-        }
-    }
-    if index = 0
-        return
-    debugButtBar  := children[index+offset]
-    if debugButtBar.name = "Load Load & Watch" {
-        debugButtBar.FindElement({LocalizedType:"button", Name:"Load"}).invoke()
-        sleep 500
-    }
-    try debugButt  := debugButtBar.FindElement({LocalizedType:"button", Name:"Debug"})
-    reloadButt     := debugButtBar.FindElement({LocalizedType:"button", Name:"Reload"})
-    reloadButt.click()
-    sleep 500
-    WinMinimize("Adobe UXP Developer Tools" A_Space devTools)
-
-    if openDebug = true {
-        debugWindow := "PremiereRemote - Premiere Pro v\d+\.\d+(\.\d+)? \(Debug\)"
-        switch {
-            case !winExt.ExistRegex(debugWindow) && IsSet(debugButt): debugButt.invoke()
-            case (winExt.ExistRegex(debugWindow)): winExt.ActivateRegex(debugWindow)
-        }
-    }
+if !winExt.ExistRegex(devTools,,,, true) {
+    notifyExt.showIfNotExist('uxpRebuildFailed',, "Failed to find UXP window")
+    return
 }
 
+if !__startUXP(, &debugButt) {
+    notifyExt.showIfNotExist('uxpRebuildFailed',, "Failed to find UXP window")
+    return
+}
+
+debugWindow := "PremiereRemote - Premiere Pro v\d+\.\d+(\.\d+)? \(Debug\)"
+switch {
+    case !winExt.ExistRegex(debugWindow) && openDebug = true && IsSet(debugButt): debugButt.invoke()
+    case (winExt.ExistRegex(debugWindow)):
+        try {
+            winExt.ActivateRegex(debugWindow)
+            if !winExt.WaitActiveRegex(debugWindow,, 2) {
+                return
+            }
+            debugTitle := winExt.TitleRegex(debugWindow)
+            debugWin := UIA.ElementFromHandle(debugTitle,, false)
+            debugWin.FindElement({LocalizedType:"button", Name:"Clear console"}).invoke()
+            if !openDebug
+                winExt.MinimizeRegex(debugWindow)
+        }
+        if openDebug = true
+            winExt.ActivateRegex(debugWindow)
+}
 notifyExt.showIfNotExist('uxpRebuild',, "UXP Rebuild Complete...")
+
 /**
 cd C:\Users\Tom\AppData\Roaming\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp
 node scripts/generate-api.js
