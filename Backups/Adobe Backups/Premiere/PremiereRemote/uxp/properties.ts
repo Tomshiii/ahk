@@ -111,5 +111,16 @@ export async function getProjectItemClipType(): Promise<string | null> {
     return String(items[0].type);
 }
 
+/**
+ * returns the sequence framerate
+ */
+export async function getSeqFrameRate(): Promise<string | null> {
+    const sequence = await common.getActiveSequence();
+    if (!sequence) return null;
+    const settings = await sequence.getSettings();
+    const frameRate = settings.getVideoFrameRate();
+    return frameRate.value;
+}
+
 // get/set proxies you can't do yet in uxp...
 

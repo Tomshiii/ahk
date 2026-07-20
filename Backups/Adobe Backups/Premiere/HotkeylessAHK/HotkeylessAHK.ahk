@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside
- * @date 2026/07/07
- * @version 1.1.8
+ * @date 2026/07/20
+ * @version 1.1.9
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -27,7 +27,7 @@ TraySetIcon(ptf.Icons "\hotkeyless.ico")
 
 serverPort := 42800 ; The port that the server will listen on. Make sure that this port is not blocked by your firewall or used by another application.
 
-functionClassNames := ["CustomFunctions"] ; this can be expanded to allow for other function classes, i.e., PersonalFunctions, WorkFunctions and so on. Note that duplicate function names may hide each other as there is no handling for scopes!
+functionClassNames := ["CustomFunctions", "OtherFuncs"] ; this can be expanded to allow for other function classes, i.e., PersonalFunctions, WorkFunctions and so on. Note that duplicate function names may hide each other as there is no handling for scopes!
 ; These classes can (of course) be defined in other AHK files and imported using #Include "<path to AHK file>".
 
 debug := false ; set to true to see the console output of the Node.js server. This will also show the console window, which is hidden by default.
@@ -56,19 +56,20 @@ Class CustomFunctions {
     setAllEnableDisabled(enabled := "true")                  => (prem.__remoteFunc('setAllEnableDisabled',, "enabled=" enabled))
     effectSlot(save := true, slot := 1, saveToFile := false) => (prem.effectSlot(save, slot, saveToFile))
 
-    renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) => (rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path))
+    renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?))
 }
 
 ;// === any functions/hotkeys that don't really make much sense anywhere else
-
-/** calls `prem.renderAndReplace()` then calls the `organiseProj` `PremiereRemote` function. Might not make sense for anyone else with a different prem bin structure */
-rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) {
-    if !prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path)
-        return
-    if !WinWait("Render and Replace Progress " prem.exeTitle,, 6)
-        return
-    if !WinWaitClose("Render and Replace Progress " prem.exeTitle,, 15)
-        return
-    sleep 1500
-    prem.__remoteFunc('organiseProj')
+class OtherFuncs {
+    /** calls `prem.renderAndReplace()` then calls the `organiseProj` `PremiereRemote` function. Might not make sense for anyone else with a different prem bin structure */
+    static rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?) {
+        if !prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?)
+            return
+        if !WinWait("Render and Replace Progress " prem.exeTitle,, 6)
+            return
+        if !WinWaitClose("Render and Replace Progress " prem.exeTitle,, 15)
+            return
+        sleep 1500
+        prem.__remoteFunc('organiseProj')
+    }
 }

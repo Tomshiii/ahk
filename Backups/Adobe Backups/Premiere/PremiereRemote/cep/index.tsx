@@ -139,6 +139,18 @@ export const host = {
     return false;
   },
 
+  getSeqFrameRate: function () {
+    const currentSequence = app.project.activeSequence;
+    const settings = currentSequence.getSettings();
+    const ticksPerFrame = Number(settings.videoFrameRate.ticks);
+
+    const TICKS_PER_SECOND = 254016000000;
+    const fps = TICKS_PER_SECOND / ticksPerFrame;
+
+    // Round to 2 decimal places to get clean values like 29.97, 23.98, 59.94
+    return Math.round(fps * 100) / 100;
+  },
+
   setProperty: function (property: string, value: any, persistent: string, createIfNotExist: string) {
     if (app.properties.doesPropertyExist(property)) {
       if (app.properties.isPropertyReadOnly(property)) {

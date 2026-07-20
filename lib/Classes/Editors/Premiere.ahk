@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/16
- * @version 2.4.48
+ * @date 2026/07/20
+ * @version 2.4.49
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3911,6 +3911,61 @@ class Prem {
     }
 
     /**
+     * Sets the checkboxes in the `Render and Replace` window
+     * @param {UIA.IUIAutomationElement} [UIAObj] pass in a UIA element for reuse
+     * @param {UIA.IUIAutomationElement} [AdobeEl] pass back the UIA element for reuse
+     * @param {unset | Integer | false} [handles=sequence framerate] determine the handles frame count. If `unset` defaults to the sequence framerate (rounded). Set to `false` to disable the checkbox.
+     * @param {Boolean} [includeEffects=true] determine the state of the `Include Video Effects` checkbox. Can be `true` or `false`.
+     * @returns {Boolean}
+     */
+    static setRnderRplcCheckBoxes(UIAObj?, &AdobeEl?, handles?, includeEffects := true) {
+        if !IsSet(UIAObj) || (IsSet(UIAObj) && Type(UIAObj) != "UIA.IUIAutomationElement") {
+            AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
+        } else {
+            AdobeEl := UIAObj
+        }
+        try {
+            handlesCheckbox := AdobeEl.FindElement({LocalizedType:"check box", Name:"Include Handles:"})
+            effCheckbox := AdobeEl.FindElement({LocalizedType:"check box", Name:"Include Video Effects"})
+        } catch {
+            return false
+        }
+        handlesState := handlesCheckbox.ToggleState
+        effState     := effCheckbox.ToggleState
+        if effState != checkBool(includeEffects)
+            effCheckbox.Toggle()
+
+        switch isSet(handles) && handles != "" {
+            case false:
+                if handlesState = false
+                    handlesCheckbox.Toggle()
+                seqFrameRate := Round(this.__remoteFunc('getSeqFrameRate', true))
+                handles := seqFrameRate
+
+            case true:
+                if handles < 0
+                    handles := false
+                if handles = false || handles = "false" || handles = "0" {
+                    if handlesState != false
+                        handlesCheckbox.Toggle()
+                    return true
+                }
+                if handlesState = false {
+                    handlesCheckbox.Toggle()
+                }
+        }
+        initialValue := AdobeEl.FindElement({LocalizedType:"edit", Name:"framesNumber"})
+        if initialValue.Value = handles
+            return true
+        initialValue.select()
+        findText := AdobeEl.FindElement({LocalizedType:"edit", Name:"OS_EditText"})
+        frames   := findText.FindElement({LocalizedType:"edit", Name:"framesNumber"})
+        frames.value := handles
+
+        return true
+    }
+
+    /**
      * This function is (for the most part) designed to be activated from a streamdeck but should still work separately. It handles going through the `render and replace` process for the selected clip(s). If the selected clip is a video it will also automate the `Render and Replace` window, including setting the desired output path.
      * @param {String/Boolean} [changeLabel] whether you wish for the selected clip to have its label colour changed. Will only change clips with a `mediatype` of `Video`
      * @param {String} [labelHotkey] the hotkey of the label colour you wish to change the selected clip to
@@ -3918,9 +3973,11 @@ class Prem {
      * @param {String} [dropSource] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
      * @param {String} [dropFormat] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
      * @param {String} [path] the parameter that will be passed to `prem.setRnderRplcPath()` and is the desired path you wish to use as the output location. (can also be set to `Next to Original Media`)
+     * @param {Integer | false} [handles=sequence framerate] determine the handles frame count. If `unset` defaults to the sequence framerate (rounded). Set to `false` to disable the checkbox.
+     * @param {Boolean} [includeEffects=true] determine the state of the `Include Video Effects` checkbox. Can be `true` or `false`.
      * @returns {Boolean} returns boolean `false` if; premiere isn't the active window, waiting for the `Render and Replace` window timed out, the user has an audio file selected, setting the render path failed
      */
-    static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path) {
+    static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, includeEffects := true) {
         if !WinActive(this.winTitle)
             return false
         clipType := this.__remoteFunc('clipType', true)
@@ -3952,13 +4009,21 @@ class Prem {
             errorLog(MethodError("path failed", -1))
             return false
         }
+        if !this.setRnderRplcCheckBoxes(AdobeEl,, handles?, includeEffects) {
+            errorLog(MethodError("checkboxes failed", -1))
+            return false
+        }
         sleep 50
         if !WinWaitActive("Render and Replace " this.exeTitle,, 2) {
             try WinActivate("Render and Replace " this.exeTitle)
             if !WinWaitActive("Render and Replace " this.exeTitle,, 2)
                 return false
         }
-        AdobeEl.FindElement({LocalizedType:"button", Name:"OK"}).Invoke()
+        try AdobeEl.FindElement({LocalizedType:"button", Name:"OK"}).Invoke()
+        catch {
+            return false
+        }
+        return true
     }
 
     /**
