@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/20
- * @version 2.4.49
+ * @date 2026/07/21
+ * @version 2.4.50
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3925,8 +3925,8 @@ class Prem {
             AdobeEl := UIAObj
         }
         try {
-            handlesCheckbox := AdobeEl.FindElement({LocalizedType:"check box", Name:"Include Handles:"})
-            effCheckbox := AdobeEl.FindElement({LocalizedType:"check box", Name:"Include Video Effects"})
+            handlesCheckbox := AdobeEl.FindElement({LocalizedType:["check box", "checkbox"], Name:"Include Handles:"})
+            effCheckbox := AdobeEl.FindElement({LocalizedType:["check box", "checkbox"], Name:"Include Video Effects"})
         } catch {
             return false
         }
@@ -4021,6 +4021,7 @@ class Prem {
         }
         try AdobeEl.FindElement({LocalizedType:"button", Name:"OK"}).Invoke()
         catch {
+            errorLog(MethodError("couldn't interact with OK button", -1))
             return false
         }
         return true

@@ -42,11 +42,11 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
     debugButtBar  := children[index+offset]
     if debugButtBar.name = "Load Load & Watch" {
         debugButtBar.FindElement({LocalizedType:"button", Name:"Load"}).invoke()
-        sleep 500
+    } else {
+        reloadButt     := debugButtBar.FindElement({LocalizedType:"button", Name:"Reload"})
+        reloadButt.click()
     }
     try debugButt  := debugButtBar.FindElement({LocalizedType:"button", Name:"Debug"})
-    reloadButt     := debugButtBar.FindElement({LocalizedType:"button", Name:"Reload"})
-    reloadButt.click()
     sleep 500
     WinMinimize("Adobe UXP Developer Tools" A_Space title)
     return true
