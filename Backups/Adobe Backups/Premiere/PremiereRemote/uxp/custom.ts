@@ -58,18 +58,40 @@ export async function save(): Promise<Boolean> {
  * @returns {boolean}
  */
 export async function focusSequence(ID: string): Promise<boolean> {
-    if (!openSequences.has(ID)) return false;
+    // if (!openSequences.has(ID)) return "false_1";
 
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
-
+    const origSeq = await project.getActiveSequence();
+    const origGUID = await ppro.Guid.toString(origSeq.guid)
+    const origSelection = await origSeq.getSelection();
     const guid = await ppro.Guid.fromString(ID);
     if (!guid) return false;
 
+    const sequences = await project.getSequences();
+    if (!sequences || sequences.length === 0) return false;
+
+    let sequence = null;
+    for (let i = 0; i < sequences.length; i++) {
+        var seqGUID = String(sequences[i].guid);
+        if (String(seqGUID) == ID) {
+            sequence = true;
+            break;
+        }
+    }
+    if (!sequence) return false;
+
     const selectedSequence = await project.getSequence(guid);
-    if (!selectedSequence) return false;
+    if (!selectedSequence) return false
 
     await project.setActiveSequence(selectedSequence);
+    const newSeq = await project.getActiveSequence();
+    const newGUID = await ppro.Guid.toString(newSeq.guid)
+    if (String(origGUID) == String(newGUID)) {
+        await origSeq.clearSelection();
+        await newSeq.clearSelection();
+        newSeq.setSelection(origSelection);
+    }
     return true;
 }
 
@@ -1879,4 +1901,151 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
     }
 
     return "DONE:\n" + allResults.join("\n");
+}
+
+/**
+ * adds adjustment layer above selected clips
+ * @returns {void}
+ */
+export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string): Promise<void> {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) {
+        alert("No active project.");
+        return;
+    }
+
+    const sequence = await project.getActiveSequence();
+    if (!sequence) {
+        alert("No active sequence.");
+        return;
+    }
+
+    const rawProjItem = await projItemByPath(adjustmentLayerPath);
+    if (!rawProjItem) {
+        alert('Could not find adjustment layer at path: "' + adjustmentLayerPath + '"');
+        return;
+    }
+    const clipProjItem = await ppro.ClipProjectItem.cast(rawProjItem);
+
+    const editor = await ppro.SequenceEditor.getEditor(sequence);
+
+    // --- Gather selected clips per video track ---
+    // Looping tracks and checking getIsSelected() per clip avoids having to
+    // distinguish video vs audio items coming back from sequence.getSelection(),
+    // since that returns a mixed VideoClipTrackItem | AudioClipTrackItem array.
+    const videoTrackCount = await sequence.getVideoTrackCount();
+    const selectedEntries: Array<{ trackIndex: number; start: TickTime; end: TickTime }> = [];
+
+    for (let t = 0; t < videoTrackCount; t++) {
+        const track = await sequence.getVideoTrack(t);
+        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+        for (const item of items) {
+            if (await item.getIsSelected()) {
+                const start = await item.getStartTime();
+                const end = await item.getEndTime();
+                selectedEntries.push({ trackIndex: t, start, end });
+            }
+        }
+    }
+
+    if (selectedEntries.length === 0) {
+        alert("No video clips are selected in the timeline.");
+        return;
+    }
+
+    // --- Compute overall time range + the highest (topmost) selected track ---
+    // Comparisons/arithmetic use TickTime's own ticksNumber/subtract rather than
+    // .seconds, since .seconds is a lossy float for non-integer frame rates
+    // (29.97, 23.976, 59.94, etc.) -- round-tripping through it here was the cause
+    // of the occasional 1-frame-short result.
+    let overallStart: TickTime | null = null;
+    let overallEnd: TickTime | null = null;
+    let highestTrackIndex = -1;
+
+    for (const entry of selectedEntries) {
+        if (!overallStart || entry.start.ticksNumber < overallStart.ticksNumber) overallStart = entry.start;
+        if (!overallEnd || entry.end.ticksNumber > overallEnd.ticksNumber) overallEnd = entry.end;
+        if (entry.trackIndex > highestTrackIndex) highestTrackIndex = entry.trackIndex;
+    }
+
+    const durationTime = overallEnd.subtract(overallStart);
+    if (durationTime.seconds <= 0) {
+        alert("Invalid selection duration.");
+        return;
+    }
+
+    // --- Find first video track above the highest selected clip with enough free space ---
+    let targetTrackIndex = -1;
+
+    for (let t = highestTrackIndex + 1; t < videoTrackCount; t++) {
+        const candidateTrack = await sequence.getVideoTrack(t);
+        const items = candidateTrack.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+
+        let free = true;
+        for (const item of items) {
+            const start = await item.getStartTime();
+            const end = await item.getEndTime();
+            if (start.ticksNumber < overallEnd.ticksNumber && end.ticksNumber > overallStart.ticksNumber) {
+                free = false;
+                break;
+            }
+        }
+
+        if (free) {
+            targetTrackIndex = t;
+            break;
+        }
+    }
+
+    // No free existing track: target one index past the last existing track.
+    const needsNewTrack = targetTrackIndex === -1;
+    if (needsNewTrack) {
+        targetTrackIndex = videoTrackCount;
+    }
+
+    // --- Read the adjustment layer's original in/out points, to restore afterward ---
+    const originalInPoint = await clipProjItem.getInPoint(ppro.Constants.MediaType.VIDEO);
+    const originalOutPoint = await clipProjItem.getOutPoint(ppro.Constants.MediaType.VIDEO);
+    const invalidTime = ppro.TickTime.TIME_INVALID;
+    const hadOriginalInOut = !originalInPoint.equals(invalidTime) && !originalOutPoint.equals(invalidTime);
+
+    const zeroTime = ppro.TickTime.TIME_ZERO;
+    const startTime = overallStart; // the exact TickTime Premiere gave us for the earliest selected clip's start
+    const audioTrackIndex = 0;
+
+    // --- Step 1: commit the temporary in/out points as their own transaction,
+    // BEFORE the placement action is even created. The insert/overwrite action
+    // appears to capture the project item's duration at the moment it's created,
+    // not when the transaction actually executes -- so bundling this into the same
+    // transaction as the placement doesn't work. Committing it first guarantees the
+    // placed clip can never be longer than the free space already verified above,
+    // so it can't overwrite anything adjacent on the target track. ---
+    project.lockedAccess(() => {
+        project.executeTransaction((compoundAction) => {
+            const setTempInOutAction = clipProjItem.createSetInOutPointsAction(zeroTime, durationTime);
+            compoundAction.addAction(setTempInOutAction);
+        }, "Set temporary adjustment layer duration");
+    });
+
+    // --- Step 2: place it, now that the project item's own duration already
+    // matches exactly what we need. ---
+    project.lockedAccess(() => {
+        project.executeTransaction((compoundAction) => {
+            const placeAction = needsNewTrack
+                ? editor.createInsertProjectItemAction(rawProjItem, startTime, targetTrackIndex, audioTrackIndex, false)
+                : editor.createOverwriteItemAction(rawProjItem, startTime, targetTrackIndex, audioTrackIndex);
+            compoundAction.addAction(placeAction);
+        }, "Add matched adjustment layer");
+    });
+
+    // --- Step 3: restore the project item's original in/out points so manually
+    // dragging it in from the bin afterward isn't affected. ---
+    project.lockedAccess(() => {
+        project.executeTransaction((compoundAction) => {
+            const restoreInOutAction = hadOriginalInOut
+                ? clipProjItem.createSetInOutPointsAction(originalInPoint, originalOutPoint)
+                : clipProjItem.createClearInOutPointsAction();
+            compoundAction.addAction(restoreInOutAction);
+        }, "Restore adjustment layer duration");
+    });
 }

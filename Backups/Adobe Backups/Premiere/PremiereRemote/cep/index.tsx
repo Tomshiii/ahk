@@ -184,66 +184,9 @@ export const host = {
     return varr.name;
   },
 
-  /* loadInSourceMonitor: function(itemName: string, folder?: string) {
-    // this method brute searches for the provided folder which may be preferred in some instances
-    // but is ultimately far less reliable than providing an exact path
-    const searchFolder: ProjectItem | null = folder
-        ? this.searchForBinWithName(folder)
-        : app.project.rootItem;
-
-    if (!searchFolder) {
-        return false;
-    }
-
-    const projItem = this.searchForItemByName(searchFolder, itemName);
-    if (!projItem) {
-        return false;
-    }
-
-    app.sourceMonitor.openProjectItem(projItem);
-    return true;
-  }, */
-
   loadInSourceMonitor: function (itemPath: string) {
     // itemPath can be just a filename or a full path like "_Assets/Footage/clip.mov"
-
-    // Find the last slash (backslash or forward slash)
-    var lastSlashIndex = -1;
-    for (var i = itemPath.length - 1; i >= 0; i--) {
-      if (itemPath[i] === '\\' || itemPath[i] === '/') {
-        lastSlashIndex = i;
-        break;
-      }
-    }
-
-    var folderPath = '';
-    var itemName = '';
-
-    if (lastSlashIndex > -1) {
-      // Build folderPath from characters before the slash
-      for (var i = 0; i < lastSlashIndex; i++) {
-        folderPath += itemPath[i];
-      }
-      // Build itemName from characters after the slash
-      for (var i = lastSlashIndex + 1; i < itemPath.length; i++) {
-        itemName += itemPath[i];
-      }
-    } else {
-      // No slash found, entire path is the item name
-      itemName = itemPath;
-    }
-
-    // Find the folder (don't create)
-    const searchFolder = folderPath
-      ? Utils.findOrCreateFolderPath(app.project.rootItem, folderPath, false)
-      : app.project.rootItem;
-
-    if (!searchFolder) {
-      // alert("Could not find folder: " + folderPath);
-      return false;
-    }
-
-    const projItem = this.searchForItemByName(searchFolder, itemName);
+    const projItem = Utils.findProjectItemByPath(itemPath);
     if (!projItem) {
       // alert("Could not find item '" + itemName + "' in folder");
       return false;
@@ -399,29 +342,6 @@ export const host = {
     };
     return deepSearchBin(inFolder);
   },
-
-  // @link : https://github.com/Adobe-CEP/Samples/blob/fbc2f2fc090b41a07f07f9fffe2043d9bafb4988/PProPanel/jsx/PPRO/Premiere.jsx#L1119
-  // @link : https://chatgpt.com/s/t_6924520380ec8191882f7441c64f1251
-  searchForItemByName: function (bin: ProjectItem, name: string) {
-    for (var i = 0; i < bin.children.numItems; i++) {
-      var child = bin.children[i];
-
-      if (!child) continue;
-
-      // Match file
-      if (child.type !== ProjectItemType.BIN && child.name === name) {
-        return child;
-      }
-
-      // Search inside sub-bins
-      if (child.type === ProjectItemType.BIN) {
-        var found = this.searchForItemByName(child, name);
-        if (found) return found;
-      }
-    }
-    return null;
-  },
-
   setMarker: function (colour: string) {
     return MarkerUtils.setMarker(colour);
   },
@@ -560,8 +480,128 @@ export const host = {
     } catch (e) {
       return false;
     }
+  },
+
+  /**
+   * Adds `adjustmentLayerPath` to the timeline, sized to exactly cover the
+   * currently selected clip(s), on the first video track above the
+   * highest selected clip that has enough free space. If none is found,
+   * a new track is created above the topmost existing track.
+   */
+  addMatchedAdjustmentLayer: function (adjustmentLayerPath: string): void {
+    var sequence = app.project.activeSequence;
+    if (!sequence) {
+      alert('No active sequence.');
+      return;
+    }
+
+    var projItem = Utils.findProjectItemByPath(adjustmentLayerPath);
+    if (!projItem) {
+      alert('Could not find adjustment layer at path: ' + adjustmentLayerPath);
+      return;
+    }
+
+    var selectedVideoClips = Utils.getSelectedVideoClips(sequence);
+    if (selectedVideoClips.length === 0) {
+      alert('No video clips are selected in the timeline.');
+      return;
+    }
+
+    // --- Compute overall time range + the highest (topmost) selected track ---
+    // Using .ticks (an exact integer, as a string) rather than .seconds, since
+    // .seconds is a lossy float for non-integer frame rates (29.97, 23.976,
+    // 59.94, etc.) -- round-tripping through it was the cause of occasional
+    // 1-frame-short placements.
+    var overallStartTicks = Number.MAX_VALUE;
+    var overallEndTicks = -Number.MAX_VALUE;
+    var highestTrackIndex = -1;
+
+    for (var i = 0; i < selectedVideoClips.length; i++) {
+      var entry = selectedVideoClips[i];
+      var s = Number(entry.clip.start.ticks);
+      var e = Number(entry.clip.end.ticks);
+      if (s < overallStartTicks) overallStartTicks = s;
+      if (e > overallEndTicks) overallEndTicks = e;
+      if (entry.trackIndex > highestTrackIndex) highestTrackIndex = entry.trackIndex;
+    }
+
+    var durationTicks = overallEndTicks - overallStartTicks;
+    if (durationTicks <= 0) {
+      alert('Invalid selection duration.');
+      return;
+    }
+
+    // --- Find first video track above the highest selected clip with enough free space ---
+    var targetTrackIndex = -1;
+    var numVideoTracks = sequence.videoTracks.numTracks;
+
+    for (var t = highestTrackIndex + 1; t < numVideoTracks; t++) {
+      var candidateTrack = sequence.videoTracks[t];
+      if (Utils.isTrackRangeFree(candidateTrack, overallStartTicks, overallEndTicks)) {
+        targetTrackIndex = t;
+        break;
+      }
+    }
+
+    if (targetTrackIndex === -1) {
+      // There is no track-adding function in the standard ExtendScript DOM at all —
+      // confirmed via Adobe community threads. The QE (Quality Engineering) DOM is
+      // the only way, via an unsupported/undocumented addTracks method. Its real
+      // signature (per community reverse-engineering, not official docs):
+      // addTracks(numVideoTracks, afterWhichVideoTrackIndex, numAudioTracks,
+      //           audioTrackType, afterWhichAudioTrackIndex, numSubmixTracks, submixTrackType)
+      // The "after which" argument is 1-based, so passing numVideoTracks (the topmost
+      // existing track's 1-based position) lands the new track above everything else.
+      app.enableQE();
+      var qeSequence = qe.project.getActiveSequence();
+      qeSequence.addTracks(1, numVideoTracks, 0, 0, 0, 0, 0);
+      targetTrackIndex = sequence.videoTracks.numTracks - 1;
+    }
+
+    var targetTrack = sequence.videoTracks[targetTrackIndex];
+    if (!targetTrack) {
+      alert('Failed to resolve target track at index ' + targetTrackIndex + '.');
+      return;
+    }
+
+    // --- Temporarily set the adjustment layer's project-item in/out points ---
+    // We do this instead of trimming after insertion because the inserted clip's
+    // duration is driven by the project item's current in/out points at insert time.
+    var originalInPoint = projItem.getInPoint ? projItem.getInPoint() : null;
+    var originalOutPoint = projItem.getOutPoint ? projItem.getOutPoint() : null;
+
+    var zeroTime = new Time();
+    zeroTime.ticks = '0';
+
+    var durationTime = new Time();
+    durationTime.ticks = String(durationTicks);
+
+    var startTime = new Time();
+    startTime.ticks = String(overallStartTicks);
+
+    projItem.setInPoint(zeroTime, 1);
+    projItem.setOutPoint(durationTime, 1);
+
+    // overwriteClip (rather than insertClip) is used so nothing on the target
+    // track ripples/shifts — we've already confirmed the range is free.
+    // Passed as a Time object (ticks-based) rather than a plain seconds number,
+    // for the same exact-arithmetic reason as above.
+    targetTrack.overwriteClip(projItem, startTime);
+
+    // --- Restore the project item's original in/out points ---
+    if (originalInPoint) {
+      projItem.setInPoint(originalInPoint, 1);
+    } else if (projItem.clearInPoint) {
+      projItem.clearInPoint(1);
+    }
+
+    if (originalOutPoint) {
+      projItem.setOutPoint(originalOutPoint, 1);
+    } else if (projItem.clearOutPoint) {
+      projItem.clearOutPoint(1);
+    }
   }
-};
+}
 
 /**
  * These functions are only used internally.

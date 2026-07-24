@@ -53,7 +53,7 @@ LCtrl & Tab::
 Shift & Tab::
 $Tab::
 {
-	titles := "Audio Gain " prem.winTitle "|"
+	titles := "Audio Gain|Sequence Settings " prem.winTitle
 	switch {
 		case isIn("Modify Clip", prem.winTitle):
 			(GetKeyState("LCtrl", "P") = true) ? prem.swapChannels(1) : prem.swapChannels(1, 16, ksa.labelPurple)

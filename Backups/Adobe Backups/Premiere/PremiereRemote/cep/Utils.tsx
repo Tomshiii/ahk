@@ -1000,4 +1000,110 @@ export class Utils {
     }
     return JSON.parse(trimmed);
   }
+
+  static findProjectItemByPath(itemPath: string) {
+    var lastSlashIndex = -1;
+    for (var i = itemPath.length - 1; i >= 0; i--) {
+      if (itemPath[i] === '\\' || itemPath[i] === '/') {
+        lastSlashIndex = i;
+        break;
+      }
+    }
+
+    var folderPath = '';
+    var itemName = '';
+
+    if (lastSlashIndex > -1) {
+      for (var i = 0; i < lastSlashIndex; i++) {
+        folderPath += itemPath[i];
+      }
+      for (var i = lastSlashIndex + 1; i < itemPath.length; i++) {
+        itemName += itemPath[i];
+      }
+    } else {
+      itemName = itemPath;
+    }
+
+    const searchFolder = folderPath
+      ? Utils.findOrCreateFolderPath(app.project.rootItem, folderPath, false)
+      : app.project.rootItem;
+
+    if (!searchFolder) {
+      return null;
+    }
+
+    return this.searchForItemByName(searchFolder, itemName);
+  }
+
+  // @link : https://github.com/Adobe-CEP/Samples/blob/fbc2f2fc090b41a07f07f9fffe2043d9bafb4988/PProPanel/jsx/PPRO/Premiere.jsx#L1119
+  // @link : https://chatgpt.com/s/t_6924520380ec8191882f7441c64f1251
+  static searchForItemByName(bin: ProjectItem, name: string): any | null {
+    for (var i = 0; i < bin.children.numItems; i++) {
+      var child = bin.children[i];
+      if (!child) continue;
+
+      if (child.type !== ProjectItemType.BIN && child.name === name) {
+        return child;
+      }
+
+      if (child.type === ProjectItemType.BIN) {
+        var found = this.searchForItemByName(child, name);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * TrackItem doesn't reliably expose its own track index across API
+   * versions, so we find it by scanning every video track's clip list
+   * and matching on nodeId.
+   */
+  static getVideoTrackIndexForClip(sequence: Sequence, clip: any): number {
+    for (var t = 0; t < sequence.videoTracks.numTracks; t++) {
+      var track = sequence.videoTracks[t];
+      for (var c = 0; c < track.clips.numItems; c++) {
+        if (track.clips[c].nodeId === clip.nodeId) {
+          return t;
+        }
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Returns { clip, trackIndex }[] for every currently selected clip that
+   * lives on a video track (audio-only selections are ignored).
+   */
+  static getSelectedVideoClips(sequence: Sequence): Array<{ clip: any; trackIndex: number }> {
+    var selection = sequence.getSelection ? sequence.getSelection() : [];
+    var result: Array<{ clip: any; trackIndex: number }> = [];
+
+    for (var i = 0; i < selection.length; i++) {
+      var item = selection[i];
+      var trackIndex = this.getVideoTrackIndexForClip(sequence, item);
+      if (trackIndex !== -1) {
+        result.push({ clip: item, trackIndex: trackIndex });
+      }
+    }
+    return result;
+  }
+
+  /**
+   * True if no clip on `track` overlaps the half-open range [startTicks, endTicks).
+   * Compares .ticks (an exact integer count, as a string) rather than .seconds,
+   * since .seconds is a lossy float for non-integer frame rates (29.97, 23.976,
+   * 59.94, etc.).
+   */
+  static isTrackRangeFree(track: Track, startTicks: number, endTicks: number): boolean {
+    for (var i = 0; i < track.clips.numItems; i++) {
+      var clip = track.clips[i];
+      var clipStart = Number(clip.start.ticks);
+      var clipEnd = Number(clip.end.ticks);
+      if (clipStart < endTicks && clipEnd > startTicks) {
+        return false; // overlap
+      }
+    }
+    return true;
+  }
 }

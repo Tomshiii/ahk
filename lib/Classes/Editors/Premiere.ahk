@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/21
- * @version 2.4.50
+ * @date 2026/07/24
+ * @version 2.4.51
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -432,6 +432,33 @@ class Prem {
     }
 
     /**
+     * determines the parameters for the passed PremiereRemote function
+     * @returns {-1 | "" | Object} returns either; `-1` if function cannot be determined, `""` if the passed function does not contain any parameters, else an object containing `{arr: [all, params], map: Map(all, true, params, true)}`
+     */
+    static __getPremRemoteFuncParams(checkFunc) {
+        if !this.__checkPremRemoteDir(checkFunc)
+            return -1
+        readFile := FileRead(this.indexFile)
+        funcPos := (InStr(readFile, Format("{}: function (", checkFunc))) ? InStr(readFile, Format("{}: function (", checkFunc)) : InStr(readFile, Format("{}: function(", checkFunc))
+        funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, funcPos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
+        if funcParamsString = ""
+            return ""
+        if !InStr(funcParamsString, ",") {
+            p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
+            return {arr: [p], map: Mip(p, true)}
+        }
+        paramsSplit := StrSplit(funcParamsString, ",", A_Space)
+        paramsArr := []
+        paramsMap := Mip()
+        for v in paramsSplit {
+            p := SubStr(v, 1, InStr(v, ':')-1)
+            paramsArr.Push(p)
+            paramsMap.Set(p, true)
+        }
+        return {arr: paramsArr, map: paramsMap}
+    }
+
+    /**
      * uses the user's `KSA.shuttlestop` hotkey to stop playback
      *
      * ~stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind. Must be set within `KSA`~ *(read comments in function for why this functionality has been disabled)*
@@ -537,6 +564,22 @@ class Prem {
         if !this.__checkPremRemoteDir(whichFunc) {
             MsgBox("PremiereRemote is not installed or function does not exist.`nFunction: " whichFunc,, "262160")
             return false
+        }
+        for v in params {
+            if !InStr(v, '=') {
+                MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
+                return false
+            }
+            splt := StrSplit(v, '=')
+            funcParams := this.__getPremRemoteFuncParams(whichFunc)
+            if funcParams != "" {
+                for v in splt {
+                    if !funcParams.map.has(v) {
+                        MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc)
+                        return false
+                    }
+                }
+            }
         }
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),, true)
@@ -3707,22 +3750,23 @@ class Prem {
      * @param {String} [outputPath] the output folder. (this is AFTER the root folder, ie. if my project file is in `W:\work\airbnb\_project files` and I pass `timeline renders`, the file will be rendered to `W:\work\airbnb\timeline renders\`)
      * @param {String} [presetName] the name of a preset file contained within `..\Backups\Adobe Backups\Media Encoder\Presets`. A custom path cannot be given, it must be within that folder
      * @param {Boolean} [addToProj=true] whether you wish for the resulting file to be imported into the current project after rendering
+     * @returns {Boolean}
      */
     static renderProjectSelection(outputPath, presetName, addToProj := true) {
         if !WinActive(this.exeTitle)
-            return
+            return false
         checkDir := this.__checkPremRemoteDir('renderInPrem')
         checkImport := this.__checkPremRemoteFunc('importFile')
         checkIsSequence := this.__checkPremRemoteFunc('selectionIsSequence')
         if !checkDir || !checkImport || !checkIsSequence {
             notifyExt.showIfNotExist('premRenderRemoteFuncs',, 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
-            return
+            return false
         }
         presetPath := ptf.Backups "\Adobe Backups\Media Encoder\Presets"
 
         if !this.__remoteFunc('selectionIsSequence', true) {
             notifyExt.showIfNotExist('premSelectionNotSeq',, 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
-            return
+            return false
         }
 
         title := WinGet.PremName()
@@ -3733,7 +3777,7 @@ class Prem {
         projPath   := WinGet.ProjPath()
         if !projPath {
             notifyExt.showIfNotExist('premRenderProjPath',, 'Could not determine the current project path', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
-            return
+            return false
         }
         renderPath := WinGet.pathU(projPath.Dir "\..\" outputPath)
         if !DirExist(renderPath)
@@ -3742,7 +3786,7 @@ class Prem {
         if !FileExist(presetPath "\" presetName) && !FileExist(presetPath "\" presetName ".epr") {
             notifyExt.showIfNotExist('premRenderPresetPath',, 'Could not determine the desired render preset:`n' presetPath "\" presetName, 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             this.save()
-            return
+            return false
         }
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
         file := this.__remoteFunc('renderInPrem', true, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
@@ -3762,12 +3806,13 @@ class Prem {
             }
             if !__waitFree() {
                 this.save()
-                return
+                return false
             }
             if !this.__remoteFunc('importFile', true, "filePath=" StrReplace(file, "\", "/"), "importAsStills=0")
-                return
+                return false
         }
         this.save()
+        return true
     }
 
     /**
@@ -4016,8 +4061,10 @@ class Prem {
         sleep 50
         if !WinWaitActive("Render and Replace " this.exeTitle,, 2) {
             try WinActivate("Render and Replace " this.exeTitle)
-            if !WinWaitActive("Render and Replace " this.exeTitle,, 2)
+            if !WinWaitActive("Render and Replace " this.exeTitle,, 2) {
+                errorLog(MethodError("render and replace couldn't activate", -1))
                 return false
+            }
         }
         try AdobeEl.FindElement({LocalizedType:"button", Name:"OK"}).Invoke()
         catch {
