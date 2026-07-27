@@ -80,7 +80,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.825378</float>
+<float>0.83456862</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -136,7 +136,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.68067527</float>
+<float>0.72895205</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -150,7 +150,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.4575198</float>
+<float>0.51072127</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -164,7 +164,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.36793542</float>
+<float>0.3101145</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -178,7 +178,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.66900176</float>
+<float>0.67075306</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -511,7 +511,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;HandlerEffectControls.SeparatorRatio&lt;/key&gt;
-&lt;float&gt;0.52966714&lt;/float&gt;
+&lt;float&gt;0.50209206&lt;/float&gt;
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;HandlerEffectControls.SeparatorRatioWhenMaximized&lt;/key&gt;
@@ -550,6 +550,20 @@
 <key>Sub2</key>
 <prop.list>
 <prop.pair>
+<key>Splitter</key>
+<prop.list>
+<prop.pair>
+<key>Orient</key>
+<true/>
+</prop.pair>
+<prop.pair>
+<key>Place</key>
+<float>0.93227094</float>
+</prop.pair>
+<prop.pair>
+<key>Sub1</key>
+<prop.list>
+<prop.pair>
 <key>Frame</key>
 <prop.list>
 <prop.pair>
@@ -586,33 +600,11 @@
 </prop.list>
 </prop.pair>
 <prop.pair>
-<key>Sub2Vis</key>
-<true/>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
 <key>Sub1Vis</key>
 <true/>
 </prop.pair>
 <prop.pair>
 <key>Sub2</key>
-<prop.list>
-<prop.pair>
-<key>Splitter</key>
-<prop.list>
-<prop.pair>
-<key>Orient</key>
-<true/>
-</prop.pair>
-<prop.pair>
-<key>Place</key>
-<float>0.066366702</float>
-</prop.pair>
-<prop.pair>
-<key>Sub1</key>
 <prop.list>
 <prop.pair>
 <key>Frame</key>
@@ -685,6 +677,22 @@
 </prop.list>
 </prop.pair>
 <prop.pair>
+<key>Sub2Vis</key>
+<true/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
+<key>Sub2Vis</key>
+<true/>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
 <key>Sub1Vis</key>
 <true/>
 </prop.pair>
@@ -722,14 +730,6 @@
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
-<key>Sub2Vis</key>
-<true/>
 </prop.pair>
 </prop.list>
 </prop.pair>
@@ -3351,7 +3351,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.16774425</float>
+<float>0.16980462</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -3426,6 +3426,44 @@
 <key>HidTabState-0</key>
 <string>&lt;prop.list&gt;
 &lt;prop.pair&gt;
+&lt;key&gt;AllowViewPersistence&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;FrameViewFlags&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;SaveViewStateWhenDestroyed&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPExtensionType&lt;/key&gt;
+&lt;string&gt;panel&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPMinorVersion&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPPanelId&lt;/key&gt;
+&lt;string&gt;de.sebinside.premiereremote.statuspanel&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPPluginId&lt;/key&gt;
+&lt;string&gt;de.sebinside.premiereremote&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPVersion&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+</string>
+</prop.pair>
+<prop.pair>
+<key>HidTabState-1</key>
+<string>&lt;prop.list&gt;
+&lt;prop.pair&gt;
 &lt;key&gt;FrameViewFlags&lt;/key&gt;
 &lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
 &lt;/prop.pair&gt;
@@ -3436,6 +3474,7 @@
 <key>ReanimTabs</key>
 <array>
 <array.type><string/></array.type>
+<string>dvauxpuiUXPPanel:de.sebinside.premiereremote-&gt;de.sebinside.premiereremote.statuspanel</string>
 <string>CsxsTabtv.misterhorse.premierecomposer.browser</string>
 </array>
 </prop.pair>
@@ -3450,7 +3489,6 @@
 <string>Properties2</string>
 <string>Graphics</string>
 <string>Essential Sound</string>
-<string>dvauxpuiUXPPanel:de.sebinside.premiereremote-&gt;de.sebinside.premiereremote.statuspanel</string>
 <string>dvauxpuiUXPPanel:com.adobe.dva.text-&gt;mainPanel</string>
 </array>
 </prop.pair>
@@ -3490,44 +3528,6 @@
 </prop.pair>
 <prop.pair>
 <key>VisTabState-3</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;AllowViewPersistence&lt;/key&gt;
-&lt;false/&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;SaveViewStateWhenDestroyed&lt;/key&gt;
-&lt;false/&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPExtensionType&lt;/key&gt;
-&lt;string&gt;panel&lt;/string&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPMinorVersion&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPPanelId&lt;/key&gt;
-&lt;string&gt;de.sebinside.premiereremote.statuspanel&lt;/string&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPPluginId&lt;/key&gt;
-&lt;string&gt;de.sebinside.premiereremote&lt;/string&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPVersion&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-4</key>
 <string>&lt;prop.list&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;AllowViewPersistence&lt;/key&gt;
@@ -3726,7 +3726,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TL.view.proplist.key&lt;/key&gt;
-&lt;ustring&gt;5&lt;/ustring&gt;
+&lt;ustring&gt;1&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -3752,8 +3752,6 @@
 <key>TabIDs</key>
 <array>
 <array.type><string/></array.type>
-<string>Timeline</string>
-<string>Timeline</string>
 <string>Timeline</string>
 <string>Timeline</string>
 <string>Timeline</string>
@@ -3788,7 +3786,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TL.view.proplist.key&lt;/key&gt;
-&lt;ustring&gt;1&lt;/ustring&gt;
+&lt;ustring&gt;4&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -3802,7 +3800,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TL.view.proplist.key&lt;/key&gt;
-&lt;ustring&gt;5&lt;/ustring&gt;
+&lt;ustring&gt;3&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -3816,41 +3814,13 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TL.view.proplist.key&lt;/key&gt;
-&lt;ustring&gt;6&lt;/ustring&gt;
+&lt;ustring&gt;1&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
 </prop.pair>
 <prop.pair>
 <key>VisTabState-4</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;TL.view.proplist.key&lt;/key&gt;
-&lt;ustring&gt;4&lt;/ustring&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-5</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;TL.view.proplist.key&lt;/key&gt;
-&lt;ustring&gt;3&lt;/ustring&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-6</key>
 <string>&lt;prop.list&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;FrameViewFlags&lt;/key&gt;
@@ -3926,7 +3896,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.93094516</float>
+<float>0.94480103</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -14369,7 +14339,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.86718053</float>
+<float>0.97687519</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -14379,7 +14349,605 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>0</int>
+<int type='unsigned' size='32'>1</int>
+</prop.pair>
+<prop.pair>
+<key>HidTabState-0</key>
+<string>&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;CurrentBin.ID&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;64&apos;&gt;1000000&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;FrameViewFlags&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;6&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;Project.ID&lt;/key&gt;
+&lt;ustring&gt;58bf4b1e-5442-4748-80ce-d87f91467ced&lt;/ustring&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;Project.ShouldRestoreTabOnProjectOpen&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;ProjectColumnInfo.ID&lt;/key&gt;
+&lt;ustring&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;
+&amp;lt;PremiereData Version=&amp;quot;3&amp;quot;&amp;gt;
+	&amp;lt;ProjectViewState ObjectRef=&amp;quot;1&amp;quot;/&amp;gt;
+	&amp;lt;ProjectViewState ObjectID=&amp;quot;1&amp;quot; ClassID=&amp;quot;18fb911d-4f21-4b7b-b196-b250dad79838&amp;quot; Version=&amp;quot;3&amp;quot;&amp;gt;
+		&amp;lt;Columns.List ObjectRef=&amp;quot;2&amp;quot;/&amp;gt;
+		&amp;lt;ProjectViewState.ID&amp;gt;fc47d76b-4765-479b-8788-f5516d06d91d&amp;lt;/ProjectViewState.ID&amp;gt;
+		&amp;lt;ProjectViewState.OriginalID&amp;gt;7c9b7be5-d596-42f3-bf3d-e5dc6801165e&amp;lt;/ProjectViewState.OriginalID&amp;gt;
+		&amp;lt;ProjectViewState.BinID&amp;gt;-1&amp;lt;/ProjectViewState.BinID&amp;gt;
+		&amp;lt;ProjectViewState.ViewHidden&amp;gt;false&amp;lt;/ProjectViewState.ViewHidden&amp;gt;
+		&amp;lt;PreviewView.Visible&amp;gt;false&amp;lt;/PreviewView.Visible&amp;gt;
+		&amp;lt;ContentView.LastViewed&amp;gt;1&amp;lt;/ContentView.LastViewed&amp;gt;
+		&amp;lt;IconView.Thumbnail.Size&amp;gt;200&amp;lt;/IconView.Thumbnail.Size&amp;gt;
+		&amp;lt;FreeformView.Scale&amp;gt;1.&amp;lt;/FreeformView.Scale&amp;gt;
+		&amp;lt;ListView.Thumbnail.Size&amp;gt;0&amp;lt;/ListView.Thumbnail.Size&amp;gt;
+		&amp;lt;IconView.Thumbnail.State&amp;gt;true&amp;lt;/IconView.Thumbnail.State&amp;gt;
+		&amp;lt;ListView.Thumbnail.State&amp;gt;false&amp;lt;/ListView.Thumbnail.State&amp;gt;
+		&amp;lt;Thumbnail.ShowsEffects.State&amp;gt;true&amp;lt;/Thumbnail.ShowsEffects.State&amp;gt;
+		&amp;lt;Sort.Type&amp;gt;0&amp;lt;/Sort.Type&amp;gt;
+		&amp;lt;Sort.Enabled&amp;gt;true&amp;lt;/Sort.Enabled&amp;gt;
+		&amp;lt;Sort.ColumnIndex&amp;gt;2&amp;lt;/Sort.ColumnIndex&amp;gt;
+		&amp;lt;Sort.Direction&amp;gt;0&amp;lt;/Sort.Direction&amp;gt;
+		&amp;lt;ListView.NameColumnWidth&amp;gt;0&amp;lt;/ListView.NameColumnWidth&amp;gt;
+		&amp;lt;IconSort.Type&amp;gt;0&amp;lt;/IconSort.Type&amp;gt;
+		&amp;lt;IconSort.Direction&amp;gt;0&amp;lt;/IconSort.Direction&amp;gt;
+		&amp;lt;IconSort.ColumnIndex&amp;gt;0&amp;lt;/IconSort.ColumnIndex&amp;gt;
+		&amp;lt;SideNav.Visible&amp;gt;true&amp;lt;/SideNav.Visible&amp;gt;
+		&amp;lt;SideNav.Width&amp;gt;160&amp;lt;/SideNav.Width&amp;gt;
+		&amp;lt;Project.IsEAProject&amp;gt;false&amp;lt;/Project.IsEAProject&amp;gt;
+		&amp;lt;ColumnListContents.Version&amp;gt;18&amp;lt;/ColumnListContents.Version&amp;gt;
+	&amp;lt;/ProjectViewState&amp;gt;
+	&amp;lt;ColumnList ObjectID=&amp;quot;2&amp;quot; ClassID=&amp;quot;a1c709cd-35df-4821-8200-03565d374155&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Columns Version=&amp;quot;1&amp;quot;&amp;gt;
+			&amp;lt;Column Index=&amp;quot;0&amp;quot; ObjectRef=&amp;quot;3&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;1&amp;quot; ObjectRef=&amp;quot;4&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;2&amp;quot; ObjectRef=&amp;quot;5&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;3&amp;quot; ObjectRef=&amp;quot;6&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;4&amp;quot; ObjectRef=&amp;quot;7&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;5&amp;quot; ObjectRef=&amp;quot;8&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;6&amp;quot; ObjectRef=&amp;quot;9&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;7&amp;quot; ObjectRef=&amp;quot;10&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;8&amp;quot; ObjectRef=&amp;quot;11&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;9&amp;quot; ObjectRef=&amp;quot;12&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;10&amp;quot; ObjectRef=&amp;quot;13&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;11&amp;quot; ObjectRef=&amp;quot;14&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;12&amp;quot; ObjectRef=&amp;quot;15&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;13&amp;quot; ObjectRef=&amp;quot;16&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;14&amp;quot; ObjectRef=&amp;quot;17&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;15&amp;quot; ObjectRef=&amp;quot;18&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;16&amp;quot; ObjectRef=&amp;quot;19&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;17&amp;quot; ObjectRef=&amp;quot;20&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;18&amp;quot; ObjectRef=&amp;quot;21&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;19&amp;quot; ObjectRef=&amp;quot;22&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;20&amp;quot; ObjectRef=&amp;quot;23&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;21&amp;quot; ObjectRef=&amp;quot;24&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;22&amp;quot; ObjectRef=&amp;quot;25&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;23&amp;quot; ObjectRef=&amp;quot;26&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;24&amp;quot; ObjectRef=&amp;quot;27&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;25&amp;quot; ObjectRef=&amp;quot;28&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;26&amp;quot; ObjectRef=&amp;quot;29&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;27&amp;quot; ObjectRef=&amp;quot;30&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;28&amp;quot; ObjectRef=&amp;quot;31&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;29&amp;quot; ObjectRef=&amp;quot;32&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;30&amp;quot; ObjectRef=&amp;quot;33&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;31&amp;quot; ObjectRef=&amp;quot;34&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;32&amp;quot; ObjectRef=&amp;quot;35&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;33&amp;quot; ObjectRef=&amp;quot;36&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;34&amp;quot; ObjectRef=&amp;quot;37&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;35&amp;quot; ObjectRef=&amp;quot;38&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;36&amp;quot; ObjectRef=&amp;quot;39&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;37&amp;quot; ObjectRef=&amp;quot;40&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;38&amp;quot; ObjectRef=&amp;quot;41&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;39&amp;quot; ObjectRef=&amp;quot;42&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;40&amp;quot; ObjectRef=&amp;quot;43&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;41&amp;quot; ObjectRef=&amp;quot;44&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;42&amp;quot; ObjectRef=&amp;quot;45&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;43&amp;quot; ObjectRef=&amp;quot;46&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;44&amp;quot; ObjectRef=&amp;quot;47&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;45&amp;quot; ObjectRef=&amp;quot;48&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;46&amp;quot; ObjectRef=&amp;quot;49&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;47&amp;quot; ObjectRef=&amp;quot;50&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;48&amp;quot; ObjectRef=&amp;quot;51&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;49&amp;quot; ObjectRef=&amp;quot;52&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;50&amp;quot; ObjectRef=&amp;quot;53&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;51&amp;quot; ObjectRef=&amp;quot;54&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;52&amp;quot; ObjectRef=&amp;quot;55&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;53&amp;quot; ObjectRef=&amp;quot;56&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;54&amp;quot; ObjectRef=&amp;quot;57&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;55&amp;quot; ObjectRef=&amp;quot;58&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;56&amp;quot; ObjectRef=&amp;quot;59&amp;quot;/&amp;gt;
+			&amp;lt;Column Index=&amp;quot;57&amp;quot; ObjectRef=&amp;quot;60&amp;quot;/&amp;gt;
+		&amp;lt;/Columns&amp;gt;
+	&amp;lt;/ColumnList&amp;gt;
+	&amp;lt;LabelColumn ObjectID=&amp;quot;3&amp;quot; ClassID=&amp;quot;0b8cc011-65dd-4b47-aad9-751ca2891f4a&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Label&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Label&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;17&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;1&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;26&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/LabelColumn&amp;gt;
+	&amp;lt;SelectedItemsColumn ObjectID=&amp;quot;4&amp;quot; ClassID=&amp;quot;88bcfb15-97a7-49ed-ac05-7d3ce637d2a0&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Selected&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.SelectedItems&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;0&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;1&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;26&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/SelectedItemsColumn&amp;gt;
+	&amp;lt;NameColumn ObjectID=&amp;quot;5&amp;quot; ClassID=&amp;quot;0547b302-c849-46b3-ae2a-b245e9dd59eb&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Name&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.Name&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;24&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;274&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/NameColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;6&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Media Type&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.MediaType&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;23&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;7&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Frame Rate&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.MediaTimebase&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;22&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;8&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Media Start&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.MediaStart&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;21&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;9&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Media End&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.MediaEnd&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;20&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;10&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Media Duration&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.MediaDuration&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;19&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;11&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Video In Point&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.VideoInPoint&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;35&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;12&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Video Out Point&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.VideoOutPoint&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;36&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;13&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Video Duration&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.VideoDuration&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;33&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;14&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Audio In Point&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.AudioInPoint&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;3&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;15&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Audio Out Point&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.AudioOutPoint&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;4&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;16&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Audio Duration&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.AudioDuration&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;1&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;17&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Subclip Start&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.SubclipStart&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;39&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;18&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Subclip End&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.SubclipEnd&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;40&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;19&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Subclip Duration&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.SubclipDuration&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;41&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;20&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Video Info&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.VideoInfo&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;34&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;21&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Audio Info&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.AudioInfo&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;2&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;150&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;22&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Video Usage&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.VideoUsage&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;38&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;23&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Audio Usage&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.AudioUsage&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;6&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;24&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Tape Name&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.TapeName&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;30&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;25&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Description&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Description&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;15&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;26&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Comment&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Comment&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;10&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;1&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;27&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Log Note&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.LogNote&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;18&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;28&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Media File Path&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.FilePath&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;16&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;29&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Status&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Status&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;29&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;30&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Offline Properties&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.OfflineProperties&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;25&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;31&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Media File Name&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.FileName&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;58&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;32&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Scene&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Scene&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;27&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;33&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Shot&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Shot&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;28&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;34&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Client&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Client&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;9&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;1&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;BoolPropertyColumn ObjectID=&amp;quot;35&amp;quot; ClassID=&amp;quot;1d4dd772-4985-4f43-874a-84b2b566e724&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Good&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyBool.Good&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;0&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;2&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+		&amp;lt;Column.Property.Key&amp;gt;Column.PropertyBool.Good&amp;lt;/Column.Property.Key&amp;gt;
+		&amp;lt;Column.Editable.Key&amp;gt;true&amp;lt;/Column.Editable.Key&amp;gt;
+	&amp;lt;/BoolPropertyColumn&amp;gt;
+	&amp;lt;BoolPropertyColumn ObjectID=&amp;quot;36&amp;quot; ClassID=&amp;quot;1d4dd772-4985-4f43-874a-84b2b566e724&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Hide&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyBool.Hide&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;0&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;2&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+		&amp;lt;Column.Property.Key&amp;gt;Column.PropertyBool.Hide&amp;lt;/Column.Property.Key&amp;gt;
+		&amp;lt;Column.Editable.Key&amp;gt;true&amp;lt;/Column.Editable.Key&amp;gt;
+	&amp;lt;/BoolPropertyColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;37&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Sound Timecode&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.SoundTimeCode&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;42&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;38&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Linear Timecode&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.LinearTimeCode&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;64&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;TimecodeColumn ObjectID=&amp;quot;39&amp;quot; ClassID=&amp;quot;9c9279d2-355c-487b-b644-0698b42e32f9&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Aux Timecode&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.AuxTimeCode&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;65&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/TimecodeColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;40&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Sound Roll&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.SoundRoll&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;43&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;41&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Camera Roll&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.FilmCameraRoll&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;47&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;42&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Daily Roll&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.FilmDailyRoll&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;48&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;43&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Lab Roll&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.FilmLabRoll&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;49&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;44&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Keycode&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.FilmKeycode&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;50&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;45&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Sync Offset&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.SyncOffset&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;44&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;46&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Video Codec&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Codec&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;45&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;47&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Field Order&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.FieldOrder&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;46&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;48&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Proxy&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Proxy&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;51&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;49&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Project Locked&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.BinLocked&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;52&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;50&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;ASC_SOP&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.ASCSOP&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;53&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;51&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;ASC_SAT&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.ASCSAT&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;54&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;52&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Lut&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Lut&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;55&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;53&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Lut1&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Lut1&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;56&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;54&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Lut2&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.Lut2&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;57&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;55&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Original Video File Name&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.OriginalVideoFileName&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;59&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;EditTextColumn ObjectID=&amp;quot;56&amp;quot; ClassID=&amp;quot;e9f21f9a-b686-440c-83f4-da1685c160ad&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Original Audio File Name&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.PropertyText.OriginalAudioFileName&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;60&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/EditTextColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;57&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Proxy Media File Path&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.ProxyFilePath&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;37&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;58&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Proxy Media File Name&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.ProxyFileName&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;61&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;true&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;59&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Transcription Status&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.TranscriptStatus&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;63&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+	&amp;lt;StringColumn ObjectID=&amp;quot;60&amp;quot; ClassID=&amp;quot;f0ef302d-babc-4f75-9975-923a8ca28d7e&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
+		&amp;lt;Column.Name&amp;gt;Content Credentials&amp;lt;/Column.Name&amp;gt;
+		&amp;lt;Column.ID&amp;gt;Column.Intrinsic.ContentCredentials&amp;lt;/Column.ID&amp;gt;
+		&amp;lt;Column.Type&amp;gt;66&amp;lt;/Column.Type&amp;gt;
+		&amp;lt;Column.Class&amp;gt;0&amp;lt;/Column.Class&amp;gt;
+		&amp;lt;Column.Width&amp;gt;100&amp;lt;/Column.Width&amp;gt;
+		&amp;lt;Column.IsHidden&amp;gt;false&amp;lt;/Column.IsHidden&amp;gt;
+	&amp;lt;/StringColumn&amp;gt;
+&amp;lt;/PremiereData&amp;gt;
+&lt;/ustring&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;ProjectView.ID&lt;/key&gt;
+&lt;ustring&gt;fc47d76b-4765-479b-8788-f5516d06d91d&lt;/ustring&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+</string>
+</prop.pair>
+<prop.pair>
+<key>ReanimTabs</key>
+<array>
+<array.type><string/></array.type>
+<string>Project:58bf4b1e-5442-4748-80ce-d87f91467ced:1000000</string>
+</array>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -14389,8 +14957,8 @@
 <key>TabIDs</key>
 <array>
 <array.type><string/></array.type>
-<string>Project:b35c85bf-658c-4432-b223-a57e11f075f1:1000000</string>
 <string>CsxsTabcom.misterhorse.premierecomposer.browser</string>
+<string>Project:b35c85bf-658c-4432-b223-a57e11f075f1:1000000</string>
 </array>
 </prop.pair>
 <prop.pair>
@@ -14399,6 +14967,16 @@
 </prop.pair>
 <prop.pair>
 <key>VisTabState-0</key>
+<string>&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;FrameViewFlags&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;6&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+</string>
+</prop.pair>
+<prop.pair>
+<key>VisTabState-1</key>
 <string>&lt;prop.list&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;CurrentBin.ID&lt;/key&gt;
@@ -14423,7 +15001,7 @@
 	&amp;lt;ProjectViewState ObjectRef=&amp;quot;1&amp;quot;/&amp;gt;
 	&amp;lt;ProjectViewState ObjectID=&amp;quot;1&amp;quot; ClassID=&amp;quot;18fb911d-4f21-4b7b-b196-b250dad79838&amp;quot; Version=&amp;quot;3&amp;quot;&amp;gt;
 		&amp;lt;Columns.List ObjectRef=&amp;quot;2&amp;quot;/&amp;gt;
-		&amp;lt;ProjectViewState.ID&amp;gt;e162a05c-4dfb-4326-90e8-eba61a964f39&amp;lt;/ProjectViewState.ID&amp;gt;
+		&amp;lt;ProjectViewState.ID&amp;gt;5ae43a43-e8b6-4719-9fd7-4dba246316a2&amp;lt;/ProjectViewState.ID&amp;gt;
 		&amp;lt;ProjectViewState.OriginalID&amp;gt;84c04016-3ef2-43a0-bc7f-da414740b2c7&amp;lt;/ProjectViewState.OriginalID&amp;gt;
 		&amp;lt;ProjectViewState.BinID&amp;gt;-1&amp;lt;/ProjectViewState.BinID&amp;gt;
 		&amp;lt;ProjectViewState.ViewHidden&amp;gt;false&amp;lt;/ProjectViewState.ViewHidden&amp;gt;
@@ -14983,17 +15561,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;ProjectView.ID&lt;/key&gt;
-&lt;ustring&gt;e162a05c-4dfb-4326-90e8-eba61a964f39&lt;/ustring&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-1</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;6&lt;/int&gt;
+&lt;ustring&gt;5ae43a43-e8b6-4719-9fd7-4dba246316a2&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -19162,8 +19730,8 @@
 &amp;lt;PremiereData Version=&amp;quot;3&amp;quot;&amp;gt;
 	&amp;lt;ProjectViewState ObjectRef=&amp;quot;1&amp;quot;/&amp;gt;
 	&amp;lt;ProjectViewState ObjectID=&amp;quot;1&amp;quot; ClassID=&amp;quot;18fb911d-4f21-4b7b-b196-b250dad79838&amp;quot; Version=&amp;quot;3&amp;quot;&amp;gt;
-		&amp;lt;ColumnListContents.Version&amp;gt;18&amp;lt;/ColumnListContents.Version&amp;gt;
-		&amp;lt;ProjectViewState.ID&amp;gt;355a5710-ce77-4c3a-a29a-629ab50cc8aa&amp;lt;/ProjectViewState.ID&amp;gt;
+		&amp;lt;Columns.List ObjectRef=&amp;quot;2&amp;quot;/&amp;gt;
+		&amp;lt;ProjectViewState.ID&amp;gt;426da389-aa44-4f22-b646-284b84c719f0&amp;lt;/ProjectViewState.ID&amp;gt;
 		&amp;lt;ProjectViewState.OriginalID&amp;gt;84c04016-3ef2-43a0-bc7f-da414740b2c7&amp;lt;/ProjectViewState.OriginalID&amp;gt;
 		&amp;lt;ProjectViewState.BinID&amp;gt;-1&amp;lt;/ProjectViewState.BinID&amp;gt;
 		&amp;lt;ProjectViewState.ViewHidden&amp;gt;false&amp;lt;/ProjectViewState.ViewHidden&amp;gt;
@@ -19186,7 +19754,7 @@
 		&amp;lt;SideNav.Visible&amp;gt;true&amp;lt;/SideNav.Visible&amp;gt;
 		&amp;lt;SideNav.Width&amp;gt;120&amp;lt;/SideNav.Width&amp;gt;
 		&amp;lt;Project.IsEAProject&amp;gt;false&amp;lt;/Project.IsEAProject&amp;gt;
-		&amp;lt;Columns.List ObjectRef=&amp;quot;2&amp;quot;/&amp;gt;
+		&amp;lt;ColumnListContents.Version&amp;gt;18&amp;lt;/ColumnListContents.Version&amp;gt;
 	&amp;lt;/ProjectViewState&amp;gt;
 	&amp;lt;ColumnList ObjectID=&amp;quot;2&amp;quot; ClassID=&amp;quot;a1c709cd-35df-4821-8200-03565d374155&amp;quot; Version=&amp;quot;1&amp;quot;&amp;gt;
 		&amp;lt;Columns Version=&amp;quot;1&amp;quot;&amp;gt;
@@ -19723,7 +20291,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;ProjectView.ID&lt;/key&gt;
-&lt;ustring&gt;355a5710-ce77-4c3a-a29a-629ab50cc8aa&lt;/ustring&gt;
+&lt;ustring&gt;426da389-aa44-4f22-b646-284b84c719f0&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -24541,18 +25109,18 @@
 <key>MinPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-1</int>
-<int type='signed' size='32'>-1</int>
+<int type='signed' size='32'>-32067</int>
+<int type='signed' size='32'>-32000</int>
 </array>
 </prop.pair>
 <prop.pair>
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>-31</int>
-<int type='signed' size='32'>3381</int>
-<int type='signed' size='32'>1448</int>
+<int type='signed' size='32'>70</int>
+<int type='signed' size='32'>0</int>
+<int type='signed' size='32'>1617</int>
+<int type='signed' size='32'>859</int>
 </array>
 </prop.pair>
 <prop.pair>

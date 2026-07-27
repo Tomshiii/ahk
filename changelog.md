@@ -1,4 +1,4 @@
-# <> Release 2.18.x - 
+# <> Release 2.18.2 - Features and Stability
 
 ## Functions
 
