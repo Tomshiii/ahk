@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/07/07
- * @version 1.9.8
+ * @date 2026/07/27
+ * @version 1.9.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -688,33 +688,14 @@ class Startup {
                     }
                     ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
                 case "open":
-                    if exists = true {
+                    if exists = true
                         return
-                    }
                     if !canLaunch {
                         MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
                         return
                     }
                     Run(ptf['HotkeylessAHK'])
-                case "reboot":
-                    if exists != true {
-                        try Run(ptf['HotkeylessAHK'])
-                        return
-                    }
-                    try ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
-                    stillExists := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
-                    if stillExists {
-                        if !winExt.WaitCloseRegex(stillExists,, 3, ignore,, true) {
-                            MsgBox("HotkeylessAHK.ahk failed to close, it may have encountered an error", "Error")
-                            return
-                        }
-                    }
-                    if !canLaunch {
-                        MsgBox("HotkeylessAHK.ahk is not installed in the expected location.`n`nExpected dir: " ptf['HotkeylessAHK'])
-                        return
-                    }
-                    try Run(ptf['HotkeylessAHK'])
-                    notifyExt.showIfNotExist("traymenuHotkeylessReboot",, 'HotkeylessAHK has been rebooted', 'C:\Windows\System32\imageres.dll|icon253',,, 'theme=Dark dur=4 bdr=Gray show=Fade@250 hide=Fade@250 maxW=400')
+                case "reboot": try Run(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\rebootHotkeylessAHK.ahk " Format('"{}" "{}"', hotkeylessTitle, ignore))
             }
         }
     }

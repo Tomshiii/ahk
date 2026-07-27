@@ -11,3 +11,5 @@ desiredFolder := WinGet.pathU(A_WorkingDir "..\..\..\..\..\..\HotkeylessAHK-3.0.
 if !DirExist(desiredFolder)
     return
 FileCopy(hotkeylessFile, desiredFolder "\*.*", true)
+
+Run("rebootHotkeylessAHK.ahk")

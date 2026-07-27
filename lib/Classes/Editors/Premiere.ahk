@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/24
- * @version 2.4.51
+ * @date 2026/07/27
+ * @version 2.4.52
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -574,6 +574,8 @@ class Prem {
             funcParams := this.__getPremRemoteFuncParams(whichFunc)
             if funcParams != "" {
                 for v in splt {
+                    if Mod(A_Index, 2) = 0
+                        continue
                     if !funcParams.map.has(v) {
                         MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc)
                         return false

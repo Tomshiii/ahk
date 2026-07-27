@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside
- * @date 2026/07/20
- * @version 1.1.9
+ * @date 2026/07/27
+ * @version 1.1.10
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -56,6 +56,7 @@ Class CustomFunctions {
     setAllEnableDisabled(enabled := "true")                  => (prem.__remoteFunc('setAllEnableDisabled',, "enabled=" enabled))
     effectSlot(save := true, slot := 1, saveToFile := false) => (prem.effectSlot(save, slot, saveToFile))
 
+    addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer")                   => (prem.__remoteFunc('addMatchedAdjustmentLayer',, 'adjustmentLayerPath=' adjustmentLayerPath))
     renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?))
 }
 

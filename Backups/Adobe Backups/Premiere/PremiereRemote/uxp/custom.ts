@@ -58,7 +58,7 @@ export async function save(): Promise<Boolean> {
  * @returns {boolean}
  */
 export async function focusSequence(ID: string): Promise<boolean> {
-    // if (!openSequences.has(ID)) return "false_1";
+    // if (!openSequences.has(ID)) return false;
 
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
@@ -82,7 +82,7 @@ export async function focusSequence(ID: string): Promise<boolean> {
     if (!sequence) return false;
 
     const selectedSequence = await project.getSequence(guid);
-    if (!selectedSequence) return false
+    if (!selectedSequence) return false;
 
     await project.setActiveSequence(selectedSequence);
     const newSeq = await project.getActiveSequence();
