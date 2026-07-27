@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/06/10
- * @version 1.3.10
+ * @date 2026/07/27
+ * @version 1.4.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,32 +34,63 @@ class AE {
         catch {
             this.UserSettings := UserPref(true)
         }
-        ;// ensure minimum version
-        ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk"]
-        ignoreWinExist(ignoreWins) {
-            Critical()
-            dct := detect()
-            for v in ignoreWins {
-                if WinExist(v) {
-                    resetOrigDetect(dct)
-                    Critical("Off")
-                    return true
-                }
-            }
-            resetOrigDetect(dct)
-            Critical("Off")
-            return false
+
+        for name in AE.OwnProps() {
+            ;// skip anything private (convention: starts with `__`), and __New itself
+            if (SubStr(name, 1, 2) = "__")
+                continue
+            desc := AE.GetOwnPropDesc(name)
+            if !desc.HasOwnProp("Call")
+                continue
+            orig := desc.Call
+            AE.DefineProp(name, {Call: __guarded.Bind(orig)})
         }
-        regInstalledVer := determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
+
+        __guarded(orig, self, args*) {
+            AE.__ensureChecked()
+            return orig(self, args*)
+        }
+    }
+
+    static __checkedInstall := false
+    static ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk"]
+
+    static __ignoreWinExist(ignoreWins := this.ignoreWins) {
+        Critical()
+        dct := detect()
+        for v in ignoreWins {
+            if WinExist(v) {
+                resetOrigDetect(dct)
+                Critical("Off")
+                return true
+            }
+        }
+        resetOrigDetect(dct)
+        Critical("Off")
+        return false
+    }
+
+    ;// everything that used to run unconditionally in __New() now lives here,
+    ;// and only runs once, lazily, the first time any real method gets called
+    static __ensureChecked() {
+        if this.__checkedInstall
+            return
+        this.__checkedInstall := true
+
+        ;// ensure minimum version
+        regInstalledVer := this.__isRegInstalledVer()
         switch regInstalledVer {
             case false:
-                (A_ScriptName != "Core Functionality.ahk" && !ignoreWinExist(ignoreWins)) ? errorLog(TargetError("After Effects is not currently installed or the incorrect version is set."),,, true) : errorLog(TargetError("After Effects is not currently installed or the incorrect version is set."))
+                (A_ScriptName != "Core Functionality.ahk" && !this.__ignoreWinExist()) ? errorLog(TargetError("After Effects is not currently installed or the incorrect version is set.", -1),,, true) : errorLog(TargetError("After Effects is not currently installed or the incorrect version is set.", -1))
             default:
                 if VerCompare(regInstalledVer.version, this.minVer) < 0 {
-                    (A_ScriptName != "Core Functionality.ahk" && !ignoreWinExist(ignoreWins)) ? errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true) : errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer,, regInstalledVer.version))
+                    (A_ScriptName != "Core Functionality.ahk" && !this.__ignoreWinExist()) ? errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer, -1, regInstalledVer.version),,, true) : errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer, -1, regInstalledVer.version))
                 }
         }
     }
+
+    static __isRegInstalledVer() => determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
+
     static UserSettings := ""
     static minVer := "22.6"
     static spectrumUI_Version := "25.0"

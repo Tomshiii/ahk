@@ -23,3 +23,4 @@
 
 ## Other Changes
 - ✅ Fixed `HotkeylessAHK` `renderAndReplace()` causing the script to throw if the render took too long
+- ✅ Fixed scripts throwing unexpectedly if `Premiere` or `After Effects` are not installed

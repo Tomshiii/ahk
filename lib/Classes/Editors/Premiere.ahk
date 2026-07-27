@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/07/27
- * @version 2.4.53
+ * @version 2.5.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -59,46 +59,27 @@ class Prem {
         catch {
             this.UserSettings := UserPref(true)
         }
-        ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk", "installNode.ahk", "installPremRemote.ahk"]
-        ignoreWinExist(ignoreWins) {
-            Critical()
-            dct := detect()
-            for v in ignoreWins {
-                if WinExist(v) {
-                    resetOrigDetect(dct)
-                    Critical("Off")
-                    return true
-                }
-            }
-            resetOrigDetect(dct)
-            Critical("Off")
-            return false
-        }
-        nodeInstalled   := RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
-        remoteInstalled := DirExist(A_AppData "\Adobe\CEP\extensions\PremiereRemote")
-        if (!nodeInstalled || !remoteInstalled) && !ignoreWinExist(ignoreWins) {
-            throwStr := (!nodeInstalled && !remoteInstalled) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!nodeInstalled && remoteInstalled) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")
-            if A_ScriptName != "Core Functionality.ahk" && !ignoreWinExist(ignoreWins)
-                throw TargetError(throwStr, -1)
-            else
-                errorLog(TargetError(throwStr, -1))
-        }
-
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
-        ;// ensure minimum version
-        regInstalledVer := determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
-        switch regInstalledVer {
-            case false: (A_ScriptName != "Core Functionality.ahk" && !ignoreWinExist(ignoreWins)) ?errorLog(TargetError("Premiere is not currently installed or the incorrect version is set."),,, true) : errorLog(TargetError("Premiere is not currently installed or the incorrect version is set."))
 
-            default:
-                if VerCompare(regInstalledVer.version, this.minVer) < 0 {
-                    ;// throw
-                    errorLog(TargetError("Installed version of Premiere is not supported.`nMin version: " this.minVer,, regInstalledVer.version),,, true)
-                }
+        allow := Mip("__remoteFunc", true, "__remoteUXP", true)
+        for name in Prem.OwnProps() {
+            ;// skip anything private (convention: starts with `__`), and __New itself
+            if (SubStr(name, 1, 2) = "__") && !allow.Has(name)
+                continue
+            desc := Prem.GetOwnPropDesc(name)
+            if !desc.HasOwnProp("Call")
+                continue
+            orig := desc.Call
+            Prem.DefineProp(name, {Call: __guarded.Bind(orig)})
         }
 
-        this.setUI()
-        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) && !ignoreWinExist(ignoreWins) {
+        __guarded(orig, self, args*) {
+            Prem.__ensureChecked()
+            return orig(self, args*)
+        }
+
+        this.__setUI()
+        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) && !this.__ignoreWinExist() {
             try {
                 activeObj := CLSID_Objs.load("prem")
                 this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
@@ -112,7 +93,8 @@ class Prem {
             this.__determineTheme()
         }
 
-        if A_ScriptName = "Core Functionality.ahk" && regInstalledVer != false && nodeInstalled != false && remoteInstalled != false  {
+        regInst := this.__isRegInstalledVer()
+        if A_ScriptName = "Core Functionality.ahk" && regInst != false && this.__isNodeInstalled() != false && this.__isRemoteInstalled() != false  {
             if (this.useSwapSequences = true || this.useSwapSequences = "true")
                 SetTimer(this.__setCurrSeq.Bind(this), this.prevSeqDelay)
 
@@ -121,7 +103,7 @@ class Prem {
             remotePath     := extensionsPath "\PremiereRemote"
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
             if DirExist(remotePath) && (getNPM != false && getNPM != "")
-                SetTimer(this.checkRemote.Bind(this, this.portCEP), 2000)
+                SetTimer(this.__checkRemote.Bind(this, this.portCEP), 2000)
 
             ;// toggle multicam when audio effect windows become active
             if !WinEvent.IsRegistered("Active", "Clip Fx Editor " this.exeTitle)
@@ -130,6 +112,55 @@ class Prem {
                 WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " this.exeTitle)), "Clip Fx Editor " this.exeTitle)
         }
     }
+
+    static __checkedInstall := false
+    static ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk", "installNode.ahk", "installPremRemote.ahk"]
+    static __ignoreWinExist(ignoreWins := this.ignoreWins) {
+            Critical()
+            dct := detect()
+            for v in ignoreWins {
+                if WinExist(v) {
+                    resetOrigDetect(dct)
+                    Critical("Off")
+                    return true
+                }
+            }
+            resetOrigDetect(dct)
+            Critical("Off")
+            return false
+        }
+
+    ;// everything that used to run unconditionally in __New() now lives here,
+    ;// and only runs once, lazily, the first time any real method gets called
+    static __ensureChecked() {
+        if this.__checkedInstall
+            return
+        this.__checkedInstall := true
+
+
+        if (!this.__isNodeInstalled() || !this.__isRemoteInstalled()) && !this.__ignoreWinExist() {
+            throwStr := (!this.__isNodeInstalled() && !this.__isRemoteInstalled()) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!this.__isNodeInstalled() && this.__isRemoteInstalled()) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")
+            if A_ScriptName != "Core Functionality.ahk" && !this.__ignoreWinExist()
+                throw TargetError(throwStr, -1)
+            else
+                errorLog(TargetError(throwStr, -1))
+        }
+
+        ;// ensure minimum version
+        regInst := this.__isRegInstalledVer()
+        switch regInst {
+            case false: (A_ScriptName != "Core Functionality.ahk" && !this.__ignoreWinExist()) ? errorLog(TargetError("Premiere is not currently installed or the incorrect version is set.", -1),,, true) : errorLog(TargetError("Premiere is not currently installed or the incorrect version is set.", -1))
+
+            default:
+                if VerCompare(regInst.version, this.minVer) < 0 {
+                    ;// throw
+                    errorLog(TargetError("Installed version of Premiere is not supported.`nMin version: " this.minVer, -1, regInst.version),,, true)
+                }
+        }
+    }
+    static __isNodeInstalled() => RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
+    static __isRemoteInstalled() => DirExist(A_AppData "\Adobe\CEP\extensions\PremiereRemote")
+    static __isRegInstalledVer() => determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
 
     static minVer := "26.2"
     static KSA {
@@ -251,11 +282,11 @@ class Prem {
 
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
-    static checkRemote(port := 8081) {
+    static __checkRemote(port := 8081) {
         if !WinExist(this.winTitle)
             return
         try {
-            sock := winsock("probe", (s,e,c) => this.probeCB(s,e,c), "IPV4")
+            sock := winsock("probe", (s,e,c) => this.__probeCB(s,e,c), "IPV4")
             sock.Connect("localhost", port)
         } catch {
             errorLog(TargetError("Couldn't probe localhost", -1))
@@ -263,7 +294,7 @@ class Prem {
         }
     }
 
-    static probeCB(sock, event, err) {
+    static __probeCB(sock, event, err) {
         if (event = "Connect") {
             this.remoteActive := (err = 0)
             sock.Close()
@@ -273,7 +304,7 @@ class Prem {
         }
     }
 
-    static setUI() {
+    static __setUI() {
         switch  {
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.UI := "Spectrum"
             default: this.UI := this.defaultUI
