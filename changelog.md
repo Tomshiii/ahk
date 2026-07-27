@@ -4,6 +4,7 @@
 
 ### 📝 `prem {`
 - 📋 `__remoteFunc()` will now alert the user if they've passed incorrect parameters or if they've forgotten to pass the parameter name
+- 📋 `__remoteUXP()` now has feature parity with `__remoteFunc()`
 
 📍 `renderAndReplace()`
 - ✅ Fixed function potentially hanging after adjusting the output path

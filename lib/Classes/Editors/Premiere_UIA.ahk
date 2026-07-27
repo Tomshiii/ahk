@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/07/07
- * @version 3.0.24
+ * @date 2026/07/27
+ * @version 3.0.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -134,12 +134,12 @@ class premUIA_Values {
             throw Error("Failed to retrieve Premiere title.")
         }
         premObj := CLSID_Objs.clone("prem")
-        if premObj.remoteActive = "loading" {
+        if premObj.remoteActiveCEP = "loading" {
             notifyExt.deleteIfExist("premUIAGenTree")
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
             throw Error("Socket")
         }
-        if !premObj.remoteActive {
+        if !premObj.remoteActiveCEP {
             notifyExt.deleteIfExist("premUIAGenTree")
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
             errorLog(Error("A socket connection could not be established", -1),, true)

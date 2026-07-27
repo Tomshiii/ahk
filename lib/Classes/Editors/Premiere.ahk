@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/07/27
- * @version 2.5.0
+ * @version 2.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -102,8 +102,10 @@ class Prem {
             extensionsPath := A_AppData "\Adobe\CEP\extensions"
             remotePath     := extensionsPath "\PremiereRemote"
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
-            if DirExist(remotePath) && (getNPM != false && getNPM != "")
-                SetTimer(this.__checkRemote.Bind(this, this.portCEP), 2000)
+            if DirExist(remotePath) && (getNPM != false && getNPM != "") {
+                SetTimer(this.__checkRemote.Bind(this, this.portCEP, "cep"), 2000)
+                SetTimer(this.__checkRemote.Bind(this, this.portUXP, "uxp"), 2000)
+            }
 
             ;// toggle multicam when audio effect windows become active
             if !WinEvent.IsRegistered("Active", "Clip Fx Editor " this.exeTitle)
@@ -192,7 +194,8 @@ class Prem {
     static useSwapSequences {
         get => this.UserSettings.use_swapSequences
     }
-    static remoteActive := "loading"
+    static remoteActiveCEP := "loading"
+    static remoteActiveUXP := "loading"
     static portCEP := 8081
     static portUXP := 8084
 
@@ -257,8 +260,11 @@ class Prem {
     static scGuest2  := "1"
 
     ;// PremiereRemote variables
-    static remoteDir := A_AppData "\Adobe\CEP\extensions\PremiereRemote"
-    static indexFile := this.remoteDir "\host\src\index.tsx"
+    static remoteDirCEP := A_AppData "\Adobe\CEP\extensions\PremiereRemote"
+    static remoteDirUXP := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp"
+    static indexFileCEP := this.remoteDirCEP "\host\src\index.tsx"
+    static indexFileUXP := this.remoteDirUXP "\src\generated\registry.ts"
+    static funcDirUXP   := this.remoteDirUXP "\src\actions"
 
     ;// swapChannels()
     static secondChannel := 0
@@ -282,11 +288,11 @@ class Prem {
 
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
-    static __checkRemote(port := 8081) {
+    static __checkRemote(port := 8081, cepOrUXP := "cep") {
         if !WinExist(this.winTitle)
             return
         try {
-            sock := winsock("probe", (s,e,c) => this.__probeCB(s,e,c), "IPV4")
+            sock := winsock("probe", (s,e,c) => this.__probeCB(s,e,c, cepOrUXP), "IPV4")
             sock.Connect("localhost", port)
         } catch {
             errorLog(TargetError("Couldn't probe localhost", -1))
@@ -294,12 +300,12 @@ class Prem {
         }
     }
 
-    static __probeCB(sock, event, err) {
+    static __probeCB(sock, event, err, cepOrUXP) {
         if (event = "Connect") {
-            this.remoteActive := (err = 0)
+            (cepOrUXP = "cep") ? this.remoteActiveCEP := (err = 0) : this.remoteActiveUXP := (err = 0)
             sock.Close()
         } else if (event = "Close") {
-            this.remoteActive := false
+            (cepOrUXP = "cep") ? this.remoteActiveCEP := false : this.remoteActiveUXP := false
             sock.Close()
         }
     }
@@ -443,34 +449,75 @@ class Prem {
         return true
     }
     /**
-     * This function checks for the existence of [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main). Can also check for the existence of a specific function within the `index.tsx` file
-     * @param {String} [checkFunc=""] the name of the function you wish to check for
+     * This function checks for the existence of [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main). Can also check for the existence of a specific function within the `index.tsx` file, or desired UXP `ts` file
+     * @param {String} [checkFunc=""] if `cepOrUXP` is set to `cep`; the name of the function you wish to check for, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
+     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
      * @returns {Boolean}
      */
-    static __checkPremRemoteDir(checkFunc := "") {
-        return (DirExist(this.remoteDir) && FileExist(this.indexFile) && this.__checkPremRemoteFunc(checkFunc) ? true : false)
+    static __checkPremRemoteDir(checkFunc := "", cepOrUXP := "cep") {
+        switch cepOrUXP, 0 {
+            case "cep": return (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP) && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+            case "uxp":
+                ff := this.__splitUXPfileFunc(checkFunc)
+                return (DirExist(this.remoteDirUXP) && FileExist(this.funcDirUXP "\" ff.fileName) && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+        }
     }
 
     /**
-     * This function checks the [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) `index` file for the desired function
-     * @param {String} checkFunc the function name you wish to search for. ie `projPath`
+     * This function checks the [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) `index` or UXP `.ts` file for the desired function
+     * @param {String} checkFunc if `cepOrUXP` is set to `cep`; the function name you wish to search for. ie `projPath`, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
+     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
      * @returns {Boolean}
      */
-    static __checkPremRemoteFunc(checkFunc) {
-        return ((InStr(readFile := FileRead(this.indexFile), Format("{}: function (", checkFunc)) ||
+    static __checkPremRemoteFunc(checkFunc, cepOrUXP := "cep") {
+        switch cepOrUXP, 0 {
+            case "cep":
+                return ((InStr(readFile := FileRead(this.indexFileCEP), Format("{}: function (", checkFunc)) ||
                     InStr(readFile, Format("{}: function(", checkFunc)))
                     ? true : false)
+            case "uxp":
+                if !ff := this.__splitUXPfileFunc(checkFunc)
+                    return
+                return ((InStr(readFile := FileRead(this.funcDirUXP "\" ff.fileName), Format("export async function {}(", ff.funcName)) ||
+                    InStr(readFile, Format("export async function {} (", ff.funcName)))
+                    ? true : false)
+        }
     }
 
     /**
-     * determines the parameters for the passed PremiereRemote function
+     * split a UXP `whichFunc` string into its filename/function name
+     * @param {String} funcString the `whichFunc` string to split
+     * @returns {false | object} `{fileName: filename.ts, funcName: functionName}`
+     */
+    static __splitUXPfileFunc(funcString) {
+        if !InStr(funcString, "/") {
+            ;// throw
+            errorLog(PropertyError("Can't check for UXP function, file wasn't specified", -1, funcString),,, true)
+            return false
+        }
+        split := StrSplit(funcString, "/")
+        return {fileName: split[1] ".ts", funcName: split[2]}
+    }
+
+    /**
+     * determines the parameters for the passed PremiereRemote CEP function
+     * @param {String} checkFunc the `whichFunc` passed to either `__remoteFunc()` function
+     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
      * @returns {-1 | "" | Object} returns either; `-1` if function cannot be determined, `""` if the passed function does not contain any parameters, else an object containing `{arr: [all, params], map: Map(all, true, params, true)}`
      */
-    static __getPremRemoteFuncParams(checkFunc) {
-        if !this.__checkPremRemoteDir(checkFunc)
+    static __getPremRemoteFuncParams(checkFunc, cepOrUXP := "cep") {
+        if !this.__checkPremRemoteDir(checkFunc, cepOrUXP)
             return -1
-        readFile := FileRead(this.indexFile)
-        funcPos := (InStr(readFile, Format("{}: function (", checkFunc))) ? InStr(readFile, Format("{}: function (", checkFunc)) : InStr(readFile, Format("{}: function(", checkFunc))
+        switch cepOrUXP, 0 {
+            case "cep":
+                readFile := FileRead(this.indexFile)
+                funcPos := (InStr(readFile, Format("{}: function (", checkFunc))) ? InStr(readFile, Format("{}: function (", checkFunc)) : InStr(readFile, Format("{}: function(", checkFunc))
+            case "uxp":
+                if !ff := this.__splitUXPfileFunc(checkFunc)
+                    return -1
+                readFile := FileRead(this.funcDirUXP "\" ff.fileName)
+                funcPos := (InStr(readFile, Format("export async function {}(", ff.funcName))) ? InStr(readFile, Format("export async function {}(", ff.funcName)) : InStr(readFile, Format("export async function {} (", ff.funcName))
+        }
         funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, funcPos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
         if funcParamsString = ""
             return ""
@@ -593,27 +640,11 @@ class Prem {
      */
     static __remoteFunc(whichFunc, needResult := false, params*) {
         if !this.__checkPremRemoteDir(whichFunc) {
-            MsgBox("PremiereRemote is not installed or function does not exist.`nFunction: " whichFunc,, "262160")
+            errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
             return false
         }
-        for v in params {
-            if !InStr(v, '=') {
-                MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
-                return false
-            }
-            splt := StrSplit(v, '=')
-            funcParams := this.__getPremRemoteFuncParams(whichFunc)
-            if funcParams != "" {
-                for v in splt {
-                    if Mod(A_Index, 2) = 0
-                        continue
-                    if !funcParams.map.has(v) {
-                        MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc)
-                        return false
-                    }
-                }
-            }
-        }
+        if !this.__checkRemoteParams(whichFunc, params, "cep")
+            return false
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),, true)
             return false
@@ -624,33 +655,33 @@ class Prem {
         if !checkPrem || checkType
             return false
         checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
-        if  checkTitle || checkCanSave {
+        if checkTitle || checkCanSave {
             return false
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
             activeObj := CLSID_Objs.clone("prem")
-            if activeObj.remoteActive = "loading" {
+            if activeObj.remoteActiveCEP = "loading" {
                 notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
-            if !activeObj.remoteActive {
+            if !activeObj.remoteActiveCEP {
                 errorLog(Error("A socket connection could not be established", -1),, true)
                 return false
             }
         } else {
-            if this.remoteActive = "loading" {
+            if this.remoteActiveCEP = "loading" {
                 notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
-            if !this.remoteActive {
+            if !this.remoteActiveCEP {
                 errorLog(Error("A socket connection could not be established", -1),, true)
                 return false
             }
         }
 
         paramsString := this.__sanitiseParams(params)
-        sendcommand := Format('curl "http://localhost:8081/{1}?{2}"', whichFunc, String(paramsString))
+        sendcommand := Format('curl "http://localhost:{3}/{1}?{2}"', whichFunc, String(paramsString), this.portCEP)
         if !needResult {
             Run(sendcommand,, "Hide")
             return true
@@ -685,6 +716,35 @@ class Prem {
     }
 
     /**
+     * check the parameters passed to a `__remoteFunc` method to ensure the user has passed them correctly
+     * @param {String} [whichFunc] the `whichFunc` parameter passed to either cep or uxp `__remoteFunc()`
+     * @param {Array} [params] an array of params passed to either cep or uxp `__remoteFunc()`
+     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
+     * @returns {Boolean}
+     */
+    static __checkRemoteParams(whichFunc, params, cepOrUXP := "cep") {
+        for v in params {
+            if !InStr(v, '=') {
+                MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
+                return false
+            }
+            splt := StrSplit(v, '=')
+            funcParams := this.__getPremRemoteFuncParams(whichFunc, cepOrUXP)
+            if funcParams != "" {
+                for v in splt {
+                    if Mod(A_Index, 2) = 0
+                        continue
+                    if !funcParams.map.has(v) {
+                        MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc)
+                        return false
+                    }
+                }
+            }
+        }
+        return true
+    }
+
+    /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) uxp function. This function is in testing as `PremiereRemote` uxp functionality is still in development
      * @param {String} whichFunc the function you wish to call. **must include the file name**, eg. `common/getActiveSequenceName`
      * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window.
@@ -698,12 +758,52 @@ class Prem {
      */
     static __remoteUXP(whichFunc, needResult := false, params*) {
         if !InStr(whichFunc, "/") {
-            errorLog(PropertyError('Parameter #1 does not contain path to desired file', -1), whichFunc)
-            MsgBox("prem.__remoteUXP() failed.`n`nParameter #1 does not contain path to desired file")
+            errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -1), whichFunc,, true)
             return false
         }
+        if !this.__checkPremRemoteDir(whichFunc, "uxp") {
+            errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
+            return false
+        }
+        if !this.__checkRemoteParams(whichFunc, params, "uxp")
+            return
+        if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+            errorLog(Error("Core Functionality.ahk is not open but is required.", -1),, true)
+            return false
+        }
+
+        checkPrem := WinGet.PremName()
+        checkType := (Type(checkPrem) != "Object")
+        if !checkPrem || checkType
+            return false
+        checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
+        if checkTitle || checkCanSave {
+            return false
+        }
+
+        if A_ScriptName != "Core Functionality.ahk" {
+            activeObj := CLSID_Objs.clone("prem")
+            if activeObj.remoteActiveUXP = "loading" {
+                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                return -1
+            }
+            if !activeObj.remoteActiveUXP {
+                errorLog(Error("A socket connection could not be established", -1),, true)
+                return false
+            }
+        } else {
+            if this.remoteActiveUXP = "loading" {
+                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                return -1
+            }
+            if !this.remoteActiveUXP {
+                errorLog(Error("A socket connection could not be established", -1),, true)
+                return false
+            }
+        }
+
         paramsString := prem.__sanitiseParams(params)
-        sendcommand := Format('curl -X GET "http://localhost:8084/{1}?{2}"', whichFunc, String(paramsString))
+        sendcommand := Format('curl -X GET "http://localhost:{3}/{1}?{2}"', whichFunc, String(paramsString), this.portUXP)
         if !needResult {
             Run(sendcommand,, "Hide")
             return true
@@ -3607,7 +3707,7 @@ class Prem {
             SetTimer(, newDelay)
             return
         }
-        if !this.remoteActive
+        if !this.remoteActiveCEP
             return
         if !this.__checkPremRemoteDir("getActiveSequence")
             SetTimer(, 0)
