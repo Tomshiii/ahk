@@ -2,15 +2,18 @@
 
 ## Functions
 
-📍 `prem {`
-- 📋 `renderAndReplace()` now accepts parameters `handles`, and `includeEffects`
+### 📝 `prem {`
 - 📋 `__remoteFunc()` will now alert the user if they've passed incorrect parameters or if they've forgotten to pass the parameter name
 
-📍 `winExt {`
+📍 `renderAndReplace()`
+- ✅ Fixed function potentially hanging after adjusting the output path
+- 📋 Now accepts parameters `handles`, and `includeEffects`
+
+### 📝 `winExt {`
 - ✏️ Added `WaitActiveRegex()`
 - ✅ Fixed `ActivateRegex()`, `CloseRegex()`, `MinimizeRegex()`, and `MaximizeRegex()` leaking the `RegEx` titlematchmode
 
-### 📝 `PremiereRemote`
+## `PremiereRemote`
 - ✏️ Added `removeMarkerAtPlayhead()`, `getSeqFrameRate()`, `addMatchedAdjustmentLayer()`
 - ✅ Fixed `setMarker()` not working on all clip types
 

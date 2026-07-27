@@ -1905,9 +1905,11 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
 
 /**
  * adds adjustment layer above selected clips
+ * @param {string} [adjustmentLayerPath] the bin path to the adjustment layer you wish to add above the selected clips
+ * @param {boolean} [makeSelection] whether you wish for the newly added adjustment layer to become the selected clip
  * @returns {void}
  */
-export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string): Promise<void> {
+export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, makeSelection: boolean): Promise<void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) {
         alert("No active project.");
@@ -2048,4 +2050,25 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string): Pr
             compoundAction.addAction(restoreInOutAction);
         }, "Restore adjustment layer duration");
     });
+
+    if (makeSelection) {
+        const targetTrack = await sequence.getVideoTrack(targetTrackIndex);
+        const trackItemsAfterPlace = targetTrack.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+
+        let placedClip = null;
+        for (const item of trackItemsAfterPlace) {
+            const start = await item.getStartTime();
+            if (start.ticksNumber === overallStart.ticksNumber) {
+                placedClip = item;
+                break;
+            }
+        }
+
+        if (placedClip) {
+            ppro.TrackItemSelection.createEmptySelection((selection) => {
+                selection.addItem(placedClip);
+                sequence.setSelection(selection);
+            });
+        }
+    }
 }

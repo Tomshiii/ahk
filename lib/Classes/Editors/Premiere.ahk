@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/07/27
- * @version 2.4.52
+ * @version 2.4.53
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3954,6 +3954,14 @@ class Prem {
         explorer.navigateUsingAddressbar(path, hwnd)
         selectFolderWin := UIA.ElementFromHandle(hwnd,, false)
         selectFolderWin.FindElement({LocalizedType:"button", Name:"Select Folder", AutomationId:"1"}).Click()
+        if !WinWaitActive("Render and Replace " this.exeTitle,, 3) && WinExist("Render and Replace " this.exeTitle) {
+            try WinActivate("Render and Replace " this.exeTitle)
+            catch {
+                return false
+            }
+            if !WinWaitActive("Render and Replace " this.exeTitle,, 3)
+                return false
+        }
         return true
     }
 
@@ -4013,7 +4021,7 @@ class Prem {
     }
 
     /**
-     * This function is (for the most part) designed to be activated from a streamdeck but should still work separately. It handles going through the `render and replace` process for the selected clip(s). If the selected clip is a video it will also automate the `Render and Replace` window, including setting the desired output path.
+     * This function is (for the most part) designed to be activated from a streamdeck but should still work separately. It handles going through the `render and replace` process for the selected clip(s). If the selected clip is a video it will also automate the `Render and Replace` window, including setting the desired output path. The function will not return (on success) until the clip has finished rendering.
      * @param {String/Boolean} [changeLabel] whether you wish for the selected clip to have its label colour changed. Will only change clips with a `mediatype` of `Video`
      * @param {String} [labelHotkey] the hotkey of the label colour you wish to change the selected clip to
      * @param {String} [dropPreset] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
@@ -4022,7 +4030,7 @@ class Prem {
      * @param {String} [path] the parameter that will be passed to `prem.setRnderRplcPath()` and is the desired path you wish to use as the output location. (can also be set to `Next to Original Media`)
      * @param {Integer | false} [handles=sequence framerate] determine the handles frame count. If `unset` defaults to the sequence framerate (rounded). Set to `false` to disable the checkbox.
      * @param {Boolean} [includeEffects=true] determine the state of the `Include Video Effects` checkbox. Can be `true` or `false`.
-     * @returns {Boolean} returns boolean `false` if; premiere isn't the active window, waiting for the `Render and Replace` window timed out, the user has an audio file selected, setting the render path failed
+     * @returns {Boolean} returns boolean `false` if; premiere isn't the active window, waiting for the `Render and Replace` window timed out, the user has an audio file selected, setting the render path failed. Else returns `true`
      */
     static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, includeEffects := true) {
         if !WinActive(this.winTitle)

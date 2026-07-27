@@ -3,7 +3,7 @@
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside
  * @date 2026/07/27
- * @version 1.1.10
+ * @version 1.1.11
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -16,6 +16,7 @@ A_IconTip := "HotkeylessAHK"
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\ptf.ahk
 #Include Functions\detect.ahk
+#Include Functions\checkBool.ahk
 ; }
 TraySetIcon(ptf.Icons "\hotkeyless.ico")
 ; #NoTrayIcon
@@ -56,7 +57,7 @@ Class CustomFunctions {
     setAllEnableDisabled(enabled := "true")                  => (prem.__remoteFunc('setAllEnableDisabled',, "enabled=" enabled))
     effectSlot(save := true, slot := 1, saveToFile := false) => (prem.effectSlot(save, slot, saveToFile))
 
-    addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer")                   => (prem.__remoteFunc('addMatchedAdjustmentLayer',, 'adjustmentLayerPath=' adjustmentLayerPath))
+    addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer", makeSelection := true) => (OtherFuncs.addAdjustLayer(adjustmentLayerPath, makeSelection))
     renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?))
 }
 
@@ -66,11 +67,19 @@ class OtherFuncs {
     static rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?) {
         if !prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?)
             return
-        if !WinWait("Render and Replace Progress " prem.exeTitle,, 6)
-            return
-        if !WinWaitClose("Render and Replace Progress " prem.exeTitle,, 15)
-            return
-        sleep 1500
+        sleep 1000
         prem.__remoteFunc('organiseProj')
+    }
+
+    /** calls premremote func `addMatchedAdjustmentLayer()`. If it's my transform adjust layer, it also adds the transform effect */
+    static addAdjustLayer(adjustmentLayerPath, makeSelection) {
+        adjustName := SubStr(adjustmentLayerPath, InStr(adjustmentLayerPath, "/",, -1)+1)
+        prem.__remoteFunc('addMatchedAdjustmentLayer',, 'adjustmentLayerPath=' adjustmentLayerPath, "makeSelection=" makeSelection)
+        if checkBool(makeSelection) != true
+            return
+        switch adjustName {
+            case "_transform_adjust layer": prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Transform")
+            case "_colour_adjust layer":    prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lumetri%20Color")
+        }
     }
 }

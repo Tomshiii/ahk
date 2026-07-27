@@ -488,7 +488,7 @@ export const host = {
    * highest selected clip that has enough free space. If none is found,
    * a new track is created above the topmost existing track.
    */
-  addMatchedAdjustmentLayer: function (adjustmentLayerPath: string): void {
+  addMatchedAdjustmentLayer: function (adjustmentLayerPath: string, makeSelection: boolean): void {
     var sequence = app.project.activeSequence;
     if (!sequence) {
       alert('No active sequence.');
@@ -599,6 +599,25 @@ export const host = {
       projItem.setOutPoint(originalOutPoint, 1);
     } else if (projItem.clearOutPoint) {
       projItem.clearOutPoint(1);
+    }
+
+    // --- Optionally make the newly-placed adjustment layer the selection ---
+    if (makeSelection) {
+      for (var si = 0; si < selectedVideoClips.length; si++) {
+        selectedVideoClips[si].clip.setSelected(0, 0);
+      }
+
+      var newClip = null;
+      for (var ci = 0; ci < targetTrack.clips.numItems; ci++) {
+        if (Number(targetTrack.clips[ci].start.ticks) === overallStartTicks) {
+          newClip = targetTrack.clips[ci];
+          break;
+        }
+      }
+
+      if (newClip) {
+        newClip.setSelected(1, 1);
+      }
     }
   }
 }
