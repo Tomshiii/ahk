@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/27
- * @version 2.5.1
+ * @date 2026/07/28
+ * @version 2.5.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -510,7 +510,7 @@ class Prem {
             return -1
         switch cepOrUXP, 0 {
             case "cep":
-                readFile := FileRead(this.indexFile)
+                readFile := FileRead(this.indexFileCEP)
                 funcPos := (InStr(readFile, Format("{}: function (", checkFunc))) ? InStr(readFile, Format("{}: function (", checkFunc)) : InStr(readFile, Format("{}: function(", checkFunc))
             case "uxp":
                 if !ff := this.__splitUXPfileFunc(checkFunc)

@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.3
  * @author tomshi, taranVH
- * @date 2026/04/30
- * @version 2.4.21
+ * @date 2026/07/28
+ * @version 2.4.22
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -415,7 +415,7 @@ class rbuttonPrem {
 		;// the cursor will still move if the user taps the activation hotkey
 		SendInput(ksa.playheadtoCursor)
 
-		useRemote := this.premObj.remoteActive
+		useRemote := this.premObj.remoteActiveCEP
 		if useRemote = true {
 			ckDir := prem.__checkPremRemoteDir("getActiveSequence"), ckFunc := prem.__checkPremRemoteFunc("focusSequence")
 			if !ckDir || !ckFunc {

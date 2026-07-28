@@ -1,27 +1,5 @@
-# <> Release 2.18.2 - Features and Stability
+# <> Release 2.18.2.1 - Hotfix
 
 ## Functions
-
-### 📝 `prem {`
-- 📋 `__remoteFunc()` will now alert the user if they've passed incorrect parameters or if they've forgotten to pass the parameter name
-- 📋 `__remoteUXP()` now has feature parity with `__remoteFunc()`
-
-📍 `renderAndReplace()`
-- ✅ Fixed function potentially hanging after adjusting the output path
-- 📋 Now accepts parameters `handles`, and `includeEffects`
-
-### 📝 `winExt {`
-- ✏️ Added `WaitActiveRegex()`
-- ✅ Fixed `ActivateRegex()`, `CloseRegex()`, `MinimizeRegex()`, and `MaximizeRegex()` leaking the `RegEx` titlematchmode
-
-## `PremiereRemote`
-- ✏️ Added `removeMarkerAtPlayhead()`, `getSeqFrameRate()`, `addMatchedAdjustmentLayer()`
-- ✅ Fixed `setMarker()` not working on all clip types
-
-📍 `applyEffectSlotJSON()`
-- 📋 Can now additionally accept a filepath instead of *just* a `base64` encoded string
-- 📋 Can now additionally apply effects from a `prfpset` file
-
-## Other Changes
-- ✅ Fixed `HotkeylessAHK` `renderAndReplace()` causing the script to throw if the render took too long
-- ✅ Fixed scripts throwing unexpectedly if `Premiere` or `After Effects` are not installed
+- ✅ Fixed `rbuttonPrem().movePlayhead()` throwing due to an incorrect variable
+- ✅ Fixed `prem.__getPremRemoteFuncParams()` throwing due to an incorrect variable
