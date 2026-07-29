@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/28
- * @version 2.5.2
+ * @date 2026/07/29
+ * @version 2.5.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -358,27 +358,27 @@ class Prem {
                                 case "Abort": ;// darkest
                                     props.text := "7.9999998211860657"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "darkest"
                                 case "Retry": ;// dark
                                     MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
                                     props.text := "7.9999998211860657"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "darkest"
                                     /* props.text := "34.999999403953552"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "dark" */
                                 case "Ignore": ;// light
                                     MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
                                     props.text := "7.9999998211860657"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "darkest"
                                     /* props.text := "80.000001192092896"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "pref=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "light" */
                             }
                         }

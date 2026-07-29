@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside
- * @date 2026/07/27
- * @version 1.1.11
+ * @date 2026/07/29
+ * @version 1.1.12
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -59,6 +59,8 @@ Class CustomFunctions {
 
     addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer", makeSelection := true) => (OtherFuncs.addAdjustLayer(adjustmentLayerPath, makeSelection))
     renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?))
+
+    closeExplorer() => (ProcessClose("explorer.exe"))
 }
 
 ;// === any functions/hotkeys that don't really make much sense anywhere else
