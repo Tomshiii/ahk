@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2026/07/30
  ***********************************************************************/
-global currentVer := "1.3.7.1"
+global currentVer := "1.3.8"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -96,6 +96,7 @@ class multiDL extends tomshiBasic {
         defaulDlFodler := RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", EnvGet("USERPROFILE") "\Downloads") "\tomshi"
         dlFolder  := (FileExist(this.requiredFilesDir "\defaultDLLocation")) ? (DirExist(prevFile := FileRead(this.requiredFilesDir "\defaultDLLocation")) ? prevFile : defaulDlFodler) : __createDefault(this.requiredFilesDir "\defaultDLLocation", defaulDlFodler)
         devBranch := (FileExist(this.requiredFilesDir "\devBranch")) ? FileRead(this.requiredFilesDir "\devBranch") : __createDefault(this.requiredFilesDir "\devBranch", "1")
+        defCookies := (FileExist(this.requiredFilesDir "\useCookies")) ? FileRead(this.requiredFilesDir "\useCookies") : __createDefault(this.requiredFilesDir "\useCookies", "1")
         __createDefault(filename, defaultReturn) {
             FileAppend("1", filename)
             return defaultReturn
@@ -116,7 +117,7 @@ class multiDL extends tomshiBasic {
         this.AddButton("vDL_single xs w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise_single", " Avoid reencode`n (may result in lower quality)")
         this.AddCheckbox("yp+40 vdlPlay_single Checked0", " Download Playlist")
-        this.AddCheckbox("yp+25 vcookies_single Checked0", " Use cookies (firefox)")
+        this.AddCheckbox("yp+25 vcookies_single Checked" defCookies, " Use cookies (firefox)").OnEvent("Click", (ctrl, *) => (FileDelete(this.requiredFilesDir "\useCookies"), FileAppend(ctrl.value, this.requiredFilesDir "\useCookies")))
         this["DL_single"].GetPos(&x, &y, &wid, &height)
         this.AddButton("vAud_single x" x " y" y+37 " w" but_width, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
         this.AddButton("vthumb_single x" x " -Wrap y+7 w" but_width, "Download Thumbnail").OnEvent("Click", this.__download.Bind(this, "thumb"))
@@ -144,7 +145,7 @@ class multiDL extends tomshiBasic {
         this.AddButton("vDL w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise", " Avoid reencode`n (may result in lower quality)")
         this.AddCheckbox("yp+40 vdlPlay_multi Checked0", " Download Playlist")
-        this.AddCheckbox("yp+25 vcookies_multi Checked0", " Use cookies (firefox)")
+        this.AddCheckbox("yp+25 vcookies_multi  Checked" defCookies, " Use cookies (firefox)").OnEvent("Click", (ctrl, *) => (FileDelete(this.requiredFilesDir "\useCookies"), FileAppend(ctrl.value, this.requiredFilesDir "\useCookies")))
         this["DL"].GetPos(&x, &y, &wid, &height)
         this.AddButton("vAud x" x " y" y+37 " w" but_width, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
         this.AddButton("vthumb x" x " y+7 w" but_width, "Download Thumbnail").OnEvent("Click", this.__download.Bind(this, "thumb"))
@@ -174,7 +175,7 @@ class multiDL extends tomshiBasic {
         }
         this.AddButton("vDL_part xs", "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise_part", " Avoid reencode`n (may result in lower quality)")
-        this.AddCheckbox("yp+40 vcookies_part Checked0", " Use cookies (firefox)")
+        this.AddCheckbox("yp+40 vcookies_part  Checked" defCookies, " Use cookies (firefox)").OnEvent("Click", (ctrl, *) => (FileDelete(this.requiredFilesDir "\useCookies"), FileAppend(ctrl.value, this.requiredFilesDir "\useCookies")))
         this["DL_part"].GetPos(&x, &y, &wid, &height)
         this.AddButton("vAud_part x" x " y" y+37 " w" wid, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
         ;// ================================================================
