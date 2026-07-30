@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/03/10
+ * @date 2026/07/30
  ***********************************************************************/
-global currentVer := "1.3.6"
+global currentVer := "1.3.7"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -40,12 +40,22 @@ class multiDL extends tomshiBasic {
     __New() {
         __checkInstalls(&ffmpeg, &ytdlp, &deno) {
             ffmpeg := cmd.result(Format(this.checkCommand, "ffmpeg"))
-            ytdlp  := cmd.result(Format(this.checkCommand, "yt-dlp"))
+            ytdlp  := cmd.result(Format(this.checkCommand, "yt-dlp --pre"))
             deno   := cmd.result(Format(this.checkCommand, "deno"))
         }
         __checkInstalls(&ffmpeg, &ytdlp, &deno)
         ffmpeg := (!InStr(ffmpeg, "is not recognized") && ffmpeg != "")  ? true : false
         ytdlp  := (!InStr(ytdlp, "is not recognized")  && ytdlp != "")   ? true : false
+        if ytdlp = true {
+            checkYTdlpVer := cmd.result("yt-dlp -U")
+            if !(InStr(checkYTdlpVer, "Latest version: nightly")) {
+                promptNightlyUpgrade := MsgBox("yt-dlp is installed but isn't on the nightly track.`nThis is recommended to ensure quick fixes.`n`nWould you like to update to the nightly track?", "Upgrade to Nightly?", "0x4 0x20 0x1000")
+                if promptNightlyUpgrade = "No"
+                    ExitApp()
+                nightlyComm := "yt-dlp --update-to nightly"
+                cmd.run(true,,, nightlyComm)
+            }
+        }
         deno   := (!InStr(deno, "is not recognized")   && deno != "")    ? true : false
 
         if !ffmpeg || !ytdlp || !deno {
@@ -336,13 +346,13 @@ class multiDL extends tomshiBasic {
                     goto break
                 }
                 this.Hide()
-                partCommand := Format('-N 8 -o "{1}" --download-sections "*{2}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 ' cookiesPart, "{}", this.timecodeValue)
+                partCommand := Format('-N 8 -o "{1}" --sleep-interval 3 --max-sleep-interval 13 --download-sections "*{2}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 ' cookiesPart, "{}", this.timecodeValue)
                 switch {
                         case (vidOrAud = "vid" && this["deprioritise_part"].value = false): yt.download(partCommand, this.getFile, this["partURL"].value, custFilePart, showDir)
                         case (vidOrAud = "vid" && this["deprioritise_part"].value = true):
-                            altCommand := Format('-N 8 -o "{1}" --download-sections "*{2}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesPart, "{}", this.timecodeValue)
+                            altCommand := Format('-N 8 -o "{1}" --sleep-interval 3 --max-sleep-interval 13 --download-sections "*{2}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesPart, "{}", this.timecodeValue)
                             yt.download(altCommand, this.getFile, this["partURL"].value, custFilePart, showDir)
-                        case (vidOrAud = "aud"): yt.download(Format('-N 8 -o "{1}" --download-sections "*{2}" --verbose --windows-filenames --extract-audio --audio-format wav ' cookiesPart, "{}", this.timecodeValue), this.getFile, this["partURL"].value, custFilePart, showDir)
+                        case (vidOrAud = "aud"): yt.download(Format('-N 8 -o "{1}" --sleep-interval 3 --max-sleep-interval 13 --download-sections "*{2}" --verbose --windows-filenames --extract-audio --audio-format wav ' cookiesPart, "{}", this.timecodeValue), this.getFile, this["partURL"].value, custFilePart, showDir)
                     }
         }
         break:
@@ -373,7 +383,7 @@ class multiDL extends tomshiBasic {
     __install_tool(val, *) {
         if !this.__checkChoco()
             return
-        dlVal := (val = "ytdlp") ? "yt-dlp" : val
+        dlVal := (val = "ytdlp") ? "yt-dlp --pre" : val
         cmd.run(true,,, "choco install " dlVal " --yes")
         this[val].text := "done"
         this[val].Opt("Disabled")
