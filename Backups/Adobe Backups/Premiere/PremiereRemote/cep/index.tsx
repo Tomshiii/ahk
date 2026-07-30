@@ -350,8 +350,8 @@ export const host = {
     return MarkerUtils.removeMarkerAtPlayhead();
   },
 
-  applyEffectOnAllSelectedClips: function (effect: string) {
-    return EffectUtils.applyEffectOnAllSelectedClips(effect);
+  applyEffectOnAllSelectedClips: function (effectName: string) {
+    return EffectUtils.applyEffectOnAllSelectedClips(effectName);
   },
 
   listEffectsOnSelectedClip: function () {

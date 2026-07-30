@@ -21,15 +21,15 @@ SC028 & t::prem.manInput("level") ;manually input a level value
 Enter::prem.reset()
 Right::unassigned()
 
-p::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Gaussian%20Blur")
+p::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Gaussian%20Blur")
 SC027::prem.movepreview() ;press then hold this hotkey and drag to move position. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ; /::
 
 
-o::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=RX%2011%20Dialogue%20Isolate")
+o::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=RX%2011%20Dialogue%20Isolate")
 l::prem.valuehold("Scale") ;press then hold this hotkey and drag to increase/decrese scale. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
-.::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Transform")
+.::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Geometry2")
 ;Down::unassigned()
 
 i::prem.preset("loremipsum") ;(if you already have a text layer click it first, then hover over it, otherwise simply..) -> press this hotkey, then watch as ahk creates a new text layer then drags your prem.preset onto the text layer. ;this hotkey has specific code just for it within the function
@@ -72,8 +72,8 @@ m:: ;this hotkey will fill the frame to fit the window
 }
 ; b::
 
-r::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lowpass")
-f::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Highpass")
+r::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Lowpass")
+f::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Highpass")
 
 v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
 {
@@ -84,17 +84,17 @@ v:: ;this hotkey will activate the program monitor, find the margin button (assu
 }
 ;PgDn::unassigned()
 
-e::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Tint")
-d::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Horizontal%20Flip")
-c::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Vertical%20Flip")
-End::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lumetri%20Color")
+e::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Tint")
+d::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Horizontal%20Flip")
+c::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Vertical%20Flip")
+End::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Lumetri%20Color")
 
-w::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Drop%20Shadow")
-s::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Crop")
+w::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Drop%20Shadow")
+s::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Crop")
 x::prem.fxSearch()
 ;F15::unassigned()
 
-q::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=S_Shake")
+q::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=S_Shake")
 a::prem.valuehold("Position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 z::prem.valuehold("Position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 

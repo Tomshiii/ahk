@@ -80,8 +80,8 @@ class OtherFuncs {
         if checkBool(makeSelection) != true
             return
         switch adjustName {
-            case "_transform_adjust layer": prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Transform")
-            case "_colour_adjust layer":    prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lumetri%20Color")
+            case "_transform_adjust layer": prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Geometry2")
+            case "_colour_adjust layer":    prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Lumetri%20Color")
         }
     }
 }

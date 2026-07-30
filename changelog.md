@@ -3,6 +3,12 @@
 ## Functions
 - ✅ Fixed `prem.__determineTheme()` using an incorrect `__remoteFunc()` parameter
 
+## PremiereRemote
+
+📍 `applyEffectOnAllSelectedClips()`
+- ❗ Parameter name changed from `effect` to `effectName` for parity
+- ✅ Fixed effects like `Geometry2` from erroring out
+
 ## Other Changes
 
 🔗 `mult-dl.ahk`

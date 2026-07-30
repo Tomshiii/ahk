@@ -31,7 +31,7 @@ SC027::prem.valuehold("Position") ;press then hold this hotkey and drag to incre
 o::prem.preset("audio_basic")
 l::prem.valuehold("Position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 ;Up::unassigned()
-.::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Transform")
+.::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Geometry2")
 ;Down::unassigned()
 
 i::prem.gain("-6") ;REDUCE GAIN BY -6db
@@ -51,7 +51,7 @@ n::unassigned()
 #MaxThreadsBuffer false
 ;Space::unassigned()
 
-t::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Gaussian%20Blur%20(Legacy)")
+t::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Gaussian%20Blur%20(Legacy)")
 y:: ;this hotkey will fill the frame to fit the window
 {
 	prem.__focusTimeline()
@@ -59,23 +59,23 @@ y:: ;this hotkey will fill the frame to fit the window
 }
 ; b::
 
-r::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Horizontal%20Flip")
-f::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Vertical%20Flip")
+r::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Horizontal%20Flip")
+f::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Vertical%20Flip")
 
 v::
 ;PgDn::unassigned()
 
-e::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Tint")
-d::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Highpass")
-c::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Lowpass")
-End::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=RX%2011%20Dialogue%20Isolate")
+e::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Tint")
+d::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Highpass")
+c::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Lowpass")
+End::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=RX%2011%20Dialogue%20Isolate")
 
-w::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Drop%20Shadow")
-s::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Crop")
+w::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Drop%20Shadow")
+s::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Crop")
 x::prem.fxSearch()
-F15::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=Crop")
+F15::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Crop")
 
-q::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effect=S_Shake")
+q::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=S_Shake")
 a::
 z::
 

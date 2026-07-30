@@ -106,28 +106,39 @@ export class EffectUtils {
 
         const target = effectName.toLowerCase();
 
-        const tryResolve = function (name: string) {
-            // list entries here are display names, so displayName mode (false) first
-            let effect = qe.project.getVideoEffectByName(name, false);
-            if (effect) return effect;
-            // fallback in case some entries in your version really are matchNames
-            return qe.project.getVideoEffectByName(name, true);
-        };
-
+        // 1) display-name match (normal case)
         if (this._videoEffectCache[target]) {
-            const effect = tryResolve(this._videoEffectCache[target]);
+            const effect = qe.project.getVideoEffectByName(this._videoEffectCache[target], false);
             if (effect) return effect;
         }
 
+        // 2) matchName-mode fallback — try fully-qualified forms FIRST,
+        //    raw effectName LAST, since an unqualified matchName can
+        //    return an incorrect/garbled match instead of null
+        const matchNameCandidates = [
+            `AE.ADBE ${effectName}`,
+            `PR.ADBE ${effectName}`,
+            effectName,
+        ];
+
+        for (let i = 0; i < matchNameCandidates.length; i++) {
+            try {
+                const effect = qe.project.getVideoEffectByName(matchNameCandidates[i], true);
+                if (effect) return effect;
+            } catch (e) {
+                // ignore and try next candidate
+            }
+        }
+
+        // 3) fuzzy substring fallback on display names
         const candidates = [];
         for (const key in this._videoEffectCache) {
             if (key.indexOf(target) === -1) continue;
             if (key.indexOf("legacy") !== -1 || key.indexOf("obsolete") !== -1 || key.indexOf(" obs") !== -1) continue;
             candidates.push(this._videoEffectCache[key]);
         }
-
         for (let i = 0; i < candidates.length; i++) {
-            const effect = tryResolve(candidates[i]);
+            const effect = qe.project.getVideoEffectByName(candidates[i], false);
             if (effect) return effect;
         }
 
@@ -166,10 +177,14 @@ export class EffectUtils {
                 ? qeClip.addVideoEffect(effect)
                 : qeClip.addAudioEffect(effect);
 
+            // refresh BEFORE checking — app-side component list is stale until this happens
+            selectedClip.setSelected(false, true);
+            selectedClip.setSelected(true, true);
+
             const afterCount = selectedClip.components.numItems;
             if (afterCount <= beforeCount) {
                 alert("Effect lookup succeeded but nothing was actually added for: " + effectName);
-                continue; // don't run the Transform-specific logic below on a clip that didn't get the effect
+                continue;
             }
 
             switch (effectName) {
