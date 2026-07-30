@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2026/04/18
- * @version 1.2.6
+ * @date 2026/07/30
+ * @version 1.2.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -30,7 +30,8 @@ class ytdlp {
         "https://www.twitch.tv/",    "https://clips.twitch.tv/",
         "https://www.tiktok.com/",
         "https://www.facebook.com/", "https://www.instagram.com/",
-        "https://old.reddit.com/",   "https://www.reddit.com/"
+        "https://old.reddit.com/",   "https://www.reddit.com/",
+        "https://x.com/"
     ]
     URL := ""
     defaultCommand      := 'yt-dlp {1} -P `"{2}`" `"{3}`"'
