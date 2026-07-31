@@ -237,6 +237,20 @@ export async function isSelected(): Promise<boolean> {
 }
 
 /**
+ * determine if there is a selection of multiple clips
+ * @returns {boolean}
+ */
+export async function isSelectedMultiple(): Promise<boolean> {
+    const sequence = await common.getActiveSequence();
+    if (!sequence) return false;
+    const selection = await sequence.getSelection();
+    const items = await selection.getTrackItems();
+    if (!items || items.length <= 1) return false;
+
+    return true;
+}
+
+/**
  * determine if there is a selection. if there is, return it
  * @returns {TrackItemSelection}
  */

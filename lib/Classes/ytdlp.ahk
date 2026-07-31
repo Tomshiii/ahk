@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2026/07/30
- * @version 1.2.6.1
+ * @date 2026/07/31
+ * @version 1.2.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -153,6 +153,7 @@ class ytdlp {
                 ext := (isAud = false) ? ((ext = "webm" || ext = "mkv") ? "mp4" : ext) : "wav"
                 checkPath1 := WinGet.pathU(folder "\" nameOutput)
                 checkPath2 := WinGet.pathU(folder "\" nameNoExt "." ext)
+                needsCookies := (cookies != false && !InStr(args, cookies)) ? A_Space cookies : ""
                 if FileExist(checkPath1) || FileExist(checkPath2) {
                     index := 1
                     loop {
@@ -161,12 +162,12 @@ class ytdlp {
                             continue
                         }
                         nameNoExt := nameNoExt String(index)
-                        args := Format(args, nameNoExt)
+                        args := Format(args needsCookies, nameNoExt)
                         break
                     }
                 }
                 else {
-                    args := Format(args, nameNoExt)
+                    args := Format(args needsCookies, nameNoExt)
                 }
                 Notify.Destroy(mNotifyGUI_Prog['hwnd'])
             case true:
@@ -183,7 +184,8 @@ class ytdlp {
                 }
                 Notify.Destroy(mNotifyGUI_Prog['hwnd'])
 
-                origArgs := args
+                needsCookies := (cookies != false && !InStr(args, cookies)) ? A_Space cookies : ""
+                origArgs := args needsCookies
                 for vObj in playlistDataArr {
                     loopArgs := origArgs
                     curDlNotify := Notify.Show(, "Downloading: " vObj.title, 'C:\Windows\System32\imageres.dll|icon86',,, 'dur=0 maxW=400 bdr=0x75AEDC')

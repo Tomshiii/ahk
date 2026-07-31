@@ -1,4 +1,4 @@
-;// New-Item -ItemType SymbolicLink -Path $path -Target $target
+;// New-Item -ItemType Junction -Path $path -Target $target
 
 ;// New-Item -ItemType Junction -Path "$env:APPDATA\tomshi" -Target "C:\Users\Tom\Desktop\git\ahk\lib"
 path := "C:\Users\Tom\Desktop\git\ahk\lib"

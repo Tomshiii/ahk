@@ -33,7 +33,17 @@ export class Utils {
     if (!selection.length) {
       return false;
     }
-    return true
+    return true;
+  }
+
+  static isSelectedMultiple() {
+    var activeSequence = app.project.activeSequence;
+    var selection = activeSequence.getSelection();
+
+    if (!selection.length || selection.length <= 1) {
+      return false;
+    }
+    return true;
   }
 
   static isClipEnabled() {

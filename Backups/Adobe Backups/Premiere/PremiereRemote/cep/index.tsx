@@ -267,6 +267,10 @@ export const host = {
     return Utils.isSelected();
   },
 
+  isSelectedMultiple: function () {
+    return Utils.isSelectedMultiple();
+  },
+
   toggleLinearColour: function (enableMaxRenderQual: boolean) {
     return Utils.toggleLinearColour(enableMaxRenderQual);
   },

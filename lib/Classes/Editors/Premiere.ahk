@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/29
- * @version 2.5.3
+ * @date 2026/07/31
+ * @version 2.5.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1209,7 +1209,7 @@ class Prem {
     static isClipSelected(effCont, &sourceButt?, &motionPos?) {
         try sourceButt := effCont.FindElement({LocalizedType:"button", Name:"Show/Hide Timeline View"})
         try motionPos  := effCont.FindElement({LocalizedType:"button", Name:"Toggle the effect on or off"})
-        if !this.__remoteFunc('isSelected', true) || !IsSet(sourceButt) || !IsSet(motionPos)
+        if !this.__remoteFunc('isSelected', true) || (!this.__remoteFunc('isSelectedMultiple', true) && (!IsSet(sourceButt) || !IsSet(motionPos)))
             return false
         return true
     }
