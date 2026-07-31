@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/07/31
- * @version 2.5.4
+ * @version 2.5.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -503,7 +503,7 @@ class Prem {
      * determines the parameters for the passed PremiereRemote CEP function
      * @param {String} checkFunc the `whichFunc` passed to either `__remoteFunc()` function
      * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
-     * @returns {-1 | "" | Object} returns either; `-1` if function cannot be determined, `""` if the passed function does not contain any parameters, else an object containing `{arr: [all, params], map: Map(all, true, params, true)}`
+     * @returns {-1 | "" | Object} returns either; `-1` if function cannot be determined, `""` if the passed function does not contain any parameters, else an object containing `{arr: [all, params], map: Map(all, all, params, types)}`
      */
     static __getPremRemoteFuncParams(checkFunc, cepOrUXP := "cep") {
         if !this.__checkPremRemoteDir(checkFunc, cepOrUXP)
@@ -529,9 +529,10 @@ class Prem {
         paramsArr := []
         paramsMap := Mip()
         for v in paramsSplit {
-            p := SubStr(v, 1, InStr(v, ':')-1)
+            p := SubStr(v, 1, (splitPoint := InStr(v, ':'))-1)
+            t := LTrim(SubStr(v, splitPoint+1))
             paramsArr.Push(p)
-            paramsMap.Set(p, true)
+            paramsMap.Set(p, t)
         }
         return {arr: paramsArr, map: paramsMap}
     }
@@ -607,6 +608,7 @@ class Prem {
 
     /**
      * a helper function for `PremiereRemote` `__remote()` functions to sanitise their parameter string
+     * @param {Array} [params] an array of parameters to sanitise
      * @returns {String} the completed parameter string
      */
     static __sanitiseParams(params) {
@@ -738,6 +740,10 @@ class Prem {
                         MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc)
                         return false
                     }
+                    if cepOrUXP = "uxp" && funcParams.map.get(v) = "boolean" && (splt[A_Index+1] = "1" || splt[A_Index+1] = "0") {
+                        MsgBox("Incorrect paramater type`n`n" v "=" splt[A_Index+1] "`nneeds to be boolean" )
+                        return false
+                    }
                 }
             }
         }
@@ -810,12 +816,33 @@ class Prem {
         }
         getResp := cmd.result(sendcommand)
         try parse := JSON.parse(getResp)
-        if !IsSet(parse) && getResp != ""
-            return ((SubStr(getResp, 1, 1) = '"' && SubStr(getResp, -1, 1) = '"') ? SubStr(getResp, 2, StrLen(getResp)-2) : getResp)
-        if parse.Has("error") {
-            errorLog(ValueError(parse["error"],-1), whichFunc "_" paramsString)
-            MsgBox("prem.__remoteUXP() failed.`n`nError: " parse["error"] "`nFunction:" whichFunc "`nPassed Params:" paramsString)
+        catch {
+            if WinExist(this.winTitle)
+                errorLog(Error("Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
+            else
+                errorLog(Error("remoteFunc was called but Premiere no longer appears to be open.", -1))
             return false
+        }
+        switch {
+            case parse.Has("error"):
+                if Type(parse["error"]) = "String" {
+                    errorLog(MethodError(parse["error"],-1), whichFunc "_" paramsString)
+                    MsgBox("prem.__remoteUXP() failed.`n`nError: " parse["error"] "`nFunction:" whichFunc "`nPassed Params:" paramsString)
+                    return false
+                }
+                if parse.Has("instancePath") && parse.Has("message") {
+                    errorLog(MethodError("UXP function encountered an error",-1), "func: " parse["instancePath"] " || error message: " parse["message"])
+                    MsgBox("prem.__remoteUXP() failed.`n`nCheck logs for details")
+                    return false
+                }
+
+                e := JSON.stringify(parse)
+                errorLog(MethodError("UXP function encountered an error",-1), e)
+                MsgBox("prem.__remoteUXP() failed.`n`n" e)
+                return false
+            case !IsSet(parse) && getResp != "":
+                sanitiseResp := ((SubStr(getResp, 1, 1) = '"' && SubStr(getResp, -1, 1) = '"') ? SubStr(getResp, 2, StrLen(getResp)-2) : getResp)
+                return (isBool(sanitiseResp) ? checkBool(sanitiseResp) : sanitiseResp)
         }
         return false
     }
@@ -3888,10 +3915,11 @@ class Prem {
     static renderProjectSelection(outputPath, presetName, addToProj := true) {
         if !WinActive(this.exeTitle)
             return false
-        checkDir := this.__checkPremRemoteDir('renderInPrem')
-        checkImport := this.__checkPremRemoteFunc('importFile')
+        checkDir        := this.__checkPremRemoteDir('renderInPrem')
+        checkImport     := this.__checkPremRemoteFunc('importFile')
         checkIsSequence := this.__checkPremRemoteFunc('selectionIsSequence')
-        if !checkDir || !checkImport || !checkIsSequence {
+        checkBinPath    := this.__checkPremRemoteFunc('getSelectionBinPath')
+        if !checkDir || !checkImport || !checkIsSequence || !checkBinPath {
             notifyExt.showIfNotExist('premRenderRemoteFuncs',, 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return false
         }
@@ -3901,6 +3929,8 @@ class Prem {
             notifyExt.showIfNotExist('premSelectionNotSeq',, 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
             return false
         }
+
+        binPath := this.__remoteFunc('getSelectionBinPath', true)
 
         title := WinGet.PremName()
         if title.saveCheck != false
@@ -3926,9 +3956,6 @@ class Prem {
         this.save()
         if checkbool(addToProj) && (file != false) && FileExist(file) {
             notifyExt.showIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
-            /* logger := log()
-            logger.Append("Attempted to import: " StrReplace(file, "\", "/")) */
-            ;// poll until Premiere's main thread is free
             __waitFree() {
                 loop 20 {
                     sleep 1000
@@ -3941,7 +3968,7 @@ class Prem {
                 this.save()
                 return false
             }
-            if !this.__remoteFunc('importFile', true, "filePath=" StrReplace(file, "\", "/"), "importAsStills=0")
+            if !this.__remoteFunc('importFile', true, "filePath=" StrReplace(file, "\", "/"), "importPath=" binPath, "importAsStills=0")
                 return false
         }
         this.save()

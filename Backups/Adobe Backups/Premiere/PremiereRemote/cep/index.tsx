@@ -423,8 +423,17 @@ export const host = {
     return Utils.selectionIsSequence();
   },
 
-  importFile: function (filePath: string, importAsStills: string) {
-    return app.project.importFiles([filePath], false, app.project.rootItem, Boolean(importAsStills));
+  getSelectionBinPath: function () {
+    return Utils.getSelectionBinPath();
+  },
+
+  importFile: function (filePath: string, importPath: string, importAsStills: string) {
+    var targetFolder = app.project.rootItem;
+    if (importPath) {
+      var folder = Utils.findOrCreateFolderPath(app.project.rootItem, importPath, true);
+      if (folder) targetFolder = folder;
+    }
+    return app.project.importFiles([filePath], false, targetFolder, Boolean(importAsStills));
   },
 
   closeClipSourceMon: function () {

@@ -6,6 +6,11 @@
 ### 📝 `prem {`
 - ✅ Fixed `__determineTheme()` using an incorrect `__remoteFunc()` parameter
 - ✅ Fixed `gain()` failing when multiple clips are selected
+- 📋 `renderProjectSelection()` will now import the file into the same bin as the sequence being rendered
+
+📍 `__remoteUXP()`
+- 📋 Will now alert the user if a parameter is required to be a `boolean` and they have passed `0`/`1` instead of `false`/`true`
+- 📋 Will now return boolean `true`/`false` instead of a string for parity with `__remoteFunc()`
 
 ## PremiereRemote
 - ✏️ Added `isSelectedMultiple()` 

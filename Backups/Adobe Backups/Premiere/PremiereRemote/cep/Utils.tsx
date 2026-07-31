@@ -451,6 +451,15 @@ export class Utils {
     return currentFolder;
   }
 
+  static getSelectionBinPath() {
+    if (!this.selectionIsSequence()) return false;
+    var selected = app.getCurrentProjectViewSelection();
+    var projectItem = selected[0];
+
+    var path = Utils.findItemBinPath(app.project.rootItem, projectItem.nodeId, "");
+    return path !== null ? path : ""; // not found -> treat as root
+  }
+
   static isPlaying() {
     var isPlaying = qe.project.getActiveSequence().player.isPlaying;
     return isPlaying
@@ -1043,6 +1052,26 @@ export class Utils {
     }
 
     return this.searchForItemByName(searchFolder, itemName);
+  }
+
+  // Recursively find the folder path (as a string) containing the item with the given nodeId.
+  // Returns "" if the item lives directly under rootItem, or null if not found at all.
+  static findItemBinPath(bin: ProjectItem, targetNodeId: string, currentPath: string): string | null {
+    for (var i = 0; i < bin.children.numItems; i++) {
+      var child = bin.children[i];
+      if (!child) continue;
+
+      if (child.type !== ProjectItemType.BIN && child.nodeId === targetNodeId) {
+        return currentPath;
+      }
+
+      if (child.type === ProjectItemType.BIN) {
+        var nextPath = currentPath ? (currentPath + "/" + child.name) : child.name;
+        var found = this.findItemBinPath(child, targetNodeId, nextPath);
+        if (found !== null) return found;
+      }
+    }
+    return null;
   }
 
   // @link : https://github.com/Adobe-CEP/Samples/blob/fbc2f2fc090b41a07f07f9fffe2043d9bafb4988/PProPanel/jsx/PPRO/Premiere.jsx#L1119

@@ -16,6 +16,7 @@ import type {
     VideoTrack,
     TrackItemSelection,
     ProjectItem,
+    Project,
 } from "@adobe/premierepro";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -227,12 +228,8 @@ export async function setZeroPoint(frames: number): Promise<void> {
  * @returns {boolean}
  */
 export async function isSelected(): Promise<boolean> {
-    const sequence = await common.getActiveSequence();
-    if (!sequence) return false;
-    const selection = await sequence.getSelection();
-    const items = await selection.getTrackItems();
+    const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return false;
-
     return true;
 }
 
@@ -241,10 +238,7 @@ export async function isSelected(): Promise<boolean> {
  * @returns {boolean}
  */
 export async function isSelectedMultiple(): Promise<boolean> {
-    const sequence = await common.getActiveSequence();
-    if (!sequence) return false;
-    const selection = await sequence.getSelection();
-    const items = await selection.getTrackItems();
+    const items = await common.getSelectedTrackItems();
     if (!items || items.length <= 1) return false;
 
     return true;
@@ -254,13 +248,9 @@ export async function isSelectedMultiple(): Promise<boolean> {
  * determine if there is a selection. if there is, return it
  * @returns {TrackItemSelection}
  */
-export async function isSelectedReturn(): Promise<TrackItemSelection> {
-    const sequence = await common.getActiveSequence();
-    if (!sequence) return false;
-    const selection = await sequence.getSelection();
-    const items = await selection.getTrackItems();
+export async function isSelectedReturn(): Promise<TrackItemSelection | false> {
+    const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return false;
-
     return items;
 }
 
@@ -272,7 +262,7 @@ export async function isClipEnabled(): Promise<boolean> {
     const sequence = await common.getActiveSequence();
     if (!sequence) return false;
 
-    const items = isSelectedReturn();
+    const items = await isSelectedReturn();
     if (!items) return false;
     const isDisabled = await items[0].isDisabled();
     if (isDisabled == true)
@@ -288,13 +278,7 @@ export async function toggleEnabled(): Promise<void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
 
-    const sequence = await project.getActiveSequence();
-    if (!sequence) return;
-
-    const selection = await sequence.getSelection();
-    if (!selection) return;
-
-    const items = await selection.getTrackItems();
+    const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return;
 
     const states: boolean[] = [];
@@ -362,16 +346,10 @@ export async function projectSelectionIsSequence(): Promise<boolean> {
     if (!items) return false;
 
     const selectedId = await items[0].getId();
-    const sequences = await project.getSequences();
-    if (!sequences || sequences.length === 0) return false;
+    const sequences = await findSequenceByProjectItemId(project, selectedId);
+    if (!sequences) return false;
 
-    for (let i = 0; i < sequences.length; i++) {
-        const seqProjectItem = await sequences[i].getProjectItem();
-        const seqId = await seqProjectItem.getId();
-        if (seqId.toString() === selectedId.toString()) return true;
-    }
-
-    return false;
+    return true;
 }
 
 /**
@@ -388,16 +366,28 @@ export async function clipSelectionIsSequence(): Promise<boolean> {
     const projItem = await selection[0].getProjectItem();
     const selectedId = await projItem.getId();
 
-    const sequences = await project.getSequences();
-    if (!sequences || sequences.length === 0) return false;
+    const sequences = await findSequenceByProjectItemId(project, selectedId);
+    if (!sequences) return false;
 
-    for (let i = 0; i < sequences.length; i++) {
-        const seqProjectItem = await sequences[i].getProjectItem();
-        const seqId = await seqProjectItem.getId();
-        if (seqId.toString() === selectedId.toString()) return true;
-    }
+    return true;
+}
 
-    return false;
+/**
+ * returns the current project selection and ensures the selected item is a sequence
+ * @returns {Sequence | false}
+ */
+export async function getSelectedProjectItemSequence() {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) return false;
+
+    const selection = await getProjectSelection();
+    if (!selection) return false;
+
+    const selectedId = await selection[0].getId();
+
+    const sequence = await findSequenceByProjectItemId(project, selectedId)
+    if (!sequence) return false;
+    return sequence;
 }
 
 /**
@@ -407,29 +397,7 @@ export async function clipSelectionIsSequence(): Promise<boolean> {
  * @returns {string | false}
  */
 export async function renderInPrem(outputPath: string, presetPath: string): Promise<string | false> {
-    const project = await ppro.Project.getActiveProject();
-    if (!project) return false;
-
-    const selection = await ppro.ProjectUtils.getSelection(project);
-    if (!selection) return false;
-
-    const items = await selection.getItems();
-    if (!items || items.length === 0) return false;
-
-    const selectedId = await items[0].getId();
-
-    const sequences = await project.getSequences();
-    if (!sequences || sequences.length === 0) return false;
-
-    let sequence = null;
-    for (let i = 0; i < sequences.length; i++) {
-        const seqProjectItem = await sequences[i].getProjectItem();
-        const seqId = await seqProjectItem.getId();
-        if (seqId.toString() === selectedId.toString()) {
-            sequence = sequences[i];
-            break;
-        }
-    }
+    const sequence = await getSelectedProjectItemSequence();
     if (!sequence) return false;
 
     outputPath = outputPath.replace(/\//g, "\\");
@@ -484,15 +452,24 @@ export async function fileExists(filePath: string): Promise<boolean> {
 
 /**
  * import file into project
+ * @param {string} [filePath] a filepath to the file to import. `/` must be `//`; eg. `W://work//352. boys lore video (Main Channel)//timeline renders//Nested Sequence 57_3.mov`
+ * @param {string} [importPath] a path representation of which bin to import the file into. if left blank, will default to the root
+ * @param {boolean} [importAsStills]
  * @returns {boolean}
  */
-export async function importFile(filePath: string, importAsStills: boolean): Promise<boolean> {
+export async function importFile(filePath: string, importPath: string, importAsStills: boolean): Promise<boolean> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
     const rootBin = await project.getRootItem();
     if (!rootBin) return false;
 
-    return project.importFiles([filePath], false, rootBin, importAsStills);
+    let targetFolder = rootBin;
+    if (importPath) {
+        const folder = await findOrCreateFolderPath(rootBin, importPath, true);
+        if (folder) targetFolder = folder;
+    }
+
+    return project.importFiles([filePath], false, targetFolder, importAsStills);
 }
 
 /**
@@ -514,10 +491,7 @@ export async function moveClip(subtract: boolean, seconds: number): Promise<void
         ? ppro.TickTime.createWithFrameAndFrameRate(-frames, frameRate)
         : ppro.TickTime.createWithFrameAndFrameRate(frames, frameRate);
 
-    const selection = await sequence.getSelection();
-    if (!selection) return;
-
-    const items = await selection.getTrackItems();
+    const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return;
 
     // gather start and end times before transaction
@@ -549,13 +523,7 @@ export async function setAllEnabledDisabled(enabled: boolean): Promise<void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
 
-    const sequence = await project.getActiveSequence();
-    if (!sequence) return;
-
-    const selection = await sequence.getSelection();
-    if (!selection) return;
-
-    const items = await selection.getTrackItems();
+    const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return;
 
     project.lockedAccess(() => {
@@ -848,6 +816,54 @@ async function findOrCreateFolderPath(rootItem: any, folderPath: string, createI
 }
 
 /**
+ * Recursively find the folder path (as a string) containing the item with the given nodeId.
+ * @returns "" if the item lives directly under rootItem, or null if not found at all.
+ */
+export async function findItemBinPath(bin: any, targetId: string, currentPath: string): Promise<string | null> {
+    const folder = await ppro.FolderItem.cast(bin);
+    const children = await folder.getItems();
+
+    for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+        if (!child) continue;
+
+        const childId = await child.getId();
+
+        if (child.type !== 2 && childId.toString() === targetId.toString()) {
+            return currentPath;
+        }
+
+        if (child.type === 2) {
+            const nextPath = currentPath ? `${currentPath}/${child.name}` : child.name;
+            const found = await findItemBinPath(child, targetId, nextPath);
+            if (found !== null) return found;
+        }
+    }
+    return null;
+}
+
+/**
+ * returns the bin path of a selected sequence
+ */
+export async function getSelectionBinPath(): Promise<false | string> {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) return false;
+    const selection = await getProjectSelection();
+    if (!selection) return false;
+    const selectedItem = selection[0];
+
+    // optional: confirm it's actually a sequence
+    const isSequence = await getSelectedProjectItemSequence();
+    if (!isSequence) return false;
+
+    const selectedId = await selectedItem.getId();
+
+    const rootItem = await project.getRootItem();
+    const path = await findItemBinPath(rootItem, selectedId, "");
+    return path !== null ? path : "";
+}
+
+/**
  * move selected projectitems to a desired bin. the bin will be created if it doesn't exist
  * @returns {boolean}
  */
@@ -855,11 +871,8 @@ export async function moveToAssetsBin(folderPath: string): Promise<boolean> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
 
-    const selection = await ppro.ProjectUtils.getSelection(project);
+    const selection = await getProjectSelection();
     if (!selection) return false;
-
-    const items = await selection.getItems();
-    if (!items || items.length === 0) return false;
 
     const rootItem = await project.getRootItem();
     if (!rootItem) return false;
@@ -869,8 +882,8 @@ export async function moveToAssetsBin(folderPath: string): Promise<boolean> {
 
     project.lockedAccess(() => {
         project.executeTransaction((compoundAction) => {
-            for (let i = 0; i < items.length; i++) {
-                compoundAction.addAction(targetFolder.createMoveItemAction(items[i], targetFolder));
+            for (let i = 0; i < selection.length; i++) {
+                compoundAction.addAction(targetFolder.createMoveItemAction(selection[i], targetFolder));
             }
         }, "Move To Bin");
     });
@@ -993,14 +1006,9 @@ export async function setClipComponentParam(
 ): Promise<void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
-
     const sequence = await common.getActiveSequence();
     if (!sequence) return;
-
-    const selection = await sequence.getSelection();
-    if (!selection) return;
-
-    const items = await selection.getTrackItems();
+    const items = await common.getSelectedTrackItems(sequence);
     if (!items || items.length === 0) return;
 
     // coerce value to correct type
@@ -1219,19 +1227,12 @@ export async function setMarker(colour: string): Promise<void> {
         if (!sequenceMarkers) return;
 
         const existingList = sequenceMarkers.getMarkers();
-        let existingMarker = null;
-        for (const marker of existingList) {
-            const markerStart = marker.getStart();
-            if (markerStart.ticks === alignedPos.ticks) {
-                existingMarker = marker;
-                break;
-            }
-        }
+        const match = findMarkerAtFrame(existingList, alignedPos, frameRate);
 
-        if (existingMarker) {
+        if (match) {
             project.lockedAccess(() => {
                 project.executeTransaction((compoundAction) => {
-                    compoundAction.addAction(existingMarker.createSetColorByIndexAction(colourIndex));
+                    compoundAction.addAction(match.createSetColorByIndexAction(colourIndex));
                 }, "Set Sequence Marker Color");
             });
             return;
@@ -1252,14 +1253,7 @@ export async function setMarker(colour: string): Promise<void> {
         await new Promise(resolve => setTimeout(resolve, 200));
         const updatedMarkers = await ppro.Markers.getMarkers(sequence);
         const updatedList = updatedMarkers.getMarkers();
-        let newMarker = null;
-        for (const marker of updatedList) {
-            const markerStart = marker.getStart();
-            if (markerStart.ticks === alignedPos.ticks) {
-                newMarker = marker;
-                break;
-            }
-        }
+        const newMarker = findMarkerAtFrame(updatedList, alignedPos, frameRate);
         if (newMarker) {
             project.lockedAccess(() => {
                 project.executeTransaction((compoundAction) => {
@@ -1303,15 +1297,7 @@ export async function setMarker(colour: string): Promise<void> {
         if (!markers) continue;
 
         const existingMarkers = markers.getMarkers();
-        let existingMarker = null;
-
-        for (const marker of existingMarkers) {
-            const markerStart = marker.getStart();
-            if (markerStart.ticks === clipPos.ticks) {
-                existingMarker = marker;
-                break;
-            }
-        }
+        const existingMarker = findMarkerAtFrame(existingMarkers, clipPos, frameRate);
 
         if (existingMarker) {
             project.lockedAccess(() => {
@@ -1335,14 +1321,7 @@ export async function setMarker(colour: string): Promise<void> {
             await new Promise(resolve => setTimeout(resolve, 200));
             const updatedMarkers = await ppro.Markers.getMarkers(markerOwner);
             const updatedList = updatedMarkers.getMarkers();
-            let newMarker = null;
-            for (const marker of updatedList) {
-                const markerStart = marker.getStart();
-                if (markerStart.ticks === clipPos.ticks) {
-                    newMarker = marker;
-                    break;
-                }
-            }
+            const newMarker = findMarkerAtFrame(updatedList, clipPos, frameRate);
             if (newMarker) {
                 project.lockedAccess(() => {
                     project.executeTransaction((compoundAction) => {
@@ -1461,13 +1440,7 @@ export async function applyEffectOnAllSelectedClips(effectName: string): Promise
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
 
-    const sequence = await common.getActiveSequence();
-    if (!sequence) return false;
-
-    const selection = await sequence.getSelection();
-    if (!selection) return false;
-
-    const items = await selection.getTrackItems();
+    const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return false;
 
     const videoFilterFactory = ppro.VideoFilterFactory;
@@ -1542,16 +1515,8 @@ export async function applyEffectOnAllSelectedClips(effectName: string): Promise
  * @returns {string}
  */
 export async function listEffectsOnSelectedClip(): Promise<string | false> {
-    const sequence = await common.getActiveSequence();
-    if (!sequence) return false;
-
-    const selection = await sequence.getSelection();
-    if (!selection) return false;
-
-    const items = await selection.getTrackItems();
-    if (!items || items.length === 0) {
-        return false;
-    }
+    const items = await common.getSelectedTrackItems();
+    if (!items || items.length === 0) return false;
 
     const item = items[0];
     const chain = await item.getComponentChain();
@@ -2085,4 +2050,17 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
             });
         }
     }
+}
+
+/**
+ *
+ */
+async function findSequenceByProjectItemId(project: Project, targetId: string): Promise<Sequence | null> {
+    const sequences = await project.getSequences();
+    if (!sequences || sequences.length === 0) return null;
+    for (const seq of sequences) {
+        const seqProjItem = await seq.getProjectItem();
+        if ((await seqProjItem.getId()).toString() === targetId.toString()) return seq;
+    }
+    return null;
 }

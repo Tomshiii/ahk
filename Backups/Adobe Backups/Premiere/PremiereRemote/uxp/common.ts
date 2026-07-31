@@ -7,6 +7,7 @@ import type {
     Sequence,
     TickTime,
     VideoTrack,
+    TrackItemSelection
 } from "@adobe/premierepro";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -32,6 +33,19 @@ export async function getActiveSequenceName(): Promise<string | null> {
     if (!sequence) return null;
 
     return sequence.name;
+}
+
+/**
+ *
+ */
+export async function getSelectedTrackItems(sequence?: Sequence | null): Promise<TrackItemSelection | null> {
+    const seq = sequence ?? await getActiveSequence();
+    if (!seq) return null;
+    const selection = await seq.getSelection();
+    if (!selection) return null;
+    const items = await selection.getTrackItems();
+    if (!items) return null;
+    return items;
 }
 
 

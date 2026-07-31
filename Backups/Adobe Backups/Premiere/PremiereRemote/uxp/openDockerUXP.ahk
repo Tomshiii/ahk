@@ -5,6 +5,8 @@
 #Include Other\UIA\UIA.ahk
 ; }
 
+;// this script may fail to open the UXP developer tools program if run with debugging through vscode
+
 ;// I don't use docker for anything else; if you do you may encounter issues with this script
 ;// as it's only currently designed to find the first "start" button and press it
 
@@ -13,10 +15,13 @@ dockerAhk := "ahk_exe Docker Desktop.exe"
 dockerFile := "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 if !__runAndWait(dockerAhk, dockerFile, false)
     return
-if WinActive(dockerAhk) {
+if WinExist(dockerAhk) {
+    WinActivate(dockerAhk)
     try {
         dockerUIA := UIA.ElementFromHandle(dockerAhk,, false)
-        dockerUIA.WaitElement({LocalizedType:"button", Name:"Start"}).invoke()
+        if !dockerUIA.FindElement({LocalizedType:"button", Name:"Stop"}) {
+            dockerUIA.WaitElement({LocalizedType:"button", Name:"Start"}).invoke()
+        }
         winExt.MinimizeRegex(dockerAhk)
     }
 }
