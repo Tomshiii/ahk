@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2026/07/31
- * @version 1.2.7
+ * @date 2026/08/03
+ * @version 1.2.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -162,12 +162,12 @@ class ytdlp {
                             continue
                         }
                         nameNoExt := nameNoExt String(index)
-                        args := Format(args needsCookies, nameNoExt)
+                        args := Format(args needsCookies, nameNoExt "." ext)
                         break
                     }
                 }
                 else {
-                    args := Format(args needsCookies, nameNoExt)
+                    args := Format(args needsCookies, nameNoExt "." ext)
                 }
                 Notify.Destroy(mNotifyGUI_Prog['hwnd'])
             case true:

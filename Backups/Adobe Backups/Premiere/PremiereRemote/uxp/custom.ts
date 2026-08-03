@@ -91,7 +91,7 @@ export async function focusSequence(ID: string): Promise<boolean> {
     if (String(origGUID) == String(newGUID)) {
         await origSeq.clearSelection();
         await newSeq.clearSelection();
-        newSeq.setSelection(origSelection);
+        return newSeq.setSelection(origSelection);
     }
     return true;
 }
