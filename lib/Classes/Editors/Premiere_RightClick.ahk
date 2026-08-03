@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.3
  * @author tomshi, taranVH
- * @date 2026/07/28
- * @version 2.4.22
+ * @date 2026/08/03
+ * @version 2.4.23
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -193,8 +193,12 @@ class rbuttonPrem {
 	 */
 	__checkForTap(activationHotkey) {
 		;// this block will allow you to still tap the activation hotkey and have it move the cursor
-		if !GetKeyState(activationHotkey, "P") && !GetKeyState(activationHotkey)
+		try {
+			if !GetKeyState(activationHotkey, "P") && !GetKeyState(activationHotkey)
+				return false
+		} catch {
 			return false
+		}
 		return true
 	}
 

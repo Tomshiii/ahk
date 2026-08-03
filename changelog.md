@@ -2,3 +2,4 @@
 
 ## Functions
 - ✅ Fixed `ytdlp.download()` leaving some files with no extension
+- ✅ Fixed `rbuttonPrem().movePlayhead()` still throwing under certain circumstances
