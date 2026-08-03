@@ -1,4 +1,4 @@
-# <> Release 2.18.x - 
+# <> Release 2.18.2.2 - Fixes
 
 ## Functions
 - ✅ Fixed `ytdlp.download()` failing to add `cookies` to some commands
@@ -24,5 +24,5 @@
 🔗 `mult-dl.ahk`
 ###### *(v1.3.6 -> v1.3.8.1)*
 - 📋 Now requires (and prompts the user to update to) the nightly builds of `yt-dlp` to ensure quicker patches
-- 📋 Now tracks a users `use cookies` preference
+- 📋 Now tracks a user's `use cookies` preference
 - 📋 `Part` now bakes `--sleep` into the command to appease the youtube gods
