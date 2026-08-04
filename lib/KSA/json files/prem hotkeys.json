@@ -329,6 +329,11 @@
         "context": "/PremiereData/shortcuts/context.timeline",
         "withinPrem": "(Panels > Timeline Panel > ) Show Duplicate Frame Markers"
     },
+    "closePanel": {
+        "command": "cmd.file.closepanel",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > File > ) Close"
+    },
     "labelViolet": {
         "command": "cmd.edit.label.0",
         "context": "/PremiereData/shortcuts/context.global",

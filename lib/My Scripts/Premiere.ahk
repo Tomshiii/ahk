@@ -449,9 +449,13 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 	prior := false
 	if A_PriorKey = "WheelUp" || A_PriorKey = "WheelDown" {
 		__within(coordObj, progmon) {
-			if ((coordObj.x > progmon.location.x) && (coordObj.x < progmon.location.x+progmon.location.w) && (coordObj.y < progmon.location.y) && (coordObj.y > progmon.location.y+progmon.location.h))
+			try {
+				if ((coordObj.x > progmon.location.x) && (coordObj.x < progmon.location.x+progmon.location.w) && (coordObj.y < progmon.location.y) && (coordObj.y > progmon.location.y+progmon.location.h))
+					return false
+				return true
+			} catch {
 				return false
-			return true
+			}
 		}
 		if !premUIA := premUIA_Values.initialise() {
 			KeyWait(A_ThisHotkey)

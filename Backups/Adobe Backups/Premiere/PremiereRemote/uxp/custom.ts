@@ -2053,6 +2053,115 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
 }
 
 /**
+ * match selected clips to the clip on the lowest track index
+ */
+export async function matchSelectedClipsToLowestTrack(): Promise<void> {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) {
+        alert("No active project.");
+        return;
+    }
+
+    const sequence = await project.getActiveSequence();
+    if (!sequence) {
+        alert("No active sequence.");
+        return;
+    }
+
+    // --- Gather selected clips per video track ---
+    const videoTrackCount = await sequence.getVideoTrackCount();
+    const selectedEntries: Array<{ trackIndex: number; item: any; start: TickTime; end: TickTime }> = [];
+
+    for (let t = 0; t < videoTrackCount; t++) {
+        const track = await sequence.getVideoTrack(t);
+        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+        for (const item of items) {
+            if (await item.getIsSelected()) {
+                const start = await item.getStartTime();
+                const end = await item.getEndTime();
+                selectedEntries.push({ trackIndex: t, item, start, end });
+            }
+        }
+    }
+
+    if (selectedEntries.length === 0) {
+        alert("No video clips are selected in the timeline.");
+        return;
+    }
+    if (selectedEntries.length === 1) {
+        return;
+    }
+
+    // Find the entry on the lowest track index (ties broken by earliest start)
+    let referenceEntry = selectedEntries[0];
+    for (const entry of selectedEntries) {
+        if (
+            entry.trackIndex < referenceEntry.trackIndex ||
+            (entry.trackIndex === referenceEntry.trackIndex &&
+                entry.start.ticksNumber < referenceEntry.start.ticksNumber)
+        ) {
+            referenceEntry = entry;
+        }
+    }
+
+    const refStart = referenceEntry.start;
+    const refEnd = referenceEntry.end;
+    if (refEnd.ticksNumber - refStart.ticksNumber <= 0) {
+        alert("Invalid reference clip duration.");
+        return;
+    }
+
+    const selectedItems = new Set(selectedEntries.map((e) => e.item));
+
+    // Validate against unselected neighbors before touching anything
+    const blocked: string[] = [];
+    for (const target of selectedEntries) {
+        if (target.item === referenceEntry.item) continue;
+
+        const track = await sequence.getVideoTrack(target.trackIndex);
+        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+
+        for (const other of items) {
+            if (other === target.item) continue;
+            if (selectedItems.has(other)) continue;
+
+            const otherStart = await other.getStartTime();
+            const otherEnd = await other.getEndTime();
+            if (otherStart.ticksNumber < refEnd.ticksNumber && otherEnd.ticksNumber > refStart.ticksNumber) {
+                blocked.push(await target.item.getName());
+                break;
+            }
+        }
+    }
+
+    if (blocked.length > 0) {
+        alert(
+            "Cannot match the following clip(s) to the reference range -- an unselected " +
+            "clip is in the way on the same track: " + blocked.join(", ")
+        );
+        return;
+    }
+
+    project.lockedAccess(() => {
+        project.executeTransaction((compoundAction) => {
+            for (const target of selectedEntries) {
+                if (target.item === referenceEntry.item) continue;
+
+                const endFirst = refStart.ticksNumber < target.start.ticksNumber;
+
+                if (endFirst) {
+                    compoundAction.addAction(target.item.createSetEndAction(refEnd));
+                    compoundAction.addAction(target.item.createSetStartAction(refStart));
+                } else {
+                    compoundAction.addAction(target.item.createSetStartAction(refStart));
+                    compoundAction.addAction(target.item.createSetEndAction(refEnd));
+                }
+            }
+        }, "Match selected clips to lowest track");
+    });
+}
+
+/**
  *
  */
 async function findSequenceByProjectItemId(project: Project, targetId: string): Promise<Sequence | null> {

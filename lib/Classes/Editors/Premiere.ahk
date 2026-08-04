@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/07/31
- * @version 2.5.5
+ * @date 2026/08/04
+ * @version 2.5.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -664,20 +664,22 @@ class Prem {
         if A_ScriptName != "Core Functionality.ahk" {
             activeObj := CLSID_Objs.clone("prem")
             if activeObj.remoteActiveCEP = "loading" {
-                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                notifyExt.showIfNotExist("premSocketConnectionErrorCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
             if !activeObj.remoteActiveCEP {
-                errorLog(Error("A socket connection could not be established", -1),, true)
+                errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
+                notifyExt.showIfNotExist('premSocketConnectionErrorCEP',, "A socket connection could not be established to CEP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return false
             }
         } else {
             if this.remoteActiveCEP = "loading" {
-                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                notifyExt.showIfNotExist("premSocketLoadingCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
             if !this.remoteActiveCEP {
-                errorLog(Error("A socket connection could not be established", -1),, true)
+                errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
+                notifyExt.showIfNotExist('premSocketConnectionErrorCEP',, "A socket connection could not be established to CEP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return false
             }
         }
@@ -790,20 +792,22 @@ class Prem {
         if A_ScriptName != "Core Functionality.ahk" {
             activeObj := CLSID_Objs.clone("prem")
             if activeObj.remoteActiveUXP = "loading" {
-                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                notifyExt.showIfNotExist("premSocketLoadingUXP",, "Socket connection to UXP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
             if !activeObj.remoteActiveUXP {
-                errorLog(Error("A socket connection could not be established", -1),, true)
+                errorLog(Error("A socket connection could not be established to UXP plugin", -1),, false)
+                notifyExt.showIfNotExist('premSocketConnectionErrorUXP',, "A socket connection could not be established to UXP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return false
             }
         } else {
             if this.remoteActiveUXP = "loading" {
-                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                notifyExt.showIfNotExist("premSocketLoadingUXP",, "Socket connection to UXP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return -1
             }
             if !this.remoteActiveUXP {
-                errorLog(Error("A socket connection could not be established", -1),, true)
+                errorLog(Error("A socket connection could not be established to the UXP plugin", -1),, false)
+                notifyExt.showIfNotExist('premSocketConnectionErrorUXP',, "A socket connection could not be established to UXP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return false
             }
         }

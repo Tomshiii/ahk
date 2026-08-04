@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside
- * @date 2026/07/29
- * @version 1.1.12
+ * @date 2026/08/04
+ * @version 1.1.13
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -56,6 +56,7 @@ Class CustomFunctions {
     setBlendMode(blendModeString)                            => (prem.setBlendMode(blendModeString))
     setAllEnableDisabled(enabled := "true")                  => (prem.__remoteFunc('setAllEnableDisabled',, "enabled=" enabled))
     effectSlot(save := true, slot := 1, saveToFile := false) => (prem.effectSlot(save, slot, saveToFile))
+    matchLayers()                                            => (prem.__remoteUXP("custom/matchSelectedClipsToLowestTrack"))
 
     addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer", makeSelection := true) => (OtherFuncs.addAdjustLayer(adjustmentLayerPath, makeSelection))
     renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?))
