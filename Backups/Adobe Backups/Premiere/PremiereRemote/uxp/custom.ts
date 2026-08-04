@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tomshi functions
- * @version 1.0.2
+ * @aiDisclosure I'm not incredibly versed in typescript - I could mostly follow along with CEP logic but a lot of the coding patterns in UXP go relatively over my head (namely transactions, promise's, async vs sync, etc). As such I tend to use Claude to write/convert functions. Always happy to receive any pull requests to replace ai code with stronger code.
  */
 const lfs = storage.localFileSystem;
 
@@ -15,6 +15,8 @@ import type {
     TickTime,
     VideoTrack,
     TrackItemSelection,
+    AudioClipTrackItem,
+    VideoClipTrackItem,
     ProjectItem,
     Project,
 } from "@adobe/premierepro";
@@ -2162,7 +2164,7 @@ export async function matchSelectedClipsToLowestTrack(): Promise<void> {
 }
 
 /**
- *
+ * finds sequence by projectitem id
  */
 async function findSequenceByProjectItemId(project: Project, targetId: string): Promise<Sequence | null> {
     const sequences = await project.getSequences();
@@ -2172,4 +2174,178 @@ async function findSequenceByProjectItemId(project: Project, targetId: string): 
         if ((await seqProjItem.getId()).toString() === targetId.toString()) return seq;
     }
     return null;
+}
+
+/**
+ * add transitions to certain audio edit points. This will (hopefully in the future) enable adding audio transitions to any audio clips that are either enabled, or have an enabled clip adjacent to them. This will not add transitions to clips that already contain them.
+ * Currently this function is non functional as there are api shortcomings. Hopefully this is one day useable
+ */
+export async function addTransitionsToEnabledAudioEditPoints(dryRun: boolean, debug: boolean) {
+  const project = await ppro.Project.getActiveProject();
+  const sequence = await project.getActiveSequence();
+
+  if (!sequence) {
+    console.warn("No active sequence.");
+    return;
+  }
+
+  const audioTrackCount = await sequence.getAudioTrackCount();
+  const results = [];
+
+  for (let trackIndex = 0; trackIndex < audioTrackCount; trackIndex++) {
+    const audioTrack = await sequence.getAudioTrack(trackIndex);
+
+    // false = don't include empty/gap track items, just real clips
+    // Defensively filter out any null/undefined entries - some track item
+    // queries can return sparse arrays with nulls in gap slots.
+    const rawClips = await audioTrack.getTrackItems(Constants.TrackItemType.CLIP, false);
+    const clips = (rawClips || []).filter(Boolean);
+
+    if (clips.length < 2) continue;
+
+    // Fetch every clip's disabled state ONCE, up front, in parallel.
+    // This is what guarantees clip N's state is never checked twice
+    // as we slide the window across edit points.
+    const disabledStates = await Promise.all(clips.map((clip) => clip.isDisabled()));
+
+    // Fetch every clip's start/end time ONCE too - needed both to locate
+    // the edit point and to cross-reference against existing transitions.
+    // ticks are used for the (precise) overlap comparison; seconds are
+    // used purely for the human-readable timecode in the log line.
+    const clipRanges = await Promise.all(
+      clips.map(async (clip) => {
+        const start = await clip.getStartTime();
+        const end = await clip.getEndTime();
+        return {
+          startTicks: start.ticksNumber,
+          endTicks: end.ticksNumber,
+          startSeconds: start.seconds,
+          endSeconds: end.seconds,
+        };
+      })
+    );
+
+    // Pull back any transitions ALREADY on this track (existing, user-placed
+    // ones included) so we can skip edit points that already have one.
+    //
+    // KNOWN LIMITATION: as of the current UXP release, Premiere reports the
+    // correct *count* of transition track items on an audio track, but the
+    // objects themselves come back as null (no AudioTransition wrapper class
+    // is implemented yet - the same "not built out yet" state Adobe has
+    // confirmed for CaptionTrack items). That means we can detect that
+    // transitions exist, but not which edit points they're on, so this
+    // check cannot safely be used to skip specific edit points right now.
+    // Filtered for null/undefined entries; see debug logging below.
+    const rawTransitions = await audioTrack.getTrackItems(Constants.TrackItemType.TRANSITION, true);
+    const existingTransitions = (rawTransitions || []).filter(Boolean);
+    const transitionRanges = await Promise.all(
+      existingTransitions.map(async (t) => ({
+        start: (await t.getStartTime()).ticksNumber,
+        end: (await t.getEndTime()).ticksNumber,
+      }))
+    );
+
+    if (debug) {
+      console.log(`Track ${trackIndex}: raw transition item count = ${(rawTransitions || []).length}, after filtering nulls = ${existingTransitions.length}`);
+      transitionRanges.forEach((r, idx) => {
+        console.log(`  transition[${idx}]: startTicks=${r.start} endTicks=${r.end} (~${helpers.formatTimecode(r.start / 254016000000)} to ${helpers.formatTimecode(r.end / 254016000000)})`);
+      });
+    }
+
+    let skippedBothDisabled = 0;
+    let skippedAlreadyHasTransition = 0;
+    let qualified = 0;
+
+    for (let i = 0; i < clips.length - 1; i++) {
+      const leftClip = clips[i];
+      const rightClip = clips[i + 1];
+      const leftDisabled = disabledStates[i];
+      const rightDisabled = disabledStates[i + 1];
+
+      const bothDisabled = leftDisabled && rightDisabled;
+
+      if (bothDisabled) {
+        // Skip entirely - neither clip contributes audio, no transition needed.
+        skippedBothDisabled++;
+        continue;
+      }
+
+      // The edit point sits between leftClip's end and rightClip's start.
+      // If a transition already straddles that point (whether it was placed
+      // by the user or a prior run of this script), leave it alone.
+      const editPointTick = (clipRanges[i].endTicks + clipRanges[i + 1].startTicks) / 2;
+      const editPointSeconds = (clipRanges[i].endSeconds + clipRanges[i + 1].startSeconds) / 2;
+      const alreadyHasTransition = transitionRanges.some(
+        (r) => editPointTick >= r.start && editPointTick < r.end
+      );
+
+      if (debug) {
+        console.log(
+          `  editPoint[${i}] @ ${helpers.formatTimecode(editPointSeconds)}: ` +
+            `leftEndTicks=${clipRanges[i].endTicks} rightStartTicks=${clipRanges[i + 1].startTicks} ` +
+            `midpointTick=${editPointTick} -> alreadyHasTransition=${alreadyHasTransition}`
+        );
+      }
+
+      if (alreadyHasTransition) {
+        skippedAlreadyHasTransition++;
+        continue;
+      }
+
+      // At least one side is enabled, and no transition exists yet -> qualifies.
+      qualified++;
+      results.push({ trackIndex, editPointIndex: i, leftClip, rightClip, editPointSeconds });
+
+      if (!dryRun) {
+        await applyAudioTransitionAtEditPoint(project, leftClip, rightClip);
+      } else {
+        const leftName = await leftClip.getName();
+        const rightName = await rightClip.getName();
+        console.log(
+          `[${helpers.formatTimecode(editPointSeconds)}] Would add transition on track ${trackIndex}, edit point ${i} - between "${leftName}" (disabled=${leftDisabled}) and "${rightName}" (disabled=${rightDisabled})`
+        );
+      }
+    }
+
+    console.log(
+      `Track ${trackIndex} summary: ${clips.length} clips, ${clips.length - 1} edit points, ` +
+        `${existingTransitions.length} existing transitions found, ` +
+        `${skippedBothDisabled} skipped (both disabled), ` +
+        `${skippedAlreadyHasTransition} skipped (already has transition), ` +
+        `${qualified} qualified`
+    );
+  }
+
+  return results;
+}
+
+
+/**
+ * STUB - fill this in once an audio transition creation API exists.
+ * Pattern mirrors the *documented* video equivalent so it's a drop-in
+ * once/if AudioClipTrackItem gets createAddAudioTransitionAction (or
+ * similar), or if TransitionFactory gains createAudioTransition().
+ */
+export async function applyAudioTransitionAtEditPoint(project: Project, leftClip: AudioClipTrackItem, rightClip: AudioClipTrackItem, options = {}) {
+    const {
+        matchName = "Constant Power", // placeholder - not a confirmed matchName
+        durationSeconds = 1,
+        applyToStart = false,
+    } = options;
+
+    await project.lockedAccess(async () => {
+        // --- Not currently supported for audio, shown for structure only ---
+        // const transition = TransitionFactory.createAudioTransition(matchName); // does not exist yet
+        // const transitionOptions = new AddTransitionOptions()
+        //   .setApplyToStart(applyToStart)
+        //   .setDuration(TickTime.createWithSeconds(durationSeconds));
+        // const action = leftClip.createAddAudioTransitionAction(transition, transitionOptions); // does not exist yet
+        // await project.executeTransaction((compoundAction) => {
+        //   compoundAction.addAction(action);
+        // }, "Add audio transition");
+
+        throw new Error(
+            "applyAudioTransitionAtEditPoint: no audio transition creation API is currently exposed by UXP. See comments above."
+        );
+    });
 }
