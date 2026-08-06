@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A GUI to quickly reencode video files using ffmpeg
  * @author tomshi
- * @date 2025/12/20
- * @version 1.3.0
+ * @date 2026/08/06
+ * @version 1.3.1
  ***********************************************************************/
 
 ;// this script requires ffmpeg to be installed correctly and in the system path
@@ -172,7 +172,7 @@ class encodeGUI extends tomshiBasic {
         crfVal  := (this.crfOrBitrate = "crf") ? this.crf : false
         bitrateVal := (crfVal = false) ? this.bitrate : false
         encoder := (this.useNVENC = true) ? "h26" this.h26 "_nvenc" : "libx26" this.h26
-        presetVal := (this.useNVENC = true) ? this["pres"].value + 11 : this.preset
+        presetVal := (this.useNVENC = true) ? this["pres"].value + 2 : this.preset
         this.ffmpegInstance.reencode_h26x(pathObj.fileObjOrig.path, pathObj.fileObj.NameNoExt, encoder, presetVal, crfVal, bitrateVal, this.useNVENC, this.forceGPU)
         explorer.highlightFile(pathObj.fileObjOrig.dir "\" pathObj.fileObj.nameNoExt "." pathObj.fileObj.ext)
         ;// calls the traytip

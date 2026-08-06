@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2026/04/18
- * @version 1.2.4
+ * @date 2026/08/06
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -148,8 +148,8 @@ class ffmpeg {
         if useNVENC_Val = true {
             codec := "h264_nvenc"
             qualParam := "-cq " crf
-            if !IsInteger(preset) || (preset<12 || preset>18)
-                preset := "17"
+            if !IsInteger(preset) || (preset<0 || preset>9)
+                preset := "8"
         }
         finalPath := obj.SplitPath(videoFilePath)
         finalFileName := IsSet(outputFileName) ? outputFileName : finalPath.NameNoExt

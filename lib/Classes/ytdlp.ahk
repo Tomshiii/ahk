@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2026/08/03
- * @version 1.2.8
+ * @date 2026/08/06
+ * @version 1.2.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,7 +38,7 @@ class ytdlp {
     defaultVideoCommand := '-N 8 -o "{1}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --no-overwrites --merge-output-format mp4 {2}'
     defaultPostProcess  := 'ffmpeg -i "{2}\{3}" {1} -c:a aac -b:a 192k "{2}\temp_{3}" && del /f /q "{2}\{3}" && move /y "{2}\temp_{3}" "{2}\{3}"'
     defaultCPU          := "-c:v libx264 -crf 21 -preset medium"
-    defaultGPU          := "-c:v h264_nvenc -preset 18 -cq 19"
+    defaultGPU          := "-c:v h264_nvenc -preset 8 -cq 19"
     defaultAudioCommand := '-N 8 -o "{1}" --verbose --windows-filenames --no-overwrites --extract-audio --audio-format wav {2} --print after_move:filepath'
     defaultFilename := "%(title).50s [%(id)s].%(ext)s"
     playlistFilename := "%(title).50s.%(ext)s"

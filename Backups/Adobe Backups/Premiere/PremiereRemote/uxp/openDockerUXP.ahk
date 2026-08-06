@@ -20,7 +20,7 @@ if WinExist(dockerAhk) {
     try {
         dockerUIA := UIA.ElementFromHandle(dockerAhk,, false)
         if !dockerUIA.FindElement({LocalizedType:"button", Name:"Stop"}) {
-            dockerUIA.WaitElement({LocalizedType:"button", Name:"Start"}).invoke()
+            dockerUIA.WaitElement({LocalizedType:"button", Name:["Start", "Run"]}).invoke()
         }
         winExt.MinimizeRegex(dockerAhk)
     }
