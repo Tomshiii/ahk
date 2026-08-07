@@ -12,12 +12,11 @@
 #Include QMK\unassigned.ahk
 ; }
 
-SC028 & SC027::prem.manInput("position") ;manually input an x value
-; SC028 & /::prem.manInput("position", "60") ;manually input a y value
-SC028 & l::prem.manInput("scale") ;manually input a scale value
-SC028 & u::prem.manInput("rotation") ;manually input a rotation value
-SC028 & y::prem.manInput("opacity") ;manually input an opacity value
-SC028 & t::prem.manInput("level") ;manually input a level value
+SC028 & a::prem.manInput("Position")
+SC028 & z::prem.manInput("Position", true)
+SC028 & l::prem.manInput("Scale")
+SC028 & u::prem.manInput("Rotation")
+SC028 & y::prem.manInput("Opacity")
 Enter::prem.reset()
 Right::unassigned()
 
@@ -96,7 +95,7 @@ x::prem.fxSearch()
 
 q::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=S_Shake")
 a::prem.valuehold("Position") ;press then hold this hotkey and drag to increase/decrese x value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
-z::prem.valuehold("Position", "60") ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
+z::prem.valuehold("Position", true) ;press then hold this hotkey and drag to increase/decrese y value. Let go of this hotkey to confirm, Simply Tap this hotkey to reset values
 
 ;F16::unassigned()
 

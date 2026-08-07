@@ -46,6 +46,23 @@ export class Utils {
     return true;
   }
 
+  static isSelectedAudio() {
+    var activeSequence = app.project.activeSequence;
+    var selection = activeSequence.getSelection();
+
+    if (!selection.length) {
+      return false;
+    }
+
+    for (var i = 0; i < selection.length; i++) {
+      if (selection[i].mediaType === "Audio") {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   static isClipEnabled() {
     var activeSequence = app.project.activeSequence;
     var selection = activeSequence.getSelection();

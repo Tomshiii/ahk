@@ -247,6 +247,16 @@ export async function isSelectedMultiple(): Promise<boolean> {
 }
 
 /**
+ * determines if any of the selected clips are audio files
+ */
+export async function isSelectedAudio(): Promise<boolean> {
+    const items = await common.getSelectedTrackItems();
+    if (!items || items.length === 0) return false;
+
+    return items.some((item) => item instanceof ppro.AudioClipTrackItem);
+}
+
+/**
  * determine if there is a selection. if there is, return it
  * @returns {TrackItemSelection}
  */

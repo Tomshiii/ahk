@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/07
- * @version 2.5.7
+ * @version 2.5.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -820,15 +820,17 @@ class Prem {
         }
         getResp := cmd.result(sendcommand)
         try parse := JSON.parse(getResp)
-        catch {
-            if WinExist(this.winTitle)
-                errorLog(Error("Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
-            else
-                errorLog(Error("remoteFunc was called but Premiere no longer appears to be open.", -1))
-            return false
+        catch as e {
+            if !InStr(e.Message, "Malformed JSON - unrecognized character") {
+                if WinExist(this.winTitle)
+                    errorLog(Error("Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
+                else
+                    errorLog(Error("remoteFunc was called but Premiere no longer appears to be open.", -1))
+                return false
+            }
         }
         switch {
-            case parse.Has("error"):
+            case IsSet(parse) && parse.Has("error"):
                 if Type(parse["error"]) = "String" {
                     errorLog(MethodError(parse["error"],-1), whichFunc "_" paramsString)
                     MsgBox("prem.__remoteUXP() failed.`n`nError: " parse["error"] "`nFunction:" whichFunc "`nPassed Params:" paramsString)
@@ -1231,34 +1233,61 @@ class Prem {
     }
 
     /**
-     * Checks the `Effect Controls` window to ensure a clip is selected
-     * @param {UIA Object} [effCont] the effect controls UIA control. it is recommended to use `effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])` for an updated window
-     * @param {VarRef} [sourceButt?] pass back the `Show/Hide Timeline View` button control if it is found
-     * @param {VarRef} [motionPos?] pass back the `Toggle the effect on or off` button control if it is found
+     * Checks the api to determine if a clip is selected
      * @returns {Boolean}
      */
-    static isClipSelected(effCont, &sourceButt?, &motionPos?) {
-        try sourceButt := effCont.FindElement({LocalizedType:"button", Name:"Show/Hide Timeline View"})
-        try motionPos  := effCont.FindElement({LocalizedType:"button", Name:"Toggle the effect on or off"})
-        if !this.__remoteFunc('isSelected', true) || (!this.__remoteFunc('isSelectedMultiple', true) && (!IsSet(sourceButt) || !IsSet(motionPos)))
+    static isClipSelected() {
+        if (!this.__remoteFunc('isSelected', true) && !this.__remoteFunc('isSelectedMultiple', true))
             return false
         return true
     }
 
     /**
+     * helper function for `valuehold()` and `manInput()` to create an object for the desired parameter
+     * @param effCtrlNN the UIA object of the eff control panel to pass in
+     * @param control the desired control. Case sensititve
+     * @param secondText whether you wish to interact with the first input field or the second
+     */
+    static __determineEffCtrlObj(effCtrlNN, control, secondText) {
+        switch this.UI {
+            case "Spectrum": effCtrlArr := ["Position", "Scale", "Scale Width", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity"]
+        }
+        if !pos := effCtrlArr.IndexOf(control) {
+            block.Off()
+            return false
+        }
+        if control != "Position" && control != "Anchor Point"
+            secondText := false
+        children := effCtrlNN.Children
+        num := 0
+        motionPos := 0
+        for i, child in children {
+            if child.Name == "Toggle the effect on or off" { ;// motion tab begin
+                motionPos := i
+                continue
+            }
+            if motionPos = 0
+                continue
+            if child.Name == "Toggle animation" {
+                if ++num < pos
+                    continue
+                return {keyframe: children[i], reset: children[i+4], text: (secondText = true) ? children[i+6] : children[i+5]}
+            }
+        }
+    }
+
+    /**
      * ## Warning
      * - ##### The activation key for this function needs to be a *single* key without any modifiers.
-     * - ##### The `Motion` property must be visible for this function to work; the user can have unassigned masks above it, but that property must still be on the screen for logic to continue
+     * - ##### The control must be visible for this function to work
      *
      * A function to warp to one of a videos values (scale , x/y, rotation, etc) click and hold it so the user can drag to increase/decrease. Also allows for tap to reset.
-     * @param {String} control is which control you wish to adjust. This parameter is CASE SENSETIVE!!. Valids options; `Position`, `Scale`, `Rotation`, `Opacity`
-     * @param {Integer} optional is used to add extra x axis movement after the pixel search. This is used to press the y axis text field in premiere as it's directly next to the x axis text field
+     * @param {String} control is which control you wish to adjust. This parameter is CASE SENSETIVE!!. Valids options;
+     * `"Position", "Scale", "Scale Width", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity"`
+     * @param {Integer | false} secondText whether you wish to adjust the first text box, or the second. Must be set to `false` for controls that only have one text input
      */
-    static valuehold(control, optional := 0)
+    static valuehold(control, secondText := false)
     {
-        ;This function will only operate correctly if the space between the x value and y value is about 210 pixels away from the left most edge of the "timer" (the icon left of the value name)
-        ;I use to have it try to function irrespective of the size of your panel but it proved to be inconsistent and too unreliable.
-        ;You can plug your own x distance in by changing the value below
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
@@ -1267,7 +1296,7 @@ class Prem {
             return
         }
         effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
-        if !this.isClipSelected(effCtrlNN, &sourceButt, &motionPos) {
+        if !this.isClipSelected() {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
@@ -1278,49 +1307,19 @@ class Prem {
             keys.allWait()
             return
         }
-        this.__focusTimeline() ;focuses the timeline
-        motionPos := {x: effCtrlNN.location.x+57, y: motionPos.location.y}
-        switch this.UI {
-            case "Spectrum": effCtrlArr := ["Position", "Scale", "Scale Width", "Uniform Scale", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity Title", "Opacity Mask", "Opacity", "Blend Mode"]
-        }
-        startPos := {x: motionPos.x+15, y: motionPos.y+this.effCtrlSegment}
-        for i, v in effCtrlArr {
-            if v !== control && i != effCtrlArr.Length
-                continue
-            if v !== control && i = effCtrlArr.Length {
-                block.Off()
-                errorLog(IndexError("Failed to find the requested control", -1, control),, 1)
-                keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-                MouseMove(xpos, ypos)
-                return
-            }
-            startPos.y += (this.effCtrlSegment*i)-(this.effCtrlSegment*0.75)
-            break
-        }
-        if !PixelSearch(&xcol, &ycol, startPos.x, startPos.y, sourceButt.location.x+3, startpos.y + (this.effCtrlSegment*.75), this.valueBlue, 6) {
+        this.__focusTimeline()
+
+        paramObj := this.__determineEffCtrlObj(effCtrlNN, control, secondText)
+        if !IsSet(paramObj) || paramObj = false {
             block.Off()
-            errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
-            keys.allWait() ;as the function can't find the property you want, it will wait for you to let go of the key so it doesn't continuously spam the function and lag out
-            MouseMove(xpos, ypos)
             return
         }
-        MouseMove(xcol + optional, ycol)
+
+        MouseMove(paramObj.text.location.x, paramObj.text.location.y)
         sleep 50 ;required, otherwise it can't know if you're trying to tap to reset
         ToolTip("")
         if !GetKeyState(A_ThisHotkey, "P") {
-            switch this.UI {
-                ;// check version - pre Spectrum UI will need to start imagesearch higher
-                ;// spectrum ui
-                case "Spectrum": startSegment := this.effCtrlSegment*.25, endSegment := this.effCtrlSegment*.75
-            }
-            ;// searches for the reset button to the right of the value you want to adjust. if it can't find it, the below block will happen
-            if !ImageSearch(&x2, &y2, startPos.x, startPos.y - startSegment, startPos.x + 1500, startPos.y + endSegment, "*2 " ptf.Premiere "reset.png") {
-                MouseMove(xpos, ypos)
-                block.Off()
-                errorLog(Error("Couldn't find the reset button", -1),, 1)
-                return
-            }
-            MouseMove(x2, y2)
+            MouseMove(paramObj.reset.location.x, paramObj.reset.location.y)
             SendInput("{Click}")
             MouseMove(xpos, ypos)
             this.disableDirectManip()
@@ -1417,7 +1416,7 @@ class Prem {
         effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
         this.__focusTimeline() ;focuses the timeline
         sleep 25
-        if !this.isClipSelected(effCtrlNN) {
+        if !this.isClipSelected() {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
@@ -1524,7 +1523,7 @@ class Prem {
         effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
         timelineAct := premUIA_Values.__isUiaElementActive('timelineWindow', premUIA)
         this.__focusTimeline() ;focuses the timeline
-        if !this.isClipSelected(effCtrlNN) {
+        if !this.isClipSelected() {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
@@ -1586,22 +1585,22 @@ class Prem {
 
     /**
      * This function will warp to and press any value in premiere to manually input a number
-     * @param {String} property is the value you want to adjust. ie "scale"
-     * @param {Integer} optional is the optional pixels to move the mouse to grab the Y axis value instead of the X axis
+     * @param {String} control is which control you wish to adjust. This parameter is CASE SENSETIVE!!. Valids options;
+     * `"Position", "Scale", "Scale Width", "Rotation", "Anchor Point", "Anti-flicker Filter", "Crop Left", "Crop Top", "Crop Right", "Crop Bottom", "Opacity"`
+     * @param {Integer | false} secondText whether you wish to adjust the first text box, or the second. Must be set to `false` for controls that only have one text input
      */
-    static manInput(property, optional := 0)
+    static manInput(control, secondText := false)
     {
         getHotkeys(&first, &waitHotkey)
-        MouseGetPos(&xpos, &ypos)
         coord.s()
+        MouseGetPos(&xpos, &ypos)
         block.On()
         if !premUIA := premUIA_Values.initialise() {
             block.Off()
             return
         }
         effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
-        this.__focusTimeline()
-        if !this.isClipSelected(effCtrlNN) {
+        if !this.isClipSelected() {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
@@ -1612,29 +1611,19 @@ class Prem {
             keys.allWait()
             return
         }
-        ;// finds the scale value you want to adjust, then finds the value adjustment to the right of it
-        if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.width/2), y2: effCtrlNN.location.y + effCtrlNN.location.h},, &x, &y
-            , ptf.Premiere property ".png"
-            , ptf.Premiere property "2.png"
-            , ptf.Premiere property "3.png"
-            , ptf.Premiere property "4.png"
-        )
-            {
-                block.Off()
-                errorLog(Error("Couldn't find the property requested.", -1, property),, 1)
-                return
-            }
-        if !PixelSearch(&xcol, &ycol, x, y, x + "740", y + "40", this.valueBlue, 2) ;searches for the blue text to the right of the scale value
-            {
-                block.Off()
-                errorLog(Error("Couldn't find the blue 'value' text", -1),, 1)
-                return
-            }
-        MouseMove(xcol + optional, ycol)
+        this.__focusTimeline()
+
+        paramObj := this.__determineEffCtrlObj(effCtrlNN, control, secondText)
+        if !IsSet(paramObj) || paramObj = false {
+            block.Off()
+            return
+        }
+
+        MouseMove(paramObj.text.location.x, paramObj.text.location.y)
         keywait(waitHotkey)
         SendInput("{Click}")
-        ToolTip("manInput() is waiting for the NumpadEnter key to be pressed")
-        KeyWait("{NumpadEnter}", "D") ;waits until the final hotkey is pressed before continuing
+        ToolTip("manInput() is waiting for the NumpadEnter key to be pressed. Will wait 8s")
+        KeyWait("NumpadEnter", "D T8") ;waits until the final hotkey is pressed before continuing
         ToolTip("")
         SendInput("{Enter}")
         MouseMove(xpos, ypos)
@@ -1678,36 +1667,11 @@ class Prem {
             blocker.Off()
             return -1
         }
-        if !premUIA := premUIA_Values.initialise() {
+
+        if !this.__remoteFunc('isSelectedAudio', true) {
             blocker.Off()
+            notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No audio clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return false
-        }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
-
-        try {
-            funcExist := this.isClipSelected(effCtrlNN)
-            switch funcExist {
-                case false:
-                    delaySI(50, KSA.timelineWindow, KSA.selectAtPlayhead) ;~ check the keyboard shortcut ini file to adjust hotkeys
-                    this().__fxPanel()
-                    if !obj.imgSrchMulti({x1: effCtrlNN.location.x, y1: effCtrlNN.location.y, x2: effCtrlNN.location.x + (effCtrlNN.location.w/2), y1: effCtrlNN.location.y + effCtrlNN.location.h},, &audx, &audy, ptf.Premiere "effctrlAudio.png", ptf.Premiere "effctrlAudio1.png") {
-                        blocker.Off()
-                        notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
-                        return false
-                    }
-                case true:
-                    if !this.__remoteFunc('isSelected', true) {
-                        blocker.Off()
-                        notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
-                        return false
-                    }
-
-            }
-        } catch {
-            blocker.Off()
-            errorLog(UnsetError("ClassNN wasn't given a value", -1))
-            notifyExt.showIfNotExist("premNoClassNN",,"ClassNN wasn't given a value",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
-            return
         }
         sleep 100
         this.__focusTimeline()
@@ -4288,7 +4252,7 @@ class Prem {
         if !premUIA := premUIA_Values.initialise()
             return
         effCont := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
-        if !this.isClipSelected(effCont)
+        if !this.isClipSelected()
             return
         try {
             blendMode := effCont.FindElement({LocalizedType:"combo box"},, 2)
