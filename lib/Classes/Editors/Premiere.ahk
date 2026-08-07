@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/04
- * @version 2.5.6
+ * @date 2026/08/07
+ * @version 2.5.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2360,23 +2360,32 @@ class Prem {
      * If the user immediately attempts to resume playback after ripple trimming the playhead will sometimes either; not be placed at the beginning of the clip and will inadvertently begin playback where you might not expect it to, or will simply not resume playback if the user tries to resume playback immediately after ripple trimming
      * This function attempts to delay playback immediately after a trim to mitigate this behaviour. This function might require some adjustment from the user depending on how fast/slow their pc is
      * @param {Integer} delayMS the delay in `ms` that you want the function to wait before attempting to resume playback. Defaults to a value set within the class
+     * @param {Boolean} [closeTrim=true] determine whether to check for, and close `Trim Mode` before playback. Defaults to `true`
      */
-    static delayPlayback(delayMS?) {
+    static delayPlayback(delayMS?, closeTrim := true) {
         this.defaultDelay := IsSet(delayMS) ? delayMS : this.defaultDelay
         delayMS := IsSet(delayMS) ? delayMS : this.defaultDelay
+        if !premUIA := premUIA_Values.initialise()
+            return
         if !this.__checkTimelineValues() {
             this.getTimeline(false)
             return
         }
         if !this.timelineFocusStatus()
             return
-        __sendSpace() => (SendEvent(ksa.playStop))
+        __sendSpace(premUIA) {
+            ;// I hate the stupid trim mode, I wish I could delete it from existence
+            if closeTrim = true && prem.isTrimModeActive() && premUIA.__isUiaElementActive("timelineWindow", premUIA) {
+                SendInput("{Escape}")
+            }
+            SendEvent(ksa.playStop)
+        }
         if (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
             ((A_PriorKey = ksa.premRipplePrev || A_PriorKey = ksa.premRippleNext) && (this.delayTime >= delayMS) || this.delayTime = 0) {
-                __sendSpace()
+                __sendSpace(premUIA)
                 return
             }
-        SetTimer(__sendSpace, -(delayMS-this.delayTime))
+        SetTimer(__sendSpace(premUIA), -(delayMS-this.delayTime))
     }
 
     /**
@@ -4406,6 +4415,22 @@ class Prem {
             }
             return true
         }
+    }
+
+    /**
+     * Uses UIA to determine if `Trim Mode` is active
+     * @param {Integer | false} [wait=false] determines whether the function will use `UIA.FindElement()` or `UIA.WaitElement()`. If the user passes an `Integer` it will use that value in `WaitElement()`. It expects a value in `ms`. Using this value will `Halt` the thread, so only use if necessary.
+     */
+    static isTrimModeActive(wait := false) {
+        if !premUIA := premUIA_Values.initialise()
+            return
+        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
+        if wait = false || !IsInteger(wait) || wait < 1 {
+            try transButton := progMon.FindElement({LocalizedType:"button", Name:"Apply Default Transitions to Selection", matchmode:"Substring"})
+            return (IsSet(transButton) && transButton != false)
+        }
+        try transButton := progMon.WaitElement({LocalizedType:"button", Name:"Apply Default Transitions to Selection", matchmode:"Substring"}, wait)
+        return (IsSet(transButton) && transButton != false)
     }
 
     __Delete() {

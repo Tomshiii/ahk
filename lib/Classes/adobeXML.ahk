@@ -17,8 +17,13 @@
  * @returns {Object} returns an xml comobj to allow the user
  * Examples:
 ```
+;// pre 27.0
 xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]/virtualkey').text
 xml.selectSingleNode('/PremiereData/shortcuts/context.global/*[commandname="cmd.transport.shuttle.stop"]').nodename
+
+;// post 27.0 - now requires `/mode.Edit/`/`/mode.Color/`
+xml.selectSingleNode('/PremiereData/shortcuts/mode.Edit/context.global/*[commandname="cmd.transport.shuttle.stop"]/virtualkey').text
+xml.selectSingleNode('/PremiereData/shortcuts/mode.Edit/context.global/*[commandname="cmd.transport.shuttle.stop"]').nodename
 ```
  */
 class adobeXML {
