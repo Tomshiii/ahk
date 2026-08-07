@@ -189,7 +189,8 @@ class adobeXML {
 
     /**
      * Builds the hotkey for the desired xml path
-     * @param {String} start the xml path of the desired hotkey. eg. `'/PremiereData/shortcuts/context.global'`
+     * @param {String} start the xml path of the desired hotkey. eg. `'/PremiereData/shortcuts/context.global'` in pre v27.0
+     * or `'/PremiereData/shortcuts/mode.Edit/context.global'`/`'/PremiereData/shortcuts/mode.Color/context.global'` post v27
      * @param {String} codename the xml `codename` for the desired hotkey. eg. `"cmd.clip.scaletoframesize"`
      * @param {Integer} [selectWhichHotkey=1] in the event the user has multiple shortcuts defined, pick which one you wish to use. If this parameter is set to `false` the user will be prompted with a GUI to pick which to use
      * @returns {String|Object} returns a string of the desired hotkey. Else returns an object containing `{isSet: false}` on failure this is to avoid stings like; `+0` being interpreted as `false`
@@ -197,7 +198,8 @@ class adobeXML {
      * example
      * ```
      * premXML := adobeXML("path\to\shortcutfile")
-     * hotkeyVal := premXML.__premBuildHotkey("/PremiereData/shortcuts/context.global", "cmd.clip.aeify", 1)
+     * hotkeyVal := premXML.__premBuildHotkey("/PremiereData/shortcuts/context.global", "cmd.clip.aeify", 1) ;// pre v27.0
+     * hotkeyVal := premXML.__premBuildHotkey("/PremiereData/shortcuts/mode.Edit/context.global", "cmd.clip.aeify", 1) ;// v27.0+
      * ```
      */
     __premBuildHotkey(start, codename, selectWhichHotkey := 1) {

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
- * @date 2026/06/18
- * @version 2.0.2
+ * @date 2026/08/07
+ * @version 2.1.0
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -12,7 +12,9 @@
 #Include Classes\Editors\Premiere.ahk
 #Include Functions\determineAdobeVer.ahk
 #Include Functions\loadXML.ahk
+#Include Functions\checkBool.ahk
 #Include Other\JSON.ahk
+#Include Other\Array.ahk
 ; #Include Other\print.ahk
 ; }
 
@@ -49,6 +51,7 @@ class KeyShortAdjust {
         }
     }
 
+    settingsINI => A_MyDocuments "\tomshi\settings.ini"
     overrideLocation => A_MyDocuments "\tomshi\KSA\override.json"
     override := ""
     jsonsDir => A_AppData "\tomshi\lib\KSA\json files"
@@ -58,6 +61,8 @@ class KeyShortAdjust {
     resolveJSONFile => this.jsonsDir "\resolve hotkeys.json"
     excaliburJSONFile => this.jsonsDir "\excalibur hotkeys.json"
     windowsJSONFile => this.jsonsDir "\windows hotkeys.json"
+
+    UserSettings := unset
 
     doUnset(appJSON, program) {
         for k, v in appJSON {
@@ -69,13 +74,24 @@ class KeyShortAdjust {
         throw UnsetError("This hotkey could not be used as the user does not currently have it set within " program, -1, hotkeyname)
     }
 
+    __isBeta(which) {
+        try {
+            if !IsSet(UserSettings)
+                UserSettings := CLSID_Objs.load("UserSettings")
+            isBeta := UserSettings.%which%IsBeta
+            return checkBool(isBeta)
+        } catch {
+            return (checkBool(IniRead(this.settingsINI, "Adjust", which "IsBeta", "false")))
+        }
+    }
+
     setAdobeKeys(which) {
         isUnset := false
         appJSON := JSON.parse(FileRead(this.%which%JSONFile))
         switch which {
             case "prem": exeName := {baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"}, prog := "Premiere"
             case "ae": exeName := {baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"}, prog := "After Effects"
-            case "ps": exeName := {baseName: "Photoshop.exe", beta: "Photoshop (Beta).exe"}, prog := "Photoshop"
+            case "ps": exeName := {baseName: "Photoshop.exe", beta: "Photoshop.exe"}, prog := "Photoshop"
         }
 
         if !appVers := determineAdobeVer(exeName) {
@@ -83,21 +99,25 @@ class KeyShortAdjust {
             this.doUnset(appJSON, prog)
             return
         }
-        ;// need to determine if beta
         switch which {
             case "prem":
-                premPrefsDir := A_MyDocuments "\Adobe\Premiere Pro\" SubStr(appVers.version, 1, 2) ".0\Profile-" A_UserName
-                premPrefs := premPrefsDir "\Adobe Premiere Pro Prefs"
+                isBeta := this.__isBeta("prem")
+                backupVer := IniRead(this.settingsINI, "Adjust", "premVer", "v" prem.minVer)
+                try premVer := (IsSet(UserSettings)) ? UserSettings.premVer : backupVer
+                catch {
+                    premVer := backupVer
+                }
+                betaString := (isBeta=true) ? " (Beta)" : ""
+                premPrefsDir := A_MyDocuments "\Adobe\Premiere Pro" betaString "\" SubStr(appVers.version, 1, 2) ".0\Profile-" A_UserName
+                premPrefs := premPrefsDir "\Adobe Premiere Pro" betaString " Prefs"
                 if FileExist(premPrefs) {
                     try {
-                        xml := loadXML(FileRead(premPrefs))
-                        userShortcutName := xml.selectSingleNode('/PremiereData/Preferences/Properties/*[name()="FE.Prefs.Shortcuts.Filename"]').text
+                        readXML := loadXML(FileRead(premPrefs))
+                        userShortcutName := readXML.selectSingleNode('/PremiereData/Preferences/Properties/*[name()="FE.Prefs.Shortcuts.Filename"]').text
                         userShortcutFile := premPrefsDir "\Win\" userShortcutName
                     }
                 }
-                if !FileExist(premPrefs) || (IsSet(userShortcutFile) && !FileExist(userShortcutFile))
-                    isUnset := true
-                if isUnset = true {
+                if !FileExist(premPrefs) || (IsSet(userShortcutFile) && !FileExist(userShortcutFile)) {
                     errorLog(ValueError("Could not determine Premiere hotkeys for KSA", -1))
                     this.doUnset(appJSON, "Premiere")
                     return
@@ -107,6 +127,18 @@ class KeyShortAdjust {
                 for k, v in appJSON {
                     if k ~= "^_*newSection$" ;// ignore any `____newSection`
                         continue
+
+                    switch {
+                        ;//? in v27.0 of prem they added an extra tag in the xml, instead of just `/PremiereData/shortcuts/` there's now an additional `mode.X` to account for the new `Color` mode
+
+                        ;//! v27.0+
+                        case VerCompare(premVer, "27.0") >= 0: RegExReplace(v["context"], "shortcuts/(?!mode\.)", "shortcuts/mode.Edit/")
+
+                        ;//! pre v27.0
+                        ;// attempt to remove `mode.Edit` or `mode.Color` for slight backwards compat
+                        ;// keep in mind that this won't work for any kbd shortcuts they add in the future or any contexts they change etc
+                        case VerCompare(premVer, "27.0") < 0: v["context"] := RegExReplace(v["context"], "/mode\.(Edit|Color)")
+                    }
                     try xmlHotkey := xml.__premBuildHotkey(v["context"], v["command"])
                     if !IsSet(xmlHotkey) || (IsSet(xmlHotkey) && IsObject(xmlHotkey) && xmlHotkey.HasOwnProp('isSet') && xmlHotkey.isSet = false) {
                         errorLog(ValueError("Could not determine key for KSA", -1, k))
@@ -119,15 +151,15 @@ class KeyShortAdjust {
             case "ae":
                 dot := InStr(appVers.version, ".",,, 2)
                 yearVer := SubStr(appVers.version, 1, ((dot != 0 && dot != "") ? dot-1 : StrLen(appVers.version)))
-                aePrefsDir := A_AppData "\Adobe\After Effects\" yearVer
+                isBeta := this.__isBeta("ae")
+                betaString := ((isBeta=true) ? " (Beta)" : "")
+                aePrefsDir := A_AppData "\Adobe\After Effects" betaString "\" yearVer
                 aePrefs := aePrefsDir "\Adobe After Effects " yearVer " Prefs.txt"
                 if FileExist(aePrefs) {
                     userShortcutName := IniRead(aePrefs, '"General Section"', '"Shortcut File Location"', "")
                     userShortcutFile := aePrefsDir "\aeks\" userShortcutName
                 }
-                if !FileExist(aePrefs) || (IsSet(userShortcutName) && userShortcutName = "") || (userShortcutName != "" && !FileExist(userShortcutFile))
-                    isUnset := true
-                if isUnset = true {
+                if !FileExist(aePrefs) || (IsSet(userShortcutName) && userShortcutName = "") || (userShortcutName != "" && !FileExist(userShortcutFile)) {
                     errorLog(ValueError("Could not determine After Effects hotkeys for KSA", -1))
                     this.doUnset(appJSON, "After Effects")
                     return
@@ -149,16 +181,14 @@ class KeyShortAdjust {
                 }
             case "ps":
                 SplitPath(appVers.path,, &yearDir)
-                year := SubStr(yearDir, -4)
+                isBeta := this.__isBeta("ps")
+                year := isBeta=true ? "(Beta)" : SubStr(yearDir, -4)
                 locale := this.__getLocale()
                 psPrefsDir := A_AppData "\Adobe\Adobe Photoshop " year "\Adobe Photoshop " year " Settings"
                 psDefaultShort := A_ProgramFiles "\Adobe\Adobe Photoshop " year "\Locales\" locale "\Support Files\Shortcuts\Win\Default Keyboard Shortcuts.kys"
                 userShortcutFile := FileExist(psPrefsDir "\Keyboard Shortcuts Primary.psp") ? psPrefsDir "\Keyboard Shortcuts Primary.psp" : psDefaultShort
                 if !FileExist(userShortcutFile) {
-                    MsgBox(userShortcutFile)
-                    isUnset := true
-                }
-                if isUnset = true {
+                    ; MsgBox(userShortcutFile)
                     errorLog(ValueError("Could not determine Photoshop hotkeys for KSA", -1))
                     this.doUnset(appJSON, "Photoshop")
                     return
