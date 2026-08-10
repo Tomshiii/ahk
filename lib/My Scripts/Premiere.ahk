@@ -403,6 +403,82 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 !e::prem.__remoteFunc('setAllEnableDisabled',, "enabled=true")
 !d::prem.__remoteFunc('setAllEnableDisabled',, "enabled=false")
 
+^+w::
+{
+	if !prem.isClipSelected()
+		return
+	nestName := ""
+	closed := false
+	n := prem.__remoteUXP('properties/getNextNestedSequenceName', true)
+	if !n
+		return
+	gTitle := "Nested Sequence Name:"
+	;// portions of the below code are taken from ; https://www.autohotkey.com/boards/viewtopic.php?f=83&t=140577
+	nestedGUI := Gui("-Resize +E0x80000", gTitle)
+	hwnd := nestedGUI.Hwnd
+
+	; 2. Set layered window attributes (LWA_ALPHA = 2)
+	DllCall("user32\SetLayeredWindowAttributes", "Ptr", hwnd, "UInt", 0, "UChar", 255, "UInt", 2)
+
+	; 3. Apply backdrop (DWMWA_SYSTEMBACKDROP_TYPE = 38, Off = 1, Mica = 2, Frosted = 2, Mica Alt = 2, )
+	DllCall("dwmapi\DwmSetWindowAttribute", "Ptr", hwnd, "UInt", 38, "Int*", 2, "UInt", 4)
+
+	; 4. Apply Glass Margins into the entire client area
+	margins := Buffer(16, 0)
+	NumPut("Int", -1, "Int", -1, "Int", -1, "Int", -1, margins, 0)
+	DllCall("dwmapi\DwmExtendFrameIntoClientArea", "Ptr", hwnd, "Ptr", margins)
+
+	; 5. Pure Black background becomes fully transparent to the DWM, exposing the Mica!
+	nestedGUI.BackColor := "000000"
+
+	; 6. DwmSetWindowAttribute - Titlebar dark emmersive  --- 19/20 = darkmode, 0 = lightmode
+	DllCall("dwmapi\DwmSetWindowAttribute", "Ptr", hwnd, "UInt", 20, "Int*", 1, "UInt", 4)
+	nestedGUI.SetFont("s10 w600 cWhite", "Segoe UI Variable Display")
+	nestedGUI.Add("Text", "w230 BackgroundTrans", "Select Nested Sequence Name:")
+	nestedGUI.InpUser := AddInput(12, 30, 200, n)
+	nestedGUI.InpUser.value := n
+	nestedGUI.but := AddButton(200+20, 32, 50, "Ok", (*) => (nestName := nestedGUI.InpUser.value, nestedGUI.Destroy()))
+	inp := InputHook("L0",, "{Enter}{NumpadEnter}")
+	inp.OnChar := (*) => (nestName := nestedGUI.InpUser.value, nestedGUI.Destroy(), inp.Stop())
+	inp.Start()
+
+	nestedGUI.OnEvent("Escape", (*) => (closed := true, nestedGUI.Destroy()))
+    nestedGUI.OnEvent("Close", (*) => (closed := true, nestedGUI.Destroy()))
+	nestedGUI.Show("w290 h90 Center")
+
+	AddInput(x, y, w, placeholder) {
+		h := 36
+		border := nestedGUI.Add("Text", "x" x " y" y " w" w " h" h " Background333333")
+		inner  := nestedGUI.Add("Text", "x" (x+1) " y" (y+2) " w" (w-2) " h" (h-3) " Background141414")
+
+		nestedGUI.SetFont("s10 w400 cWhite", "Segoe UI")
+		edit := nestedGUI.Add("Edit", "x" (x+10) " w" (w-24) " -E0x200 Background141414 cWhite")
+		edit.GetPos(,, &eW, &eH)
+		edit.Move(, y + (h - eH) // 2)
+
+		DllCall("uxtheme\SetWindowTheme", "Ptr", edit.Hwnd, "Str", "DarkMode_Explorer", "Ptr", 0)
+		SendMessage(0x1501, 1, StrPtr(placeholder), edit.Hwnd)
+
+		edit.OnEvent("Focus", (*) => (border.Opt("Background0078D4"), border.Redraw()))
+		edit.OnEvent("LoseFocus", (*) => (border.Opt("Background333333"), border.Redraw()))
+		border.OnEvent("Click", (*) => edit.Focus())
+		inner.OnEvent("Click", (*) => edit.Focus())
+		return edit
+	}
+
+	AddButton(x, y, w, text, callback) {
+		h := 30
+		nestedGUI.SetFont("s10 w600 c" ("White"), "Segoe UI")
+		btn := nestedGUI.Add("Text", "x" x " y" y " w" w " h" h " Center 0x200 Background0067C0", text)
+		btn.OnEvent("Click", callback)
+	}
+	WinWaitClose(gTitle)
+	try inp.Stop()
+	if closed = true
+		return
+	prem.__remoteUXP('custom/nestSelectionReplaceNestedAudio',, "ignoreTrackTargeting=false", "makeSelection=true", "subsequenceName=" nestName)
+}
+
 ;// while cursor is within timeline;
 ; use MButton to Ctrl click (adjust edit points with mouse if left hand isn't on keyboard)
 ;// while cursor is within program monitor;

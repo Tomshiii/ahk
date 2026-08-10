@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/05/25
- * @version 1.0.12
+ * @date 2026/08/08
+ * @version 1.0.12.1
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -188,7 +188,7 @@ __doExit(premUIAobj) {
 OnExit(_onExit.Bind(allRegister))
 _onExit(allRegister, *) {
     try getReload := A_Args.Get(1)
-    if !isReload(getReload ?? "")
+    if !isReload(getReload ?? false)
         errorLog(Error("determineUIA.ahk has exited"))
     WinEvent.Stop("Close", prem.exeTitle)
     for v in allRegister {

@@ -11,6 +11,7 @@ This release fixes those issues, as well as some overdue shortcomings of the rec
 
 ### 📝 `prem {`
 - ✅ Fixed `__remoteUXP()` throwing instead of returning values
+- ✅ Fixed `__remoteUXP()`/`__remoteFunc()` failing to determine parameters when they're defined over multiple lines
 - ✏️ Added `isTrimModeActive()`
 - 📋 `delayPlayback()` now accepts parameter `closeTrim`
 - 📋 `isClipSelected()` no longer uses `UIA` values and just relies on the api
@@ -26,8 +27,8 @@ This release fixes those issues, as well as some overdue shortcomings of the rec
 - ✏️ Added `closePanel`
 
 ## PremiereRemote
-- ✏️ Added `matchSelectedClipsToLowestTrack()` as a `UXP` function
 - ✏️ Added `isSelectedAudio()`
+- ✏️ Added `matchSelectedClipsToLowestTrack()`, and `nestSelectionReplaceNestedAudio()` as `UXP` functions
 
 ## Other Changes
 - ❌ Removed `effctrlAudio.png`, `effctrlAudio1.png`, `effCtrlCollapse.png`, `reset.png`, `reset_2.png`

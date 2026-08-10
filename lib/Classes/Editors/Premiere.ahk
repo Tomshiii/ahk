@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/07
- * @version 2.5.8
+ * @date 2026/08/10
+ * @version 2.5.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -525,7 +525,7 @@ class Prem {
             p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
             return {arr: [p], map: Mip(p, true)}
         }
-        paramsSplit := StrSplit(funcParamsString, ",", A_Space)
+        paramsSplit := StrSplit(funcParamsString, ",", A_Space "`n`r")
         paramsArr := []
         paramsMap := Mip()
         for v in paramsSplit {
@@ -2337,19 +2337,27 @@ class Prem {
         }
         if !this.timelineFocusStatus()
             return
-        __sendSpace(premUIA) {
+        __sendSpace(premUIA?, closeTrim := true) {
+            if !IsSet(premUIA) || (IsSet(premUIA) && Type(premUIA) != "ComObject") {
+                try {
+                    if !premUIA := premUIA_Values.initialise()
+                        return
+                } catch {
+                    return
+                }
+            }
             ;// I hate the stupid trim mode, I wish I could delete it from existence
-            if closeTrim = true && prem.isTrimModeActive() && premUIA.__isUiaElementActive("timelineWindow", premUIA) {
+            if closeTrim = true && prem.isTrimModeActive() && premUIA_Values.__isUiaElementActive("timelineWindow", premUIA) = true {
                 SendInput("{Escape}")
             }
             SendEvent(ksa.playStop)
         }
         if (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
             ((A_PriorKey = ksa.premRipplePrev || A_PriorKey = ksa.premRippleNext) && (this.delayTime >= delayMS) || this.delayTime = 0) {
-                __sendSpace(premUIA)
+                __sendSpace(premUIA, closeTrim)
                 return
             }
-        SetTimer(__sendSpace(premUIA), -(delayMS-this.delayTime))
+        SetTimer(__sendSpace.Bind(premUIA, closeTrim), -(delayMS-this.delayTime))
     }
 
     /**

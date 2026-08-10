@@ -9,7 +9,7 @@
  * if isReload()
  *     return
  * ;// if the script was reloaded, beyond this point will not fire
- * @param {Boolean} [arg=""]
+ * @param {Boolean} [arg=false]
  * ```
  */
-isReload(arg := "") => (DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" || (checkBool(arg) = true))
+isReload(arg := false) => (DllCall("GetCommandLine", "str") ~= "i) /r(estart)?(?!\S)" || (checkBool(arg) = true))

@@ -1,3 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const ppro = require("premierepro") as premierepro;
+import type {
+    premierepro,
+    TickTime,
+} from "@adobe/premierepro";
+
 type ParsedProperty = {
     displayName: string;
     isTimeVarying: boolean;
@@ -132,4 +139,35 @@ export function formatTimecode(seconds) {
   const ms = Math.round((seconds - Math.floor(seconds)) * 1000);
   const pad = (n, len = 2) => String(n).padStart(len, "0");
   return `${pad(h)}:${pad(m)}:${pad(s)}.${pad(ms, 3)}`;
+}
+
+/**
+ * determines the first available free track
+ */
+export async function findFirstFreeTrack(
+    getTrack: (index: number) => Promise<any>,
+    trackCount: number,
+    rangeStart: TickTime,
+    rangeEnd: TickTime,
+    searchFrom: number = 0
+): Promise<FreeTrackResult> {
+    for (let t = searchFrom; t < trackCount; t++) {
+        const track = await getTrack(t);
+        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+
+        let free = true;
+        for (const item of items) {
+            const start = await item.getStartTime();
+            const end = await item.getEndTime();
+            if (start.ticksNumber < rangeEnd.ticksNumber && end.ticksNumber > rangeStart.ticksNumber) {
+                free = false;
+                break;
+            }
+        }
+
+        if (free) {
+            return { trackIndex: t, needsNewTrack: false };
+        }
+    }
+    return { trackIndex: trackCount, needsNewTrack: true };
 }

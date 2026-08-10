@@ -124,3 +124,49 @@ export async function getSeqFrameRate(): Promise<string | null> {
 
 // get/set proxies you can't do yet in uxp...
 
+/**
+ * Scans all sequences in the active project for names matching
+ * "Nested Sequence <number>" and returns the next available name
+ * in that series (e.g. "Nested Sequence 05").
+ *
+ * @returns {string} The next available "Nested Sequence XX" name.
+ */
+export async function getNextNestedSequenceName() {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) return false;
+
+    const sequences = await project.getSequences();
+    if (!sequences || sequences.length === 0) {
+        return "Nested Sequence 01";
+    }
+
+    // Matches "Nested Sequence" followed by one or more digits, case-insensitive.
+    const regex = /^Nested Sequence\s+(\d+)\s*$/i;
+
+    let highestNum = 0;
+    let padding = 2; // default padding width if none found yet (e.g. "01")
+
+    for (const seq of sequences) {
+        if (!seq || !seq.name) continue;
+
+        const match = seq.name.match(regex);
+        if (match) {
+            const numStr = match[1];
+            const num = parseInt(numStr, 10);
+
+            if (num > highestNum) {
+                highestNum = num;
+                padding = numStr.length;
+            }
+        }
+    }
+
+    const nextNum = highestNum + 1;
+    let nextNumStr = String(nextNum);
+
+    if (nextNumStr.length < padding) {
+        nextNumStr = nextNumStr.padStart(padding, "0");
+    }
+
+    return `Nested Sequence ${nextNumStr}`;
+}

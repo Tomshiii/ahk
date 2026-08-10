@@ -68,9 +68,9 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>70</int>
+<int type='signed' size='32'>1128</int>
 <int type='signed' size='32'>0</int>
-<int type='signed' size='32'>1617</int>
+<int type='signed' size='32'>2675</int>
 <int type='signed' size='32'>859</int>
 </array>
 </prop.pair>
@@ -87,7 +87,7 @@
 <string>20260504T005234.745181</string>
 <string>20250725T031359.840093</string>
 <string>20250724T233533.585158</string>
-<string>20260802T235206.417365</string>
+<string>20260810T022624.953242</string>
 <string>20260622T032732.758915</string>
 <string>20260317T050634.322451</string>
 <string>20250724T233504.530425</string>

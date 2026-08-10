@@ -1968,33 +1968,13 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
     }
 
     // --- Find first video track above the highest selected clip with enough free space ---
-    let targetTrackIndex = -1;
-
-    for (let t = highestTrackIndex + 1; t < videoTrackCount; t++) {
-        const candidateTrack = await sequence.getVideoTrack(t);
-        const items = candidateTrack.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
-
-        let free = true;
-        for (const item of items) {
-            const start = await item.getStartTime();
-            const end = await item.getEndTime();
-            if (start.ticksNumber < overallEnd.ticksNumber && end.ticksNumber > overallStart.ticksNumber) {
-                free = false;
-                break;
-            }
-        }
-
-        if (free) {
-            targetTrackIndex = t;
-            break;
-        }
-    }
-
-    // No free existing track: target one index past the last existing track.
-    const needsNewTrack = targetTrackIndex === -1;
-    if (needsNewTrack) {
-        targetTrackIndex = videoTrackCount;
-    }
+    const { trackIndex: targetTrackIndex, needsNewTrack } = await helpers.findFirstFreeTrack(
+        (i) => sequence.getVideoTrack(i),
+        videoTrackCount,
+        overallStart,
+        overallEnd,
+        highestTrackIndex + 1
+    );
 
     // --- Read the adjustment layer's original in/out points, to restore afterward ---
     const originalInPoint = await clipProjItem.getInPoint(ppro.Constants.MediaType.VIDEO);
@@ -2188,145 +2168,147 @@ async function findSequenceByProjectItemId(project: Project, targetId: string): 
 
 /**
  * add transitions to certain audio edit points. This will (hopefully in the future) enable adding audio transitions to any audio clips that are either enabled, or have an enabled clip adjacent to them. This will not add transitions to clips that already contain them.
- * Currently this function is non functional as there are api shortcomings. Hopefully this is one day useable
+ * ! Currently this function is non functional as there are api shortcomings. Hopefully this is one day useable
+ * ! this function would need to be adjusted to not add transitions to bars and tone
+ * ? potentially also add a param to ignore any tracks below a certain track index (to completely ignore music/sfx)
  */
 export async function addTransitionsToEnabledAudioEditPoints(dryRun: boolean, debug: boolean) {
-  const project = await ppro.Project.getActiveProject();
-  const sequence = await project.getActiveSequence();
+    const project = await ppro.Project.getActiveProject();
+    const sequence = await project.getActiveSequence();
 
-  if (!sequence) {
-    console.warn("No active sequence.");
-    return;
-  }
-
-  const audioTrackCount = await sequence.getAudioTrackCount();
-  const results = [];
-
-  for (let trackIndex = 0; trackIndex < audioTrackCount; trackIndex++) {
-    const audioTrack = await sequence.getAudioTrack(trackIndex);
-
-    // false = don't include empty/gap track items, just real clips
-    // Defensively filter out any null/undefined entries - some track item
-    // queries can return sparse arrays with nulls in gap slots.
-    const rawClips = await audioTrack.getTrackItems(Constants.TrackItemType.CLIP, false);
-    const clips = (rawClips || []).filter(Boolean);
-
-    if (clips.length < 2) continue;
-
-    // Fetch every clip's disabled state ONCE, up front, in parallel.
-    // This is what guarantees clip N's state is never checked twice
-    // as we slide the window across edit points.
-    const disabledStates = await Promise.all(clips.map((clip) => clip.isDisabled()));
-
-    // Fetch every clip's start/end time ONCE too - needed both to locate
-    // the edit point and to cross-reference against existing transitions.
-    // ticks are used for the (precise) overlap comparison; seconds are
-    // used purely for the human-readable timecode in the log line.
-    const clipRanges = await Promise.all(
-      clips.map(async (clip) => {
-        const start = await clip.getStartTime();
-        const end = await clip.getEndTime();
-        return {
-          startTicks: start.ticksNumber,
-          endTicks: end.ticksNumber,
-          startSeconds: start.seconds,
-          endSeconds: end.seconds,
-        };
-      })
-    );
-
-    // Pull back any transitions ALREADY on this track (existing, user-placed
-    // ones included) so we can skip edit points that already have one.
-    //
-    // KNOWN LIMITATION: as of the current UXP release, Premiere reports the
-    // correct *count* of transition track items on an audio track, but the
-    // objects themselves come back as null (no AudioTransition wrapper class
-    // is implemented yet - the same "not built out yet" state Adobe has
-    // confirmed for CaptionTrack items). That means we can detect that
-    // transitions exist, but not which edit points they're on, so this
-    // check cannot safely be used to skip specific edit points right now.
-    // Filtered for null/undefined entries; see debug logging below.
-    const rawTransitions = await audioTrack.getTrackItems(Constants.TrackItemType.TRANSITION, true);
-    const existingTransitions = (rawTransitions || []).filter(Boolean);
-    const transitionRanges = await Promise.all(
-      existingTransitions.map(async (t) => ({
-        start: (await t.getStartTime()).ticksNumber,
-        end: (await t.getEndTime()).ticksNumber,
-      }))
-    );
-
-    if (debug) {
-      console.log(`Track ${trackIndex}: raw transition item count = ${(rawTransitions || []).length}, after filtering nulls = ${existingTransitions.length}`);
-      transitionRanges.forEach((r, idx) => {
-        console.log(`  transition[${idx}]: startTicks=${r.start} endTicks=${r.end} (~${helpers.formatTimecode(r.start / 254016000000)} to ${helpers.formatTimecode(r.end / 254016000000)})`);
-      });
+    if (!sequence) {
+        console.warn("No active sequence.");
+        return;
     }
 
-    let skippedBothDisabled = 0;
-    let skippedAlreadyHasTransition = 0;
-    let qualified = 0;
+    const audioTrackCount = await sequence.getAudioTrackCount();
+    const results = [];
 
-    for (let i = 0; i < clips.length - 1; i++) {
-      const leftClip = clips[i];
-      const rightClip = clips[i + 1];
-      const leftDisabled = disabledStates[i];
-      const rightDisabled = disabledStates[i + 1];
+    for (let trackIndex = 0; trackIndex < audioTrackCount; trackIndex++) {
+        const audioTrack = await sequence.getAudioTrack(trackIndex);
 
-      const bothDisabled = leftDisabled && rightDisabled;
+        // false = don't include empty/gap track items, just real clips
+        // Defensively filter out any null/undefined entries - some track item
+        // queries can return sparse arrays with nulls in gap slots.
+        const rawClips = await audioTrack.getTrackItems(Constants.TrackItemType.CLIP, false);
+        const clips = (rawClips || []).filter(Boolean);
 
-      if (bothDisabled) {
-        // Skip entirely - neither clip contributes audio, no transition needed.
-        skippedBothDisabled++;
-        continue;
-      }
+        if (clips.length < 2) continue;
 
-      // The edit point sits between leftClip's end and rightClip's start.
-      // If a transition already straddles that point (whether it was placed
-      // by the user or a prior run of this script), leave it alone.
-      const editPointTick = (clipRanges[i].endTicks + clipRanges[i + 1].startTicks) / 2;
-      const editPointSeconds = (clipRanges[i].endSeconds + clipRanges[i + 1].startSeconds) / 2;
-      const alreadyHasTransition = transitionRanges.some(
-        (r) => editPointTick >= r.start && editPointTick < r.end
-      );
+        // Fetch every clip's disabled state ONCE, up front, in parallel.
+        // This is what guarantees clip N's state is never checked twice
+        // as we slide the window across edit points.
+        const disabledStates = await Promise.all(clips.map((clip) => clip.isDisabled()));
 
-      if (debug) {
-        console.log(
-          `  editPoint[${i}] @ ${helpers.formatTimecode(editPointSeconds)}: ` +
-            `leftEndTicks=${clipRanges[i].endTicks} rightStartTicks=${clipRanges[i + 1].startTicks} ` +
-            `midpointTick=${editPointTick} -> alreadyHasTransition=${alreadyHasTransition}`
+        // Fetch every clip's start/end time ONCE too - needed both to locate
+        // the edit point and to cross-reference against existing transitions.
+        // ticks are used for the (precise) overlap comparison; seconds are
+        // used purely for the human-readable timecode in the log line.
+        const clipRanges = await Promise.all(
+            clips.map(async (clip) => {
+                const start = await clip.getStartTime();
+                const end = await clip.getEndTime();
+                return {
+                    startTicks: start.ticksNumber,
+                    endTicks: end.ticksNumber,
+                    startSeconds: start.seconds,
+                    endSeconds: end.seconds,
+                };
+            })
         );
-      }
 
-      if (alreadyHasTransition) {
-        skippedAlreadyHasTransition++;
-        continue;
-      }
-
-      // At least one side is enabled, and no transition exists yet -> qualifies.
-      qualified++;
-      results.push({ trackIndex, editPointIndex: i, leftClip, rightClip, editPointSeconds });
-
-      if (!dryRun) {
-        await applyAudioTransitionAtEditPoint(project, leftClip, rightClip);
-      } else {
-        const leftName = await leftClip.getName();
-        const rightName = await rightClip.getName();
-        console.log(
-          `[${helpers.formatTimecode(editPointSeconds)}] Would add transition on track ${trackIndex}, edit point ${i} - between "${leftName}" (disabled=${leftDisabled}) and "${rightName}" (disabled=${rightDisabled})`
+        // Pull back any transitions ALREADY on this track (existing, user-placed
+        // ones included) so we can skip edit points that already have one.
+        //
+        // KNOWN LIMITATION: as of the current UXP release, Premiere reports the
+        // correct *count* of transition track items on an audio track, but the
+        // objects themselves come back as null (no AudioTransition wrapper class
+        // is implemented yet - the same "not built out yet" state Adobe has
+        // confirmed for CaptionTrack items). That means we can detect that
+        // transitions exist, but not which edit points they're on, so this
+        // check cannot safely be used to skip specific edit points right now.
+        // Filtered for null/undefined entries; see debug logging below.
+        const rawTransitions = await audioTrack.getTrackItems(Constants.TrackItemType.TRANSITION, true);
+        const existingTransitions = (rawTransitions || []).filter(Boolean);
+        const transitionRanges = await Promise.all(
+            existingTransitions.map(async (t) => ({
+                start: (await t.getStartTime()).ticksNumber,
+                end: (await t.getEndTime()).ticksNumber,
+            }))
         );
-      }
+
+        if (debug) {
+            console.log(`Track ${trackIndex}: raw transition item count = ${(rawTransitions || []).length}, after filtering nulls = ${existingTransitions.length}`);
+            transitionRanges.forEach((r, idx) => {
+                console.log(`  transition[${idx}]: startTicks=${r.start} endTicks=${r.end} (~${helpers.formatTimecode(r.start / 254016000000)} to ${helpers.formatTimecode(r.end / 254016000000)})`);
+            });
+        }
+
+        let skippedBothDisabled = 0;
+        let skippedAlreadyHasTransition = 0;
+        let qualified = 0;
+
+        for (let i = 0; i < clips.length - 1; i++) {
+            const leftClip = clips[i];
+            const rightClip = clips[i + 1];
+            const leftDisabled = disabledStates[i];
+            const rightDisabled = disabledStates[i + 1];
+
+            const bothDisabled = leftDisabled && rightDisabled;
+
+            if (bothDisabled) {
+                // Skip entirely - neither clip contributes audio, no transition needed.
+                skippedBothDisabled++;
+                continue;
+            }
+
+            // The edit point sits between leftClip's end and rightClip's start.
+            // If a transition already straddles that point (whether it was placed
+            // by the user or a prior run of this script), leave it alone.
+            const editPointTick = (clipRanges[i].endTicks + clipRanges[i + 1].startTicks) / 2;
+            const editPointSeconds = (clipRanges[i].endSeconds + clipRanges[i + 1].startSeconds) / 2;
+            const alreadyHasTransition = transitionRanges.some(
+                (r) => editPointTick >= r.start && editPointTick < r.end
+            );
+
+            if (debug) {
+                console.log(
+                    `  editPoint[${i}] @ ${helpers.formatTimecode(editPointSeconds)}: ` +
+                    `leftEndTicks=${clipRanges[i].endTicks} rightStartTicks=${clipRanges[i + 1].startTicks} ` +
+                    `midpointTick=${editPointTick} -> alreadyHasTransition=${alreadyHasTransition}`
+                );
+            }
+
+            if (alreadyHasTransition) {
+                skippedAlreadyHasTransition++;
+                continue;
+            }
+
+            // At least one side is enabled, and no transition exists yet -> qualifies.
+            qualified++;
+            results.push({ trackIndex, editPointIndex: i, leftClip, rightClip, editPointSeconds });
+
+            if (!dryRun) {
+                await applyAudioTransitionAtEditPoint(project, leftClip, rightClip);
+            } else {
+                const leftName = await leftClip.getName();
+                const rightName = await rightClip.getName();
+                console.log(
+                    `[${helpers.formatTimecode(editPointSeconds)}] Would add transition on track ${trackIndex}, edit point ${i} - between "${leftName}" (disabled=${leftDisabled}) and "${rightName}" (disabled=${rightDisabled})`
+                );
+            }
+        }
+
+        console.log(
+            `Track ${trackIndex} summary: ${clips.length} clips, ${clips.length - 1} edit points, ` +
+            `${existingTransitions.length} existing transitions found, ` +
+            `${skippedBothDisabled} skipped (both disabled), ` +
+            `${skippedAlreadyHasTransition} skipped (already has transition), ` +
+            `${qualified} qualified`
+        );
     }
 
-    console.log(
-      `Track ${trackIndex} summary: ${clips.length} clips, ${clips.length - 1} edit points, ` +
-        `${existingTransitions.length} existing transitions found, ` +
-        `${skippedBothDisabled} skipped (both disabled), ` +
-        `${skippedAlreadyHasTransition} skipped (already has transition), ` +
-        `${qualified} qualified`
-    );
-  }
-
-  return results;
+    return results;
 }
 
 
@@ -2358,4 +2340,316 @@ export async function applyAudioTransitionAtEditPoint(project: Project, leftClip
             "applyAudioTransitionAtEditPoint: no audio transition creation API is currently exposed by UXP. See comments above."
         );
     });
+}
+
+
+/**
+ * nest selection, remove audio and replace with nested audio track
+ */
+export async function nestSelectionReplaceNestedAudio(
+    ignoreTrackTargeting: boolean = false,
+    makeSelection: boolean = true,
+    subsequenceName: string
+): Promise<void> {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) {
+        alert("No active project.");
+        return;
+    }
+
+    const sequence = await project.getActiveSequence();
+    if (!sequence) {
+        alert("No active sequence.");
+        return;
+    }
+
+    const editor = await ppro.SequenceEditor.getEditor(sequence);
+
+    // --- Step 1: capture the FULL selection (video + audio) before nesting.
+    const videoTrackCount = await sequence.getVideoTrackCount();
+    const audioTrackCount = await sequence.getAudioTrackCount();
+
+    const selectedVideoEntries = await gatherSelectedEntries((i) => sequence.getVideoTrack(i), videoTrackCount);
+    const selectedAudioEntries = await gatherSelectedEntries((i) => sequence.getAudioTrack(i), audioTrackCount);
+
+    if (selectedVideoEntries.length === 0 && selectedAudioEntries.length === 0) {
+        alert("No clips are selected in the timeline.");
+        return;
+    }
+
+    const haveVideo = selectedVideoEntries.length > 0;
+    const haveAudio = selectedAudioEntries.length > 0;
+
+    let highestVideoTrackIndex = -1;
+    let combinedStart: TickTime | null = null; // earliest point across video + audio -- the nest's internal zero
+    let videoStart: TickTime | null = null;
+    let videoEnd: TickTime | null = null;
+    let audioStart: TickTime | null = null;
+    let audioEnd: TickTime | null = null;
+
+    for (const entry of selectedVideoEntries) {
+        if (!videoStart || entry.start.ticksNumber < videoStart.ticksNumber) videoStart = entry.start;
+        if (!videoEnd || entry.end.ticksNumber > videoEnd.ticksNumber) videoEnd = entry.end;
+        if (entry.trackIndex > highestVideoTrackIndex) highestVideoTrackIndex = entry.trackIndex;
+    }
+    for (const entry of selectedAudioEntries) {
+        if (!audioStart || entry.start.ticksNumber < audioStart.ticksNumber) audioStart = entry.start;
+        if (!audioEnd || entry.end.ticksNumber > audioEnd.ticksNumber) audioEnd = entry.end;
+    }
+    for (const entry of [...selectedVideoEntries, ...selectedAudioEntries]) {
+        if (!combinedStart || entry.start.ticksNumber < combinedStart.ticksNumber) combinedStart = entry.start;
+    }
+
+    // --- Step 2: build the nest. ---
+    const subsequence = await sequence.createSubsequence(ignoreTrackTargeting);
+    if (!subsequence) {
+        alert("Failed to create subsequence.");
+        return;
+    }
+    const nestedProjItem = await subsequence.getProjectItem();
+    if (!nestedProjItem) {
+        alert("Could not resolve the nested item -- skipping timeline replacement.");
+        return;
+    }
+    const clipProjItem = await ppro.ClipProjectItem.cast(nestedProjItem);
+
+    if (subsequenceName) {
+        project.lockedAccess(() => {
+            project.executeTransaction((compoundAction) => {
+                const renameAction = nestedProjItem.createSetNameAction(subsequenceName);
+                compoundAction.addAction(renameAction);
+            }, "Rename nested sequence");
+        });
+    }
+
+    // --- Step 3: re-scan and remove the original clips left behind by
+    // createSubsequence(). ---
+    const videoOrphans = await findMatchingItems((i) => sequence.getVideoTrack(i), selectedVideoEntries);
+    const audioOrphans = await findMatchingItems((i) => sequence.getAudioTrack(i), selectedAudioEntries);
+
+    await removeItems(project, editor, videoOrphans, ppro.Constants.MediaType.VIDEO, "Remove original video after nest");
+    await removeItems(project, editor, audioOrphans, ppro.Constants.MediaType.AUDIO, "Remove original audio after nest");
+
+    // --- Step 4: capture original in/out for restoring between/after passes. ---
+    const zeroTime = ppro.TickTime.TIME_ZERO;
+    const invalidTime = ppro.TickTime.TIME_INVALID;
+    const inOutMediaType = haveVideo ? ppro.Constants.MediaType.VIDEO : ppro.Constants.MediaType.AUDIO;
+    const originalInPoint = await clipProjItem.getInPoint(inOutMediaType);
+    const originalOutPoint = await clipProjItem.getOutPoint(inOutMediaType);
+    const hadOriginalInOut = !originalInPoint.equals(invalidTime) && !originalOutPoint.equals(invalidTime);
+
+    // --- Step 5: video pass -- reuse the topmost originally-selected video
+    // track, starting exactly where the video itself started (not dragged
+    // back by any earlier J-cut audio lead-in). ---
+    if (haveVideo) {
+        const sliceIn = videoStart.subtract(combinedStart);
+        const sliceOut = videoEnd.subtract(combinedStart);
+        await placeMediaSlice(
+            project, editor, sequence, nestedProjItem, clipProjItem,
+            sliceIn, sliceOut, videoStart,
+            highestVideoTrackIndex, true,
+            originalInPoint, originalOutPoint, hadOriginalInOut
+        );
+    }
+
+    // --- Step 6: audio pass -- first audio track with free space across
+    // audio's own range, starting exactly where the audio itself started. ---
+    if (haveAudio) {
+        const sliceIn = audioStart.subtract(combinedStart);
+        const sliceOut = audioEnd.subtract(combinedStart);
+        const refreshedAudioTrackCount = await sequence.getAudioTrackCount();
+        const audioTarget = await helpers.findFirstFreeTrack(
+            (i) => sequence.getAudioTrack(i),
+            refreshedAudioTrackCount,
+            audioStart,
+            audioEnd
+        );
+        await placeMediaSlice(
+            project, editor, sequence, nestedProjItem, clipProjItem,
+            sliceIn, sliceOut, audioStart,
+            audioTarget.trackIndex, false,
+            originalInPoint, originalOutPoint, hadOriginalInOut
+        );
+    }
+
+    // --- Step 7 (optional): select the newly placed video clip (preferred)
+    // or audio clip. ---
+    if (makeSelection) {
+        if (haveVideo) {
+            const track = await sequence.getVideoTrack(highestVideoTrackIndex);
+            const item = await findItemAtStart(track, videoStart);
+            if (item) {
+                ppro.TrackItemSelection.createEmptySelection((selection) => {
+                    selection.addItem(item);
+                    sequence.setSelection(selection);
+                });
+            }
+        } else if (haveAudio) {
+            const refreshedAudioTrackCount = await sequence.getAudioTrackCount();
+            const audioTarget = await helpers.findFirstFreeTrack(
+                (i) => sequence.getAudioTrack(i),
+                refreshedAudioTrackCount,
+                audioStart,
+                audioEnd
+            );
+            const track = await sequence.getAudioTrack(audioTarget.trackIndex);
+            const item = await findItemAtStart(track, audioStart);
+            if (item) {
+                ppro.TrackItemSelection.createEmptySelection((selection) => {
+                    selection.addItem(item);
+                    sequence.setSelection(selection);
+                });
+            }
+        }
+    }
+
+    /**
+ * Places a [sliceIn, sliceOut) slice of clipProjItem at `startTime` on
+ * `realTrackIndex` (of type `realMediaType`), and discards whatever lands
+ * on the other media type's track (found via a fresh free-space scan
+ * across the same time range).
+ */
+    async function placeMediaSlice(
+        project: any,
+        editor: any,
+        sequence: any,
+        nestedProjItem: any,
+        clipProjItem: any,
+        sliceIn: TickTime,
+        sliceOut: TickTime,
+        startTime: TickTime,
+        realTrackIndex: number,
+        realIsVideo: boolean,
+        originalInPoint: TickTime,
+        originalOutPoint: TickTime,
+        hadOriginalInOut: boolean
+    ): Promise<void> {
+        const sliceDuration = sliceOut.subtract(sliceIn);
+        const endTime = startTime.add(sliceDuration);
+
+        // Find a disposable track for the OTHER media type, across this pass's
+        // own time range.
+        const otherTrackCount = realIsVideo ? await sequence.getAudioTrackCount() : await sequence.getVideoTrackCount();
+        const otherGetTrack = realIsVideo ? (i: number) => sequence.getAudioTrack(i) : (i: number) => sequence.getVideoTrack(i);
+        const scratch = await helpers.findFirstFreeTrack(otherGetTrack, otherTrackCount, startTime, endTime);
+
+        const videoTrackIndex = realIsVideo ? realTrackIndex : scratch.trackIndex;
+        const audioTrackIndex = realIsVideo ? scratch.trackIndex : realTrackIndex;
+        const needsNewTrack = scratch.needsNewTrack; // real track is always pre-existing (see below)
+
+        // Trim to this pass's slice.
+        project.lockedAccess(() => {
+            project.executeTransaction((compoundAction: any) => {
+                const setTempInOutAction = clipProjItem.createSetInOutPointsAction(sliceIn, sliceOut);
+                compoundAction.addAction(setTempInOutAction);
+            }, "Set temporary nested-item slice");
+        });
+
+        // Place. NOTE: placement actions take the raw ProjectItem, not the cast
+        // ClipProjectItem -- passing the cast object here is what caused
+        // "Invalid parameter." Only the in/out-point actions want the cast one.
+        project.lockedAccess(() => {
+            project.executeTransaction((compoundAction: any) => {
+                const placeAction = needsNewTrack
+                    ? editor.createInsertProjectItemAction(nestedProjItem, startTime, videoTrackIndex, audioTrackIndex, false)
+                    : editor.createOverwriteItemAction(nestedProjItem, startTime, videoTrackIndex, audioTrackIndex);
+                compoundAction.addAction(placeAction);
+            }, "Place nested-item slice");
+        });
+
+        // Restore original in/out immediately -- each pass is self-contained.
+        project.lockedAccess(() => {
+            project.executeTransaction((compoundAction: any) => {
+                const restoreAction = hadOriginalInOut
+                    ? clipProjItem.createSetInOutPointsAction(originalInPoint, originalOutPoint)
+                    : clipProjItem.createClearInOutPointsAction();
+                compoundAction.addAction(restoreAction);
+            }, "Restore nested item duration");
+        });
+
+        // Discard whatever landed on the scratch track.
+        const scratchTrack = realIsVideo ? await sequence.getAudioTrack(scratch.trackIndex) : await sequence.getVideoTrack(scratch.trackIndex);
+        const scratchItem = await findItemAtStart(scratchTrack, startTime);
+        if (scratchItem) {
+            await removeItems(
+                project,
+                editor,
+                [scratchItem],
+                realIsVideo ? ppro.Constants.MediaType.AUDIO : ppro.Constants.MediaType.VIDEO,
+                "Remove scratch placement"
+            );
+        }
+    }
+
+    /** Finds the single clip on `track` whose start matches `startTime`. */
+    async function findItemAtStart(track: any, startTime: TickTime): Promise<any | null> {
+        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+        for (const item of items) {
+            const start = await item.getStartTime();
+            if (start.ticksNumber === startTime.ticksNumber) return item;
+        }
+        return null;
+    }
+
+    /** Re-scans the given tracks for clips still sitting at previously-recorded
+     *  positions, and returns the matching live TrackItem objects. */
+    async function findMatchingItems(
+        getTrack: (index: number) => Promise<any>,
+        entries: TrackItemEntry[]
+    ): Promise<any[]> {
+        const found: any[] = [];
+        for (const entry of entries) {
+            const track = await getTrack(entry.trackIndex);
+            const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+            for (const item of items) {
+                const start = await item.getStartTime();
+                const end = await item.getEndTime();
+                if (start.ticksNumber === entry.start.ticksNumber && end.ticksNumber === entry.end.ticksNumber) {
+                    found.push(item);
+                    break;
+                }
+            }
+        }
+        return found;
+    }
+
+    async function removeItems(
+        project: any,
+        editor: any,
+        items: any[],
+        mediaType: any,
+        undoString: string
+    ): Promise<void> {
+        if (items.length === 0) return;
+        project.lockedAccess(() => {
+            project.executeTransaction((compoundAction: any) => {
+                ppro.TrackItemSelection.createEmptySelection((selection: any) => {
+                    for (const item of items) {
+                        selection.addItem(item);
+                    }
+                    const removeAction = editor.createRemoveItemsAction(selection, false /* ripple */, mediaType);
+                    compoundAction.addAction(removeAction);
+                });
+            }, undoString);
+        });
+    }
+
+    async function gatherSelectedEntries(
+        getTrack: (index: number) => Promise<any>,
+        trackCount: number
+    ): Promise<TrackItemEntry[]> {
+        const entries: TrackItemEntry[] = [];
+        for (let t = 0; t < trackCount; t++) {
+            const track = await getTrack(t);
+            const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+            for (const item of items) {
+                if (await item.getIsSelected()) {
+                    const start = await item.getStartTime();
+                    const end = await item.getEndTime();
+                    entries.push({ trackIndex: t, start, end });
+                }
+            }
+        }
+        return entries;
+    }
 }
