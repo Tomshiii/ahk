@@ -1,7 +1,7 @@
 ﻿/************************************************************************
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
- * @author sebinside
+ * @author sebinside, tomshi
  * @date 2026/08/04
  * @version 1.1.13
  ***********************************************************************/

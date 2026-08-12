@@ -17,8 +17,10 @@ activeScripts()
 {
     detect()
     MyRelease := getLocalVer()
-    if WinExist("Active Scripts " MyRelease)
+    if WinExist("Active Scripts " MyRelease) {
+        WinActivate("Active Scripts " MyRelease)
         return
+    }
 
     buttonX := 482
     margX := 8

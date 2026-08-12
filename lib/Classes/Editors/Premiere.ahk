@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/11
- * @version 2.5.9.1
+ * @date 2026/08/12
+ * @version 2.5.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -46,6 +46,7 @@
 #Include Functions\isObjHasProp.ahk
 #Include Functions\determineAdobeVer.ahk
 #Include Functions\base64Encode.ahk
+#Include Functions\getWindowScale.ahk
 #Include Other\Notify\Notify.ahk
 #Include Other\ShinsImageScanClass.ahk
 #Include Other\Array.ahk
@@ -858,23 +859,62 @@ class Prem {
 
     /**
      * Checks the active Premiere window to see whether the `Edit` tab is currently active
-     * @returns {Boolean}
+     * @returns {Boolean | -1} returns -1 if; Premiere does not exist, Premiere's name could not be determined, or `ShinsImageClass` could not be set. Else returns `true`/`false`
      */
     static isEditTabActive() {
         if !WinExist(this.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
-            return false
+            return -1
         }
         name := WinGet.PremName()
         if !name || !isObjHasProp(name, "winTitle", false) {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
-            return false
+            return -1
         }
 
         if !this.setShinsIMG(name.winTitle)
-            return false
+            return -1
         return this._scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
+    }
+
+    /**
+     * Uses UIA and `ShinsImageClass` to check the Program monitor to see if playback is currently occurring. The `Play/Stop Toggle` button must be visible for this function to work.
+     * @returns {Boolean | -1} returns -1 if; Premiere does not exist, Premiere's name could not be determined, `ShinsImageClass` could not be set, or the `Play/Stop Toggle` button could not be found. Else returns `true`/`false`
+     */
+    static isPlaying() {
+        if !WinExist(this.exeTitle) {
+            ;// throw
+            errorLog(TargetError("Premiere is currently not open."),,, true)
+            return -1
+        }
+        name := WinGet.PremName()
+        if !name || !isObjHasProp(name, "winTitle", false) {
+            errorLog(UnsetError("Could not determine Premiere window title", -1))
+            return -1
+        }
+        if !this.setShinsIMG(name.winTitle)
+            return -1
+        if !premUIA := premUIA_Values.initialise()
+            return -1
+        coord.s()
+        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
+        try button := progMon.FindElement({LocalizedType:"button", Name:"Play-Stop Toggle", matchmode:"Substring"})
+        catch {
+            errorLog(TargetError("Play/Stop button could not be found", -1))
+            return -1
+        }
+
+        centerX := button.location.x + Round((button.Location.w/2))
+        centerY := button.location.y + Round((button.Location.h/2))
+        ; convert screen coords -> client-relative coords
+        WinGetClientPos(&clientOriginX, &clientOriginY, , , "ahk_id " this._scan.hwnd)
+        localX := Round((centerX - clientOriginX) / this._scan.WindowScale)
+        localY := Round((centerY - clientOriginY) / this._scan.WindowScale)
+
+        centerPix := this._scan.GetPixel(localX, localY, true)
+        abovePix  := this._scan.GetPixel(localX, localY - 4, true)
+        return (centerPix == abovePix)
     }
 
     static setShinsIMG(title) {
@@ -885,6 +925,7 @@ class Prem {
                 errorLog(UnsetError("ShinsImageScanClass failed to be set.", -1), "title: " title)
                 return false
             }
+            this._scan.WindowScale := getWindowScale(this._scan.hwnd)
             this._scan.autoUpdate := 0
             try this._scan.Update()
             catch {
@@ -899,6 +940,7 @@ class Prem {
             this._scan.hwnd := WinExist(this._scanTitle)
             if !this._scan.hwnd || !this._scanTitle
                 return false
+            this._scan.WindowScale := getWindowScale(this._scan.hwnd)
             try this._scan.Update()
             catch {
                 errorLog(MethodError("ShinsImageScanClass failed to update. Was set but different values were present.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
@@ -906,7 +948,7 @@ class Prem {
             }
             return true
         }
-        try this._scan.Update()
+        try this._scan.Update(), this._scan.WindowScale := getWindowScale(this._scan.hwnd)
         catch {
             errorLog(MethodError("ShinsImageScanClass failed to update. Was already set", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
             return false

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/05/25
- * @version 2.2.23
+ * @date 2026/08/12
+ * @version 2.2.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -98,6 +98,7 @@ class adobeAutoSave extends count {
     ms            := (5*60000) ;// 5min by default
     saveOverride  := true
     origWindow    := ""
+    selfInitiatedSave := false
 
     premExist     := false,  aeExist := false
     premWindow    := unset
@@ -213,6 +214,8 @@ class adobeAutoSave extends count {
     }
 
     __stopAndReset(*) {
+        if this.selfInitiatedSave = true
+            return
         this.Stop(false)
         this.resetingSave := true, this.idleAttempt := true
         WinWaitClose("Save Project " prem.exeTitle, 2)
@@ -372,30 +375,6 @@ class adobeAutoSave extends count {
         }
     }
 
-    /**
-     * Attempts to check whether the user was playing back on the timeline within Premiere.
-     * *note: this function will only work if the user has their program monitor on their main display*
-     */
-    __checkPremPlayback() {
-        ;// unfortunately cannot be relied on as it will not work if the multicam view is active...
-        /* if prem.__checkPremRemoteDir('isPlaying') {
-            this.userPlayback := prem.__remoteFunc('isPlaying', true)
-            return
-        } */
-        if !this.programMonX1 && !this.programMonX2 && !this.programMonY1 && !this.programMonY2 {
-            if !this.premUIA := premUIA_Values.initialise()
-                return false
-            progMon := this.premUIA.UIA_Objs["programMon"]
-            this.programMonX1 := progMon.location.x+100, this.programMonX2 := progMon.location.x + progMon.location.w-100, this.programMonY1 := (progMon.location.y+progMon.location.h)*0.7,  this.programMonY2 := progMon.location.y + progMon.location.h + 150
-        }
-        ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
-        if !ImageSearch(&x, &y, this.programMonX1, this.programMonY1, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png")
-            return
-        notifyExt.showIfNotExist("autosavepremPlayback",, 'If you were playing back anything, this function should attempt to resume it', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75AEDC')
-        ; tool.Cust("If you were playing back anything, this function should resume it", 2.0,, 30, 2)
-        this.userPlayback := true
-    }
-
 
     /**
      * Check for a window containing a class used by windows to denote that a file select/dir select GUI is open (ie. a save window)
@@ -414,7 +393,7 @@ class adobeAutoSave extends count {
     __reactivateWindow() {
         try {
             checkActive := winExt.ProcessNameRegex()
-            if this.origWindow = checkActive && this.userPlayback = false
+            if (this.origWindow = checkActive && this.userPlayback = false)
                 return
             switch this.origWindow {
                 case "CabinetWClass": WinActivate("CabinetWClass")
@@ -437,20 +416,21 @@ class adobeAutoSave extends count {
                     ;// if the user was originally playing back on the timeline
                     ;// we resume that playback here
 
+                    prem.__focusTimeline()
                     sleep 100
                     SendEvent(KSA.playStop)
                     sleep 1000
                     loop 3 {
-                        ;// if you don't have your project monitor on your main computer monitor this section of code will always fail
-                        if !ImageSearch(&x, &y, this.programMonX1, this.programMonY2/2, this.programMonX2, this.programMonY2, "*2 " ptf.Premiere "stop.png") {
+                        checkPlaying := prem.isPlaying()
+                        if checkPlaying != true {
                             prem.__focusTimeline()
                             sleep 100
                             SendEvent(KSA.playStop)
+                            sleep 100
                             continue
                         }
                         break
                     }
-                    prem.__focusTimeline()
                 default:
                     if this.premRemoteSave = false
                         WinActivate("ahk_exe " this.origWindow)
@@ -493,7 +473,7 @@ class adobeAutoSave extends count {
             return
         }
 
-        if !prem.isEditTabActive() {
+        if prem.isEditTabActive() = false {
             errorLog(TargetError("The Premiere 'Edit' tab is not currently selected, or the Premiere window could not be found. The save attempt was aborted", -1))
             notifyExt.showIfNotExist("autosavepremEdit",, "The Premiere 'Edit' tab is not currently selected, or the Premiere window could not be found. The save attempt was aborted", 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
@@ -515,7 +495,7 @@ class adobeAutoSave extends count {
                 return
 
             if this.restartPlayback = true
-                this.__checkPremPlayback()
+                this.userPlayback := prem.isPlaying()
         }
 
         notifyExt.showIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
@@ -523,24 +503,26 @@ class adobeAutoSave extends count {
         ; tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
 
         ;// attempts to save using `PremiereRemote`
+        this.selfInitiatedSave := true
         saveAttempt := prem.save(false)
         if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy" || saveAttempt = "noseq") {
             sleep 500
+            this.selfInitiatedSave := false
             return
         }
         notifyExt.showIfNotExist("autosavepremFailed",, 'PremiereRemote failed to save, falling back`nto a manual save attempt.', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark dur=5 bdr=0xE96969 show=Fade@250 hide=Fade@250')
 
+        this.premRemoteSave := false
+        saveAsTitle := "Save As " editors.Premiere.winTitle
         try {
             block.On()
             checkStuck()
-            this.premRemoteSave := false
 
             ;// this script will attempt to NOT fire if Premiere_RightClick.ahk is active
             if this.__checkRClick() = true {
                 throw
             }
 
-            saveAsTitle := "Save As " editors.Premiere.winTitle
             this.__startSaveAsWinEvent(saveAsTitle)
 
             ;// attempt to send save
@@ -608,21 +590,42 @@ class adobeAutoSave extends count {
         if this.idleAttempt = false
             return
 
-        if this.saveAttemptNotify = false && !Notify.Exist("autosavepremSaveAttempt")
-            notifyExt.showIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
+        if this.saveAttemptNotify = false && !Notify.Exist("autosaveaeSaveAttempt")
+            notifyExt.showIfNotExist("autosaveaeSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
 
         block.On()
         checkStuck()
         saveAsTitle := "Save As " editors.AE.winTitle
         this.__startSaveAsWinEvent(saveAsTitle)
+        this.selfInitiatedSave := true
+
+        try procName := WinGetProcessName(this.aeWindow.winTitle), procClass := WinGetClass(this.aeWindow.wintitle), procClassIsAE := RegExMatch(procClass, "^AE_CApplication_(\d+(?:\.\d+)*)$")
+        catch {
+            ;// ae may have crashed
+            this.__stopSaveAsWinEvent(saveAsTitle)
+            block.Off()
+            this.__resetAETrans()
+            return
+        }
+        checkAgain := this.__checkDialogueClass("AfterFX")
+        if ((procName = "AfterFX.exe" || procName = "AfterFX (Beta).exe") && (procClassIsAE != true)) || !checkAgain {
+            ;// ae may be busy
+            this.__stopSaveAsWinEvent(saveAsTitle)
+            block.Off()
+            this.__resetAETrans()
+            errorLog(TargetError("After Effects may be busy, aborting save attempt", -1))
+            notifyExt.showIfNotExist("autosaveaeBusier",, 'After Effects is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            return
+        }
 
         ;// if AE is the active window, a normal save will be fine
-        if this.origWindow = WinGetProcessName(editors.AE.winTitle) {
+        if this.origWindow = procName {
             AE.save()
             if !WinWait("Save Project " editors.AE.winTitle,, 3) {
                 this.__stopSaveAsWinEvent(saveAsTitle)
                 block.Off()
                 errorLog(TimeoutError("Failed to wait for AE save window to appear"))
+                notifyExt.showIfNotExist("autosaveaeBusier",, 'After Effects is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250     hide=Fade@250 maxW=400 bdr=0x75aedc')
                 return
             }
             this.__stopSaveAsWinEvent(saveAsTitle)
@@ -672,6 +675,7 @@ class adobeAutoSave extends count {
     __stopSaveAsWinEvent(saveAsTitle) {
         if WinEvent.IsRegistered('Exist', saveAsTitle)
             WinEvent.Stop('Exist', saveAsTitle)
+        this.selfInitiatedSave := false
     }
 
     /** reset after effects window transparency */
