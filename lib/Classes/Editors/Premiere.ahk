@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/10
- * @version 2.5.9
+ * @date 2026/08/11
+ * @version 2.5.9.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -197,7 +197,7 @@ class Prem {
     static remoteActiveCEP := "loading"
     static remoteActiveUXP := "loading"
     static portCEP := 8081
-    static portUXP := 8084
+    static portUXP := 42400
 
     static exeTitle := Editors.Premiere.winTitle
     static winTitle := this.exeTitle
@@ -261,7 +261,7 @@ class Prem {
 
     ;// PremiereRemote variables
     static remoteDirCEP := A_AppData "\Adobe\CEP\extensions\PremiereRemote"
-    static remoteDirUXP := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp"
+    static remoteDirUXP := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\client"
     static indexFileCEP := this.remoteDirCEP "\host\src\index.tsx"
     static indexFileUXP := this.remoteDirUXP "\src\generated\registry.ts"
     static funcDirUXP   := this.remoteDirUXP "\src\actions"

@@ -13,12 +13,13 @@ hide := false
 doHide := (hide = true) ? "Hide" : ""
 openDebug := false
 
-cmd.run(,, keepWindow, 'node scripts/generate-api.js', A_AppData '\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp', doHide)
-cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', A_AppData '\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp', doHide)
-cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', A_AppData '\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp', doHide)
-cmd.run(,, keepWindow, 'npx pnpm run bundle', A_AppData '\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp', doHide)
+InstalledDir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
+cmd.run(,, keepWindow, 'node scripts/generate-api.js', InstalledDir "\client", doHide)
+cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', InstalledDir "\client", doHide)
+cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', InstalledDir "\client", doHide)
+cmd.run(,, keepWindow, 'npx pnpm run bundle', InstalledDir "\client", doHide)
 
-cmd.run(,, keepWindow, 'docker compose down && docker compose up --build -d', A_AppData '\Adobe\UXP\Plugins\External\PremiereRemote-uxp', doHide)
+cmd.run(,, keepWindow, 'docker compose down && docker compose up --build -d', InstalledDir, doHide)
 sleep 1000
 
 ;// reload premremote in devTools
@@ -53,13 +54,3 @@ switch {
             winExt.ActivateRegex(debugWindow)
 }
 notifyExt.showIfNotExist('uxpRebuild',, "UXP Rebuild Complete...")
-
-/**
-cd C:\Users\Tom\AppData\Roaming\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp
-node scripts/generate-api.js
-xcopy /s /e /y static\. build\
-npx pnpm run bundle
-
-cd c:\
-cd C:\Users\Tom\AppData\Roaming\Adobe\UXP\Plugins\External\PremiereRemote-uxp
-docker compose down && docker compose up --build

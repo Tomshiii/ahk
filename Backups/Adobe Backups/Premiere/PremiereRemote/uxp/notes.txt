@@ -2,3 +2,8 @@
 
 "localFileSystem"
 will need to be changed to; "localFileSystem": "fullAccess",
+
+installing plugin may require;
+```
+rmdir /s /q build 2>nul & node scripts\generate-api.js && xcopy static build /E /I /Y && npx esbuild src\core\index.ts --bundle --outfile=build\index.js --platform=node --format=iife --external:premierepro
+```

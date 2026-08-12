@@ -1,4 +1,4 @@
-installedPath := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp"
+installedPath := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\client"
 SplitPath(A_LineFile,, &linePath)
 backupPath := linePath
 

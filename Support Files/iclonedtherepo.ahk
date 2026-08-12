@@ -23,6 +23,7 @@ if !baseDir || !libDir || !verFile || !installFile {
     RunWait(suppFilesDir "\Release Assets\Install Packages\baseLineSettings.ahk")
     RunWait(suppFilesDir "\Release Assets\Install Packages\installNode.ahk")
     Run(suppFilesDir "\Release Assets\Install Packages\installPremRemote.ahk")
+    try RunWait(A_ComSpec "/k git submodule update --init --recursive", rootPath)
 }
 
 MsgBox("Process Complete")

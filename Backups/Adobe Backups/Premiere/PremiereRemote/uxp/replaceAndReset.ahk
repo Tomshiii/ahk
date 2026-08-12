@@ -7,7 +7,7 @@
 SetWorkingDir(A_ScriptDir)
 
 ;// ======= manifest =======
-dir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\uxp"
+dir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\client"
 manifest := dir "\manifest.json"
 if !FileExist(manifest)
     return

@@ -438,14 +438,18 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 	nestedGUI.InpUser := AddInput(12, 30, 200, n)
 	nestedGUI.InpUser.value := n
 	nestedGUI.but := AddButton(200+20, 32, 50, "Ok", (*) => (nestName := nestedGUI.InpUser.value, nestedGUI.Destroy()))
-	inp := InputHook("L0",, "{Enter}{NumpadEnter}")
-	inp.OnChar := (*) => (nestName := nestedGUI.InpUser.value, nestedGUI.Destroy(), inp.Stop())
+	inp := InputHook("L0 V", "{Enter}{NumpadEnter}")
+	inp.OnEnd := OnInputEnd
 	inp.Start()
 
 	nestedGUI.OnEvent("Escape", (*) => (closed := true, nestedGUI.Destroy()))
     nestedGUI.OnEvent("Close", (*) => (closed := true, nestedGUI.Destroy()))
 	nestedGUI.Show("w290 h90 Center")
 
+	OnInputEnd(*) {
+		nestName := nestedGUI.InpUser.Value
+		nestedGUI.Destroy()
+	}
 	AddInput(x, y, w, placeholder) {
 		h := 36
 		border := nestedGUI.Add("Text", "x" x " y" y " w" w " h" h " Background333333")
