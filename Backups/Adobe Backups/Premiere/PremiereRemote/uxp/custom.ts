@@ -154,6 +154,30 @@ export async function movePlayhead(subtract: boolean, seconds: number): Promise<
 }
 
 /**
+ * returns the current playhead position in ticks
+ * @returns {string | false}
+ */
+export async function getPlayheadPosTicks(): Promise<string | false> {
+    const sequence = await common.getActiveSequence();
+    if (!sequence) return false;
+
+    const currentPos = await sequence.getPlayerPosition();
+    return currentPos.ticks;
+}
+
+/**
+ * sets the playhead position
+ * @param {string} [ticks] the position in ticks to set the playhead
+ * @returns {boolean}
+ */
+export async function setPlayheadPosTicks(ticks: string): Promise<boolean> {
+    const sequence = await common.getActiveSequence();
+    if (!sequence) return false;
+
+    return await sequence.setPlayerPosition(ppro.TickTime.createWithTicks(ticks));
+}
+
+/**
  * Moves the playhead in frames
  * @param {boolean} [subtract] whether to add or subtract the desired time to the current playhead position
  * @param {number} [frames] the amount of frames you wish to move the playhead. will be automatically converted to the current timebase
@@ -2369,8 +2393,8 @@ export async function nestSelectionReplaceNestedAudio(
     const videoTrackCount = await sequence.getVideoTrackCount();
     const audioTrackCount = await sequence.getAudioTrackCount();
 
-    const selectedVideoEntries = await gatherSelectedEntries((i) => sequence.getVideoTrack(i), videoTrackCount);
-    const selectedAudioEntries = await gatherSelectedEntries((i) => sequence.getAudioTrack(i), audioTrackCount);
+    const selectedVideoEntries = await helpers.gatherSelectedEntries((i) => sequence.getVideoTrack(i), videoTrackCount);
+    const selectedAudioEntries = await helpers.gatherSelectedEntries((i) => sequence.getAudioTrack(i), audioTrackCount);
 
     if (selectedVideoEntries.length === 0 && selectedAudioEntries.length === 0) {
         alert("No clips are selected in the timeline.");
@@ -2424,11 +2448,11 @@ export async function nestSelectionReplaceNestedAudio(
 
     // --- Step 3: re-scan and remove the original clips left behind by
     // createSubsequence(). ---
-    const videoOrphans = await findMatchingItems((i) => sequence.getVideoTrack(i), selectedVideoEntries);
-    const audioOrphans = await findMatchingItems((i) => sequence.getAudioTrack(i), selectedAudioEntries);
+    const videoOrphans = await helpers.findMatchingItems((i) => sequence.getVideoTrack(i), selectedVideoEntries);
+    const audioOrphans = await helpers.findMatchingItems((i) => sequence.getAudioTrack(i), selectedAudioEntries);
 
-    await removeItems(project, editor, videoOrphans, ppro.Constants.MediaType.VIDEO, "Remove original video after nest");
-    await removeItems(project, editor, audioOrphans, ppro.Constants.MediaType.AUDIO, "Remove original audio after nest");
+    await helpers.removeItems(project, editor, videoOrphans, ppro.Constants.MediaType.VIDEO, "Remove original video after nest");
+    await helpers.removeItems(project, editor, audioOrphans, ppro.Constants.MediaType.AUDIO, "Remove original audio after nest");
 
     // --- Step 4: capture original in/out for restoring between/after passes. ---
     const zeroTime = ppro.TickTime.TIME_ZERO;
@@ -2444,7 +2468,7 @@ export async function nestSelectionReplaceNestedAudio(
     if (haveVideo) {
         const sliceIn = videoStart.subtract(combinedStart);
         const sliceOut = videoEnd.subtract(combinedStart);
-        await placeMediaSlice(
+        await helpers.placeMediaSlice(
             project, editor, sequence, nestedProjItem, clipProjItem,
             sliceIn, sliceOut, videoStart,
             highestVideoTrackIndex, true,
@@ -2464,7 +2488,7 @@ export async function nestSelectionReplaceNestedAudio(
             audioStart,
             audioEnd
         );
-        await placeMediaSlice(
+        await helpers.placeMediaSlice(
             project, editor, sequence, nestedProjItem, clipProjItem,
             sliceIn, sliceOut, audioStart,
             audioTarget.trackIndex, false,
@@ -2477,7 +2501,7 @@ export async function nestSelectionReplaceNestedAudio(
     if (makeSelection) {
         if (haveVideo) {
             const track = await sequence.getVideoTrack(highestVideoTrackIndex);
-            const item = await findItemAtStart(track, videoStart);
+            const item = await helpers.findItemAtStart(track, videoStart);
             if (item) {
                 ppro.TrackItemSelection.createEmptySelection((selection) => {
                     selection.addItem(item);
@@ -2493,7 +2517,7 @@ export async function nestSelectionReplaceNestedAudio(
                 audioEnd
             );
             const track = await sequence.getAudioTrack(audioTarget.trackIndex);
-            const item = await findItemAtStart(track, audioStart);
+            const item = await helpers.findItemAtStart(track, audioStart);
             if (item) {
                 ppro.TrackItemSelection.createEmptySelection((selection) => {
                     selection.addItem(item);
@@ -2501,155 +2525,5 @@ export async function nestSelectionReplaceNestedAudio(
                 });
             }
         }
-    }
-
-    /**
- * Places a [sliceIn, sliceOut) slice of clipProjItem at `startTime` on
- * `realTrackIndex` (of type `realMediaType`), and discards whatever lands
- * on the other media type's track (found via a fresh free-space scan
- * across the same time range).
- */
-    async function placeMediaSlice(
-        project: any,
-        editor: any,
-        sequence: any,
-        nestedProjItem: any,
-        clipProjItem: any,
-        sliceIn: TickTime,
-        sliceOut: TickTime,
-        startTime: TickTime,
-        realTrackIndex: number,
-        realIsVideo: boolean,
-        originalInPoint: TickTime,
-        originalOutPoint: TickTime,
-        hadOriginalInOut: boolean
-    ): Promise<void> {
-        const sliceDuration = sliceOut.subtract(sliceIn);
-        const endTime = startTime.add(sliceDuration);
-
-        // Find a disposable track for the OTHER media type, across this pass's
-        // own time range.
-        const otherTrackCount = realIsVideo ? await sequence.getAudioTrackCount() : await sequence.getVideoTrackCount();
-        const otherGetTrack = realIsVideo ? (i: number) => sequence.getAudioTrack(i) : (i: number) => sequence.getVideoTrack(i);
-        const scratch = await helpers.findFirstFreeTrack(otherGetTrack, otherTrackCount, startTime, endTime);
-
-        const videoTrackIndex = realIsVideo ? realTrackIndex : scratch.trackIndex;
-        const audioTrackIndex = realIsVideo ? scratch.trackIndex : realTrackIndex;
-        const needsNewTrack = scratch.needsNewTrack; // real track is always pre-existing (see below)
-
-        // Trim to this pass's slice.
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction: any) => {
-                const setTempInOutAction = clipProjItem.createSetInOutPointsAction(sliceIn, sliceOut);
-                compoundAction.addAction(setTempInOutAction);
-            }, "Set temporary nested-item slice");
-        });
-
-        // Place. NOTE: placement actions take the raw ProjectItem, not the cast
-        // ClipProjectItem -- passing the cast object here is what caused
-        // "Invalid parameter." Only the in/out-point actions want the cast one.
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction: any) => {
-                const placeAction = needsNewTrack
-                    ? editor.createInsertProjectItemAction(nestedProjItem, startTime, videoTrackIndex, audioTrackIndex, false)
-                    : editor.createOverwriteItemAction(nestedProjItem, startTime, videoTrackIndex, audioTrackIndex);
-                compoundAction.addAction(placeAction);
-            }, "Place nested-item slice");
-        });
-
-        // Restore original in/out immediately -- each pass is self-contained.
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction: any) => {
-                const restoreAction = hadOriginalInOut
-                    ? clipProjItem.createSetInOutPointsAction(originalInPoint, originalOutPoint)
-                    : clipProjItem.createClearInOutPointsAction();
-                compoundAction.addAction(restoreAction);
-            }, "Restore nested item duration");
-        });
-
-        // Discard whatever landed on the scratch track.
-        const scratchTrack = realIsVideo ? await sequence.getAudioTrack(scratch.trackIndex) : await sequence.getVideoTrack(scratch.trackIndex);
-        const scratchItem = await findItemAtStart(scratchTrack, startTime);
-        if (scratchItem) {
-            await removeItems(
-                project,
-                editor,
-                [scratchItem],
-                realIsVideo ? ppro.Constants.MediaType.AUDIO : ppro.Constants.MediaType.VIDEO,
-                "Remove scratch placement"
-            );
-        }
-    }
-
-    /** Finds the single clip on `track` whose start matches `startTime`. */
-    async function findItemAtStart(track: any, startTime: TickTime): Promise<any | null> {
-        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
-        for (const item of items) {
-            const start = await item.getStartTime();
-            if (start.ticksNumber === startTime.ticksNumber) return item;
-        }
-        return null;
-    }
-
-    /** Re-scans the given tracks for clips still sitting at previously-recorded
-     *  positions, and returns the matching live TrackItem objects. */
-    async function findMatchingItems(
-        getTrack: (index: number) => Promise<any>,
-        entries: TrackItemEntry[]
-    ): Promise<any[]> {
-        const found: any[] = [];
-        for (const entry of entries) {
-            const track = await getTrack(entry.trackIndex);
-            const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
-            for (const item of items) {
-                const start = await item.getStartTime();
-                const end = await item.getEndTime();
-                if (start.ticksNumber === entry.start.ticksNumber && end.ticksNumber === entry.end.ticksNumber) {
-                    found.push(item);
-                    break;
-                }
-            }
-        }
-        return found;
-    }
-
-    async function removeItems(
-        project: any,
-        editor: any,
-        items: any[],
-        mediaType: any,
-        undoString: string
-    ): Promise<void> {
-        if (items.length === 0) return;
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction: any) => {
-                ppro.TrackItemSelection.createEmptySelection((selection: any) => {
-                    for (const item of items) {
-                        selection.addItem(item);
-                    }
-                    const removeAction = editor.createRemoveItemsAction(selection, false /* ripple */, mediaType);
-                    compoundAction.addAction(removeAction);
-                });
-            }, undoString);
-        });
-    }
-
-    async function gatherSelectedEntries(
-        getTrack: (index: number) => Promise<any>,
-        trackCount: number
-    ): Promise<TrackItemEntry[]> {
-        const entries: TrackItemEntry[] = [];
-        for (let t = 0; t < trackCount; t++) {
-            const track = await getTrack(t);
-            const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
-            for (const item of items) {
-                if (await item.getIsSelected()) {
-                    const start = await item.getStartTime();
-                    const end = await item.getEndTime();
-                    entries.push({ trackIndex: t, start, end });
-                }
-            }
-        }
-        return entries;
     }
 }

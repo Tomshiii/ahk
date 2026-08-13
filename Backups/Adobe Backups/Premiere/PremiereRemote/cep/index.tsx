@@ -636,6 +636,16 @@ export const host = {
         newClip.setSelected(1, 1);
       }
     }
+  },
+
+  getPlayheadPosTicks: function(): string {
+    const currentSequence = app.project.activeSequence;
+    return currentSequence.getPlayerPosition().ticks;
+  },
+
+  setPlayheadPosTicks: function(ticks: string) {
+    const currentSequence = app.project.activeSequence;
+    return currentSequence.setPlayerPosition(String(ticks));;
   }
 }
 

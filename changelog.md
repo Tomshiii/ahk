@@ -2,11 +2,15 @@
 
 ## Functions
 - ✏️ Added `getWindowScale()`
+- ✅ Fixed `errorLog()`/`Log()` sometimes failing to log if interrupted
 
 ### 📝 `prem {`
 - ✏️ Added `isPlaying()`
 - 📋 `setShinsIMG()` will now correctly scale based on the user's window scaling
 - 📋 `isEditTabActive()` will now return `-1` for any execution failures instead of `false`
+
+## PremiereRemote
+- ✏️ Added `getPlayheadPosTicks()`, and `setPlayheadPosTicks()`
 
 ## Other Changes
 - ❌ Removed `stop.png`

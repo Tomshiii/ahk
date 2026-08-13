@@ -334,6 +334,13 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > File > ) Close"
     },
+    "premPaste": {
+        "command": "cmd.edit.paste",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Edit > ) Paste"
+    },
+
+
     "labelViolet": {
         "command": "cmd.edit.label.0",
         "context": "/PremiereData/shortcuts/context.global",

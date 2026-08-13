@@ -20,6 +20,17 @@ isIn(title, ahk_exe?) {
 	return InStr(getTitle exe, title)
 }
 
+~LButton:: ;// im doing testing don't mind me
+{
+	logger := log()
+	Shift := GetKeyState("Shift"), ShiftP := GetKeyState("Shift", "P")
+	Ctrl := GetKeyState("Ctrl"), CtrlP := GetKeyState("Ctrl", "P")
+	Alt := GetKeyState("Alt"), AltP := GetKeyState("Alt", "P")
+	str := Format("s: {} | sP: {} | c: {} | cP: {} | a: {} | aP: {}", Shift, ShiftP, Ctrl, CtrlP, Alt, AltP)
+	logger.Append(str)
+	; errorLog(Error(str),, true)
+}
+
 ;// this hotkey is an attempt to stop inputs being sent through to premiere while waiting for excalibur to pop up
 /* $^Space::
 {
@@ -403,7 +414,18 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 !e::prem.__remoteFunc('setAllEnableDisabled',, "enabled=true")
 !d::prem.__remoteFunc('setAllEnableDisabled',, "enabled=false")
 
-^+w::
+$^v::
+{
+	if !WinActive(prem.winTitle) {
+		SendInput("^v")
+		return
+	}
+	t := prem.__remoteFunc('getPlayheadPosTicks', true)
+	SendInput(ksa.premPaste)
+	prem.__remoteFunc('setPlayheadPosTicks',, "ticks=" t)
+}
+
+^!+w::
 {
 	if !prem.isClipSelected()
 		return

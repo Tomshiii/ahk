@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to enable easy file/outputdebug based logging
  * @author tomshi
- * @date 2025/12/20
- * @version 1.1.0
+ * @date 2026/08/13
+ * @version 1.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -19,6 +19,7 @@ class log {
      * @param {String} fileLocation the location (including filename/extension) of the file you wish to log to. Defaults to `ptf.Logs "\Other Logs\YYYY_MM_DD.txt"`
      */
     __New(dateTime?, print?, fileLocation?) {
+        Critical()
         this.dateTime     := IsSet(dateTime)     ? dateTime     : this.dateTime
         this.print        := IsSet(print)        ? print        : this.print
         this.fileLocation := IsSet(fileLocation) ? fileLocation : this.fileLocation
@@ -48,6 +49,7 @@ class log {
      * @param {String} errorMsg the desired message
      */
     Append(errorMsg) {
+        Critical()
         try FileAppend(this.dateTime errorMsg "`n", this.fileLocation)
 
         if !this.print

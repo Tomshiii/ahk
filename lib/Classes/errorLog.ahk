@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to help debug errors by offering an easy solution to log any errors as they come in.
  * @author tomshi
- * @date 2026/02/02
- * @version 2.2.2
+ * @date 2026/08/13
+ * @version 2.2.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -29,6 +29,7 @@
  */
 class errorLog extends log {
     __New(err, optMessage := "", toolCust := false, doThrow := false) {
+        Critical()
         this.err         := err,       this.optMessage := optMessage,
         this.toolCust    := toolCust,  this.doThrow    := doThrow,
         this.logLocation := ptf.ErrorLog "\" A_YYYY "_" A_MM "_" A_DD "_ErrorLog.txt"
@@ -38,9 +39,11 @@ class errorLog extends log {
 
         ;// append log
         this.__logError()
+        Critical("Off")
     }
 
     __logError() {
+        Critical()
         ;// throw if no error object is passed
         setVar := this.err
         if !IsSet(setVar) || !IsObject(setVar)
@@ -114,6 +117,7 @@ class errorLog extends log {
 
     /** This function is called if it's the first time `errorLog()` has been called in the current day and handles generating an inital file */
     __firstError() {
+        Critical()
         try {
             ;These values can be found at the following link (and the other appropriate tabs) - https://docs.microsoft.com/en-gb/windows/win32/cimwin32prov/win32-process
             ;// get OS name
@@ -189,6 +193,7 @@ class errorLog extends log {
 
     /** This function is to simply help the flow of errorLog and make it more logical to follow */
     __doTooltip() {
+        ;//! do NOT add `Critical()` here or you may cause scripts to become uninteruptible while a tooltip displays
         scndLine := (this.optMessage != "") ? "`n" this.optMessage : ""
 
         ;// if an object has been passed we'll create a custom tooltip

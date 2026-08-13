@@ -171,3 +171,159 @@ export async function findFirstFreeTrack(
     }
     return { trackIndex: trackCount, needsNewTrack: true };
 }
+
+/**
+ * Places a [sliceIn, sliceOut) slice of clipProjItem at `startTime` on
+ * `realTrackIndex` (of type `realMediaType`), and discards whatever lands
+ * on the other media type's track (found via a fresh free-space scan
+ * across the same time range).
+ */
+export async function placeMediaSlice(
+    project: any,
+    editor: any,
+    sequence: any,
+    nestedProjItem: any,
+    clipProjItem: any,
+    sliceIn: TickTime,
+    sliceOut: TickTime,
+    startTime: TickTime,
+    realTrackIndex: number,
+    realIsVideo: boolean,
+    originalInPoint: TickTime,
+    originalOutPoint: TickTime,
+    hadOriginalInOut: boolean
+): Promise<void> {
+    const sliceDuration = sliceOut.subtract(sliceIn);
+    const endTime = startTime.add(sliceDuration);
+
+    // Find a disposable track for the OTHER media type, across this pass's
+    // own time range.
+    const otherTrackCount = realIsVideo ? await sequence.getAudioTrackCount() : await sequence.getVideoTrackCount();
+    const otherGetTrack = realIsVideo ? (i: number) => sequence.getAudioTrack(i) : (i: number) => sequence.getVideoTrack(i);
+    const scratch = await findFirstFreeTrack(otherGetTrack, otherTrackCount, startTime, endTime);
+
+    const videoTrackIndex = realIsVideo ? realTrackIndex : scratch.trackIndex;
+    const audioTrackIndex = realIsVideo ? scratch.trackIndex : realTrackIndex;
+    const needsNewTrack = scratch.needsNewTrack; // real track is always pre-existing (see below)
+
+    // Trim to this pass's slice.
+    project.lockedAccess(() => {
+        project.executeTransaction((compoundAction: any) => {
+            const setTempInOutAction = clipProjItem.createSetInOutPointsAction(sliceIn, sliceOut);
+            compoundAction.addAction(setTempInOutAction);
+        }, "Set temporary nested-item slice");
+    });
+
+    // Place. NOTE: placement actions take the raw ProjectItem, not the cast
+    // ClipProjectItem -- passing the cast object here is what caused
+    // "Invalid parameter." Only the in/out-point actions want the cast one.
+    project.lockedAccess(() => {
+        project.executeTransaction((compoundAction: any) => {
+            const placeAction = needsNewTrack
+                ? editor.createInsertProjectItemAction(nestedProjItem, startTime, videoTrackIndex, audioTrackIndex, false)
+                : editor.createOverwriteItemAction(nestedProjItem, startTime, videoTrackIndex, audioTrackIndex);
+            compoundAction.addAction(placeAction);
+        }, "Place nested-item slice");
+    });
+
+    // Restore original in/out immediately -- each pass is self-contained.
+    project.lockedAccess(() => {
+        project.executeTransaction((compoundAction: any) => {
+            const restoreAction = hadOriginalInOut
+                ? clipProjItem.createSetInOutPointsAction(originalInPoint, originalOutPoint)
+                : clipProjItem.createClearInOutPointsAction();
+            compoundAction.addAction(restoreAction);
+        }, "Restore nested item duration");
+    });
+
+    // Discard whatever landed on the scratch track.
+    const scratchTrack = realIsVideo ? await sequence.getAudioTrack(scratch.trackIndex) : await sequence.getVideoTrack(scratch.trackIndex);
+    const scratchItem = await findItemAtStart(scratchTrack, startTime);
+    if (scratchItem) {
+        await removeItems(
+            project,
+            editor,
+            [scratchItem],
+            realIsVideo ? ppro.Constants.MediaType.AUDIO : ppro.Constants.MediaType.VIDEO,
+            "Remove scratch placement"
+        );
+    }
+}
+
+/** Finds the single clip on `track` whose start matches `startTime`. */
+export async function findItemAtStart(track: any, startTime: TickTime): Promise<any | null> {
+    const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+    for (const item of items) {
+        const start = await item.getStartTime();
+        if (start.ticksNumber === startTime.ticksNumber) return item;
+    }
+    return null;
+}
+
+/** Re-scans the given tracks for clips still sitting at previously-recorded
+ *  positions, and returns the matching live TrackItem objects. */
+export async function findMatchingItems(
+    getTrack: (index: number) => Promise<any>,
+    entries: TrackItemEntry[]
+): Promise<any[]> {
+    const found: any[] = [];
+    for (const entry of entries) {
+        const track = await getTrack(entry.trackIndex);
+        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+        for (const item of items) {
+            const start = await item.getStartTime();
+            const end = await item.getEndTime();
+            if (start.ticksNumber === entry.start.ticksNumber && end.ticksNumber === entry.end.ticksNumber) {
+                found.push(item);
+                break;
+            }
+        }
+    }
+    return found;
+}
+
+/**
+ *
+ */
+export async function removeItems(
+    project: any,
+    editor: any,
+    items: any[],
+    mediaType: any,
+    undoString: string
+): Promise<void> {
+    if (items.length === 0) return;
+    project.lockedAccess(() => {
+        project.executeTransaction((compoundAction: any) => {
+            ppro.TrackItemSelection.createEmptySelection((selection: any) => {
+                for (const item of items) {
+                    selection.addItem(item);
+                }
+                const removeAction = editor.createRemoveItemsAction(selection, false /* ripple */, mediaType);
+                compoundAction.addAction(removeAction);
+            });
+        }, undoString);
+    });
+}
+
+/**
+ *
+ */
+export async function gatherSelectedEntries(
+    getTrack: (index: number) => Promise<any>,
+    trackCount: number
+): Promise<TrackItemEntry[]> {
+    const entries: TrackItemEntry[] = [];
+    for (let t = 0; t < trackCount; t++) {
+        const track = await getTrack(t);
+        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+        for (const item of items) {
+            if (await item.getIsSelected()) {
+                const start = await item.getStartTime();
+                const end = await item.getEndTime();
+                entries.push({ trackIndex: t, start, end });
+            }
+        }
+    }
+    return entries;
+}
