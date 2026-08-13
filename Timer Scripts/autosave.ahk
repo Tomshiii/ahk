@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/08/12
- * @version 2.2.24
+ * @date 2026/08/13
+ * @version 2.2.24.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -495,7 +495,7 @@ class adobeAutoSave extends count {
                 return
 
             if this.restartPlayback = true
-                this.userPlayback := prem.isPlaying()
+                this.userPlayback := (prem.isPlaying() = true) ? true : false
         }
 
         notifyExt.showIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
