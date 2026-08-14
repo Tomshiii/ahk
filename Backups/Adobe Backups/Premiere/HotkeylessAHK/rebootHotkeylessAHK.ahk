@@ -9,14 +9,15 @@ try arg1 := A_Args[1]
 try arg2 := A_Args[2]
 
 canLaunch := (!FileExist(ptf['HotkeylessAHK'])) ? false : true
-hotkeylessTitle := IsSet(arg1) ? arg1 : "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
-ignore := IsSet(arg2) ? arg2 : browser.vscode.winTitle "|" A_ScriptName "|My Scripts.ahk"
+hotkeylessTitle := IsSet(arg1) ? arg1 : "\\HotkeylessAHK\.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+ignore := IsSet(arg2) ? arg2 "|" A_ScriptName : browser.vscode.winTitle "|" A_ScriptName "|My Scripts.ahk"
 
+exists := false
 if hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
     exists := true
 if exists != true
     return
-try ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
+RunWait(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\closeHotkeylessAHK.ahk " Format('"{}" "{}"', hotkeylessTitle, ignore))
 stillExists := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
 if stillExists {
     if !winExt.WaitCloseRegex(stillExists,, 3, ignore,, true) {

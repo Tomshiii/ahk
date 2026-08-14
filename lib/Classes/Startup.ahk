@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/07/27
- * @version 1.9.9
+ * @date 2026/08/14
+ * @version 1.9.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -677,16 +677,16 @@ class Startup {
             canLaunch := (!FileExist(ptf['HotkeylessAHK'])) ? false : true
             exists := false
             submenuHotkeyless.Enable("Open HotkeylessAHK"), submenuHotkeyless.Enable("Close HotkeylessAHK"), submenuHotkeyless.Enable("Reboot HotkeylessAHK")
-            hotkeylessTitle := "HotkeylessAHK.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
-            ignore := browser.vscode.winTitle "|" A_ScriptName
+            hotkeylessTitle := "\\HotkeylessAHK\.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+            ignore := browser.vscode.winTitle "|" A_ScriptName "|My Scripts.ahk"
             if hotkeyHWND := winExt.ExistRegex(hotkeylessTitle,, ignore,, true)
                 exists := true
             switch closeOrOpen {
                 case "close":
-                    if exists = false {
-                        return
+                    try Run(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\closeHotkeylessAHK.ahk " Format('"{}" "{}"', hotkeylessTitle, ignore))
+                    catch as e {
+                        MsgBox("Attempting to run ``closeHotkeylessAHK.ahk` failed:`n`n" e.Message)
                     }
-                    ProcessClose(winExt.PIDRegex(hotkeyHWND,, ignore,, true))
                 case "open":
                     if exists = true
                         return
@@ -695,7 +695,11 @@ class Startup {
                         return
                     }
                     Run(ptf['HotkeylessAHK'])
-                case "reboot": try Run(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\rebootHotkeylessAHK.ahk " Format('"{}" "{}"', hotkeylessTitle, ignore))
+                case "reboot":
+                    try Run(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\rebootHotkeylessAHK.ahk " Format('"{}" "{}"', hotkeylessTitle, ignore))
+                    catch as e {
+                        MsgBox("Attempting to run ``rebootHotkeylessAHK.ahk` failed:`n`n" e.Message)
+                    }
             }
         }
     }

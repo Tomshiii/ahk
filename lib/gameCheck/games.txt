@@ -36,4 +36,5 @@ Subnautica ahk_exe Subnautica.exe,
 Momentum Mod - DX11 ahk_exe momentum.exe,
 Treraira ahk_exe Terraria.exe,
 Satisfactory   ahk_exe FactoryGameSteam-Win64-Shipping.exe,
-Heroes of Hammerwatch - B115 ahk_exe HWR.exe
+Heroes of Hammerwatch - B115 ahk_exe HWR.exe,
+League of Legends (TM) Client ahk_exe League of Legends.exe

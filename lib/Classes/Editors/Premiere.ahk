@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/12
- * @version 2.5.10
+ * @date 2026/08/14
+ * @version 2.5.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -858,8 +858,8 @@ class Prem {
     static _scanTitle := ""
 
     /**
-     * Checks the active Premiere window to see whether the `Edit` tab is currently active
-     * @returns {Boolean | -1} returns -1 if; Premiere does not exist, Premiere's name could not be determined, or `ShinsImageClass` could not be set. Else returns `true`/`false`
+     * Uses `ShinsImageClass` to check the active Premiere window to see whether the `Edit` tab is currently active.
+     * @returns {Boolean | -1} returns `-1` if; Premiere does not exist, Premiere's name could not be determined, or `ShinsImageClass` could not be set. Else returns `true`/`false`
      */
     static isEditTabActive() {
         if !WinExist(this.exeTitle) {
@@ -4035,10 +4035,11 @@ class Prem {
 "MXF OP1a"
 "QuickTime"
      * ```
+     * @param {Integer} [timout=3] how long to wait for some UIA elements in `sec`. Defaults to `3s`
      * @param {UIA.IUIAutomationElement} [UIAObj] pass in a UIA element for reuse
      * @param {UIA.IUIAutomationElement} [AdobeEl] pass back the UIA element for reuse
      */
-    static setRnderRplcPreset(dropPreset, dropSource := "Sequence", dropFormat := "QuickTime", UIAObj?, &AdobeEl?) {
+    static setRnderRplcPreset(dropPreset, dropSource := "Sequence", dropFormat := "QuickTime", timeout := 3, UIAObj?, &AdobeEl?) {
         sources := Map("Sequence", true, "Individual Clips", true, "Preset", true)
         formats := Map("DNxHR/DNxHD MXF OP1a", true, "MXF OP1a", true, "QuickTime", true)
         presets := Map(
@@ -4076,14 +4077,15 @@ class Prem {
             AdobeEl := UIAObj
         }
         _setComboBox(index, item) {
-            box := AdobeEl.FindElement({LocalizedType:"combo box"},, index)
-            if box.Value != item {
-                try item := box.FindElement({LocalizedType:"list item", Name: item})
-                catch {
-                    ;// throw
-                    errorLog(TargetError("Could not find: " item, -1),,, true)
+            try {
+                box := AdobeEl.WaitElement({LocalizedType:"combo box"}, timeout,, index)
+                if box.Value != item {
+                    item := box.WaitElement({LocalizedType:"list item", Name: item}, 5)
+                    item.select()
                 }
-                item.select()
+            } catch {
+                errorLog(TargetError("Could not find: " item, -1))
+                return false
             }
             sleep 25
         }
@@ -4101,11 +4103,12 @@ class Prem {
     /**
      * Sets the `Location` combo box to the desired path in the `Render and Replace` window
      * @param {String} path the desired path you wish to use as the output location. (can also be set to `Next to Original Media`)
+     * @param {Integer} [timout=3] how long to wait for some UIA elements in `sec`. Defaults to `3s`
      * @param {UIA.IUIAutomationElement} [UIAObj] pass in a UIA element for reuse
      * @param {UIA.IUIAutomationElement} [AdobeEl] pass back the UIA element for reuse
      * @returns {Boolean}
      */
-    static setRnderRplcPath(path, UIAObj?, &AdobeEl?) {
+    static setRnderRplcPath(path, timeout := 3, UIAObj?, &AdobeEl?) {
         if path = "timeline renders" {
             projPath := WinGet.ProjPath()
             path := WinGet.pathU(projPath.Dir "\..\timeline renders")
@@ -4122,23 +4125,36 @@ class Prem {
         if comb.name = path
             return true
         comb.Click()
-        if !WinWait("OS_PopupWindow " this.exeTitle,, 3)
+        if !WinWait("OS_PopupWindow " this.exeTitle,, timeout)
             return false
         flyout := UIA.ElementFromHandle("OS_PopupWindow " this.exeTitle,, false)
         if path = "Next to Original Media" {
-            item := flyout.FindElement({LocalizedType:"text", Name:"Choose Location..."})
+            try item := flyout.WaitElement({LocalizedType:"text", Name:"Choose Location..."}, timeout)
+            catch {
+                errorLog(TargetError("Could not find: Choose Location...", -1))
+                return false
+            }
             Send( "{Click " item.Location.x A_Space item.location.y "}")
             return true
         }
-        item := flyout.FindElement({LocalizedType:"text", Name:"Choose Location..."})
+        try item := flyout.FindElement({LocalizedType:"text", Name:"Choose Location..."})
+        catch {
+            errorLog(TargetError("Could not find: Choose Location...", -1))
+            return false
+        }
         Send( "{Click " item.Location.x A_Space item.location.y "}")
         MouseMove(origPos.x, origPos.y, 0)
         if !WinWait("Select Folder " this.exeTitle,, 2)
             return false
         hwnd := WinExist("Select Folder " this.exeTitle)
         explorer.navigateUsingAddressbar(path, hwnd)
-        selectFolderWin := UIA.ElementFromHandle(hwnd,, false)
-        selectFolderWin.FindElement({LocalizedType:"button", Name:"Select Folder", AutomationId:"1"}).Click()
+        try {
+            selectFolderWin := UIA.ElementFromHandle(hwnd,, false)
+            selectFolderWin.WaitElement({LocalizedType:"button", Name:"Select Folder", AutomationId:"1"}, timeout).Click()
+        } catch {
+            errorLog(TargetError("Could not find: Select Folder", -1))
+            return false
+        }
         if !WinWaitActive("Render and Replace " this.exeTitle,, 3) && WinExist("Render and Replace " this.exeTitle) {
             try WinActivate("Render and Replace " this.exeTitle)
             catch {
@@ -4168,6 +4184,7 @@ class Prem {
             handlesCheckbox := AdobeEl.FindElement({LocalizedType:["check box", "checkbox"], Name:"Include Handles:"})
             effCheckbox := AdobeEl.FindElement({LocalizedType:["check box", "checkbox"], Name:"Include Video Effects"})
         } catch {
+            errorLog(TargetError("Could not find: checkboxes", -1))
             return false
         }
         handlesState := handlesCheckbox.ToggleState
@@ -4194,13 +4211,18 @@ class Prem {
                     handlesCheckbox.Toggle()
                 }
         }
-        initialValue := AdobeEl.FindElement({LocalizedType:"edit", Name:"framesNumber"})
-        if initialValue.Value = handles
-            return true
-        initialValue.select()
-        findText := AdobeEl.FindElement({LocalizedType:"edit", Name:"OS_EditText"})
-        frames   := findText.FindElement({LocalizedType:"edit", Name:"framesNumber"})
-        frames.value := handles
+        try {
+            initialValue := AdobeEl.FindElement({LocalizedType:"edit", Name:"framesNumber"})
+            if initialValue.Value = handles
+                return true
+            initialValue.select()
+            findText := AdobeEl.FindElement({LocalizedType:"edit", Name:"OS_EditText"})
+            frames   := findText.FindElement({LocalizedType:"edit", Name:"framesNumber"})
+            frames.value := handles
+        } catch {
+            errorLog(TargetError("Could not find or interact with: frames text", -1))
+            return false
+        }
 
         return true
     }
@@ -4213,11 +4235,12 @@ class Prem {
      * @param {String} [dropSource] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
      * @param {String} [dropFormat] the parameter that will be passed to `prem.setRnderRplcPreset()`. See that function for more detailed information.
      * @param {String} [path] the parameter that will be passed to `prem.setRnderRplcPath()` and is the desired path you wish to use as the output location. (can also be set to `Next to Original Media`)
+     * @param {Integer} [timout=3] how long to wait for some UIA elements in `sec`. Defaults to `3s`
      * @param {Integer | false} [handles=sequence framerate] determine the handles frame count. If `unset` defaults to the sequence framerate (rounded). Set to `false` to disable the checkbox.
      * @param {Boolean} [includeEffects=true] determine the state of the `Include Video Effects` checkbox. Can be `true` or `false`.
      * @returns {Boolean} returns boolean `false` if; premiere isn't the active window, waiting for the `Render and Replace` window timed out, the user has an audio file selected, setting the render path failed. Else returns `true`
      */
-    static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, includeEffects := true) {
+    static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout := 3, handles?, includeEffects := true) {
         if !WinActive(this.winTitle)
             return false
         clipType := this.__remoteFunc('clipType', true)
@@ -4241,11 +4264,11 @@ class Prem {
         }
         if clipType != "Video"
             return false
-        if !this.setRnderRplcPreset(dropPreset, dropSource, dropFormat,, &AdobeEl) {
+        if !this.setRnderRplcPreset(dropPreset, dropSource, dropFormat, timeout,, &AdobeEl) {
             errorLog(MethodError("preset failed", -1))
             return false
         }
-        if !this.setRnderRplcPath(path, AdobeEl) {
+        if !this.setRnderRplcPath(path, timeout, AdobeEl) {
             errorLog(MethodError("path failed", -1))
             return false
         }

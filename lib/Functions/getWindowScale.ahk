@@ -1,6 +1,6 @@
 /**
  * returns the current windows scaling for the monitor the window resides within
- * @param [hwnd] the hwnd of the desired window
+ * @param {Integer} [hwnd] the hwnd of the desired window
  */
 getWindowScale(hwnd) {
     dpi := DllCall("GetDpiForWindow", "ptr", hwnd, "uint")

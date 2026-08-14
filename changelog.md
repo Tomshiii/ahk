@@ -3,6 +3,8 @@
 ## Functions
 - ✏️ Added `getWindowScale()`
 - ✅ Fixed `errorLog()`/`Log()` sometimes failing to log if interrupted
+- ✅ Fixed `Reboot HotkeylessAHK` not working from the tray menu
+- 📋 `renderAndReplace()` now accepts parameter `timeout`
 
 ### 📝 `prem {`
 - ✏️ Added `isPlaying()`
@@ -21,3 +23,4 @@
 - ✅ Fixed `__checkPremPlayback()` checking an incorrect `UIA` value causing the script to throw
 - ✅ Fixed script sometimes failing to reactivate the correct window, or outright not attempting to restart playback
 - 📋 Added more guarding so `After Effects` does not attempt to save when it isn't supposed to
+- 📋 Now uses UIA to restart playback when enabled

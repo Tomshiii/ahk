@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/08/04
- * @version 1.1.13
+ * @date 2026/08/14
+ * @version 1.1.14
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -59,7 +59,7 @@ Class CustomFunctions {
     matchLayers()                                            => (prem.__remoteUXP("custom/matchSelectedClipsToLowestTrack"))
 
     addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer", makeSelection := true) => (OtherFuncs.addAdjustLayer(adjustmentLayerPath, makeSelection))
-    renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?))
+    renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?))
 
     closeExplorer() => (ProcessClose("explorer.exe"))
 }
@@ -67,8 +67,8 @@ Class CustomFunctions {
 ;// === any functions/hotkeys that don't really make much sense anywhere else
 class OtherFuncs {
     /** calls `prem.renderAndReplace()` then calls the `organiseProj` `PremiereRemote` function. Might not make sense for anyone else with a different prem bin structure */
-    static rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?) {
-        if !prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, handles?, inceff?)
+    static rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) {
+        if !prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?)
             return
         sleep 1000
         prem.__remoteFunc('organiseProj')
