@@ -7,9 +7,16 @@
 - 📋 `renderAndReplace()` now accepts parameter `timeout`
 
 ### 📝 `prem {`
-- ✏️ Added `isPlaying()`, `isMultiCamActive()`
+- ✏️ Added `isPlaying()`, `isMultiCamActive()`, `getSourceMonDragButtons()`
 - 📋 `setShinsIMG()` will now correctly scale based on the user's window scaling
 - 📋 `isEditTabActive()` will now return `-1` for any execution failures instead of `false`
+
+
+📍 `dragSourceMon()`
+- ❗ No longer requires any `ImageSearch`
+- ❌ Removed parameter `sendOnFailure`
+- 📋 Changed paramater `audOrVid` => `audVidBoth`
+    - Now accepts `both`
 
 📍 `wheelEditPoint()`
 - 📋 Will now behave differently depending on if the `Multi-Cam` view is active
@@ -19,7 +26,7 @@
 - ✏️ Added `getPlayheadPosTicks()`, and `setPlayheadPosTicks()`
 
 ## Other Changes
-- ❌ Removed `stop.png`
+- ❌ Removed `stop.png`, `sourceMon_audioX.png`, `sourceMon_videoX.png`
 
 🔗 `autosave.ahk`
 - ❗ No longer requires any `ImageSearch`

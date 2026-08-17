@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/17
- * @version 2.5.12
+ * @version 2.5.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2678,14 +2678,65 @@ class Prem {
     }
 
     /**
+     * Uses UIA to determine the location of the 3 draggable buttons on the source monitor (audio only, vido only, both)
+     * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. Will be generated if omitted
+     * @returns {false | Object} returns `false` if; Premiere does not exist, Premiere's name could not be determined, UIA values could not be initialised or are not set, or the required group boxes in the source monitor could could not be found. else returns;
+     * ```
+     * {audOnly: int, vidOnly: int, both: int, yVal: int}
+     * ```
+     */
+    static getSourceMonDragButtons(UIAObj?) {
+        if !WinExist(prem.exeTitle) {
+            ;// throw
+            errorLog(TargetError("Premiere is currently not open."),,, true)
+            return false
+        }
+        name := WinGet.PremName()
+        if !name || !isObjHasProp(name, "winTitle", false) {
+            errorLog(UnsetError("Could not determine Premiere window title", -1))
+            return false
+        }
+
+        premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
+        if !premUIA
+            return false
+        sourceMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["sourceMonitor"])
+        coord.s()
+        offsetValue := 31
+        try {
+            fitBox := sourceMon.FindElement({LocalizedType:"combo box", Name:"Select Zoom Level"})
+            resBox := sourceMon.FindElement({LocalizedType:"combo box", Name:"Select Playback Resolution"})
+        } catch {
+            errorLog(TargetError("Could not derermine the position of source monitor buttons", -1))
+            return false
+        }
+
+        startPos := fitBox.Location.x+fitBox.Location.w
+        middleX := startPos + Round((resBox.Location.x - startPos)/2)
+        middleY := fitBox.Location.y + Round(fitBox.Location.h/2)
+        vidOnly := middleX-offsetValue
+        both := middleX+offsetValue
+
+        sourceMonStart := sourceMon.Location.x
+        sourceMonEnd := sourceMon.Location.x+sourceMon.Location.w
+        if(
+            vidOnly < sourceMonStart || vidOnly > sourceMonEnd ||
+            both < sourceMonStart    || both > sourceMonEnd    ||
+            middleX < sourceMonStart || middleX > sourceMonEnd
+        )
+            return false
+
+        return {audOnly: middleX, vidOnly: vidOnly, both: both, yVal: middleY}
+    }
+
+    /**
      * A function to quickly drag the audio or video track from the source monitor to the timeline. This is often easier than dealing with insert/override quirkiness.
-     * @param {String} [audOrVid="audio"] determine whether you wish to drag the audio or video track. This parameter must be either `"audio"` or `"video"`
-     * @param {String} [sendOnFailure=A_ThisHotkey] define what hotkey you want this function to send in the event that the main premiere window isn't the active window. This function will correctly handle any single key activation hotkey - if your activation is more (ie `Ctrl & F19`) you will need to instead define this parameter as `"^{F19}" etc
+     * @param {String} [audVidBoth="audio"] determine whether you wish to drag the audio or video track. This parameter must be either `audio`, `video`, or `both`
      * @param {String} [specificFile=false] if set the function will only activate if the desired file is open within the source monitor. Defaults to `false`. If not set to `false` a path must be provided to the file; ie. `"_Assets/01_Other/Bars and Tone - Rec 709"` you may encounter issues if you try to use `\` instead of `/`
      * @param {Boolean} [searchForFile=false] if set to `true` the function will attempt to search for the desired file provided in `specificFile`, then attempt to load it into the source monitor. Defaults to `false`
      */
-    static dragSourceMon(audOrVid := "audio", sendOnFailure := A_ThisHotkey, specificFile := false, searchForFile := false) {
-        if audOrVid != "audio" && audOrVid != "video" {
+    static dragSourceMon(audVidBoth := "audio", specificFile := false, searchForFile := false) {
+        if audVidBoth != "audio" && audVidBoth != "video" && audVidBoth != "both" {
             ;// throw
             errorLog(PropertyError("Incorrect value in Parameter #1", -1),,, true)
             return
@@ -2711,8 +2762,6 @@ class Prem {
         if !IsSet(activeWin) || activeWin != getTitle.winTitle {
             if !InStr(A_ThisHotkey, "&")
                 try SendInput("{" Format("sc{:X}", GetKeySC(A_ThisHotkey)) "}")
-            /* else
-                try SendInput(sendOnFailure) */
             blocker.Off()
             return
         }
@@ -2753,29 +2802,16 @@ class Prem {
             }
         }
 
-        if !premUIA := premUIA_Values.initialise() {
+        if !sourceButtonsObj := this.getSourceMonDragButtons() {
+            errorLog(TargetError("Failed to determine source monitor button locations", -1))
             blocker.Off()
             return
         }
-        sourceMonNN := premUIA.UIA_Objs["sourceMonitor"]
-        prefixTitle := "sourceMon_"
-        found := false
-        loop 10 {
-            indexNum := (A_Index = 1) ? "" : A_Index
-            if !FileExist(ptf.Premiere prefixTitle audOrVid indexNum ".png")
-                break
-            heightNum := (A_Index = 1) ? 0.7 : Max(Round(0.7-Number(Format("0.{1}", indexNum-1)), 1), 0.1)
-            if !ImageSearch(&sourceX, &sourceY, sourceMonNN.location.x, sourceMonNN.location.y+(sourceMonNN.location.h*heightNum), sourceMonNN.location.x+sourceMonNN.location.w, sourceMonNN.location.y+sourceMonNN.location.h, "*2 " ptf.Premiere prefixTitle audOrVid indexNum ".png")
-                continue
-            found := true
-            break
+        switch audVidBoth {
+            case "audio": MouseClickDrag("Left", sourceButtonsObj.audOnly, sourceButtonsObj.yVal, origMouse.x, origMouse.y, 1)
+            case "video": MouseClickDrag("Left", sourceButtonsObj.vidOnly, sourceButtonsObj.yVal, origMouse.x, origMouse.y, 1)
+            case "both": MouseClickDrag("Left", sourceButtonsObj.both, sourceButtonsObj.yVal, origMouse.x, origMouse.y, 1)
         }
-        if found = false {
-            errorLog(TargetError("Image: ``" prefixTitle audOrVid ".png`` not found. Source monitor may not contain a file.", -1),, true)
-            blocker.Off()
-            return
-        }
-        MouseClickDrag("Left", sourceX+4, sourceY+3, origMouse.x, origMouse.y, 1)
         blocker.Off()
     }
 
