@@ -9,7 +9,10 @@
 
 if !WinActive(prem.winTitle)
     return
-
+if prem.didWiggle != false {
+    amount := 2000-(A_TickCount-prem.didWiggle)
+    (amount > 0) ? sleep(amount) : ""
+}
 if GetKeyState("LCtrl", "P")
     prem.__remoteUXP("custom/movePlayhead",, "subtract=true", "seconds=1")
 else

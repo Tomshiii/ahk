@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/14
- * @version 2.5.11
+ * @date 2026/08/17
+ * @version 2.5.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -83,9 +83,12 @@ class Prem {
         if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) && !this.__ignoreWinExist() {
             try {
                 activeObj := CLSID_Objs.load("prem")
-                this.theme := activeObj.theme, this.defaultTheme := activeObj.theme
-                this.timelineCol := activeObj.timelineCol, this.timelineColArr := activeObj.timelineColArr
-                this.sequenceArr := activeObj.sequenceArr
+                ignoreProps := Map('__checkedInstall', true, "ignoreWins", true, "KSA", true, "defaultTheme", true, "prevSeqDelay", true, "useSwapSequences", true, "toggleableButtons", true)
+                for propName, propVal in activeObj.OwnProps() {
+                    if this.HasProp(propName) && !ignoreProps.Has(propName) {
+                        try this.%propName% := propVal
+                    }
+                }
                 this.__setTimelineCol(this.UI, this.theme)
             } catch {
                 this.__determineTheme()
@@ -248,6 +251,9 @@ class Prem {
     ;// variables for `delayPlayback()` && `rippleTrim()`
     static defaultDelay := 400
     static delayTime    := 0
+
+    ;// variables for `wheelEditPoint()`
+    static didWiggle := false
 
     ;// screenshots
     static scEddie        := "1"
@@ -540,71 +546,21 @@ class Prem {
 
     /**
      * uses the user's `KSA.shuttlestop` hotkey to stop playback
-     *
-     * ~stops playback within premiere using either `PremiereRemote` or the user's shuttle stop keybind. Must be set within `KSA`~ *(read comments in function for why this functionality has been disabled)*
      * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps). *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
      * */
     static stopPlayback(checkIsPlaying := false) {
-        ckDir := this.__checkPremRemoteDir('isPlaying')
-        if !ckDir || !checkIsPlaying {
-            SendInput(KSA.shuttleStop)
-            return
-        }
-        if !this.__remoteFunc('isPlaying', true)
+        if !this.isPlaying()
             return
         SendInput(KSA.shuttleStop)
-
-        /*
-        ;// unfortunately there's no way to track the state of the multicam monitor
-        ;// which means there's no real way to ensure we "stop" playback when the multicam monitor is active
-        ;// because calling qe.project.getActiveSequence().multicam.stop(); actually just acts as a `play/stop` toggle
-        :(
-
-        ckDir := this.__checkPremRemoteDir(), ckStop := this.__checkPremRemoteFunc('stopPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
-        if !ckDir || !ckStop || !ckIsPlaying {
-			SendInput(KSA.shuttleStop)
-            return
-        }
-        if !checkIsPlaying {
-            this.__remoteFunc('stopPlayback')
-            return
-        }
-        if !this.__remoteFunc('isPlaying', true)
-            return
-        this.__remoteFunc('stopPlayback') */
     }
 
     /**
      * uses the user's `KSA.playStop` hotkey to start playback
-     *
-     *  ~starts playback within premiere using either `PremiereRemote` or the user's Play-Stop Toggle keybind. Must be set within `KSA`~ *(read comments in function for why this functionality has been disabled)*
-     *
-     * ~@param {Integer} [speed=1] Determine playback speed. `1` is normal, `2` is double, `0.5` is half, `-1` is backwards, etc. This parameter will only work if `PremiereRemote` is installed and used to resume playback. Otherwise normal playback will occur. *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*~
-     * */
+     */
     static startPlayback() {
-        delaySI(, KSA.shuttleStop, KSA.playStop)
-
-        ;// unfortunately prem is kinda really dumb and the normal player & the multicam player are two completely separate things
-        ;// which means you can start/stop one, but they aren't the same - so if you try to call the startPlayback commands for both
-        ;// it'll inevitably stop playback for the other. And since there's no real way to programmatically determine if the multicam view
-        ;// is active, we can't determine which to use so we're left using keyboard shortcuts
-        ;// even `qe.startPlayback();` acts as a play/stop toggle...
-
-        /* ckDir := this.__checkPremRemoteDir(), ckStart := this.__checkPremRemoteFunc('startPlayback'), ckIsPlaying := this.__checkPremRemoteFunc('isPlaying')
-        if !ckDir || !ckStart || !ckIsPlaying {
-			delaySI(, KSA.shuttleStop, KSA.playStop)
+        if this.isPlaying() = true
             return
-        }
-        if !IsFloat(speed) && !IsInteger(speed)
-            speed := 1
-        if !checkIsPlaying {
-            this.__remoteFunc('startPlayback',, "speed=" String(speed))
-            return
-        }
-        isPlaying := this.__remoteFunc('isPlaying', true)
-        if speed == 1 && isPlaying
-            return
-        this.__remoteFunc('startPlayback',, "speed=" String(speed)) */
+        SendInput(KSA.playStop)
     }
 
     /**
@@ -880,9 +836,10 @@ class Prem {
 
     /**
      * Uses UIA and `ShinsImageClass` to check the Program monitor to see if playback is currently occurring. The `Play/Stop Toggle` button must be visible for this function to work.
-     * @returns {Boolean | -1} returns -1 if; Premiere does not exist, Premiere's name could not be determined, `ShinsImageClass` could not be set, or the `Play/Stop Toggle` button could not be found. Else returns `true`/`false`
+     * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. Will be generated if omitted
+     * @returns {Boolean | -1} returns -1 if; Premiere does not exist, Premiere's name could not be determined, UIA values could not be initialised or are not set, `ShinsImageClass` could not be set, or the `Play/Stop Toggle` button could not be found. Else returns `true`/`false`
      */
-    static isPlaying() {
+    static isPlaying(UIAObj?) {
         if !WinExist(this.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
@@ -895,7 +852,8 @@ class Prem {
         }
         if !this.setShinsIMG(name.winTitle)
             return -1
-        if !premUIA := premUIA_Values.initialise()
+        premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
+        if !premUIA
             return -1
         coord.s()
         progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
@@ -915,6 +873,34 @@ class Prem {
         centerPix := this._scan.GetPixel(localX, localY, true)
         abovePix  := this._scan.GetPixel(localX, localY - 4, true)
         return (centerPix == abovePix)
+    }
+
+    /**
+     * Uses UIA to determine if the multicam view is active or not.
+     * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. Will be generated if omitted
+     * @returns {-1 | boolean} returns -1 if; Premiere does not exist, Premiere's name could not be determined, UIA values could not be initialised or are not set. Else returns `true`/`false`
+     */
+    static isMultiCamActive(UIAObj?) {
+        if !WinExist(prem.exeTitle) {
+            ;// throw
+            errorLog(TargetError("Premiere is currently not open."),,, true)
+            return -1
+        }
+        name := WinGet.PremName()
+        if !name || !isObjHasProp(name, "winTitle", false) {
+            errorLog(UnsetError("Could not determine Premiere window title", -1))
+            return -1
+        }
+
+        premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
+        if !premUIA
+            return -1
+        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
+        try button := progMon.FindElement({LocalizedType:"combo box", Name:"Select Multicam Page"})
+        catch {
+            return false
+        }
+        return true
     }
 
     static setShinsIMG(title) {
@@ -1410,36 +1396,58 @@ class Prem {
 
         switch window {
             case ksa.timelineWindow:
-                ;// If you ever use the multi camera view you unfortunately cannot simply send the required hotkey, for whatever reason there is a potential for premiere to get stuck within a multicam nest.
-                ;// hopefully one day adobe fixes this bug - https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
-
-                ;// I think simply moving the playhead back and forth avoids the issue
-                delaySI(30, ksa.stepBackOneFrame, ksa.stepforwardOneFrame)
-                /*
-                 but moving the playhead using cep doesn't seem to work the same way... for.. whatever reason.
-                 right := ObjBindMethod(this, '__remoteFunc', 'movePlayheadFrames', false, "subtract=false", "frames=1")
-                left  := ObjBindMethod(this, '__remoteFunc', 'movePlayheadFrames', false, "subtract=true", "frames=1")
-                delayFuncs(16, right, left)
-                */
-                this.__focusTimeline()
-
-            case ksa.effectControls:
-                try {
-                    premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
-                    Sleep(25)
-                    premUIA.AdobeEl.UIA_obj["programMonitor"].SetFocus()
-                    Sleep(25)
-                    premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
-                    Sleep(50)
-                    delaySI(20, "^a", ksa.deselectAll)
+                multCam := this.isMultiCamActive(premUIA)
+                if multCam = true || multCam = -1 {
+                    ;// If you ever use the multi camera view you unfortunately cannot simply send the required hotkey, for whatever reason there is a potential for premiere to get stuck within a multicam nest.
+                    ;// hopefully one day adobe fixes this bug - https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
+                    timelineAct := premUIA_Values.__isUiaElementActive('timelineWindow', premUIA)
+                    if !timelineAct {
+                        this.__focusTimeline()
+                        sleep 150
+                    }
+                    startTick := this.__remoteFunc('getPlayheadPosTicks', true)
+                    SendInput(direction)
+                    sleep 25
+                    newTick := this.__remoteFunc('getPlayheadPosTicks', true)
+                    if startTick == newTick {
+                        delaySI(30, ksa.stepBackOneFrame, ksa.stepforwardOneFrame)
+                        try {
+                            loadPrem := CLSID_Objs.load('prem')
+                            loadPrem.didWiggle := A_TickCount
+                            SetTimer((*) => (loadPrem.didWiggle := false), -2000)
+                        } catch as e {
+                            errorLog("failed to interact with Premiere ComObject", -1)
+                        }
+                    }
+                    this.__focusTimeline()
+                    keys.allWait(keyswait)
+                    blocker.Off()
+                    return
                 }
-                catch {
-                    delaySI(20, window, ksa.programMonitor, window, "^a", ksa.deselectAll) ;// indicates the user is trying to use `Select previous/next Keyframe`
+            case ksa.effectControls:
+                if !this.isClipSelected() {
+                    keys.allWait(keyswait)
+                    blocker.Off()
+                    return
+                }
+                effCtrlAct := premUIA_Values.__isUiaElementActive('effectControls', premUIA)
+                if !effCtrlAct {
+                    try {
+                        premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
+                        Sleep(25)
+                        premUIA.AdobeEl.UIA_obj["programMonitor"].SetFocus()
+                        Sleep(25)
+                        premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
+                        Sleep(50)
+                        delaySI(20, "^a", ksa.deselectAll)
+                    } catch {
+                        delaySI(20, window, ksa.programMonitor, window, "^a", ksa.deselectAll)
+                    }
                 }
             default: SendInput(window) ;focuses the timeline/desired window
         }
         SendInput(direction)
-        keys.allWait(keyswait) ;prevents hotkey spam
+        keys.allWait(keyswait)
         blocker.Off()
     }
 

@@ -7,9 +7,13 @@
 - 📋 `renderAndReplace()` now accepts parameter `timeout`
 
 ### 📝 `prem {`
-- ✏️ Added `isPlaying()`
+- ✏️ Added `isPlaying()`, `isMultiCamActive()`
 - 📋 `setShinsIMG()` will now correctly scale based on the user's window scaling
 - 📋 `isEditTabActive()` will now return `-1` for any execution failures instead of `false`
+
+📍 `wheelEditPoint()`
+- 📋 Will now behave differently depending on if the `Multi-Cam` view is active
+- 📋 Will now only manually move the playhead forward/backwards if the playhead is stuck in `Multi-Cam` view
 
 ## PremiereRemote
 - ✏️ Added `getPlayheadPosTicks()`, and `setPlayheadPosTicks()`

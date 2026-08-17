@@ -575,18 +575,25 @@ export async function setAllEnabledDisabled(enabled: boolean): Promise<void> {
 }
 
 /**
- * setup premiere bin structure
+ * setup premiere bin structure, optionally seeding "_Assets/01_Other" with standard assets
+ * (adjustment layers, mattes, blank audio, etc.) copied out of a template project.
+ *
+ * @param {string} [templateProjectPath] absolute path to a template .prproj to pull standard assets from. Step is skipped if omitted.
+ * @param {boolean} [includeOptionalAssets] also copy Black Video / Color Matte / Bars and Tone / blank audio, not just the adjustment layers
  * @returns {void}
  */
-export async function setupProjBin(): Promise<void> {
+export async function setupProjBin(
+    templateProjectPath: string,
+    includeOptionalAssets: boolean = true
+): Promise<void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
 
     const rootItem = await project.getRootItem();
     if (!rootItem) return;
 
-    const rootBins = ["_Assets", "_linked comps & renders", "_Sequences"];
-    const subBins = [
+    const ROOTBINS = ["_Assets", "_linked comps & renders", "_Sequences"];
+    const SUBBINS = [
         "01_Other",
         "02_Images",
         "03_sfx",
@@ -594,6 +601,21 @@ export async function setupProjBin(): Promise<void> {
         "05_Other Audio",
         "06_Videos",
         "07_Other Assets"
+    ];
+    const TEMPLATE_ADJUSTMENT_LAYERS = [
+        "_colour_adjust layer",
+        "_members",
+        "_members_bonus",
+        "_transform_adjust layer",
+        "Adjustment Layer"
+    ];
+
+    const TEMPLATE_OPTIONAL_ASSETS = [
+        "Black Video",
+        "Color Matte_white",
+        "Bars and Tone - Rec 709",
+        "blank.wav",
+        "blank_long.wav"
     ];
 
     async function getChildNames(folder: any): Promise<string[]> {
@@ -609,7 +631,7 @@ export async function setupProjBin(): Promise<void> {
 
     project.lockedAccess(() => {
         project.executeTransaction((compoundAction) => {
-            for (const binName of rootBins) {
+            for (const binName of ROOTBINS) {
                 if (!rootChildren.includes(binName)) {
                     compoundAction.addAction(rootItem.createBinAction(binName, false));
                 }
@@ -622,27 +644,93 @@ export async function setupProjBin(): Promise<void> {
 
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    const rootChildrenAfter = await rootItem.getItems();
-    let assetsBin = null;
-    for (let i = 0; i < rootChildrenAfter.length; i++) {
-        if (rootChildrenAfter[i].name === "_Assets") {
-            assetsBin = await ppro.FolderItem.cast(rootChildrenAfter[i]);
-            break;
-        }
-    }
+    const assetsBin = await findOrCreateFolderPath(rootItem, "_Assets", false);
     if (!assetsBin) return;
 
     const assetsChildren = await getChildNames(assetsBin);
 
     project.lockedAccess(() => {
         project.executeTransaction((compoundAction) => {
-            for (const binName of subBins) {
+            for (const binName of SUBBINS) {
                 if (!assetsChildren.includes(binName)) {
                     compoundAction.addAction(assetsBin.createBinAction(binName, false));
                 }
             }
         }, "Setup Assets Sub-Bins");
     });
+
+    if (!templateProjectPath) return;
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // "01_Other" is guaranteed to exist by now, so createIfMissing isn't needed here
+    const otherBin = await findOrCreateFolderPath(rootItem, "_Assets/01_Other", false);
+    if (!otherBin) return;
+
+    // Skip names already present, so re-running this is a no-op for items already imported
+    const otherBinChildren = await getChildNames(otherBin);
+
+    // Stage the entire template project in a throwaway bin at root so its full
+    // contents don't dump directly into the project panel
+    const stagingFolder = await findOrCreateFolderPath(rootItem, "__TemplateImportStaging__", true);
+    if (!stagingFolder) return;
+
+    // Equivalent of File > Import > picking a .prproj — brings in the ENTIRE
+    // template project's bin structure, nested under a bin named after the file
+    const importSuccess = await project.importFiles(
+        [templateProjectPath],
+        true,
+        stagingFolder,
+        false
+    );
+
+    if (!importSuccess) {
+        project.lockedAccess(() => {
+            project.executeTransaction((compoundAction) => {
+                compoundAction.addAction(rootItem.createRemoveItemAction(stagingFolder));
+            }, "Remove Template Import Staging Bin");
+        });
+        return;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // The template's own "01_Other" bin will be nested somewhere inside the
+    // imported wrapper bin (named after the template file) — location is dynamic,
+    // so this uses matchFolders rather than a fixed path
+    const templateOtherBin = await searchForItemByName(stagingFolder, "01_Other", true);
+
+    if (templateOtherBin) {
+        const wantedNames = includeOptionalAssets
+            ? [...TEMPLATE_ADJUSTMENT_LAYERS, ...TEMPLATE_OPTIONAL_ASSETS]
+            : TEMPLATE_ADJUSTMENT_LAYERS;
+
+        const sourceItems = await templateOtherBin.getItems();
+        const matches = sourceItems.filter((item: any) =>
+            wantedNames.includes(item.name) && !otherBinChildren.includes(item.name)
+        );
+
+        project.lockedAccess(() => {
+            project.executeTransaction((compoundAction) => {
+                for (const item of matches) {
+                    compoundAction.addAction(otherBin.createMoveItemAction(item, otherBin));
+                }
+                compoundAction.addAction(rootItem.createRemoveItemAction(stagingFolder));
+            }, "Import Template Assets Into 01_Other");
+        });
+    } else {
+        project.lockedAccess(() => {
+            project.executeTransaction((compoundAction) => {
+                compoundAction.addAction(rootItem.createRemoveItemAction(stagingFolder));
+            }, "Remove Template Import Staging Bin");
+        });
+    }
+
+    const audSeq = "Main Sequence-for audio"
+    const audSeqExists = await searchForItemByName(rootItem, audSeq)
+    if (!audSeqExists) {
+        await helpers.importSequencesFromProject(project, templateProjectPath, audSeq);
+    }
 }
 
 /**
@@ -1181,9 +1269,10 @@ export async function changeAllAudioLevels(levelInDb: number): Promise<void> {
  * searches for a projectItem by name
  * @param {any} [bin] the bin you wish to search in
  * @param {string} [name] the name of the projectItem you wish to search for
+ * @param {boolean} [matchFolders] if true, folders (bins) themselves are eligible matches, not just leaf items
  * @returns {any}
  */
-async function searchForItemByName(bin: any, name: string): Promise<any> {
+async function searchForItemByName(bin: any, name: string, matchFolders: boolean = false): Promise<any> {
     const children = await bin.getItems();
     for (let i = 0; i < children.length; i++) {
         const child = children[i];
@@ -1194,8 +1283,11 @@ async function searchForItemByName(bin: any, name: string): Promise<any> {
         }
 
         if (child.type === 2) {
+            if (matchFolders && child.name === name) {
+                return await ppro.FolderItem.cast(child);
+            }
             const folder = await ppro.FolderItem.cast(child);
-            const found = await searchForItemByName(folder, name);
+            const found = await searchForItemByName(folder, name, matchFolders);
             if (found) return found;
         }
     }

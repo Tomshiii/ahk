@@ -2,6 +2,7 @@
 const ppro = require("premierepro") as premierepro;
 import type {
     premierepro,
+    Project,
     TickTime,
 } from "@adobe/premierepro";
 
@@ -326,4 +327,22 @@ export async function gatherSelectedEntries(
         }
     }
     return entries;
+}
+
+/**
+ * import specific sequences from unopened prproj files
+ * @param {Project} [activeProject] the opened project you wish to copy into
+ * @param {string} [sourceProjectPath] path to project file you wish to import from
+ * @param {string} [sequenceNames] name of sequence you wish to import
+ * @returns {boolean}
+ */
+export async function importSequencesFromProject(activeProject: Project, sourceProjectPath: string, sequenceNames: string): Promise<boolean> {
+    const sourceProject = await ppro.Project.open(sourceProjectPath);
+    const sequences = await sourceProject.getSequences();
+    const targetSequences = sequences.filter(seq => sequenceNames.includes(seq.name));
+    const guids = targetSequences.map(seq => seq.guid);
+    await sourceProject.close();
+    const success = await activeProject.importSequences(sourceProjectPath, guids);
+
+    return success;
 }

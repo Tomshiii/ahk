@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/08/14
- * @version 1.1.14
+ * @date 2026/08/17
+ * @version 1.1.15
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -58,8 +58,9 @@ Class CustomFunctions {
     effectSlot(save := true, slot := 1, saveToFile := false) => (prem.effectSlot(save, slot, saveToFile))
     matchLayers()                                            => (prem.__remoteUXP("custom/matchSelectedClipsToLowestTrack"))
 
-    addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer", makeSelection := true) => (OtherFuncs.addAdjustLayer(adjustmentLayerPath, makeSelection))
+    addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer", makeSelection := true)     => (OtherFuncs.addAdjustLayer(adjustmentLayerPath, makeSelection))
     renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?))
+    setupProject()                                           => OtherFuncs.setupProject()
 
     closeExplorer() => (ProcessClose("explorer.exe"))
 }
@@ -84,5 +85,12 @@ class OtherFuncs {
             case "_transform_adjust layer": prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Geometry2")
             case "_colour_adjust layer":    prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Lumetri%20Color")
         }
+    }
+
+    /** sets up a project using my template project file and desired bin structure */
+    static setupProject() {
+        backupsPath := ptf.Backups
+        templateFile := backupsPath "\Adobe Backups\Premiere\Template\v" SubStr(prem.currentSetVer, 1, 2) "_2160p29.97.prproj"
+        prem.__remoteUXP('custom/setupProjBin',, "templateProjectPath=" templateFile, "includeOptionalAssets=true")
     }
 }
