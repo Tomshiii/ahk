@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/18
- * @version 2.5.14
+ * @version 2.5.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1782,14 +1782,14 @@ class Prem {
             return
         }
         checkSelected := this.__remoteFunc('isSelected', true)
+        if !premUIA := premUIA_Values.initialise() {
+            ih.Stop(), star_ih.Stop()
+            errorLog(TargetError('Creating UIA element failed'))
+            return
+        }
 
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
 		if (descernTitle || currTimelineStatus != 1) && title != "Audio Gain" {
-            if !premUIA := premUIA_Values.initialise() {
-                ih.Stop(), star_ih.Stop()
-                errorLog(TargetError('Creating UIA element failed'))
-                return
-            }
             textStatus := premUIA.isToolSelected("textTool", premUIA)
 
             switch {
@@ -2704,18 +2704,18 @@ class Prem {
         coord.s()
         offsetValue := 31
         try {
-            fitBox := sourceMon.FindElement({LocalizedType:"combo box", Name:"Select Zoom Level"})
-            resBox := sourceMon.FindElement({LocalizedType:"combo box", Name:"Select Playback Resolution"})
+            UI_TEXT_1 := sourceMon.FindElement({LocalizedType:"edit", Name:"UI_HotText"},, 1)
+            settingsButt := sourceMon.FindElement({LocalizedType:"button", Name:"Settings..."})
         } catch {
             errorLog(TargetError("Could not derermine the position of source monitor buttons", -1))
             return false
         }
 
-        startPos := fitBox.Location.x+fitBox.Location.w
-        middleX := startPos + Round((resBox.Location.x - startPos)/2)
-        middleY := fitBox.Location.y + Round(fitBox.Location.h/2)
-        vidOnly := middleX-offsetValue
-        both := middleX+offsetValue
+        startPos := UI_TEXT_1.Location.x+UI_TEXT_1.Location.w
+        middleX  := startPos + Round((settingsButt.Location.x - startPos)/2)
+        middleY  := UI_TEXT_1.Location.y + Round(UI_TEXT_1.Location.h/2)
+        vidOnly  := middleX-offsetValue
+        both     := middleX+offsetValue
 
         sourceMonStart := sourceMon.Location.x
         sourceMonEnd := sourceMon.Location.x+sourceMon.Location.w

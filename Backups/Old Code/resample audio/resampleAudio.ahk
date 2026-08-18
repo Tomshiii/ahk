@@ -9,6 +9,9 @@
 if !dir := FileSelect("D2",, "Select Folder to Resample (this process will recurse to all subdirs)")
     ExitApp()
 sampleRate := "48000"
+command := 'ffmpeg -i "{1}" -ar {2} "{3}" && move "{3}" "{1}"'
+if replace := MsgBox("Replace originals?",, 0x4) ="Yes"
+    command .= ' || del -f "{3}"'
 totalFIles := explorer.nItemsInDir(dir)
 ffmp := ffmpeg()
 ffmp.doAlert := false
@@ -23,7 +26,7 @@ loop files dir "\*.*", "F" {
     }
     if !Hz.hzArr.Has(1) || Hz.hzArr[1] = sampleRate
         continue
-    command := Format('ffmpeg -i "{1}" -ar 48000 "{3}" && move "{3}" "{1}" || del -f "{3}"', A_LoopFilePath, sampleRate, outDir "\" nameNoExt "_temp." ext)
+    command := Format(command, A_LoopFilePath, sampleRate, outDir "\" nameNoExt "_temp." ext)
     cmd.run(,,, command,, "Hide")
 }
 Notify.Destroy(check["hwnd"], true)

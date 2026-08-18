@@ -13,7 +13,10 @@ ffmp.doAlert := false
 ;// resample footage to 48KHz without video reencode
 if !rootDir := FileSelect("D2",, "Select Folder to Resample (this process will recurse to all subdirs)")
     ExitApp()
-cmnd := 'ffmpeg -y -i "{1}" -c:v copy -c:a pcm_s16le -ar {3} -b:a 192k "{2}" && move /Y "{2}" "{1}"'
+cmnd := 'ffmpeg -y -i "{1}" -c:v copy -c:a pcm_s16le -ar {3} -b:a 192k "{2}"'
+
+if replace := MsgBox("Replace originals?",, 0x4) ="Yes"
+    cmnd .= ' && move /Y "{2}" "{1}"'
 
 totalFIles := explorer.nItemsInDir(rootDir, true)
 ignore := DirExist(rootDir "\orig") ? explorer.nItemsInDir(rootDir "\orig", true) : {files: 0}
@@ -48,7 +51,7 @@ loop files rootDir "\*", "FR" {
     if origext != "wav" {
         completed.Set(outdir "\" noext "." origext, true)
         completed.Set(outdir "\" noext ".wav", true)
-        if FileExist(outdir "\" noext "." origext) && FileExist(outdir "\" noext ".wav")
+        if replace = "Yes" && FileExist(outdir "\" noext "." origext) && FileExist(outdir "\" noext ".wav")
             FileDelete(outdir "\" noext "." origext)
     }
 }
