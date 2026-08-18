@@ -26,7 +26,7 @@
 - ✏️ Added `getPlayheadPosTicks()`, and `setPlayheadPosTicks()`
 
 ## Other Changes
-- ❌ Removed `stop.png`, `sourceMon_audioX.png`, `sourceMon_videoX.png`
+- ❌ Removed `stop.png`, `sourceMon_audioX.png`, `sourceMon_videoX.png`, `jpgX.png`, `pngX.png`
 
 🔗 `autosave.ahk`
 - ❗ No longer requires any `ImageSearch`

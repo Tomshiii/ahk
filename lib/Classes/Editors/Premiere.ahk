@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/17
- * @version 2.5.13
+ * @date 2026/08/18
+ * @version 2.5.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2807,10 +2807,23 @@ class Prem {
             blocker.Off()
             return
         }
+
+        __findHand(origMouse, middleObj, offset) {
+            MouseMove(middleObj.x, middleObj.y, 0)
+            while A_Cursor != "Unknown" {
+                if A_Index > 5
+                    break
+                MouseMove(offset, 0, 1, "R")
+            }
+            newPos := obj.MousePos()
+            MouseClickDrag("Left", newPos.x, newPos.y, origMouse.x, origMouse.y, 1)
+        }
         switch audVidBoth {
             case "audio": MouseClickDrag("Left", sourceButtonsObj.audOnly, sourceButtonsObj.yVal, origMouse.x, origMouse.y, 1)
-            case "video": MouseClickDrag("Left", sourceButtonsObj.vidOnly, sourceButtonsObj.yVal, origMouse.x, origMouse.y, 1)
-            case "both": MouseClickDrag("Left", sourceButtonsObj.both, sourceButtonsObj.yVal, origMouse.x, origMouse.y, 1)
+
+            ;// when the two side buttons are near the edge of the panel the cursor may not change to the little hand directly in the middle of the button and movement may need to be shifted
+            case "video": __findHand(origMouse, {x: sourceButtonsObj.vidOnly, y: sourceButtonsObj.yVal}, 2)
+            case "both":  __findHand(origMouse, {x: sourceButtonsObj.both,    y: sourceButtonsObj.yVal}, -2)
         }
         blocker.Off()
     }

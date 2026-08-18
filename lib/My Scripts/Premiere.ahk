@@ -361,9 +361,10 @@ $s:: ;// stop "add edit" adding an edit to all tracks when nothing is selected (
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 
-F20::prem.dragSourceMon("video", "{F20}")
-F19::prem.dragSourceMon(, "{F19}", "_Assets/01_Other/Bars and Tone - Rec 709", true)
-F14 & F19::prem.dragSourceMon(, "")
+F20::prem.dragSourceMon("video")
+F14 & F20::prem.dragSourceMon("both")
+F19::prem.dragSourceMon("audio", "_Assets/01_Other/Bars and Tone - Rec 709", true)
+F14 & F19::prem.dragSourceMon("audio")
 
 ;// playback speed change hotkeys
 F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
