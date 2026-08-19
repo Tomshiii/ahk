@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/20
- * @version 2.5.17
+ * @version 2.5.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2761,7 +2761,6 @@ class Prem {
         try activeWin := WinGet.Title()
         if !IsSet(activeWin) || activeWin != getTitle.winTitle {
             if !InStr(A_ThisHotkey, "&")
-                try SendInput("{" Format("sc{:X}", GetKeySC(A_ThisHotkey)) "}")
             blocker.Off()
             return
         }

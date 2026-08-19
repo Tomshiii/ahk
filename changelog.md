@@ -16,6 +16,7 @@
 📍 `dragSourceMon()`
 - ❗ No longer requires any `ImageSearch`
 - ❌ Removed parameter `sendOnFailure`
+    - 📋 Will no longer send keystrokes on failure
 - 📋 Changed paramater `audOrVid` => `audVidBoth`
     - Now accepts `both`
 - 📋 Will now only operate if the cursor is within the `Timeline` panel
