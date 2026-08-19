@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/19
- * @version 2.5.16
+ * @date 2026/08/20
+ * @version 2.5.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2730,7 +2730,7 @@ class Prem {
     }
 
     /**
-     * A function to quickly drag the audio or video track from the source monitor to the timeline. This is often easier than dealing with insert/override quirkiness.
+     * A function to quickly drag the audio or video track from the source monitor to the timeline. This is often easier than dealing with insert/override quirkiness. This function will only complete operation if the cursor is within the `Timeline` panel.
      * @param {String} [audVidBoth="audio"] determine whether you wish to drag the audio or video track. This parameter must be either `audio`, `video`, or `both`
      * @param {String} [specificFile=false] if set the function will only activate if the desired file is open within the source monitor. Defaults to `false`. If not set to `false` a path must be provided to the file; ie. `"_Assets/01_Other/Bars and Tone - Rec 709"` you may encounter issues if you try to use `\` instead of `/`
      * @param {Boolean} [searchForFile=false] if set to `true` the function will attempt to search for the desired file provided in `specificFile`, then attempt to load it into the source monitor. Defaults to `false`
@@ -2775,6 +2775,12 @@ class Prem {
         }
         coord.s()
         if !origMouse := obj.MousePos() {
+            blocker.Off()
+            return
+        }
+        if !this.__checkTimelineValues()
+            this.__setTimelineValues()
+        if !this.__checkCoords(origMouse) {
             blocker.Off()
             return
         }

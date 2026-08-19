@@ -18,6 +18,7 @@
 - ❌ Removed parameter `sendOnFailure`
 - 📋 Changed paramater `audOrVid` => `audVidBoth`
     - Now accepts `both`
+- 📋 Will now only operate if the cursor is within the `Timeline` panel
 
 📍 `wheelEditPoint()`
 - 📋 Will now behave differently depending on if the `Multi-Cam` view is active
