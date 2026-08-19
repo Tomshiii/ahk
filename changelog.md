@@ -1,12 +1,13 @@
 # <> Release 2.18.x - 
 
 ## Functions
-- ✏️ Added `getWindowScale()`
 - ✅ Fixed `errorLog()`/`Log()` sometimes failing to log if interrupted
 - ✅ Fixed `Reboot HotkeylessAHK` not working from the tray menu
+- ✏️ Added `getWindowScale()`
 - 📋 `renderAndReplace()` now accepts parameter `timeout`
 
 ### 📝 `prem {`
+- ✅ Fixed various instances of calling `__isUiaElementActive()`/`isToolSelected()` incorrectly
 - ✏️ Added `isPlaying()`, `isMultiCamActive()`, `getSourceMonDragButtons()`
 - 📋 `setShinsIMG()` will now correctly scale based on the user's window scaling
 - 📋 `isEditTabActive()` will now return `-1` for any execution failures instead of `false`
@@ -24,6 +25,9 @@
 
 ## PremiereRemote
 - ✏️ Added `getPlayheadPosTicks()`, and `setPlayheadPosTicks()`
+
+## KSA
+- ✏️ Added `chooseCam11` => `chooseCam16`
 
 ## Other Changes
 - ❌ Removed `stop.png`, `sourceMon_audioX.png`, `sourceMon_videoX.png`, `jpgX.png`, `pngX.png`

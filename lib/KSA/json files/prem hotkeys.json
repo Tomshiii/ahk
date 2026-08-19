@@ -339,6 +339,36 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Edit > ) Paste"
     },
+    "chooseCam11": {
+        "command": "cmd.multicam.choosenocut.camera11",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > View > ) Select Camera X"
+    },
+    "chooseCam12": {
+        "command": "cmd.multicam.choosenocut.camera12",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > View > ) Select Camera X"
+    },
+    "chooseCam13": {
+        "command": "cmd.multicam.choosenocut.camera13",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > View > ) Select Camera X"
+    },
+    "chooseCam14": {
+        "command": "cmd.multicam.choosenocut.camera14",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > View > ) Select Camera X"
+    },
+    "chooseCam15": {
+        "command": "cmd.multicam.choosenocut.camera15",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > View > ) Select Camera X"
+    },
+    "chooseCam16": {
+        "command": "cmd.multicam.choosenocut.camera16",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > View > ) Select Camera X"
+    },
 
 
     "labelViolet": {

@@ -87,7 +87,7 @@ $Tab::
 	try {
 		if !premUIA := premUIA_Values.initialise()
 			return
-		if premUIA.__isUiaElementActive("effectControls", premUIA) = true {
+		if premUIA_Values.__isUiaElementActive("effectControls", premUIA) = true {
 			sendMod := (GetKeyState("Shift", "P")) ? "+" : ""
 			SendInput(sendMod "{Tab}")
 			return
@@ -167,8 +167,8 @@ Enter:: ;// close windows by double tapping enter
 				return
 			}
 			currTimelineStatus := prem.timelineFocusStatus()
-			activePath := premUIA.__activeElementPath(, premUIA)
-            textStatus := premUIA.isToolSelected("textTool", premUIA)
+			activePath := premUIA_Values.__activeElementPath(, premUIA)
+            textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
 			switch {
 				case (InStr(activePath, premUIA.UIA_Path["programMonitor"]) != 1):
 					SendInput("{" A_ThisHotkey "}")
@@ -258,7 +258,7 @@ SC03A & LButton:: ;// lock vertical movement while adjusting keyframe handles
 	if !premUIA := premUIA_Values.initialise()
 		return
 
-	if !premUIA.__isUiaElementActive("effectControls", premUIA) {
+	if !premUIA_Values.__isUiaElementActive("effectControls", premUIA) {
 		__resetCaps(storeHotkey, capslockState)
 		return
 	}
@@ -276,6 +276,27 @@ SC03A & LButton:: ;// lock vertical movement while adjusting keyframe handles
 	move.setMouseClip()
 	__resetCaps(storeHotkey, capslockState)
 	checkStuck(["CapsLock", "LButton"])
+}
+
+SC03A & 1::
+SC03A & 2::
+SC03A & 3::
+SC03A & 4::
+SC03A & 5::
+SC03A & 6::
+{
+	capslockState := GetKeyState("CapsLock", "T")
+	hotArr := getHotkeysArr()
+	numKey := GetKeyName(hotArr[-1])
+	if !IsInteger(numKey) {
+		if !capslockState
+			SetCapsLockState('AlwaysOff')
+		return
+	}
+	num := numKey+10
+	SendInput(ksa.chooseCam%num%)
+	if !capslockState
+		SetCapsLockState('AlwaysOff')
 }
 
 ^!1::prem.disableAllMuteSolo("mute")

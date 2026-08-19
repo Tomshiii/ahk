@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/18
- * @version 2.5.15
+ * @date 2026/08/19
+ * @version 2.5.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1071,7 +1071,7 @@ class Prem {
                 return false
             }
         }
-        if !uiaVals.__isUiaElementActive("timelineWindow", uiaVals) {
+        if !premUIA_Values.__isUiaElementActive("timelineWindow", uiaVals) {
             tool.Cust("Premiere should automatically refocus the timeline")
             sleep 1000
             return "active"
@@ -1790,18 +1790,18 @@ class Prem {
 
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
 		if (descernTitle || currTimelineStatus != 1) && title != "Audio Gain" {
-            textStatus := premUIA.isToolSelected("textTool", premUIA)
+            textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
 
             switch {
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
-                    if !premUIA.__isUiaElementActive('effectControls', premUIA) {
+                    if !premUIA_Values.__isUiaElementActive('effectControls', premUIA) {
                         ih.Stop(), star_ih.Stop()
                         SendInput(sendOnFail star_ih.Input)
                         tool.Cust("If you are attempting to adjust audio;`nThe timeline is not currently in focus", 2000)
                         return
                     }
                     needsTimelineFocus := true
-                case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && premUIA.__isUiaElementActive('programMonitor', premUIA):
+                case (!descernTitle && currTimelineStatus != 1) && (textStatus = true) && premUIA_Values.__isUiaElementActive('programMonitor', premUIA):
                     ih.Stop(), star_ih.Stop()
                     SendInput(sendOnFail star_ih.Input)
                     return
@@ -2075,7 +2075,7 @@ class Prem {
     static selectTool(tool := "selectionTool") {
         if !premUIA := premUIA_Values.initialise()
             return false
-        if premUIA.isToolSelected(tool, premUIA) = false {
+        if premUIA_Values.isToolSelected(tool, premUIA) = false {
             try premUIA.UIA_Objs[tool].Click()
             catch {
                 return false
@@ -2114,8 +2114,8 @@ class Prem {
         if !premUIA := premUIA_Values.initialise()
             return
         toolsNN := premUIA.UIA_Objs["toolsWindow"]
-        projActive := premUIA.__isUiaElementActive("projectsWindow", premUIA)
-        textStatus := premUIA.isToolSelected("textTool", premUIA)
+        projActive := premUIA_Values.__isUiaElementActive("projectsWindow", premUIA)
+        textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
         if !toolsNN || (projActive = true) || textStatus {
             __sendOrig()
             return
@@ -3757,7 +3757,7 @@ class Prem {
 			return
         if !premUIA := premUIA_Values.initialise()
             return
-        if premUIA.__isUiaElementActive("projectsWindow", premUIA) {
+        if premUIA_Values.__isUiaElementActive("projectsWindow", premUIA) {
             SendInput(labelHotkey)
             return
         }
@@ -3911,30 +3911,6 @@ class Prem {
         this.__remoteFunc('closeActiveSequence',, "allExcept=" allExcept)
     }
 
-    /** determines if the `Multi-Camera View` button is selected. The button must be visible
-     * @returns {-1|Boolean} if `premUIA_Values` have not been set, will return `-1`, else `true/false`
-     */
-    static __determineMultiCam() {
-        if !premUIA := premUIA_Values.initialise()
-            return -1
-        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
-        try multCam := progMon.FindElement({LocalizedType:"button", Name:"Toggle Multi-Camera View", matchmode:"Substring"})
-        catch {
-            timersActive := (WinEvent.IsRegistered("Active", "Clip Fx Editor " this.exeTitle) || WinEvent.IsRegistered("Close", "Clip Fx Editor " this.exeTitle))
-            timerStr := (timersActive) ? "`n`nTimers will be stopped." : ""
-            errorLog(MethodError("Could not determine Multi-Camera View button. Might not be visible in Program Monitor", -1))
-            notifyExt.showIfNotExist("progMon_MultiCamButton",, "Could not determine Multi-Camera View button. May not be visible in Program Monitor." timerStr, 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
-            if timerStr {
-                try {
-                    WinEvent.Stop("Active", "Clip Fx Editor " this.exeTitle)
-                    WinEvent.Stop("Close", "Clip Fx Editor " this.exeTitle)
-                }
-            }
-            return
-        }
-        return ((multCam.State = 0) ? false : true)
-    }
-
     /**
      * Handles disabling multicam view if an audio effect window becomes active, then reenabling it if it was previously active once the window is closed.
      * This function is helpful as adjusting audio effects while the multicam view is active causes the program monitor to flicker like crazy
@@ -3955,7 +3931,7 @@ class Prem {
             this.audioWaitClose := false
             return
         }
-        multicamEnabled := this.__determineMultiCam()
+        multicamEnabled := this.isMultiCamActive()
         if multicamEnabled = -1
             return
         switch which {
@@ -4356,7 +4332,7 @@ class Prem {
         if !WinActive(prem.winTitle)
             return
         premUIA := premUIA_Values.initialise()
-        if !premUIA.__isUiaElementActive("projectsWindow", premUIA) {
+        if !premUIA_Values.__isUiaElementActive("projectsWindow", premUIA) {
             SendInput(ksa.projectsWindow)
             sleep 50
         }
