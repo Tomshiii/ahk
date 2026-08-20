@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/08/14
- * @version 1.9.10
+ * @date 2026/08/20
+ * @version 1.9.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1088,7 +1088,7 @@ class Startup {
             SplitPath(v, &repo)
             getBranch := SubStr(getStatus, first := InStr(getStatus, "'",, 1, 1)+1, InStr(getStatus, "'",, first+1, 1)-first)
             checkStaged := cmd.result('cmd.exe /c git diff --cached --quiet && echo false || echo true',,, v)
-            if checkBool(checkStaged) = true {
+            if checkBool(Trim(checkStaged)) = true {
                 Notify.Show(v, 'The following git repo has staged changes. Pulling from the repo will be aborted to avoid issues.', ptf.lib "\Other\Notify\Icons.dll|Icon28",,, 'dur=7 bdr=Red maxW=400')
                 continue
             }

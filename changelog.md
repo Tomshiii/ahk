@@ -3,6 +3,7 @@
 ## Functions
 - ✅ Fixed `errorLog()`/`Log()` sometimes failing to log if interrupted
 - ✅ Fixed `Reboot HotkeylessAHK` not working from the tray menu
+- ✅ Fixed `startup.gitBranchCheck()` throwing
 - ✏️ Added `getWindowScale()`
 - 📋 `renderAndReplace()` now accepts parameter `timeout`
 
