@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/20
- * @version 2.5.18
+ * @version 2.5.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -689,14 +689,14 @@ class Prem {
                 MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
                 return false
             }
-            splt := StrSplit(v, '=')
+            splt := StrSplit(v, '=',, 2)
             funcParams := this.__getPremRemoteFuncParams(whichFunc, cepOrUXP)
-            if funcParams != "" {
+            if funcParams != "" && funcParams != -1 {
                 for v in splt {
                     if Mod(A_Index, 2) = 0
                         continue
                     if !funcParams.map.has(v) {
-                        MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc)
+                        MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc "`ncepOrUXP: " cepOrUXP)
                         return false
                     }
                     if cepOrUXP = "uxp" && funcParams.map.get(v) = "boolean" && (splt[A_Index+1] = "1" || splt[A_Index+1] = "0") {
