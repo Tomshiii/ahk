@@ -5,14 +5,14 @@
 - ✅ Fixed `Reboot HotkeylessAHK` not working from the tray menu
 - ✅ Fixed `startup.gitBranchCheck()` throwing
 - ✏️ Added `getWindowScale()`
-- 📋 `renderAndReplace()` now accepts parameter `timeout`
 
 ### 📝 `prem {`
 - ✅ Fixed various instances of calling `__isUiaElementActive()`/`isToolSelected()` incorrectly
 - ✅ Fixed `__checkRemoteParams()` throwing if a param included a <kbd>=</kbd> in its value
 - ✅ Fixed `__disableMulticamOnAudioEffect()` logic behaving unexpectedly if the window is hidden by deselecting the clip instead of fully closing it
 - ✅ Fixed `__getlayerMid()` potentially returning the incorrect `midDivYBottom` value
-- ✏️ Added `isPlaying()`, `isMultiCamActive()`, `getSourceMonDragButtons()`
+- ✏️ Added `isPlaying()`, `isMultiCamActive()`, `getSourceMonDragButtons()`, `determineLockedTracks()`
+- 📋 `renderAndReplace()` now accepts parameter `timeout`
 - 📋 `setShinsIMG()` will now correctly scale based on the user's window scaling
 - 📋 `isEditTabActive()` will now return `-1` for any execution failures instead of `false`
 - 📋 `delayPlayback()`/`rippleTrim()` now share their values over the `UIA` object for better reliability
@@ -35,7 +35,7 @@
 
 ### 📝 `rbuttonPrem {`
 - ❗ No longer uses `Hotkey` 
-- 📋 Once again uses [`MouseHook.ahk`](<https://discord.com/channels/115993023636176902/1207794506095923350/1207794506095923350>) (without the issues this time <sup>[[1]](<https://github.com/Tomshiii/ahk/releases/tag/v2.14.1.1>)</sup>)
+- 📋 Once again uses [`MouseHook.ahk`](<https://discord.com/channels/115993023636176902/1207794506095923350/1207794506095923350>) (without the issues this time<sup>[[1]](<https://github.com/Tomshiii/ahk/releases/tag/v2.14.1.1>)</sup>)
     - This stops any user set hotkeys from getting deleted after `rbuttonPrem.movePlayhead()` has been called (and `playbackKeys` has been set)
 
 ## PremiereRemote

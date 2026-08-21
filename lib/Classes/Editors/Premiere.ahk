@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/21
- * @version 2.5.24
+ * @version 2.5.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2909,8 +2909,8 @@ class Prem {
      * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. Will be generated if omitted
      * @returns {false | Object} returns `false` on failure or;
      * ```
-     * {indicies, children, audIndex}
-     * ;// {indicies: UIA reference to top/bottom timeline scrollbars, children: UIA children tree object for the timeline, audIndex: the index of the first audio layer (generally the first `Toggle Track Lock`)}
+     * {indicies, children, audIndex, bottomIndex}
+     * ;// {indicies: UIA reference to top/bottom timeline scrollbars, children: UIA children tree object for the timeline, audIndex: the index of the first audio layer (generally the first `Toggle Track Lock`), bottomIndex: the index of the second scrollbar}
      * ```
      */
     static __retrieveAudLayerIndex(UIAObj?) {
@@ -2923,6 +2923,7 @@ class Prem {
 
         icvIndices := []
         audIndex := 0
+        bottomIndex := 0
         for i, child in children {
             if child.Name == "UI_InteractiveControlView" {
                 ;// Check if any direct child is a text element - if so, skip it
@@ -2937,6 +2938,8 @@ class Prem {
                     icvIndices.Push(i)
                     if icvIndices.Length = 1
                         audIndex := i + 1
+                    else
+                        bottomIndex := i
                 }
             }
             if icvIndices.Length == 2
@@ -2944,7 +2947,7 @@ class Prem {
         }
         if icvIndices.Length < 2
             return false
-        return {indicies: icvIndices, children: children, audIndex: audIndex}
+        return {indicies: icvIndices, children: children, audIndex: audIndex, bottomIndex: bottomIndex}
     }
 
     /**
@@ -2956,7 +2959,6 @@ class Prem {
         try {
             if !premUIA := premUIA_Values.initialise()
                 return false
-            ;// the timeline pane itself loses its hwnd if you swap sequences, so we have to use the container instead
             timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"])
             timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
             if !middleIndex := this.__retrieveAudLayerIndex(premUIA)
@@ -2970,6 +2972,62 @@ class Prem {
             return false
         }
         return true
+    }
+
+    /**
+     * Uses UIA to determine any video/audio tracks that are locked. Will encounter issues if some layers are not currently visible as they no longer exist within the UIA tree.
+     * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. Will be generated if omitted
+     * @returns {false | Object} returns `false` if `premUIA` object isn't set or if it fails to retrieve the audio layer index, else returns;
+     * ```
+     * {video: {total: int, locked: array, notVisible: boolean}, audio: {total: int, locked: array, notVisible: boolean}}
+     * ;// total: total tracks checked
+     * ;// locked: an array of track indexes that were locked
+     * ;// notVisible: whether the function determined that some tracks were not visible and could not be checked - if this is `true` you may encounter issues with further logic ie. if a user is scrolled up and track 1 != V1/A1 etc
+     * ```
+     */
+    static determineLockedTracks(UIAObj?) {
+        premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
+        if !premUIA
+            return false
+        if !layerIndex := this.__retrieveAudLayerIndex(premUIA)
+            return false
+        vidTrackNum := this.__remoteFunc('getVideoTracks', true)
+        audTrackNum := this.__remoteFunc('getAudioTracks', true)
+
+        vidTracksArr := []
+        vidLayersChecked := 0
+        vidLayersNotVisible := false
+        audTracksArr := []
+        audLayersChecked := 0
+        audLayersNotVisible := false
+
+        for i, child in layerIndex.children {
+            if child.name = "Toggle Track Lock" {
+                if i < layerIndex.audIndex {
+                    vidLayersChecked += 1
+                    if child.value = "Selected"
+                        vidTracksArr.Push(vidLayersChecked)
+                }
+                else {
+                    audLayersChecked += 1
+                    if audLayersChecked = audTrackNum
+                        break
+                    if child.value = "Selected"
+                        audTracksArr.Push(audLayersChecked)
+                }
+            }
+            if i >= layerIndex.audIndex && vidLayersChecked != vidTrackNum
+                vidLayersNotVisible := true
+            if i = layerIndex.bottomIndex {
+                if audLayersChecked != audTrackNum
+                    audLayersNotVisible := true
+                break
+            }
+            if child.name != "Toggle Track Lock"
+                continue
+        }
+
+        return {video: {total: vidTracksArr.Length, locked: vidTracksArr, notVisible: vidLayersNotVisible}, audio: {total: audTracksArr.Length, locked: audTracksArr, notVisible: audLayersNotVisible}}
     }
 
     /**
