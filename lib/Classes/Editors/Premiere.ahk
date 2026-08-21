@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/20
- * @version 2.5.19
+ * @date 2026/08/21
+ * @version 2.5.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -112,8 +112,8 @@ class Prem {
             }
 
             ;// toggle multicam when audio effect windows become active
-            if !WinEvent.IsRegistered("Active", "Clip Fx Editor " this.exeTitle)
-                WinEvent.Active((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " this.exeTitle)), "Clip Fx Editor " this.exeTitle)
+            if !WinEvent.IsRegistered("Show", "Clip Fx Editor " this.exeTitle)
+                WinEvent.Show((*) => (this.__disableMulticamOnAudioEffect("disable", "Clip Fx Editor " this.exeTitle)), "Clip Fx Editor " this.exeTitle)
             if !WinEvent.IsRegistered("Close", "Clip Fx Editor " this.exeTitle)
                 WinEvent.Close((*) => (this.__disableMulticamOnAudioEffect("enable", "Clip Fx Editor " this.exeTitle)), "Clip Fx Editor " this.exeTitle)
         }
@@ -1683,37 +1683,64 @@ class Prem {
 
     /**
      * This function is to increase/decrease gain within premiere pro. This function will check to ensure the timeline is in focus and a clip is selected
-     * @param {Integer} amount is the value you want the gain to adjust (eg. -2, 6, etc)
+     * @param {Number} amount is the value you want the gain to adjust (eg. -2, 6, etc)
+     * @param {String} [opt=adjust] which radio control you wish to use to adjust the audio. Valid options are; `set`, `adjust`, `maxPeak`, `allPeak`
      */
-    static gain(amount)
+    static gain(amount, opt := "adjust")
     {
         if !IsNumber(amount) {
             ;// throw
             errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
         }
+        allowedOpt := ["set", "adjust", "maxPeak", "allPeak"]
+        if !allowedOpt.IndexOf(opt) {
+            ;// throw
+            errorLog(TypeError("Invalid parameter value in Parameter #2", -1, opt),,, 1)
+        }
         keys.allWait()
         Critical
+        gainTitle := "Audio Gain"
         if !check := winget.Title()
             return
         blocker := block_ext()
         blocker.On(false)
         coord.s()
 
-        if check = "Audio Gain" {
-            ;// if the gain window is already open, then all we want to do is ensure the caret is visible, then highlight the gain textbox and input our value
-            if !CaretGetPos(&xcar, &ycar) {
-                loop {
-                    SendInput("{Tab}")
-                    sleep 25
-                    if !CaretGetPos(&xcar, &ycar) {
-                        continue
-                    }
-                    sleep 25
-                    break
-                }
+        /**
+         * uses UIA to set the desired value to the desired option
+         */
+        __setGainValUIA(amount, opt, gainTitle) {
+            gainTitle := "Audio Gain"
+            radios := Mip("set", "Set Gain to:", "adjust", "Adjust Gain by:", "maxPeak", "Normalize Max Peak to:", "allPeak", "Normalize All Peaks to:")
+            edits := Mip("set", "setGainHotNumber", "adjust", "adjustGainHotNumber", "maxPeak", "normalizeMaxHotNumber", "allPeak", "normalizeAllHotNumber")
+            if !WinWait(gainTitle,, 5) {
+                errorLog(TargetError("Failed to wait for the gain window", -1))
+                return false
             }
-            SendInput("{Tab 3}{Up 3}{Down}{Tab}" amount "{Enter}")
-            WinWaitClose("Audio Gain",, 1.5)
+            try gainWin := UIA.ElementFromHandle(gainTitle A_Space this.winTitle)
+            catch {
+                errorLog(TargetError("Failed to create UIA handle for gain window", -1))
+                return false
+            }
+            try {
+                findRadio := gainWin.WaitElement({LocalizedType:"radio button", Name: radios[opt]}, 1500)
+                if !findRadio.IsSelected
+                    findRadio.Invoke()
+                findEdit := gainWin.FindElement({LocalizedType:"edit", Name: edits[opt]})
+                findEdit.select()
+                findText := gainWin.FindElement({LocalizedType:"edit", Name:"OS_EditText"})
+                findVal := findText.FindElement({LocalizedType:"edit", Name: edits[opt]})
+                findVal.value := amount
+                gainWin.FindElement({LocalizedType:"button", Name:"OK"}).Invoke()
+            } catch {
+                errorLog(MethodError("Failed to set gain using UIA", -1))
+                return false
+            }
+            return true
+        }
+
+        if check = gainTitle {
+            __setGainValUIA(amount, opt, gainTitle)
             blocker.Off()
             return -1
         }
@@ -1733,10 +1760,7 @@ class Prem {
             return false
         }
 
-        ;// the below sendinput use to begin with a simple +{Tab} but it appears that since either v24.0/v24.1 doing so will
-        ;// instead focus the cancel button
-        SendInput("{Tab 3}{Up 3}{Down}{Tab}" amount "{Enter}")
-        WinWaitClose("Audio Gain",, 1.5)
+        __setGainValUIA(amount, opt, gainTitle)
         blocker.Off()
         return true
     }
@@ -1766,6 +1790,7 @@ class Prem {
 		title := WinGet.Title()
         descernTitle := (title = "") ? true : false
         currTimelineStatus := this.timelineFocusStatus()
+        gainTitle := "Audio Gain"
 
         ;// because getting the UIA element of the active window is slow, we need to start an initial inputhook here for the sole purpose
         ;// of check whether * is pressed, otherwise it may end up missed while waiting
@@ -1789,7 +1814,7 @@ class Prem {
         }
 
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
-		if (descernTitle || currTimelineStatus != 1) && title != "Audio Gain" {
+		if (descernTitle || currTimelineStatus != 1) && title != gainTitle {
             textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
 
             switch {
@@ -1811,7 +1836,7 @@ class Prem {
                     SendInput(sendOnFail star_ih.Input)
                     return
             }
-		} else if !checkSelected && title != "Audio Gain" {
+		} else if !checkSelected && title != gainTitle {
             ih.Stop(), star_ih.Stop()
             errorLog(TargetError("No clip selected. Cancelling"),, {time: 2000})
             return
@@ -1851,7 +1876,7 @@ class Prem {
         if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels")
             this.gain(which sendGain)
         else {
-            if title = "Audio Gain" {
+            if title = gainTitle {
                 errorLog(MethodError("Levels cannot be adjusted while the gain window is open", -1))
                 notifyExt.showIfNotExist("premLevelsGain", 'Levels cannot be adjusted while the gain window is open.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
                 block.Off()

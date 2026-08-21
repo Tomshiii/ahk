@@ -10,9 +10,14 @@
 ### 📝 `prem {`
 - ✅ Fixed various instances of calling `__isUiaElementActive()`/`isToolSelected()` incorrectly
 - ✅ Fixed `__checkRemoteParams()` throwing if a param included a <kbd>=</kbd> in its value
+- ✅ Fixed `__disableMulticamOnAudioEffect()` logic behaving unexpectedly if the window is hidden by deselecting the clip instead of fully closing it
 - ✏️ Added `isPlaying()`, `isMultiCamActive()`, `getSourceMonDragButtons()`
 - 📋 `setShinsIMG()` will now correctly scale based on the user's window scaling
 - 📋 `isEditTabActive()` will now return `-1` for any execution failures instead of `false`
+
+📍 `gain()`
+- 📋 Now accepts parameter `opt` to set all 4 types of gain
+- 📋 Now uses UIA to set values instead of keystrokes
 
 📍 `dragSourceMon()`
 - ❗ No longer requires any `ImageSearch`
