@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.3
  * @author tomshi, taranVH
- * @date 2026/08/03
- * @version 2.4.23
+ * @date 2026/08/18
+ * @version 2.4.24
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -23,6 +23,7 @@
 #Include Classes\notifyExt.ahk
 #Include Other\WinEvent.ahk
 #Include Other\Notify\Notify.ahk
+#Include Other\MouseHook.ahk
 #Include Functions\checkStuck.ahk
 #Include Functions\isObjHasProp.ahk
 ; }
@@ -97,6 +98,7 @@ class rbuttonPrem {
 	premObj := {}
 	doPlayback := true
 	playbackKeys := {}
+	ih := false
 
 	/**
 	 * Checks to see whether the colour under the cursor indicates that it's a blank track
@@ -211,36 +213,19 @@ class rbuttonPrem {
 		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := ""
 		try this.premObj.RClickIsActive := false
 		try this.premObj := {}
+		try this.ih := false
 	}
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {
+		try this.ih.Stop()
 		block.Off()
-		PremHotkeys.__HotkeyReset([this.playbackKeys.play, this.playbackKeys.speed])
 		this.__resetClicks()
 		checkstuck()
 		try SetTimer(this.__ensureSeq, 0)
 		; try WinEvent.Stop("Exist")
 		try WinEvent.Stop("NotActive")
 		Exit()
-	}
-
-	/**
-	 * Defines what happens when certain buttons are pressed while RButton is held down
-	 * @param {Array} arr all keys you wish to assign a function
-	 */
-	__HotkeySet(arr) {
-		PremHotkeys.__HotkeySet(arr, __set)
-		/**
-		 * A function to define what each hotkey passed will do
-		 * @param {String} which the keyname
-		 */
-		__set(which, *) {
-			switch which {
-				case this.playbackKeys.play:  this.leftClick := true
-				case this.playbackKeys.speed: this.leftClick := true, this.xbuttonClick := true
-			}
-		}
 	}
 
 	/**
@@ -365,7 +350,32 @@ class rbuttonPrem {
 			return
 
 		;// set what `LButton` & `XButton2` do
-		this.__HotkeySet([this.playbackKeys.play, this.playbackKeys.speed])
+		if this.ih != false
+			this.ih := false
+		this.ih := MouseHook("All", __keyHook)
+		this.ih.Start()
+		__keyHook(event, w, l) {
+			if Type(event.Action) != "string" || event.Action = ""
+				return
+
+			;// ignore synthetic events (eg. this script's own SendInput LButton Down/Up
+			;// used to grab/release the playhead) — only react to real physical input
+			if (event.flags & 1)
+        		return
+
+			key := StrSplit(event.Action, " ")[1]
+			if key != this.playbackKeys.play && key != this.playbackKeys.speed
+				return
+
+			if InStr(event.Action, " Up") {
+				switch key {
+					case this.playbackKeys.play:  this.leftClick := true
+					case this.playbackKeys.speed: this.leftClick := true, this.xbuttonClick := true
+				}
+			}
+
+			return true
+		}
 
 		;// checks to see whether the timeline position has been located
 		if !prem.__checkTimelineValues() {

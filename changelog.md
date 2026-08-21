@@ -14,7 +14,6 @@
 - 📋 `setShinsIMG()` will now correctly scale based on the user's window scaling
 - 📋 `isEditTabActive()` will now return `-1` for any execution failures instead of `false`
 
-
 📍 `dragSourceMon()`
 - ❗ No longer requires any `ImageSearch`
 - ❌ Removed parameter `sendOnFailure`
@@ -26,6 +25,11 @@
 📍 `wheelEditPoint()`
 - 📋 Will now behave differently depending on if the `Multi-Cam` view is active
 - 📋 Will now only manually move the playhead forward/backwards if the playhead is stuck in `Multi-Cam` view
+
+### 📝 `rbuttonPrem {`
+- ❗ No longer uses `Hotkey` 
+- 📋 Once again uses [`MouseHook.ahk`](<https://discord.com/channels/115993023636176902/1207794506095923350/1207794506095923350>) (without the issues this time <sup>[[1]](<https://github.com/Tomshiii/ahk/releases/tag/v2.14.1.1>)</sup>)
+    - This stops any `LButton::` hotkeys from getting deleted after `rbuttonPrem.movePlayhead()` has been called
 
 ## PremiereRemote
 - ✏️ Added `getPlayheadPosTicks()`, and `setPlayheadPosTicks()`

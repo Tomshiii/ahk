@@ -4,7 +4,8 @@
  * @date 2024/03/26
  * @link https://discord.com/channels/115993023636176902/1207794506095923350/1207794506095923350
  ***********************************************************************/
-
+;// I added;
+; this.flags := NumGet(lParam, 12, "UInt")
 class MouseHook
 {
     /** @prop {Map} MsgList A list of actions and message codes. */
@@ -104,6 +105,7 @@ class MouseHook
 
             this.x := NumGet(lParam, 0, "Int")
             this.y := NumGet(lParam, 4, "Int")
+            this.flags := NumGet(lParam, 12, "UInt")
 
             return (nCode >= 0) && this.OnEvent(wParam, lParam) ? true : CallNextHookEx(nCode, wParam, lParam)
         }
