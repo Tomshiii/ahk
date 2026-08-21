@@ -14,6 +14,7 @@
 - ✏️ Added `isPlaying()`, `isMultiCamActive()`, `getSourceMonDragButtons()`
 - 📋 `setShinsIMG()` will now correctly scale based on the user's window scaling
 - 📋 `isEditTabActive()` will now return `-1` for any execution failures instead of `false`
+- 📋 `delayPlayback()`/`rippleTrim()` now share their values over the `UIA` object for better reliability
 
 📍 `gain()`
 - 📋 Now accepts parameter `opt` to set all 4 types of gain

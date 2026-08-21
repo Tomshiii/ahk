@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/21
- * @version 2.5.21
+ * @version 2.5.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2402,8 +2402,6 @@ class Prem {
      * @param {Boolean} [closeTrim=true] determine whether to check for, and close `Trim Mode` before playback. Defaults to `true`
      */
     static delayPlayback(delayMS?, closeTrim := true) {
-        this.defaultDelay := IsSet(delayMS) ? delayMS : this.defaultDelay
-        delayMS := IsSet(delayMS) ? delayMS : this.defaultDelay
         if !premUIA := premUIA_Values.initialise()
             return
         if !this.__checkTimelineValues() {
@@ -2412,7 +2410,14 @@ class Prem {
         }
         if !this.timelineFocusStatus()
             return
-        __sendSpace(premUIA?, closeTrim := true) {
+        try premObj := CLSID_Objs.load("prem")
+        catch {
+            errorLog(MemoryError("Failed to load prem UIA object", -1))
+            return
+        }
+        premObj.defaultDelay := IsSet(delayMS) ? delayMS : premObj.defaultDelay
+        delayMS := IsSet(delayMS) ? delayMS : premObj.defaultDelay
+        __sendSpace(premUIA?, closeTrim := true, *) {
             if !IsSet(premUIA) || (IsSet(premUIA) && Type(premUIA) != "ComObject") {
                 try {
                     if !premUIA := premUIA_Values.initialise()
@@ -2422,17 +2427,17 @@ class Prem {
                 }
             }
             ;// I hate the stupid trim mode, I wish I could delete it from existence
-            if closeTrim = true && prem.isTrimModeActive() && premUIA_Values.__isUiaElementActive("timelineWindow", premUIA) = true {
+            if closeTrim = true && this.isTrimModeActive() && premUIA_Values.__isUiaElementActive("timelineWindow", premUIA) = true {
                 SendInput("{Escape}")
             }
             SendEvent(ksa.playStop)
         }
         if (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
-            ((A_PriorKey = ksa.premRipplePrev || A_PriorKey = ksa.premRippleNext) && (this.delayTime >= delayMS) || this.delayTime = 0) {
+            ((A_PriorKey = ksa.premRipplePrev || A_PriorKey = ksa.premRippleNext) && (premObj.delayTime >= delayMS) || premObj.delayTime = 0) {
                 __sendSpace(premUIA, closeTrim)
                 return
             }
-        SetTimer(__sendSpace.Bind(premUIA, closeTrim), -(delayMS-this.delayTime))
+        SetTimer(__sendSpace.Bind(premUIA, closeTrim), -(delayMS-premObj.delayTime))
     }
 
     /**
@@ -2442,6 +2447,14 @@ class Prem {
      */
     static rippleTrim(pauseFirst := true, delay := 50) {
         Critical()
+        if !premUIA := premUIA_Values.initialise()
+            return
+        try premObj := CLSID_Objs.load("prem")
+        catch {
+            errorLog(MemoryError("Failed to load prem UIA object", -1))
+            return
+        }
+
         if !this.timelineVals {
             this.__setTimelineValues()
             return
@@ -2451,21 +2464,21 @@ class Prem {
             SendInput(A_ThisHotkey)
             return
         }
-        this.delayTime += 1
+        premObj.delayTime += 1
         if pauseFirst = true {
             this.stopPlayback()
             sleep(delay)
         }
         SendEvent(A_ThisHotkey)
-        SetTimer(__track.Bind(A_TickCount), 16)
-        __track(initialTime) {
+        SetTimer(__track.Bind(premObj, A_TickCount), 16)
+        __track(premObj, initialTime, *) {
             ListLines(0)
             currentTime := A_TickCount - initialTime
             if currentTime >= this.defaultDelay {
-                this.delayTime := 0
+                premObj.delayTime := 0
                 return
             }
-            this.delayTime := currentTime
+            premObj.delayTime := currentTime
         }
     }
 
