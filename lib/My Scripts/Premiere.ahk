@@ -451,6 +451,15 @@ $^v::
 {
 	if !prem.isClipSelected()
 		return
+	if !lockedTracks := prem.determineLockedTracks()
+		return
+	vidIgnore := ""
+	audIgnore := ""
+	for i, v in lockedTracks.video.locked
+    	vidIgnore .= (i != lockedTracks.video.locked.length) ? v "," : v
+	for i, v in lockedTracks.audio.locked
+    	audIgnore .= (i != lockedTracks.audio.locked.length) ? v "," : v
+
 	nestName := ""
 	closed := false
 	n := prem.__remoteUXP('properties/getNextNestedSequenceName', true)
@@ -481,13 +490,13 @@ $^v::
 	nestedGUI.Add("Text", "w230 BackgroundTrans", "Select Nested Sequence Name:")
 	nestedGUI.InpUser := AddInput(12, 30, 200, n)
 	nestedGUI.InpUser.value := n
-	nestedGUI.but := AddButton(200+20, 32, 50, "Ok", (*) => (nestName := nestedGUI.InpUser.value, nestedGUI.Destroy()))
+	nestedGUI.but := AddButton(200+20, 32, 50, "Ok", (*) => (nestName := nestedGUI.InpUser.value, inp.Stop()))
 	inp := InputHook("L0 V", "{Enter}{NumpadEnter}")
 	inp.OnEnd := OnInputEnd
 	inp.Start()
 
-	nestedGUI.OnEvent("Escape", (*) => (closed := true, nestedGUI.Destroy()))
-    nestedGUI.OnEvent("Close", (*) => (closed := true, nestedGUI.Destroy()))
+	nestedGUI.OnEvent("Escape", (*) => (closed := true, inp.Stop()))
+    nestedGUI.OnEvent("Close", (*) => (closed := true, inp.Stop()))
 	nestedGUI.Show("w290 h90 Center")
 
 	OnInputEnd(*) {
@@ -522,9 +531,13 @@ $^v::
 	}
 	WinWaitClose(gTitle)
 	try inp.Stop()
+	switchTo.Premiere()
 	if closed = true
 		return
-	prem.__remoteUXP('custom/nestSelectionReplaceNestedAudio',, "ignoreTrackTargeting=false", "makeSelection=true", "subsequenceName=" nestName)
+
+	ignoreVid := vidIgnore != "" ? "ignoreVideoTracks=" vidIgnore : ""
+	ignoreAud := audIgnore != "" ? "ignoreAudioTracks=" vidIgnore : ""
+	prem.__remoteUXP('custom/nestSelectionReplaceNestedAudio',, "ignoreTrackTargeting=false", "makeSelection=true", "subsequenceName=" nestName, ignoreVid, ignoreAud)
 }
 
 ;// while cursor is within timeline;

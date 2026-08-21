@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/21
- * @version 2.5.25
+ * @version 2.5.25.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2976,6 +2976,8 @@ class Prem {
 
     /**
      * Uses UIA to determine any video/audio tracks that are locked. Will encounter issues if some layers are not currently visible as they no longer exist within the UIA tree.
+     * > #### [!Caution]
+     * > This function returns a `0` indexed array of locked layers. This is to line up with how tracks are generally indexed within the Premiere api
      * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. Will be generated if omitted
      * @returns {false | Object} returns `false` if `premUIA` object isn't set or if it fails to retrieve the audio layer index, else returns;
      * ```
@@ -3006,14 +3008,14 @@ class Prem {
                 if i < layerIndex.audIndex {
                     vidLayersChecked += 1
                     if child.value = "Selected"
-                        vidTracksArr.Push(vidLayersChecked)
+                        vidTracksArr.Push(vidLayersChecked-1)
                 }
                 else {
                     audLayersChecked += 1
                     if audLayersChecked = audTrackNum
                         break
                     if child.value = "Selected"
-                        audTracksArr.Push(audLayersChecked)
+                        audTracksArr.Push(audLayersChecked-1)
                 }
             }
             if i >= layerIndex.audIndex && vidLayersChecked != vidTrackNum

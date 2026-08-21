@@ -2465,7 +2465,9 @@ export async function applyAudioTransitionAtEditPoint(project: Project, leftClip
 export async function nestSelectionReplaceNestedAudio(
     ignoreTrackTargeting: boolean = false,
     makeSelection: boolean = true,
-    subsequenceName: string
+    subsequenceName: string,
+    ignoreVideoTracks: string = "",
+    ignoreAudioTracks: string = ""
 ): Promise<void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) {
@@ -2480,6 +2482,8 @@ export async function nestSelectionReplaceNestedAudio(
     }
 
     const editor = await ppro.SequenceEditor.getEditor(sequence);
+    const ignoreVideoTrackIndexes = helpers.parseTrackList(ignoreVideoTracks);
+    const ignoreAudioTrackIndexes = helpers.parseTrackList(ignoreAudioTracks);
 
     // --- Step 1: capture the FULL selection (video + audio) before nesting.
     const videoTrackCount = await sequence.getVideoTrackCount();
@@ -2564,7 +2568,8 @@ export async function nestSelectionReplaceNestedAudio(
             project, editor, sequence, nestedProjItem, clipProjItem,
             sliceIn, sliceOut, videoStart,
             highestVideoTrackIndex, true,
-            originalInPoint, originalOutPoint, hadOriginalInOut
+            originalInPoint, originalOutPoint, hadOriginalInOut,
+            ignoreVideoTrackIndexes, ignoreAudioTrackIndexes
         );
     }
 
@@ -2578,13 +2583,16 @@ export async function nestSelectionReplaceNestedAudio(
             (i) => sequence.getAudioTrack(i),
             refreshedAudioTrackCount,
             audioStart,
-            audioEnd
+            audioEnd,
+            0,
+            ignoreAudioTrackIndexes
         );
         await helpers.placeMediaSlice(
             project, editor, sequence, nestedProjItem, clipProjItem,
             sliceIn, sliceOut, audioStart,
             audioTarget.trackIndex, false,
-            originalInPoint, originalOutPoint, hadOriginalInOut
+            originalInPoint, originalOutPoint, hadOriginalInOut,
+            ignoreVideoTrackIndexes, ignoreAudioTrackIndexes
         );
     }
 
@@ -2606,7 +2614,9 @@ export async function nestSelectionReplaceNestedAudio(
                 (i) => sequence.getAudioTrack(i),
                 refreshedAudioTrackCount,
                 audioStart,
-                audioEnd
+                audioEnd,
+                0,
+                ignoreAudioTrackIndexes
             );
             const track = await sequence.getAudioTrack(audioTarget.trackIndex);
             const item = await helpers.findItemAtStart(track, audioStart);

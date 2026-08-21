@@ -150,9 +150,12 @@ export async function findFirstFreeTrack(
     trackCount: number,
     rangeStart: TickTime,
     rangeEnd: TickTime,
-    searchFrom: number = 0
+    searchFrom: number = 0,
+    ignoreTracks: Set<number> = new Set()
 ): Promise<FreeTrackResult> {
     for (let t = searchFrom; t < trackCount; t++) {
+        if (ignoreTracks.has(t)) continue;
+
         const track = await getTrack(t);
         const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
 
@@ -174,6 +177,23 @@ export async function findFirstFreeTrack(
 }
 
 /**
+ * parse comma separate string
+ */
+export function parseTrackList(input: string): Set<number> {
+    const result = new Set<number>();
+    if (!input) return result;
+    for (const part of input.split(",")) {
+        const trimmed = part.trim();
+        if (trimmed === "") continue;
+        const n = parseInt(trimmed, 10);
+        if (!isNaN(n)) {
+            result.add(n - 1);
+        }
+    }
+    return result;
+}
+
+/**
  * Places a [sliceIn, sliceOut) slice of clipProjItem at `startTime` on
  * `realTrackIndex` (of type `realMediaType`), and discards whatever lands
  * on the other media type's track (found via a fresh free-space scan
@@ -192,16 +212,16 @@ export async function placeMediaSlice(
     realIsVideo: boolean,
     originalInPoint: TickTime,
     originalOutPoint: TickTime,
-    hadOriginalInOut: boolean
+    hadOriginalInOut: boolean,
+    ignoreVideoTracks: Set<number> = new Set(),
+    ignoreAudioTracks: Set<number> = new Set()
 ): Promise<void> {
     const sliceDuration = sliceOut.subtract(sliceIn);
     const endTime = startTime.add(sliceDuration);
-
-    // Find a disposable track for the OTHER media type, across this pass's
-    // own time range.
     const otherTrackCount = realIsVideo ? await sequence.getAudioTrackCount() : await sequence.getVideoTrackCount();
     const otherGetTrack = realIsVideo ? (i: number) => sequence.getAudioTrack(i) : (i: number) => sequence.getVideoTrack(i);
-    const scratch = await findFirstFreeTrack(otherGetTrack, otherTrackCount, startTime, endTime);
+    const otherIgnoreSet = realIsVideo ? ignoreAudioTracks : ignoreVideoTracks;
+    const scratch = await findFirstFreeTrack(otherGetTrack, otherTrackCount, startTime, endTime, 0, otherIgnoreSet);
 
     const videoTrackIndex = realIsVideo ? realTrackIndex : scratch.trackIndex;
     const audioTrackIndex = realIsVideo ? scratch.trackIndex : realTrackIndex;
