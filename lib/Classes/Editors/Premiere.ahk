@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/21
- * @version 2.5.22
+ * @version 2.5.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2435,11 +2435,27 @@ class Prem {
         if (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
             ((A_PriorKey = ksa.premRipplePrev || A_PriorKey = ksa.premRippleNext) && (premObj.delayTime >= delayMS) || premObj.delayTime = 0) {
                 __sendSpace(premUIA, closeTrim)
+                premObj := ""
                 return
             }
         SetTimer(__sendSpace.Bind(premUIA, closeTrim), -(delayMS-premObj.delayTime))
     }
 
+    static __rippleTrack(premObj, initialTime, *) {
+        ListLines(0)
+        try {
+            currentTime := A_TickCount - initialTime
+            if currentTime >= premObj.defaultDelay {
+                premObj.delayTime := 0
+                SetTimer(, 0)
+                return
+            }
+            premObj.delayTime := currentTime
+        } catch {
+            premObj := ""
+            SetTimer(, 0)
+        }
+    }
     /**
      * Tracks how long it has been since the user used a ripple trim. This function is to provide proper functionality to `prem.delayPlayback()`
      * @param {Boolean} [pauseFirst=true] determnines whether to stop playback before attempting to ripple trim (requires `ksa.shuttleStop` to be set correctly)
@@ -2470,16 +2486,7 @@ class Prem {
             sleep(delay)
         }
         SendEvent(A_ThisHotkey)
-        SetTimer(__track.Bind(premObj, A_TickCount), 16)
-        __track(premObj, initialTime, *) {
-            ListLines(0)
-            currentTime := A_TickCount - initialTime
-            if currentTime >= this.defaultDelay {
-                premObj.delayTime := 0
-                return
-            }
-            premObj.delayTime := currentTime
-        }
+        SetTimer(this.__rippleTrack.Bind(this, premObj, A_TickCount), 16)
     }
 
     /**
@@ -4552,6 +4559,7 @@ class Prem {
             WinEvent.Stop("Close",  this.exeTitle " Clip Fx Editor")
             WinEvent.Stop("Close",  this.exeTitle)
         }
+        try SetTimer(this.__rippleTrack, 0)
 	}
 
     ;//! *** ===============================================

@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.3
  * @author tomshi, taranVH
- * @date 2026/08/18
- * @version 2.4.24
+ * @date 2026/08/21
+ * @version 2.4.25
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -46,11 +46,7 @@ startupTray()
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /*
 NOTE!!
-YOU MUST ASSIGN ALL VARIABLES THAT START WITH `KSA.` with their proper values within `KSA.ini`
-THESE THEN ALSO NEED TO BE SET CORRECTLY WITHIN PREMIERE TO WORK CORRECTLY
-TRY RUNNING `adobeKSA.ahk` FOUND: `..\Support Files\Release Assets\`
-
-You must also set the correct version of premiere within `settingsGUI()` to ensure the function attempts to account for the correct UI
+You must set the correct version of premiere within `settingsGUI()` to ensure the function attempts to account for the correct UI
 ;
 RUNNING THIS SCRIPT SEPARATELY WHILE OTHER HOTKEYS ARE SET USING THE SAME KEYS AS THIS SCRIPT MAY RESULT IN UNEXPECTED BEHAVIOUR
 TRY RUNNING THIS SCRIPT ALONGSIDE THOSE OTHER HOTKEYS (similarly to how I run this script from within `My Scripts.ahk`) TO ATTEMPT
@@ -60,19 +56,10 @@ I've tried using sendevent instead of sendinput in this script multiple times bu
 There's probably some dumb hacky way to work around that but ultimately it's just not worth it. I see little to no benefit from using sendevent.
 -Tomshi
 */
-;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-;NOTE: This does not, and cannot work on the timeline where there are no tracks visible.
-;Explanation: https://twitter.com/boxrNathan/status/927371468371103745
 
 ;---------------------------------------------------------------------------------------
 
-;// there may be code that EXPECTS the activation hotkey to be RButton
 RButton::rbuttonPrem().movePlayhead(, prem.currentSetVer,, {play: "LButton", speed: "XButton2"})
-
-;// there is code that EXPECTS the activation hotkey to be XButton1
-;// including uses of `checkStuck()`
-;// beware if modifying this activation hotkey that code adjustments might be necessary
 XButton1::rbuttonPrem().movePlayhead(false, prem.currentSetVer)
 
 OnExit(__OnExit)
@@ -98,7 +85,12 @@ class rbuttonPrem {
 	premObj := {}
 	doPlayback := true
 	playbackKeys := {}
-	ih := false
+	ihM := false
+	ihK := false
+	preHeldPlay := false
+	preHeldSpeed := false
+	playHeld  := false
+	speedHeld := false
 
 	/**
 	 * Checks to see whether the colour under the cursor indicates that it's a blank track
@@ -150,9 +142,10 @@ class rbuttonPrem {
 	 * Checks to see whether the playhead can be found on the screen. If it is, `KSA.shuttleStop` is sent.
 	 * If the playhead is close to the cursor, the cursor will be moved to it and `LButton` is held down
 	 * @param {Object} coordObj an object containing the cursor coords
+	 * @param {String} currHotkey the current activation hotkey determined by `movePlayhead()`
 	 * @param {Boolean} [search=true] passing in `allChecks` to determine if the function should search near the cursor for the playhead. Disabling this feature if `allChecks` is set to `false` stops the script from potentially clicking on a clip below the cursor
 	 */
-	__checkForPlayhead(coordObj, search := true) {
+	__checkForPlayhead(coordObj, currHotkey, search := true) {
 		;// checking to see if the playhead is on the screen
 		if !prem.searchPlayhead({x1: prem.timelineXValue, y1: coordObj.y, x2: prem.timelineXControl, y2: coordObj.y}) {
 			SendInput(KSA.playheadtoCursor)
@@ -177,9 +170,9 @@ class rbuttonPrem {
 			block.Off()
 			this.colourOrNorm := "colour"
 
-			SetTimer(checktap, -50)
-			checktap() {
-				if !this.__checkForTap(A_ThisHotkey) {
+			SetTimer(checktap.Bind(currHotkey), -50)
+			checktap(hk) {
+				if !this.__checkForTap(hk) {
 					SendInput("{LButton Up}")
 					SendInput(KSA.playheadtoCursor)
 					this.__exit()
@@ -210,15 +203,20 @@ class rbuttonPrem {
 
 	/** Reset class variables */
 	__resetClicks() {
-		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := ""
+		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.preHeldPlay := false, this.preHeldSpeed := false, this.playHeld := false, this.speedHeld := false
 		try this.premObj.RClickIsActive := false
 		try this.premObj := {}
-		try this.ih := false
+	}
+
+	/** stop inputhooks and return class default values */
+	__stopHook() {
+		try this.ihM.Stop()
+		try this.ihM := false
 	}
 
 	/** A functon to define what should happen anytime the class is closed */
 	__exit() {
-		try this.ih.Stop()
+		this.__stopHook()
 		block.Off()
 		this.__resetClicks()
 		checkstuck()
@@ -265,16 +263,75 @@ class rbuttonPrem {
 			SetTimer(, -timeWait)
 	}
 
+	__setHooks(allChecks) {
+		mouseList := Mip("LButton", true, "RButton", true, "MButton", true, "WheelUp", true, "WheelDown", true, "XButton1", true, "XButton2", true)
+		;// set what `LButton` & `XButton2` do
+		if this.ihM != false
+			this.ihM := false
+
+		;// if the playback keys are ALREADY physically down the instant we start hooking,
+		;// Premiere has already received a real "Down" message for them. We must let their
+		;// matching "Up" through (instead of swallowing it) or Premiere's UI thinks the
+		;// button is still held
+		this.preHeldPlay  := GetKeyState(this.playbackKeys.play, "P")
+		this.preHeldSpeed := GetKeyState(this.playbackKeys.speed, "P")
+		this.playHeld  := this.preHeldPlay
+		this.speedHeld := this.preHeldSpeed
+
+		this.ihM := MouseHook("All", __keyHook)
+		this.ihM.Start()
+		__keyHook(event, w, l) {
+			Critical()
+			if Type(event.Action) != "string" || event.Action = ""
+				return
+
+			;// ignore synthetic events (eg. this script's own SendInput LButton Down/Up
+			;// used to grab/release the playhead) — only react to real physical input
+			if (event.flags & 1)
+				return
+
+			key := StrSplit(event.Action, " ")[1]
+			if key != this.playbackKeys.play && key != this.playbackKeys.speed
+				return
+			isUp := InStr(event.Action, " Up")
+			;// keep our own record of hold state - GetKeyState(...,"P") for these keys
+			;// goes stale while we're blocking their events from reaching AHK's own hook
+			if key = this.playbackKeys.play
+				this.playHeld := !isUp
+			if key = this.playbackKeys.speed
+				this.speedHeld := !isUp
+
+
+			if isUp {
+				switch key {
+					case this.playbackKeys.play:  this.leftClick := true
+					case this.playbackKeys.speed: this.leftClick := true, this.xbuttonClick := true
+				}
+				;// this key was already down before we started blocking - let this one
+				;// Up event pass through unblocked to balance the Down Premiere already got
+				if key = this.playbackKeys.play && this.preHeldPlay {
+					this.preHeldPlay := false
+					return
+				}
+				if key = this.playbackKeys.speed && this.preHeldSpeed {
+					this.preHeldSpeed := false
+					return
+				}
+			}
+
+			if allChecks = true
+				return true
+		}
+	}
+
 	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton1</kbd>).
 	 * This function has built in checks for <kbd>LButton</kbd> & <kbd>XButton2</kbd> by default during activation - this can be overwritten by using the `playbackKeys` parameter.
-	 * This function should work as intended on both the old UI and the Spectrum UI assuming you use the default darkest themeing for both UI versions. Other themes will require the user to add additional colour values to `timelineColours {`
-	 *
 	 * #### This function has code to exit early in the event that `A_ThisHotkey` gets set to something that `GetKeyState` cannot handle. If you want to do this on purpose, you will need to remove that block of code.
 	 * @param {Boolean} [allChecks=true] determines whether the user wishes for the function to make the necessary checks to determine if the cursor is hovering an empty track on the timeline. Setting this value to false allows the function to move the playhead regardless of where on the timeline the cursor is situated. It is not recommended to use this value if your activation hotkey is something like <kbd>RButton</kbd> as that removes the ability for the keys native function to operate
 	 * @param {String} [version=unset] the currently selected version of premiere within `settingsGUI()`. This parameter can usually be filled in using `prem.currentSetVer`
 	 * @param {String} [sendOnFailure=unset] what you wish for the script to send in the event that it needs to fallback. What you set for this parameter will be sent to `SendInput()`. If left unset, sends `"{" A_ThisHotkey "}"`
-	 * @param {Object} [playbackKeys=unset] an object `{play: , speed: }` to determine which hotkeys will be used to start playback after the user releases the activation hotkey. ie. `{play: "LButton", speed: "XButton2"}. If the user leaves this parameter unset, or does not set both object properties, the function will assume that this functionality should be disabled.
+	 * @param {Object} [playbackKeys=unset] an object `{play: , speed: }` to determine which hotkeys will be used to start playback after the user releases the activation hotkey. ie. `{play: "LButton", speed: "XButton2"}`. If the user leaves this parameter unset, or does not set both object properties, the function will assume that this functionality should be disabled. These keys need to be mouse keys
 	 */
 	movePlayhead(allChecks := true, version := unset, sendOnFailure := unset, playbackKeys?) {
 		if !IsSet(version) {
@@ -299,16 +356,24 @@ class rbuttonPrem {
 			SendInput(this.sendHotkey)
 			return
 		}
-
+		try {
+			this.__setHooks(allChecks)
+		} catch {
+			this.__stopHook()
+			errorLog(MethodError("MouseHook failed to be set", -1),,, true)
+			return
+		}
 
 		;// ensure the main prem window is active before attempting to fire
 		getTitle := WinGet.PremName()
 		try {
 			if WinGet.Title() != gettitle.winTitle {
 				SendInput(this.sendHotkey)
+				this.__stopHook()
 				return
 			}
 		} catch {
+			this.__stopHook()
 			return
 		}
         checkType := (Type(getTitle) != "Object")
@@ -316,18 +381,22 @@ class rbuttonPrem {
         checkCanSave := isObjHasProp(getTitle, "titleCheck", true)
 		if !getTitle || checkType || !checkTitle || checkCanSave {
 			SendInput(this.sendHotkey)
+			this.__stopHook()
             return
         }
 
 		if prem.__OSwindow() && WinActive(prem.winTitle) {
             SendInput("{Escape}")
+			this.__stopHook()
 			return
         }
 
 		if WinExist("DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
 			prem.dismissWarning()
-			if !GetKeyState(currHotkey)
+			if !GetKeyState(currHotkey) {
+				this.__stopHook()
 				return
+			}
 		}
 
 		;try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class") ;// prem has fixed the issue of it spamming the error... for now
@@ -335,6 +404,7 @@ class rbuttonPrem {
 		InstallMouseHook(1)
 		try this.premObj := CLSID_Objs.load("prem")
 		catch {
+			this.__stopHook()
 			return
 		}
 		this.premObj.RClickIsActive := true
@@ -346,35 +416,9 @@ class rbuttonPrem {
 
 		;// set coord mode and grab the cursor position
 		coord.s()
-		if !origMouse := obj.MousePos()
+		if !origMouse := obj.MousePos() {
+			this.__stopHook()
 			return
-
-		;// set what `LButton` & `XButton2` do
-		if this.ih != false
-			this.ih := false
-		this.ih := MouseHook("All", __keyHook)
-		this.ih.Start()
-		__keyHook(event, w, l) {
-			if Type(event.Action) != "string" || event.Action = ""
-				return
-
-			;// ignore synthetic events (eg. this script's own SendInput LButton Down/Up
-			;// used to grab/release the playhead) — only react to real physical input
-			if (event.flags & 1)
-        		return
-
-			key := StrSplit(event.Action, " ")[1]
-			if key != this.playbackKeys.play && key != this.playbackKeys.speed
-				return
-
-			if InStr(event.Action, " Up") {
-				switch key {
-					case this.playbackKeys.play:  this.leftClick := true
-					case this.playbackKeys.speed: this.leftClick := true, this.xbuttonClick := true
-				}
-			}
-
-			return true
 		}
 
 		;// checks to see whether the timeline position has been located
@@ -419,7 +463,7 @@ class rbuttonPrem {
 				this.__exit()
 			}
 		}
-		this.__checkForPlayhead(origMouse, allChecks)
+		this.__checkForPlayhead(origMouse, currHotkey, allChecks)
 		if !this.__checkForTap(currHotkey) {
 			SendInput(KSA.playheadtoCursor)
 			this.__exit()
@@ -466,6 +510,21 @@ class rbuttonPrem {
 			sleep 30
 		}
 
+		;// covers the user still physically holding play/speed when RButton comes up
+		if allChecks && this.doPlayback {
+			if this.ihM != false {
+				if this.speedHeld
+					this.leftClick := true, this.xbuttonClick := true
+				else if this.playHeld
+					this.leftClick := true
+			} else {
+				if GetKeyState(this.playbackKeys.speed, "P")
+					this.leftClick := true, this.xbuttonClick := true
+				else if GetKeyState(this.playbackKeys.play, "P")
+					this.leftClick := true
+			}
+		}
+
 		;// releases the LButton if it was used to grab the playhead
 		if this.colourOrNorm = "colour" {
 			SendInput("{LButton Up}")
@@ -486,7 +545,6 @@ class rbuttonPrem {
 			case (allChecks && this.doPlayback && this.xbuttonClick):
 				prem.startPlayback()
 				SendInput(KSA.speedUpPlayback)
-			case (!allChecks && this.leftClick): SendInput("{LButton}")
 		}
 
 		;// cleans up
