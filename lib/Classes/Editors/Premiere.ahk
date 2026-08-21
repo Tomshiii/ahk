@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/21
- * @version 2.5.20
+ * @version 2.5.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -857,7 +857,7 @@ class Prem {
             return -1
         coord.s()
         progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
-        try button := progMon.FindElement({LocalizedType:"button", Name:"Play-Stop Toggle", matchmode:"Substring"})
+        try button := progMon.FindElement({Type:50000, Name:"Play-Stop Toggle", matchmode:"Substring"})
         catch {
             errorLog(TargetError("Play/Stop button could not be found", -1))
             return -1
@@ -896,7 +896,7 @@ class Prem {
         if !premUIA
             return -1
         progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
-        try button := progMon.FindElement({LocalizedType:"combo box", Name:"Select Multicam Page"})
+        try button := progMon.FindElement({Type:50003, Name:"Select Multicam Page"})
         catch {
             return false
         }
@@ -1585,7 +1585,7 @@ class Prem {
             return
         }
         try {
-            reset := effCtrlNN.FindElement({LocalizedType:"button", Name:"Reset Effect"}).Invoke()
+            reset := effCtrlNN.FindElement({Type:50000, Name:"Reset Effect"}).Invoke()
         }
         if timelineAct {
             sleep 50
@@ -1604,7 +1604,7 @@ class Prem {
     static __setEffContScrollbar(effCont, mouseSpeed := 0, timeout := 1000) {
         SetDefaultMouseSpeed(mouseSpeed)
         coord.s()
-        try scrollBar := effCont.FindElement({LocalizedType:"scroll bar", Name:"UI_ScrollBar"})
+        try scrollBar := effCont.FindElement({Type:50014, Name:"UI_ScrollBar"})
         catch {
             errorLog(Error("Failed to find the Effect Controls scrollbar", -1))
             notifyExt.showIfNotExist("premEffContScrollbarFind",, 'Failed to find the Effect Controls scrollbar',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
@@ -1723,15 +1723,15 @@ class Prem {
                 return false
             }
             try {
-                findRadio := gainWin.WaitElement({LocalizedType:"radio button", Name: radios[opt]}, 1500)
+                findRadio := gainWin.WaitElement({Type:50013, Name: radios[opt]}, 1500)
                 if !findRadio.IsSelected
                     findRadio.Invoke()
-                findEdit := gainWin.FindElement({LocalizedType:"edit", Name: edits[opt]})
+                findEdit := gainWin.FindElement({Type:50004, Name: edits[opt]})
                 findEdit.select()
-                findText := gainWin.FindElement({LocalizedType:"edit", Name:"OS_EditText"})
-                findVal := findText.FindElement({LocalizedType:"edit", Name: edits[opt]})
+                findText := gainWin.FindElement({Type:50004, Name:"OS_EditText"})
+                findVal := findText.FindElement({Type:50004, Name: edits[opt]})
                 findVal.value := amount
-                gainWin.FindElement({LocalizedType:"button", Name:"OK"}).Invoke()
+                gainWin.FindElement({Type:50000, Name:"OK"}).Invoke()
             } catch {
                 errorLog(MethodError("Failed to set gain using UIA", -1))
                 return false
@@ -2729,8 +2729,8 @@ class Prem {
         coord.s()
         offsetValue := 31
         try {
-            UI_TEXT_1 := sourceMon.FindElement({LocalizedType:"edit", Name:"UI_HotText"},, 1)
-            settingsButt := sourceMon.FindElement({LocalizedType:"button", Name:"Settings..."})
+            UI_TEXT_1 := sourceMon.FindElement({Type:50004, Name:"UI_HotText"},, 1)
+            settingsButt := sourceMon.FindElement({Type:50000, Name:"Settings..."})
         } catch {
             errorLog(TargetError("Could not derermine the position of source monitor buttons", -1))
             return false
@@ -2896,7 +2896,7 @@ class Prem {
 
             ;// the timeline pane itself loses its hwnd if you swap sequences, so we have to use the container instead
             timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"])
-            timelineUIA    := timelineWindow.FindElement({Name:"Timeline", LocalizedType:"pane"})
+            timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
             children       := timelineUIA.Children
 
             icvIndices := []
@@ -4141,9 +4141,9 @@ class Prem {
         }
         _setComboBox(index, item) {
             try {
-                box := AdobeEl.WaitElement({LocalizedType:"combo box"}, timeout,, index)
+                box := AdobeEl.WaitElement({Type:50003}, timeout,, index)
                 if box.Value != item {
-                    item := box.WaitElement({LocalizedType:"list item", Name: item}, 5)
+                    item := box.WaitElement({Type:50007, Name: item}, 5)
                     item.select()
                 }
             } catch {
@@ -4184,7 +4184,7 @@ class Prem {
         } else {
             AdobeEl := UIAObj
         }
-        comb := AdobeEl.FindElement({LocalizedType:"combo box"},, 4)
+        comb := AdobeEl.FindElement({Type:50003},, 4)
         if comb.name = path
             return true
         comb.Click()
@@ -4192,7 +4192,7 @@ class Prem {
             return false
         flyout := UIA.ElementFromHandle("OS_PopupWindow " this.exeTitle,, false)
         if path = "Next to Original Media" {
-            try item := flyout.WaitElement({LocalizedType:"text", Name:"Choose Location..."}, timeout)
+            try item := flyout.WaitElement({Type:50020, Name:"Choose Location..."}, timeout)
             catch {
                 errorLog(TargetError("Could not find: Choose Location...", -1))
                 return false
@@ -4200,7 +4200,7 @@ class Prem {
             Send( "{Click " item.Location.x A_Space item.location.y "}")
             return true
         }
-        try item := flyout.FindElement({LocalizedType:"text", Name:"Choose Location..."})
+        try item := flyout.FindElement({Type:50020, Name:"Choose Location..."})
         catch {
             errorLog(TargetError("Could not find: Choose Location...", -1))
             return false
@@ -4213,7 +4213,7 @@ class Prem {
         explorer.navigateUsingAddressbar(path, hwnd)
         try {
             selectFolderWin := UIA.ElementFromHandle(hwnd,, false)
-            selectFolderWin.WaitElement({LocalizedType:"button", Name:"Select Folder", AutomationId:"1"}, timeout).Click()
+            selectFolderWin.WaitElement({Type:50000, Name:"Select Folder", AutomationId:"1"}, timeout).Click()
         } catch {
             errorLog(TargetError("Could not find: Select Folder", -1))
             return false
@@ -4275,12 +4275,12 @@ class Prem {
                 }
         }
         try {
-            initialValue := AdobeEl.FindElement({LocalizedType:"edit", Name:"framesNumber"})
+            initialValue := AdobeEl.FindElement({Type:50004, Name:"framesNumber"})
             if initialValue.Value = handles
                 return true
             initialValue.select()
-            findText := AdobeEl.FindElement({LocalizedType:"edit", Name:"OS_EditText"})
-            frames   := findText.FindElement({LocalizedType:"edit", Name:"framesNumber"})
+            findText := AdobeEl.FindElement({Type:50004, Name:"OS_EditText"})
+            frames   := findText.FindElement({Type:50004, Name:"framesNumber"})
             frames.value := handles
         } catch {
             errorLog(TargetError("Could not find or interact with: frames text", -1))
@@ -4347,7 +4347,7 @@ class Prem {
                 return false
             }
         }
-        try AdobeEl.FindElement({LocalizedType:"button", Name:"OK"}).Invoke()
+        try AdobeEl.FindElement({Type:50000, Name:"OK"}).Invoke()
         catch {
             errorLog(MethodError("couldn't interact with OK button", -1))
             return false
@@ -4391,8 +4391,8 @@ class Prem {
         if !this.isClipSelected()
             return
         try {
-            blendMode := effCont.FindElement({LocalizedType:"combo box"},, 2)
-            blendMode.FindElement({LocalizedType:"list item", Name:blendModeString}).Select()
+            blendMode := effCont.FindElement({Type:50003},, 2)
+            blendMode.FindElement({Type:50007, Name:blendModeString}).Select()
         }
     }
 
@@ -4526,10 +4526,10 @@ class Prem {
             return
         progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
         if wait = false || !IsInteger(wait) || wait < 1 {
-            try transButton := progMon.FindElement({LocalizedType:"button", Name:"Apply Default Transitions to Selection", matchmode:"Substring"})
+            try transButton := progMon.FindElement({Type:50000, Name:"Apply Default Transitions to Selection", matchmode:"Substring"})
             return (IsSet(transButton) && transButton != false)
         }
-        try transButton := progMon.WaitElement({LocalizedType:"button", Name:"Apply Default Transitions to Selection", matchmode:"Substring"}, wait)
+        try transButton := progMon.WaitElement({Type:50000, Name:"Apply Default Transitions to Selection", matchmode:"Substring"}, wait)
         return (IsSet(transButton) && transButton != false)
     }
 

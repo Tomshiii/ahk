@@ -1,0 +1,15 @@
+button=50000
+checkbox=50002
+combobox=50003
+Edit=50004
+list item=50007
+menu=50009
+menu item=50011
+radio button=50013
+scroll bar=50014
+text=50020
+TreeItem=50024
+row=50026
+group=50026
+dialog=50032
+pane=50033

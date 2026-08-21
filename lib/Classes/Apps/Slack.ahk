@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2025/12/20
- * @version 1.2.0
+ * @date 2026/08/21
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,72 +69,72 @@ class Slack {
         blocker := block_ext()
         blocker.On()
 
-        static slackCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "AutomationId", "Name"],, 5)
+        static slackCacheRequest := UIA.CreateCacheRequest(["Type", "AutomationId", "Name"],, 5)
 
         try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, slackCacheRequest)
         if !IsSet(slackEl) || !IsObject(slackEl) || !slackEl {
-            errorLog(UnsetError("Failed to set UIA element", -1),, true)
             blocker.Off()
+            errorLog(UnsetError("Failed to set UIA element", -1),, true)
             return
         }
 
         pressButton(uiaObj, type, button) {
             if button = "Delete message… delete" || button = "Edit message E" {
-                if !uiaObj.WaitElement({LocalizedType:"toggle button", Name: "Save for later"}, 2000) {
-                    errorLog(UnsetError("Failed to find Save for later element", -1),, true)
+                if !uiaObj.WaitElement({Type:50000, Name: "Save for later"}, 2000) {
                     blocker.Off()
+                    errorLog(UnsetError("Failed to find Save for later element", -1),, true)
                     return
                 }
-                findLocation := uiaObj.FindCachedElement({LocalizedType:"toggle button", Name: "Save for later"})
-                for el in uiaObj.FindCachedElements({LocalizedType:"button", Name: "More actions"}) {
+                findLocation := uiaObj.FindCachedElement({Type:50000, Name: "Save for later"})
+                for el in uiaObj.FindCachedElements({Type:50000, Name: "More actions"}) {
                     if el.location.y != findLocation.location.y
                         continue
                     el.ControlClick()
                 }
-                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 2000,,,,, slackCacheRequest).ControlClick()
+                try uiaObj.WaitElement({Type: type, Name: button}, 2000,,,,, slackCacheRequest).ControlClick()
                 return
             }
 
             ;// if a thread is open we need to hone our search to just the thread
-            if button != "Reply in thread" && uiaObj.CachedElementExist({LocalizedType:"dialog", LocalizedType:"dialogue", Name: "Thread in channel", matchmode: "Substring"}) {
-                findThread := uiaObj.WaitElement([{LocalizedType:"dialog", LocalizedType:"dialogue", Name:"Thread in channel", matchmode:"Substring"}], 2000,,,,, slackCacheRequest)
-                findLocation := findThread.WaitElement([{LocalizedType:"group", Name:"Message actions"}], 2000,,,,, slackCacheRequest)
+            if button != "Reply in thread" && uiaObj.CachedElementExist({Type:50032, Type:50032, Name: "Thread in channel", matchmode: "Substring"}) {
+                findThread := uiaObj.WaitElement([{Type:50032, Type:50032, Name:"Thread in channel", matchmode:"Substring"}], 2000,,,,, slackCacheRequest)
+                findLocation := findThread.WaitElement([{Type:50026, Name:"Message actions"}], 2000,,,,, slackCacheRequest)
 
-                moreActions := findThread.FindElements([{LocalizedType:"group", Name:"Message actions"}],,,, slackCacheRequest)
+                moreActions := findThread.FindElements([{Type:50026, Name:"Message actions"}],,,, slackCacheRequest)
                 for el in moreActions {
                     if el.location.y != findLocation.location.y && el.location.x != findLocation.location.x
                         continue
                     if button = "Add reaction…" {
-                        el.FindCachedElement({LocalizedType: type, Name: button}).ControlClick()
+                        el.FindCachedElement({Type: type, Name: button}).ControlClick()
                         return
                     }
-                    el.FindCachedElement([{LocalizedType:"button", Name: "More actions"}]).ControlClick()
+                    el.FindCachedElement([{Type:50000, Name: "More actions"}]).ControlClick()
                 }
-                try uiaObj.WaitElement({LocalizedType: type, Name: button}, 2000,,,,, slackCacheRequest).ControlClick()
+                try uiaObj.WaitElement({Type: type, Name: button}, 2000,,,,, slackCacheRequest).ControlClick()
                 return
             }
             ;// otherwise we just search for the button
             if button != "Reply in thread" {
                 ;// limit to just the hover buttons (as the "add reaction" button appears under images and this script may attempt to interact with that)
-                try msgAction := uiaObj.FindCachedElement([{LocalizedType:"group", Name:"Message actions"}])
-                try msgAction.FindCachedElement({LocalizedType: type, Name: button}).ControlClick()
+                try msgAction := uiaObj.FindCachedElement([{Type:50026, Name:"Message actions"}])
+                try msgAction.FindCachedElement({Type: type, Name: button}).ControlClick()
                 return
             }
-            try check := uiaObj.FindCachedElement({LocalizedType: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}).ControlClick()
+            try check := uiaObj.FindCachedElement({Type: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}).ControlClick()
             if IsSet(check) && replyInThread = true {
                 try {
-                    findThread := uiaObj.WaitElement([{LocalizedType:"dialog|dialogue", Name:"Thread in (channel|conversation)", matchmode:"Regex"}], 2000,,,,, slackCacheRequest, 100)
-                    findBox    := uiaObj.WaitElement([{LocalizedType:"list item", Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, slackCacheRequest, 100)
-                    findBox.WaitElement([{LocalizedType:"i)(check box|checkbox)", AutomationId:"p-thread_footer__broadcast_checkbox", Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, slackCacheRequest).ControlClick()
+                    findThread := uiaObj.WaitElement([{Type:50032, Name:"Thread in (channel|conversation)", matchmode:"Regex"}], 2000,,,,, slackCacheRequest, 100)
+                    findBox    := uiaObj.WaitElement([{Type:50007, Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, slackCacheRequest, 100)
+                    findBox.WaitElement([{Type:50002, AutomationId:"p-thread_footer__broadcast_checkbox", Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, slackCacheRequest).ControlClick()
                 }
             }
         }
 
         switch button {
-            case "reaction": pressButton(slackEl, "button", "Add reaction…")
-            case "reply": pressButton(slackEl, "button", "Reply in thread")
-            case "delete": pressButton(slackEl, "menu item", "Delete message… delete")
-            case "edit": pressButton(slackEl, "menu item", "Edit message E")
+            case "reaction": pressButton(slackEl, 50000, "Add reaction…")
+            case "reply": pressButton(slackEl, 50000, "Reply in thread")
+            case "delete": pressButton(slackEl, 50011, "Delete message… delete")
+            case "edit": pressButton(slackEl, 50011, "Edit message E")
         }
         blocker.Off()
     }

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/04/18
- * @version 1.1.3
+ * @date 2026/08/21
+ * @version 1.1.4
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -112,7 +112,7 @@ class explorer {
             return -1
         }
         autoID := this.__getUIAautoID(explorerEl)
-        try cancelButt := explorerEl.uiaElement.FindElement({LocalizedType:"app bar button", Name:"Close search", ClassName:"AppBarButton"}).Click()
+        try cancelButt := explorerEl.uiaElement.FindElement({Type:50000, Name:"Close search", ClassName:"AppBarButton"}).Click()
         catch {
             SendInput("{Browser_Back}")
             return -1
@@ -126,7 +126,7 @@ class explorer {
      */
     static isPopupHost(el) {
         try {
-            popup := el.FindElement({Name:"PopupHost", LocalizedType:"pane", ClassName:"Microsoft.UI.Content.PopupWindowSiteBridge"})
+            popup := el.FindElement({Name:"PopupHost", Type:50033, ClassName:"Microsoft.UI.Content.PopupWindowSiteBridge"})
             return popup
         }
         return false

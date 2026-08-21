@@ -3,8 +3,8 @@
  * Last tested in the version of Photoshop listed below
  * @psVer 27.1
  * @author tomshi
- * @date 2026/04/18
- * @version 1.3.3
+ * @date 2026/08/21
+ * @version 1.3.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -96,7 +96,7 @@ class PS {
         origCoords := obj.MousePos()
         MouseMove(0, 0)
         sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
-        fileComboBox := {Type: "50003 (ComboBox)", Name: "Save as type:", LocalizedType: "combo box", AutomationId: "FileTypeControlHost", ClassName: "AppControlHost"}
+        fileComboBox := {Name: "Save as type:", Type:50003, AutomationId: "FileTypeControlHost", ClassName: "AppControlHost"}
         try {
             switch filetype {
                 case "png": __doSwap(AdobeEl, "PNG (*.PNG;*.PNG)")
@@ -110,8 +110,8 @@ class PS {
 
         __doSwap(el, value) {
             el.WaitElement(fileComboBox, 1500).Expand()
-            el.WaitElement({Type: '50007 (ListItem)', Name: value, LocalizedType: "list item"}, 1500).ControlClick()
-            el.WaitElement({Type:"Edit", Name:"File name:", LocalizedType:"edit"}).SetFocus()
+            el.WaitElement({Type: 50007, Name: value}, 1500).ControlClick()
+            el.WaitElement({Name:"File name:", Type:50004}).SetFocus()
             coord.w()
             MouseMove(origCoords.x, origCoords.y)
         }

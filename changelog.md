@@ -44,6 +44,7 @@
 
 ## Other Changes
 - ❌ Removed `stop.png`, `sourceMon_audioX.png`, `sourceMon_videoX.png`, `jpgX.png`, `pngX.png`
+- 📋 Changed all uses of `UIA` `LocalizedType` to the corresponding `Type` integer for broader compatibility
 
 🔗 `autosave.ahk`
 - ❗ No longer requires any `ImageSearch`

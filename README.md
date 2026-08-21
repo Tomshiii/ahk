@@ -13,6 +13,9 @@ The roots of this repo were heavily inspired by [Taran (previous editor for LTT)
 > *A lot* of the development for this repo happens in the [dev](https://github.com/Tomshiii/ahk/tree/dev) branch before making its way into a release and these changes can remain over there for months at a time. I recommend checking out any [changes](https://github.com/Tomshiii/ahk/blob/dev/changelog.md) over there in case of important fixes, as well as the [Known Issues & Planned Changes](https://github.com/users/Tomshiii/projects/1) project page to see if any small bugs/changes are currently being tracked/worked on.  
 > ***However*** do be aware that the dev branch **is** in active development and any number of bugs/issues may still be present as I continue to iron things out.
 
+> [!Caution]
+> A lot of code in this repo makes use of [UIA](https://github.com/Tomshiii/ahk/wiki/UIA) and amongst those code snippets there are tonnes of instances of hardcoded values that are assummed to be in english. If your installation of windows, or any relevant programs are in another language you may encounter issues.
+
 ***
 
 ## [Getting Started:](https://github.com/Tomshiii/ahk/wiki)

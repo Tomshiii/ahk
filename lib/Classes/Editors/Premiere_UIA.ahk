@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/07/27
- * @version 3.0.25
+ * @date 2026/08/21
+ * @version 3.0.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -157,15 +157,15 @@ class premUIA_Values {
         __TryCatchUIAobj(name, objOrPath, errorCode, pathName := "") {
             try {
                 switch objOrPath {
-                    case "obj":  temp := this.AdobeEl.FindCachedElement({LocalizedType:"pane", Name:name})
+                    case "obj":  temp := this.AdobeEl.FindCachedElement({Type:50033, Name:name})
                     case "path":
                         switch pathName {
                             case "timelineWindow":temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true), this.UIA_Hwnd[pathName] := this.UIA_Objs[pathName].Parent.NativeWindowHandle
                             default: temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true), this.UIA_Hwnd[pathName] := this.UIA_Objs[pathName].NativeWindowHandle
                         }
 
-                    case "premObj": temp := this.AdobeEl.FindCachedElement({LocalizedType:"pane", LocalizedType:"tab item", Name:name})
-                    case "projObj": temp := this.AdobeEl.FindCachedElement({LocalizedType:"pane", Name:name, matchmode:"Substring"})
+                    case "premObj": temp := this.AdobeEl.FindCachedElement({Type:50033, Type:50019, Name:name})
+                    case "projObj": temp := this.AdobeEl.FindCachedElement({Type:50033, Name:name, matchmode:"Substring"})
                 }
                 return temp
             } catch {
@@ -184,7 +184,7 @@ class premUIA_Values {
                 sleep 25
             }
             blocker.Off()
-            premCacheRequest := UIA.CreateCacheRequest(["LocalizedType", "Type", "Name", "Value", "ClassName", "AutomationId", "BoundingRectangle"],, "Descendants") ;// all necessary for `GetUIAPath()`
+            premCacheRequest := UIA.CreateCacheRequest(["Type", "Name", "Value", "ClassName", "AutomationId", "BoundingRectangle"],, "Descendants") ;// all necessary for `GetUIAPath()`
             try {
                 try n := winget.PremName()
                 title := (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") ? n.wintitle A_Space prem.winTitle : prem.winTitle
@@ -227,7 +227,7 @@ class premUIA_Values {
                 switch Type(v), false {
                     case "Array":
                         for v2 in v {
-                            try this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v2, matchmode:"Substring"})
+                            try this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:50000,  Name: v2, matchmode:"Substring"})
                             catch {
                                 continue
                             }
@@ -239,7 +239,7 @@ class premUIA_Values {
                         }
                     default:
                         try {
-                            this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:"Button", LocalizedType:"button",  Name: v, matchmode:"Substring"})
+                            this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:50000,  Name: v, matchmode:"Substring"})
                             this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
                         } catch {
                             errorLog(UnsetError("Failed to find tool: " k))

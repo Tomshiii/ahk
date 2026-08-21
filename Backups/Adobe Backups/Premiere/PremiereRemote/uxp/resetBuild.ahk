@@ -46,7 +46,7 @@ switch {
             }
             debugTitle := winExt.TitleRegex(debugWindow)
             debugWin := UIA.ElementFromHandle(debugTitle,, false)
-            debugWin.FindElement({LocalizedType:"button", Name:"Clear console"}).invoke()
+            debugWin.FindElement({Type:50000, Name:"Clear console"}).invoke()
             if !openDebug
                 winExt.MinimizeRegex(debugWindow)
         }

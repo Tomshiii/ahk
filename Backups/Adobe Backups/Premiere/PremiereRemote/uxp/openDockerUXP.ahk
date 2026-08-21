@@ -19,9 +19,9 @@ if WinExist(dockerAhk) {
     WinActivate(dockerAhk)
     try {
         dockerUIA := UIA.ElementFromHandle(dockerAhk,, false)
-        try dockerUIA.FindElement({LocalizedType:"button", Name:"Stop"})
+        try dockerUIA.FindElement({Type:50000, Name:"Stop"})
         catch {
-            dockerUIA.WaitElement({LocalizedType:"button", Name:["Start", "Run"]}).invoke()
+            dockerUIA.WaitElement({Type:50000, Name:["Start", "Run"]}).invoke()
         }
         winExt.MinimizeRegex(dockerAhk)
     }
