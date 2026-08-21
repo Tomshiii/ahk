@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/21
- * @version 2.5.23
+ * @version 2.5.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2905,44 +2905,67 @@ class Prem {
     }
 
     /**
+     * A helper function to take the timeline panel and return some UIA information regarding it to more easily determine positioning of certain layers
+     * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. Will be generated if omitted
+     * @returns {false | Object} returns `false` on failure or;
+     * ```
+     * {indicies, children, audIndex}
+     * ;// {indicies: UIA reference to top/bottom timeline scrollbars, children: UIA children tree object for the timeline, audIndex: the index of the first audio layer (generally the first `Toggle Track Lock`)}
+     * ```
+     */
+    static __retrieveAudLayerIndex(UIAObj?) {
+        premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
+        if !premUIA
+            return false
+        timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"])
+        timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
+        children       := timelineUIA.Children
+
+        icvIndices := []
+        audIndex := 0
+        for i, child in children {
+            if child.Name == "UI_InteractiveControlView" {
+                ;// Check if any direct child is a text element - if so, skip it
+                hasText := false
+                for grandchild in child.Children {
+                    if grandchild.Type == 50020 || grandchild.Type == 50004 {
+                        hasText := true
+                        break
+                    }
+                }
+                if !hasText {
+                    icvIndices.Push(i)
+                    if icvIndices.Length = 1
+                        audIndex := i + 1
+                }
+            }
+            if icvIndices.Length == 2
+                break
+        }
+        if icvIndices.Length < 2
+            return false
+        return {indicies: icvIndices, children: children, audIndex: audIndex}
+    }
+
+    /**
      * Determines the x/y pos of the middle divider using UIA
      * @param {VarRef} [] x/y values of middle divider
-     * @returns {boolean/VarRef} returns `true`/`false` for success of the imagesearch - if true will also return the x/y/bottom y value of the middle divider as varrefs
+     * @returns {boolean/VarRef}
      */
     static __getlayerMid(&midDivX?, &midDivY?, &midDivYBottom?) {
         try {
             if !premUIA := premUIA_Values.initialise()
                 return false
-
             ;// the timeline pane itself loses its hwnd if you swap sequences, so we have to use the container instead
             timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"])
             timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
-            children       := timelineUIA.Children
-
-            icvIndices := []
-            for i, child in children {
-                if child.Name == "UI_InteractiveControlView" {
-                    ;// Check if any direct child is a text element - if so, skip it
-                    hasText := false
-                    for grandchild in child.Children {
-                        if grandchild.LocalizedType == "text" {
-                            hasText := true
-                            break
-                        }
-                    }
-                    if !hasText
-                        icvIndices.Push(i)
-                }
-                if icvIndices.Length == 2
-                    break
-            }
-            if icvIndices.Length < 2
+            if !middleIndex := this.__retrieveAudLayerIndex(premUIA)
                 return false
 
             adjustVal     := 3 ;// the pixel difference between the top/bottom of the scroll bar control & the middle divider bar. May change in future versions
             midDivX       := timelineUIA.Location.x
-            midDivY       := children[icvIndices[1]].Location.y + children[icvIndices[1]].Location.h + adjustVal
-            midDivYBottom := children[icvIndices[2]].Location.y - adjustVal
+            midDivY       := middleIndex.children[middleIndex.indicies[1]].Location.y + middleIndex.children[middleIndex.indicies[1]].Location.h + adjustVal
+            midDivYBottom := middleIndex.children[middleIndex.indicies[2]].Location.y - adjustVal
         } catch {
             return false
         }
