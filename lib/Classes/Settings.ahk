@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/07/09
- * @version 1.4.12
+ * @date 2026/08/24
+ * @version 1.4.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -21,6 +21,16 @@ class UserPref {
      * @constructor
      */
     __New(override := false, checkVals := false) {
+        if this.ignoreVersionWarningList.has(A_ScriptName) && !FileExist(this.installDir) || !FileExist(A_AppData "\tomshi\version") {
+            if !DirExist(A_AppData "\tomshi")
+                DirCreate(A_AppData "\tomshi")
+            (!FileExist(A_AppData "\tomshi\version")) ? FileAppend("v2.18.0", A_AppData "\tomshi\version") : ""
+            if !FileExist(this.installDir) {
+                switch A_ScriptName {
+                    case "Multi Download", "mult-dl.ahk": FileAppend(A_ScriptFullPath, this.installDir)
+                }
+            }
+        }
         if !FileExist(this.installDir) {
             throw TargetError("lib files have not been installed.")
         }
@@ -85,6 +95,7 @@ class UserPref {
     SettingsDir  => A_MyDocuments "\tomshi"
     SettingsFile => this.SettingsDir "\settings.ini"
     installDir => A_Appdata "\tomshi\installDir"
+    ignoreVersionWarningList := Mip("Multi Download", true, "mult-dl.ahk", true)
 
     /**
      * A function to provide the default for each .ini value

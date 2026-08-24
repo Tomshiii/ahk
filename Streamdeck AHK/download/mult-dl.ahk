@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/08/06
+ * @date 2026/08/22
  ***********************************************************************/
-global currentVer := "1.3.9"
+global currentVer := "1.3.10"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -445,11 +445,13 @@ class multiDL extends tomshiBasic {
             Download("https://raw.githubusercontent.com/Tomshiii/ahk/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.ahk", A_Temp "\tomshi\mult-dl.ahk")
             readDl := FileRead(A_Temp "\tomshi\mult-dl.ahk")
             dlVer := getLocalVer(readDl,, "currentVer := ", '"')
+            if FileExist(A_Temp "\tomshi\mult-dl.ahk")
+                FileDelete(A_Temp "\tomshi\mult-dl.ahk")
             if VerCompare(dlVer, currentVer) > 0 {
                 updates := true
                 if MsgBox("New version of mult-dl.exe available, would you like to download it?",, 0x4) = "No"
                     return
-                if !dlLoc := FileSelect("D3",, "Download mult-dl.exe")
+                if !dlLoc := FileSelect("D3", A_ScriptFullPath, "Download mult-dl.exe")
                     return
                 Download("https://github.com/Tomshiii/ahk/raw/refs/heads/" mainOrDev "/Streamdeck%20AHK/download/mult-dl.exe", dlLoc "\mult-dl_v" dlVer ".exe")
                 MsgBox("Download Complete, please run the new file")

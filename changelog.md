@@ -55,3 +55,7 @@
 - ✅ Fixed script sometimes failing to reactivate the correct window, or outright not attempting to restart playback
 - 📋 Added more guarding so `After Effects` does not attempt to save when it isn't supposed to
 - 📋 Now uses UIA to restart playback when enabled
+
+🔗 `mult-dl.ahk`
+- ✅ Fixed script throwing if the whole repo is not installed
+- 📋 Folder picker will default to the current installation directory when updating `.exe`
