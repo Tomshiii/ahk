@@ -275,9 +275,11 @@ replaceVer(filepath) {
     if InStr(filepath, "-patch") {
         repValSearch := 'FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_Temp "\tomshi\yes.value.zip", 1)'
         repVal := 'FileInstall("E:\Github\ahk\releases\release\' yes.value '-patch.zip", A_Temp "\tomshi\yes.value.zip", 1)'
-        delSearch := 'FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)'
+        delSearch := 'FileInstall("E:\Github\ahk\releases\release\yes.value.zip", this.WorkDir "\yes.value.zip", 1)'
         patcherSearch := 'isPatcher := false'
         readFi := StrReplace(readFi, repValSearch, repVal)
+        if !InStr(readFi, delSearch)
+            throw ValueError("delSearch pattern not found - installGUI.ahk may have changed", -1)
         readFi := StrReplace(readFi, delSearch, "")
         readFi := StrReplace(readFi, patcherSearch, 'isPatcher := true')
     }
