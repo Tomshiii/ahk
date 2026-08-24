@@ -19,6 +19,9 @@
 		{
 			"name": "ThioJoe-AHK-Scripts",
 			"path": "../../../ThioJoe-AHK-Scripts"
+		},
+		{
+			"path": "../../../PremiereRemote"
 		}
 	],
 	"settings": {

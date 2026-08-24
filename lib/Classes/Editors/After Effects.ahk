@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/07/27
- * @version 1.4.0
+ * @date 2026/08/24
+ * @version 1.4.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,6 +20,7 @@
 #Include Classes\cmd.ahk
 #Include Classes\winGet.ahk
 #Include Classes\errorLog.ahk
+#Include Other\UIA\UIA.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\detect.ahk
 #Include Functions\determineAdobeVer.ahk
@@ -117,6 +118,8 @@ class AE {
 
     /** saves ae using CEP. Require's the correct year version to be set within `settingsGUI()` */
     static save() {
+        if !WinExist("Adobe After Effects 20" this.currentYearVer)
+            return false
         aeLoc := Format("{}\Adobe\Adobe After Effects 20{}\Support Files\AfterFX.exe", EnvGet("ProgramFiles"), this.currentYearVer)
         func := "app.project.save()"
         command := '""{}" -noui -s "{}""'
@@ -399,30 +402,85 @@ class AE {
     }
 
     /**
-     * Trying to zoom in on the preview window can be really annoying when the hotkey only works while the window is focused
-     * This function will ensure it happens regardless
-     * @param {Object} coords the coordinates of your `tools` bar. requires {x: , x2: , y: , y2: }
-     * @param {String} command the hotkey to send to after effects to zoom however you wish
-     * @param {Integer} mousespeed the speed you wish for the mouse to move. Defaults to `2`
-    */
-    static zoomCompWindow(coords, command, mousespeed := 2) {
-        __sendOrig() {
-            if A_ThisHotkey != "" {
-                hot := SubStr(A_ThisHotkey, 1, 1) = "$" ? SubStr(A_ThisHotkey, 2) : A_ThisHotkey
-                SendInput(hot)
+     * Sets the zoom state of the current viewer
+     * @param {String | Number} [zoom="Fit up to 100%"] The zoom value you wish to set. May be `Fit up to 100%`/`Fit`, or must otherwise be an number between `1` => `1600`
+     * @returns {Boolean}
+     */
+    static setViewerZoom(zoom := "Fit up to 100%") {
+        if !WinActive(this.winTitle)
+            switchTo.AE()
+        aeName := WinGet.AEName()
+        aeWin := UIA.ElementFromHandle(aeName.winTitle,, false)
+        coord.s()
+        origMouse := obj.MousePos()
+        SetMouseDelay(0)
+        if zoom != "Fit" && zoom != "Fit up to 100%" && !IsNumber(zoom) && zoom <= 1600 && zoom >= 1 {
+            ;// throw
+            errorLog(TypeError("Incorrect Paramater type in Parameter #1", -1, zoom),,, true)
+            return false
+        }
+        if zoom = "Fit" || zoom = "Fit up to 100%" {
+            try listItem := aeWin.FindElement({Type:50007, Name:zoom})
+            catch {
+                return false
             }
+            listItem.select()
+            return true
         }
-        if ImageSearch(&xx, &yy, coords.x, coords.y, coords.x2, coords.y2, "*2 " ptf.AE "text.png") {
-            __sendOrig()
+        try editTextBox := aeWin.FindElement({Type: 50004, Name: "Magnification percentage", matchmode:"Substring"})
+        try percent := aeWin.FindElement({Type:50020, Name:"%"})
+        catch {
+            return false
+        }
+        MouseMove(percent.Location.x-10, editTextBox.Location.y+5)
+        SendInput("{Click}")
+        try editText := aeWin.FindElements({Type:50004, Name:"OS_EditText"})
+        catch {
+            return false
+        }
+        found := false
+        el := false
+        for v in editText {
+            for child in v.children {
+                if InStr(child.Name, "Magnification percentage") {
+                    found := true
+                    el := child
+                    break
+                }
+            }
+            if !found
+                continue
+        }
+        if !found {
+            return false
+        }
+        el.value := zoom
+        SendInput("{Enter}")
+        MouseMove(origMouse.x, origMouse.y)
+        return true
+    }
+
+    /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
+    static anchorToPosition() {
+        ;// check to see if the user is in a text field
+        if !CaretGetPos(&carx, &cary) {
+            tool.Cust("The user is not currently within a text field")
             return
         }
-        if !mouse := obj.MousePos()
+        clipb := clip.clear()
+        if !clip.copyWait(clipb.storedClip)
             return
-        if !PixelSearch(&colx, &coly, coords.x, coords.y, coords.x2, coords.y2, this.focusColour)
+        blocker := block_ext()
+        blocker.On()
+        anch1 := A_Clipboard
+        clip.clear()
+        SendEvent("{Tab}")
+        if !clip.copyWait(clipb.storedClip) {
+            blocker.Off()
             return
-        MouseMove(colx, coly, mousespeed)
-        Click
-        delaySI(50, KSA.switchCompTimeline, command)
-        MouseMove(mouse.x, mouse.y, mousespeed)
+        }
+        anch2 := A_Clipboard
+        delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
+        clip.delayReturn(clipb.storedClip)
     }
 }

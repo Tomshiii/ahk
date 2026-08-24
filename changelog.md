@@ -16,6 +16,8 @@
 - 📋 `setShinsIMG()` will now correctly scale based on the user's window scaling
 - 📋 `isEditTabActive()` will now return `-1` for any execution failures instead of `false`
 - 📋 `delayPlayback()`/`rippleTrim()` now share their values over the `UIA` object for better reliability
+- ❌ Removed parameter `ae` from `anchorToPosition()`
+    - Use `ae.anchorToPosition()`
 
 📍 `gain()`
 - 📋 Now accepts parameter `opt` to set all 4 types of gain
@@ -37,6 +39,12 @@
 - ❗ No longer uses `Hotkey` 
 - 📋 Once again uses [`MouseHook.ahk`](<https://discord.com/channels/115993023636176902/1207794506095923350/1207794506095923350>) (without the issues this time<sup>[[1]](<https://github.com/Tomshiii/ahk/releases/tag/v2.14.1.1>)</sup>)
     - This stops any user set hotkeys from getting deleted after `rbuttonPrem.movePlayhead()` has been called (and `playbackKeys` has been set)
+
+### 📝 `ae {`
+- ✏️ Added `anchorToPosition()`
+- 📋 Replaced `zoomCompWindow()` => `setViewerZoom()`
+    - 📋 Uses `UIA` to more reliably set the correct value
+    - ✅ Fixes function reactiving the comp viewer when using Rotobrush
 
 ## PremiereRemote
 - ✏️ Added `getPlayheadPosTicks()`, and `setPlayheadPosTicks()`

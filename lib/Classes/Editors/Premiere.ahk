@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/21
- * @version 2.5.25.1
+ * @date 2026/08/24
+ * @version 2.5.25.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2508,9 +2508,12 @@ class Prem {
 
     /**
      * A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab.
-     * @param {Boolean} [ae=false] determine whether you're calling this function for after effects or premiere as some of the logic may be different per version.  Defaults to `false`
      */
-    static anchorToPosition(ae := false) {
+    static anchorToPosition() {
+        if !this.isClipSelected() {
+            errorLog(TargetError("No clip selected.", -1))
+            return
+        }
         ;// check to see if the user is in a text field
         if !CaretGetPos(&carx, &cary) {
             tool.Cust("The user is not currently within a text field")
@@ -2529,12 +2532,6 @@ class Prem {
             return
         }
         anch2 := A_Clipboard
-        if ae = true {
-            delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
-            clip.delayReturn(clipb.storedClip)
-            blocker.Off()
-            return
-        }
         switch {
             ;// versions 25.4 and greater. They now focus the reset button when you tab
             case VerCompare(this.currentSetVer, "25.5") >= 0: delaySI(50, "{Tab 2}", anch1, "{Tab}", anch2, "{Enter}")
