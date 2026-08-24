@@ -3,7 +3,7 @@
 #Include Classes\CLSID_Objs.ahk
 ; }
 
-if !CLSID_Objs.waitCoreFuncs(6) {
+if !CLSID_Objs.waitCoreFuncs(15) {
     sleep 2000
     try CLSID_Objs.load("Loading")
     catch {

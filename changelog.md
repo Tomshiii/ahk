@@ -4,6 +4,10 @@ Using my fork of `PremiereRemote` ([AERemote](https://github.com/Tomshiii/Premie
 ae.__remoteFunc('save')
 ```
 
+## Installation
+- ✅ Fixed throwing if installing from the root of a drive
+- ✅ Fixed failing to install `nodejs`
+
 ## Functions
 - ✅ Fixed `errorLog()`/`Log()` sometimes failing to log if interrupted
 - ✅ Fixed `Reboot HotkeylessAHK` not working from the tray menu

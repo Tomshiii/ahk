@@ -254,6 +254,7 @@ DirCopy(A_WorkingDir "\release\" yes.Value, A_WorkingDir "\release\" yes.Value "
 
 downloadNode(A_WorkingDir "\release\" yes.Value "\nodejs.msi")
 Download("https://github.com/sebinside/PremiereRemote/archive/refs/tags/v2.2.0.zip", A_WorkingDir "\release\" yes.Value "\premExtract.zip")
+Download("https://github.com/Tomshiii/PremiereRemote/archive/refs/heads/AE.zip", A_WorkingDir "\release\" yes.Value "\aeExtract.zip")
 ;// zipping the temp repo
 zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 sleep 1000

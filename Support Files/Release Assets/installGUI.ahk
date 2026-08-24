@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/06/12
- * @version 1.1.25
+ * @date 2026/08/24
+ * @version 1.1.26
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -28,6 +28,7 @@ class installGUI extends Gui {
         if !this.ahkPath {
             throw MemberError("AHK is not installed.")
         }
+        this.WorkDir := (StrLen(A_WorkingDir) = 3 && SubStr(A_WorkingDir, 2, 2) = ":\") ? SubStr(A_WorkingDir, 1, 1) ":" : A_WorkingDir
         super.__New("+Resize +MinSize100x170 -MinimizeBox -MaximizeBox", "Install Tomshi AHK")
         SetTimer(() => this.Opt("-Resize"), -10)
         this.SetFont("S11")
@@ -74,7 +75,8 @@ class installGUI extends Gui {
         TotalWidth := 450
 
         ahkPath       := false
-        InstallDir    := A_WorkingDir "\Tomshi AHK\"
+        InstallDir    := (StrLen(A_WorkingDir) = 3 && SubStr(A_WorkingDir, 2, 2) = ":\") ? SubStr(A_WorkingDir, 1, 1) ":\Tomshi AHK\" : A_WorkingDir "\Tomshi AHK\"
+        WorkDir       := ""
         progress      := 0
         isDetected    := false
         settingsDir   := A_MyDocuments "\tomshi\"
@@ -154,7 +156,7 @@ class installGUI extends Gui {
                 FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_Temp "\tomshi\yes.value.zip", 1)
                 return
             }
-            FileInstall("E:\Github\ahk\releases\release\yes.value.zip", A_WorkingDir "\yes.value.zip", 1)
+            FileInstall("E:\Github\ahk\releases\release\yes.value.zip", this.WorkDir "\yes.value.zip", 1)
         }
 
         /** this function handles deleting the left over files from installation */
@@ -163,8 +165,8 @@ class installGUI extends Gui {
                 this.__addLogEntry("deleting ``" name "``")
             }
             __after("yes.value.zip")
-            if FileExist(A_WorkingDir '\yes.value.zip')
-                FileDelete(A_WorkingDir '\yes.value.zip')
+            if FileExist(this.WorkDir '\yes.value.zip')
+                FileDelete(this.WorkDir '\yes.value.zip')
             __after("nodejs.msi")
             if FileExist(this.InstallDir '\nodejs.msi')
                 FileDelete(this.InstallDir '\nodejs.msi')
@@ -318,7 +320,7 @@ class installGUI extends Gui {
             this.__installDump()
             this.__setProgress(30)
             this.__addLogEntry("unzipping release contents")
-            if this.__unzip(A_WorkingDir "\yes.value.zip", this.InstallDir) != true {
+            if this.__unzip(this.WorkDir "\yes.value.zip", this.InstallDir) != true {
                 this.__setProgress(100)
                 this["Progress"].opt("CRed")
                 throw(Error("Unable to Unzip install files", -1))
@@ -403,6 +405,12 @@ class installGUI extends Gui {
                     return false
                 }
             }
+            if FileExist(this.InstallDir "\aeExtract.zip") && DirExist(extensionsPath) {
+                try FileMove(this.InstallDir "\aeExtract.zip", extensionsPath "\aeExtract.zip", true)
+                catch {
+                    return false
+                }
+            }
             try RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk")
             catch {
                 return false
@@ -413,8 +421,8 @@ class installGUI extends Gui {
 
         __installNode(path) {
             this.__addLogEntry("installing nodejs")
-                RunWait('msiexec.exe /i "' . path . '" /qn /norestart',, "Hide")
-                sleep 100
+                RunWait('*RunAs msiexec.exe /i "' . path . '" /qn /norestart',, "Hide")
+            sleep 100
         }
 
         __runCoreFunc() {
