@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/07/06
- * @version 1.1.18
+ * @date 2026/08/24
+ * @version 1.1.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -49,6 +49,7 @@ class CLSID_Objs {
 
     static __Item := Mip(
         "prem",            "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}",
+        "ae",              "{1D5AA6FA-E1A5-45A2-B6FA-5D285FEF6700}",
         "UserSettings",    "{AC89B835-1CD6-4CC3-AFCC-56360FD5116F}",
         "determineUIA",    "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}",
         "KSA",             "{A6A98BC1-C523-4F2E-8CB9-839106A6C8E1}",
@@ -66,8 +67,10 @@ class CLSID_Objs {
                 sleep delay
                 continue
             }
-            if loading.isLoading = true
+            if loading.isLoading = true {
+                sleep delay
                 continue
+            }
             return loading
         }
         return false

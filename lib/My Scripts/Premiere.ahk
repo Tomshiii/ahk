@@ -536,8 +536,8 @@ $^v::
 	if closed = true
 		return
 
-	ignoreVid := vidIgnore != "" ? "ignoreVideoTracks=" vidIgnore : ""
-	ignoreAud := audIgnore != "" ? "ignoreAudioTracks=" audIgnore : ""
+	ignoreVid := vidIgnore != "" ? "ignoreVideoTracks=" vidIgnore : 'ignoreVideoTracks=""'
+	ignoreAud := audIgnore != "" ? "ignoreAudioTracks=" audIgnore : 'ignoreAudioTracks=""'
 	if lockedTracks.audio.notVisible = true || lockedTracks.video.notVisible = true {
 		closed := false
 		lTitle := "Some layers may not be visible"

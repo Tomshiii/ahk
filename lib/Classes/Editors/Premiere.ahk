@@ -122,19 +122,19 @@ class Prem {
     static __checkedInstall := false
     static ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk", "installNode.ahk", "installPremRemote.ahk"]
     static __ignoreWinExist(ignoreWins := this.ignoreWins) {
-            Critical()
-            dct := detect()
-            for v in ignoreWins {
-                if WinExist(v) {
-                    resetOrigDetect(dct)
-                    Critical("Off")
-                    return true
-                }
+        Critical()
+        dct := detect()
+        for v in ignoreWins {
+            if WinExist(v) {
+                resetOrigDetect(dct)
+                Critical("Off")
+                return true
             }
-            resetOrigDetect(dct)
-            Critical("Off")
-            return false
         }
+        resetOrigDetect(dct)
+        Critical("Off")
+        return false
+    }
 
     ;// everything that used to run unconditionally in __New() now lives here,
     ;// and only runs once, lazily, the first time any real method gets called
@@ -142,7 +142,6 @@ class Prem {
         if this.__checkedInstall
             return
         this.__checkedInstall := true
-
 
         if (!this.__isNodeInstalled() || !this.__isRemoteInstalled()) && !this.__ignoreWinExist() {
             throwStr := (!this.__isNodeInstalled() && !this.__isRemoteInstalled()) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!this.__isNodeInstalled() && this.__isRemoteInstalled()) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")

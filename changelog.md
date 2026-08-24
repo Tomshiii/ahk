@@ -1,4 +1,8 @@
-# <> Release 2.18.x - 
+# <> Release 2.18.4 - AERemote
+Using my fork of `PremiereRemote` ([AERemote](https://github.com/Tomshiii/PremiereRemote/tree/AE)) it is now possible to send `CEP` commands to `After Effects` the same way we do to `Premiere`
+```c#
+ae.__remoteFunc('save')
+```
 
 ## Functions
 - ✅ Fixed `errorLog()`/`Log()` sometimes failing to log if interrupted
@@ -41,7 +45,7 @@
     - This stops any user set hotkeys from getting deleted after `rbuttonPrem.movePlayhead()` has been called (and `playbackKeys` has been set)
 
 ### 📝 `ae {`
-- ✏️ Added `anchorToPosition()`
+- ✏️ Added `anchorToPosition()`, `__remoteFunc()`
 - 📋 Replaced `zoomCompWindow()` => `setViewerZoom()`
     - 📋 Uses `UIA` to more reliably set the correct value
     - ✅ Fixes function reactiving the comp viewer when using Rotobrush

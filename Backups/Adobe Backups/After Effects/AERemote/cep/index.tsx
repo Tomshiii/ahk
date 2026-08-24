@@ -30,4 +30,8 @@ export const host = {
   yourNewFunction: function (param1, param2) {
     alert(param1 + " " + param2);
   },
+
+  save: function() {
+    return app.project.save();
+  }
 };
