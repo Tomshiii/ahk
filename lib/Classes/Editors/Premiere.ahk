@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/25
- * @version 2.5.26
+ * @version 2.5.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3032,9 +3032,12 @@ class Prem {
      * Determines the top/bottom position of the layer the cursor is currently within. Will also optionally determine the position of the middle divider
      * @param {Object} [coords] an object containing the `x`/`y` value of the current cursor coords
      * @param {Boolean} [searchMid=true] determine whether to search for the middle divider
-     * @param {VarRef} [] x/y values of `top`/`bot`/`mid` in that order
+     * @param {VarRef} `topDivX/topDivY/botDivX/botDivY/midDivX/midDivY/midDivBot` x/y values of `top`/`bot`/`mid` in that order
      * @param {Boolean} [showError=true] determine whether to show the `Notify {` error on failure. May be useful to disable this if systematically trying to determine all layer positions as it will show the error once it runs out of tracks
-     * @returns {Boolean/Object} returns boolean `false` on failure or an object containing all coords on success
+     * @returns {Object}
+     * ```
+     * {topX: topDivX ?? false, topY: topDivY ?? false, botX: botDivX ?? false, botY: botDivY ?? false, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: bool}
+     * ```
      */
     static __getlayerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, &midDivBot?, showError?) {
         doNotify := IsSet(showError) && (showError=true || showError=false) ? showError : true
@@ -3223,8 +3226,9 @@ class Prem {
             block.Off()
             return
         }
-
-        if !this.__layerDividerCheck(origMouseCords) || !this.__getlayerTopBottom(origMouseCords, true, &topDivX, &topDivY, &botDivX, &botDivY, &midDivX, &midDivY) {
+        layerDiv    := this.__layerDividerCheck(origMouseCords)
+        layerCoords := this.__getlayerTopBottom(origMouseCords, true, &topDivX, &topDivY, &botDivX, &botDivY, &midDivX, &midDivY)
+        if !layerDiv || !!layerCoords.error {
             block.Off()
             return
         }
@@ -3367,7 +3371,8 @@ class Prem {
         loop {
             if IsInteger(stopAt) && stopAt != false && A_Index > stopAt
                 break
-            if !getLayerPos := this.__getlayerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,,, false)
+            getLayerPos := this.__getlayerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,,, false)
+            if !!getLayerPos.error
                 break
             current := Map()
             current["top"] := getLayerPos.topY, current["bot"] := getLayerPos.botY, current["mid"] := getLayerPos.topY+((getLayerPos.botY-getLayerPos.topY)/2)
