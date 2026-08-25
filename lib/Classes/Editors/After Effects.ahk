@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/08/24
- * @version 1.5.0
+ * @date 2026/08/25
+ * @version 1.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -765,5 +765,6 @@ class AE {
         anch2 := A_Clipboard
         delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
         clip.delayReturn(clipb.storedClip)
+        blocker.Off()
     }
 }
