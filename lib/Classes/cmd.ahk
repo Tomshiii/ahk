@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2025/12/20
- * @version 1.2.0
+ * @date 2026/08/25
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -81,8 +81,10 @@ class cmd {
             exec := shell.Exec(A_ComSpec " /C " command)
             return __whichOutput(exec.StdOut.ReadAll(), exec.StdErr.ReadAll())
         }
-
-        return pipeCommand(command, workingDir, returnObj)
+        try return pipeCommand(command, workingDir, returnObj)
+        catch {
+            return pipeCommand(A_ComSpec " /C " command, workingDir, returnObj)
+        }
     }
 
     static deleteMappedDrive(driveLocation) => this.run(,,, Format("net use {}: /delete", Chr(64+driveLocation)))

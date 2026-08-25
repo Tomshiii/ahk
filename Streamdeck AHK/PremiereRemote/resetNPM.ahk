@@ -17,7 +17,11 @@ if !DirExist(dir) {
     return
 }
 
-cmd.run(, false, IsSet(keepWin) ? checkBool(keepWin) : true, command, dir, (IsSet(Hide) && hide != "false") ? "Hide" : "")
+resp := RegExReplace(cmd.result(command, true,, dir), "^(?:.*\R){3}", "")
+if !InStr(resp, "Build successful. Modifying index.jsx now.") {
+    A_Clipboard := resp
+    MsgBox("Build failed with the following error (also copied to clipboard):`n" resp)
+}
 if !IsSet(Hide) {
     switch which {
         case "PremiereRemote":
