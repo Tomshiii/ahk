@@ -22,7 +22,7 @@ startupTray()
 ;\\v2.14.0
 
 ;\\CURRENT RELEASE VERSION
-;\\v2.18.4
+;\\v2.18.4.1
 
 ; \\\\\\\\////////////
 ; THIS SCRIPT WAS ORIGINALLY CREATED BY TARAN FROM LTT, I HAVE REWORKED IT TO WORK IN AHK v2.0 and then completely changed it to be for my workflow
