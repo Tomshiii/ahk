@@ -2,6 +2,7 @@
 
 ## Functions
 - ✅ Fixed `ae.anchorToPosition()` not unblocking inputs
+- ✅ Fixed `prem.layerSizeAdjust()` being unable to adjust a layer paritally off screen
 
 ## KSA
 - ✏️ Added `premAddTracks`

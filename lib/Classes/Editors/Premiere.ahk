@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/08/25
- * @version 2.5.25.3
+ * @version 2.5.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3044,9 +3044,9 @@ class Prem {
         if (!topDiv || !botDiv || !mid) {
             if doNotify = true && !Notify.Exist("premLayerBounds")
                 Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424 tag=premLayerBounds')
-            return false
+            return {topX: topDivX ?? false, topY: topDivY ?? false, botX: botDivX ?? false, botY: botDivY ?? false, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: true}
         }
-        return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false}
+        return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: false}
     }
 
     /**
@@ -3098,18 +3098,40 @@ class Prem {
         blocker.Off()
 
         switch middle {
-            ;// adjust layers
             case false:
-                if !this.__layerDividerCheck(origMouseCords) || !this.__getlayerTopBottom(origMouseCords, middle,, &topDivY,,,, &midDivY) {
+                ;// adjust layers
+                if !this.__layerDividerCheck(origMouseCords) {
                     return
                 }
+                layerObj := this.__getlayerTopBottom(origMouseCords, middle,,,,,,,, false)
                 block.On()
-                MouseMove(this.timelineRawX+10, topDivY+4)
-                KeyWait("LAlt", "L")
-                if !checkAgain := this.__getlayerTopBottom({x:0, y: topDivY+4}, false)
-                    MouseMove(origMouseCords.x, topDivY+4)
-                else
+                newTop := ""
+                if !layerObj.error {
+                    MouseMove(this.timelineRawX+10, layerObj.topY+4)
+                    newTop := layerObj.topY+4
+                    KeyWait("LAlt", "L")
+                } else {
+                    if !layerObj.topY && !layerObj.botY {
+                        KeyWait("LAlt", "L")
+                        checkStuck(["LAlt", "CapsLock"])
+                        block.Off()
+                        return
+                    }
+                    switch {
+                        case layerObj.topY != false && !layerObj.botY: MouseMove(this.timelineRawX+10, layerObj.topY+4), newTop := layerObj.topY+4
+                        case !layerObj.topY  && layerObj.botY != false: MouseMove(this.timelineRawX+10, layerObj.botY-4), newTop := layerObj.botY-4
+                    }
+                    KeyWait("LAlt", "L")
+                }
+                checkAgain := this.__getlayerTopBottom({x:0, y: newTop}, false,,,,,,,, false)
+                if !checkAgain.error && (checkAgain.topY != false && checkAgain.botY != false)
                     MouseMove(origMouseCords.x, (checkAgain.topY+checkAgain.botY)/2)
+                else {
+                    switch {
+                        case (checkAgain.topY != false && !checkAgain.botY): MouseMove(origMouseCords.x, checkAgain.topY+4)
+                        case (!checkAgain.topY && checkAgain.botY!= false): MouseMove(origMouseCords.x, checkAgain.botY-4)
+                    }
+                }
                 checkStuck(["LAlt", "CapsLock"])
             case true:
                 ;// adjust middle divider
