@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/08/24
- * @version 1.1.26
+ * @date 2026/08/25
+ * @version 1.1.27
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -182,8 +182,10 @@ class installGUI extends Gui {
          */
         __unzip(zipPath, unzippedPath) {
             SplitPath(zipPath,,, &checkZipPathExt)
-            if checkZipPathExt != "zip"
+            if checkZipPathExt != "zip" {
+                this.__exit()
                 throw TypeError("Requested folder is not a ZIP folder", -2, zipPath)
+            }
             ; Ensure destination directory exists
             if !DirExist(unzippedPath)
                 DirCreate(unzippedPath)
@@ -195,12 +197,16 @@ class installGUI extends Gui {
             psh := ComObject("Shell.Application")
 
             zipFolder := psh.Namespace(zipPath)
-            if !IsObject(zipFolder)
+            if !IsObject(zipFolder) {
+                this.__exit()
                 throw TargetError("Shell could not open zip path: " zipPath, -1)
+            }
 
             destFolder := psh.Namespace(unzippedPath)
-            if !IsObject(destFolder)
+            if !IsObject(destFolder) {
+                this.__exit()
                 throw TargetError("Shell could not open destination path: " unzippedPath, -1)
+            }
 
             destFolder.CopyHere(zipFolder.Items(), 4|16)
 
@@ -216,8 +222,10 @@ class installGUI extends Gui {
 
         __patchInstall() {
             try RunWait(this.prevInstallLoc "\Support Files\closeAll.ahk 1 " A_ScriptName)
-            if !DirExist(A_Temp "\tomshi\yes.value")
+            if !DirExist(A_Temp "\tomshi\yes.value") {
+                this.__exit()
                 throw TargetError
+            }
             patchDir := A_Temp "\tomshi\yes.value"
             this.__addLogEntry("unzipping release contents")
             if this.__unzip(A_Temp "\tomshi\yes.value.zip", patchDir) != true {
@@ -225,10 +233,12 @@ class installGUI extends Gui {
                 try FileDelete(this.InstallDir "\yes.value.zip")
                 this.__setProgress(100)
                 this["Progress"].opt("CRed")
+                this.__exit()
                 throw(Error("Unable to Unzip install files. Please try the installation again.", -1))
             }
             this.__setProgress(40)
             if !this.nodeInstalled() && !FileExist(patchDir "\yes.value\nodejs.msi") {
+                this.__exit()
                 throw TargetError("Node is not installed and installer cannot be found. Try the full installer.")
             }
             if !this.nodeInstalled() && FileExist(patchDir "\yes.value\nodejs.msi") {
@@ -241,7 +251,7 @@ class installGUI extends Gui {
                 this.__addLogEntry("moving: " A_LoopFileName)
                 if A_LoopFileName = "lib" {
                     if DirExist(A_Appdata "\tomshi\lib")
-                        DirDelete(A_Appdata "\tomshi\lib", true)
+                        DirMove(A_Appdata "\tomshi\lib", A_Appdata "\tomshi\lib_old", 2)
                     DirMove(A_LoopFileFullPath, A_Appdata "\tomshi\lib", 2)
                     continue
                 }
@@ -259,12 +269,39 @@ class installGUI extends Gui {
             this.__adjustVersion()
 
             DirDelete(A_Temp "\tomshi", true)
+            if DirExist(A_Appdata "\tomshi\lib_old")
+                DirDelete(A_Appdata "\tomshi\lib_old", true)
 
             ;//! finished
             this.__setProgress(100)
             this["Progress"].opt("CLime")
             this.Destroy()
             return
+        }
+
+
+        __exit() {
+            __delIfExist(path) {
+                if FileExist(path)
+                    try FileDelete(path)
+            }
+            switch this.prevVer {
+                case false: __delIfExist(A_Appdata "\tomshi\version")
+                default:
+                    __delIfExist(A_Appdata "\tomshi\version")
+                    FileAppend(this.prevVer, A_Appdata "\tomshi\version")
+            }
+            switch this.prevInstallLoc {
+                case "": __delIfExist(A_Appdata "\tomshi\installDir")
+                default:
+                    __delIfExist(A_Appdata "\tomshi\installDir")
+                    FileAppend(this.prevVer, A_Appdata "\tomshi\installDir")
+            }
+            if DirExist(A_Appdata "\tomshi\lib_old") {
+                if DirExist(A_Appdata "\tomshi\lib")
+                    DirDelete(A_Appdata "\tomshi\lib", true)
+                DirMove(A_Appdata "\tomshi\lib_old", A_Appdata "\tomshi\lib", 2)
+            }
         }
 
         /** this function handles the entire install sequence of the installer */
@@ -323,6 +360,7 @@ class installGUI extends Gui {
             if this.__unzip(this.WorkDir "\yes.value.zip", this.InstallDir) != true {
                 this.__setProgress(100)
                 this["Progress"].opt("CRed")
+                this.__exit()
                 throw(Error("Unable to Unzip install files", -1))
             }
             this.__setProgress(40)
@@ -339,8 +377,10 @@ class installGUI extends Gui {
                 break
             }
             this.__setProgress(50)
-            if !dirMoved
+            if !dirMoved {
+                this.__exit()
                 throw TargetError("Failed to move lib folder")
+            }
             this.__baselineSettings()
             this.__setProgress(60)
             if !this.nodeInstalled() {
@@ -389,6 +429,7 @@ class installGUI extends Gui {
 
         __installPremRemote() {
             if !FileExist(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk") {
+                this.__exit()
                 throw TargetError("Couldn't find installPremRemote.ahk")
             }
             this.__addLogEntry("installing PremiereRemote")
@@ -430,6 +471,7 @@ class installGUI extends Gui {
             ;// stops core func getting run as admin
             try Run(this.InstallDir "\Core Functionality.ahk")
             catch {
+                this.__exit()
                 throw TargetError("Failed to run Core Functionality.ahk")
             }
             sleep 1500
