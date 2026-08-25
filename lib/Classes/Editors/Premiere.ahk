@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/24
- * @version 2.5.25.2
+ * @date 2026/08/25
+ * @version 2.5.25.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -855,7 +855,7 @@ class Prem {
         if !premUIA
             return -1
         coord.s()
-        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
+        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"],, false)
         try button := progMon.FindElement({Type:50000, Name:"Play-Stop Toggle", matchmode:"Substring"})
         catch {
             errorLog(TargetError("Play/Stop button could not be found", -1))
@@ -894,7 +894,7 @@ class Prem {
         premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
         if !premUIA
             return -1
-        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
+        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"],, false)
         try button := progMon.FindElement({Type:50003, Name:"Select Multicam Page"})
         catch {
             return false
@@ -1105,7 +1105,7 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
 
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
             this().__loremipsum({x: effCtrlNN.location.x, y: effCtrlNN.location.y}, {width: effCtrlNN.location.w, height: effCtrlNN.location.h}, &eyeX, &eyeY)
@@ -1322,7 +1322,7 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         if !this.isClipSelected() {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
@@ -1462,7 +1462,7 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         this.__focusTimeline() ;focuses the timeline
         sleep 25
         if !this.isClipSelected() {
@@ -1569,7 +1569,7 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         timelineAct := premUIA_Values.__isUiaElementActive('timelineWindow', premUIA)
         this.__focusTimeline() ;focuses the timeline
         if !this.isClipSelected() {
@@ -1595,7 +1595,7 @@ class Prem {
 
     /**
      * Sets the Effect Controls scrollbar to its topmost value if it has been moved
-     * @param {UIA Object} [effCont] the effect controls UIA control. it is recommended to use `effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])` for an updated window
+     * @param {UIA Object} [effCont] the effect controls UIA control. it is recommended to use `effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)` for an updated window
      * @param {Integer} [mouseSpeed=0] the value to be passed to `SetDefaultMouseSpeed()`. Defaults to `0`
      * @param {Integer} [timeout=1000] the time in `ms` you want to check to ensure the scrollbar has moved. Will check every `50ms`
      * @returns {Boolean}
@@ -1648,7 +1648,7 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         if !this.isClipSelected() {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
@@ -1716,7 +1716,7 @@ class Prem {
                 errorLog(TargetError("Failed to wait for the gain window", -1))
                 return false
             }
-            try gainWin := UIA.ElementFromHandle(gainTitle A_Space this.winTitle)
+            try gainWin := UIA.ElementFromHandle(gainTitle A_Space this.winTitle,, false)
             catch {
                 errorLog(TargetError("Failed to create UIA handle for gain window", -1))
                 return false
@@ -2741,7 +2741,7 @@ class Prem {
         premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
         if !premUIA
             return false
-        sourceMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["sourceMonitor"])
+        sourceMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["sourceMonitor"],, false)
         coord.s()
         offsetValue := 31
         try {
@@ -2913,7 +2913,7 @@ class Prem {
         premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
         if !premUIA
             return false
-        timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"])
+        timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"],, false)
         timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
         children       := timelineUIA.Children
 
@@ -2955,7 +2955,7 @@ class Prem {
         try {
             if !premUIA := premUIA_Values.initialise()
                 return false
-            timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"])
+            timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"],, false)
             timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
             if !middleIndex := this.__retrieveAudLayerIndex(premUIA)
                 return false
@@ -4486,7 +4486,7 @@ class Prem {
     static setBlendMode(blendModeString) {
         if !premUIA := premUIA_Values.initialise()
             return
-        effCont := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"])
+        effCont := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         if !this.isClipSelected()
             return
         try {
@@ -4623,7 +4623,7 @@ class Prem {
     static isTrimModeActive(wait := false) {
         if !premUIA := premUIA_Values.initialise()
             return
-        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"])
+        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"],, false)
         if wait = false || !IsInteger(wait) || wait < 1 {
             try transButton := progMon.FindElement({Type:50000, Name:"Apply Default Transitions to Selection", matchmode:"Substring"})
             return (IsSet(transButton) && transButton != false)

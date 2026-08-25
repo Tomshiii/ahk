@@ -369,6 +369,11 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > View > ) Select Camera X"
     },
+    "premAddTracks": {
+        "command": "cmd.sequence.addtracks",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Sequence > ) Add Tracks..."
+    },
 
 
     "labelViolet": {

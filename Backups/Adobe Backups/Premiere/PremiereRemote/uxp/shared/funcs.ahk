@@ -26,7 +26,7 @@ __runAndWait(ahkExe, filepath, minimise := true, timeout := 3, sleepTime := 5000
 __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
     WinActivate("Adobe UXP Developer Tools" A_Space title)
     premRemote := UIA.ElementFromHandle("Adobe UXP Developer Tools" A_Space title,, false)
-    if !premRow := premRemote.WaitElement({Type:50025, Name:"Premiere Pro"}, 5000) {
+    if !premRow := premRemote.WaitElement({Type:50025, Name:"Premiere Pro"}, 10000) {
         MsgBox("Failed to find the UXP plugin window",, "T3")
         return false
     }

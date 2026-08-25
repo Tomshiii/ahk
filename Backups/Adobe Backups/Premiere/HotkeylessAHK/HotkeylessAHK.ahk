@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/08/17
- * @version 1.1.15
+ * @date 2026/08/25
+ * @version 1.1.16
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -15,8 +15,11 @@ A_IconTip := "HotkeylessAHK"
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\ptf.ahk
+#Include Classes\switchTo.ahk
 #Include Functions\detect.ahk
 #Include Functions\checkBool.ahk
+#Include Other\UIA\UIA.ahk
+#Include GUIs\tomshiBasic.ahk
 ; }
 TraySetIcon(ptf.Icons "\hotkeyless.ico")
 ; #NoTrayIcon
@@ -61,6 +64,7 @@ Class CustomFunctions {
     addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer", makeSelection := true)     => (OtherFuncs.addAdjustLayer(adjustmentLayerPath, makeSelection))
     renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?))
     setupProject()                                           => OtherFuncs.setupProject()
+    setupMusicTracks(audioType := "Standard")                => OtherFuncs.setupMusicTracks(audioType)
 
     closeExplorer() => (ProcessClose("explorer.exe"))
 }
@@ -92,5 +96,83 @@ class OtherFuncs {
         backupsPath := ptf.Backups
         templateFile := backupsPath "\Adobe Backups\Premiere\Template\v" SubStr(prem.currentSetVer, 1, 2) "_2160p29.97.prproj"
         prem.__remoteUXP('custom/setupProjBin',, "templateProjectPath=" templateFile, "includeOptionalAssets=true")
+    }
+
+    /**
+     * add 5 tracks after the desired track, optionally add 2 submixes
+     * @param {String} [audioType="Standard"] which type of audio channel to add. Can be `Standard`/`5.1`/`mono`/`adaptive`
+     */
+    static setupMusicTracks(audioType := "Standard") {
+        audTrackNum := prem.__remoteFunc('getAudioTracks', true)
+        selectedTrack := ""
+        afterGUI := tomshiBasic(,,, "After Track")
+        afterGUI.AddText(, "After which track:")
+        dropDownArr := ["None", "Before First Track"]
+        loop audTrackNum {
+            dropDownArr.Push("After Audio " A_Index)
+        }
+        afterGUI.AddDropDownList("Choose1 vdropDwn w200", dropDownArr)
+        afterGUI.AddButton("x+5 y+-26", "Ok").OnEvent('Click', __okButt)
+        closed := false
+        afterGUI.OnEvent("Escape", (*) => (closed := true, afterGUI.Destroy()))
+        afterGUI.OnEvent("Close", (*) => (closed := true, afterGUI.Destroy()))
+        __okButt(*) {
+            selectedTrack := afterGUI["dropDwn"].Text
+            afterGUI.Destroy()
+        }
+        afterGUI.show()
+        WinWaitClose("After Track")
+        if closed = true
+            return
+        subMixes := MsgBox("Add submixes?",, 0x4)
+        if !WinWaitActive(prem.winTitle,, 1) {
+            switchTo.Premiere()
+            if !WinWaitActive(prem.winTitle,, 5)
+                return
+        }
+        if selectedTrack = "None" && subMixes = "no"
+            return
+        SendInput(ksa.premAddTracks)
+        WinWait("Add Tracks")
+        tracksUIA := UIA.ElementFromHandle("Add Tracks " prem.exeTitle,, false)
+        __openEditText(uiaObj, name, value) {
+            try {
+                edit := uiaObj.FindElement({Type:50004, Name: name})
+                edit.select()
+                text := uiaObj.FindElement({Type:50004, Name: "OS_EditText" })
+                actualText := text.FindElement({Type:50004, Name: name})
+                actualText.value := value
+            }
+        }
+        __openEditText(tracksUIA, "videoTracksCountHotTextNumber", 0)
+        __openEditText(tracksUIA, "audioTracksCountHotTextNumber", 5)
+        if subMixes = "yes"
+            __openEditText(tracksUIA, "audioSubmixTracksCountHotTextNumber", 2)
+
+        try {
+            groups := tracksUIA.FindElements({Type:50026}, 4)
+            ;// order; vid, aud, submix
+            for i, group in groups {
+                if i = 1
+                    continue
+                if i = 2 && selectedTrack != "None" {
+                    audBoxes := group.FindElements({Type:50003})
+                    listItem := audBoxes[1].FindElement({Type:50007, Name: selectedTrack})
+                    listItem.select()
+                    trackType := audBoxes[2].FindElement({Type:50007, Name: audioType})
+                    trackType.select()
+                }
+                if i = 3 && subMixes = "yes" {
+                    subBoxes := group.FindElements({Type:50003})
+                    placement := subBoxes[1].FindElement({Type:50007, Name: "Before First Track"})
+                    placement.select()
+                    trackType := subBoxes[2].FindElement({Type:50007, Name: "Stereo"})
+                    trackType.select()
+                }
+            }
+
+            okButt := tracksUIA.FindElement({Type:50000, Name: "OK"})
+            okButt.Invoke()
+        }
     }
 }
