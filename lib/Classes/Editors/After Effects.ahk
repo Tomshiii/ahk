@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/08/25
- * @version 1.5.1
+ * @date 2026/08/26
+ * @version 1.5.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -743,8 +743,25 @@ class AE {
         return true
     }
 
+    /**
+     * Checks the api to determine if a clip is selected
+     * @returns {Boolean}
+     */
+    static isClipSelected() {
+        if (!this.__remoteFunc('isSelected', true) && !this.__remoteFunc('isSelectedMultiple', true))
+            return false
+        return true
+    }
+
     /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
     static anchorToPosition() {
+        cepSync := this.__remoteFunc('syncTransformAnchorToPosition', true)
+        if cepSync = true
+            return
+        if !this.isClipSelected() {
+            errorLog(TargetError("No clip selected.", -1))
+            return
+        }
         ;// check to see if the user is in a text field
         if !CaretGetPos(&carx, &cary) {
             tool.Cust("The user is not currently within a text field")

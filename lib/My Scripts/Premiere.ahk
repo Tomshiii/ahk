@@ -167,8 +167,17 @@ Enter:: ;// close windows by double tapping enter
 				return
 			}
 			currTimelineStatus := prem.timelineFocusStatus()
-			activePath := premUIA_Values.__activeElementPath(, premUIA)
-            textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
+			try {
+				activePath := premUIA_Values.__activeElementPath(, premUIA)
+				textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
+			} catch {
+				SendInput("{" A_ThisHotkey "}")
+				return
+			}
+			if activePath = -1 || textStatus = -1 {
+				SendInput("{" A_ThisHotkey "}")
+				return
+			}
 			switch {
 				case (InStr(activePath, premUIA.UIA_Path["programMonitor"]) != 1):
 					SendInput("{" A_ThisHotkey "}")

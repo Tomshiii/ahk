@@ -638,14 +638,64 @@ export const host = {
     }
   },
 
-  getPlayheadPosTicks: function(): string {
+  getPlayheadPosTicks: function (): string {
     const currentSequence = app.project.activeSequence;
     return currentSequence.getPlayerPosition().ticks;
   },
 
-  setPlayheadPosTicks: function(ticks: string) {
+  setPlayheadPosTicks: function (ticks: string) {
     const currentSequence = app.project.activeSequence;
     return currentSequence.setPlayerPosition(String(ticks));;
+  },
+
+  syncTransformAnchorToPosition: function () {
+    // bail if more than one clip selected
+    if (this.isSelectedMultiple()) {
+      return false;
+    }
+    // bail if nothing selected
+    if (!this.isSelected()) {
+      return false;
+    }
+
+    var activeSequence = app.project.activeSequence;
+    var selection = activeSequence.getSelection();
+    var clip = selection[0];
+
+    // find all "Transform" components on the clip
+    var transformEffects = [];
+    for (var i = 0; i < clip.components.numItems; i++) {
+      var component = clip.components[i];
+      if (component.displayName === "Transform") {
+        transformEffects.push(component);
+      }
+    }
+
+    // bail if no or more than one Transform effect
+    if (transformEffects.length === 0 || transformEffects.length > 1) {
+      return false;
+    }
+
+    var transform = transformEffects[0];
+    var anchorPointProp = null;
+    var positionProp = null;
+
+    for (var p = 0; p < transform.properties.numItems; p++) {
+      var prop = transform.properties[p];
+      if (prop.displayName === "Anchor Point") {
+        anchorPointProp = prop;
+      } else if (prop.displayName === "Position") {
+        positionProp = prop;
+      }
+    }
+
+    if (!anchorPointProp || !positionProp) {
+      return false;
+    }
+
+    var anchorValue = anchorPointProp.getValue();
+    positionProp.setValue(anchorValue, true);
+    return true;
   }
 }
 

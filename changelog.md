@@ -1,14 +1,12 @@
-# <> Release 2.18.4.1 - Hotfix
-Check out the [v2.18.4 changelog](<https://github.com/Tomshiii/ahk/releases/tag/v2.18.4>) for the recent big changes 
-
-## Installation
-- 📋 Installer will now attempt to reinstate the original `version`/`installDir`/`lib` files in the event of complete failure
-    - Hopefully avoids situations where the installer fails part way through, then cannot be run again because `"This version is already installed"`
+# <> Release 2.18.x - 
 
 ## Functions
-- ✅ Fixed `ae.anchorToPosition()` not unblocking inputs
-- ✅ Fixed `prem.layerSizeAdjust()` being unable to adjust a layer paritally off screen
-- ✅ Fixed `cmd.result()` not working for some command types
+- 📋 `prem/ae.anchorToPosition()` now attempts to use the api to adjust the values before falling back to clipboard manipulation
 
-## KSA
-- ✏️ Added `premAddTracks`
+## PremiereRemote
+- ✏️ Added `syncTransformAnchorToPosition()`
+
+## AERemote
+- ✅ Fixed extension failing to appear (mb I forgot to edit some files)
+    - If already installed, will need to be reinstalled
+- ✏️ Added ports of `applyEffectOnAllSelectedClips()`, `listEffectsOnSelectedClip()`, `syncTransformAnchorToPosition()`, `isSelected()`, `isSelectedMultiple()`

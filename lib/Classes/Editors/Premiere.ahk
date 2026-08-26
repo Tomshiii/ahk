@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/25
- * @version 2.5.27
+ * @date 2026/08/26
+ * @version 2.5.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2509,6 +2509,9 @@ class Prem {
      * A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab.
      */
     static anchorToPosition() {
+        cepSync := this.__remoteFunc('syncTransformAnchorToPosition', true)
+        if cepSync = true
+            return
         if !this.isClipSelected() {
             errorLog(TargetError("No clip selected.", -1))
             return

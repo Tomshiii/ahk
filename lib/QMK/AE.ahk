@@ -22,7 +22,7 @@ l::ae.wiggle("
 			[w[0],w[0]]
 		)"
 	)
-.::ae.wiggle("wiggle(1,10)")
+.::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Transform")
 ;Down::unassigned()
 
 i::unassigned()
