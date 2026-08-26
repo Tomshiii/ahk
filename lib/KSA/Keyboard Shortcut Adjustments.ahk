@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
- * @date 2026/08/07
- * @version 2.1.0
+ * @date 2026/08/26
+ * @version 2.1.1
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -76,8 +76,12 @@ class KeyShortAdjust {
 
     __isBeta(which) {
         try {
-            if !IsSet(UserSettings)
-                UserSettings := CLSID_Objs.load("UserSettings")
+            if !IsSet(UserSettings) {
+                try UserSettings := CLSID_Objs.clone("UserSettings")
+                catch {
+                    UserSettings := UserPref(true)
+                }
+            }
             isBeta := UserSettings.%which%IsBeta
             return checkBool(isBeta)
         } catch {

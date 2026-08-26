@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/08/21
- * @version 3.0.26
+ * @date 2026/08/26
+ * @version 3.0.27
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -67,9 +67,47 @@ class premUIA_Values {
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
         if !uiaEl
             return -1
-        focusedEl := UIA.GetFocusedElement()
-        try focusedPath := uiaEl.AdobeEl.GetUIAPath(focusedEl, true)
-        return ((returnObj = false) ? focusedPath ?? "" : {uiaEl: uiaEl, Path: focusedPath ?? "", focusedEl: focusedEl})
+        panelName   := this.GetActivePanelName(uiaEl)
+        focusedPath := (panelName != "" && uiaEl.UIA_Path.Has(panelName)) ? uiaEl.UIA_Path[panelName] : ""
+
+        return ((returnObj = false) ? focusedPath : {uiaEl: uiaEl, Path: focusedPath, focusedEl: panelName})
+    }
+
+    /**
+     * Determines which known Premiere panel currently has UIA keyboard focus,
+     * by climbing from the focused element up through native-window-backed
+     * ancestors and matching against the panel hwnd map built during setObjs().
+     * This avoids searching the (potentially stale) cached AdobeEl tree, since
+     * deep/lazily-generated elements (eg an edit box only created once clicked
+     * into) will never exist there - but their host panel's hwnd is stable.
+     * @returns {String} the panel key (eg "effectControls") or "" if none matched
+     */
+    static GetActivePanelName(uiaEl) {
+        try focusedEl := UIA.GetFocusedElement()
+        if !IsSet(focusedEl) || !focusedEl
+            return ""
+
+        el := focusedEl
+        Loop 20 {
+            try hwnd := el.NativeWindowHandle
+            catch
+                hwnd := 0
+
+            if hwnd {
+                for panelName, storedHwnd in uiaEl.UIA_Hwnd {
+                    if storedHwnd = hwnd
+                        return panelName
+                }
+            }
+
+            try parent := el.Parent
+            catch
+                break
+            if !parent
+                break
+            el := parent
+        }
+        return ""
     }
 
     /**

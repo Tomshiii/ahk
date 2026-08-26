@@ -1,6 +1,7 @@
 # <> Release 2.18.x - 
 
 ## Functions
+- ✅ Fixed `premUIA_Values.__activeElementPath()` throwing in certain circumstances causing `determineUIA.ahk` to crash
 - 📋 `prem/ae.anchorToPosition()` now attempts to use the api to adjust the values before falling back to clipboard manipulation
 
 ## PremiereRemote
