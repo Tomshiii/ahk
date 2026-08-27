@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/08/25
- * @version 1.1.16
+ * @date 2026/08/27
+ * @version 1.1.17
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -145,9 +145,15 @@ class OtherFuncs {
             }
         }
         __openEditText(tracksUIA, "videoTracksCountHotTextNumber", 0)
-        __openEditText(tracksUIA, "audioTracksCountHotTextNumber", 5)
+        if selectedTrack != "None"
+            __openEditText(tracksUIA, "audioTracksCountHotTextNumber", 5)
+        else
+            __openEditText(tracksUIA, "audioTracksCountHotTextNumber", 0)
+
         if subMixes = "yes"
             __openEditText(tracksUIA, "audioSubmixTracksCountHotTextNumber", 2)
+        else
+            __openEditText(tracksUIA, "audioSubmixTracksCountHotTextNumber", 0)
 
         try {
             groups := tracksUIA.FindElements({Type:50026}, 4)
