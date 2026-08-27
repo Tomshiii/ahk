@@ -11,3 +11,8 @@
 - ✅ Fixed extension failing to appear (mb I forgot to edit some files)
     - If already installed, will need to be reinstalled
 - ✏️ Added ports of `applyEffectOnAllSelectedClips()`, `listEffectsOnSelectedClip()`, `syncTransformAnchorToPosition()`, `isSelected()`, `isSelectedMultiple()`
+
+## Other Changes
+
+🔗 `mult-dl.ahk`
+- `Multi` list will now be cleared once downloading has completed

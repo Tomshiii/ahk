@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/08/24
+ * @date 2026/08/27
  ***********************************************************************/
-global currentVer := "1.3.11"
+global currentVer := "1.3.12"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -339,6 +339,7 @@ class multiDL extends tomshiBasic {
                     pickDelay := Random(18, 26) "000"
                     sleep(pickDelay)
                 }
+                this["list"].Delete()
             case 3: ;// part
                 this.timecodeValue := (Format("{:02}", this["H1"].value) ":" Format("{:02}", this["M1"].value) ":" Format("{:02}", this["S1"].value) "-" Format("{:02}", this["H2"].value) ":" Format("{:02}", this["M2"].value) ":" Format("{:02}", this["S2"].value))
                 if this.timecodeValue == "00:00:00-00:00:00" || this["partURL"].value = "" {

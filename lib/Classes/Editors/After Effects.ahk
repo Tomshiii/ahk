@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/08/26
- * @version 1.5.2
+ * @date 2026/08/27
+ * @version 1.5.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,7 +20,10 @@
 #Include Classes\cmd.ahk
 #Include Classes\winGet.ahk
 #Include Classes\errorLog.ahk
+#Include Classes\switchTo.ahk
+#Include Classes\clip.ahk
 #Include Other\UIA\UIA.ahk
+#Include Other\_socket.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\detect.ahk
 #Include Functions\determineAdobeVer.ahk
