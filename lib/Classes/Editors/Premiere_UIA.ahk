@@ -127,7 +127,7 @@ class premUIA_Values {
      * Determines whether a given premiere tool is currently selected (using a UIA element)
      * @param {String} [tool] the name of the tool you wish to check. Tool names are listed below
      * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
-     * @returns {Trilean} returns `-1` if UIA object is unable to be set, else returns bool
+     * @returns {-1 | Boolean} returns `-1` when; Premiere window cannot be determined, Premiere window is not active, or UIA object is unable to be set, else returns `true`/`false`
      * ```
      * "selectionTool", "Selection Tool",
      * "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],

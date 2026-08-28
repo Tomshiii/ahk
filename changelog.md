@@ -10,6 +10,7 @@
 
 ### 📝 `ae {`
 - ❌ Removed `scaleAndPos()`, `motionBlur()`
+- ✏️ Added `isToolSelected()`
 - 📋 Port `prem.save()` to `ae.save()`
 - 📋 `anchorToPosition()` now attempts to use the api to adjust the values before falling back to clipboard manipulation
 
@@ -22,7 +23,7 @@
 - ✏️ Added ports of `applyEffectOnAllSelectedClips()`, `listEffectsOnSelectedClip()`, `anchorToPosition()`, `isSelected()`, `isSelectedMultiple()`
 
 ## Other Changes
-- ❌ Removed `advancedX.png`, `blurX.png`, `mode.png`, `toggle.png`
+- ❌ Removed AE `advancedX.png`, `blurX.png`, `mode.png`, `toggle.png`, `text.png`, `shutterangle.png`
 
 🔗 `mult-dl.ahk`
 ###### *(v1.3.11 -> v1.3.13)*

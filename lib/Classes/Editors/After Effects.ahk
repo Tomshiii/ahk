@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/08/27
- * @version 1.5.2.1
+ * @date 2026/08/28
+ * @version 1.5.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -27,6 +27,7 @@
 #Include Functions\delaySI.ahk
 #Include Functions\detect.ahk
 #Include Functions\determineAdobeVer.ahk
+#Include Functions\isObjHasProp.ahk
 ; }
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
@@ -658,6 +659,30 @@ class AE {
         delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
         clip.delayReturn(clipb.storedClip)
         blocker.Off()
+    }
+
+    /**
+     * Uses UIA to determine if the desired tool is selected. This function may fail if the desired tool is not visible on the screen.
+     * @param {String} [toolName] the name of the tool as seen in UIA. ie; `Selection Tool`, `Hand Tool`, `Zoom Tool`, `Orbit Around Cursor Tool`, `Pan Under Cursor Tool`, `Dolly Towards Cursor Tool`, `Rotation Tool`, `Pan Behind (Anchor Point) Tool`, `Rectangle Tool`, `Cube Tool`, `Pen Tool`, `Horizontal Type Tool`, `Brush Tool`, `Clone Stamp Tool`, `Eraser Tool`, Object Matte Tool`, `Puppet Position Pin Tool`
+     * @returns {-1 | Boolean} returns `-1` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button. Else returns `true`/`false`
+     */
+    static isToolSelected(toolName) {
+        try n := WinGet.AEName()
+        if !WinActive(this.winTitle) && !WinActive(this.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
+            return -1
+        }
+        aeUIA := UIA.ElementFromHandle(this.winTitle,, false)
+        try toolsTab := aeUIA.FindElement({Type:50033, Name: "ToolsTab"})
+        catch {
+            errorLog(TargetError("Failed to find the Tools Tab", -1))
+            return -1
+        }
+        try tool := toolsTab.FindElement({Type:50000, Name:toolName, matchmode:"Substring"})
+        catch {
+            errorLog(TargetError("Failed to find the desired tool", -1))
+            return -1
+        }
+        return ((tool.Value = "Selected") ? true : false)
     }
 
     __Delete() {
