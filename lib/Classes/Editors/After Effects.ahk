@@ -398,179 +398,73 @@ class AE {
         return StrReplace(paramsString, A_Space, "%20")
     }
 
-    /** saves ae using CEP. Require's the correct year version to be set within `settingsGUI()` */
-    static save() {
-        if !WinExist("Adobe After Effects 20" this.currentYearVer)
+    /**
+     * Calls a `AERemote` function to directly save the current project.
+     * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close. (This is simply to get information returned to you, it should be noted that the thread will still halt until the `AERemote` save function has completed)
+     * @param {Boolean} [continueOnBusy=false] determine whether to continue with a save attempt even if AE may be busy
+     * @returns {Boolean/String}
+     * - `true`      : successful
+     * - `false`     : `AERemote`/`save` func/`projPath` not found/save attempt fails (server not running)
+     * - `"timeout"` : waiting for the save project window to open/close timed out
+     * - `"busy"`    : another window may be open in AE that could cause saving to fail
+     */
+    static save(andWait := true, continueOnBusy := false) {
+        if !isBool(andWait) || !isBool(continueOnBusy) {
+            errorLog(PropertyError("Incorrect Parameter Type"),,, true)
             return false
-        this.__remoteFunc('save')
-    }
+        }
+        ;// the below windows will halt or delay the save process if they exist
+        ; waitSave := "(?:) " this.winTitle
+        haltSave := "(?:Save Project) " this.winTitle
+        if winExt.ExistRegex(haltSave)
+            return "busy"
+        /* if winExt.ExistRegex(waitSave) {
+            if !winExt.WaitCloseRegex(waitSave,, 10)
+                return "busy"
+        } */
+        aeWindow := WinGet.AEName()
+        if !aeWindow || Type(aeWindow) != "Object" ||
+            ((aeWindow.winTitle = "" || !aeWindow.wintitle) &&
+            aeWindow.titleCheck = -1 && aeWindow.saveCheck = -1) {
+            errorLog(UnsetError("ae.save() was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
+            return false
+        }
+        try procName := WinGetProcessName(aeWindow.winTitle), procClass := WinGetClass(aeWindow.wintitle)
+        catch {
+            ;// ae may have crashed
+            return false
+        }
+        if continueOnBusy = false && ((procName = "ahk_exe AfterFX.exe.exe" || procName = "ahk_exe AfterFX.exe (Beta).exe") && (procClass ~= "^AE_CApplication_\d{2}(\.\d+)*$"))
+            return "busy"
+        state := {hasAppeared: false, hasClosed: false}
+        try WinEvent.Exist((*) => state.hasAppeared := true, "Save Project " this.exeTitle)
+        try WinEvent.Close((*) => state.hasClosed := true, "Save Project " this.exeTitle)
+        __stopCallbacks() {
+            try WinEvent.Stop('Exist', "Save Project " this.exeTitle)
+            try WinEvent.Stop('Close', "Save Project " this.exeTitle)
+        }
+        ;// func won't continue until this aeremote func finishes (saving completes)
+        blocker := block_ext()
+        blocker.On(false)
+        SetTimer((*) => blocker.Off(), -250)
+        if !this.__remoteFunc("save", true) {
+            __stopCallbacks()
+            blocker.Off()
+            return false
+        }
+        __stopCallbacks()
 
-    /**
-     * This function is to quickly begin keyframing the scale & position values.
-     */
-    static scaleAndPos()
-    {
-        keys.allWait()
-        ;block.On()
-        coord.s()
-        MouseGetPos(&x, &y)
-        colour := PixelGetColor(x, y) ;assigned the pixel colour at the mouse coords to the variable "colour"
-        if colour != 0x9E9E9E ;0x9E9E9E is the colour of a selected track - != means "not equal to"
-            {
-                errorLog(Error("User not hovering over the right spot on the track")
-                            , "Or not hovering over the right spot", 1)
-                block.Off()
-                return
-            }
-        try {
-            effClassNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
-            ControlGetPos(&efx, &efy, &width, &height, effClassNN) ;gets the x/y value and width/height of the active panel
-        } catch as e {
-            tool.Cust("Couldn't find the ClassNN value")
-            errorLog(e)
-        }
-        ;ToolTip(efx ", " efy) ;debugging
-        SendInput(KSA.audioAE "s") ;we first bring focus to another window, then to the effects panel since after effects is all about "toggling" instead of highlighting. These values can be set within KSA.ini
-        sleep 200
-        xsize := 200
-        ysize := 40
-        loop {
-            ToolTip(A_Index)
-            if ImageSearch(&xscale, &yscale, x - xsize, y - ysize, x + xsize, y + ysize, "*2 " ptf.AE "scale.png")
-                {
-                    tool.Cust(A_Index)
-                    break
-                }
-            sleep 10
-            xsize += 200
-            ysize += 5
-            if A_Index > 10
-                {
-                    block.Off()
-                    errorLog(IndexError("Couldn't find the Scale property", -1),, 1)
-                    return
-                }
-        }
-        next:
-        MouseMove(xscale, yscale)
-        SendInput("{Click}")
-        SendInput("p")
-        Sleep 50
-        SendInput("{Click}")
-        Sleep 50
-        SendInput("u" "u")
-        MouseMove(x, y)
-        block.Off()
-    }
+        blocker.Off()
+        if !andWait
+            return true
 
-    /**
-     * This function will open up the composition settings window within After Effects, navigate its way to the "advanced" tab, find "shuttle angle" and increase it to a value of 360
-     */
-    static motionBlur()
-    {
-        keys.allWait()
-        coord.s()
-        MouseGetPos(&x, &y) ;gets the coordinates of the mouse to return it at the end/after an error
-        coord.w()
-        start := 5
-        loop { ;this loop will attempt to search for the blur icon and activate it on the top most track if it isn't already. It's probably possible to do this for any track but that's just not worth me trying to figure out when a large majority of my work is just on the top track as I precomp most things
-            ToolTip(A_Index)
-            if ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.AE "blur3.png") || ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.AE "blur4.png") ;checks if the blur icon is already activated
-                break
-            if ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.AE "blur.png") || ImageSearch(&blurx, &blury, 0, A_ScreenHeight / start, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.AE "blur2.png")
-                {
-                    MouseMove(blurx + 3, blury + 20)
-                    SendInput("{Click}")
-                    ToolTip("")
-                    break
-                }
-            start -= 1
-            MouseMove(-30, 0,, "R") ;move the mouse incase it's in the way
-            if A_Index > 4
-                {
-                    errorLog(IndexError("Couldn't find the blur button", -1),, 1)
-                    break
-                }
-        }
-        if WinExist("Composition Settings") ;if the menu is already open, this check will allow us to continue without running into any futher issues
-            goto open
-        block.On()
-        SendInput(KSA.compSettings) ;opens the composition settings
-        WinWait("Composition Settings") ;waits for composition settings to open
-        open:
-        MouseMove(0,0)
-        loop { ;this loop will allow us to make multiple checks for the advanced tab - as adobe products can be quite laggy this loop will give us about 0.6s for AE to react. If your machine is too slow, or AE is just sluggish, consider increasing the amount of times the loop will continue before returning or increasing the sleep between each attempt
-            if ImageSearch(&advX, &advY, 0, 0, 200, 200, "*2 " ptf.AE "advanced.png") || ImageSearch(&advX, &advY, 0, 0, 200, 200, "*2 " ptf.AE "advanced2.png") ;this imagesearch will check for both the non selected text & the selected text varient
-                {
-                    ToolTip("")
-                    break
-                }
-            if A_Index > 0
-                ToolTip(A_Index)
-            sleep 50
-            if WinExist("Composition Settings")
-                WinActivate("Composition Settings")
-            if A_Index > 10
-                {
-                    ToolTip("")
-                    coord.s()
-                    MouseMove(x, y)
-                    block.Off()
-                    errorLog(IndexError("Couldn't find the advanced tab", -1),, 1)
-                    return
-                }
-        }
-        MouseMove(advX, advY) ;moves to the advanced tab
-        SendInput("{Click}") ;clicks it
-        loop { ;this loop will allow us to make multiple checks for the shutter angle - as adobe products can be quite laggy this loop will give us about 0.6s for AE to react. If your machine is too slow, or AE is just sluggish, consider increasing the amount of times the loop will continue before returning or increasing the sleep between each attempt
-            if ImageSearch(&shutX, &shutY, 0, 0, 200, 300, "*2 " ptf.AE "shutterangle.png")
-                {
-                    ToolTip("")
-                    break
-                }
-            if A_Index > 0
-                ToolTip(A_Index)
-            sleep 50
-            if WinExist("Composition Settings")
-                WinActivate("Composition Settings")
-            if A_Index > 10
-                {
-                    ToolTip("")
-                    coord.s()
-                    MouseMove(x, y)
-                    block.Off()
-                    errorLog(IndexError("Couldn't find the shutter angle", -1),, 1)
-                    return
-                }
-        }
-        loop { ;this loop will allow us to make multiple checks for the shutter angle value - as adobe products can be quite laggy this loop will give us about 0.6s for AE to react. If your machine is too slow, or AE is just sluggish, consider increasing the amount of times the loop will continue before returning or increasing the sleep between each attempt
-            if PixelSearch(&xcol, &ycol, shutX, shutY, shutX + "150", shutY + "40", 0x234CB4, 2)
-                {
-                    ToolTip("")
-                    MouseMove(xcol, ycol)
-                    SendInput("{Click}")
-                    SendInput("360" "{Enter}")
-                    coord.s()
-                    MouseMove(x, y)
-                    block.Off()
-                    break
-                }
-            if A_Index > 0
-                ToolTip(A_Index)
-            sleep 50
-            if WinExist("Composition Settings")
-                WinActivate("Composition Settings")
-            if A_Index > 10
-                {
-                    ToolTip("")
-                    coord.s()
-                    MouseMove(x, y)
-                    block.Off()
-                    errorLog(IndexError("Couldn't find the shutter angle value", -1),, 1)
-                    return
-                }
-        }
-        ToolTip("")
+        ;// waiting for save dialogue to open & close
+        if !state.hasAppeared
+            return "timeout_nosave"
+        if !state.hasClosed
+            return "timeout"
+
+        return true
     }
 
     /**
@@ -632,28 +526,6 @@ class AE {
                 block.Off()
                 keys.allWait()
                 SendInput("{Click Up}")
-            }
-    }
-
-    /**
-     * This function will ensure you're in the right mode to adjust blend modes
-     */
-    static blendMode()
-    {
-        keys.allWait()
-        coord.s()
-        MouseGetPos(&x, &y) ;gets the coordinates of the mouse to return it at the end/after an error
-        coord.w()
-        if !ImageSearch(&modex, &modey, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.AE "mode.png")
-            {
-                if !ImageSearch(&togx, &togy, 0, 0, A_ScreenWidth, A_ScreenHeight, "*2 " ptf.AE "toggle.png")
-                    {
-                        errorLog(Error("Couldn't toggle switches/modes", -1),, 1)
-                        return
-                    }
-                MouseMove(togx, togy)
-                SendInput("{Click}")
-                sleep 250
             }
     }
 
@@ -758,7 +630,7 @@ class AE {
 
     /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
     static anchorToPosition() {
-        cepSync := this.__remoteFunc('syncTransformAnchorToPosition', true)
+        cepSync := this.__remoteFunc('anchorToPosition', true)
         if cepSync = true
             return
         if !this.isClipSelected() {
@@ -787,4 +659,9 @@ class AE {
         clip.delayReturn(clipb.storedClip)
         blocker.Off()
     }
+
+    __Delete() {
+        try WinEvent.Stop('Exist', "Save Project " this.exeTitle)
+        try WinEvent.Stop('Close', "Save Project " this.exeTitle)
+	}
 }

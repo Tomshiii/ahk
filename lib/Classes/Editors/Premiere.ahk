@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/26
- * @version 2.5.28
+ * @date 2026/08/28
+ * @version 2.5.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -943,13 +943,13 @@ class Prem {
 
     /**
      * Calls a `PremiereRemote` function to directly save the current project. This function will also double check to ensure the active sequence does not change after the save attempt
-     * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close
+     * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close. (This is simply to get information returned to you, it should be noted that the thread will still halt until the `PremiereRemote` save function has completed)
      * @param {Integer} [checkSeqTime=1000] the value you wish the function to sleep before checking if the active sequence was changed
      * @param {Integer} [checkAmount=1] the amount of times you wish for the function to check (with a sleep delay of `checkSeqTime` inbetween each). Be aware that using a value higher than `1` may result in the function changing the sequence in the event that the user manually changes it after a save
      * @param {Boolean} [continueOnBusy=false] determine whether to continue with a save attempt even if Premiere may be busy
      * @returns {Boolean/String}
      * - `true`      : successful
-     * - `false`     : `PremiereRemote`/`saveProj` func/`projPath` func not found/save attempt fails (server not running)
+     * - `false`     : `PremiereRemote`/`saveProj` func/`projPath` not found/save attempt fails (server not running)
      * - `"timeout"` : waiting for the save project window to open/close timed out
      * - `"noseq"`   : `focusSequence`/`getActiveSequence` func not found
      * - `"busy"`    : another window may be open in premiere that could cause saving to fail
@@ -959,10 +959,13 @@ class Prem {
             errorLog(PropertyError("Incorrect Parameter Type"),,, true)
             return false
         }
-        ;// the below windows will halt the save process if they exist
-        haltSave := "Clip Fx Editor - RX 11"
-        if winExt.ExistRegex(haltSave) {
-            if !winExt.WaitCloseRegex(haltSave,, 10)
+        ;// the below windows will halt or delay the save process if they exist
+        waitSave := "(?:Clip Fx Editor - RX 11) " this.winTitle
+        haltSave := "(?:Save Project) " this.winTitle
+        if winExt.ExistRegex(haltSave)
+            return "busy"
+        if winExt.ExistRegex(waitSave) {
+            if !winExt.WaitCloseRegex(waitSave,, 10)
                 return "busy"
         }
         premWindow := WinGet.PremName()
@@ -988,13 +991,11 @@ class Prem {
         if checkAmount != 0
             origSeq := this.__remoteFunc("getActiveSequence", true)
         state := {hasAppeared: false, hasClosed: false}
-        try WinEvent.Exist((*) => state.hasAppeared := true, "Save Project " prem.exeTitle)
-        try WinEvent.Close((*) => state.hasClosed := true, "Save Project " prem.exeTitle)
+        try WinEvent.Exist((*) => state.hasAppeared := true, "Save Project " this.exeTitle)
+        try WinEvent.Close((*) => state.hasClosed := true, "Save Project " this.exeTitle)
         __stopCallbacks() {
-            try {
-                WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
-                WinEvent.Stop('Close', "Save Project " prem.exeTitle)
-            }
+            try WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
+            try WinEvent.Stop('Close', "Save Project " prem.exeTitle)
         }
 
         ;// func won't continue until this premiereremote func finishes (saving completes)
@@ -1008,31 +1009,22 @@ class Prem {
         }
         __stopCallbacks()
 
-        if !andWait {
-            blocker.Off()
+        blocker.Off()
+        if !andWait
             return true
-        }
 
         ;// waiting for save dialogue to open & close
-        if !state.hasAppeared {
-            blocker.Off()
+        if !state.hasAppeared
             return "timeout_nosave"
-        }
-        if !state.hasClosed {
-            blocker.Off()
+        if !state.hasClosed
             return "timeout"
-        }
 
-        if checkAmount = 0 {
-            blocker.Off()
+        if checkAmount = 0
             return true
-        }
         if origSeq = "" {
-            blocker.Off()
             errorLog(Error("Premiere failed to retrieve the originally active sequence before saving. Aborting"))
             return true
         }
-        blocker.Off()
         sleep checkSeqTime
         loop checkAmount {
             currentSeq := this.__remoteFunc("getActiveSequence", true)
@@ -2509,7 +2501,7 @@ class Prem {
      * A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab.
      */
     static anchorToPosition() {
-        cepSync := this.__remoteFunc('syncTransformAnchorToPosition', true)
+        cepSync := this.__remoteFunc('anchorToPosition', true)
         if cepSync = true
             return
         if !this.isClipSelected() {
@@ -4663,11 +4655,11 @@ class Prem {
     }
 
     __Delete() {
-		try {
-            WinEvent.Stop("Active", this.exeTitle " Clip Fx Editor")
-            WinEvent.Stop("Close",  this.exeTitle " Clip Fx Editor")
-            WinEvent.Stop("Close",  this.exeTitle)
-        }
+		try WinEvent.Stop('Exist', "Save Project " this.exeTitle)
+        try WinEvent.Stop('Close', "Save Project " this.exeTitle)
+        try WinEvent.Stop("Show", this.exeTitle " Clip Fx Editor")
+        try WinEvent.Stop("Close", this.exeTitle " Clip Fx Editor")
+        try WinEvent.Stop("Close", this.exeTitle)
         try SetTimer(this.__rippleTrack, 0)
 	}
 

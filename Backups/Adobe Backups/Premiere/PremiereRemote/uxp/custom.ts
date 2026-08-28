@@ -2629,3 +2629,84 @@ export async function nestSelectionReplaceNestedAudio(
         }
     }
 }
+
+/**
+ * copies the value of a Transform component's Anchor Point parameter to its Position parameter, if the clip has exactly one Transform effect
+ * @returns {boolean}
+ */
+export async function anchorToPosition(): Promise<boolean> {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) return false;
+
+    const sequence = await common.getActiveSequence();
+    if (!sequence) return false;
+
+    const items = await common.getSelectedTrackItems();
+    if (!items || items.length !== 1) return false;
+
+    const item = items[0];
+    const chain = await item.getComponentChain();
+    if (!chain) return false;
+
+    const componentCount = await chain.getComponentCount();
+
+    const transformComponents: any[] = [];
+    for (let i = 0; i < componentCount; i++) {
+        const component = await chain.getComponentAtIndex(i);
+        if ((await component.getDisplayName()) === "Transform") {
+            transformComponents.push(component);
+        }
+    }
+
+    if (transformComponents.length !== 1) return false;
+
+    const transform = transformComponents[0];
+    const paramCount = await transform.getParamCount();
+
+    let anchorPointParam: any = null;
+    let positionParam: any = null;
+
+    for (let p = 0; p < paramCount; p++) {
+        const param = await transform.getParam(p);
+        if (param.displayName === "Anchor Point") anchorPointParam = param;
+        else if (param.displayName === "Position") positionParam = param;
+    }
+
+    if (!anchorPointParam || !positionParam) return false;
+
+    const anchorIsTimeVarying = await anchorPointParam.isTimeVarying();
+    let rawAnchorValue: any;
+
+    if (anchorIsTimeVarying) {
+        const playerPosition = await sequence.getPlayerPosition();
+        rawAnchorValue = await anchorPointParam.getValueAtTime(playerPosition);
+    } else {
+        rawAnchorValue = await anchorPointParam.getStartValue();
+    }
+
+    // unwrap down to the raw [x, y] array
+    const unwrapped = (rawAnchorValue as any)?.value ?? rawAnchorValue;
+    const point = (unwrapped as any)?.value ?? unwrapped;
+
+    if (!Array.isArray(point) || typeof point[0] !== "number" || typeof point[1] !== "number") {
+        console.log("could not resolve x/y from anchor value:", point);
+        return false;
+    }
+
+    const anchorPointF = await ppro.PointF(point[0], point[1]);
+
+    const positionIsTimeVarying = await positionParam.isTimeVarying();
+    const positionKeyframe = await positionParam.createKeyframe(anchorPointF);
+
+    let success = false;
+    project.lockedAccess(() => {
+        success = project.executeTransaction((compoundAction) => {
+            if (positionIsTimeVarying) {
+                compoundAction.addAction(positionParam.createAddKeyframeAction(positionKeyframe));
+            }
+            compoundAction.addAction(positionParam.createSetValueAction(positionKeyframe, true));
+        }, "Sync Transform Anchor to Position");
+    });
+
+    return success;
+}

@@ -2,17 +2,27 @@
 
 ## Functions
 - ✅ Fixed `premUIA_Values.__activeElementPath()` throwing in certain circumstances causing `determineUIA.ahk` to crash
-- 📋 `prem/ae.anchorToPosition()` now attempts to use the api to adjust the values before falling back to clipboard manipulation
+- 📋 Shared objects should now be less likely to get stuck in a locked state
+
+### 📝 `prem {`
+- 📋 `anchorToPosition()` now attempts to use the api to adjust the values before falling back to clipboard manipulation
+- 📋 `save()` will now abort early if a `Save Project` window already exists
+
+### 📝 `ae {`
+- ❌ Removed `scaleAndPos()`, `motionBlur()`
+- 📋 Port `prem.save()` to `ae.save()`
+- 📋 `anchorToPosition()` now attempts to use the api to adjust the values before falling back to clipboard manipulation
 
 ## PremiereRemote
-- ✏️ Added `syncTransformAnchorToPosition()`
+- ✏️ Added `anchorToPosition()`
 
 ## AERemote
 - ✅ Fixed extension failing to appear (mb I forgot to edit some files)
     - If already installed, will need to be reinstalled
-- ✏️ Added ports of `applyEffectOnAllSelectedClips()`, `listEffectsOnSelectedClip()`, `syncTransformAnchorToPosition()`, `isSelected()`, `isSelectedMultiple()`
+- ✏️ Added ports of `applyEffectOnAllSelectedClips()`, `listEffectsOnSelectedClip()`, `anchorToPosition()`, `isSelected()`, `isSelectedMultiple()`
 
 ## Other Changes
+- ❌ Removed `advancedX.png`, `blurX.png`, `mode.png`, `toggle.png`
 
 🔗 `mult-dl.ahk`
 ###### *(v1.3.11 -> v1.3.13)*

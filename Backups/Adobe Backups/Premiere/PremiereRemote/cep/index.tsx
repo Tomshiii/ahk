@@ -648,7 +648,7 @@ export const host = {
     return currentSequence.setPlayerPosition(String(ticks));;
   },
 
-  syncTransformAnchorToPosition: function () {
+  anchorToPosition: function () {
     // bail if more than one clip selected
     if (this.isSelectedMultiple()) {
       return false;

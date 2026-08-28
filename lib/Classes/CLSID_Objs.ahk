@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/08/24
- * @version 1.1.19
+ * @date 2026/08/28
+ * @version 1.1.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -58,6 +58,26 @@ class CLSID_Objs {
         "premSlots",       "{307A7C63-03F9-49D4-AE34-F8196809D22C}"
     )
 
+    /**
+     * Non-blocking-poll version of Mutex.Wait() that keeps the message queue pumping
+     * (via Sleep) so this script can still service incoming COM calls while it waits.
+     * @param {Mutex} mtx the mutex object to wait on
+     * @param {Integer} timeout total time to wait, in ms
+     * @param {Integer} pollInterval how often to re-check, in ms
+     * @returns {Integer} WAIT_OBJECT_0 / WAIT_ABANDONED / WAIT_TIMEOUT / WAIT_FAILED
+     */
+    static pumpWait(mtx, timeout := 5000, pollInterval := 15) {
+        startTime := A_TickCount
+        loop {
+            result := mtx.Wait(0)
+            if (result != WAIT_TIMEOUT)
+                return result
+            if (A_TickCount - startTime >= timeout)
+                return WAIT_TIMEOUT
+            Sleep(pollInterval)
+        }
+    }
+
     /** a quick and dirty function to wait for `Core Functionality.ahk` to finish loading */
     static waitCoreFuncs(waitSec := 2) {
         delay := 16
@@ -84,11 +104,13 @@ class CLSID_Objs {
      */
     static load(clsid, inClass := true, timeout := 5000) {
         this.checkCoreFunc()
-        objName := inClass ? clsid : "custom"
-        mtx := Mutex({Name: "Global\CoreFunc_" objName})
+        if inClass && !this.__Item.Has(clsid)
+            throw ValueError("Unknown CLSID key: '" clsid "'", -1)
+        objName := inClass ? "CoreFunc_" clsid : "custom_" clsid
+        mtx := Mutex({Name: "Global\" objName})
 
         try {
-            result := mtx.Wait(timeout)
+            result := this.pumpWait(mtx, timeout)
             switch result {
                 case WAIT_OBJECT_0, WAIT_ABANDONED:
                     try {
@@ -102,7 +124,7 @@ class CLSID_Objs {
                 case WAIT_TIMEOUT:
                     notifyExt.showIfNotExist("mutexLock_" clsid,, 'Timeout waiting for lock on: ' objName, 'icon!', 'Speech Off',, 'dur=6 bdr=Yellow maxW=400')
                     errorLog(TimeoutError('Timeout waiting for lock on: ' objName, -2))
-                    sleep 500
+                    sleep 250
                     return false
                 case WAIT_FAILED:
                     errorLog(TimeoutError('Failed waiting for lock on: ' objName, -2))

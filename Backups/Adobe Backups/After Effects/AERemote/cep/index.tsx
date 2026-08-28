@@ -127,7 +127,7 @@ export const host = {
     alert(effectsList);
   },
 
-  syncTransformAnchorToPosition: function (): boolean {
+  anchorToPosition: function (): boolean {
     const comp = app.project.activeItem;
     if (!(comp && comp instanceof CompItem)) {
       return false;
