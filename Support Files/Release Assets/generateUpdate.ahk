@@ -369,9 +369,9 @@ if WinExist(verNum ".x")
 
 ;// backing up repo/wiki
 ;// these need to be hardcoded dirs, dirdelete/dircopy don't work with relative paths
-ahkBackup     := "E:\Github\Non Github Backups\ahkBackup"
+ahkBackup     := "N:\Backup\Github\ahk"
 ahkWiki       := "E:\Github\ahk_wiki"
-ahkWikiBackup := "E:\Github\Non Github Backups\ahkWikiBackup"
+ahkWikiBackup := "N:\Backup\Github\ahk_wiki"
 
 ;// backup ahk folder
 if MsgBox("Backup ahk folder?",, 0x3) = "Yes" {
@@ -379,7 +379,7 @@ if MsgBox("Backup ahk folder?",, 0x3) = "Yes" {
         DirDelete(ahkBackup, 1)
     ToolTip("Backing up ahk folder")
     sleep 1000
-    DirCopy(ptf.rootDir, ahkBackup, 1)
+    DirCopy(ptf.rootDir, ahkBackup, 2)
     ToolTip("")
     tool.Cust("AHK folder backup complete")
 }
@@ -391,7 +391,7 @@ if MsgBox("Backup wiki folder?",, 0x3) = "Yes" {
         DirDelete(ahkWikiBackup, 1)
     ToolTip("Backing up wiki")
     sleep 1000
-    DirCopy(ahkWiki, ahkWikiBackup, 1)
+    DirCopy(ahkWiki, ahkWikiBackup, 2)
     ToolTip("")
     tool.Cust("Backing up wiki folder complete")
 }

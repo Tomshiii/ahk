@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/08/27
+ * @date 2026/08/28
  ***********************************************************************/
-global currentVer := "1.3.12"
+global currentVer := "1.3.13"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -32,7 +32,7 @@ if win := WinExist(A_ScriptName) || win := WinExist(preReqTitle) {
 }
 
 try {
-    if !A_IsCompiled && FileExist(ptf.Icons "\myscript.ico")
+    if !A_IsCompiled && FileExist(ptf.Icons "\multDL.ico")
         TraySetIcon(ptf.Icons "\multDL.ico")
 }
 
@@ -260,6 +260,17 @@ class multiDL extends tomshiBasic {
     __addListURL(*) {
         if this["listURL"].text = ""
             return
+        if InStr(this["listURL"].text, ",") {
+            urls := StrSplit(this["listURL"].text, ",", " `t")
+            for v in urls {
+                if !isURL(v)
+                    continue
+                this["list"].Add("", v)
+            }
+            this["listURL"].text := ""
+            this["listURL"].Focus()
+            return
+        }
         if !isURL(this["listURL"].text) {
             MsgBox("Value is not a valid URL string",, "4112")
             return

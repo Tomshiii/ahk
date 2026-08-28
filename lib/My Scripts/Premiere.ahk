@@ -20,17 +20,6 @@ isIn(title, ahk_exe?) {
 	return InStr(getTitle exe, title)
 }
 
-~LButton:: ;// im doing testing don't mind me
-{
-	logger := log()
-	Shift := GetKeyState("Shift"), ShiftP := GetKeyState("Shift", "P")
-	Ctrl := GetKeyState("Ctrl"), CtrlP := GetKeyState("Ctrl", "P")
-	Alt := GetKeyState("Alt"), AltP := GetKeyState("Alt", "P")
-	str := Format("s: {} | sP: {} | c: {} | cP: {} | a: {} | aP: {}", Shift, ShiftP, Ctrl, CtrlP, Alt, AltP)
-	logger.Append(str)
-	; errorLog(Error(str),, true)
-}
-
 ;// this hotkey is an attempt to stop inputs being sent through to premiere while waiting for excalibur to pop up
 /* $^Space::
 {

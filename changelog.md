@@ -15,4 +15,6 @@
 ## Other Changes
 
 🔗 `mult-dl.ahk`
-- `Multi` list will now be cleared once downloading has completed
+###### *(v1.3.11 -> v1.3.13)*
+- 📋 `Multi` list will now be cleared once downloading has completed
+- 📋 `Multi` will now accept a `,` delimited list of url's to add
