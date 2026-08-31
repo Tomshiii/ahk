@@ -7,4 +7,4 @@
 #Include Classes\CLSID_Objs.ahk
 ; }
 
-prem.deletePreviews(KSA.premDelPrevInOut)
+prem.deletePreviews(ksa.prem.delPrevInOut)

@@ -6,4 +6,4 @@
 
 if !WinActive(prem.winTitle)
     return
-SendInput(KSA.premFrameHold)
+SendInput(ksa.prem.FrameHold)

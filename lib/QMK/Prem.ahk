@@ -56,8 +56,8 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 		return
 	;// read the preset file
 	preset := FileRead(ptf["PremPresets"])
-	SendInput(KSA.effectControls)
-	SendInput(KSA.effectControls)
+	SendInput(KSA.prem.effectControls)
+	SendInput(KSA.prem.effectControls)
 	;// check if preset for current proj exists
 	if InStr(preset, "fix clipping_" ClientName)
 		prem.preset("fix clipping_" ClientName)
@@ -67,7 +67,7 @@ t:: ;preset for applying an eq effect to lessen harshness of clipping
 m:: ;this hotkey will fill the frame to fit the window
 {
 	prem.__focusTimeline()
-	SendInput(KSA.fitToFrame)
+	SendInput(KSA.prem.fitToFrame)
 }
 ; b::
 
@@ -76,8 +76,8 @@ f::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Highpass")
 
 v:: ;this hotkey will activate the program monitor, find the margin button (assuming you have it there) and activate/deactivate it
 {
-	SendInput(KSA.programMonitor)
-	SendInput(KSA.premSafeMargins)
+	SendInput(KSA.prem.programMonitor)
+	SendInput(ksa.prem.safeMargins)
 	sleep 100
 	prem.__focusTimeline()
 }

@@ -44,17 +44,17 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Window >) Timelines"
     },
-    "handPrem": {
+    "handTool": {
         "command": "cmd.tools.10hand",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Hand Tool"
     },
-    "selectionPrem": {
+    "selectionTool": {
         "command": "cmd.tools.01pointer",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Selection Tool"
     },
-    "cutPrem": {
+    "cutTool": {
         "command": "cmd.tools.06razor",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Razor Tool"
@@ -89,12 +89,12 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Go to Previous Edit Point on Any Track"
     },
-    "premnextKeyframe": {
+    "nextKeyframe": {
         "command": "cmd.clip.keyframe.selectnext",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Select next keyframe"
     },
-    "prempreviousKeyframe": {
+    "previousKeyframe": {
         "command": "cmd.clip.keyframe.selectprevious",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Select previous keyframe"
@@ -164,7 +164,7 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Play-Stop Toggle"
     },
-    "premIngest": {
+    "ingest": {
         "command": "cmd.project.settings.ingestsettings",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > File > Project Settings >) Ingest Settings"
@@ -174,37 +174,37 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Shuttle Stop"
     },
-    "adjustmentPrem": {
+    "adjustment": {
         "command": "cmd.file.new.adjustmentlayer",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > File > New >) Adjustment Layer"
     },
-    "premSafeMargins": {
+    "safeMargins": {
         "command": "cmd.monitor.togglesafearea",
         "context": "/PremiereData/shortcuts/context.program.monitor",
         "withinPrem": "(Panels > Program Monitor Panel >) Safe Margins"
     },
-    "premLink": {
+    "link": {
         "command": "cmd.clip.linkaudioandvideo",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Clip >) Link"
     },
-    "premRenderInOut": {
+    "renderInOut": {
         "command": "cmd.sequence.previewyellow",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Sequence >) Render Entire Work Area"
     },
-    "premDelPrevInOut": {
+    "delPrevInOut": {
         "command": "cmd.sequence.deleteworkareavideopreviews",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Sequence >) Delete Work Area Render Files"
     },
-    "premDelPrevAll": {
+    "delPrevAll": {
         "command": "cmd.sequence.deletevideopreviews",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Sequence >) Delete Render Files"
     },
-    "premRndrReplce": {
+    "rndrReplce": {
         "command": "cmd.clip.renderandreplace",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Clip >) Render and Replace"
@@ -214,32 +214,32 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(File > Adobe Dynamic Link >) Replace with After Effects Composition"
     },
-    "premFrameHold": {
+    "frameHold": {
         "command": "cmd.clip.videooptions.addframehold",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Clip > Video Options) Add Frame Hold"
     },
-    "premMakeSequence": {
+    "makeSequence": {
         "command": "cmd.sequence.makesubsequence",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Sequence) Make Sequence"
     },
-    "premRipplePrev": {
+    "ripplePrev": {
         "command": "cmd.sequence.rippletrimpreviousedittoplayhead",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > ) Ripple Trim Previous Edit to Playhead"
     },
-    "premRippleNext": {
+    "rippleNext": {
         "command": "cmd.sequence.rippletrimnextedittoplayhead",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > ) Ripple Trim Next Edit to Playhead"
     },
-    "premRippleDelete": {
+    "rippleDelete": {
         "command": "cmd.edit.rippledelete",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Edit > ) Ripple Delete"
     },
-    "premExportFrame": {
+    "exportFrame": {
         "command": "cmd.export.frame",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > ) Export Frame"
@@ -334,7 +334,7 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > File > ) Close"
     },
-    "premPaste": {
+    "Paste": {
         "command": "cmd.edit.paste",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Edit > ) Paste"
@@ -369,10 +369,15 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > View > ) Select Camera X"
     },
-    "premAddTracks": {
+    "AddTracks": {
         "command": "cmd.sequence.addtracks",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application > Sequence > ) Add Tracks..."
+    },
+    "addDefaultTransition": {
+        "command": "cmd.sequence.applydefaulttransitions",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application > Sequence > ) Apply Default Transitions to Selection"
     },
 
 

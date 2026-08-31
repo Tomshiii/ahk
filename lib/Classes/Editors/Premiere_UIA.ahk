@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/08/26
- * @version 3.0.27
+ * @date 2026/08/31
+ * @version 3.0.28
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -215,10 +215,10 @@ class premUIA_Values {
                 switchTo.Premiere()
             blocker := block_ext()
             blocker.On()
-            SendInput(ksa.shuttleStop)
+            SendInput(ksa.prem.shuttleStop)
             keys := ["effectControls", "effectsWindow", "programMonitor", "sourceMonitor", "toolsWindow", "projectsWindow", "timelineWindow"]
             for v in keys {
-                SendInput(ksa.%v%)
+                SendInput(ksa.prem.%v%)
                 sleep 25
             }
             blocker.Off()

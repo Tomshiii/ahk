@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2026/05/11
- * @version 1.3.0.2
+ * @date 2026/08/31
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -40,12 +40,12 @@ class VSCode {
                 errorLog(ValueError("Invalid hotkey in Parameter #3", -1, copyOrCut),,, 1)
             }
         if focusFirst = true
-            SendInput(KSA.focusCode)
+            SendInput(KSA.vscode.focusCode)
         orig := ClipboardAll()
         A_Clipboard := ""
         SendInput(copyOrCut)
         if !ClipWait(0.1) && focusFirst = false
-            SendInput(KSA.focusCode)
+            SendInput(KSA.vscode.focusCode)
     }
 
     /**
@@ -75,15 +75,15 @@ class VSCode {
         keys.allWait()
         block.On()
         sleep 50
-        delaySI(50, KSA.focusExplorerWin, KSA.focusExplorerWin, KSA.focusWork, KSA.collapseFold, KSA.collapseFold, "{Up 5}", "{Enter}")
+        delaySI(50, KSA.vscode.focusExplorerWin, KSA.vscode.focusExplorerWin, KSA.vscode.focusWork, KSA.vscode.collapseFold, KSA.vscode.collapseFold, "{Up 5}", "{Enter}")
         __closeOut(ttp) => (sleep(50), block.Off(), tool.Wait(), tool.Cust(ttp, 2.0))
-        if script = 0 && A_ThisHotkey = KSA.testHotkey  || A_ThisHotkey = KSA.functionHotkey {
+        if script = 0 && A_ThisHotkey = KSA.vscode.testHotkey  || A_ThisHotkey = KSA.vscode.functionHotkey {
             switch A_ThisHotkey {
-                case KSA.testHotkey:
+                case KSA.vscode.testHotkey:
                     delaySI(50, "{Down 6}{Enter}", "{Down 23}{Enter}")
                     __closeOut("The test file has been selected")
                     return
-                case KSA.functionHotkey:
+                case KSA.vscode.functionHotkey:
                     delaySI(50, "{Down 6}{Enter}", "{Down 22}{Enter}")
                     __closeOut("The emoji file has been selected")
                     return
@@ -92,7 +92,7 @@ class VSCode {
         SendInput("{Down " script "}")
         sleep 25
         SendInput("{Enter}")
-        SendInput(KSA.focusCode)
+        SendInput(KSA.vscode.focusCode)
         __closeOut("The proper file should now be focused")
     }
 

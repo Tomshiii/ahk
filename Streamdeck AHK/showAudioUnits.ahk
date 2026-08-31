@@ -17,4 +17,4 @@ if prem.__checkTimelineValues() = true {
         return
 }
 
-SendInput(ksa.audioTimeUnits)
+SendInput(ksa.prem.audioTimeUnits)

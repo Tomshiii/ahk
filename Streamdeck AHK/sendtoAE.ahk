@@ -51,7 +51,7 @@ focusAndContinue() {
 }
 
 __final() {
-    SendInput(KSA.rplceAEComp)
+    SendInput(KSA.prem.rplceAEComp)
     if !WinWait("Save Project " AE.winTitle,, 3)
         ExitApp()
     if !WinWaitClose("Save Project " AE.winTitle,, 5)

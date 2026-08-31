@@ -6,4 +6,4 @@
 
 if !WinActive(prem.winTitle)
     return
-SendInput(ksa.revealExplorer)
+SendInput(ksa.prem.revealExplorer)

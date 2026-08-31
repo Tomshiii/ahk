@@ -3,8 +3,8 @@
  * Last tested in the version of Photoshop listed below
  * @psVer 27.1
  * @author tomshi
- * @date 2026/08/21
- * @version 1.3.4
+ * @date 2026/08/31
+ * @version 1.3.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,7 +41,7 @@ class PS {
         if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "text2.png") ;checks to see if you're typing
             SendInput("^{Enter}")
         if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "text.png") ;checks to see if you're in the text tool
-            SendInput(KSA.selectiontool) ;if you are, it'll press v to go to the selection tool
+            SendInput(KSA.ps.selectiontool) ;if you are, it'll press v to go to the selection tool
         if ImageSearch(&xdec, &ydec, 60, 30, 744, 64, "*5 " ptf.Photoshop "InTransform.png") && !ImageSearch(&x, &y, 60, 30, 744, 64, "*5 " ptf.Photoshop image) ;checks to see if you're already in the free transform window
             {
                 block.Off()
@@ -51,7 +51,7 @@ class PS {
             }
         else
             {
-                SendInput(KSA.freeTransform) ;if you aren't in the free transform it'll simply press your hotkey to get you into it. check the ini file to adjust this hotkey
+                SendInput(KSA.ps.freeTransform) ;if you aren't in the free transform it'll simply press your hotkey to get you into it. check the ini file to adjust this hotkey
                 tool.Cust("we must wait for photoshop`nbecause it's slow as hell")
                 sleep 300 ;photoshop is slow
                 if !ImageSearch(&x, &y, 111, 30, 744, 64, "*5 " ptf.Photoshop image)

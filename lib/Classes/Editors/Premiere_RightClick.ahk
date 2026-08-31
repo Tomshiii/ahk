@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.3
  * @author tomshi, taranVH
- * @date 2026/08/21
- * @version 2.4.25
+ * @date 2026/08/31
+ * @version 2.4.26
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -139,7 +139,7 @@ class rbuttonPrem {
 	}
 
 	/**
-	 * Checks to see whether the playhead can be found on the screen. If it is, `KSA.shuttleStop` is sent.
+	 * Checks to see whether the playhead can be found on the screen. If it is, `KSA.prem.shuttleStop` is sent.
 	 * If the playhead is close to the cursor, the cursor will be moved to it and `LButton` is held down
 	 * @param {Object} coordObj an object containing the cursor coords
 	 * @param {String} currHotkey the current activation hotkey determined by `movePlayhead()`
@@ -148,14 +148,14 @@ class rbuttonPrem {
 	__checkForPlayhead(coordObj, currHotkey, search := true) {
 		;// checking to see if the playhead is on the screen
 		if !prem.searchPlayhead({x1: prem.timelineXValue, y1: coordObj.y, x2: prem.timelineXControl, y2: coordObj.y}) {
-			SendInput(KSA.playheadtoCursor)
+			SendInput(KSA.prem.playheadtoCursor)
 			return
 		}
 		prem.stopPlayback()
 
 		;// this stops the script from potentially clicking a clip if using `rbuttonPrem().movePlayhead(false)`
 		if !search {
-			SendInput(KSA.playheadtoCursor)
+			SendInput(KSA.prem.playheadtoCursor)
 			return
 		}
 
@@ -163,7 +163,7 @@ class rbuttonPrem {
 		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
 			block.On()
 			prem.selectTool("selectionTool")
-			SendInput(KSA.selectionPrem)
+			SendInput(KSA.prem.selectionTool)
 			MouseMove(xcol, ycol)
 			SendInput("{LButton Down}")
 			MouseMove(coordObj.x, coordObj.y)
@@ -174,7 +174,7 @@ class rbuttonPrem {
 			checktap(hk) {
 				if !this.__checkForTap(hk) {
 					SendInput("{LButton Up}")
-					SendInput(KSA.playheadtoCursor)
+					SendInput(KSA.prem.playheadtoCursor)
 					this.__exit()
 				}
 			}
@@ -465,13 +465,13 @@ class rbuttonPrem {
 		}
 		this.__checkForPlayhead(origMouse, currHotkey, allChecks)
 		if !this.__checkForTap(currHotkey) {
-			SendInput(KSA.playheadtoCursor)
+			SendInput(KSA.prem.playheadtoCursor)
 			this.__exit()
 		}
 
 		;// we send a single input here so that in the event UIA is slow to respond because of premiere
 		;// the cursor will still move if the user taps the activation hotkey
-		SendInput(ksa.playheadtoCursor)
+		SendInput(ksa.prem.playheadtoCursor)
 
 		useRemote := this.premObj.remoteActiveCEP
 		if useRemote = true {
@@ -506,7 +506,7 @@ class rbuttonPrem {
 				}
 			}
 			if this.colourOrNorm != "colour"
-				SendInput(ksa.playheadtoCursor)
+				SendInput(ksa.prem.playheadtoCursor)
 			sleep 30
 		}
 
@@ -544,7 +544,7 @@ class rbuttonPrem {
 				;// which unfortunately takes no params
 			case (allChecks && this.doPlayback && this.xbuttonClick):
 				prem.startPlayback()
-				SendInput(KSA.speedUpPlayback)
+				SendInput(KSA.prem.speedUpPlayback)
 		}
 
 		;// cleans up

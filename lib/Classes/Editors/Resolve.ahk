@@ -2,8 +2,8 @@
  * @description A library of useful Resolve functions to speed up common tasks
  * Last tested on Davinci Resolve v20.1
  * @author tomshi
- * @date 2025/12/20
- * @version 1.6.0
+ * @date 2026/08/31
+ * @version 1.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -106,7 +106,7 @@ class Resolve {
         keys.allWait(2)
         coord.w()
         block.On()
-        SendInput(KSA.resolveSelectPlayhead)
+        SendInput(KSA.resolve.resolveSelectPlayhead)
         if !orig := obj.MousePos() {
             block.Off()
             return
@@ -240,7 +240,7 @@ class Resolve {
     {
         coord.w()
         block.On()
-        SendInput(KSA.resolveSelectPlayhead)
+        SendInput(KSA.resolve.resolveSelectPlayhead)
         if !orig := obj.MousePos() {
             block.Off()
             return
@@ -328,7 +328,7 @@ class Resolve {
             }
         coord.w()
         block.On()
-        SendInput(KSA.resolveSelectPlayhead)
+        SendInput(KSA.resolve.resolveSelectPlayhead)
         if !origM := obj.MousePos() {
             block.Off()
             return

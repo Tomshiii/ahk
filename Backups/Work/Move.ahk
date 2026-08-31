@@ -32,7 +32,7 @@ class Move {
         ;// which causes this function to throw because it hasn't actually set KSA yet
         if !IsSet(KSA)
             return
-        if !IsSet(key) && (A_ThisHotkey != KSA.minimiseHotkey && A_ThisHotkey != KSA.maximiseHotkey) {
+        if !IsSet(key) && (A_ThisHotkey != KSA.windows.minimiseHotkey && A_ThisHotkey != KSA.windows.maximiseHotkey) {
             ;// throw
             errorLog(ValueError("Incorrect hotkey has been used for function.`nDouble check KSA values.", -1),,, 1)
         }
@@ -66,8 +66,8 @@ class Move {
             return
         SendInput("{LButton Up}") ;releases the left mouse button to stop it from getting stuck
         switch A_ThisHotkey,  "Off" {
-            case KSA.minimiseHotkey: try WinMinimize(window)
-            case KSA.maximiseHotkey:
+            case KSA.windows.minimiseHotkey: try WinMinimize(window)
+            case KSA.windows.maximiseHotkey:
                 switch winget.isFullscreen(&title, window) {
                     case false: WinMaximize(window)
                     case true: WinRestore(window)

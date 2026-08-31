@@ -1,8 +1,10 @@
 {
-    "resolveSelectPlayhead": {
-        "hotkey": "+v"
-    },
-    "resolveDeselectAll": {
-        "hotkey": "^+a"
+    "resolve": {
+        "selectPlayhead": {
+            "hotkey": "+v"
+        },
+        "deselectAll": {
+            "hotkey": "^+a"
+        }
     }
 }

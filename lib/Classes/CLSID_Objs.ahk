@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/08/28
- * @version 1.1.20
+ * @date 2026/08/31
+ * @version 1.1.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -147,27 +147,60 @@ class CLSID_Objs {
         if !IsObject(obj)
             return obj
 
-        switch Type(obj) {
-            case "Map":
-                newObj := Map()
-                newObj.CaseSense := obj.CaseSense
-                for k, v in obj
-                    newObj[k] := IsObject(v) ? this.deepClone(v) : v
-                return newObj
-            case "Array":
+        ;// Type() only reflects local metadata, which is lost once `obj` has crossed a
+        ;// ComObjActive boundary (eg. cloning KSA from a script other than Core
+        ;// Functionality.ahk) - everything comes back generically as "ComObject"
+        ;// regardless of what it really is underneath. Real method/property CALLS still
+        ;// get forwarded correctly though, so duck-type instead of relying on Type().
+        isEnumerable := false
+        try {
+            for _k, _v in obj
+                break
+            isEnumerable := true
+        }
+
+        if isEnumerable {
+            ;// only Array has `.Length` - Map doesn't
+            isArray := false
+            try {
+                obj.Length
+                isArray := true
+            }
+            if isArray {
                 newObj := Array()
-                newObj.Length := obj.Length
-                loop obj.Length {
+                len := obj.Length
+                newObj.Length := len
+                loop len {
                     if obj.Has(A_Index)
                         newObj[A_Index] := IsObject(obj[A_Index]) ? this.deepClone(obj[A_Index]) : obj[A_Index]
                 }
                 return newObj
-            default:
-                newObj := Object()
-                for k, v in obj.OwnProps()
-                    newObj.DefineProp(k, {Value: IsObject(v) ? this.deepClone(v) : v})
+            } else {
+                newObj := Map()
+                try newObj.CaseSense := obj.CaseSense
+                for k, v in obj
+                    newObj[k] := IsObject(v) ? this.deepClone(v) : v
                 return newObj
+            }
         }
+
+        ;// not enumerable - plain object or custom class instance
+        newObj := Object()
+        if !(obj is ComObject) {
+            newObj.Base := obj.Base
+        } else {
+            ;// __Class is just a string, so it marshals across COM fine. If the
+            ;// equivalent class is loaded locally too, reattach its prototype so
+            ;// methods like a custom __Get still work post-clone.
+            try {
+                className := obj.__Class
+                if className != ""
+                    newObj.Base := %className%.Prototype
+            }
+        }
+        for k, v in obj.OwnProps()
+            newObj.DefineProp(k, {Value: IsObject(v) ? this.deepClone(v) : v})
+        return newObj
     }
 
     /**

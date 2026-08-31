@@ -1,8 +1,12 @@
 # <> Release 2.18.x - 
 
+## KSA
+- ❗ All `KSA` variables are now prefixed by their respective program, ie; `KSA.prem.timelineWindow`/`KSA.ae.previousKeyframe`/etc
+- ✅ Fixed unhelpful errors when a keyboard shortcut isn't set
+
 ## Functions
 - ✅ Fixed `premUIA_Values.__activeElementPath()` throwing in certain circumstances causing `determineUIA.ahk` to crash
-- 📋 Shared objects should now be less likely to get stuck in a locked state
+- 📋 Shared `CLSID_Objs` objects should now be less likely to get stuck in a locked state
 
 ### 📝 `prem {`
 - 📋 `anchorToPosition()` now attempts to use the api to adjust the values before falling back to clipboard manipulation
@@ -10,7 +14,7 @@
 
 ### 📝 `ae {`
 - ❌ Removed `scaleAndPos()`, `motionBlur()`
-- ✏️ Added `isToolSelected()`
+- ✏️ Added `isToolSelected()`, `isClipSelected()`
 - 📋 Port `prem.save()` to `ae.save()`
 - 📋 `anchorToPosition()` now attempts to use the api to adjust the values before falling back to clipboard manipulation
 
@@ -18,12 +22,11 @@
 - ✏️ Added `anchorToPosition()`
 
 ## AERemote
-- ✅ Fixed extension failing to appear (mb I forgot to edit some files)
-    - If already installed, will need to be reinstalled
 - ✏️ Added ports of `applyEffectOnAllSelectedClips()`, `listEffectsOnSelectedClip()`, `anchorToPosition()`, `isSelected()`, `isSelectedMultiple()`
 
 ## Other Changes
 - ❌ Removed AE `advancedX.png`, `blurX.png`, `mode.png`, `toggle.png`, `text.png`, `shutterangle.png`
+- ❌ Removed `adjustment layer.ahk`, `obs_screenshot.ahk`, `start main stream.ahk`, `close stream.ahk`, `disable obs preview.ahk`, `enable obs preview.ahk`, `focusChat.ahk`, `open mii wii program.ahk`, `quick sound settings.ahk`, `powerpoints.ahk`, `start botshi stream.ahk`
 
 🔗 `mult-dl.ahk`
 ###### *(v1.3.11 -> v1.3.13)*

@@ -25,4 +25,4 @@ if prem.__checkTimelineValues() = true {
         return
 }
 
-delaySI(50, ksa.modifyStartTime, startValue, "{Enter}")
+delaySI(50, ksa.prem.modifyStartTime, startValue, "{Enter}")

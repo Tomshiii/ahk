@@ -19,4 +19,4 @@ catch {
 }
 
 sleep 100
-SendInput(ksa.closePanel)
+SendInput(ksa.prem.closePanel)

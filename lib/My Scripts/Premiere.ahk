@@ -56,7 +56,7 @@ $Tab::
 	titles := "Audio Gain|Sequence Settings " prem.winTitle
 	switch {
 		case isIn("Modify Clip", prem.winTitle):
-			(GetKeyState("LCtrl", "P") = true) ? prem.swapChannels(1) : prem.swapChannels(1, 16, ksa.labelPurple)
+			(GetKeyState("LCtrl", "P") = true) ? prem.swapChannels(1) : prem.swapChannels(1, 16, ksa.prem.labelPurple)
 			KeyWait("LCtrl")
 			return
 		case isIn("Clip Fx Editor"), isIn("Track Fx Editor"):
@@ -292,7 +292,7 @@ SC03A & 6::
 		return
 	}
 	num := numKey+10
-	SendInput(ksa.chooseCam%num%)
+	SendInput(ksa.prem.chooseCam%num%)
 	if !capslockState
 		SetCapsLockState('AlwaysOff')
 }
@@ -330,7 +330,7 @@ $+c:: ;// stop playback before ripple deleting as it can go funky in laggy comps
 	}
 	prem.stopPlayback()
 	sleep 30
-	SendInput(ksa.premRippleDelete)
+	SendInput(ksa.prem.rippleDelete)
 	return
 }
 
@@ -338,7 +338,19 @@ $+1::
 $+2::prem.zoomPreviewWindow(A_ThisHotkey)
 $+3::prem.zoomPreviewWindow("+3", true)
 
-^!f::prem.flattenAndColour(ksa.labelIris)
+$+f::
+{
+	try defTrans := ksa.prem.addDefaultTransition
+	if !IsSet(defTrans) || Type(defTrans) != "string" {
+		SendInput("+f")
+		return
+	}
+	if IsSet(A_PriorHotkey) && A_PriorHotkey = defTrans && IsSet(A_TimeSincePriorHotkey) && A_TimeSincePriorHotkey <= 100
+		return
+	SendInput("+f")
+	return
+}
+^!f::prem.flattenAndColour(ksa.prem.labelIris)
 $+d:: ;// deselect edit points after adding transitions
 {
 	if prem.timelineVals = false {
@@ -386,24 +398,24 @@ F19::prem.dragSourceMon("audio", "_Assets/01_Other/Bars and Tone - Rec 709", tru
 F14 & F19::prem.dragSourceMon("audio")
 
 ;// playback speed change hotkeys
-F14 & F21::SendInput(KSA.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
+F14 & F21::SendInput(KSA.prem.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
 F14 & F23::
 {
-	delaySI(16, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement, ksa.speedUpIncrement) ;alternate way to speed up playback on the timeline with mouse buttons
+	delaySI(16, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement) ;alternate way to speed up playback on the timeline with mouse buttons
 	keys.allWait()
 }
 ;// next/previous frame hotkeys
-<+F21::prem.wheelEditPoint(KSA.effectControls, KSA.prempreviousKeyframe, 2, true) ;goes to the next keyframe point towards the left
-<+F23::prem.wheelEditPoint(KSA.effectControls, KSA.premnextKeyframe, 2, true) ;goes to the next keyframe towards the right
+<+F21::prem.wheelEditPoint(KSA.prem.effectControls, ksa.prem.previousKeyframe, 2, true) ;goes to the next keyframe point towards the left
+<+F23::prem.wheelEditPoint(KSA.prem.effectControls, ksa.prem.nextKeyframe, 2, true) ;goes to the next keyframe towards the right
 
-<!F21::prem.wheelEditPoint(ksa.timelineWindow, ksa.selectedClipStart, 2, true, "{LAlt}{F21}")
-<!F23::prem.wheelEditPoint(ksa.timelineWindow, ksa.selectedClipEnd, 2, true, "{LAlt}{F23}")
+<!F21::prem.wheelEditPoint(ksa.prem.timelineWindow, ksa.prem.selectedClipStart, 2, true, "{LAlt}{F21}")
+<!F23::prem.wheelEditPoint(ksa.prem.timelineWindow, ksa.prem.selectedClipEnd, 2, true, "{LAlt}{F23}")
 ;// next/previous edit point hotkeys
-F21::prem.wheelEditPoint(KSA.timelineWindow, KSA.previousEditPoint,, true) ;goes to the next edit point towards the left
-F23::prem.wheelEditPoint(KSA.timelineWindow, KSA.nextEditPoint,, true) ;goes to the next edit point towards the right
+F21::prem.wheelEditPoint(KSA.prem.timelineWindow, KSA.prem.previousEditPoint,, true) ;goes to the next edit point towards the left
+F23::prem.wheelEditPoint(KSA.prem.timelineWindow, KSA.prem.nextEditPoint,, true) ;goes to the next edit point towards the right
 
 ;// mousedrag hotkeys
-*XButton2::prem.mousedrag(KSA.handPrem, KSA.selectionPrem) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
+*XButton2::prem.mousedrag(KSA.prem.handTool, KSA.prem.selectionTool) ;changes the tool to the hand tool while mouse button is held ;check the various Functions scripts for the code to this preset & the keyboard shortcuts ini file for the tool shortcuts
 
 
 /* <!WheelUp::
@@ -441,7 +453,7 @@ $^v::
 		return
 	}
 	t := prem.__remoteFunc('getPlayheadPosTicks', true)
-	SendInput(ksa.premPaste)
+	SendInput(ksa.prem.Paste)
 	prem.__remoteFunc('setPlayheadPosTicks',, "ticks=" t)
 }
 

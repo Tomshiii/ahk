@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/08/13
- * @version 2.2.24.1
+ * @date 2026/08/31
+ * @version 2.2.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -119,8 +119,8 @@ class adobeAutoSave extends count {
 
     rClickPrem    := ""
     rClickMove    := ""
-    movePlayhead  := InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}") ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{")
-                                                                                          : ksa.playheadtoCursor
+    movePlayhead  := InStr(ksa.prem.playheadtoCursor, "{") && InStr(ksa.prem.playheadtoCursor, "}") ? LTrim(RTrim(ksa.prem.playheadtoCursor, "}"), "{")
+                                                                                          : ksa.prem.playheadtoCursor
     saveAttemptNotify := false
 
     programMonX1  := false,  programMonX2 := false
@@ -418,14 +418,14 @@ class adobeAutoSave extends count {
 
                     prem.__focusTimeline()
                     sleep 100
-                    SendEvent(KSA.playStop)
+                    SendEvent(KSA.prem.playStop)
                     sleep 1000
                     loop 3 {
                         checkPlaying := prem.isPlaying()
                         if checkPlaying != true {
                             prem.__focusTimeline()
                             sleep 100
-                            SendEvent(KSA.playStop)
+                            SendEvent(KSA.prem.playStop)
                             sleep 100
                             continue
                         }

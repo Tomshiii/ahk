@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2026/08/21
- * @version 1.7.7
+ * @date 2026/08/31
+ * @version 1.7.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -256,7 +256,7 @@ class discord {
         block.On("send")
         store := clip.clear()
         if !clip.copyWait(unset, timeWait.first, false) {
-            SendInput(KSA.discHighlightChat)
+            SendInput(KSA.discord.highlightChat)
             sendText := (charLength = 2 && A_ThisHotkey != "") ? onFailSend : char
             A_Clipboard := sendText
             if !ClipWait(timeWait.second) {

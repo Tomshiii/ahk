@@ -20,8 +20,8 @@ speed(amount)
             errorLog(TypeError("Invalid parameter type in Parameter #1", -1, amount),,, 1)
         }
     ;// first we make sure clips are selected
-    SendInput(KSA.effectControls)
-    SendInput(KSA.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
+    SendInput(KSA.prem.effectControls)
+    SendInput(KSA.prem.effectControls) ;focus it twice because premiere is dumb and you need to do it twice to ensure it actually gets focused
     try {
         effCtrlNN := ControlGetClassNN(ControlGetFocus("A")) ;gets the ClassNN value of the active panel
         ControlGetPos(&classX, &classY, &width, &height, effCtrlNN) ;gets the x/y value and width/height value
@@ -37,5 +37,5 @@ speed(amount)
             errorLog(Error("No clips are selected", -1),, 1)
             return
         }
-    SendInput(KSA.speedMenu amount "{ENTER}")
+    SendInput(KSA.prem.speedMenu amount "{ENTER}")
 }

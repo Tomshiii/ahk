@@ -19,7 +19,7 @@ youMouse(tenS, fiveS)
         ;//sometimes the window won't activate fast enough
         sleep 25
         ;// ;checks to see if you have a second key held down to see whether you want the function to skip 10s or 5s. If you hold down this second button, it will skip 10s
-        which := GetKeyState(KSA.longSkip, "P") ? tens : fiveS
+        which := GetKeyState(KSA.windows.longSkip, "P") ? tens : fiveS
         ControlSend(which, hwnd, hwnd)
     }
 }

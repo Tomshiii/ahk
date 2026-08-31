@@ -8,4 +8,4 @@
 if !WinActive(prem.winTitle)
     return
 
-SendInput(ksa.selectFollowPlayhead)
+SendInput(ksa.prem.selectFollowPlayhead)

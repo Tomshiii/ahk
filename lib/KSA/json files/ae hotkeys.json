@@ -1,10 +1,10 @@
 {
-    "audioAE": {
+    "audio": {
         "context": "CSwitchboard",
         "command":  "ShowHideAudio",
         "withinAE": "(Application > Window >) Show/Hide Audio Panel"
     },
-    "effectsAE": {
+    "effects": {
         "context": "CSwitchboard",
         "command":  "ShowHideFxPal",
         "withinAE": "(Application > Window >) Show/Hide Effects & Presets Panel"
@@ -14,12 +14,12 @@
         "command":  "OpenComp",
         "withinAE": "(Application > ) Switch Between Composition/Timeline Panel"
     },
-    "handAE": {
+    "handTool": {
         "context": "CEggAppTool",
         "command":  "ToolHand",
         "withinAE": "(Application >) Hand"
     },
-    "selectionAE": {
+    "selectionTool": {
         "context": "CEggAppTool",
         "command":  "ToolArrow",
         "withinAE": "(Application >) Selection"
@@ -64,7 +64,7 @@
         "command":  "CompSettings",
         "withinAE": "(Application > Composition >) Composition Settings"
     },
-    "adjustmentAE": {
+    "adjustment": {
         "context": "CSwitchboard",
         "command":  "NewEffectsLayer",
         "withinAE": "(Application > Layer > New) New Adjustment Layer"

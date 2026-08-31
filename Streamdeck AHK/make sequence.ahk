@@ -8,4 +8,4 @@
 if !WinActive(prem.winTitle)
     return
 
-delaySI(75, KSA.projectsWindow, KSA.timelineWindow, KSA.premMakeSequence, KSA.timelineWindow)
+delaySI(75, KSA.prem.projectsWindow, KSA.prem.timelineWindow, ksa.prem.MakeSequence, KSA.prem.timelineWindow)

@@ -14,8 +14,8 @@
 
 BackSpace:: ;this hotkey will activate the program monitor, then send the hotkey to activate safe margins
 {
-	SendInput(KSA.programMonitor)
-	SendInput(KSA.premSafeMargins)
+	SendInput(KSA.prem.programMonitor)
+	SendInput(ksa.prem.prem.SafeMargins)
 	sleep 100
 	prem.__focusTimeline()
 }
@@ -55,7 +55,7 @@ t::prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Gaussian%20Bl
 y:: ;this hotkey will fill the frame to fit the window
 {
 	prem.__focusTimeline()
-	SendInput(KSA.fitToFrame)
+	SendInput(KSA.prem.fitToFrame)
 }
 ; b::
 

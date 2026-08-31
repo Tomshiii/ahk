@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/08/27
- * @version 1.1.17
+ * @date 2026/08/31
+ * @version 1.1.18
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -132,7 +132,7 @@ class OtherFuncs {
         }
         if selectedTrack = "None" && subMixes = "no"
             return
-        SendInput(ksa.premAddTracks)
+        SendInput(ksa.prem.addTracks)
         WinWait("Add Tracks")
         tracksUIA := UIA.ElementFromHandle("Add Tracks " prem.exeTitle,, false)
         __openEditText(uiaObj, name, value) {

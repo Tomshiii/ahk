@@ -53,7 +53,7 @@ class adobeTimer extends count {
         super.start()
     }
     premObj := {}
-    playToCurs := (InStr(ksa.playheadtoCursor, "{") && InStr(ksa.playheadtoCursor, "}")) ? LTrim(RTrim(ksa.playheadtoCursor, "}"), "{") : ksa.playheadtoCursor
+    playToCurs := (InStr(ksa.prem.playheadtoCursor, "{") && InStr(ksa.prem.playheadtoCursor, "}")) ? LTrim(RTrim(ksa.prem.playheadtoCursor, "}"), "{") : ksa.prem.playheadtoCursor
     premName := ""
 
     ;// default timer (attempts to be overridden by the user's settings value)

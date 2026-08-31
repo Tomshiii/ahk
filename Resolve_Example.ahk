@@ -177,7 +177,7 @@ Rbutton:: ;ports the functionality of "Premiere_RightClick.ahk" as best as possi
                     SendInput("{Click Up}")
                     return
                 }
-            SendInput(KSA.resolveDeselectAll) ;in case you end up inside the "delete" right click menu from the timeline
+            SendInput(KSA.resolve.deselectAll) ;in case you end up inside the "delete" right click menu from the timeline
             block.Off()
             return
         }

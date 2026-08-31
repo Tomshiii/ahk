@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/28
- * @version 2.5.29
+ * @date 2026/08/31
+ * @version 2.5.30
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -413,13 +413,13 @@ class Prem {
         }
     }
 
-    __fxPanel() => (delaySI(16, KSA.effectControls, ksa.programMonitor, KSA.effectControls))
+    __fxPanel() => (delaySI(16, KSA.prem.effectControls, ksa.prem.programMonitor, KSA.prem.effectControls))
 
     /**
      * This function cuts repeat code. It activates the findbox and waits for the carot to appear.
      */
     __findBox() {
-        SendInput(KSA.findBox)
+        SendInput(KSA.prem.findBox)
         tool.Cust("if you hear windows, blame premiere")
         coord.c("screen")
         CaretGetPos(&findx)
@@ -428,7 +428,7 @@ class Prem {
                 loop {
                         if A_Index > 5
                             {
-                                SendInput(KSA.findBox) ;adjust this in the ini file
+                                SendInput(KSA.prem.findBox) ;adjust this in the ini file
                                 tool.Cust("if you hear windows, blame adobe", 2000)
                             }
                         sleep 30
@@ -544,22 +544,22 @@ class Prem {
     }
 
     /**
-     * uses the user's `KSA.shuttlestop` hotkey to stop playback
+     * uses the user's `KSA.prem.shuttlestop` hotkey to stop playback
      * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps). *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
      * */
     static stopPlayback(checkIsPlaying := false) {
         if !this.isPlaying()
             return
-        SendInput(KSA.shuttleStop)
+        SendInput(KSA.prem.shuttleStop)
     }
 
     /**
-     * uses the user's `KSA.playStop` hotkey to start playback
+     * uses the user's `KSA.prem.playStop` hotkey to start playback
      */
     static startPlayback() {
         if this.isPlaying() = true
             return
-        SendInput(KSA.playStop)
+        SendInput(KSA.prem.playStop)
     }
 
     /**
@@ -1161,7 +1161,7 @@ class Prem {
      */
     __loremipsum(classObj, widHeiObj, &returnX, &returnY) {
         sleep 100
-        delaySI(150, KSA.timelineWindow, KSA.timelineWindow, KSA.newText)
+        delaySI(150, KSA.prem.timelineWindow, KSA.prem.timelineWindow, KSA.prem.newText)
         sleep 150
         ;// premiere can slow down depending on the size of your project so it's best
         ;// to build in multiple checks for most things
@@ -1229,9 +1229,9 @@ class Prem {
     /**
      * checks for and disables the `Direct Manipulation` button that appears in the bottom left of the program monitor when you select a clip
      * this button being enabled can be annoying as it will then pause playback if you click anything else in the timeline
-     * @param {String} [toggleKey=ksa.toggleCropDirectManip] the shortcut to send to toggle off Direct Manip. Defaults to a KSA value
+     * @param {String} [toggleKey=ksa.prem.toggleCropDirectManip] the shortcut to send to toggle off Direct Manip. Defaults to a KSA value
      */
-    static disableDirectManip(toggleKey := ksa.toggleCropDirectManip) {
+    static disableDirectManip(toggleKey := ksa.prem.toggleCropDirectManip) {
         ;// button was only added in specrum UI
         if VerCompare(this.currentSetVer, this.spectrumUI_Version) < 0
             return
@@ -1386,7 +1386,7 @@ class Prem {
         sleep 50
 
         switch window {
-            case ksa.timelineWindow:
+            case ksa.prem.timelineWindow:
                 multCam := this.isMultiCamActive(premUIA)
                 if multCam = true || multCam = -1 {
                     ;// If you ever use the multi camera view you unfortunately cannot simply send the required hotkey, for whatever reason there is a potential for premiere to get stuck within a multicam nest.
@@ -1401,7 +1401,7 @@ class Prem {
                     sleep 25
                     newTick := this.__remoteFunc('getPlayheadPosTicks', true)
                     if startTick == newTick {
-                        delaySI(30, ksa.stepBackOneFrame, ksa.stepforwardOneFrame)
+                        delaySI(30, ksa.prem.stepBackOneFrame, ksa.prem.stepforwardOneFrame)
                         try {
                             loadPrem := CLSID_Objs.load('prem')
                             loadPrem.didWiggle := A_TickCount
@@ -1415,7 +1415,7 @@ class Prem {
                     blocker.Off()
                     return
                 }
-            case ksa.effectControls:
+            case ksa.prem.effectControls:
                 if !this.isClipSelected() {
                     keys.allWait(keyswait)
                     blocker.Off()
@@ -1430,9 +1430,9 @@ class Prem {
                         Sleep(25)
                         premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
                         Sleep(50)
-                        delaySI(20, "^a", ksa.deselectAll)
+                        delaySI(20, "^a", ksa.prem.deselectAll)
                     } catch {
-                        delaySI(20, window, ksa.programMonitor, window, "^a", ksa.deselectAll)
+                        delaySI(20, window, ksa.prem.programMonitor, window, "^a", ksa.prem.deselectAll)
                     }
                 }
             default: SendInput(window) ;focuses the timeline/desired window
@@ -1744,7 +1744,7 @@ class Prem {
         sleep 100
         this.__focusTimeline()
         sleep 100
-        SendInput(KSA.gainAdjust)
+        SendInput(KSA.prem.gainAdjust)
         if !WinWait("Audio Gain",, 3) {
             errorLog(TimeoutError("Waiting for gain window timed out"),, true)
             blocker.Off()
@@ -1893,7 +1893,7 @@ class Prem {
         if this.timelineFocusStatus() = true
             return
         sleep 1
-        SendEvent(KSA.timelineWindow)
+        SendEvent(KSA.prem.timelineWindow)
         sleep 25
 	}
 
@@ -1906,9 +1906,9 @@ class Prem {
      * @param {String} tool is the hotkey you want the script to input to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
      * @param {String} toolorig is the hotkey you want the script to input to bring you back to your tool of choice (consider using KSA values)
      * @param {Integer} [timeout=10] the number of `seconds` you want the function to wait before intentionally timing out. Defaults to `10`
-     * @param {String} [dragWait=KSA.DragKeywait] The hotkey this function will wait for release before finalising logic. Defaults to the `KSA` value `DragKeyWait`. It is not recommended to simply use `A_ThisHotkey` as quick actions can trip up ahk causing that value to get poisoned
+     * @param {String} [dragWait=KSA.windows.DragKeywait] The hotkey this function will wait for release before finalising logic. Defaults to the `KSA` value `DragKeyWait`. It is not recommended to simply use `A_ThisHotkey` as quick actions can trip up ahk causing that value to get poisoned
     */
-    static mousedrag(premtool, toolorig, timeout := 10, dragWait := ksa.DragKeywait) {
+    static mousedrag(premtool, toolorig, timeout := 10, dragWait := ksa.windows.DragKeywait) {
         if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
             return
         SetTimer(rdisable, -1)
@@ -1946,7 +1946,7 @@ class Prem {
         SetTimer(again.Bind(timeout), -400)
         again(timeout)
         again(timeout) {
-            ;// we check for the defined value `dragWait` (`ksa.DragKeywait` by default) here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
+            ;// we check for the defined value `dragWait` (`ksa.windows.DragKeywait` by default) here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
             isKey := false
             i := 0
             hot := getHotkeysArr()
@@ -2138,7 +2138,7 @@ class Prem {
         }
         ;// we first need to focus a window that won't cycle through anything if you activate it multiple times
         ;// if you don't, activating the program monitor while it's already activated will cycle timeline sequences
-        delaySI(50, KSA.effectControls, KSA.programMonitor, command)
+        delaySI(50, KSA.prem.effectControls, KSA.prem.programMonitor, command)
     }
 
     /**
@@ -2147,7 +2147,7 @@ class Prem {
      * @param {Integer} frames the amount of frames you wish to move in that direction
      * @param {String} windowHotkey the hotkey you wish to send to premiere to focus your window of choice. Defaults to the `Effect Controls` window
      */
-    static moveKeyframes(direction, frames, windowHotkey := KSA.effectControls) {
+    static moveKeyframes(direction, frames, windowHotkey := KSA.prem.effectControls) {
         if direction != "left" && direction != "right" {
             ;// throw
             errorLog(ValueError("Value is not a valid direction", direction, -1),,, 1)
@@ -2421,10 +2421,10 @@ class Prem {
             if closeTrim = true && this.isTrimModeActive() && premUIA_Values.__isUiaElementActive("timelineWindow", premUIA) = true {
                 SendInput("{Escape}")
             }
-            SendEvent(ksa.playStop)
+            SendEvent(ksa.prem.playStop)
         }
-        if (A_PriorKey != ksa.premRipplePrev && A_PriorKey != ksa.premRippleNext) ||
-            ((A_PriorKey = ksa.premRipplePrev || A_PriorKey = ksa.premRippleNext) && (premObj.delayTime >= delayMS) || premObj.delayTime = 0) {
+        if (A_PriorKey != ksa.prem.ripplePrev && A_PriorKey != ksa.prem.rippleNext) ||
+            ((A_PriorKey = ksa.prem.ripplePrev || A_PriorKey = ksa.prem.rippleNext) && (premObj.delayTime >= delayMS) || premObj.delayTime = 0) {
                 __sendSpace(premUIA, closeTrim)
                 premObj := ""
                 return
@@ -2449,7 +2449,7 @@ class Prem {
     }
     /**
      * Tracks how long it has been since the user used a ripple trim. This function is to provide proper functionality to `prem.delayPlayback()`
-     * @param {Boolean} [pauseFirst=true] determnines whether to stop playback before attempting to ripple trim (requires `ksa.shuttleStop` to be set correctly)
+     * @param {Boolean} [pauseFirst=true] determnines whether to stop playback before attempting to ripple trim (requires `ksa.prem.shuttleStop` to be set correctly)
      * @param {Integer} [delay=50] how long you wish for the function to stall after halting playback before attempting to ripple trim. This is necessary as premiere can be a little slow to receive inputs so spamming them back to back may result in some inputs being missed. If `pauseFirst` is set to false, this parameter is irrelevant
      */
     static rippleTrim(pauseFirst := true, delay := 50) {
@@ -2559,7 +2559,7 @@ class Prem {
                 if !this.__waitForTimeline(3)
                     return
             }
-            SendInput(ksa.audioChannels)
+            SendInput(ksa.prem.audioChannels)
             if !WinWait(clipWinTitle,, 3) {
                 block.Off()
                 errorLog(Error("Timed out waiting for window", -1),, 1)
@@ -2877,7 +2877,7 @@ class Prem {
         keys.allWait()
         block.On()
         this.__focusTimeline()
-        delaySI(100, ksa.flattenMulti, colour)
+        delaySI(100, ksa.prem.flattenMulti, colour)
         block.Off()
     }
 
@@ -3495,10 +3495,10 @@ class Prem {
 
         ;// prem is dumb and sometimes ignores inputs if you're too fast
         if this.__remoteFunc('isSelected', true) {
-            SendInput(ksa.deselectAll)
+            SendInput(ksa.prem.deselectAll)
             if this.__remoteFunc('isSelected', true) {
                 sleep 50
-                SendInput(ksa.deselectAll)
+                SendInput(ksa.prem.deselectAll)
                 sleep 25
                 if this.__remoteFunc('isSelected', true) {
                     errorLog(MethodError("Deselecting failed. Please try again"))
@@ -3507,7 +3507,7 @@ class Prem {
                 }
             }
         }
-        ; SendInput(ksa.selectionPrem)
+        ; SendInput(ksa.prem.selectionTool)
         this.selectTool()
         sleep 16
         if !origMouseCords := obj.MousePos() {
@@ -3682,7 +3682,7 @@ class Prem {
         }
         MouseMove(origMouseCords.x, origMouseCords.y, 0)
         sleep 25
-        SendInput(ksa.deselectAll)
+        SendInput(ksa.prem.deselectAll)
         sleep 25
         checkStuck()
         blocker.Off()
@@ -3891,7 +3891,7 @@ class Prem {
         if !this.__setTimelineValues()
 			return
         this.__focusTimeline()
-        SendInput(ksa.togDupeFrameMarkers)
+        SendInput(ksa.prem.togDupeFrameMarkers)
     }
 
     /**
@@ -3927,7 +3927,7 @@ class Prem {
     static deleteEmptyTracks() {
         if !WinActive(this.winTitle) ;// this is here in the event the user calls this func from `HotkeylessAHK` - otherwise it'll throw an error if prem isn't active
             return
-        SendInput(ksa.deleteEmptyTracksAll)
+        SendInput(ksa.prem.deleteEmptyTracksAll)
     }
 
     /**
@@ -4103,7 +4103,7 @@ class Prem {
         sleep 50
         this.__focusTimeline()
         sleep 50
-        SendInput(ksa.toggleMultiCam)
+        SendInput(ksa.prem.toggleMultiCam)
         WinWaitClose(title)
         if which = "enable"
             this.audioWaitClose := false
@@ -4435,11 +4435,11 @@ class Prem {
         if checkBool(changeLabel) && labelHotkey != "" && clipType = "Video"
             SendEvent(labelHotkey)
         sleep 50
-        SendEvent(KSA.premRndrReplce)
+        SendEvent(ksa.prem.rndrReplce)
         sleep 100
         if !WinWait("Render and Replace " this.exeTitle,, 2) {
             if (attempt ?? false) = "active" {
-                SendInput(KSA.premRndrReplce)
+                SendInput(ksa.prem.rndrReplce)
                 if !WinWait("Render and Replace " this.exeTitle,, 2) {
                     tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")
                     return false
@@ -4484,12 +4484,12 @@ class Prem {
             return
         premUIA := premUIA_Values.initialise()
         if !premUIA_Values.__isUiaElementActive("projectsWindow", premUIA) {
-            SendInput(ksa.projectsWindow)
+            SendInput(ksa.prem.projectsWindow)
             sleep 50
         }
-        delaySI(16, ksa.findBox, "{Delete}", "{Enter}") ;// clear any text in the findbox
+        delaySI(16, ksa.prem.findBox, "{Delete}", "{Enter}") ;// clear any text in the findbox
         sleep 50
-        SendInput(ksa.projItemEnd)
+        SendInput(ksa.prem.projItemEnd)
     }
 
     /**
@@ -4737,14 +4737,14 @@ class Prem {
         }
 
         /**
-         * #### This function requires the premiere plugin `Excalibur` to be installed and for `KSA.excalLockVid/KSA.excalLockAud` to be correctly set.
+         * #### This function requires the premiere plugin `Excalibur` to be installed and for `KSA.excalibur.LockVid/KSA.excalibur.LockAud` to be correctly set.
          * Quickly and easily lock/unlock multiple audio/video tracks
          * @param {String} which determines which track you wish to adjust. Must be either `"video"` or `"audio"`
          */
         static lockTracks(which := "Video") {
             switch which, "Off" {
-                case "audio": SendInput(KSA.excalLockAud)
-                case "video": SendInput(KSA.excalLockVid)
+                case "audio": SendInput(KSA.excalibur.LockAud)
+                case "video": SendInput(KSA.excalibur.LockVid)
                 default: return
             }
             if !WinWait("Lock " StrTitle(which) " Tracks",, 3)
