@@ -2,7 +2,7 @@
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
  * @date 2026/08/31
- * @version 2.2.0
+ * @version 2.2.1
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -51,7 +51,12 @@ class KeyShortAdjust {
             DirCreate(A_MyDocuments "\tomshi\KSA")
         if !FileExist(A_MyDocuments "\tomshi\KSA\override.json")
             FileAppend("{`n`n}", A_MyDocuments "\tomshi\KSA\override.json")
-        this.override := JSON.parse(FileRead(this.overrideLocation))
+        try this.override := JSON.parse(FileRead(this.overrideLocation))
+        catch as e {
+            if e.Message = "Malformed JSON - unrecognized character."
+                throw ValueError("Malformed JSON in " this.overrideLocation, -1)
+            throw e
+        }
         this.setAdobeKeys("prem")
         this.setAdobeKeys("ae")
         this.setAdobeKeys("ps")
@@ -75,6 +80,7 @@ class KeyShortAdjust {
 
     /**
      * lazily create (or fetch) the KSA_Namespace instance for a given program name so KSA.<prog>.<hotkey> always resolves through KSA_Namespace's __Get, no matter how many programs end up nested inside the various json files
+     * @param {String} [which] the name of the namespace to operate on, ie; `"prem"`
      */
     getNamespace(which) {
         if !this.HasOwnProp(which) || !(this.%which% is KSA_Namespace)
@@ -82,6 +88,28 @@ class KeyShortAdjust {
         return this.%which%
     }
 
+    /**
+     * cut repeat code to determine whether an override hotkey is present for the desired program
+     * @param {String} [which] the `Key` name of the JSON section you wish to check - the program name.
+     * @param {String} [hotkeyName] the name of the hotkey to be checked for
+     * @returns {String | false}
+     */
+    getOverride(which, hotkeyName) {
+        if !(this.override is Map) || !this.override.Has(which)
+            return false
+        progOverride := this.override[which]
+        if !(progOverride is Map) || !progOverride.Has(hotkeyName)
+            return false
+        entry := progOverride[hotkeyName]
+        return (entry is Map) ? entry["hotkey"] : false
+    }
+
+    /**
+     * determine unset programs
+     * @param {Map} [appJSON] the `JSON.parse()` map for the desired program
+     * @param {String} [program] the name of the program that is encountering the error, ie; `"Premiere"`
+     * @param {Class} [ns] the `getNamespace()` class instance to operate on
+     */
     doUnset(appJSON, program, ns) {
         for k, v in appJSON {
             ns._unset[k] := program
@@ -89,6 +117,10 @@ class KeyShortAdjust {
         return
     }
 
+    /**
+     * Determines if the user has `IsBeta` set for the desired adobe program
+     * @param {String} [which] the shorthand name of the desired adobe product, ie; `"prem"`
+     */
     __isBeta(which) {
         try {
             if !IsSet(UserSettings) {
@@ -104,6 +136,10 @@ class KeyShortAdjust {
         }
     }
 
+    /**
+     * sets the hotkeys for the desired adobe program
+     * @param {String} [which] the shorthand name of the desired adobe product, ie; `"prem"`
+     */
     setAdobeKeys(which) {
         isUnset := false
         appJSON := JSON.parse(FileRead(this.%which%JSONFile))
@@ -165,7 +201,8 @@ class KeyShortAdjust {
                         ns._undetermined[k] := "Premiere"
                         continue
                     }
-                    currentHotkey := (this.override.Has(k) ? this.override.%k%.v["hotkey"] : xmlHotkey)
+                    overrideVal := this.getOverride(which, k)
+                    currentHotkey := overrideVal != false ? overrideVal : xmlHotkey
                     ns.%k% := currentHotkey
                 }
             case "ae":
@@ -191,12 +228,13 @@ class KeyShortAdjust {
                         continue
                     aeHotkeyIniVal := IniRead(userShortcutFile, '"' v["context"] '"', '"' v["command"] '"', "")
                     try xmlHotkey := xml.__aeBuildHotkey(aeHotkeyIniVal)
-                    if !this.override.Has(k) && (aeHotkeyIniVal = "" || !IsSet(xmlHotkey) || (IsSet(xmlHotkey) && xmlHotkey = false)) {
+                    overrideVal := this.getOverride(which, k)
+                    if !overrideVal && (aeHotkeyIniVal = "" || !IsSet(xmlHotkey) || (IsSet(xmlHotkey) && xmlHotkey = false)) {
                         errorLog(ValueError("Could not determine key for KSA", -1, k))
                         ns._undetermined[k] := "After Effects"
                         continue
                     }
-                    buildHotkey := (this.override.Has(k)) ? this.override.%k%.v["hotkey"] : xmlHotkey
+                    buildHotkey := overrideVal != false ? overrideVal : xmlHotkey
                     ns.%k% := buildHotkey
                 }
             case "ps":
@@ -218,17 +256,19 @@ class KeyShortAdjust {
                     if k ~= "^_*newSection$" ;// ignore any `____newSection`
                         continue
                     try xmlHotkey := xml.__psBuildHotkey(v["type"], v["name"])
-                    if !this.override.Has(k) && (!IsSet(xmlHotkey) || (IsSet(xmlHotkey) && IsObject(xmlHotkey) && xmlHotkey.HasOwnProp('isSet') && xmlHotkey.isSet = false)) {
+                    overrideVal := this.getOverride(which, k)
+                    if !overrideVal && (!IsSet(xmlHotkey) || (IsSet(xmlHotkey) && IsObject(xmlHotkey) && xmlHotkey.HasOwnProp('isSet') && xmlHotkey.isSet = false)) {
                         errorLog(ValueError("Could not determine key for KSA", -1, k))
                         ns._undetermined[k] := "Photoshop"
                         continue
                     }
-                    buildHotkey := (this.override.Has(k)) ? this.override.%k%.v["hotkey"] : xmlHotkey
+                    buildHotkey := overrideVal != false ? overrideVal : xmlHotkey
                     ns.%k% := buildHotkey
                 }
         }
     }
 
+    /** sets the hotkeys for the premiere plugin `Excalibur` */
     setExcaliburKeys() {
         appJSON := JSON.parse(FileRead(this.excaliburJSONFile))
         ns := this.getNamespace("excalibur")
@@ -246,12 +286,13 @@ class KeyShortAdjust {
                 continue
 
             try xmlHotkey := adobeReadXML.__excaliburBuildHotkey(readSpell["commands"][v["command"]]["shortcut"])
-            if !this.override.Has(k) && (!IsSet(xmlHotkey) || (IsSet(xmlHotkey) && xmlHotkey = false)) {
+            overrideVal := this.getOverride("excalibur", k)
+            if !overrideVal && (!IsSet(xmlHotkey) || (IsSet(xmlHotkey) && xmlHotkey = false)) {
                 errorLog(ValueError("Could not determine key for KSA", -1, k))
                 ns._undetermined[k] := "Excalibur"
                 continue
             }
-            buildHotkey := (this.override.Has(k)) ? this.override.%k%.v["hotkey"] : xmlHotkey
+            buildHotkey := overrideVal != false ? overrideVal : xmlHotkey
             ns.%k% := buildHotkey
         }
     }
@@ -274,15 +315,26 @@ class KeyShortAdjust {
      *     },
      *     ...
      * }
+     * ```
+     * @param {String} [jsonFilepath] the full filepath to the desired json file
      */
     setBasicKeys(jsonFilepath) {
-        jsonFile := JSON.parse(FileRead(jsonFilepath))
+        if !FileExist(jsonFilepath) {
+            ;// throw
+            errorLog(TargetError("File does not exist", -2, jsonFilepath),,, true)
+            return
+        }
+        try jsonFile := JSON.parse(FileRead(jsonFilepath))
+        catch as e{
+            throw e
+        }
         for prog, obj in jsonFile {
             ns := this.getNamespace(prog)
             for k, v in obj {
                 if k ~= "^_*newSection$" ;// ignore any `____newSection`
                     continue
-                ns.%k% := v["hotkey"]
+                overrideVal := this.getOverride(prog, k)
+                ns.%k% := overrideVal != false ? overrideVal : v["hotkey"]
             }
         }
     }
