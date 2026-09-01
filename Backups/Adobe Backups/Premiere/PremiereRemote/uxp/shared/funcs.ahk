@@ -24,8 +24,9 @@ __runAndWait(ahkExe, filepath, minimise := true, timeout := 3, sleepTime := 5000
 }
 
 __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
-    WinActivate("Adobe UXP Developer Tools" A_Space title)
-    premRemote := UIA.ElementFromHandle("Adobe UXP Developer Tools" A_Space title,, false)
+    fullTitle := "Adobe UXP Developer Tools" A_Space title
+    WinActivate(fullTitle)
+    premRemote := UIA.ElementFromHandle(fullTitle,, false)
     if !premRow := premRemote.WaitElement({Type:50025, Name:"Premiere Pro"}, 10000) {
         MsgBox("Failed to find the UXP plugin window",, "T3")
         return false
@@ -46,10 +47,31 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
     }
     debugButtBar  := children[index+offset]
     if debugButtBar.name = "Load Load & Watch" {
-        debugButtBar.FindElement({Type:50000, Name:"Load"}).invoke()
+        set := false
+        for children in debugButtBar.Children {
+            if children.Name != "" {
+                set := true
+                break
+            }
+        }
+        if set = false {
+            try ProcessClose(fullTitle)
+            catch {
+                return false
+            }
+            v := __startUXP(, &debugButt)
+            return v
+        }
+        try debugButtBar.FindElement({Type:50000, Name:"Load"}).invoke()
+        catch {
+            try debugButtBar.FindElement({Type:50000, Name:"Unload"}).invoke()
+            try debugButtBar.FindElement({Type:50000, Name:"Load"}).invoke()
+        }
     } else {
-        reloadButt     := debugButtBar.FindElement({Type:50000, Name:"Reload"})
-        reloadButt.click()
+        try {
+            reloadButt := debugButtBar.FindElement({Type:50000, Name:"Reload"})
+            reloadButt.click()
+        }
     }
     try debugButt  := debugButtBar.FindElement({Type:50000, Name:"Debug"})
     sleep 500

@@ -7,6 +7,7 @@
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\cmd.ahk
 #Include Classes\clip.ahk
+#Include Functions\base64Encode.ahk
 ; }
 
 class rclone {
@@ -16,17 +17,32 @@ class rclone {
     /**
      * @param `{1}` - NAS folder
      * @param `{2}` - gdrive folder AFTER `1. The Boys`
+     * @param `{3}` - share/volume (e.g. CACHEDEV1_DATA/storage)
      */
-    static cmdSyncDir := '(trap `'`' HUP; /share/CACHEDEV1_DATA/tools/rclone/rclone copy \"/share/{3}/{1}\" \"gdrive:2. Videos/1. The Boys/{2}\" --config /share/CACHEDEV1_DATA/tools/rclone/rclone.conf --transfers 4 --checkers 8 --drive-chunk-size 128M --log-level INFO --log-file /share/CACHEDEV1_DATA/rclone.log --bwlimit 300M --exclude \"_proxy/**\" --exclude \"proxy/**\" --exclude \"Monitor Baackup/**\" --exclude \"Monitor Backup/**\" --exclude \"MONITOR BACKUP/**\") &'
-
-
+    static cmdSyncDir := "trap '' HUP; /share/CACHEDEV1_DATA/tools/rclone/rclone copy '/share/{3}/{1}' 'gdrive:2. Videos/1. The Boys/{2}' --config /share/CACHEDEV1_DATA/tools/rclone/rclone.conf --transfers 4 --checkers 8 --drive-chunk-size 128M --log-level INFO --log-file /share/CACHEDEV1_DATA/rclone.log --bwlimit 300M --exclude '_proxy/**' --exclude 'proxy/**' --exclude 'Monitor Baackup/**' --exclude 'Monitor Backup/**' --exclude 'MONITOR BACKUP/**' &"
 
     /**
      * @param `{1}` gdrive folder & FILENAME
      * @param `{2}` NAS folder & FILENAME
+     * @param `{3}` - share/volume (e.g. CACHEDEV1_DATA/storage)
      */
-    static cmdCopyFile := '(trap `'`' HUP; /share/CACHEDEV1_DATA/tools/rclone/rclone copyto \"gdrive:2. Videos/1. The Boys/{1}\" \"/share/{3}/{2}\" --config /share/CACHEDEV1_DATA/tools/rclone/rclone.conf --drive-chunk-size 128M --log-level INFO --log-file /share/CACHEDEV1_DATA/rclone.log --bwlimit 300M) &'
+    static cmdCopyFile := "trap '' HUP; /share/CACHEDEV1_DATA/tools/rclone/rclone copyto 'gdrive:2. Videos/1. The Boys/{1}' '/share/{3}/{2}' --config /share/CACHEDEV1_DATA/tools/rclone/rclone.conf --drive-chunk-size 128M --log-level INFO --log-file /share/CACHEDEV1_DATA/rclone.log --bwlimit 300M &"
 
+    /**
+     * formats and returns the command encoded in base64 to avoid issues with invalid characters
+     * @param {String} [command] the base command that will be modified
+     * @returns {String}
+     */
+    static __formatSSH(command) {
+        b64 := base64Encode(command)
+        return Format('ssh -i "{1}" {2} "echo {3} | base64 -d | bash"', this.sshKey, this.sshHost, b64)
+    }
+
+    /**
+     * removes filename from string to return the remainder of the path
+     * @param {String} [fullPath] the full path string
+     * @returns {String}
+     */
     static __removeFile(fullPath) {
         if !InStr(FileExist(fullPath), "D") {
             SplitPath(fullPath,, &nFullPath)
@@ -34,7 +50,7 @@ class rclone {
         }
         return fullPath
     }
-    static __formatSSH(command) => Format('ssh -i "{}" {} "{}"', this.sshKey, this.sshHost, command)
+
     /**
      * @param {String} [NAS_FullPath]
      * @param {String} [gdrive_FullPath]
