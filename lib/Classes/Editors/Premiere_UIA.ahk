@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/08/31
- * @version 3.0.28
+ * @date 2026/09/04
+ * @version 3.0.29
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -67,10 +67,11 @@ class premUIA_Values {
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
         if !uiaEl
             return -1
-        panelName   := this.GetActivePanelName(uiaEl)
+        try focusedEl := UIA.GetFocusedElement()
+        panelName   := IsSet(focusedEl) ? this.getActivePanelName(uiaEl, focusedEl) : ""
         focusedPath := (panelName != "" && uiaEl.UIA_Path.Has(panelName)) ? uiaEl.UIA_Path[panelName] : ""
 
-        return ((returnObj = false) ? focusedPath : {uiaEl: uiaEl, Path: focusedPath, focusedEl: panelName})
+        return ((returnObj = false) ? focusedPath : {uiaEl: uiaEl, Path: focusedPath, focusedEl: focusedEl})
     }
 
     /**
@@ -80,13 +81,16 @@ class premUIA_Values {
      * This avoids searching the (potentially stale) cached AdobeEl tree, since
      * deep/lazily-generated elements (eg an edit box only created once clicked
      * into) will never exist there - but their host panel's hwnd is stable.
+     * @param {ComObj} [uiaEl] paramater to pass in an already set prem UIA object.
+     * @param {UIA.IUIAutomationElement} [focusedEl=unset] the currently focused UIA Element. If not set this function will attempt to determine it.
      * @returns {String} the panel key (eg "effectControls") or "" if none matched
      */
-    static GetActivePanelName(uiaEl) {
-        try focusedEl := UIA.GetFocusedElement()
-        if !IsSet(focusedEl) || !focusedEl
-            return ""
-
+    static getActivePanelName(uiaEl, focusedEl?) {
+        if !IsSet(focusedEl) || !focusedEl {
+            try focusedEl := UIA.GetFocusedElement()
+            if !IsSet(focusedEl) || !focusedEl
+                return ""
+        }
         el := focusedEl
         Loop 20 {
             try hwnd := el.NativeWindowHandle
@@ -112,15 +116,42 @@ class premUIA_Values {
 
     /**
      * Determines if a given UIA element path is the current active UIA element
-     * @param {String} [elementPath] the UIA element path you wish to check
+     * @param {String} [elementPath] the UIA element path you wish to check. May also be a panel name that is tracked within this class.
      * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
      * @returns {Trilean} returns `-1` if UIA object is unable to be set, else returns bool
      */
     static __isUiaElementActive(elementPath, UIAobj?) {
+        uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
+        if !uiaEl
+            return -1
+        if uiaEl.UIA_Hwnd.Has(elementPath) {
+            try panel := this.__isPremPanelActive(elementPath, uiaEl)
+            if IsSet(panel) && panel = true
+                return true
+        }
         focusedPath := this.__activeElementPath(true, (IsSet(UIAobj) ? UIAobj : ""))
         if !isObjHasProp(focusedPath, 'Path', -1) || focusedPath.Path = -1
             return -1
         return (IsSet(UIAobj) ? (InStr(focusedPath.Path, UIAobj.UIA_Path[elementPath]) = 1) : (InStr(focusedPath.Path, focusedPath.uiaEl.UIA_Path[elementPath]) = 1))
+    }
+
+    /**
+     * Do a more basic check for premiere panel active status first to potentially return early by checking the `state` value. Generally a value of `4`/`1048580` mean a panel is active or `0`/`1048576` generally means it is inactive. This will not be comprehensive on its own as UIA elements are created/destroyed dynamically as the user interacts with the UI which may cause issues with accuracy of this function in some scenarios.
+     * @param {String} [panel] the UIA element name you wish to check. Must be one of the elements tracked within this class.
+     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {-1 | Boolean}
+     */
+    static __isPremPanelActive(panel, UIAobj?) {
+        uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
+        if !uiaEl || !uiaEl.UIA_Hwnd.Has(panel)
+            return -1
+        try element := UIA.ElementFromHandle(uiaEl.UIA_Hwnd[panel],, false)
+        catch {
+            return -1
+        }
+        UIA_PREM_INACTIVE := 1048576
+        UIA_PREM_ACTIVE := 1048580
+        return ((element.state = 4 || element.state = UIA_PREM_ACTIVE) ? true : false)
     }
 
     /**
