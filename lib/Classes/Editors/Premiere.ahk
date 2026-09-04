@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/08/31
- * @version 2.5.30
+ * @date 2026/09/04
+ * @version 2.5.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -985,11 +985,11 @@ class Prem {
             return "busy"
         if !this.__checkPremRemoteDir("saveProj")
             return false
-        actSequence := this.__checkPremRemoteFunc("getActiveSequence"), focusSequence := this.__checkPremRemoteFunc("focusSequence")
+        actSequence := this.__checkPremRemoteFunc("getActiveSequenceID"), focusSequence := this.__checkPremRemoteFunc("focusSequence")
         if !actSequence || !focusSequence
             return "noseq"
         if checkAmount != 0
-            origSeq := this.__remoteFunc("getActiveSequence", true)
+            origSeq := this.__remoteFunc("getActiveSequenceID", true)
         state := {hasAppeared: false, hasClosed: false}
         try WinEvent.Exist((*) => state.hasAppeared := true, "Save Project " this.exeTitle)
         try WinEvent.Close((*) => state.hasClosed := true, "Save Project " this.exeTitle)
@@ -1027,7 +1027,7 @@ class Prem {
         }
         sleep checkSeqTime
         loop checkAmount {
-            currentSeq := this.__remoteFunc("getActiveSequence", true)
+            currentSeq := this.__remoteFunc("getActiveSequenceID", true)
             if currentSeq != origSeq {
                 errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" origSeq))
                 this.__remoteFunc("focusSequence",, "ID=" String(origSeq))
@@ -3971,7 +3971,7 @@ class Prem {
         }
         if !this.remoteActiveCEP
             return
-        if !this.__checkPremRemoteDir("getActiveSequence")
+        if !this.__checkPremRemoteDir("getActiveSequenceID")
             SetTimer(, 0)
         if !WinExist(this.winTitle) || !WinActive(this.winTitle)
             return
@@ -3982,7 +3982,7 @@ class Prem {
 		if !premWindow || checkType || !checkTitle || checkCanSave {
             return
         }
-        seq := this.__remoteFunc("getActiveSequence", true)
+        seq := this.__remoteFunc("getActiveSequenceID", true)
         if !seq {
             return
         }

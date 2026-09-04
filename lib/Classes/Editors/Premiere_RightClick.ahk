@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.3
  * @author tomshi, taranVH
- * @date 2026/08/31
- * @version 2.4.26
+ * @date 2026/09/04
+ * @version 2.4.27
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -234,7 +234,7 @@ class rbuttonPrem {
 	 */
 	__ensureSeq(checkAmount := 1, timeWait := 1000, *) {
 		static count := 1
-		currentSeq := prem.__remoteFunc("getActiveSequence", true)
+		currentSeq := prem.__remoteFunc("getActiveSequenceID", true)
 
 		;// guard against WinGet title bleed or failed curl responses
 		isCurrSeqExe := InStr(currentSeq, "ahk_exe") ? true : (InStr(currentSeq, ".exe") ? true : false)
@@ -475,13 +475,13 @@ class rbuttonPrem {
 
 		useRemote := this.premObj.remoteActiveCEP
 		if useRemote = true {
-			ckDir := prem.__checkPremRemoteDir("getActiveSequence"), ckFunc := prem.__checkPremRemoteFunc("focusSequence")
+			ckDir := prem.__checkPremRemoteDir("getActiveSequenceID"), ckFunc := prem.__checkPremRemoteFunc("focusSequence")
 			if !ckDir || !ckFunc {
 				useRemote := false
 				notifyExt.showIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
 			} else {
 
-				if !this.origSeq := prem.__remoteFunc("getActiveSequence", true) {
+				if !this.origSeq := prem.__remoteFunc("getActiveSequenceID", true) {
 					useRemote := false
 					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
 					notifyExt.showIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')

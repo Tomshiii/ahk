@@ -167,8 +167,12 @@ export const host = {
     return !!app.project.save();
   },
 
-  getActiveSequence: function () {
+  getActiveSequenceID: function () {
     return app.project.activeSequence.sequenceID;
+  },
+
+  getActiveSequenceName: function () {
+    return app.project.activeSequence.name;
   },
 
   focusSequence: function (ID: string) {

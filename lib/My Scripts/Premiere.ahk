@@ -452,6 +452,12 @@ $^v::
 		SendInput("^v")
 		return
 	}
+	seqName := prem.__remoteFunc('getActiveSequenceName', true)
+	if seqName = "BONUS" {
+		SendInput(ksa.prem.Paste)
+		try prem.__remoteUXP("custom/movePlayhead",, "subtract=false", "seconds=1")
+		return
+	}
 	t := prem.__remoteFunc('getPlayheadPosTicks', true)
 	SendInput(ksa.prem.Paste)
 	prem.__remoteFunc('setPlayheadPosTicks',, "ticks=" t)

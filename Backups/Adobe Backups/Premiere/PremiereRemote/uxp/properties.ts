@@ -24,6 +24,16 @@ export async function getActiveSequenceID(): Promise<string | null> {
 }
 
 /**
+ * Returns the name of the active sequence
+ * @returns {string | null} The name of the active sequence
+ */
+export async function getActiveSequenceName(): Promise<string | null> {
+    const sequence = await common.getActiveSequence();
+    if (!sequence) return null;
+    return sequence.name;
+}
+
+/**
  * return the project path
  * @returns {string | null} project path
  */
