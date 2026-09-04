@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/09/04
- * @version 2.5.31
+ * @version 2.5.32
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -325,10 +325,40 @@ class Prem {
 
     /** Sets required class values for the user's premiere theme. Versions greater than the Spectrum UI update will have their theme determined automatically based off their premiere settings file */
     static __determineTheme() {
-        ;// timeline colours + themes
         switch this.UI {
             case "Spectrum":
-                filecheck := (FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs")) ? ptf['PremProfile'] "Adobe Premiere Pro Prefs" : ((FileExist(ptf['PremProfile'] "Adobe Premiere Prefs")) ? ptf['PremProfile'] "Adobe Premiere Prefs" : false)
+                ;// set timeline and playhead colours
+                this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
+                ;// edit tab
+                this.editTabX := 154, this.editTabY := 35
+                ;// keyframes
+                this.keyframeGrey := 0xb0b0b0, this.keyframeBlue := 0x4096f3
+                this.__spectrum()
+        }
+    }
+
+    static __spectrum() {
+        UI := __byUI()
+        if UI = true
+            return
+        __byFile()
+
+        ;// =============================
+        __byUI() {
+            if !WinExist(this.wintitle) || !premUIA_Values.determineUIA_Exist()
+                return false
+            UI_HEX := this.__retrieveUIColour()
+            if UI_HEX = -1
+                return false
+            switch this.__uiByHex(UI_HEX) {
+                case "darkest": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
+                case "dark": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme))
+                case "light": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme))
+            }
+            return true
+        }
+        __byFile() {
+            filecheck := (FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs")) ? ptf['PremProfile'] "Adobe Premiere Pro Prefs" : ((FileExist(ptf['PremProfile'] "Adobe Premiere Prefs")) ? ptf['PremProfile'] "Adobe Premiere Prefs" : false)
                 if !filecheck {
                     this.theme := this.defaultTheme
                     this.__setTimelineCol("Spectrum", this.theme) ;// defaults to this.defaultTheme
@@ -346,11 +376,16 @@ class Prem {
 
                 props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
                 switch props.text {
-                    case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
-                    case "34.999999403953552": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
-                    case "80.000001192092896": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
+                    case "7.9999998211860657":
+                        this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
+                        return true
+                    case "34.999999403953552":
+                        (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
+                        return true
+                    case "80.000001192092896":
+                        (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
+                        return true
                     case "0":
-                        sleep 50
                         if !Notify.Exist('notDeterminedIntZero') {
                             Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDeterminedIntZero')
                             errorLog(Error("Premiere theme could not be determined. Settings File int: " props.text, -1))
@@ -389,27 +424,15 @@ class Prem {
                             }
                         }
                         this.__setTimelineCol("Spectrum", this.defaultTheme)
+                        return true
                     default:
-                        sleep 50
                         if !Notify.Exist('notDetermined') {
                             Notify.Show('Premiere theme could not be determined.', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
                             errorLog(Error("Premiere theme could not be determined.", -1))
                         }
                         this.__setTimelineCol("Spectrum", this.defaultTheme)
+                        return true
                 }
-        }
-
-        ;// other values
-        switch this.UI {
-            case "Spectrum":
-                ;// set timeline and playhead colours
-                this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
-                ;// set layer button offsets (these get added onto `timelineRawX`)
-                this.layerSource := 16, this.layerLock := 48, this.layerTarget := 71, this.layerSync := 96, this.layerMute := 119, this.layerSolo := 142, this.valueBlue := 0x4096f3, this.effCtrlSegment := 21
-                ;// edit tab
-                this.editTabX := 154, this.editTabY := 35
-                ;// keyframes
-                this.keyframeGrey := 0xb0b0b0, this.keyframeBlue := 0x4096f3
         }
     }
 
@@ -811,6 +834,45 @@ class Prem {
 
     static _scan := ""
     static _scanTitle := ""
+
+    /**
+     * attempts to use `ShinsImgClass` to retrieve the currently set UI hex colour
+     * @returns {String} Hexadecimal formatted string
+     */
+    static __retrieveUIColour() {
+        if !WinExist(this.exeTitle) {
+            ;// throw
+            errorLog(TargetError("Premiere is currently not open."))
+            return -1
+        }
+        name := WinGet.PremName()
+        if !name || !isObjHasProp(name, "winTitle", false) {
+            errorLog(UnsetError("Could not determine Premiere window title", -1))
+            return -1
+        }
+        if !this.setShinsIMG(name.winTitle)
+            return -1
+        if !premUIA := premUIA_Values.initialise()
+            return -1
+        tab := UIA.ElementFromHandle(premUIA.UIA_Hwnd["homeTab"],, false)
+        x := tab.location.x, y := tab.location.y
+        ; convert screen coords -> client-relative coords
+        WinGetClientPos(&clientOriginX, &clientOriginY, , , "ahk_id " this._scan.hwnd)
+        localX := Round((x - clientOriginX) / this._scan.WindowScale)
+        localY := Round((y - clientOriginY) / this._scan.WindowScale)
+        return Format("0x{:x}", this._scan.GetPixel(localX, localY, true))
+    }
+
+    /**
+     * @returns {String} which UI setting the user has set. `darkest`/`dark`/`light`
+     */
+    static __uiByHex(hex) {
+        switch hex {
+            case 0x1d1d1d: return "darkest"
+            case 0x323232: return "dark"
+            case 0xf8f8f8: return "light"
+        }
+    }
 
     /**
      * Uses `ShinsImageClass` to check the active Premiere window to see whether the `Edit` tab is currently active.

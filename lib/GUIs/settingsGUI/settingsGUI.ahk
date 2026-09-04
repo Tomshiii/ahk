@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/07/09
- * @version 2.4.16
+ * @date 2026/09/04
+ * @version 2.4.17
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -626,9 +626,10 @@ settingsGUI()
         }
         if program = "Premiere" {
             ;// themes
-            defaults := Map("Light", "1", "Dark", "2", "Darkest", "3")
+            ; defaults := Map("Light", "1", "Dark", "2", "Darkest", "3")
             adobeGui.AddText("xs", "Theme Default: ")
-            adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose" defaults.Get(UserSettings.premDefaultTheme) " vthemeDefaultPrem", ["Light", "Dark", "Darkest"])
+            ; adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose" defaults.Get(UserSettings.premDefaultTheme) " vthemeDefaultPrem", ["Light", "Dark", "Darkest"])
+            adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose1 vthemeDefaultPrem", ["Darkest"])
             adobeGui['themeDefaultPrem'].OnEvent("change", (ctrl, *) => UserSettings.premDefaultTheme := ctrl.Text)
 
             ;// swapSequences()

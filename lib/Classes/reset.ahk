@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain functions used to action all active ahk scripts. These functions are designed specifically for my repo and may encounter unexpected issues with other scripts
  * @author tomshi
- * @date 2026/03/22
- * @version 1.1.15
+ * @date 2026/09/04
+ * @version 1.1.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -27,7 +27,7 @@ class reset {
                 this.ignoreScript.Set(A_LoopFileName, 1)
         }
 
-        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1, "reloadAll.ahk", 1, "Add game to gameCheck.ahk", 1, "Install Tomshi AHK.ahk", 1, "WindowSpy.ahk", 1)
+        this.ignoreScript := this.ignoreScript.Set("PC Startup.ahk", 1, "PC Startup_work.ahk", 1, "Initialise.ahk", 1, "Initialise_work.ahk", 1, "launcher.ahk", 1, "Notify Creator.ahk", 1, "MsgBoxCreator.ahk", 1, "syncOnConnect.ahk", 1, "uninstall.ahk", 1, "closeAll.ahk", 1, "reloadAll.ahk", 1, "Add game to gameCheck.ahk", 1, "Install Tomshi AHK.ahk", 1, "WindowSpy.ahk", 1, "UIA.ahk", 1)
         if ignoreCoreFunc
             this.ignoreScript.Set("Core Functionality.ahk", 1)
     }
