@@ -29,3 +29,5 @@ Space::
 	}
 	SendInput("{Space}")
 }
+
+SC03A & v::ae.selectTool("Selection Tool")

@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/08/28
- * @version 1.5.4
+ * @date 2026/09/04
+ * @version 1.5.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -664,25 +664,51 @@ class AE {
     /**
      * Uses UIA to determine if the desired tool is selected. This function may fail if the desired tool is not visible on the screen.
      * @param {String} [toolName] the name of the tool as seen in UIA. ie; `Selection Tool`, `Hand Tool`, `Zoom Tool`, `Orbit Around Cursor Tool`, `Pan Under Cursor Tool`, `Dolly Towards Cursor Tool`, `Rotation Tool`, `Pan Behind (Anchor Point) Tool`, `Rectangle Tool`, `Cube Tool`, `Pen Tool`, `Horizontal Type Tool`, `Brush Tool`, `Clone Stamp Tool`, `Eraser Tool`, Object Matte Tool`, `Puppet Position Pin Tool`
-     * @returns {-1 | Boolean} returns `-1` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button. Else returns `true`/`false`
+     * @returns {-1 | Boolean | Object}
+     * if `returnObj` is `false`;
+     *   - returns `-1` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
+     *   - Else returns `true`/`false`
+     * if `returnObj` is `true`;
+     *   - returns `{error: true, selected: unset, toolEl: unset}` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
+     *   - Else returns `{error: false, selected: Boolean, toolEl: UIA.IUIAutomationElement}`
      */
-    static isToolSelected(toolName) {
+    static isToolSelected(toolName, returnObj := false) {
         try n := WinGet.AEName()
         if !WinActive(this.winTitle) && !WinActive(this.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
-            return -1
+            return (returnObj=false) ? -1 : {error: true, selected: unset, toolEl: unset}
         }
         aeUIA := UIA.ElementFromHandle(this.winTitle,, false)
         try toolsTab := aeUIA.FindElement({Type:50033, Name: "ToolsTab"})
         catch {
             errorLog(TargetError("Failed to find the Tools Tab", -1))
-            return -1
+            return (returnObj=false) ? -1 : {error: true, selected: unset, toolEl: unset}
         }
         try tool := toolsTab.FindElement({Type:50000, Name:toolName, matchmode:"Substring"})
         catch {
-            errorLog(TargetError("Failed to find the desired tool", -1))
-            return -1
+            errorLog(TargetError("Failed to find the desired tool", -1, toolName))
+            return (returnObj=false) ? -1 : {error: true, selected: unset, toolEl: unset}
         }
-        return ((tool.Value = "Selected") ? true : false)
+        toolBool := (tool.Value = "Selected") ? true : false
+        return (returnObj = false ? toolBool : {error: false, selected: toolBool, toolEl: toolsTab})
+    }
+
+    /**
+     * This function will attempt to select the desired tool using UIA.
+     * @param {String} [toolName=Selection Tool] the name of the tool as seen in UIA. ie; `Selection Tool`, `Hand Tool`, `Zoom Tool`, `Orbit Around Cursor Tool`, `Pan Under Cursor Tool`, `Dolly Towards Cursor Tool`, `Rotation Tool`, `Pan Behind (Anchor Point) Tool`, `Rectangle Tool`, `Cube Tool`, `Pen Tool`, `Horizontal Type Tool`, `Brush Tool`, `Clone Stamp Tool`, `Eraser Tool`, Object Matte Tool`, `Puppet Position Pin Tool`
+     * @returns {-1 | Boolean}
+     */
+    static selectTool(toolName := "Selection Tool") {
+        selectedObj := this.isToolSelected(toolName, true)
+        if selectedObj.error = true
+            return -1
+        if selectedObj.selected = false {
+            try selectedObj.toolEl.FindElement({Type:50000, Name: toolName, matchmode:"Substring"}).Click()
+            catch {
+                errorLog(TargetError("Failed to click the desired tool.", -1, toolName))
+                return false
+            }
+        }
+        return true
     }
 
     __Delete() {
