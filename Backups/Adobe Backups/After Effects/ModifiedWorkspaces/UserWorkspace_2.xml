@@ -394,7 +394,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>1</int>
+<int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
 <key>HidTabState-0</key>
@@ -601,7 +601,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>1</int>
+<int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -1156,7 +1156,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>

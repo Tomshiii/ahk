@@ -1,8 +1,8 @@
-# <> Release 2.18.x - 
+# <> Release 2.18.5 - KSA Changes
 
 ## KSA
 - ❗ All `KSA` variables are now prefixed by their respective program, ie; `KSA.prem.timelineWindow`/`KSA.ae.previousKeyframe`/etc
-    - This will now require the `override.json` file to be structured similarly. Checkout the updated wiki<sup>[[1](<https://github.com/Tomshiii/ahk/wiki/Keyboard-Shortcut-Adjustments>)]</sup> for more information on the updated formatting.
+    - This will now require the `override.json` file to be structured similarly. Checkout the updated wiki<sup>[[1]](<https://github.com/Tomshiii/ahk/wiki/Keyboard-Shortcut-Adjustments>)</sup> for more information on the updated formatting.
 - ✅ Fixed unhelpful errors when a keyboard shortcut isn't set
 
 ## Functions

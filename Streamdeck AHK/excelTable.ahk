@@ -5,7 +5,7 @@
 if !WinExist("ahk_exe EXCEL.EXE")
     return
 
-arr1 := ["Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Rent", "Health", "Amazon"]
+arr1 := ["Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Rent", "Health"]
 
 SetTimer(MoveCaret, -10)
 MoveCaret() {
