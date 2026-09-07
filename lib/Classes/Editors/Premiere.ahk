@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/09/07
- * @version 2.5.33
+ * @version 2.5.34
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -852,9 +852,8 @@ class Prem {
         }
         if !this.setShinsIMG(name.winTitle)
             return -1
-        if !premUIA := premUIA_Values.initialise()
+        if !tab := premUIA_Values.getLivePanel("homeTab")
             return -1
-        tab := UIA.ElementFromHandle(premUIA.UIA_Hwnd["homeTab"],, false)
         x := tab.location.x, y := tab.location.y
         ; convert screen coords -> client-relative coords
         WinGetClientPos(&clientOriginX, &clientOriginY, , , "ahk_id " this._scan.hwnd)
@@ -913,11 +912,9 @@ class Prem {
         }
         if !this.setShinsIMG(name.winTitle)
             return -1
-        premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
-        if !premUIA
-            return -1
         coord.s()
-        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"],, false)
+        if !progMon := premUIA_Values.getLivePanel("programMonitor")
+            return -1
         try button := progMon.FindElement({Type:50000, Name:"Play-Stop Toggle", matchmode:"Substring"})
         catch {
             errorLog(TargetError("Play/Stop button could not be found", -1))
@@ -952,12 +949,9 @@ class Prem {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
             return -1
         }
-
-        premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
-        if !premUIA
+        if !progMon := premUIA_Values.getLivePanel("programMonitor")
             return -1
-        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"],, false)
-        try button := progMon.FindElement({Type:50003, Name:"Select Multicam Page"})
+        try progMon.FindElement({Type:50003, Name:"Select Multicam Page"})
         catch {
             return false
         }
@@ -1156,17 +1150,15 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        if !premUIA := premUIA_Values.initialise() {
+        if !effNN := premUIA_Values.getLivePanel("effectsWindow") {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectsWindow"],, false)
-
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
-            this.__loremipsum({x: effCtrlNN.location.x, y: effCtrlNN.location.y}, {width: effCtrlNN.location.w, height: effCtrlNN.location.h}, &eyeX, &eyeY)
+            this.__loremipsum({x: effNN.location.x, y: effNN.location.y}, {width: effNN.location.w, height: effNN.location.h}, &eyeX, &eyeY)
         /** this is simply to cut needing to repeat this code below */
         effectbox() {
-            effCtrlNN.SetFocus()
+            effNN.SetFocus()
             if !this.__findBox()
                 return
             SendInput("^a" "+{BackSpace}")
@@ -1176,7 +1168,7 @@ class Prem {
                 if WinExist("Delete Item") {
                     SendInput("{Esc}")
                     sleep 100
-                    effCtrlNN.SetFocus()
+                    effNN.SetFocus()
                     if !this.__findBox()
                         return
                     SendInput("^a" "+{BackSpace}")
@@ -1373,11 +1365,10 @@ class Prem {
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        if !premUIA := premUIA_Values.initialise() {
+        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls") {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         if !this.isClipSelected() {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
@@ -1513,11 +1504,10 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        if !premUIA := premUIA_Values.initialise() {
+        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls",, &premUIA) {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         this.__focusTimeline() ;focuses the timeline
         sleep 25
         if !this.isClipSelected() {
@@ -1620,11 +1610,10 @@ class Prem {
         keys.allWait()
         coord.s()
         block.On()
-        if !premUIA := premUIA_Values.initialise() {
+        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls",, &premUIA) {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         timelineAct := premUIA_Values.__isUiaElementActive('timelineWindow', premUIA)
         this.__focusTimeline() ;focuses the timeline
         if !this.isClipSelected() {
@@ -1699,11 +1688,10 @@ class Prem {
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        if !premUIA := premUIA_Values.initialise() {
+        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls") {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         if !this.isClipSelected() {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
@@ -2796,10 +2784,8 @@ class Prem {
             return false
         }
 
-        premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
-        if !premUIA
+        if !sourceMon := premUIA_Values.getLivePanel("sourceMonitor", UIAObj?, &premUIA)
             return false
-        sourceMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["sourceMonitor"],, false)
         coord.s()
         offsetValue := 31
         try {
@@ -2968,10 +2954,8 @@ class Prem {
      * ```
      */
     static __retrieveAudLayerIndex(UIAObj?) {
-        premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
-        if !premUIA
+        if !timelineWindow := premUIA_Values.getLivePanel("timelineWindow", UIAObj?, &premUIA)
             return false
-        timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"],, false)
         timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
         children       := timelineUIA.Children
 
@@ -3011,9 +2995,8 @@ class Prem {
      */
     static __getlayerMid(&midDivX?, &midDivY?, &midDivYBottom?) {
         try {
-            if !premUIA := premUIA_Values.initialise()
+            if !timelineWindow := premUIA_Values.getLivePanel("timelineWindow",, &premUIA)
                 return false
-            timelineWindow := UIA.ElementFromHandle(premUIA.UIA_Hwnd["timelineWindow"],, false)
             timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
             if !middleIndex := this.__retrieveAudLayerIndex(premUIA)
                 return false
@@ -4569,10 +4552,9 @@ class Prem {
      * `Difference`, `Exclusion`, `Subtract`, `Divide`, `Hue`, `Saturation`, `Color`, `Luminosity`
      */
     static setBlendMode(blendModeString) {
-        if !premUIA := premUIA_Values.initialise()
-            return
-        effCont := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
         if !this.isClipSelected()
+            return
+        if !effCont := premUIA_Values.getLivePanel("effectControls")
             return
         try {
             blendMode := effCont.FindElement({Type:50003},, 2)
@@ -4706,9 +4688,8 @@ class Prem {
      * @param {Integer | false} [wait=false] determines whether the function will use `UIA.FindElement()` or `UIA.WaitElement()`. If the user passes an `Integer` it will use that value in `WaitElement()`. It expects a value in `ms`. Using this value will `Halt` the thread, so only use if necessary.
      */
     static isTrimModeActive(wait := false) {
-        if !premUIA := premUIA_Values.initialise()
+        if !progMon := premUIA_Values.getLivePanel("programMonitor")
             return
-        progMon := UIA.ElementFromHandle(premUIA.UIA_Hwnd["programMonitor"],, false)
         if wait = false || !IsInteger(wait) || wait < 1 {
             try transButton := progMon.FindElement({Type:50000, Name:"Apply Default Transitions to Selection", matchmode:"Substring"})
             return (IsSet(transButton) && transButton != false)

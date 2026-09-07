@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/09/07
- * @version 3.0.31
+ * @version 3.0.32
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -143,16 +143,27 @@ class premUIA_Values {
      * @returns {-1 | Boolean}
      */
     static __isPremPanelActive(panel, UIAobj?) {
-        uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
-        if !uiaEl || !uiaEl.UIA_Hwnd.Has(panel)
+        if !element := this.getLivePanel(uiaEl.UIA_Hwnd[panel], UIAobj?, &uiaEl)
             return -1
-        try element := UIA.ElementFromHandle(uiaEl.UIA_Hwnd[panel],, false)
-        catch {
-            return -1
-        }
         UIA_PREM_INACTIVE := 1048576
         UIA_PREM_ACTIVE := 1048580
         return ((element.state = 4 || element.state = UIA_PREM_ACTIVE) ? true : false)
+    }
+
+    /**
+     * syntatic sugar for creating a live `UIA.IUIAutomationElement` for the desired hwnd panel.
+     * @param {String} [panel] the UIA element name you wish to check. Must be one of the elements tracked within this class.
+     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {UIA.IUIAutomationElement | false}
+     */
+    static getLivePanel(panel, UIAobj?, &uiaEl?) {
+        uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
+        if !uiaEl || !uiaEl.UIA_Hwnd.Has(panel)
+            return false
+        try return UIA.ElementFromHandle(uiaEl.UIA_Hwnd[panel],, false)
+        catch {
+            return false
+        }
     }
 
     /**
