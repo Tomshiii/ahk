@@ -1,6 +1,7 @@
 # <> Release 2.18.x - 
 
 ## Functions
+- ✅ Fixed `prem.preset()`
 
 ### 📝 `ae {`
 - ✏️ Added `selectTool()`

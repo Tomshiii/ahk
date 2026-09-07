@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/09/04
- * @version 2.5.32
+ * @date 2026/09/07
+ * @version 2.5.33
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -441,7 +441,7 @@ class Prem {
     /**
      * This function cuts repeat code. It activates the findbox and waits for the carot to appear.
      */
-    __findBox() {
+    static __findBox() {
         SendInput(KSA.prem.findBox)
         tool.Cust("if you hear windows, blame premiere")
         coord.c("screen")
@@ -1143,8 +1143,9 @@ class Prem {
     /**
      * This function will drag and drop any previously saved preset onto the clip you're hovering over. Your saved preset MUST be in a folder for this function to work.
      * @param {String} item in this function defines what it will type into the search box (the name of your preset within premiere)
+     * @param {Integer} [folderDepth=2] how many folders deep your preset is
      */
-    static preset(item)
+    static preset(item, folderDepth := 2)
     {
         if Type(item) != "string" {
             ;// throw
@@ -1159,14 +1160,14 @@ class Prem {
             block.Off()
             return
         }
-        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)
+        effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectsWindow"],, false)
 
         if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
-            this().__loremipsum({x: effCtrlNN.location.x, y: effCtrlNN.location.y}, {width: effCtrlNN.location.w, height: effCtrlNN.location.h}, &eyeX, &eyeY)
+            this.__loremipsum({x: effCtrlNN.location.x, y: effCtrlNN.location.y}, {width: effCtrlNN.location.w, height: effCtrlNN.location.h}, &eyeX, &eyeY)
         /** this is simply to cut needing to repeat this code below */
         effectbox() {
             effCtrlNN.SetFocus()
-            if !this().__findBox()
+            if !this.__findBox()
                 return
             SendInput("^a" "+{BackSpace}")
             SetTimer(delete, -250)
@@ -1176,7 +1177,7 @@ class Prem {
                     SendInput("{Esc}")
                     sleep 100
                     effCtrlNN.SetFocus()
-                    if !this().__findBox()
+                    if !this.__findBox()
                         return
                     SendInput("^a" "+{BackSpace}")
                     sleep 60
@@ -1195,7 +1196,7 @@ class Prem {
         MouseMove(carx-5, cary+5) ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
         SendInput(item) ;create a preset of any effect, must be in a folder as well
         sleep 50
-        MouseMove(0, 65,, "R") ;move down to the saved preset (must be in an additional folder)
+        MouseMove(0, (32.5*(folderDepth+1)), 1, "R") ;move down to the saved preset (must be in an additional folder)
         SendInput("{Click Down}")
         if item = "loremipsum" ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
             {
@@ -1203,11 +1204,11 @@ class Prem {
                 SendInput("{Click Up}")
                 effectbox()
                 this.__focusTimeline()
-                MouseMove(xpos, ypos)
+                MouseMove(xpos, ypos, 1)
                 block.Off()
                 return
             }
-        MouseMove(xpos, ypos) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
+        MouseMove(xpos, ypos, 2) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
         SendInput("{Click Up}")
         effectbox() ;this will delete whatever preset it had typed into the find box
         this.__focusTimeline()
@@ -1221,7 +1222,7 @@ class Prem {
      * @param {Object} widHeiObj an object `{width: , height: }` to pass in the classNN variables
      * @param {VarRef} returnXY passing variables back to the function
      */
-    __loremipsum(classObj, widHeiObj, &returnX, &returnY) {
+    static __loremipsum(classObj, widHeiObj, &returnX, &returnY) {
         sleep 100
         delaySI(150, KSA.prem.timelineWindow, KSA.prem.timelineWindow, KSA.prem.newText)
         sleep 150
@@ -1263,7 +1264,7 @@ class Prem {
         coord.s()
         block.On()
         this().__fxPanel()
-        if !this().__findBox()
+        if !this.__findBox()
             return
         this().__fxPanel()
         SendInput("^a" "+{BackSpace}")
@@ -1274,7 +1275,7 @@ class Prem {
                 SendInput("{Esc}")
                 sleep 100
                 this().__fxPanel()
-                if !this().__findBox()
+                if !this.__findBox()
                     return
                 this().__fxPanel()
                 SendInput("^a" "+{BackSpace}")

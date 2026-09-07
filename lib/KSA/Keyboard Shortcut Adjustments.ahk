@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
- * @date 2026/08/31
- * @version 2.2.1
+ * @date 2026/09/07
+ * @version 2.2.2
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -34,14 +34,27 @@ class KSA_Namespace {
 
     __Get(name, params) {
         if this._unset.Has(name) {
-            errorLog(UnsetError("This hotkey could not be used as it failed to be set during KSA. " this._unset[name] " may not be installed", -1, name),,, true)
+            errorLog(UnsetError("This hotkey could not be used as it failed to be set during KSA. " this.__describe(this._unset[name]) " may not be installed", -1, name),,, true)
             return
         }
         if this._undetermined.Has(name) {
-            errorLog(UnsetError("This hotkey could not be used as the user does not currently have it set within " this._undetermined[name], -1, name),,, true)
+            errorLog(UnsetError("This hotkey could not be used as the user does not currently have it set within " this.__describe(this._undetermined[name]), -1, name),,, true)
             return
         }
         throw PropertyError("`"" name "`" is not a recognised KSA hotkey (check it exists in the relevant json file).", -1, name)
+    }
+
+    /**
+     * builds a human readable description for an `_unset`/`_undetermined` entry.
+     * entries are normally just a plain program-name string, but for `prem`/`ae`
+     * they may instead be `{program, within}` so the specific menu path
+     * (`withinPrem`/`withinAE`) can be surfaced in the error
+     * @param {String | Object} [entry]
+     */
+    __describe(entry) {
+        if IsObject(entry)
+            return (entry.within != "") ? entry.program "`n" entry.within : entry.program
+        return entry
     }
 }
 
@@ -109,12 +122,27 @@ class KeyShortAdjust {
      * @param {Map} [appJSON] the `JSON.parse()` map for the desired program
      * @param {String} [program] the name of the program that is encountering the error, ie; `"Premiere"`
      * @param {Class} [ns] the `getNamespace()` class instance to operate on
+     * @param {String} [which] the shorthand namespace name (`"prem"`/`"ae"`) used to look up the
+     * matching `withinPrem`/`withinAE` field on each entry, if present
      */
-    doUnset(appJSON, program, ns) {
+    doUnset(appJSON, program, ns, which := "") {
+        withinKey := (which = "prem") ? "withinPrem" : (which = "ae") ? "withinAE" : ""
         for k, v in appJSON {
-            ns._unset[k] := program
+            ns._unset[k] := this.__descriptor(program, v, withinKey)
         }
         return
+    }
+
+    /**
+     * builds either a plain program-name string, or - when `withinKey` exists on `v` -
+     * an object of `{program, within}` so `KSA_Namespace` can surface the specific
+     * menu path in its errors
+     * @param {String} [program] display name of the program, ie; `"Premiere"`
+     * @param {Map} [v] the JSON entry for this hotkey
+     * @param {String} [withinKey] the JSON key to look up on `v`, ie; `"withinPrem"`
+     */
+    __descriptor(program, v, withinKey) {
+        return (withinKey != "" && v.Has(withinKey)) ? {program: program, within: v[withinKey]} : program
     }
 
     /**
@@ -152,7 +180,7 @@ class KeyShortAdjust {
 
         if !appVers := determineAdobeVer(exeName) {
             errorLog(ValueError("Could not determine " prog " hotkeys for KSA", -1))
-            this.doUnset(appJSON, prog, ns)
+            this.doUnset(appJSON, prog, ns, which)
             return
         }
         switch which {
@@ -198,7 +226,7 @@ class KeyShortAdjust {
                     try xmlHotkey := xml.__premBuildHotkey(v["context"], v["command"])
                     if !IsSet(xmlHotkey) || (IsSet(xmlHotkey) && IsObject(xmlHotkey) && xmlHotkey.HasOwnProp('isSet') && xmlHotkey.isSet = false) {
                         errorLog(ValueError("Could not determine key for KSA", -1, k))
-                        ns._undetermined[k] := "Premiere"
+                        ns._undetermined[k] := this.__descriptor("Premiere", v, "withinPrem")
                         continue
                     }
                     overrideVal := this.getOverride(which, k)
@@ -231,7 +259,7 @@ class KeyShortAdjust {
                     overrideVal := this.getOverride(which, k)
                     if !overrideVal && (aeHotkeyIniVal = "" || !IsSet(xmlHotkey) || (IsSet(xmlHotkey) && xmlHotkey = false)) {
                         errorLog(ValueError("Could not determine key for KSA", -1, k))
-                        ns._undetermined[k] := "After Effects"
+                        ns._undetermined[k] := this.__descriptor("After Effects", v, "withinAE")
                         continue
                     }
                     buildHotkey := overrideVal != false ? overrideVal : xmlHotkey
