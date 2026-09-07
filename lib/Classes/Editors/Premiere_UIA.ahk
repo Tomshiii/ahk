@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/04
- * @version 3.0.30
+ * @date 2026/09/07
+ * @version 3.0.31
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -245,6 +245,8 @@ class premUIA_Values {
         try {
             if !WinActive(prem.winTitle) && !WinActive(prem.class)
                 switchTo.Premiere()
+            if !prem.isEditTabActive()
+                throw UnsetError("throw code:719")
             blocker := block_ext()
             blocker.On()
             SendInput(ksa.prem.shuttleStop)
