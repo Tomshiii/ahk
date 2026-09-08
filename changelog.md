@@ -1,8 +1,11 @@
 # <> Release 2.18.x - 
 
 ## Functions
+- ✏️ Added `CLSID_Objs.writeProp()`, `CLSID_Objs.loadProp()`
+    - `loadProp()` is now used wherever possible to significantly reduce the `COM` round trip time
 
 ### 📝 `prem {`
+- 📋 `CEP`/`UXP` functions (and parameters) are now only computed once
 
 📍 `preset()`
 - ✅ Fixed function failing to determine the find box
@@ -11,6 +14,7 @@
 ### 📝 `ae {`
 - ✏️ Added `selectTool()`
 - 📋 `isToolSelected()` now accepts param `returnObj`
+- 📋 `CEP` functions (and parameters) are now only computed once
 
 ### 📝 `premUIA_Values {`
 - ✏️ Added `getLivePanel()`

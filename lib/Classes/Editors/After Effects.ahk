@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/09/04
- * @version 1.5.5
+ * @date 2026/09/08
+ * @version 1.5.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -148,7 +148,24 @@ class AE {
         }
     }
     static __isNodeInstalled() => RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
-    static __isRemoteInstalled() => DirExist(A_AppData "\Adobe\CEP\extensions\AERemote")
+    static __isRemoteInstalled() {
+        if this.__cepInstalled = -1 || this.__cepInstalled = true
+            return (this.__cepInstalled = -1) ? false : true
+        if !this.__cepInstalled {
+            if A_ScriptName != "Core Functionality.ahk"
+                try this.__cepInstalled := CLSID_Objs.loadProp("aftereffects", "__cepInstalled")
+            if this.__cepInstalled = -1 || this.__cepInstalled = true
+                return (this.__cepInstalled = -1) ? false : true
+            if (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP)) {
+                this.__cepInstalled := true
+                try CLSID_Objs.writeProp("aftereffects", "__cepInstalled", true)
+                return true
+            }
+            this.__cepInstalled := -1
+            try CLSID_Objs.writeProp("aftereffects", "__cepInstalled", -1)
+            return false
+        }
+    }
     static __isRegInstalledVer() => determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
 
     static UserSettings := ""
@@ -178,6 +195,9 @@ class AE {
     static currentYearVer {
         get =>  SubStr(this.UserSettings.aeVer, 2, 2)
     }
+
+    static __cepInstalled := false
+    static __cepFuncMap   := false
 
     /**
      * This function is syntatic sugar to activate a [AERemote](https://github.com/Tomshiii/PremiereRemote/tree/AE) function
@@ -278,10 +298,11 @@ class AE {
      */
     static __checkAERemoteDir(checkFunc := "", cepOrUXP := "cep") {
         switch cepOrUXP, 0 {
-            case "cep": return (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP) && this.__checkAERemoteFunc(checkFunc, cepOrUXP) ? true : false)
-            /* case "uxp":
-                ff := this.__splitUXPfileFunc(checkFunc)
-                return (DirExist(this.remoteDirUXP) && FileExist(this.funcDirUXP "\" ff.fileName) && this.__checkAERemoteFunc(checkFunc, cepOrUXP) ? true : false) */
+            case "cep":
+                this.__isRemoteInstalled()
+                if this.__cepInstalled != true
+                    return false
+                return (this.__cepInstalled = true && this.__checkAERemoteFunc(checkFunc, cepOrUXP) ? true : false)
         }
     }
 
@@ -294,16 +315,61 @@ class AE {
     static __checkAERemoteFunc(checkFunc, cepOrUXP := "cep") {
         switch cepOrUXP, 0 {
             case "cep":
-                return ((InStr(readFile := FileRead(this.indexFileCEP), Format("{}: function (", checkFunc)) ||
-                    InStr(readFile, Format("{}: function(", checkFunc)))
-                    ? true : false)
-            /* case "uxp":
-                if !ff := this.__splitUXPfileFunc(checkFunc)
-                    return
-                return ((InStr(readFile := FileRead(this.funcDirUXP "\" ff.fileName), Format("export async function {}(", ff.funcName)) ||
-                    InStr(readFile, Format("export async function {} (", ff.funcName)))
-                    ? true : false) */
+                this.__isRemoteInstalled()
+                if this.__cepInstalled != true
+                    return false
+                if !this.__cepFuncMap
+                    this.__setCEPfuncs()
+                return this.__cepFuncMap.Has(checkFunc)
         }
+    }
+
+    /** retrieves all CEP functions, stores them in `__cepFuncMap` along with all paramaters */
+    static __setCEPfuncs() {
+        this.__isRemoteInstalled()
+        if this.__cepInstalled != true
+            return false
+        if A_ScriptName != "Core Functionality.ahk" {
+            try this.__cepFuncMap := CLSID_Objs.loadProp("aftereffects", "__cepFuncMap")
+        }
+        if this.__cepFuncMap != false
+            return this.__cepFuncMap
+        readFile := FileRead(this.indexFileCEP)
+        funcNames := Map()
+        pos := 1
+        while (pos := RegExMatch(readFile, "(\w+)\s*:\s*function\s*\(", &match, pos)) {
+            params := {set: false}
+            funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, pos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
+            if funcParamsString = "" {
+                funcNames.Set(match[1], params)
+                pos += match.Len(0)
+                continue
+            }
+            if !InStr(funcParamsString, ",") {
+                p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
+                params.arr := [p], params.map := Mip(p, true), params.set := true
+                funcNames.Set(match[1], params)
+                pos += match.Len(0)
+                continue
+            }
+            paramsSplit := StrSplit(funcParamsString, ",", A_Space "`n`r")
+            paramsArr := []
+            paramsMap := Mip()
+            for v in paramsSplit {
+                p := SubStr(v, 1, (splitPoint := InStr(v, ':'))-1)
+                t := LTrim(SubStr(v, splitPoint+1))
+                paramsArr.Push(p)
+                paramsMap.Set(p, t)
+            }
+            params.arr := paramsArr, params.map := paramsMap, params.set := true
+            funcNames.Set(match[1], params)
+            pos += match.Len(0)
+        }
+        this.__cepFuncMap := funcNames
+        if A_ScriptName != "Core Functionality.ahk" {
+            try CLSID_Objs.writeProp("aftereffects", "__cepFuncMap", funcNames)
+        }
+        return funcNames
     }
 
     /**
@@ -314,67 +380,29 @@ class AE {
      * @returns {Boolean}
      */
     static __checkRemoteParams(whichFunc, params, cepOrUXP := "cep") {
-        for v in params {
-            if !InStr(v, '=') {
-                MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
-                return false
-            }
-            splt := StrSplit(v, '=',, 2)
-            funcParams := this.__getAERemoteFuncParams(whichFunc, cepOrUXP)
-            if funcParams != "" && funcParams != -1 {
-                for v in splt {
-                    if Mod(A_Index, 2) = 0
-                        continue
-                    if !funcParams.map.has(v) {
-                        MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc "`ncepOrUXP: " cepOrUXP)
-                        return false
-                    }
-                    /* if cepOrUXP = "uxp" && funcParams.map.get(v) = "boolean" && (splt[A_Index+1] = "1" || splt[A_Index+1] = "0") {
-                        MsgBox("Incorrect paramater type`n`n" v "=" splt[A_Index+1] "`nneeds to be boolean" )
-                        return false
-                    } */
-                }
-            }
-        }
-        return true
-    }
-
-    /**
-     * determines the parameters for the passed AERemote CEP function
-     * @param {String} checkFunc the `whichFunc` passed to either `__remoteFunc()` function
-     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions ~or UXP functions.~ Must be either `cep` ~or `uxp`~
-     * @returns {-1 | "" | Object} returns either; `-1` if function cannot be determined, `""` if the passed function does not contain any parameters, else an object containing `{arr: [all, params], map: Map(all, all, params, types)}`
-     */
-    static __getAERemoteFuncParams(checkFunc, cepOrUXP := "cep") {
-        if !this.__checkAERemoteDir(checkFunc, cepOrUXP)
-            return -1
         switch cepOrUXP, 0 {
             case "cep":
-                readFile := FileRead(this.indexFileCEP)
-                funcPos := (InStr(readFile, Format("{}: function (", checkFunc))) ? InStr(readFile, Format("{}: function (", checkFunc)) : InStr(readFile, Format("{}: function(", checkFunc))
-            /* case "uxp":
-                if !ff := this.__splitUXPfileFunc(checkFunc)
-                    return -1
-                readFile := FileRead(this.funcDirUXP "\" ff.fileName)
-                funcPos := (InStr(readFile, Format("export async function {}(", ff.funcName))) ? InStr(readFile, Format("export async function {}(", ff.funcName)) : InStr(readFile, Format("export async function {} (", ff.funcName)) */
+                if !this.__setCEPfuncs()
+                    return false
+                if !this.__cepFuncMap.Has(whichFunc)
+                    return false
+                for v in params {
+                    if !InStr(v, '=') {
+                        MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
+                        return false
+                    }
+                    splt := StrSplit(v, '=',, 2)
+                    for v in splt {
+                        if Mod(A_Index, 2) = 0
+                            continue
+                        if !this.__cepFuncMap[whichFunc].map.has(v) {
+                            MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc "`ncepOrUXP: " cepOrUXP)
+                            return false
+                        }
+                    }
+                }
         }
-        funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, funcPos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
-        if funcParamsString = ""
-            return ""
-        if !InStr(funcParamsString, ",") {
-            p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
-            return {arr: [p], map: Mip(p, true)}
-        }
-        paramsSplit := StrSplit(funcParamsString, ",", A_Space "`n`r")
-        paramsArr := []
-        paramsMap := Mip()
-        for v in paramsSplit {
-            p := SubStr(v, 1, (splitPoint := InStr(v, ':'))-1)
-            t := LTrim(SubStr(v, splitPoint+1))
-            paramsArr.Push(p)
-            paramsMap.Set(p, t)
-        }
-        return {arr: paramsArr, map: paramsMap}
+        return true
     }
 
     /**

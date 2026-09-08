@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/08/31
- * @version 1.1.21
+ * @date 2026/09/08
+ * @version 1.1.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -217,6 +217,97 @@ class CLSID_Objs {
         baseObj := ""
         Critical('Off')
         return clonedObj
+    }
+
+    /**
+     * Writes a single (or multiple) property/properties on a live COM object.
+     * @param {String | Map} propName the name of the property to write, or a Map of propertyName -> value pairs to write
+     * @param {Any} [value] the value to assign. Required (and only used) if `propName` is a `String`. Ignored if `propName` is a `Map`
+     * @param {String} clsid the clsid of the object to write to
+     * @param {Boolean} [inClass=true] whether `clsid` should be resolved via the internal map
+     * @param {Integer} [timeout=5000] milliseconds to wait for the mutex lock
+     * @returns {Boolean} `true` on success, `false` on failure
+     */
+    static writeProp(clsid, propName, value?, inClass := true, timeout := 5000) {
+        Critical('On')
+        this.checkCoreFunc()
+        obj := this.load(clsid, inClass, timeout)
+        if obj = false {
+            Critical('Off')
+            return false
+        }
+        switch Type(propName), 0 {
+            case "string":
+                if !IsSet(value) {
+                    obj := ""
+                    Critical('Off')
+                    throw ValueError("Parameter #2 (value) must be set when propName is a String", -2)
+                }
+                try {
+                    obj.%propName% := value
+                } catch as e {
+                    obj := ""
+                    Critical('Off')
+                    throw e
+                }
+            case "map":
+                try {
+                    for name, val in propName
+                        obj.%name% := val
+                } catch as e {
+                    obj := ""
+                    Critical('Off')
+                    throw e
+                }
+            default: throw TypeError("Incorrect Parameter Type", -2, Type(propName))
+        }
+        obj := ""
+        Critical('Off')
+        return true
+    }
+
+    /**
+     * Loads a COM object, reads a single (or multiple) property/properies from it, and returns a safe local copy without deep-cloning the entire object graph like `clone()` does.
+     * @param {String} clsid the clsid of the object to read from
+     * @param {String | Array} propName the name of the property you want, or an array of properties
+     * @param {Boolean} [inClass=true] whether `clsid` should be resolved via the internal map
+     * @param {Integer} [timeout=5000] milliseconds to wait for the mutex lock
+     * @returns {Any} if `propName` is a string, the property will be returned in its original state, if `propName` is an array, a Map of all requested properties will be returned
+     */
+    static loadProp(clsid, propName, inClass := true, timeout := 5000) {
+        Critical('On')
+        this.checkCoreFunc()
+        obj := this.load(clsid, inClass, timeout)
+        if obj = false {
+            Critical('Off')
+            return false
+        }
+        switch Type(propName), 0 {
+            case "string":
+                try {
+                    val := obj.%propName%
+                } catch as e {
+                    obj := ""
+                    Critical('Off')
+                    throw e
+                }
+            case "array":
+                out := Map()
+                try {
+                    for name in propName {
+                        val := obj.%name%
+                        out[name] := IsObject(val) ? this.deepClone(val) : val
+                    }
+                } catch as e {
+                    obj := ""
+                    Critical('Off')
+                    throw e
+                }
+            default: throw TypeError("Incorrect Parameter Type", -2, Type(propName))
+        }
+        Critical('Off')
+        obj := ""
+        return (IsSet(out)) ? out : (IsObject(val) ? this.deepClone(val) : val)
     }
 }
 

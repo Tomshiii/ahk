@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/09/07
- * @version 2.5.34
+ * @date 2026/09/08
+ * @version 2.5.35
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -164,7 +164,42 @@ class Prem {
         }
     }
     static __isNodeInstalled() => RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
-    static __isRemoteInstalled() => DirExist(A_AppData "\Adobe\CEP\extensions\PremiereRemote")
+    static __isRemoteInstalled() {
+        if this.__cepInstalled = -1 || this.__cepInstalled = true
+            return (this.__cepInstalled = -1) ? false : true
+        if !this.__cepInstalled {
+            if A_ScriptName != "Core Functionality.ahk"
+                try this.__cepInstalled := CLSID_Objs.loadProp("prem", "__cepInstalled")
+            if this.__cepInstalled = -1 || this.__cepInstalled = true
+                return (this.__cepInstalled = -1) ? false : true
+            if (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP)) {
+                this.__cepInstalled := true
+                try CLSID_Objs.writeProp("prem", "__cepInstalled", true)
+                return true
+            }
+            this.__cepInstalled := -1
+            try CLSID_Objs.writeProp("prem", "__cepInstalled", -1)
+            return false
+        }
+    }
+    static __isUXPInstalled() {
+        if this.__uxpInstalled = -1 || this.__uxpInstalled = true
+            return (this.__uxpInstalled = -1) ? false : true
+        if !this.__uxpInstalled {
+            if A_ScriptName != "Core Functionality.ahk"
+                try this.__uxpInstalled := CLSID_Objs.loadProp("prem", "__uxpInstalled")
+            if this.__uxpInstalled = -1 || this.__uxpInstalled = true
+                return (this.__uxpInstalled = -1) ? false : true
+            if (DirExist(this.remoteDirUXP) && FileExist(this.indexFileUXP)) {
+                this.__uxpInstalled := true
+                try CLSID_Objs.writeProp("prem", "__uxpInstalled", true)
+                return true
+            }
+            this.__uxpInstalled := -1
+            try CLSID_Objs.writeProp("prem", "__uxpInstalled", -1)
+            return false
+        }
+    }
     static __isRegInstalledVer() => determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
 
     static minVer := "26.2"
@@ -477,6 +512,12 @@ class Prem {
         }
         return true
     }
+
+    static __cepInstalled := false
+    static __cepFuncMap   := false
+    static __uxpInstalled := false
+    static __uxpFuncMap   := false
+
     /**
      * This function checks for the existence of [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main). Can also check for the existence of a specific function within the `index.tsx` file, or desired UXP `ts` file
      * @param {String} [checkFunc=""] if `cepOrUXP` is set to `cep`; the name of the function you wish to check for, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
@@ -485,11 +526,125 @@ class Prem {
      */
     static __checkPremRemoteDir(checkFunc := "", cepOrUXP := "cep") {
         switch cepOrUXP, 0 {
-            case "cep": return (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP) && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+            case "cep":
+                this.__isRemoteInstalled()
+                if this.__cepInstalled != true
+                    return false
+                return (this.__cepInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
             case "uxp":
-                ff := this.__splitUXPfileFunc(checkFunc)
-                return (DirExist(this.remoteDirUXP) && FileExist(this.funcDirUXP "\" ff.fileName) && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+                this.__isUXPInstalled()
+                if this.__uxpInstalled != true
+                    return false
+                return (this.__uxpInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
         }
+    }
+
+    /** retrieves all CEP functions, stores them in `__cepFuncMap` along with all paramaters */
+    static __setCEPfuncs() {
+        this.__isRemoteInstalled()
+        if this.__cepInstalled != true
+            return false
+        if A_ScriptName != "Core Functionality.ahk" {
+            try this.__cepFuncMap := CLSID_Objs.loadProp("prem", "__cepFuncMap")
+        }
+        if this.__cepFuncMap != false
+            return this.__cepFuncMap
+        readFile := FileRead(this.indexFileCEP)
+        funcNames := Map()
+        pos := 1
+        while (pos := RegExMatch(readFile, "(\w+)\s*:\s*function\s*\(", &match, pos)) {
+            params := {set: false}
+            funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, pos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
+            if funcParamsString = "" {
+                funcNames.Set(match[1], params)
+                pos += match.Len(0)
+                continue
+            }
+            if !InStr(funcParamsString, ",") {
+                p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
+                params.arr := [p], params.map := Mip(p, true), params.set := true
+                funcNames.Set(match[1], params)
+                pos += match.Len(0)
+                continue
+            }
+            paramsSplit := StrSplit(funcParamsString, ",", A_Space "`n`r")
+            paramsArr := []
+            paramsMap := Mip()
+            for v in paramsSplit {
+                p := SubStr(v, 1, (splitPoint := InStr(v, ':'))-1)
+                t := LTrim(SubStr(v, splitPoint+1))
+                paramsArr.Push(p)
+                paramsMap.Set(p, t)
+            }
+            params.arr := paramsArr, params.map := paramsMap, params.set := true
+            funcNames.Set(match[1], params)
+            pos += match.Len(0)
+        }
+        this.__cepFuncMap := funcNames
+        if A_ScriptName != "Core Functionality.ahk" {
+            try CLSID_Objs.writeProp("prem", "__cepFuncMap", funcNames)
+        }
+        return funcNames
+    }
+
+    /**
+     * retrieves all UXP functions, stores them in `__uxpFuncMap` along with all paramaters and parameter types
+     * @param {String} [filename] the filename the function resides within
+     */
+    static __setUXPfuncs(fileName) {
+        this.__isUXPInstalled()
+        if this.__uxpInstalled != true
+            return false
+
+        if A_ScriptName != "Core Functionality.ahk" {
+            try this.__uxpFuncMap := CLSID_Objs.loadProp("prem", "__uxpFuncMap")
+        }
+        if !IsObject(this.__uxpFuncMap)
+            this.__uxpFuncMap := Map()
+
+        if this.__uxpFuncMap.Has(fileName)
+            return this.__uxpFuncMap[fileName]
+
+        filePath := this.funcDirUXP "\" fileName ".ts"
+        if !FileExist(filePath)
+            return false
+
+        readFile := FileRead(filePath)
+        funcNames := Map()
+        pos := 1
+        while (pos := RegExMatch(readFile, "export async function\s+(\w+)\s*\(", &match, pos)) {
+            params := {set: false}
+            funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, pos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
+            if funcParamsString = "" {
+                funcNames.Set(match[1], params)
+                pos += match.Len(0)
+                continue
+            }
+            if !InStr(funcParamsString, ",") {
+                p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
+                params.arr := [p], params.map := Mip(p, true), params.set := true
+                funcNames.Set(match[1], params)
+                pos += match.Len(0)
+                continue
+            }
+            paramsSplit := StrSplit(funcParamsString, ",", A_Space "`n`r")
+            paramsArr := []
+            paramsMap := Mip()
+            for v in paramsSplit {
+                p := SubStr(v, 1, (splitPoint := InStr(v, ':'))-1)
+                t := LTrim(SubStr(v, splitPoint+1))
+                paramsArr.Push(p)
+                paramsMap.Set(p, t)
+            }
+            params.arr := paramsArr, params.map := paramsMap, params.set := true
+            funcNames.Set(match[1], params)
+            pos += match.Len(0)
+        }
+        this.__uxpFuncMap.Set(fileName, funcNames)
+        if A_ScriptName != "Core Functionality.ahk" {
+            try CLSID_Objs.writeProp("prem", "__uxpFuncMap", this.__uxpFuncMap)
+        }
+        return funcNames
     }
 
     /**
@@ -501,15 +656,18 @@ class Prem {
     static __checkPremRemoteFunc(checkFunc, cepOrUXP := "cep") {
         switch cepOrUXP, 0 {
             case "cep":
-                return ((InStr(readFile := FileRead(this.indexFileCEP), Format("{}: function (", checkFunc)) ||
-                    InStr(readFile, Format("{}: function(", checkFunc)))
-                    ? true : false)
+                this.__isRemoteInstalled()
+                if this.__cepInstalled != true
+                    return false
+                if !this.__cepFuncMap
+                    this.__setCEPfuncs()
+                return this.__cepFuncMap.Has(checkFunc)
             case "uxp":
                 if !ff := this.__splitUXPfileFunc(checkFunc)
                     return
-                return ((InStr(readFile := FileRead(this.funcDirUXP "\" ff.fileName), Format("export async function {}(", ff.funcName)) ||
-                    InStr(readFile, Format("export async function {} (", ff.funcName)))
-                    ? true : false)
+                if !fileFuncs := this.__setUXPfuncs(ff.fileName)
+                    return false
+                return fileFuncs.Has(ff.funcName)
         }
     }
 
@@ -526,44 +684,6 @@ class Prem {
         }
         split := StrSplit(funcString, "/")
         return {fileName: split[1] ".ts", funcName: split[2]}
-    }
-
-    /**
-     * determines the parameters for the passed PremiereRemote CEP function
-     * @param {String} checkFunc the `whichFunc` passed to either `__remoteFunc()` function
-     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
-     * @returns {-1 | "" | Object} returns either; `-1` if function cannot be determined, `""` if the passed function does not contain any parameters, else an object containing `{arr: [all, params], map: Map(all, all, params, types)}`
-     */
-    static __getPremRemoteFuncParams(checkFunc, cepOrUXP := "cep") {
-        if !this.__checkPremRemoteDir(checkFunc, cepOrUXP)
-            return -1
-        switch cepOrUXP, 0 {
-            case "cep":
-                readFile := FileRead(this.indexFileCEP)
-                funcPos := (InStr(readFile, Format("{}: function (", checkFunc))) ? InStr(readFile, Format("{}: function (", checkFunc)) : InStr(readFile, Format("{}: function(", checkFunc))
-            case "uxp":
-                if !ff := this.__splitUXPfileFunc(checkFunc)
-                    return -1
-                readFile := FileRead(this.funcDirUXP "\" ff.fileName)
-                funcPos := (InStr(readFile, Format("export async function {}(", ff.funcName))) ? InStr(readFile, Format("export async function {}(", ff.funcName)) : InStr(readFile, Format("export async function {} (", ff.funcName))
-        }
-        funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, funcPos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
-        if funcParamsString = ""
-            return ""
-        if !InStr(funcParamsString, ",") {
-            p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
-            return {arr: [p], map: Mip(p, true)}
-        }
-        paramsSplit := StrSplit(funcParamsString, ",", A_Space "`n`r")
-        paramsArr := []
-        paramsMap := Mip()
-        for v in paramsSplit {
-            p := SubStr(v, 1, (splitPoint := InStr(v, ':'))-1)
-            t := LTrim(SubStr(v, splitPoint+1))
-            paramsArr.Push(p)
-            paramsMap.Set(p, t)
-        }
-        return {arr: paramsArr, map: paramsMap}
     }
 
     /**
@@ -706,27 +826,54 @@ class Prem {
      * @returns {Boolean}
      */
     static __checkRemoteParams(whichFunc, params, cepOrUXP := "cep") {
-        for v in params {
-            if !InStr(v, '=') {
-                MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
-                return false
-            }
-            splt := StrSplit(v, '=',, 2)
-            funcParams := this.__getPremRemoteFuncParams(whichFunc, cepOrUXP)
-            if funcParams != "" && funcParams != -1 {
-                for v in splt {
-                    if Mod(A_Index, 2) = 0
-                        continue
-                    if !funcParams.map.has(v) {
-                        MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc "`ncepOrUXP: " cepOrUXP)
+        switch cepOrUXP, 0 {
+            case "cep":
+                if !this.__setCEPfuncs()
+                    return false
+                if !this.__cepFuncMap.Has(whichFunc)
+                    return false
+                for v in params {
+                    if !InStr(v, '=') {
+                        MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
                         return false
                     }
-                    if cepOrUXP = "uxp" && funcParams.map.get(v) = "boolean" && (splt[A_Index+1] = "1" || splt[A_Index+1] = "0") {
-                        MsgBox("Incorrect paramater type`n`n" v "=" splt[A_Index+1] "`nneeds to be boolean" )
-                        return false
+                    splt := StrSplit(v, '=',, 2)
+                    for v in splt {
+                        if Mod(A_Index, 2) = 0
+                            continue
+                        if !this.__cepFuncMap[whichFunc].map.has(v) {
+                            MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc "`ncepOrUXP: " cepOrUXP)
+                            return false
+                        }
                     }
                 }
-            }
+            case "uxp":
+                if !ff := this.__splitUXPfileFunc(whichFunc)
+                    return false
+                if !fileFuncs := this.__setUXPfuncs(ff.fileName)
+                    return false
+                if !fileFuncs.Has(ff.funcName)
+                    return false
+                funcParams := fileFuncs[ff.funcName]
+                for v in params {
+                    if !InStr(v, '=') {
+                        MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
+                        return false
+                    }
+                    splt := StrSplit(v, '=',, 2)
+                    for v in splt {
+                        if Mod(A_Index, 2) = 0
+                            continue
+                        if funcParams.set && !funcParams.map.has(v) {
+                            MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc "`ncepOrUXP: " cepOrUXP)
+                            return false
+                        }
+                        if funcParams.set && funcParams.map.get(v) = "boolean" && (splt[A_Index+1] = "1" || splt[A_Index+1] = "0") {
+                            MsgBox("Incorrect paramater type`n`n" v "=" splt[A_Index+1] "`nneeds to be boolean" )
+                            return false
+                        }
+                    }
+                }
         }
         return true
     }
