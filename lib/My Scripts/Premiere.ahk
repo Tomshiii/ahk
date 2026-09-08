@@ -7,6 +7,7 @@
 #Include Classes\keys.ahk
 #Include Classes\winget.ahk
 #Include Classes\notifyExt.ahk
+#Include Classes\null.ahk
 #Include Functions\isDoubleClick.ahk
 #Include Functions\delaySI.ahk
 ; }
@@ -163,7 +164,7 @@ Enter:: ;// close windows by double tapping enter
 				SendInput("{" A_ThisHotkey "}")
 				return
 			}
-			if activePath = -1 || textStatus = -1 {
+			if activePath = null || textStatus = null {
 				SendInput("{" A_ThisHotkey "}")
 				return
 			}

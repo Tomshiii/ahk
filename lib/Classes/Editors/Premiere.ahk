@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/09/08
- * @version 2.5.35
+ * @version 2.5.36
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -31,6 +31,7 @@
 #Include Classes\Editors\Premiere_TimelineColours.ahk
 #Include Classes\winExt.ahk
 #Include Classes\notifyExt.ahk
+#Include Classes\null.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\WinEvent.ahk
@@ -165,38 +166,38 @@ class Prem {
     }
     static __isNodeInstalled() => RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
     static __isRemoteInstalled() {
-        if this.__cepInstalled = -1 || this.__cepInstalled = true
-            return (this.__cepInstalled = -1) ? false : true
+        if this.__cepInstalled = null || this.__cepInstalled = true
+            return (this.__cepInstalled = null) ? false : true
         if !this.__cepInstalled {
             if A_ScriptName != "Core Functionality.ahk"
                 try this.__cepInstalled := CLSID_Objs.loadProp("prem", "__cepInstalled")
-            if this.__cepInstalled = -1 || this.__cepInstalled = true
-                return (this.__cepInstalled = -1) ? false : true
+            if this.__cepInstalled = null || this.__cepInstalled = true
+                return (this.__cepInstalled = null) ? false : true
             if (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP)) {
                 this.__cepInstalled := true
                 try CLSID_Objs.writeProp("prem", "__cepInstalled", true)
                 return true
             }
-            this.__cepInstalled := -1
-            try CLSID_Objs.writeProp("prem", "__cepInstalled", -1)
+            this.__cepInstalled := null
+            try CLSID_Objs.writeProp("prem", "__cepInstalled", null)
             return false
         }
     }
     static __isUXPInstalled() {
-        if this.__uxpInstalled = -1 || this.__uxpInstalled = true
-            return (this.__uxpInstalled = -1) ? false : true
+        if this.__uxpInstalled = null || this.__uxpInstalled = true
+            return (this.__uxpInstalled = null) ? false : true
         if !this.__uxpInstalled {
             if A_ScriptName != "Core Functionality.ahk"
                 try this.__uxpInstalled := CLSID_Objs.loadProp("prem", "__uxpInstalled")
-            if this.__uxpInstalled = -1 || this.__uxpInstalled = true
-                return (this.__uxpInstalled = -1) ? false : true
+            if this.__uxpInstalled = null || this.__uxpInstalled = true
+                return (this.__uxpInstalled = null) ? false : true
             if (DirExist(this.remoteDirUXP) && FileExist(this.indexFileUXP)) {
                 this.__uxpInstalled := true
                 try CLSID_Objs.writeProp("prem", "__uxpInstalled", true)
                 return true
             }
-            this.__uxpInstalled := -1
-            try CLSID_Objs.writeProp("prem", "__uxpInstalled", -1)
+            this.__uxpInstalled := null
+            try CLSID_Objs.writeProp("prem", "__uxpInstalled", null)
             return false
         }
     }
@@ -383,7 +384,7 @@ class Prem {
             if !WinExist(this.wintitle) || !premUIA_Values.determineUIA_Exist()
                 return false
             UI_HEX := this.__retrieveUIColour()
-            if UI_HEX = -1
+            if UI_HEX = null
                 return false
             switch this.__uiByHex(UI_HEX) {
                 case "darkest": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
@@ -755,7 +756,7 @@ class Prem {
         checkType := (Type(checkPrem) != "Object")
         if !checkPrem || checkType
             return false
-        checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
+        checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = null)
         if checkTitle || checkCanSave {
             return false
         }
@@ -764,7 +765,7 @@ class Prem {
             activeObj := CLSID_Objs.clone("prem")
             if activeObj.remoteActiveCEP = "loading" {
                 notifyExt.showIfNotExist("premSocketConnectionErrorCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return -1
+                return null
             }
             if !activeObj.remoteActiveCEP {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
@@ -774,7 +775,7 @@ class Prem {
         } else {
             if this.remoteActiveCEP = "loading" {
                 notifyExt.showIfNotExist("premSocketLoadingCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return -1
+                return null
             }
             if !this.remoteActiveCEP {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
@@ -888,7 +889,7 @@ class Prem {
      *
      * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
      * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead. This function will attempt to rectify the issue itself but again, relying on such could result in issues.
-     * @returns {String} if the user sets `needResult` to `true` this function will return a string containing the response. The response will have its surrounding `"` quotes removed (eg. `fd75a385-7c84-48af-b6ee-a6c5a69c4c24` *not* `"fd75a385-7c84-48af-b6ee-a6c5a69c4c24"`)
+     * @returns {String | null | false} if the user sets `needResult` to `true` this function will return a string containing the response. The response will have its surrounding `"` quotes removed (eg. `fd75a385-7c84-48af-b6ee-a6c5a69c4c24` *not* `"fd75a385-7c84-48af-b6ee-a6c5a69c4c24"`)
      */
     static __remoteUXP(whichFunc, needResult := false, params*) {
         if !InStr(whichFunc, "/") {
@@ -910,7 +911,7 @@ class Prem {
         checkType := (Type(checkPrem) != "Object")
         if !checkPrem || checkType
             return false
-        checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = -1)
+        checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = null)
         if checkTitle || checkCanSave {
             return false
         }
@@ -919,7 +920,7 @@ class Prem {
             activeObj := CLSID_Objs.clone("prem")
             if activeObj.remoteActiveUXP = "loading" {
                 notifyExt.showIfNotExist("premSocketLoadingUXP",, "Socket connection to UXP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return -1
+                return null
             }
             if !activeObj.remoteActiveUXP {
                 errorLog(Error("A socket connection could not be established to UXP plugin", -1),, false)
@@ -929,7 +930,7 @@ class Prem {
         } else {
             if this.remoteActiveUXP = "loading" {
                 notifyExt.showIfNotExist("premSocketLoadingUXP",, "Socket connection to UXP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return -1
+                return null
             }
             if !this.remoteActiveUXP {
                 errorLog(Error("A socket connection could not be established to the UXP plugin", -1),, false)
@@ -984,23 +985,23 @@ class Prem {
 
     /**
      * attempts to use `ShinsImgClass` to retrieve the currently set UI hex colour
-     * @returns {String} Hexadecimal formatted string
+     * @returns {String | null} Hexadecimal formatted string
      */
     static __retrieveUIColour() {
         if !WinExist(this.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."))
-            return -1
+            return null
         }
         name := WinGet.PremName()
         if !name || !isObjHasProp(name, "winTitle", false) {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
-            return -1
+            return null
         }
         if !this.setShinsIMG(name.winTitle)
-            return -1
+            return null
         if !tab := premUIA_Values.getLivePanel("homeTab")
-            return -1
+            return null
         x := tab.location.x, y := tab.location.y
         ; convert screen coords -> client-relative coords
         WinGetClientPos(&clientOriginX, &clientOriginY, , , "ahk_id " this._scan.hwnd)
@@ -1022,50 +1023,50 @@ class Prem {
 
     /**
      * Uses `ShinsImageClass` to check the active Premiere window to see whether the `Edit` tab is currently active.
-     * @returns {Boolean | -1} returns `-1` if; Premiere does not exist, Premiere's name could not be determined, or `ShinsImageClass` could not be set. Else returns `true`/`false`
+     * @returns {Boolean | null} returns `null` if; Premiere does not exist, Premiere's name could not be determined, or `ShinsImageClass` could not be set. Else returns `true`/`false`
      */
     static isEditTabActive() {
         if !WinExist(this.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
-            return -1
+            return null
         }
         name := WinGet.PremName()
         if !name || !isObjHasProp(name, "winTitle", false) {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
-            return -1
+            return null
         }
 
         if !this.setShinsIMG(name.winTitle)
-            return -1
+            return null
         return this._scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
     }
 
     /**
      * Uses UIA and `ShinsImageClass` to check the Program monitor to see if playback is currently occurring. The `Play/Stop Toggle` button must be visible for this function to work.
      * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. Will be generated if omitted
-     * @returns {Boolean | -1} returns -1 if; Premiere does not exist, Premiere's name could not be determined, UIA values could not be initialised or are not set, `ShinsImageClass` could not be set, or the `Play/Stop Toggle` button could not be found. Else returns `true`/`false`
+     * @returns {Boolean | null} returns null if; Premiere does not exist, Premiere's name could not be determined, UIA values could not be initialised or are not set, `ShinsImageClass` could not be set, or the `Play/Stop Toggle` button could not be found. Else returns `true`/`false`
      */
     static isPlaying(UIAObj?) {
         if !WinExist(this.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
-            return -1
+            return null
         }
         name := WinGet.PremName()
         if !name || !isObjHasProp(name, "winTitle", false) {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
-            return -1
+            return null
         }
         if !this.setShinsIMG(name.winTitle)
-            return -1
+            return null
         coord.s()
         if !progMon := premUIA_Values.getLivePanel("programMonitor")
-            return -1
+            return null
         try button := progMon.FindElement({Type:50000, Name:"Play-Stop Toggle", matchmode:"Substring"})
         catch {
             errorLog(TargetError("Play/Stop button could not be found", -1))
-            return -1
+            return null
         }
 
         centerX := button.location.x + Round((button.Location.w/2))
@@ -1083,21 +1084,21 @@ class Prem {
     /**
      * Uses UIA to determine if the multicam view is active or not.
      * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. Will be generated if omitted
-     * @returns {-1 | boolean} returns -1 if; Premiere does not exist, Premiere's name could not be determined, UIA values could not be initialised or are not set. Else returns `true`/`false`
+     * @returns {null | boolean} returns null if; Premiere does not exist, Premiere's name could not be determined, UIA values could not be initialised or are not set. Else returns `true`/`false`
      */
     static isMultiCamActive(UIAObj?) {
         if !WinExist(prem.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
-            return -1
+            return null
         }
         name := WinGet.PremName()
         if !name || !isObjHasProp(name, "winTitle", false) {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
-            return -1
+            return null
         }
         if !progMon := premUIA_Values.getLivePanel("programMonitor")
-            return -1
+            return null
         try progMon.FindElement({Type:50003, Name:"Select Multicam Page"})
         catch {
             return false
@@ -1174,7 +1175,7 @@ class Prem {
         premWindow := WinGet.PremName()
         if !premWindow || Type(premWindow) != "Object" ||
             ((premWindow.winTitle = "" || !premWindow.wintitle) &&
-            premWindow.titleCheck = -1 && premWindow.saveCheck = -1) {
+            premWindow.titleCheck = null && premWindow.saveCheck = null) {
             errorLog(UnsetError("prem.save() was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
             return false
         }
@@ -1589,7 +1590,7 @@ class Prem {
         switch window {
             case ksa.prem.timelineWindow:
                 multCam := this.isMultiCamActive(premUIA)
-                if multCam = true || multCam = -1 {
+                if multCam = true || multCam = null {
                     ;// If you ever use the multi camera view you unfortunately cannot simply send the required hotkey, for whatever reason there is a potential for premiere to get stuck within a multicam nest.
                     ;// hopefully one day adobe fixes this bug - https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
                     timelineAct := premUIA_Values.__isUiaElementActive('timelineWindow', premUIA)
@@ -1873,7 +1874,7 @@ class Prem {
     /**
      * This function is to increase/decrease gain within premiere pro. This function will check to ensure the timeline is in focus and a clip is selected
      * @param {Number} amount is the value you want the gain to adjust (eg. -2, 6, etc)
-     * @param {String} [opt=adjust] which radio control you wish to use to adjust the audio. Valid options are; `set`, `adjust`, `maxPeak`, `allPeak`
+     * @param {null | boolean} [opt=adjust] which radio control you wish to use to adjust the audio. Valid options are; `set`, `adjust`, `maxPeak`, `allPeak`
      */
     static gain(amount, opt := "adjust")
     {
@@ -1890,7 +1891,7 @@ class Prem {
         Critical
         gainTitle := "Audio Gain"
         if !check := winget.Title()
-            return
+            return null
         blocker := block_ext()
         blocker.On(false)
         coord.s()
@@ -1931,7 +1932,7 @@ class Prem {
         if check = gainTitle {
             __setGainValUIA(amount, opt, gainTitle)
             blocker.Off()
-            return -1
+            return null
         }
 
         if !this.__remoteFunc('isSelectedAudio', true) {
@@ -2184,15 +2185,15 @@ class Prem {
 
     /**
      * This function will check for the blue outline around the timeline (using stored values within the class) that a focused window in premiere will ususally have.
-     * @returns {Trilean} true/false/-1. `-1` indicates that the timeline coordinates could not be determined.
+     * @returns {null | boolean} true/false/-1. `-1` indicates that the timeline coordinates could not be determined.
      */
     static timelineFocusStatus() {
         if !this.timelineVals {
             this.__setTimelineValues()
-            return -1
+            return null
         }
         if !this.__setTimelineValues()
-            return -1
+            return null
         origcoord := A_CoordModePixel, returnCoord() => A_CoordModePixel := origcoord
         coord.s()
         if PixelGetColor(this.timelineRawX-1, this.timelineRawY+10) = this.focusColour {
@@ -3471,7 +3472,7 @@ class Prem {
      * determines the coordinates of all buttons for all audio/video layers
      * @param {String} [audOrVid="aud"] whether you wish to return the locations for audio layers or video layers
      * @param {Object} [mouseCoords?] pass in an `obj.MousePos()` mouse coordinates. If not provided, they will be retrieved within this function
-     * @returns {Map/false/-1} if the window title cannot be determined, or `audOrVid` != "aud" or "vid" - returns `false` ||
+     * @returns {Map | false  | null} if the window title cannot be determined, or `audOrVid` != "aud" or "vid" - returns `false` ||
      * if the middle divider line cannot be determined - returns `-1` ||
      * else returns a map of all coordinates for all buttons
      * ```
@@ -3516,7 +3517,7 @@ class Prem {
         if !this.__checkTimelineValues()
             return false
         if !mid := this.__getlayerMid(, &midDivY)
-            return -1
+            return null
         if !IsSet(mouseCoords) {
             if !mouseCoords := obj.MousePos()
                 return false
@@ -3539,7 +3540,7 @@ class Prem {
      * @param {Number} [midDivY=""] a parameter to pass in the middle divider `y` coordinate if it has already been located
      * @param {String} [vidOrAud="aud"] whether to operate down on the audio layers or up on the video layers
      * @param {Integer} [stopAt=false] a track number to stop at to cancel operation early. Leave as `false` to return all visible values
-     * @returns {Map} returns a map containing `["top"]`, `["bot"]`, `["mid"]`
+     * @returns {Map | false} returns a map containing `["top"]`, `["bot"]`, `["mid"]`
      */
     static __getAllLayerPos(midDivY := "", vidOrAud := "aud", stopAt := false) {
         ;// avoid attempting to fire unless main window is active
@@ -3974,11 +3975,11 @@ class Prem {
             return
         }
         allButtons := this.__getAllLayerButtonPos(, origMouseCords)
-        if !allButtons || allButtons = -1 {
+        if !allButtons || allButtons = null {
             blocker.Off()
             switch allButtons {
                 case false: notifyExt.showIfNotExist("premInvalidLayerVals", 'prem.disableAllMuteSolo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case -1: notifyExt.showIfNotExist("premMiddleDivider", 'prem.disableAllMuteSolo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case null: notifyExt.showIfNotExist("premMiddleDivider", 'prem.disableAllMuteSolo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
             }
             return
         }
@@ -4041,11 +4042,11 @@ class Prem {
         }
 
         allButtons := this.__getAllLayerButtonPos("vid", origMouseCords)
-        if !allButtons || allButtons = -1 {
+        if !allButtons || allButtons = null {
             blocker.Off()
             switch allButtons {
                 case false: notifyExt.showIfNotExist("premInvalidLayerVals", 'prem.soloVideo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case -1: notifyExt.showIfNotExist("premMiddleDivider", 'prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
+                case null: notifyExt.showIfNotExist("premMiddleDivider", 'prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
             }
             return
         }
@@ -4276,7 +4277,7 @@ class Prem {
             return
         }
         multicamEnabled := this.isMultiCamActive()
-        if multicamEnabled = -1
+        if multicamEnabled = null
             return
         switch which {
             case "disable":

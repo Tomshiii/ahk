@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/08/21
- * @version 1.1.4
+ * @date 2026/09/08
+ * @version 1.1.5
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -10,6 +10,7 @@
 #Include Classes\WinGet.ahk
 #Include Classes\cmd.ahk
 #Include Classes\notifyExt.ahk
+#Include Classes\null.ahk
 #Include Other\Notify\Notify.ahk
 #Include Other\UIA\UIA.ahk
 ; }
@@ -98,24 +99,24 @@ class explorer {
 
     /**
      * A function to click the "Cancel search" button that appears in windows 1
-     * @returns {Object} [uiaElement, activeAutoID] returns an object. Returns `false` on failure or `-1` if the window title cannot be determined or if creating a UIA element fails
+     * @returns {Object | null} [uiaElement, activeAutoID] returns an object. Returns `false` on failure or `null` if the window title cannot be determined or if creating a UIA element fails
      */
     static cancelSearch() {
         if !currWin := WinGet.Title()
-            return -1
+            return null
         if !InStr(currWin, "Search Results in") {
             return false
         }
         try explorerEl := this.__createUIAelement(currWin, true)
         catch {
             SendInput("{Browser_Back}")
-            return -1
+            return null
         }
         autoID := this.__getUIAautoID(explorerEl)
         try cancelButt := explorerEl.uiaElement.FindElement({Type:50000, Name:"Close search", ClassName:"AppBarButton"}).Click()
         catch {
             SendInput("{Browser_Back}")
-            return -1
+            return null
         }
         return {uiaElement: explorerEl.uiaElement, activeAutoID: autoID}
     }

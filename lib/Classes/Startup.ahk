@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/08/20
- * @version 1.9.11
+ * @date 2026/09/08
+ * @version 1.9.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,6 +26,7 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\winExt.ahk
 #Include Classes\notifyExt.ahk
+#Include Classes\null.ahk
 #Include Functions\getScriptRelease.ahk
 #Include Functions\getHTML.ahk
 #Include Functions\isReload.ahk
@@ -811,7 +812,7 @@ class Startup {
          */
         getString(url, name) {
             string := getHTML(url)
-            if string = -1 {
+            if string = null {
                 ; tool.Tray({title: "libUpdateCheck() encountered an issue", text: "lib may have incorrect url:`n" url})
                 notifyExt.showIfNotExist("libupdateError", 'Error: libUpdateCheck() encountered an issue', "The requested lib may have incorrect url.`nLib: " name "`nURL: " url, 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 errorLog(Error(A_ThisFunc " encountered an issue with the specified url", -1), url)

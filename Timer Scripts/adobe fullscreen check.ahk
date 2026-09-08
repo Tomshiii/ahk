@@ -16,6 +16,7 @@ KeyHistory(0)
 #Include Classes\errorLog.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\winExt.ahk
+#Include Classes\null.ahk
 #Include Functions\trayShortcut.ahk
 ; }
 
@@ -86,7 +87,7 @@ class adobeTimer extends count {
     __fs(nameObj, progName) {
         InstallMouseHook(1)
         if ((!IsObject(nameObj)             || !nameObj.HasProp("winTitle") ||
-            !nameObj.HasProp("titleCheck")) || (nameObj.titleCheck = -1)
+            !nameObj.HasProp("titleCheck")) || (nameObj.titleCheck = null)
         )
             return
         if winget.isFullscreen(, nameObj.winTitle) = true

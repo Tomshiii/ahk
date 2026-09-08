@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/07
- * @version 3.0.32
+ * @date 2026/09/08
+ * @version 3.0.33
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,6 +14,7 @@
 #Include Classes\notifyExt.ahk
 #Include Classes\switchTo.ahk
 #Include Classes\block.ahk
+#Include Classes\null.ahk
 #Include KSA\Keyboard Shortcut Adjustments.ahk
 #Include Functions\isObjHasProp.ahk
 #Include Other\UIA\UIA.ahk
@@ -63,11 +64,11 @@ class premUIA_Values {
     static __activeElementPath(returnObj := false, UIAobj?) {
         try n := WinGet.PremName()
         if !WinActive(prem.winTitle) && !WinActive(prem.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
-            return -1
+            return null
         }
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
         if !uiaEl
-            return -1
+            return null
         try focusedEl := UIA.GetFocusedElement()
         panelName   := IsSet(focusedEl) ? this.getActivePanelName(uiaEl, focusedEl) : ""
         focusedPath := (panelName != "" && uiaEl.UIA_Path.Has(panelName)) ? uiaEl.UIA_Path[panelName] : ""
@@ -124,15 +125,15 @@ class premUIA_Values {
     static __isUiaElementActive(elementPath, UIAobj?) {
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
         if !uiaEl
-            return -1
+            return null
         if uiaEl.UIA_Hwnd.Has(elementPath) {
             try panel := this.__isPremPanelActive(elementPath, uiaEl)
             if IsSet(panel) && panel = true
                 return true
         }
         focusedPath := this.__activeElementPath(true, (IsSet(UIAobj) ? UIAobj : ""))
-        if !isObjHasProp(focusedPath, 'Path', -1) || focusedPath.Path = -1
-            return -1
+        if !isObjHasProp(focusedPath, 'Path', -1) || focusedPath.Path = null
+            return null
         return (IsSet(UIAobj) ? (InStr(focusedPath.Path, UIAobj.UIA_Path[elementPath]) = 1) : (InStr(focusedPath.Path, focusedPath.uiaEl.UIA_Path[elementPath]) = 1))
     }
 
@@ -144,7 +145,7 @@ class premUIA_Values {
      */
     static __isPremPanelActive(panel, UIAobj?) {
         if !element := this.getLivePanel(uiaEl.UIA_Hwnd[panel], UIAobj?, &uiaEl)
-            return -1
+            return null
         UIA_PREM_INACTIVE := 1048576
         UIA_PREM_ACTIVE := 1048580
         return ((element.state = 4 || element.state = UIA_PREM_ACTIVE) ? true : false)
@@ -186,11 +187,11 @@ class premUIA_Values {
     static isToolSelected(tool, UIAobj?) {
         try n := WinGet.PremName()
         if !WinActive(prem.winTitle) && !WinActive(prem.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
-            return -1
+            return null
         }
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
         if !uiaEl
-            return -1
+            return null
         try returnVal := (uiaEl.UIA_Objs[tool].value = "Selected" ? true : false)
         return (IsSet(returnVal) && (returnVal = true || returnVal = false) ? returnVal : -1)
     }

@@ -2,6 +2,7 @@
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\explorer.ahk
 #Include Classes\winget.ahk
+#Include Classes\null.ahk
 #Include Functions\delaySI.ahk
 ; }
 
@@ -16,7 +17,7 @@ F21::
     }
     expl := explorer.cancelSearch()
     switch {
-        case (expl == -1): return
+        case (expl == null): return
         case (expl = false):
             try currWin := WinGet.Title()
             catch {

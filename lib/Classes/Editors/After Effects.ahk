@@ -4,7 +4,7 @@
  * @aeVer 26.3
  * @author tomshi
  * @date 2026/09/08
- * @version 1.5.6
+ * @version 1.5.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -22,6 +22,7 @@
 #Include Classes\errorLog.ahk
 #Include Classes\switchTo.ahk
 #Include Classes\clip.ahk
+#Include Classes\null.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\_socket.ahk
 #Include Functions\delaySI.ahk
@@ -149,20 +150,20 @@ class AE {
     }
     static __isNodeInstalled() => RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
     static __isRemoteInstalled() {
-        if this.__cepInstalled = -1 || this.__cepInstalled = true
-            return (this.__cepInstalled = -1) ? false : true
+        if this.__cepInstalled = null || this.__cepInstalled = true
+            return (this.__cepInstalled = null) ? false : true
         if !this.__cepInstalled {
             if A_ScriptName != "Core Functionality.ahk"
                 try this.__cepInstalled := CLSID_Objs.loadProp("aftereffects", "__cepInstalled")
-            if this.__cepInstalled = -1 || this.__cepInstalled = true
-                return (this.__cepInstalled = -1) ? false : true
+            if this.__cepInstalled = null || this.__cepInstalled = true
+                return (this.__cepInstalled = null) ? false : true
             if (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP)) {
                 this.__cepInstalled := true
                 try CLSID_Objs.writeProp("aftereffects", "__cepInstalled", true)
                 return true
             }
-            this.__cepInstalled := -1
-            try CLSID_Objs.writeProp("aftereffects", "__cepInstalled", -1)
+            this.__cepInstalled := null
+            try CLSID_Objs.writeProp("aftereffects", "__cepInstalled", null)
             return false
         }
     }
@@ -227,7 +228,7 @@ class AE {
         checkType := (Type(checkAE) != "Object")
         if !checkAE || checkType
             return false
-        checkTitle := (checkAE.winTitle = "" || !checkAE.wintitle), checkCanSave := (checkAE.titleCheck = -1)
+        checkTitle := (checkAE.winTitle = "" || !checkAE.wintitle), checkCanSave := (checkAE.titleCheck = null)
         if checkTitle || checkCanSave {
             return false
         }
@@ -236,7 +237,7 @@ class AE {
             activeObj := CLSID_Objs.clone("ae")
             if activeObj.remoteActiveCEP = "loading" {
                 notifyExt.showIfNotExist("aeSocketConnectionErrorCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return -1
+                return null
             }
             if !activeObj.remoteActiveCEP {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
@@ -246,7 +247,7 @@ class AE {
         } else {
             if this.remoteActiveCEP = "loading" {
                 notifyExt.showIfNotExist("aeSocketLoadingCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return -1
+                return null
             }
             if !this.remoteActiveCEP {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
@@ -454,7 +455,7 @@ class AE {
         aeWindow := WinGet.AEName()
         if !aeWindow || Type(aeWindow) != "Object" ||
             ((aeWindow.winTitle = "" || !aeWindow.wintitle) &&
-            aeWindow.titleCheck = -1 && aeWindow.saveCheck = -1) {
+            aeWindow.titleCheck = null && aeWindow.saveCheck = null) {
             errorLog(UnsetError("ae.save() was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
             return false
         }
@@ -593,7 +594,7 @@ class AE {
         checkType := (Type(aeName) != "Object")
         if !aeName || checkType
             return false
-        checkTitle := (aeName.winTitle = "" || !aeName.wintitle), checkCanSave := (aeName.titleCheck = -1)
+        checkTitle := (aeName.winTitle = "" || !aeName.wintitle), checkCanSave := (aeName.titleCheck = null)
         if checkTitle || checkCanSave {
             return false
         }
@@ -728,7 +729,7 @@ class AE {
     static selectTool(toolName := "Selection Tool") {
         selectedObj := this.isToolSelected(toolName, true)
         if selectedObj.error = true
-            return -1
+            return null
         if selectedObj.selected = false {
             try selectedObj.toolEl.FindElement({Type:50000, Name: toolName, matchmode:"Substring"}).Click()
             catch {

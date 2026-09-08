@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/06/09
- * @version 1.7.14
+ * @date 2026/09/08
+ * @version 1.7.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,6 +14,7 @@
 #Include Classes\errorLog.ahk
 #Include Classes\Mip.ahk
 #Include Classes\Editors\Premiere.ahk
+#Include Classes\null.ahk
 #Include Functions\detect.ahk
 ; }
 
@@ -181,7 +182,7 @@ class WinGet {
     {
         title := (window != false) ? window : this.Title(&title)
         if !title
-            return -1
+            return null
         ;// this block checks for the desktop or some common win explorer classes we want to ignore. You don't want the desktop trying to get fullscreened unless you want to replicate the classic windows xp lagscreen
         if (this.isProc(WinExist(title)) || (title = "Program Manager"))
             title := ""
@@ -190,7 +191,7 @@ class WinGet {
         } catch {
             errorLog(UnsetError("Couldn't determine the active window or you're attempting to interact with an ahk GUI", -1),, 1)
             block.Off()
-            return -1
+            return null
         }
     }
 
@@ -249,7 +250,7 @@ class WinGet {
                 return ((which = "Premiere") ? prem.class : AE.class)
             }
             if !WinExist(editors.%which%.winTitle) && !WinExist(__getClass(which))
-                return {winTitle: false, titleCheck: -1, saveCheck: -1}
+                return {winTitle: false, titleCheck: null, saveCheck: null}
             progCheck := this.__determineAdobeTitle(which)
             adobeYear := this.__determineAdobeYear(progCheck, which, UserSettings)
             switch which {
@@ -266,17 +267,17 @@ class WinGet {
             if ttips = true
                 tool.Cust("Couldn't determine the titles of Adobe programs")
             errorLog(e)
-            return {winTitle: false, titleCheck: -1, saveCheck: -1}
+            return {winTitle: false, titleCheck: null, saveCheck: null}
         }
     }
 
     /**
      * This function will grab the title of premiere if it exists and check to see if a save is necessary
      * @param {VarRef} premCheck is the complete title of premiere
-     * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return `-1` if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than or equal to 0
-     * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary. Will return `-1` if premiere cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
+     * @param {VarRef} titleCheck is checking to see if the premiere window is available to save based off what's found in the current title. Will return `null` if premiere cannot be found or a boolean false if unavailable to save. Otherwise it will contain a number greater than or equal to 0
+     * @param {VarRef} saveCheck is checking for an * in the title to say a save is necessary. Will return `null` if premiere cannot be found or a boolean false if save is not required. Otherwise it will return boolean true
      * @param {Boolean} [ttips=true] determine whether tooltips will display in the event that the title cannot be determined
-     * @returns {Object/Boolean}
+     * @returns {Object | Boolean | null}
      * ```
      * ;// if Premiere isn't open `winget.PremName()` will return 0/false
      * prem := winget.PremName()
@@ -372,7 +373,7 @@ class WinGet {
                 WinGet.AEName(&Name, &titlecheck)
         }
         ;// if the name returns blank
-        if !IsSet(titlecheck) || (!titlecheck || titlecheck = -1) {
+        if !IsSet(titlecheck) || (!titlecheck || titlecheck = null) {
             tool.Cust("You're on a part of an Editor that won't contain the project path", 2000)
             return false
         }
