@@ -1,0 +1,2 @@
+put local.ahk2-null-highlight-1.0.1 -> %USERPROFILE%\.vscode\extensions\
+put ahk2.tmLanguage.json ->%USERPROFILE%\.vscode\extensions\thqby.vscode-autohotkey2-lsp-3.0.10\syntaxes\

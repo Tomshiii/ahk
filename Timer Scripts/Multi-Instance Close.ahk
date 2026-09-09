@@ -22,8 +22,8 @@ TraySetIcon(ptf.Icons "\M-I_C.png")
 
 startupTray()
 
-UserSettings := CLSID_Objs.clone("UserSettings")
-SetTimer(check, (UserSettings.multi_SEC * 1000))
+multi_SEC := CLSID_Objs.loadProp("UserSettings", "multi_SEC")
+SetTimer(check, (multi_SEC * 1000))
 
 
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")

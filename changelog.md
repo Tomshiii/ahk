@@ -2,6 +2,8 @@
 
 ## Functions
 - ✏️ Added `null {`
+- ✏️ Added `CLSID_Objs.loadProp()`/`CLSID_Objs.writeProp()`
+    - Reduces the `COM` round trip time across many functions
 
 ### 📝 `prem {`
 - 📋 `CEP`/`UXP` functions (and parameters) are now only computed once

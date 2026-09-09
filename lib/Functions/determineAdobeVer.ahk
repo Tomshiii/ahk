@@ -12,13 +12,17 @@
  * Photoshop does not create a separate folder for the `beta` version so if `psIsBeta` equals `false` this function will attempt to locate the latest installed year version of Photoshop
  * @link "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\"
  * @param {Object} exeNames must provide `{baseName: , beta: }` which are both the normal name and the beta name as found in the registry. ie; `{baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"}`
- * @param {Object} [UserSettings=unset] if you've already set a `UserPref()` object, you can pass it through here, otherwise it will be generated
  * @returns {Object|false} `{path: "path\to\.exe", version: "v2x.y.z"}`
  */
-determineAdobeVer(exeNames, UserSettings?) {
-    try UserSettings := CLSID_Objs.clone("UserSettings")
+determineAdobeVer(exeNames) {
+    isBeta := ["premIsBeta", "aeIsBeta", "psIsBeta"]
+    try UserSettings_map := CLSID_Objs.loadProp("UserSettings", isBeta)
     catch {
         UserSettings := UserPref(true)
+    }
+    if IsSet(UserSettings_map) {
+        UserSettings := {}
+        UserSettings.premIsBeta := UserSettings_map["premIsBeta"], UserSettings.aeIsBeta := UserSettings_map["aeIsBeta"], UserSettings.psIsBeta := UserSettings_map["psIsBeta"]
     }
     whichBeta := InStr(exeNames.baseName, "Premiere") ? UserSettings.premIsBeta : (InStr(exeNames.baseName, "After Effects") ? UserSettings.aeIsBeta : UserSettings.psIsBeta)
     whichExe := (checkBool(whichBeta) = false) ? exeNames.baseName : exeNames.beta

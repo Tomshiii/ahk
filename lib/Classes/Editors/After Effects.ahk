@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/09/08
- * @version 1.5.7
+ * @date 2026/09/09
+ * @version 1.5.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -234,12 +234,12 @@ class AE {
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
-            activeObj := CLSID_Objs.clone("ae")
-            if activeObj.remoteActiveCEP = "loading" {
+            remoteCEPState := CLSID_Objs.loadProp("ae", "remoteActiveCEP")
+            if remoteCEPState = "loading" {
                 notifyExt.showIfNotExist("aeSocketConnectionErrorCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null
             }
-            if !activeObj.remoteActiveCEP {
+            if !remoteCEPState {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
                 notifyExt.showIfNotExist('aeSocketConnectionErrorCEP',, "A socket connection could not be established to CEP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return false

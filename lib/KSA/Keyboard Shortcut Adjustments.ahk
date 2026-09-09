@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
- * @date 2026/09/07
- * @version 2.2.2
+ * @date 22026/09/08
+ * @version 2.2.3
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -150,18 +150,11 @@ class KeyShortAdjust {
      * @param {String} [which] the shorthand name of the desired adobe product, ie; `"prem"`
      */
     __isBeta(which) {
-        try {
-            if !IsSet(UserSettings) {
-                try UserSettings := CLSID_Objs.clone("UserSettings")
-                catch {
-                    UserSettings := UserPref(true)
-                }
-            }
-            isBeta := UserSettings.%which%IsBeta
-            return checkBool(isBeta)
-        } catch {
+        try isBeta := CLSID_Objs.loadProp("UserSettings", which "IsBeta")
+        catch {
             return (checkBool(IniRead(this.settingsINI, "Adjust", which "IsBeta", "false")))
         }
+        return checkBool(isBeta)
     }
 
     /**

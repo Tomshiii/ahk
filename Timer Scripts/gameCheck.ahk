@@ -65,12 +65,10 @@ ExitFunc(ExitReason, ExitCode) {
 
 class gameCheckTimer extends count {
     __New() {
-        this.UserSettings := CLSID_Objs.clone("UserSettings")
-        super.__New((this.UserSettings.game_SEC * 1000))
+        game_SEC := CLSID_Objs.loadProp("UserSettings", "game_SEC")
+        super.__New((game_SEC * 1000))
         super.start()
     }
-
-    UserSettings := ""
 
     ;// game open = true || closed = false
     which := false

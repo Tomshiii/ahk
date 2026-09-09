@@ -7,14 +7,14 @@
 ; }
 
 try {
-   UserSettings := CLSID_Objs.load("UserSettings")
+    isBeta := CLSID_Objs.loadProp("UserSettings", "aeIsBeta")
 }
 
 SetWorkingDir(A_ScriptDir)
 aeVerNum := StrReplace(ptf.aeSETver, "v", "")
 aeVerNumTrim := InStr(aeVerNum, ".",,, 2) ? SubStr(aeVerNum, 1, InStr(aeVerNum, ".",,, 2)-1) : aeVerNum
-version := (IsSet(UserSettings)) ? aeVerNumTrim : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
-incBeta := (IsSet(UserSettings) && (UserSettings.aeIsBeta = true || UserSettings.aeIsBeta = "true")) ? " (Beta)" : ""
+version := (IsSet(isBeta)) ? aeVerNumTrim : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
+incBeta := (IsSet(isBeta) && (isBeta = true || isBeta = "true")) ? " (Beta)" : ""
 
 Dir := A_AppData "\Adobe\After Effects" incBeta "\" version "\aeks"
 if !DirExist(Dir) {

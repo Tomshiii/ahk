@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/09/08
- * @version 2.5.36
+ * @date 2026/09/09
+ * @version 2.5.37
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -531,12 +531,18 @@ class Prem {
                 this.__isRemoteInstalled()
                 if this.__cepInstalled != true
                     return false
-                return (this.__cepInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+                if checkFunc != ""
+                    return (this.__cepInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+                else
+                    return (this.__cepInstalled = true ? true : false)
             case "uxp":
                 this.__isUXPInstalled()
                 if this.__uxpInstalled != true
                     return false
-                return (this.__uxpInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+                if checkFunc != ""
+                    return (this.__uxpInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+                else
+                    return (this.__uxpInstalled = true ? true : false)
         }
     }
 
@@ -606,7 +612,7 @@ class Prem {
         if this.__uxpFuncMap.Has(fileName)
             return this.__uxpFuncMap[fileName]
 
-        filePath := this.funcDirUXP "\" fileName ".ts"
+        filePath := this.funcDirUXP "\" fileName
         if !FileExist(filePath)
             return false
 
@@ -665,7 +671,7 @@ class Prem {
                 return this.__cepFuncMap.Has(checkFunc)
             case "uxp":
                 if !ff := this.__splitUXPfileFunc(checkFunc)
-                    return
+                    return false
                 if !fileFuncs := this.__setUXPfuncs(ff.fileName)
                     return false
                 return fileFuncs.Has(ff.funcName)
@@ -762,12 +768,12 @@ class Prem {
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
-            activeObj := CLSID_Objs.clone("prem")
-            if activeObj.remoteActiveCEP = "loading" {
+            remoteCEPState := CLSID_Objs.loadProp("prem", "remoteActiveCEP")
+            if remoteCEPState = "loading" {
                 notifyExt.showIfNotExist("premSocketConnectionErrorCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null
             }
-            if !activeObj.remoteActiveCEP {
+            if !remoteCEPState {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
                 notifyExt.showIfNotExist('premSocketConnectionErrorCEP',, "A socket connection could not be established to CEP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return false
@@ -917,12 +923,12 @@ class Prem {
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
-            activeObj := CLSID_Objs.clone("prem")
-            if activeObj.remoteActiveUXP = "loading" {
+            remoteUXPState := CLSID_Objs.loadProp("prem", "remoteActiveUXP")
+            if remoteUXPState = "loading" {
                 notifyExt.showIfNotExist("premSocketLoadingUXP",, "Socket connection to UXP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null
             }
-            if !activeObj.remoteActiveUXP {
+            if !remoteUXPState {
                 errorLog(Error("A socket connection could not be established to UXP plugin", -1),, false)
                 notifyExt.showIfNotExist('premSocketConnectionErrorUXP',, "A socket connection could not be established to UXP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return false
@@ -2216,12 +2222,12 @@ class Prem {
         ;// this block is called if the function originates from a script that isn't `Core Functionality.ahk`
         if A_ScriptName != "Core Functionality.ahk" {
             try {
-                activeObj := CLSID_Objs.load("prem")
-                if activeObj.__checkTimelineValues() {
+                premObj_vals := CLSID_Objs.loadProp("prem", ["timelineRawX", "timelineRawY", "timelineXValue", "timelineYValue", "timelineXControl", "timelineYControl", "timelineVals"])
+                if premObj_vals["timelineVals"] = true {
                     coord.s()
-                    this.timelineRawX     := activeObj.timelineRawX,     this.timelineRawY     := activeObj.timelineRawY
-                    this.timelineXValue   := activeObj.timelineXValue,   this.timelineYValue   := activeObj.timelineYValue
-                    this.timelineXControl := activeObj.timelineXControl, this.timelineYControl := activeObj.timelineYControl
+                    this.timelineRawX     := premObj_vals["timelineRawX"],     this.timelineRawY     := premObj_vals["timelineRawY"]
+                    this.timelineXValue   := premObj_vals["timelineXValue"],   this.timelineYValue   := premObj_vals["timelineYValue"]
+                    this.timelineXControl := premObj_vals["timelineXControl"], this.timelineYControl := premObj_vals["timelineYControl"]
                     this.timelineVals     := true
                     return true
                 }
@@ -2377,17 +2383,17 @@ class Prem {
      * @returns {Boolean}
      */
     static __checkTimelineValues() {
-        try premObj := CLSID_Objs.load("prem")
+        try premObj_timelineVals := CLSID_Objs.loadProp("prem", "timelineVals")
         catch {
-            premObj := ""
+            premObj_timelineVals := ""
             return false
         }
         if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
-            (this.timelineVals = false || premObj.timelineVals = false) {
-            premObj := ""
+            (this.timelineVals = false || premObj_timelineVals = false) {
+            premObj_timelineVals := ""
             return false
         }
-        premObj := ""
+        premObj_timelineVals := ""
         return true
     }
 
@@ -3670,7 +3676,7 @@ class Prem {
         }
         if !this.__checkPremRemoteDir() {
             blocker.Off()
-            errorLog(MethodError('This function requires PremiereRemote functionality', -1))
+            errorLog(MethodError('This function requires PremiereRemote functionality. __cepInstalled: ' this.__cepInstalled, -1))
             return
         }
         checkTrack := false
@@ -3688,20 +3694,19 @@ class Prem {
         }
 
         ;// prem is dumb and sometimes ignores inputs if you're too fast
-        if this.__remoteFunc('isSelected', true) {
+        if this.isClipSelected() {
             SendInput(ksa.prem.deselectAll)
-            if this.__remoteFunc('isSelected', true) {
+            if this.isClipSelected() {
                 sleep 50
                 SendInput(ksa.prem.deselectAll)
                 sleep 25
-                if this.__remoteFunc('isSelected', true) {
+                if this.isClipSelected() {
                     errorLog(MethodError("Deselecting failed. Please try again"))
                     blocker.Off()
                     return
                 }
             }
         }
-        ; SendInput(ksa.prem.selectionTool)
         this.selectTool()
         sleep 16
         if !origMouseCords := obj.MousePos() {
@@ -3804,7 +3809,7 @@ class Prem {
         hasMap := Map()
         origIgnore := ignore
         if ignore = "settings" {
-            try ignore := this.UserSettings.toggleEnabled_ignore
+            try ignore := CLSID_Objs.loadProp("UserSettings", "toggleEnabled_ignore")
             catch {
                 errorLog(TargetError("Failed to determine settings value: toggleEnabled_ignore"))
                 notifyExt.showIfNotExist("premignoreSetting", 'prem.toggleEnabled()', '"Failed to determine settings value: toggleEnabled_ignore"',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')

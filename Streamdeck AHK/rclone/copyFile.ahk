@@ -12,3 +12,4 @@ if !nPath
 SplitPath(gPath, &fileName)
 command := rclone.formatCommand(nPath "\" filename, gPath, 2)
 cmd.run(false, false, false, command,, "Hide")
+ExitApp()

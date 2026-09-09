@@ -6,8 +6,8 @@
 str := '{"DefaultLoudness":{"type":"float","value":-23}'
 repString := StrReplace(str, "-23", "-14")
 
-UserSettings := CLSID_Objs.clone("UserSettings")
-year := SubStr(UserSettings.premVer, 2, 4) ;// eg v26.0.2
+premVer := CLSID_Objs.loadProp("UserSettings", "premVer")
+year := SubStr(premVer, 2, 4) ;// eg v26.0.2
 path := A_MyDocuments "\Adobe\Premiere Pro\" year "\Profile-" A_UserName "\Settings\EssentialSound\Default\dialog\(Config).essentialsound"
 pathAppdata := A_AppData "\Adobe\Premiere Pro\" year "\EssentialSound\Default\dialog\(Config).essentialsound"
 

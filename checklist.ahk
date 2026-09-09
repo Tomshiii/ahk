@@ -35,7 +35,7 @@ startupTray()
 closeWaitUntil() ;checks to see if `waitUntil.ahk` is open and closes it if it is
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-version := "v2.13.1"
+version := "v2.13.2"
 ;todays date
 today := A_YYYY "_" A_MM "_" A_DD
 
@@ -87,9 +87,10 @@ else
         if !IsSet(dashLocation)
             {
                 detect()
-                UserSettings := CLSID_Objs.load("UserSettings")
-                settingsFile := UserSettings.SettingsFile
-                checklist_wait := UserSettings.checklist_wait
+                settings := ["SettingsFile", "checlist_wait"]
+                UserSettings := CLSID_Objs.loadProp("UserSettings", settings)
+                settingsFile := UserSettings["SettingsFile"]
+                checklist_wait := UserSettings["checklist_wait"]
                 UserSettings := ""
                 if FileExist(settingsFile) ;checks to see if the user wants to always wait until they open a project
                     {

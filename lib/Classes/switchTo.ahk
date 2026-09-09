@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used functions to open/cycle between windows of a certain type.
  * @author tomshi
- * @date 2026/04/30
- * @version 1.4.6
+ * @date 2026/09/08
+ * @version 1.4.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -243,12 +243,9 @@ class switchTo {
                 Run(AE.path)
             } catch {
                 try {
-                    UserSettings := CLSID_Objs.clone("UserSettings")
-                    if !generateAdobeShortcut(UserSettings, "Adobe After Effects", UserSettings.ae_year) {
-                        UserSettings := ""
+                    ae_year := CLSID_Objs.loadProp("UserSettings", "ae_year")
+                    if !generateAdobeShortcut("Adobe After Effects", ae_year)
                         throw
-                    }
-                    UserSettings := ""
                     sleep 50
                     Run(AE.path)
                 } catch {
@@ -492,7 +489,7 @@ class switchTo {
      * A function to cut repeat code. Handles swapping to/running desired adobe program as well as generating a shortcut if one does not exist
      * @param {String} adobeClass the class value usually determined using window spy. Can use the values at the top of the respective program's class within this repo (ie. prem.class/ps.class)
      * @param {String} path the path to the shortcut that this function will attempt to run. Can use the values at the top of the respective program's class within this repo (ie. prem.path/ps.path)
-     * @param {String} which the string that will be passed to `generateAdobeShortcut(, x, )`.
+     * @param {String} which the string that will be passed to `generateAdobeShortcut(x, )`.
      * @param {String} year short name used within `settings.ini` to determine which program you are targeting (ie. prem/ae/ps)
     */
     __adobeSwitch(adobeClass, path, which, year, switchBetween := false) {
@@ -515,12 +512,9 @@ class switchTo {
             Run(path)
         } catch {
             try {
-                UserSettings := CLSID_Objs.clone("UserSettings")
-                if !generateAdobeShortcut(UserSettings, which, UserSettings.%year%_year) {
-                    UserSettings := ""
+                yearVer := CLSID_Objs.loadProp("UserSettings", year "_year")
+                if !generateAdobeShortcut(which, yearVer)
                     throw
-                }
-                UserSettings := ""
                 sleep 50
                 Run(path)
             } catch {

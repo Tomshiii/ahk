@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/09/08
- * @version 1.9.12
+ * @date 2026/09/09
+ * @version 1.9.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -195,7 +195,8 @@ class Startup {
                     }
                 }
 
-                UserSettings := CLSID_Objs.load("UserSettings")
+                settings := ["update_check", "beta_update_check", "update_check", "skipVersion"]
+                UserSettings := CLSID_Objs.loadProp("UserSettings", settings)
 
                 ;set download button
                 MyGui["gitButton"].GetPos(&x)
@@ -203,24 +204,24 @@ class Startup {
                 ;set cancel button
                 MyGui.AddButton("Default X+5", "Cancel").OnEvent("Click", closegui)
                 ;set "skip this version" checkbox
-                MyGui.AddCheckbox("xs-175 Ys-30", "Skip this Version").OnEvent("Click", (guiCtrl, *) => ((UserSettings.skipVersion := (guiCtrl.Value = 1) ? version : this.origSkipVer)))
+                MyGui.AddCheckbox("xs-175 Ys-30", "Skip this Version").OnEvent("Click", (guiCtrl, *) => ((UserSettings["skipVersion"] := (guiCtrl.Value = 1) ? version : this.origSkipVer)))
                 ;set "don't prompt again" checkbox
-                MyGui.AddCheckbox("xs-175 Y+5", "Don't prompt again").OnEvent("Click", (guiCtrl, *) => (UserSettings.update_check := guiCtrl.Value))
+                MyGui.AddCheckbox("xs-175 Y+5", "Don't prompt again").OnEvent("Click", (guiCtrl, *) => (UserSettings["update_check"] := guiCtrl.Value))
                 ;set beta checkbox
-                betaCheck := (UserSettings.beta_update_check = true)
+                betaCheck := (UserSettings["beta_update_check"] = true)
                     ? MyGui.Add("Checkbox", "Checked1 Y+5", "Check for Pre-Releases")
                     : MyGui.Add("Checkbox", "Checked0 Y+5", "Check for Pre-Releases")
-                betaCheck.OnEvent("Click", (guiCtrl, *) => (UserSettings.beta_update_check := guiCtrl.Value, sleep(500), Run(A_ScriptFullPath)))
+                betaCheck.OnEvent("Click", (guiCtrl, *) => (UserSettings["beta_update_check"] := guiCtrl.Value, sleep(500), Run(A_ScriptFullPath)))
 
                 MyGui.Show()
                 prompt(which, guiCtrl, *) {
                     switch which {
-                        case "prompt": UserSettings.update_check := (guiCtrl.Value = 0) ? true : false
+                        case "prompt": UserSettings["update_check"] := (guiCtrl.Value = 0) ? true : false
                         case "prerelease":
-                            UserSettings.beta_update_check := (guiCtrl.value = 0) ? false : true
+                            UserSettings["beta_update_check"] := (guiCtrl.value = 0) ? false : true
                             sleep 500
                             Run(A_ScriptFullPath)
-                        case "skip": UserSettings.skipVersion := (guiCtrl.Value = 1) ? version : this.origSkipVer
+                        case "skip": UserSettings["skipVersion"] := (guiCtrl.Value = 1) ? version : this.origSkipVer
                     }
                 }
                 githubButton(*) {

@@ -7,12 +7,12 @@
 ; }
 
 try {
-   UserSettings := CLSID_Objs.load("UserSettings")
+   premIsBeta := CLSID_Objs.loadProp("UserSettings", "premIsBeta")
 }
 
 SetWorkingDir(A_ScriptDir)
-version := (IsSet(UserSettings)) ? ptf.PremYearVer ".0" : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
-incBeta := (IsSet(UserSettings) && ((UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true"))) ? " (Beta)" : ""
+version := (IsSet(premIsBeta)) ? ptf.PremYearVer ".0" : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
+incBeta := (IsSet(premIsBeta) && ((premIsBeta = true || premIsBeta = "true"))) ? " (Beta)" : ""
 
 Dir := A_MyDocuments "\Adobe\Adobe Media Encoder" incBeta "\" version "\Presets"
 if !DirExist(Dir) {

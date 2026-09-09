@@ -4,3 +4,4 @@
 ; }
 
 cmd.run(, false, true, rclone.__formatSSH('tail -f /share/CACHEDEV1_DATA/rclone.log'))
+ExitApp()

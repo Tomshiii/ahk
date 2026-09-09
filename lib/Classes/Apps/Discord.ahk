@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2026/08/31
- * @version 1.7.8
+ * @date 2026/09/08
+ * @version 1.7.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -85,9 +85,7 @@ class discord {
 
         switch button {
             case "reply":
-                UserSettings := CLSID_Objs.clone("UserSettings")
-                disableAutoReplyPing := UserSettings.disc_disable_autoreply
-                UserSettings := ""
+                disableAutoReplyPing := CLSID_Objs.loadProp("UserSettings", "disc_disable_autoreply")
                 try {
                     quickSwitch := this.DiscordEl.FindCachedElement({Type:50000, Name:"Open Quick Switcher"}) ;// the top bar of discord (ie. in dm's has the disc icon & "Direct Messages")
                     dms := quickSwitch.FindCachedElement({Type:50020, Name:"Direct Messages"})

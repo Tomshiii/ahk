@@ -1,0 +1,13 @@
+{
+    "name": "ahk2-null-highlight",
+    "publisher": "local",
+    "version": "1.0.0",
+    "engines": {
+        "vscode": "^1.70.0"
+    },
+    "main": "./extension.js",
+    "activationEvents": [
+        "onLanguage:ahk2"
+    ],
+    "contributes": {}
+}

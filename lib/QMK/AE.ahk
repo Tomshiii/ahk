@@ -37,10 +37,10 @@ m::unassigned()
 
 y::unassigned()
 ;h::unassigned()
-n::ae.scaleAndPos()
+n::unassigned()
 ;Space::unassigned()
 
-t::unassigned()
+t::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Gaussian Blur")
 g::unassigned()
 b::unassigned()
 
@@ -54,7 +54,7 @@ d::unassigned()
 c::unassigned()
 ;End::unassigned()
 
-w::ae.preset("Drop Shadow")
+w::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Drop Shadow")
 s::unassigned()
 x::unassigned()
 ;F15::unassigned()

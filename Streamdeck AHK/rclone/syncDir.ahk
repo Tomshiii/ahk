@@ -1,6 +1,8 @@
 ; { \\ #Includes
 #Include rclone.ahk
 #Include '%A_Appdata%\tomshi\lib'
+#Include Classes\clip.ahk
+#Include Classes\cmd.ahk
 ; }
 
 nPath := FileSelect("D2", "N:\The Boys Main", "Choose Directory to copy from")
@@ -14,6 +16,5 @@ clip.returnClip(prevClip)
 if !gPath
     return
 command := rclone.formatCommand(nPath, gPath, 1)
-MsgBox(nPath "`n" gPath)
-MsgBox(command)
 cmd.run(false, false, false, command,, "Hide")
+ExitApp()

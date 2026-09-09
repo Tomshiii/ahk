@@ -78,7 +78,7 @@ q::unassigned()
 a::unassigned()
 Right & z::musicGUI()
 z::switchTo.Music()
-F16::switchTo.PhoneProgs(, true)
+; F16::switchTo.PhoneProgs(, true)
 
 ;Tab::unassigned()
 Esc::unassigned()

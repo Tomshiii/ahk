@@ -4,3 +4,4 @@
 ; }
 
 cmd.run(, false, false, rclone.__formatSSH('killall rclone'),, "Hide")
+ExitApp()

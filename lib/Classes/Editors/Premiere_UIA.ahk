@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/08
- * @version 3.0.33
+ * @date 2026/09/09
+ * @version 3.0.34
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -215,13 +215,13 @@ class premUIA_Values {
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
             throw Error("Failed to retrieve Premiere title.")
         }
-        premObj := CLSID_Objs.clone("prem")
-        if premObj.remoteActiveCEP = "loading" {
+        remoteCEPState := CLSID_Objs.loadProp("prem", "remoteActiveCEP")
+        if remoteCEPState = "loading" {
             notifyExt.deleteIfExist("premUIAGenTree")
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
             throw Error("Socket")
         }
-        if !premObj.remoteActiveCEP {
+        if !remoteCEPState {
             notifyExt.deleteIfExist("premUIAGenTree")
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
             errorLog(Error("A socket connection could not be established", -1),, true)
@@ -387,8 +387,8 @@ class premUIA_Values {
         try uiaObj := CLSID_Objs.load("determineUIA")
         catch {
             try {
-                coreIsActive := CLSID_Objs.load("determineActive")
-                if coreIsActive.isRunning = true
+                isRunning := CLSID_Objs.loadProp("determineActive", "isRunning")
+                if isRunning = true
                     return false
             }
             errorLog(TargetError("Script could not interact with ``determineUIA.ahk``. Script will reload.", -1))

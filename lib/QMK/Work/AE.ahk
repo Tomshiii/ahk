@@ -4,68 +4,67 @@
 #Include Classes\Editors\Premiere.ahk
 #Include QMK\unassigned.ahk
 ; }
-,::prem.anchorToPosition(true)
-/*
+/* ,::
+.::
+
+w:: */
 BackSpace::unassigned()
 SC028::unassigned()
 Enter::unassigned()
-;Right::unassigned()
+Right::unassigned()
 
-p::ae.motionBlur()
+p::unassigned()
 SC027::unassigned()
-/::unassigned()
+; /:unassigned()
 ;Up::unassigned()
 
+
 o::unassigned()
-l::ae.wiggle("
-		(
-			w = wiggle(1,10);
-			[w[0],w[0]]
-		)"
-	)
-.::ae.wiggle("wiggle(1,10)")
+l::unassigned()
+.::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Transform")
 ;Down::unassigned()
 
 i::unassigned()
 k::unassigned()
-,::unassigned()
+,::ae.anchorToPosition()
 ;Left::unassigned()
 
 u::unassigned()
 j::unassigned()
-m::unassigned()
+; m::unassigned()
 ;PgUp::unassigned()
 
-y::unassigned()
+; y::unassigned()
 ;h::unassigned()
-n::ae.scaleAndPos()
+; n::unassigned()
 ;Space::unassigned()
 
-t::unassigned()
+t::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Gaussian Blur")
 g::unassigned()
-b::unassigned()
+; b:unassigned()
 
 r::unassigned()
 f::unassigned()
-v::unassigned()
-;PgDn::unassigned()
+; v::unassigned()
+PgDn::unassigned()
+
 
 e::unassigned()
 d::unassigned()
 c::unassigned()
-;End::unassigned()
+End::unassigned()
 
-w::ae.preset("Drop Shadow")
-s::unassigned()
+w::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Drop Shadow")
+s::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Tint")
 x::unassigned()
-;F15::unassigned()
+F15::unassigned()
 
-q::unassigned()
+q::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=S_Shake")
 a::unassigned()
-z::prem.anchorToPosition()
+; z::unassigned()
 ;F16::unassigned()
 
 ;Tab::unassigned()
 Esc::unassigned()
-; F13::unassigned()
-; Home::unassigned() */
+F13::unassigned()
+Home::unassigned()

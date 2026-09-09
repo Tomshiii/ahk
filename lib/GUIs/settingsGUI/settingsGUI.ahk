@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/09/04
- * @version 2.4.17
+ * @date 2026/09/08
+ * @version 2.4.18
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -703,7 +703,7 @@ settingsGUI()
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
         }
 
-        __generateShortcut() => generateAdobeShortcut(UserSettings, shortcutName, year.text)
+        __generateShortcut() => generateAdobeShortcut(shortcutName, year.text)
 
         /**
          * This function generates the year dropdown selector

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/08/31
- * @version 2.2.25
+ * @date 2026/09/08
+ * @version 2.2.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -71,14 +71,14 @@ class adobeAutoSave extends count {
         try {
             ; this.premUIA.initialise(false) ;// don't do this or every reload it'll force attempt trying to set them
             ;// attempt to grab user settings
-            this.UserSettings    := CLSID_Objs.clone("UserSettings")
-            this.ms              := (this.UserSettings.autosave_MIN * 60000)
-            this.beep            := this.UserSettings.autosave_beep
-            this.checkMouse      := this.UserSettings.autosave_check_mouse
-            this.saveOverride    := this.UserSettings.autosave_save_override
-            this.alwaysSave      := this.UserSettings.autosave_always_save
-            this.restartPlayback := this.UserSettings.autosave_restart_playback
-            ; this.aeSaveBG        := this.UserSettings.ae_save_bg
+            user_props_list := ["autosave_MIN", "autosave_beep", "autosave_check_mouse", "autosave_save_override", "autosave_always_save", "autosave_restart_playback"]
+            userPros := CLSID_Objs.loadProp("UserSettings", user_props_list)
+            this.ms              := (userPros["autosave_MIN"] * 60000)
+            this.beep            := userPros["autosave_beep"]
+            this.checkMouse      := userPros["autosave_check_mouse"]
+            this.saveOverride    := userPros["autosave_save_override"]
+            this.alwaysSave      := userPros["autosave_always_save"]
+            this.restartPlayback := userPros["autosave_restart_playback"]
         }
 
         ;// set variables for some user hotkeys
@@ -94,7 +94,6 @@ class adobeAutoSave extends count {
     premUIA := false
 
     ;// Class Variables
-    UserSettings  := unset
     ms            := (5*60000) ;// 5min by default
     saveOverride  := true
     origWindow    := ""
@@ -696,8 +695,8 @@ class adobeAutoSave extends count {
         InstallMouseHook(true)
         isCoreFunc := winExt.ExistRegex("Core Functionality.ahk")
         if isCoreFunc {
-            premObj := CLSID_Objs.clone("prem")
-            if premObj.RClickIsActive = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true {
+            rClick := CLSID_Objs.loadProp("prem", "RClickIsActive")
+            if rClick = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true {
                 InstallMouseHook(false)
                 premObj := ""
                 return true

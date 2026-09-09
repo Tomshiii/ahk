@@ -13,15 +13,13 @@
 SetWorkingDir(ptf.lib)
 TraySetIcon(ptf.Icons "\update.png")
 
-UserSettings := CLSID_Objs.load("UserSettings")
-if UserSettings.beta_update_check = true
-	{ ;if the user wants to check for beta updates instead, this block will fire
-		version := getScriptRelease(true, &changeVer)
-		betaprep := 1
-	}
-else
+beta_update_check := CLSID_Objs.loadProp("UserSettings", "beta_update_check")
+if beta_update_check = true || beta_update_check = "true" { ;if the user wants to check for beta updates instead, this block will fire
+	version := getScriptRelease(true, &changeVer)
+	betaprep := 1
+} else {
 	version := getScriptRelease(, &changeVer) ;getting non beta latest release
-UserSettings := ""
+}
 
 main := tomshiBasic(,, "-Resize", "Latest Update - " version)
 main.OnEvent("Close", closeit)

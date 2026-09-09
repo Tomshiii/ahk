@@ -22,3 +22,4 @@ for v in paths {
     command := rclone.formatCommand(dirName "." ext, v, 2)
     cmd.run(false, false, false, command,, "Hide")
 }
+ExitApp()

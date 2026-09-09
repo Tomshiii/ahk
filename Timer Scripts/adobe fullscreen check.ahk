@@ -42,18 +42,15 @@ OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
 class adobeTimer extends count {
     __New() {
         try {
-            UserSettings := CLSID_Objs.clone("UserSettings")
-            ;// open settings instance and start timer
-            fire_frequency := UserSettings.adobe_FS
+            adobe_FS := CLSID_Objs.loadProp("UserSettings", "adobe_FS")
+            fire_frequency := adobe_FS
             this.fire := (fire_frequency * 1000)
             this.premName := "Premiere" Editors.__determinePremName(false)
-            this.premObj := CLSID_Objs.clone("prem")
         }
 
         super.__New(this.fire)
         super.start()
     }
-    premObj := {}
     playToCurs := (InStr(ksa.prem.playheadtoCursor, "{") && InStr(ksa.prem.playheadtoCursor, "}")) ? LTrim(RTrim(ksa.prem.playheadtoCursor, "}"), "{") : ksa.prem.playheadtoCursor
     premName := ""
 
@@ -99,7 +96,8 @@ class adobeTimer extends count {
                 return
             }
             sleep 50
-            if this.premObj.RClickIsActive = false && (GetKeyState("RButton", "P") = false) && (GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false) && WinExist(nameObj.winTitle)
+            rClick := CLSID_Objs.loadProp("prem", "RClickIsActive")
+            if rClick = false && (GetKeyState("RButton", "P") = false) && (GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false) && WinExist(nameObj.winTitle)
                 WinMaximize(nameObj.winTitle)
             return
         }

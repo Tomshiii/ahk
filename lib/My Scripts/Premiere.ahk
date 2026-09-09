@@ -449,7 +449,7 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 
 $^v::
 {
-	if !WinActive(prem.winTitle) {
+	if !WinActive(prem.winTitle) || (WinActive(prem.winTitle) && CaretGetPos(&x, &y)) {
 		SendInput("^v")
 		return
 	}

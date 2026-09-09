@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2026/04/30
- * @version 1.4.2
+ * @date 2026/09/08
+ * @version 1.4.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -28,9 +28,8 @@ class block {
             }
         if args = "on" || args = "off"
             {
-                UserSettings := CLSID_Objs.clone("UserSettings")
-                checkIni := UserSettings.block_aware
-                if checkIni = "false"
+                block_aware := CLSID_Objs.loadProp("UserSettings", "block_aware")
+                if block_aware = "false"
                     {
                         alert := MsgBox("
                         (
@@ -39,7 +38,9 @@ class block {
                             Would you like to be alerted of this again in the future?
                         )", "Block Mode Warning", "4 48 4096")
                         if alert = "No" {
+                            UserSettings := CLSID_Objs.load("UserSettings")
                             UserSettings.block_aware := true
+                            UserSettings := ""
                         }
                     }
             }
