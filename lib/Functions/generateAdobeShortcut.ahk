@@ -19,9 +19,17 @@ generateAdobeShortcut(adobeName, adobeYear) {
         errorLog(ValueError("Incorrect Value set in Parameter #2", -1, adobeName),,, 1)
     }
     isBeta := ["premIsBeta", "aeIsBeta", "psIsBeta"]
-    betas := CLSID_Objs.loadProp("UserSettings", isBeta)
+    try betas := CLSID_Objs.loadProp("UserSettings", isBeta)
+    catch {
+        UserSettings := UserPref(true)
+    }
+    if !IsSet(betas) {
+        betas := Map()
+        betas["premIsBeta"] := UserSettings.premIsBeta, betas["aeIsBeta"] := UserSettings.aeIsBeta, betas["psIsBeta"] := UserSettings.psIsBeta
+    }
     switch adobeName {
         case "Adobe Premiere Pro", "Adobe After Effects":
+            shortName :=
             ;// determining some variables
             ahkEXE     := (adobeName = "Adobe Premiere Pro") ? adobeName ".exe" : "AfterFX.exe"
             ahkEXEBeta := (adobeName = "Adobe Premiere Pro") ? adobeName " (Beta).exe" : "AfterFX (Beta).exe"
@@ -29,16 +37,12 @@ generateAdobeShortcut(adobeName, adobeYear) {
             ;// determining if we need to include an additional folder for AE
             aeFolder := (adobeName = "Adobe After Effects") ? "Support Files\" : ""
             ;// the location of the exe we're generating a shortcut for
-            exeLocation := (betas[%shortName%IsBeta] = false || betas[%shortName%IsBeta] = "false") ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" aeFolder ahkEXE
+            exeLocation := (betas[shortName "IsBeta"] = false || betas[shortName "IsBeta"] = "false") ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" aeFolder ahkEXE
                                                                        : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" aeFolder ahkEXEBeta
         case "Adobe Photoshop":
             ahkEXE     := InStr(adobeName, "Adobe ",, 1, 1) ? SubStr(adobeName, InStr(adobeName, A_Space,, 1, 1)+1) ".exe"        : adobeName ".exe"
             ahkEXEBeta := InStr(adobeName, "Adobe ",, 1, 1) ? SubStr(adobeName, InStr(adobeName, A_Space,, 1, 1)+1) " (Beta).exe" : adobeName "(Beta).exe"
             shortName  := "ps"
-            /* ;// determining some variables
-            ;// the location of the exe we're generating a shortcut for
-            exeLocation := (betas[%shortName%IsBeta] = false || betas[%shortName%IsBeta] = "false") ? A_ProgramFiles "\Adobe\" adobeName A_Space adobeYear "\" ahkEXE
-                                                                       : A_ProgramFiles "\Adobe\" adobeName A_Space "(Beta)\" ahkEXEBeta */
             ;// default to latest non beta instead of using usersettings
             full := false, beta := false
             years := Map()

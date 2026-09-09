@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/09/09
- * @version 2.5.37
+ * @version 2.5.37.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1627,6 +1627,7 @@ class Prem {
                 if !this.isClipSelected() {
                     keys.allWait(keyswait)
                     blocker.Off()
+                    notifyExt.showIfNotExist('wheelEditNoClip',, "No clip currently selected. Aborting...",,,, "DUR=3")
                     return
                 }
                 effCtrlAct := premUIA_Values.__isUiaElementActive('effectControls', premUIA)

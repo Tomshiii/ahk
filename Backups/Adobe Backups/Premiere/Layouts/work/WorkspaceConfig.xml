@@ -34,8 +34,9 @@
 <key>FilePaths</key>
 <array>
 <array.type><ustring/></array.type>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\ArchivedLayouts\UserWorkspace_1.xml</ustring>
 <ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
 </array>
 </prop.pair>
 <prop.pair>
@@ -61,10 +62,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>-31</int>
-<int type='signed' size='32'>3382</int>
-<int type='signed' size='32'>1429</int>
+<int type='signed' size='32'>485</int>
+<int type='signed' size='32'>155</int>
+<int type='signed' size='32'>3874</int>
+<int type='signed' size='32'>1611</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -77,16 +78,18 @@
 <key>ModifiedTimes</key>
 <array>
 <array.type><string/></array.type>
-<string>20260810T234247.874367</string>
-<string>20260811T021808.585148</string>
+<string>20260811T034139.757304</string>
+<string>20260811T034139.749298</string>
+<string>20260908T063857.608466</string>
 </array>
 </prop.pair>
 <prop.pair>
 <key>UserNames</key>
 <array>
 <array.type><ustring/></array.type>
-<ustring>2023_work - multicam</ustring>
+<ustring>work_2026</ustring>
 <ustring>$$$/Premiere/FrontEnd/Learning=Learning</ustring>
+<ustring>work_2026</ustring>
 </array>
 </prop.pair>
 <prop.pair>
@@ -97,6 +100,7 @@
 <key>WorkspaceTypes</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
+<int type='signed' size='32'>0</int>
 <int type='signed' size='32'>1</int>
 <int type='signed' size='32'>1</int>
 </array>
