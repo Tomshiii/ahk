@@ -6,7 +6,10 @@
     - Reduces the `COM` round trip time across many functions
 
 ### 📝 `prem {`
+- ✏️ Added `isClipUnderCursor()`
 - 📋 `CEP`/`UXP` functions (and parameters) are now only computed once
+- 📋 `isClipSelected()` now accepts parameter `single`
+- 📋 `toggleEnabled()` should be a 150-300ms faster to begin on average
 
 📍 `preset()`
 - ✅ Fixed function failing to determine the find box
@@ -14,8 +17,9 @@
 
 ### 📝 `ae {`
 - ✏️ Added `selectTool()`
-- 📋 `isToolSelected()` now accepts param `returnObj`
 - 📋 `CEP` functions (and parameters) are now only computed once
+- 📋 `isToolSelected()` now accepts param `returnObj`
+- 📋 `isClipSelected()` now accepts parameter `single`
 
 ### 📝 `premUIA_Values {`
 - ✏️ Added `getLivePanel()`
@@ -28,5 +32,8 @@
     - `loadProp()` is now used wherever possible to significantly reduce the `COM` round trip time
 
 ## PremiereRemote
-- ✏️ Added `getActiveSequenceName()`
+- ✏️ Added `getActiveSequenceName()`, `isSelectedSingle()`
 - 📋 Renamed `getActiveSequence()` => `getActiveSequenceID()` for parity/clarity
+
+## AERemote
+- ✏️ Added `isSelectedSingle()`

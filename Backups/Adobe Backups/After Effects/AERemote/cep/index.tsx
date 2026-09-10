@@ -199,6 +199,15 @@ export const host = {
     return comp.selectedLayers.length > 0;
   },
 
+  isSelectedSingle: function (): boolean {
+    const comp = app.project.activeItem;
+    if (!(comp && comp instanceof CompItem)) {
+      return false;
+    }
+
+    return comp.selectedLayers.length == 1;
+  },
+
   isSelectedMultiple: function (): boolean {
     const comp = app.project.activeItem;
     if (!(comp && comp instanceof CompItem)) {

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/09
- * @version 3.0.34
+ * @date 2026/09/10
+ * @version 3.0.35
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -53,7 +53,7 @@ class premUIA_Values {
      * Determine the UIA path of the active element
      * @param {Boolean} [returnObj=false] determines whether the function returns an object containing multiple useful elements or just the UIA path as a string
      * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
-     * @returns {String|Object|-1} if UIA element is unable to be set, will return `-1`. Else, depending on bool state of `returnObj` will either return a string containing just the UIA path string, or an object containing;
+     * @returns {String|Object|null} if UIA element is unable to be set, will return `null`. Else, depending on bool state of `returnObj` will either return a string containing just the UIA path string, or an object containing;
      * ```
      * obj := premUIA_Values(true)
      * obj.uiaEl     ; the uia object returned by `initialise()`
@@ -120,7 +120,7 @@ class premUIA_Values {
      * Determines if a given UIA element path is the current active UIA element
      * @param {String} [elementPath] the UIA element path you wish to check. May also be a panel name that is tracked within this class.
      * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
-     * @returns {Trilean} returns `-1` if UIA object is unable to be set, else returns bool
+     * @returns {Boolean | null} returns `null` if UIA object is unable to be set, else returns bool
      */
     static __isUiaElementActive(elementPath, UIAobj?) {
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
@@ -132,7 +132,7 @@ class premUIA_Values {
                 return true
         }
         focusedPath := this.__activeElementPath(true, (IsSet(UIAobj) ? UIAobj : ""))
-        if !isObjHasProp(focusedPath, 'Path', -1) || focusedPath.Path = null
+        if !isObjHasProp(focusedPath, 'Path', null) || focusedPath.Path = null
             return null
         return (IsSet(UIAobj) ? (InStr(focusedPath.Path, UIAobj.UIA_Path[elementPath]) = 1) : (InStr(focusedPath.Path, focusedPath.uiaEl.UIA_Path[elementPath]) = 1))
     }
@@ -141,10 +141,10 @@ class premUIA_Values {
      * Do a more basic check for premiere panel active status first to potentially return early by checking the `state` value. Generally a value of `4`/`1048580` mean a panel is active or `0`/`1048576` generally means it is inactive. This will not be comprehensive on its own as UIA elements are created/destroyed dynamically as the user interacts with the UI which may cause issues with accuracy of this function in some scenarios.
      * @param {String} [panel] the UIA element name you wish to check. Must be one of the elements tracked within this class.
      * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
-     * @returns {-1 | Boolean}
+     * @returns {null | Boolean}
      */
     static __isPremPanelActive(panel, UIAobj?) {
-        if !element := this.getLivePanel(uiaEl.UIA_Hwnd[panel], UIAobj?, &uiaEl)
+        if !element := this.getLivePanel(panel, UIAobj?, &uiaEl?)
             return null
         UIA_PREM_INACTIVE := 1048576
         UIA_PREM_ACTIVE := 1048580
@@ -171,7 +171,7 @@ class premUIA_Values {
      * Determines whether a given premiere tool is currently selected (using a UIA element)
      * @param {String} [tool] the name of the tool you wish to check. Tool names are listed below
      * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
-     * @returns {-1 | Boolean} returns `-1` when; Premiere window cannot be determined, Premiere window is not active, or UIA object is unable to be set, else returns `true`/`false`
+     * @returns {null | Boolean} returns `null` when; Premiere window cannot be determined, Premiere window is not active, or UIA object is unable to be set, else returns `true`/`false`
      * ```
      * "selectionTool", "Selection Tool",
      * "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
@@ -193,7 +193,7 @@ class premUIA_Values {
         if !uiaEl
             return null
         try returnVal := (uiaEl.UIA_Objs[tool].value = "Selected" ? true : false)
-        return (IsSet(returnVal) && (returnVal = true || returnVal = false) ? returnVal : -1)
+        return (IsSet(returnVal) && (returnVal = true || returnVal = false) ? returnVal : null)
     }
 
     /** sets UIA objects */
@@ -210,7 +210,7 @@ class premUIA_Values {
         }
 
         try premName := WinGet.PremName()
-        if (!isObjHasProp(premName, 'titleCheck', false) && isObjHasProp(premName, 'titleCheck', -1)) || premName.titleCheck != true {
+        if (!isObjHasProp(premName, 'titleCheck', false) && isObjHasProp(premName, 'titleCheck', null)) || premName.titleCheck != true {
             notifyExt.deleteIfExist("premUIAGenTree")
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
             throw Error("Failed to retrieve Premiere title.")

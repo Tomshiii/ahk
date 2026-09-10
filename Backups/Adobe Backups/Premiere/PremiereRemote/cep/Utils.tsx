@@ -36,6 +36,16 @@ export class Utils {
     return true;
   }
 
+  static isSelectedSingle() {
+    var activeSequence = app.project.activeSequence;
+    var selection = activeSequence.getSelection();
+
+    if (selection.length !== 1) {
+      return false;
+    }
+    return true;
+  }
+
   static isSelectedMultiple() {
     var activeSequence = app.project.activeSequence;
     var selection = activeSequence.getSelection();

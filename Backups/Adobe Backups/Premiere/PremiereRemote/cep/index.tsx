@@ -271,6 +271,10 @@ export const host = {
     return Utils.isSelected();
   },
 
+  isSelectedSingle: function () {
+    return Utils.isSelectedSingle();
+  },
+
   isSelectedMultiple: function () {
     return Utils.isSelectedMultiple();
   },

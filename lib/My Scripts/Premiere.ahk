@@ -464,9 +464,32 @@ $^v::
 	prem.__remoteFunc('setPlayheadPosTicks',, "ticks=" t)
 }
 
+$d::
+{
+	premActive := WinActive(prem.winTitle)
+	coord.s()
+	origMouse := obj.MousePos()
+	checkCoords := prem.__checkCoords(origMouse)
+	if !premActive || (premActive && CaretGetPos(&x, &y)) || (premActive && !checkCoords) {
+		SendInput("d")
+		return
+	}
+	timelineActive := premUIA_Values.__isPremPanelActive('timelineWindow')
+	if !timelineActive || timelineActive == null
+		return
+	isClip := prem.isClipUnderCursor(origMouse, &colour1, &colour2)
+    if isClip == null || isClip == true
+        return
+	if colour1 = prem.playhead || colour2 = prem.playhead
+		prem.__remoteUXP("custom/movePlayheadFrames",, "subtract=false", "frames=2")
+	MouseClickDrag(, origMouse.x, origMouse.y, origMouse.x+1, prem.timelineYControl, 0)
+	MouseMove(origMouse.x, origMouse.y, 0)
+}
+
 ^!+w::
 {
-	if !prem.isClipSelected()
+	selected := prem.isClipSelected()
+	if !selected || selected == null
 		return
 	if !lockedTracks := prem.determineLockedTracks()
 		return
@@ -725,7 +748,8 @@ F14 & MButton::
 	ckDir := prem.__checkPremRemoteDir('isSelected'), ckEnabled := prem.__checkPremRemoteFunc('toggleEnabled')
 	if !ckDir || !ckEnabled
 		return
-	if !prem.__remoteFunc('isSelected', true) {
+	selected := prem.isClipSelected()
+	if !selected || selected == null {
 		tool.Cust("nothing is selected")
 		KeyWait(kwait)
 		return

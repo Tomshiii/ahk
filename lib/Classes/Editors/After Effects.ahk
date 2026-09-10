@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.3
  * @author tomshi
- * @date 2026/09/09
- * @version 1.5.8
+ * @date 2026/09/10
+ * @version 1.5.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -650,12 +650,19 @@ class AE {
 
     /**
      * Checks the api to determine if a clip is selected
-     * @returns {Boolean}
+     * @param {Boolean | String} [single=false] `true`/`false`/`'multi'`
+     * @returns {Boolean | null}
      */
-    static isClipSelected() {
-        if (!this.__remoteFunc('isSelected', true) && !this.__remoteFunc('isSelectedMultiple', true))
-            return false
-        return true
+    static isClipSelected(single := false) {
+        if this.__checkPremRemoteDir("isSelected") != true
+            return null
+        switch single, 0 {
+            case false:   which := 'isSelected'
+            case true:    which := 'isSelectedSingle'
+            case "multi": which := 'isSelectedMultiple'
+        }
+        return (!IsSet(which) ? null
+                              : (this.__remoteFunc(which, true) = false ? false : true))
     }
 
     /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
@@ -663,7 +670,8 @@ class AE {
         cepSync := this.__remoteFunc('anchorToPosition', true)
         if cepSync = true
             return
-        if !this.isClipSelected() {
+        selected := this.isClipSelected()
+        if !selected || selected == null {
             errorLog(TargetError("No clip selected.", -1))
             return
         }
@@ -693,9 +701,9 @@ class AE {
     /**
      * Uses UIA to determine if the desired tool is selected. This function may fail if the desired tool is not visible on the screen.
      * @param {String} [toolName] the name of the tool as seen in UIA. ie; `Selection Tool`, `Hand Tool`, `Zoom Tool`, `Orbit Around Cursor Tool`, `Pan Under Cursor Tool`, `Dolly Towards Cursor Tool`, `Rotation Tool`, `Pan Behind (Anchor Point) Tool`, `Rectangle Tool`, `Cube Tool`, `Pen Tool`, `Horizontal Type Tool`, `Brush Tool`, `Clone Stamp Tool`, `Eraser Tool`, Object Matte Tool`, `Puppet Position Pin Tool`
-     * @returns {-1 | Boolean | Object}
+     * @returns {null | Boolean | Object}
      * if `returnObj` is `false`;
-     *   - returns `-1` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
+     *   - returns `null` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
      *   - Else returns `true`/`false`
      * if `returnObj` is `true`;
      *   - returns `{error: true, selected: unset, toolEl: unset}` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
@@ -704,18 +712,18 @@ class AE {
     static isToolSelected(toolName, returnObj := false) {
         try n := WinGet.AEName()
         if !WinActive(this.winTitle) && !WinActive(this.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
-            return (returnObj=false) ? -1 : {error: true, selected: unset, toolEl: unset}
+            return (returnObj=false) ? null : {error: true, selected: unset, toolEl: unset}
         }
         aeUIA := UIA.ElementFromHandle(this.winTitle,, false)
         try toolsTab := aeUIA.FindElement({Type:50033, Name: "ToolsTab"})
         catch {
             errorLog(TargetError("Failed to find the Tools Tab", -1))
-            return (returnObj=false) ? -1 : {error: true, selected: unset, toolEl: unset}
+            return (returnObj=false) ? null : {error: true, selected: unset, toolEl: unset}
         }
         try tool := toolsTab.FindElement({Type:50000, Name:toolName, matchmode:"Substring"})
         catch {
             errorLog(TargetError("Failed to find the desired tool", -1, toolName))
-            return (returnObj=false) ? -1 : {error: true, selected: unset, toolEl: unset}
+            return (returnObj=false) ? null : {error: true, selected: unset, toolEl: unset}
         }
         toolBool := (tool.Value = "Selected") ? true : false
         return (returnObj = false ? toolBool : {error: false, selected: toolBool, toolEl: toolsTab})
@@ -724,7 +732,7 @@ class AE {
     /**
      * This function will attempt to select the desired tool using UIA.
      * @param {String} [toolName=Selection Tool] the name of the tool as seen in UIA. ie; `Selection Tool`, `Hand Tool`, `Zoom Tool`, `Orbit Around Cursor Tool`, `Pan Under Cursor Tool`, `Dolly Towards Cursor Tool`, `Rotation Tool`, `Pan Behind (Anchor Point) Tool`, `Rectangle Tool`, `Cube Tool`, `Pen Tool`, `Horizontal Type Tool`, `Brush Tool`, `Clone Stamp Tool`, `Eraser Tool`, Object Matte Tool`, `Puppet Position Pin Tool`
-     * @returns {-1 | Boolean}
+     * @returns {null | Boolean}
      */
     static selectTool(toolName := "Selection Tool") {
         selectedObj := this.isToolSelected(toolName, true)

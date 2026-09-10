@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.3
  * @author tomshi
- * @date 2026/09/09
- * @version 2.5.37.1
+ * @date 2026/09/10
+ * @version 2.5.38
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -512,6 +512,29 @@ class Prem {
             return false
         }
         return true
+    }
+
+    /**
+     * A rudimentary check to determine if a clip might be under the cursor's position based off the timeline colours saved within the class
+     * @param {Object} [cursorObj?] a cursor coordinate object obtained from `obj.MousePos()`. will be generated if not passed
+     * @param {VarRef} [&colour1] the hexadecimal colour underneath the cursor
+     * @param {VarRef} [&colour2] the hexadecimal colour one pixel to the right of the timeline
+     * @returns {null | boolean}
+     */
+    static isClipUnderCursor(cursorObj?, &colour1?, &colour2?) {
+        coord.s()
+        cursorObj := !IsSet(cursorObj) ? obj.MousePos() : cursorObj
+        if !this.__checkCoords(cursorObj)
+            return null
+        colour1 := PixelGetColor(cursorObj.x, cursorObj.y), colour2 := PixelGetColor(cursorObj.x + 1, cursorObj.y)
+        colour := (colour1 = this.playhead || colour2 = this.playhead) ? (colour1 = this.playhead ? colour2 : colour1) : colour1
+        checkTimelineCols := (colour != this.timelineColArr[1] && colour != this.timelineColArr[2] &&
+			colour != this.timelineColArr[3] && colour != this.timelineColArr[4] &&
+			colour != this.timelineColArr[8] && colour != this.timelineColArr[9] &&
+			colour != this.timelineColArr[11] && colour != this.timelineColArr[12] &&
+			colour != this.timelineColArr[13] && colour != this.timelineColArr[14]
+        )
+        return (!checkTimelineCols ? false : true)
     }
 
     static __cepInstalled := false
@@ -1461,13 +1484,25 @@ class Prem {
     }
 
     /**
-     * Checks the api to determine if a clip is selected
-     * @returns {Boolean}
+     * Checks the api to determine if a clip is selected in a variety of ways
+     * @param {Boolean | String} [single=false] accepts; `true`/`false`/`'multi'`
+     * @returns {Boolean | null}
      */
-    static isClipSelected() {
-        if (!this.__remoteFunc('isSelected', true) && !this.__remoteFunc('isSelectedMultiple', true))
-            return false
-        return true
+    static isClipSelected(single := false) {
+        if single != false && single != true && single != "multi" {
+            ;// throw
+            errorLog(PropertyError("Incorrect Value in Parameter #1", -2, single),,, true)
+            return null
+        }
+        if this.__checkPremRemoteDir("isSelected") != true
+            return null
+        switch single, 0 {
+            case false:   which := 'isSelected'
+            case true:    which := 'isSelectedSingle'
+            case "multi": which := 'isSelectedMultiple'
+        }
+        return (!IsSet(which) ? null
+                              : (this.__remoteFunc(which, true) = false ? false : true))
     }
 
     /**
@@ -1523,7 +1558,8 @@ class Prem {
             block.Off()
             return
         }
-        if !this.isClipSelected() {
+        selected := this.isClipSelected()
+        if !selected || selected == null {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
@@ -1624,7 +1660,8 @@ class Prem {
                     return
                 }
             case ksa.prem.effectControls:
-                if !this.isClipSelected() {
+                selected := this.isClipSelected()
+                if !selected || selected == null {
                     keys.allWait(keyswait)
                     blocker.Off()
                     notifyExt.showIfNotExist('wheelEditNoClip',, "No clip currently selected. Aborting...",,,, "DUR=3")
@@ -1665,7 +1702,8 @@ class Prem {
         }
         this.__focusTimeline() ;focuses the timeline
         sleep 25
-        if !this.isClipSelected() {
+        selected := this.isClipSelected()
+        if !selected || selected == null {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
@@ -1771,7 +1809,8 @@ class Prem {
         }
         timelineAct := premUIA_Values.__isUiaElementActive('timelineWindow', premUIA)
         this.__focusTimeline() ;focuses the timeline
-        if !this.isClipSelected() {
+        selected := this.isClipSelected()
+        if !selected || selected == null {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
@@ -1847,7 +1886,8 @@ class Prem {
             block.Off()
             return
         }
-        if !this.isClipSelected() {
+        selected := this.isClipSelected()
+        if !selected || selected == null {
             block.Off()
             errorLog(Error("No clips are selected", -1),, 1)
             keys.allWait()
@@ -1997,13 +2037,10 @@ class Prem {
         ih := InputHook("L5 T4", "{NumpadEnter}{Esc}")
         ih.Start()
 
-        if !this.__checkPremRemoteDir('isSelected') {
-            ;// throw
+        if checkSelected := this.isClipSelected() == null {
             ih.Stop(), star_ih.Stop()
-            errorLog(MethodError('This function requires PremiereRemote'),,, true)
             return
         }
-        checkSelected := this.__remoteFunc('isSelected', true)
         if !premUIA := premUIA_Values.initialise() {
             ih.Stop(), star_ih.Stop()
             errorLog(TargetError('Creating UIA element failed'))
@@ -2013,6 +2050,10 @@ class Prem {
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
 		if (descernTitle || currTimelineStatus != 1) && title != gainTitle {
             textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
+            if textStatus == null {
+                ih.Stop(), star_ih.Stop()
+                return
+            }
 
             switch {
                 case (!descernTitle && currTimelineStatus != 1) && (textStatus = false):
@@ -2192,7 +2233,7 @@ class Prem {
 
     /**
      * This function will check for the blue outline around the timeline (using stored values within the class) that a focused window in premiere will ususally have.
-     * @returns {null | boolean} true/false/-1. `-1` indicates that the timeline coordinates could not be determined.
+     * @returns {null | boolean} true/false/null. `null` indicates that the timeline coordinates could not be determined.
      */
     static timelineFocusStatus() {
         if !this.timelineVals {
@@ -2240,11 +2281,14 @@ class Prem {
             }
         }
 
-        if !premUIA := premUIA_Values.initialise() {
-            keys.allWait()
+
+        if !premUIA_Values.getLivePanel("timelineWindow",, &premUIA)
             return false
-        }
         timelineNN := premUIA.UIA_Objs['timelineWindow']
+        if !middleIndex := prem.__retrieveAudLayerIndex(premUIA)
+            return false
+        scrollBarPos := middleIndex.children[middleIndex.indicies[1]].location.y
+        padding := 6
 
         ;// determine how much to account for the column left of the timeline based on premiere version
         xAddMap := Map("26.2", 204)
@@ -2265,7 +2309,7 @@ class Prem {
                 activeObj.timelineRawX     := this.timelineRawX     := timelineNN.location.x
                 activeObj.timelineRawY     := this.timelineRawY     := timelineNN.location.y
                 activeObj.timelineXValue   := this.timelineXValue   := timelineNN.location.x + timelineNN.location.w - 22  ;accounting for the scroll bars on the right side of the timeline
-                activeObj.timelineYValue   := this.timelineYValue   := timelineNN.location.y + 46                          ;accounting for the area at the top of the timeline that you can drag to move the playhead
+                activeObj.timelineYValue   := this.timelineYValue   := scrollBarPos - padding                              ;accounting for the area at the top of the timeline that you can drag to move the playhead
                 activeObj.timelineXControl := this.timelineXControl := timelineNN.location.x + xAdd                        ;accounting for the column to the left of the timeline
                 activeObj.timelineYControl := this.timelineYControl := timelineNN.location.y + timelineNN.location.h - 25  ;accounting for the scroll bars at the bottom of the timeline
                 activeObj.timelineVals     := this.timelineVals     := true
@@ -2293,11 +2337,15 @@ class Prem {
     /**
      * This function will attempt to select the desired tool using UIA.
      * @param {String} [tool=selectionTool] the name of the tool. Must correspond to a tool set within `Premiere_UIA.ahk` or the function will throw.
+     * @returns {Boolean}
      */
     static selectTool(tool := "selectionTool") {
         if !premUIA := premUIA_Values.initialise()
             return false
-        if premUIA_Values.isToolSelected(tool, premUIA) = false {
+        isSelected := premUIA_Values.isToolSelected(tool, premUIA)
+        if isSelected == null
+            return false
+        if isSelected = false {
             try premUIA.UIA_Objs[tool].Click()
             catch {
                 return false
@@ -2338,7 +2386,7 @@ class Prem {
         toolsNN := premUIA.UIA_Objs["toolsWindow"]
         projActive := premUIA_Values.__isUiaElementActive("projectsWindow", premUIA)
         textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
-        if !toolsNN || (projActive = true) || textStatus {
+        if !toolsNN || projActive == null || textStatus == null || (projActive = true) || textStatus {
             __sendOrig()
             return
         }
@@ -2434,9 +2482,14 @@ class Prem {
     /**
      * This function checks if the mouse is outside the bounds of the timeline.
      * This code should work regardless of where you have the timeline (unless you make your timeline comically small, then you may encounter issues)
-     * @returns {Boolean} if the cursor is **not** within the timeline, returns `false`. Else returns `true`
+     * @returns {Boolean} if the cursor is **not** within the timeline (or timeline coords haven't been set), returns `false`. Else returns `true`
      */
 	static __checkCoords(coordObj) {
+        if !this.__checkTimelineValues() {
+            this.getTimeline(false)
+            return false
+        }
+        coord.s()
 		if ((coordObj.x > this.timelineXValue) || (coordObj.x < this.timelineXControl) || (coordObj.y < this.timelineYValue) || (coordObj.y > this.timelineYControl))
 			return false
 		return true
@@ -2691,13 +2744,9 @@ class Prem {
      * @link https://github.com/kristenmaxwell/KMAP/blob/master/premiere/inc_premiere_subroutines.ahk#L70
      */
     static rippleCut() {
-        checkForFunc := this.__checkPremRemoteDir("isSelected")
-        if !checkForFunc && !this.__remoteFunc('isSelected', true) {
-            if !checkForFunc {
-                    errorLog(MethodError('This function requires ``PremiereRemote``', -1),, true)
-                }
+        selected := this.isClipSelected()
+        if !selected || selected == null
             return
-        }
         name := WinGet.PremName()
         MenuSelect(name.winTitle, "", "Edit", "Copy")
         MenuSelect(name.winTitle, "", "Edit", "Ripple Delete")
@@ -2710,7 +2759,8 @@ class Prem {
         cepSync := this.__remoteFunc('anchorToPosition', true)
         if cepSync = true
             return
-        if !this.isClipSelected() {
+        selected := this.isClipSelected()
+        if !selected || selected == null {
             errorLog(TargetError("No clip selected.", -1))
             return
         }
@@ -3152,7 +3202,7 @@ class Prem {
         try {
             if !timelineWindow := premUIA_Values.getLivePanel("timelineWindow",, &premUIA)
                 return false
-            timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
+            timelineUIA := timelineWindow.FindElement({Name:"Timeline", Type:50033})
             if !middleIndex := this.__retrieveAudLayerIndex(premUIA)
                 return false
 
@@ -3470,7 +3520,8 @@ class Prem {
             errorLog(MethodError('Required PremiereRemote functions missing', -1),,, true)
             return
         }
-        if !this.__remoteFunc('isSelected', true)
+        selected := this.isClipSelected(true)
+        if !selected || selected == null
             return
         this.__remoteFunc('setScale',, "scale=" String(scaleVal))
     }
@@ -3581,7 +3632,7 @@ class Prem {
     static ignoreToggleEnabledKey := false
 
     /**
-     * ### This function requires `PremiereRemote`
+     * ### This function requires `PremiereRemote` - and in the instance of needing to deselect clips may require the UXP extension
      * A function to toggle the `enabled`/`disabled` state of a clip on the desired layer. This function will operate on either the audio/video tracks depending on whether the cursor is above or below the middle dividing line.
      *
      * If you want this function to work at full speed you **CANNOT** place it under a `#HotIf`. If you do, any subsequent activations of the function will act as
@@ -3695,13 +3746,20 @@ class Prem {
         }
 
         ;// prem is dumb and sometimes ignores inputs if you're too fast
-        if this.isClipSelected() {
-            SendInput(ksa.prem.deselectAll)
-            if this.isClipSelected() {
-                sleep 50
+        selected := this.isClipSelected()
+        if selected == null {
+            blocker.Off()
+            return
+        }
+        if selected == true {
+            if this.__remoteUXP('custom/deselectAll') == null {
                 SendInput(ksa.prem.deselectAll)
                 sleep 25
-                if this.isClipSelected() {
+            }
+            sleep 16
+            if this.isClipSelected() == true {
+                sleep 50
+                if this.isClipSelected() == true {
                     errorLog(MethodError("Deselecting failed. Please try again"))
                     blocker.Off()
                     return
@@ -4112,13 +4170,9 @@ class Prem {
             SendInput(labelHotkey)
             return
         }
-        if !this.__checkPremRemoteDir("isSelected") {
-            ;// throw
-            errorLog(MethodError('This function requires ``PremiereRemote`` to adjust labels on the timeline', -1),, true)
-            return
-        }
         this.__focusTimeline()
-        if !this.__remoteFunc('isSelected', true)
+        selected := this.isClipSelected()
+        if !selected || selected == null
             return
         SendInput(labelHotkey)
     }
@@ -4706,7 +4760,8 @@ class Prem {
      * `Difference`, `Exclusion`, `Subtract`, `Divide`, `Hue`, `Saturation`, `Color`, `Luminosity`
      */
     static setBlendMode(blendModeString) {
-        if !this.isClipSelected()
+        selected := this.isClipSelected()
+        if !selected || selected == null
             return
         if !effCont := premUIA_Values.getLivePanel("effectControls")
             return

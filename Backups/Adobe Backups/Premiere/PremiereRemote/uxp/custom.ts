@@ -260,6 +260,16 @@ export async function isSelected(): Promise<boolean> {
 }
 
 /**
+ * determine if there is a single selection
+ * @returns {boolean}
+ */
+export async function isSelectedSingle(): Promise<boolean> {
+    const items = await common.getSelectedTrackItems();
+    if (items.length !== 1) return false;
+    return true;
+}
+
+/**
  * determine if there is a selection of multiple clips
  * @returns {boolean}
  */
