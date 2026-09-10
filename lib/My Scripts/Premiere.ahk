@@ -118,6 +118,8 @@ Space:: ;// make space more useful by closing certain windows
 		return
 	}
 	timelineStatus := prem.timelineFocusStatus()
+	if timelineStatus == null
+		return
 	if !timelineStatus || CaretGetPos(&x, &y) {
 		SendInput("{Space}")
 		return
@@ -157,6 +159,8 @@ Enter:: ;// close windows by double tapping enter
 				return
 			}
 			currTimelineStatus := prem.timelineFocusStatus()
+			if currTimelineStatus == null
+				return
 			try {
 				activePath := premUIA_Values.__activeElementPath(, premUIA)
 				textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
@@ -325,7 +329,10 @@ $+c:: ;// stop playback before ripple deleting as it can go funky in laggy comps
 		prem.__setTimelineValues()
 		return
 	}
-	if !prem.timelineFocusStatus() || CaretGetPos(&carx, &cary) {
+	focusStatus := prem.timelineFocusStatus()
+	if focusStatus == null
+		return
+	if !focusStatus || CaretGetPos(&carx, &cary) {
 		SendInput("+c")
 		return
 	}
@@ -358,7 +365,10 @@ $+d:: ;// deselect edit points after adding transitions
 		prem.__setTimelineValues()
 		return
 	}
-	if !prem.timelineFocusStatus() || CaretGetPos(&carx, &cary) {
+	focusStatus := prem.timelineFocusStatus()
+	if focusStatus == null
+		return
+	if !focusStatus || CaretGetPos(&carx, &cary) {
 		SendInput("+d")
 		return
 	}
@@ -484,6 +494,7 @@ $d::
 		prem.__remoteUXP("custom/movePlayheadFrames",, "subtract=false", "frames=2")
 	MouseClickDrag(, origMouse.x, origMouse.y, origMouse.x+1, prem.timelineYControl, 0)
 	MouseMove(origMouse.x, origMouse.y, 0)
+	KeyWait("d")
 }
 
 ^!+w::

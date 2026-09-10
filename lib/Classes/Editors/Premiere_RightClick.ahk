@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.3
  * @author tomshi, taranVH
- * @date 2026/09/04
- * @version 2.4.27
+ * @date 2026/09/10
+ * @version 2.4.28
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -438,7 +438,10 @@ class rbuttonPrem {
 		;// a bunch of letters being spammed while typing
 		;// unfortunately we can't use UIA to check if the program monitor is the focused window
 		;// because setting UIA vals this early can cause a tonne of lag during playback
-		if !prem.timelineFocusStatus() {
+		focusStatus := prem.timelineFocusStatus()
+		if focusStatus == null
+			return
+		if !focusStatus {
 			SendInput("{Escape}")
 			sleep 16
 		}

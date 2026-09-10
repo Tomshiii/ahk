@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/09/10
- * @version 3.0.35
+ * @version 3.0.35.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -128,8 +128,8 @@ class premUIA_Values {
             return null
         if uiaEl.UIA_Hwnd.Has(elementPath) {
             try panel := this.__isPremPanelActive(elementPath, uiaEl)
-            if IsSet(panel) && panel = true
-                return true
+            if IsSet(panel) && (panel = true || panel == null)
+                return (panel = true ? true : null)
         }
         focusedPath := this.__activeElementPath(true, (IsSet(UIAobj) ? UIAobj : ""))
         if !isObjHasProp(focusedPath, 'Path', null) || focusedPath.Path = null
@@ -144,7 +144,7 @@ class premUIA_Values {
      * @returns {null | Boolean}
      */
     static __isPremPanelActive(panel, UIAobj?) {
-        if !element := this.getLivePanel(panel, UIAobj?, &uiaEl?)
+        if !element := this.getLivePanel(panel, UIAobj?)
             return null
         UIA_PREM_INACTIVE := 1048576
         UIA_PREM_ACTIVE := 1048580
@@ -159,10 +159,13 @@ class premUIA_Values {
      */
     static getLivePanel(panel, UIAobj?, &uiaEl?) {
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
-        if !uiaEl || !uiaEl.UIA_Hwnd.Has(panel)
+        if !uiaEl || !uiaEl.UIA_Hwnd.Has(panel) {
+            errorLog(MethodError("premUIA doesn't store the following panel: " panel, -1, panel))
             return false
+        }
         try return UIA.ElementFromHandle(uiaEl.UIA_Hwnd[panel],, false)
         catch {
+            errorLog(MethodError("failed to generate live UIA panel for the following panel: " panel, -1, panel))
             return false
         }
     }

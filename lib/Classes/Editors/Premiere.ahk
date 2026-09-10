@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/09/10
- * @version 2.5.38
+ * @version 2.5.39
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -689,8 +689,10 @@ class Prem {
                 this.__isRemoteInstalled()
                 if this.__cepInstalled != true
                     return false
-                if !this.__cepFuncMap
-                    this.__setCEPfuncs()
+                if !this.__cepFuncMap {
+                    if !this.__setCEPfuncs()
+                        return false
+                }
                 return this.__cepFuncMap.Has(checkFunc)
             case "uxp":
                 if !ff := this.__splitUXPfileFunc(checkFunc)
@@ -1494,15 +1496,17 @@ class Prem {
             errorLog(PropertyError("Incorrect Value in Parameter #1", -2, single),,, true)
             return null
         }
-        if this.__checkPremRemoteDir("isSelected") != true
-            return null
-        switch single, 0 {
+        selectedFuncs := ['isSelected', 'isSelectedSingle', 'isSelectedMultiple']
+        for v in selectedFuncs {
+            if !this.__checkPremRemoteFunc(v, 'cep')
+                return null
+        }
+        switch single {
             case false:   which := 'isSelected'
             case true:    which := 'isSelectedSingle'
             case "multi": which := 'isSelectedMultiple'
         }
-        return (!IsSet(which) ? null
-                              : (this.__remoteFunc(which, true) = false ? false : true))
+        return (!IsSet(which) ? null : ((this.__remoteFunc(which, true) = false ? false : true)))
     }
 
     /**
@@ -2027,6 +2031,8 @@ class Prem {
 		title := WinGet.Title()
         descernTitle := (title = "") ? true : false
         currTimelineStatus := this.timelineFocusStatus()
+        if currTimelineStatus == null
+            return
         gainTitle := "Audio Gain"
 
         ;// because getting the UIA element of the active window is slow, we need to start an initial inputhook here for the sole purpose
@@ -2037,7 +2043,8 @@ class Prem {
         ih := InputHook("L5 T4", "{NumpadEnter}{Esc}")
         ih.Start()
 
-        if checkSelected := this.isClipSelected() == null {
+        checkSelected := this.isClipSelected()
+        if checkSelected == null {
             ih.Stop(), star_ih.Stop()
             return
         }
@@ -2137,7 +2144,8 @@ class Prem {
             this.__setTimelineValues()
             return
         }
-        if this.timelineFocusStatus() = true
+        focusStatus := this.timelineFocusStatus()
+		if focusStatus !== false
             return
         sleep 1
         SendEvent(KSA.prem.timelineWindow)
@@ -2211,7 +2219,8 @@ class Prem {
                 return
             }
 
-            if !this.timelineFocusStatus()
+            focusStatus := this.timelineFocusStatus()
+            if !focusStatus || focusStatus == null
                 return
 
             __finish()
@@ -2456,7 +2465,10 @@ class Prem {
             return
         }
         loop timeout {
-            if !this.timelineFocusStatus() {
+            focusStatus := this.timelineFocusStatus()
+            if focusStatus == null
+                return false
+            if !focusStatus {
                 this.__focusTimeline()
                 sleep 1000
                 continue
@@ -2658,7 +2670,8 @@ class Prem {
             this.getTimeline(false)
             return
         }
-        if !this.timelineFocusStatus()
+        focusStatus := this.timelineFocusStatus()
+        if !focusStatus || focusStatus == null
             return
         try premObj := CLSID_Objs.load("prem")
         catch {
@@ -2726,7 +2739,8 @@ class Prem {
             return
         }
         ;// ensure the user isn't typing
-        if CaretGetPos(&x, &y) || !this.timelineFocusStatus() {
+        focusStatus := this.timelineFocusStatus()
+        if CaretGetPos(&x, &y) || !focusStatus || focusStatus == null {
             SendInput(A_ThisHotkey)
             return
         }
@@ -3323,7 +3337,10 @@ class Prem {
             __resetCaps(storeHotkey, capslockState)
 			return
         }
-        if !this.timelineFocusStatus() {
+        focusStatus := this.timelineFocusStatus()
+        if focusStatus == null
+            return
+        if !focusStatus  {
             this.__focusTimeline()
             tool.Cust("The timeline has been focused, you will need to reactive`nthe hotkey to continue", 3.0)
             __resetCaps(storeHotkey, capslockState)
@@ -3468,7 +3485,10 @@ class Prem {
         coord.s()
 
         origMouseCords := obj.MousePos()
-        if !origMouseCords || (!this.timelineFocusStatus() && !this.__checkCoords(origMouseCords)) {
+        focusStatus := this.timelineFocusStatus()
+        if focusStatus == null
+            return
+        if !origMouseCords || (!focusStatus && !this.__checkCoords(origMouseCords)) {
             block.Off()
             return
         }
