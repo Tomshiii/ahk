@@ -4,7 +4,7 @@
  * @aeVer 26.3
  * @author tomshi
  * @date 2026/09/10
- * @version 1.5.9
+ * @version 1.5.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -150,22 +150,14 @@ class AE {
     }
     static __isNodeInstalled() => RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
     static __isRemoteInstalled() {
-        if this.__cepInstalled = null || this.__cepInstalled = true
-            return (this.__cepInstalled = null) ? false : true
-        if !this.__cepInstalled {
-            if A_ScriptName != "Core Functionality.ahk"
-                try this.__cepInstalled := CLSID_Objs.loadProp("aftereffects", "__cepInstalled")
-            if this.__cepInstalled = null || this.__cepInstalled = true
-                return (this.__cepInstalled = null) ? false : true
-            if (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP)) {
-                this.__cepInstalled := true
-                try CLSID_Objs.writeProp("aftereffects", "__cepInstalled", true)
-                return true
-            }
-            this.__cepInstalled := null
-            try CLSID_Objs.writeProp("aftereffects", "__cepInstalled", null)
-            return false
+        if this.__cepInstalled = false || this.__cepInstalled = true
+            return this.__cepInstalled
+        if (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP)) {
+            this.__cepInstalled := true
+            return true
         }
+        this.__cepInstalled := false
+        return false
     }
     static __isRegInstalledVer() => determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
 
@@ -197,7 +189,7 @@ class AE {
         get =>  SubStr(this.UserSettings.aeVer, 2, 2)
     }
 
-    static __cepInstalled := false
+    static __cepInstalled := null
     static __cepFuncMap   := false
 
     /**
@@ -280,7 +272,7 @@ class AE {
         switch {
             case (!parse.has("result") && parse.has("message")):
                 errorLog(ValueError(parse["message"],-1), whichFunc "_" paramsString)
-                MsgBox("prem.__remoteFunc() failed.`n`nMessage: " parse["message"] "`nPassed Params:" paramsString)
+                MsgBox("ae.__remoteFunc() failed.`n`nMessage: " parse["message"] "`nPassed Params:" paramsString)
                 return false
             case parse.has("result") && parse["result"] != "true" && parse["result"] != "false":
                 return parse["result"]
@@ -307,10 +299,10 @@ class AE {
         }
     }
 
-    /**
-     * This function checks the [AERemote](https://github.com/Tomshiii/PremiereRemote/tree/AE) `index` or ~UXP `.ts`~ file for the desired function
-     * @param {String} checkFunc if `cepOrUXP` is set to `cep`; the function name you wish to search for. ie `projPath`~, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`~
-     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions ~or UXP functions. Must be either `cep` or `uxp`~
+   /**
+     * This function checks the [AERemote](https://github.com/Tomshiii/PremiereRemote/tree/AE) `index` file for the desired function
+     * @param {String | Array} checkFunc the function name (or an array of function names) you wish to search for. ie `projPath`, or `["projPath", "isSelected"]`
+     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions. Must be `cep`
      * @returns {Boolean}
      */
     static __checkAERemoteFunc(checkFunc, cepOrUXP := "cep") {
@@ -319,9 +311,19 @@ class AE {
                 this.__isRemoteInstalled()
                 if this.__cepInstalled != true
                     return false
-                if !this.__cepFuncMap
-                    this.__setCEPfuncs()
-                return this.__cepFuncMap.Has(checkFunc)
+                if !this.__cepFuncMap {
+                    if !this.__setCEPfuncs()
+                        return false
+                }
+                switch Type(checkFunc), 0 {
+                    case "string": return this.__cepFuncMap.Has(checkFunc)
+                    case "array":
+                        for v in checkFunc {
+                            if !this.__cepFuncMap.Has(v)
+                                return false
+                        }
+                        return true
+                }
         }
     }
 
@@ -330,9 +332,6 @@ class AE {
         this.__isRemoteInstalled()
         if this.__cepInstalled != true
             return false
-        if A_ScriptName != "Core Functionality.ahk" {
-            try this.__cepFuncMap := CLSID_Objs.loadProp("aftereffects", "__cepFuncMap")
-        }
         if this.__cepFuncMap != false
             return this.__cepFuncMap
         readFile := FileRead(this.indexFileCEP)
@@ -367,9 +366,6 @@ class AE {
             pos += match.Len(0)
         }
         this.__cepFuncMap := funcNames
-        if A_ScriptName != "Core Functionality.ahk" {
-            try CLSID_Objs.writeProp("aftereffects", "__cepFuncMap", funcNames)
-        }
         return funcNames
     }
 

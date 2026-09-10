@@ -5,7 +5,7 @@
  * @premVer 26.3
  * @author tomshi
  * @date 2026/09/10
- * @version 2.5.39
+ * @version 2.5.40
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -166,40 +166,24 @@ class Prem {
     }
     static __isNodeInstalled() => RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
     static __isRemoteInstalled() {
-        if this.__cepInstalled = null || this.__cepInstalled = true
-            return (this.__cepInstalled = null) ? false : true
-        if !this.__cepInstalled {
-            if A_ScriptName != "Core Functionality.ahk"
-                try this.__cepInstalled := CLSID_Objs.loadProp("prem", "__cepInstalled")
-            if this.__cepInstalled = null || this.__cepInstalled = true
-                return (this.__cepInstalled = null) ? false : true
-            if (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP)) {
-                this.__cepInstalled := true
-                try CLSID_Objs.writeProp("prem", "__cepInstalled", true)
-                return true
-            }
-            this.__cepInstalled := null
-            try CLSID_Objs.writeProp("prem", "__cepInstalled", null)
-            return false
+        if this.__cepInstalled = false || this.__cepInstalled = true
+            return this.__cepInstalled
+        if (DirExist(this.remoteDirCEP) && FileExist(this.indexFileCEP)) {
+            this.__cepInstalled := true
+            return true
         }
+        this.__cepInstalled := false
+        return false
     }
     static __isUXPInstalled() {
-        if this.__uxpInstalled = null || this.__uxpInstalled = true
-            return (this.__uxpInstalled = null) ? false : true
-        if !this.__uxpInstalled {
-            if A_ScriptName != "Core Functionality.ahk"
-                try this.__uxpInstalled := CLSID_Objs.loadProp("prem", "__uxpInstalled")
-            if this.__uxpInstalled = null || this.__uxpInstalled = true
-                return (this.__uxpInstalled = null) ? false : true
-            if (DirExist(this.remoteDirUXP) && FileExist(this.indexFileUXP)) {
-                this.__uxpInstalled := true
-                try CLSID_Objs.writeProp("prem", "__uxpInstalled", true)
-                return true
-            }
-            this.__uxpInstalled := null
-            try CLSID_Objs.writeProp("prem", "__uxpInstalled", null)
-            return false
+        if this.__uxpInstalled = false || this.__uxpInstalled = true
+            return this.__uxpInstalled
+        if (DirExist(this.remoteDirUXP) && FileExist(this.indexFileUXP)) {
+            this.__uxpInstalled := true
+            return true
         }
+        this.__uxpInstalled := false
+        return false
     }
     static __isRegInstalledVer() => determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
 
@@ -518,7 +502,7 @@ class Prem {
      * A rudimentary check to determine if a clip might be under the cursor's position based off the timeline colours saved within the class
      * @param {Object} [cursorObj?] a cursor coordinate object obtained from `obj.MousePos()`. will be generated if not passed
      * @param {VarRef} [&colour1] the hexadecimal colour underneath the cursor
-     * @param {VarRef} [&colour2] the hexadecimal colour one pixel to the right of the timeline
+     * @param {VarRef} [&colour2] the hexadecimal colour one pixel to the right of the cursor
      * @returns {null | boolean}
      */
     static isClipUnderCursor(cursorObj?, &colour1?, &colour2?) {
@@ -537,9 +521,9 @@ class Prem {
         return (!checkTimelineCols ? false : true)
     }
 
-    static __cepInstalled := false
+    static __cepInstalled := null
     static __cepFuncMap   := false
-    static __uxpInstalled := false
+    static __uxpInstalled := null
     static __uxpFuncMap   := false
 
     /**
@@ -574,10 +558,7 @@ class Prem {
         this.__isRemoteInstalled()
         if this.__cepInstalled != true
             return false
-        if A_ScriptName != "Core Functionality.ahk" {
-            try this.__cepFuncMap := CLSID_Objs.loadProp("prem", "__cepFuncMap")
-        }
-        if this.__cepFuncMap != false
+        if this.__cepFuncMap !== false
             return this.__cepFuncMap
         readFile := FileRead(this.indexFileCEP)
         funcNames := Map()
@@ -611,9 +592,6 @@ class Prem {
             pos += match.Len(0)
         }
         this.__cepFuncMap := funcNames
-        if A_ScriptName != "Core Functionality.ahk" {
-            try CLSID_Objs.writeProp("prem", "__cepFuncMap", funcNames)
-        }
         return funcNames
     }
 
@@ -626,16 +604,13 @@ class Prem {
         if this.__uxpInstalled != true
             return false
 
-        if A_ScriptName != "Core Functionality.ahk" {
-            try this.__uxpFuncMap := CLSID_Objs.loadProp("prem", "__uxpFuncMap")
-        }
-        if !IsObject(this.__uxpFuncMap)
+        if !IsObject(this.__uxpFuncMap) && this.__uxpFuncMap == false
             this.__uxpFuncMap := Map()
 
         if this.__uxpFuncMap.Has(fileName)
             return this.__uxpFuncMap[fileName]
 
-        filePath := this.funcDirUXP "\" fileName
+        filePath := this.funcDirUXP "\" fileName (InStr(fileName, ".ts") ? "" : ".ts")
         if !FileExist(filePath)
             return false
 
@@ -671,10 +646,7 @@ class Prem {
             pos += match.Len(0)
         }
         this.__uxpFuncMap.Set(fileName, funcNames)
-        if A_ScriptName != "Core Functionality.ahk" {
-            try CLSID_Objs.writeProp("prem", "__uxpFuncMap", this.__uxpFuncMap)
-        }
-        return funcNames
+        return this.__uxpFuncMap[fileName]
     }
 
     /**
@@ -693,13 +665,34 @@ class Prem {
                     if !this.__setCEPfuncs()
                         return false
                 }
-                return this.__cepFuncMap.Has(checkFunc)
+                switch Type(checkFunc), 0 {
+                    case "string": return this.__cepFuncMap.Has(checkFunc)
+                    case "array":
+                        for v in checkFunc {
+                            if !this.__cepFuncMap.Has(v)
+                                return false
+                        }
+                        return true
+                }
             case "uxp":
-                if !ff := this.__splitUXPfileFunc(checkFunc)
-                    return false
-                if !fileFuncs := this.__setUXPfuncs(ff.fileName)
-                    return false
-                return fileFuncs.Has(ff.funcName)
+                switch Type(checkFunc), 0 {
+                    case "string":
+                        if !ff := this.__splitUXPfileFunc(checkFunc)
+                            return false
+                        if !fileFuncs := this.__setUXPfuncs(ff.fileName)
+                            return false
+                        return fileFuncs.Has(ff.funcName)
+                    case "array":
+                        for objs in checkFunc {
+                            if !fileFuncs  := this.__setUXPfuncs(objs.file)
+                                return false
+                            for nfunc in objs.funcs {
+                                if !fileFuncs.Has(nfunc)
+                                    return false
+                            }
+                        }
+                        return true
+                }
         }
     }
 
@@ -1285,6 +1278,10 @@ class Prem {
     static saveAndFocusTimeline() {
         if !uiaVals := premUIA_Values.initialise()
             return
+        if !this.__checkTimelineValues() {
+            if !this.getTimeline(false)
+                return false
+        }
         saveAttempt := this.save()
         if (saveAttempt = false || saveAttempt = "timeout" || saveAttempt = "timeout_nosave") {
             SendEvent("^s")
@@ -1299,17 +1296,10 @@ class Prem {
         }
         if !premUIA_Values.__isUiaElementActive("timelineWindow", uiaVals) {
             tool.Cust("Premiere should automatically refocus the timeline")
-            sleep 1000
-            return "active"
-        }
-        tool.Cust("Checking if timeline is in focus", 500, -180,, 16)
-        sleep 500
-        if this.__checkTimelineValues() {
             if !this.__waitForTimeline()
                 return false
+            return "active"
         }
-        tool.Cust("Letting Premiere catch up...", 500, -180,, 16)
-        sleep 500
         return true
     }
 
@@ -2290,9 +2280,10 @@ class Prem {
             }
         }
 
-
-        if !premUIA_Values.getLivePanel("timelineWindow",, &premUIA)
+        if !premUIA_Values.getLivePanel("timelineWindow",, &premUIA) {
+            keys.allWait()
             return false
+        }
         timelineNN := premUIA.UIA_Objs['timelineWindow']
         if !middleIndex := prem.__retrieveAudLayerIndex(premUIA)
             return false

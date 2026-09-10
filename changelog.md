@@ -7,9 +7,8 @@
 
 ### 📝 `prem {`
 - ✏️ Added `isClipUnderCursor()`
-- 📋 `CEP`/`UXP` functions (and parameters) are now only computed once
 - 📋 `isClipSelected()` now accepts parameter `single`
-- 📋 `toggleEnabled()` should be a 150-300ms faster to begin on average
+- 📋 `toggleEnabled()` should be 150-300ms faster to begin on average
 
 📍 `preset()`
 - ✅ Fixed function failing to determine the find box
@@ -17,7 +16,6 @@
 
 ### 📝 `ae {`
 - ✏️ Added `selectTool()`
-- 📋 `CEP` functions (and parameters) are now only computed once
 - 📋 `isToolSelected()` now accepts param `returnObj`
 - 📋 `isClipSelected()` now accepts parameter `single`
 
@@ -29,7 +27,6 @@
 
 ### 📝 `CLSID_Objs {`
 - ✏️ Added `writeProp()`, `loadProp()`
-    - `loadProp()` is now used wherever possible to significantly reduce the `COM` round trip time
 
 ## PremiereRemote
 - ✏️ Added `getActiveSequenceName()`, `isSelectedSingle()`

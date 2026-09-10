@@ -488,13 +488,23 @@ $d::
 	if !timelineActive || timelineActive == null
 		return
 	isClip := prem.isClipUnderCursor(origMouse, &colour1, &colour2)
-    if isClip == null || isClip == true
-        return
+	if isClip == null || isClip == true
+		return
+	KeyWait("d")
+	blocker := block_ext()
+	blocker.On()
+	SendInput(ksa.prem.deselectAll)
 	if colour1 = prem.playhead || colour2 = prem.playhead
 		prem.__remoteUXP("custom/movePlayheadFrames",, "subtract=false", "frames=2")
-	MouseClickDrag(, origMouse.x, origMouse.y, origMouse.x+1, prem.timelineYControl, 0)
+	if !prem.__getlayerMid(&midDivX, &midDivY) {
+		blocker.Off()
+		return
+	}
+	aboveOrBelow := (origMouse.y < midDivY) ? true : false
+	drag := (aboveOrBelow = true) ? prem.timelineYControl : prem.timelineYValue+1
+	MouseClickDrag(, origMouse.x, origMouse.y, origMouse.x+1, drag, 0)
 	MouseMove(origMouse.x, origMouse.y, 0)
-	KeyWait("d")
+	blocker.Off()
 }
 
 ^!+w::
