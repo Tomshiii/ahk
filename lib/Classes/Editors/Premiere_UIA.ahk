@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/10
- * @version 3.0.35.1
+ * @date 2026/09/11
+ * @version 3.0.36
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -132,8 +132,10 @@ class premUIA_Values {
                 return (panel = true ? true : null)
         }
         focusedPath := this.__activeElementPath(true, (IsSet(UIAobj) ? UIAobj : ""))
-        if !isObjHasProp(focusedPath, 'Path', null) || focusedPath.Path = null
+        if !isObjHasProp(focusedPath, 'Path', null) || focusedPath.Path = null {
+            errorLog(TypeError("focusPath isn't an object or returned null", -1))
             return null
+        }
         return (IsSet(UIAobj) ? (InStr(focusedPath.Path, UIAobj.UIA_Path[elementPath]) = 1) : (InStr(focusedPath.Path, focusedPath.uiaEl.UIA_Path[elementPath]) = 1))
     }
 
@@ -184,7 +186,8 @@ class premUIA_Values {
      * "penTool", "Pen Tool",
      * "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
      * "handTool", ["Hand Tool", "Zoom Tool"],
-     * "textTool", ["Type Tool", "Vertical Type Tool"]
+     * "textTool", ["Type Tool", "Vertical Type Tool"],
+     * "genAITool", ["Generative Media Tool", "Generative Extend Tool"]
      * ```
      */
     static isToolSelected(tool, UIAobj?) {
@@ -307,8 +310,10 @@ class premUIA_Values {
                 "slipTool", ["Slip Tool", "Slide Tool"],
                 "penTool", "Pen Tool",
                 "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
+                ; "maskTool", "Tools.ObjectSelectionLasso_18", ;// still can't discern between them for whatever reason...
                 "handTool", ["Hand Tool", "Zoom Tool"],
-                "textTool", ["Type Tool", "Vertical Type Tool"]
+                "textTool", ["Type Tool", "Vertical Type Tool"],
+                "genAITool", ["Generative Media Tool", "Generative Extend Tool"]
             )
             for k, v in tools {
                 switch Type(v), false {

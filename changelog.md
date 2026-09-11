@@ -1,4 +1,5 @@
 # <> Release 2.18.x - 
+It is highly recommended for the best performance that the user updates `Premiere Pro` to `v26.5+` as `UIA` tree generation is significantly faster than `v26.2->26.3.2`.
 
 ## Functions
 - ✏️ Added `null {`
@@ -7,8 +8,9 @@
 
 ### 📝 `prem {`
 - ✏️ Added `isClipUnderCursor()`
+- ✅ Fixed `__getlayerTopBottom()` in `v26.5`
 - 📋 `isClipSelected()` now accepts parameter `single`
-- 📋 `toggleEnabled()` should be 150-300ms faster to begin on average
+- 📋 `toggleEnabled()` should now be 150-300ms faster to begin on average
 
 📍 `preset()`
 - ✅ Fixed function failing to determine the find box

@@ -141,7 +141,7 @@ export async function getSeqFrameRate(): Promise<string | null> {
  *
  * @returns {string} The next available "Nested Sequence XX" name.
  */
-export async function getNextNestedSequenceName() {
+export async function getNextNestedSequenceName(): Promise<string | false> {
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
 
@@ -179,4 +179,12 @@ export async function getNextNestedSequenceName() {
     }
 
     return `Nested Sequence ${nextNumStr}`;
+}
+
+/**
+ * returns the rgb background colour as a json string
+ */
+export async function getBackgroundColour(): Promise<string> {
+    const uxp = require("uxp");
+    return await uxp.host.getBackgroundColor();
 }

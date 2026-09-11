@@ -27,7 +27,7 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
     fullTitle := "Adobe UXP Developer Tools" A_Space title
     WinActivate(fullTitle)
     premRemote := UIA.ElementFromHandle(fullTitle,, false)
-    if !premRow := premRemote.WaitElement({Type:50025, Name:"Premiere Pro"}, 10000) {
+    if !premRow := premRemote.WaitElement({Type:50025, Name:"Premiere"}, 10000) {
         MsgBox("Failed to find the UXP plugin window",, "T3")
         return false
     }

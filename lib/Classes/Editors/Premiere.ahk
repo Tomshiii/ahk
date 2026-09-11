@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Code is maintained for the version of Premiere listed below
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 26.3
+ * @premVer 26.5
  * @author tomshi
- * @date 2026/09/10
- * @version 2.5.40
+ * @date 2026/09/11
+ * @version 2.5.41
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -651,7 +651,7 @@ class Prem {
 
     /**
      * This function checks the [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) `index` or UXP `.ts` file for the desired function
-     * @param {String} checkFunc if `cepOrUXP` is set to `cep`; the function name you wish to search for. ie `projPath`, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
+     * @param {String | array} checkFunc if `cepOrUXP` is set to `cep`; the function name you wish to search for. ie `projPath`, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
      * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
      * @returns {Boolean}
      */
@@ -1658,11 +1658,12 @@ class Prem {
                 if !selected || selected == null {
                     keys.allWait(keyswait)
                     blocker.Off()
+                    errorLog(Error("No clip currently selected. Aborting...", -1))
                     notifyExt.showIfNotExist('wheelEditNoClip',, "No clip currently selected. Aborting...",,,, "DUR=3")
                     return
                 }
                 effCtrlAct := premUIA_Values.__isUiaElementActive('effectControls', premUIA)
-                if !effCtrlAct {
+                if !effCtrlAct || effCtrlAct == null {
                     try {
                         premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
                         Sleep(25)
@@ -1672,6 +1673,7 @@ class Prem {
                         Sleep(50)
                         delaySI(20, "^a", ksa.prem.deselectAll)
                     } catch {
+                        errorLog(Error("UIA focus failed. falling back to manual method", -1))
                         delaySI(20, window, ksa.prem.programMonitor, window, "^a", ksa.prem.deselectAll)
                     }
                 }
@@ -2281,12 +2283,15 @@ class Prem {
         }
 
         if !premUIA_Values.getLivePanel("timelineWindow",, &premUIA) {
+            errorLog(MethodError("Failed to initialise premUIA. Aborting...", -1))
             keys.allWait()
             return false
         }
         timelineNN := premUIA.UIA_Objs['timelineWindow']
-        if !middleIndex := prem.__retrieveAudLayerIndex(premUIA)
+        if !middleIndex := prem.__retrieveAudLayerIndex(premUIA) {
+            errorLog(MethodError("Failed to determine middle index object. Aborting...", -1))
             return false
+        }
         scrollBarPos := middleIndex.children[middleIndex.indicies[1]].location.y
         padding := 6
 
@@ -3292,8 +3297,12 @@ class Prem {
      */
     static __getlayerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, &midDivBot?, showError?) {
         doNotify := IsSet(showError) && (showError=true || showError=false) ? showError : true
-        topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineRawY, this.layerDivider)
-        botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+5, coords.y, this.timelineRawX+5, this.timelineYControl, this.layerDivider)
+        switch {
+            case VerCompare(this.currentSetVer, "v26.3.2") <= 0: plus := 5
+            case VerCompare(this.currentSetVer, "v26.5") >= 0: plus := 12
+        }
+        topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+plus, coords.y, this.timelineRawX+plus, this.timelineRawY, this.layerDivider)
+        botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+plus, coords.y, this.timelineRawX+plus, this.timelineYControl, this.layerDivider)
         mid := (searchMid = true) ? this.__getlayerMid(&midDivX, &midDivY, &midDivBot) : true
         if (!topDiv || !botDiv || !mid) {
             if doNotify = true && !Notify.Exist("premLayerBounds")
@@ -3682,10 +3691,13 @@ class Prem {
             __resetIgnore(*) {
                 this.ignoreToggleEnabledKey := false
             }
-
+            errorLog(TargetError("Couldn't determine Premiere Title", -1))
             return
         }
-        premUIA := premUIA_Values.initialise()
+        if !premUIA := premUIA_Values.initialise() {
+            errorLog(TargetError("Failed to initialise premUIA object.", -1))
+            return
+        }
         if allExcept != true && allExcept != false && allExcept != "all" {
             ;// throw
             errorLog(PropertyError("Parameter allExcept unaccepted value", allExcept),,, true)
@@ -3735,6 +3747,7 @@ class Prem {
         coord.s()
         if !this.__setTimelineValues() {
             blocker.Off()
+            errorLog(TargetError("Failed to set timeline values.", -1))
             return
         }
         if !this.__checkPremRemoteDir() {
@@ -3744,13 +3757,7 @@ class Prem {
         }
         checkTrack := false
         funcs := ['isSelected', 'movePlayheadFrames', 'isClipEnabled', 'toggleEnabled', 'getAudioTracks', 'getVideoTracks']
-        for v in funcs {
-            if !this.__checkPremRemoteFunc(v) {
-                checkTrack := true
-                break
-            }
-        }
-        if checkTrack = true {
+        if !this.__checkPremRemoteFunc(funcs) {
             blocker.Off()
             errorLog(MethodError('This function requires additional PremiereRemote functions for proper functionality', -1))
             return
@@ -3760,6 +3767,7 @@ class Prem {
         selected := this.isClipSelected()
         if selected == null {
             blocker.Off()
+            errorLog(ValueError("isClipSelected() returned null.", -1))
             return
         }
         if selected == true {
@@ -3777,10 +3785,16 @@ class Prem {
                 }
             }
         }
-        this.selectTool()
+        selected := this.selectTool()
+        if !selected || selected == null {
+            blocker.Off()
+            errorLog(MethodError("Selecting selection tool failed. Aborting...", -1))
+            return
+        }
         sleep 16
         if !origMouseCords := obj.MousePos() {
             blocker.Off()
+            errorLog(MethodError("Failed to gather mouse coordinates. Aborting...", -1))
             return
         }
         movedPlayhead  := false
@@ -3790,6 +3804,7 @@ class Prem {
         }
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
+            errorLog(ValueError("Cursor isn't within timeline coordinates. Aborting...", -1))
             blocker.Off()
             return
         }
@@ -3816,6 +3831,7 @@ class Prem {
         if track != "queue" {
             if !IsInteger(track) {
                 blocker.Off()
+                errorLog(ValueError("Track value isn't an integer. Aborting...", -1))
                 return
             }
             if track+offset < 1 {
