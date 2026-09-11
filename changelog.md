@@ -1,4 +1,4 @@
-# <> Release 2.18.x - 
+# <> Release 2.18.6 - Initial 26.5 Support
 It is highly recommended for the best performance that the user updates `Premiere Pro` to `v26.5+` as `UIA` tree generation is significantly faster than `v26.2->26.3.2`.
 
 ## Functions

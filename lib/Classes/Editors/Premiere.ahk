@@ -5,7 +5,7 @@
  * @premVer 26.5
  * @author tomshi
  * @date 2026/09/11
- * @version 2.5.41
+ * @version 2.5.42
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1008,7 +1008,8 @@ class Prem {
     static _scanTitle := ""
 
     /**
-     * attempts to use `ShinsImgClass` to retrieve the currently set UI hex colour
+     * attempts to use `UXP` or `ShinsImgClass` to retrieve the currently set UI hex colour
+     * @since (uxp) 26.5
      * @returns {String | null} Hexadecimal formatted string
      */
     static __retrieveUIColour() {
@@ -1016,6 +1017,21 @@ class Prem {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."))
             return null
+        }
+
+        ;// if premver greater than 26.5 we can use UXP to determine the colour
+        if VerCompare(this.currentSetVer, "v26.5") >= 0 {
+            remoteBG := prem.__remoteUXP('properties/getBackgroundColour', true)
+            if remoteBG != false && remoteBG !== null {
+                bgCol := json.parse(StrReplace(remoteBG, "\"))
+                if bgCol["value"]["red"] == bgCol["value"]["green"] && bgCol["value"]["green"] == bgCol["value"]["blue"] {
+                    switch bgCol["value"]["red"] {
+                        case "0": return Format("0x{:x}", 0x1d1d1d)
+                        case "0.11372549086809158": return Format("0x{:x}", 0x323232)
+                        case "0.8352941274642944": return Format("0x{:x}", 0xf8f8f8)
+                    }
+                }
+            }
         }
         name := WinGet.PremName()
         if !name || !isObjHasProp(name, "winTitle", false) {
