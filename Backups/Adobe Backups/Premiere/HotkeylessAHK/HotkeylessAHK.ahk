@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/08/31
- * @version 1.1.18
+ * @date 2026/09/14
+ * @version 1.1.19
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -82,12 +82,17 @@ class OtherFuncs {
     /** calls premremote func `addMatchedAdjustmentLayer()`. If it's my transform adjust layer, it also adds the transform effect */
     static addAdjustLayer(adjustmentLayerPath, makeSelection) {
         adjustName := SubStr(adjustmentLayerPath, InStr(adjustmentLayerPath, "/",, -1)+1)
-        prem.__remoteFunc('addMatchedAdjustmentLayer',, 'adjustmentLayerPath=' adjustmentLayerPath, "makeSelection=" makeSelection)
+        prem.stopPlayback()
+        prem.__remoteUXP('custom/addMatchedAdjustmentLayer', true, 'adjustmentLayerPath=' adjustmentLayerPath, "makeSelection=" makeSelection)
         if checkBool(makeSelection) != true
             return
         switch adjustName {
-            case "_transform_adjust layer": prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Geometry2")
-            case "_colour_adjust layer":    prem.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Lumetri%20Color")
+            case "_transform_adjust layer":
+                prem.__remoteUXP('custom/applyEffectOnAllSelectedClips', true, "effectName=Geometry2")
+                prem.__remoteUXP('custom/resetSelection', true) ;// hotkeys to move between keyframes won't work unless you reset the selection
+            case "_colour_adjust layer":
+                prem.__remoteUXP('custom/applyEffectOnAllSelectedClips', true, "effectName=Lumetri%20Color")
+                prem.__remoteUXP('custom/resetSelection', true) ;// hotkeys to move between keyframes won't work unless you reset the selection
         }
     }
 

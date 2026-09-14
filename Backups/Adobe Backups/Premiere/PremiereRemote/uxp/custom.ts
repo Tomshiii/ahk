@@ -68,6 +68,9 @@ export async function focusSequence(ID: string): Promise<boolean> {
     const origSeq = await project.getActiveSequence();
     const origGUID = await ppro.Guid.toString(origSeq.guid)
     const origSelection = await origSeq.getSelection();
+
+    // Extract the actual items now, before any clearSelection() call empties out origSelection along with the sequence's live selection state.
+    const origItems = await origSelection.getTrackItems();
     const guid = await ppro.Guid.fromString(ID);
     if (!guid) return false;
 
@@ -93,7 +96,15 @@ export async function focusSequence(ID: string): Promise<boolean> {
     if (String(origGUID) == String(newGUID)) {
         await origSeq.clearSelection();
         await newSeq.clearSelection();
-        return newSeq.setSelection(origSelection);
+
+        let ok = false;
+        await ppro.TrackItemSelection.createEmptySelection((newSelection) => {
+            for (const item of origItems) {
+                newSelection.addItem(item, true);
+            }
+            ok = origSeq.setSelection(newSelection);
+        });
+        return ok;
     }
     return true;
 }
@@ -240,8 +251,8 @@ export async function setZeroPoint(frames: number): Promise<void> {
     const frameRate = settings.getVideoFrameRate(); // synchronous method call
     const offset = ppro.TickTime.createWithFrameAndFrameRate(frames, frameRate);
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             compoundAction.addAction(
                 sequence.createSetZeroPointAction(offset)
             );
@@ -332,8 +343,8 @@ export async function toggleEnabled(): Promise<void> {
         states.push(await items[i].isDisabled());
     }
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (let i = 0; i < items.length; i++) {
                 const action = items[i].createSetDisabledAction(!states[i]);
                 compoundAction.addAction(action);
@@ -548,8 +559,8 @@ export async function moveClip(subtract: boolean, seconds: number): Promise<void
         endTimes.push(await items[i].getEndTime());
     }
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction: any) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction: any) => {
             for (let i = 0; i < items.length; i++) {
                 const newStart = subtract ? startTimes[i].subtract(offset) : startTimes[i].add(offset);
                 const newEnd = subtract ? endTimes[i].subtract(offset) : endTimes[i].add(offset);
@@ -572,8 +583,8 @@ export async function setAllEnabledDisabled(enabled: boolean): Promise<void> {
     const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return;
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (let i = 0; i < items.length; i++) {
                 const action = items[i].createSetDisabledAction(!enabled);
                 compoundAction.addAction(action);
@@ -639,8 +650,8 @@ export async function setupProjBin(
 
     const rootChildren = await getChildNames(rootItem);
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (const binName of ROOTBINS) {
                 if (!rootChildren.includes(binName)) {
                     compoundAction.addAction(rootItem.createBinAction(binName, false));
@@ -659,8 +670,8 @@ export async function setupProjBin(
 
     const assetsChildren = await getChildNames(assetsBin);
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (const binName of SUBBINS) {
                 if (!assetsChildren.includes(binName)) {
                     compoundAction.addAction(assetsBin.createBinAction(binName, false));
@@ -695,8 +706,8 @@ export async function setupProjBin(
     );
 
     if (!importSuccess) {
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction) => {
+        await project.lockedAccess(() => {
+            return project.executeTransaction((compoundAction) => {
                 compoundAction.addAction(rootItem.createRemoveItemAction(stagingFolder));
             }, "Remove Template Import Staging Bin");
         });
@@ -720,8 +731,8 @@ export async function setupProjBin(
             wantedNames.includes(item.name) && !otherBinChildren.includes(item.name)
         );
 
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction) => {
+        await project.lockedAccess(() => {
+            return project.executeTransaction((compoundAction) => {
                 for (const item of matches) {
                     compoundAction.addAction(otherBin.createMoveItemAction(item, otherBin));
                 }
@@ -729,8 +740,8 @@ export async function setupProjBin(
             }, "Import Template Assets Into 01_Other");
         });
     } else {
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction) => {
+        await project.lockedAccess(() => {
+            return project.executeTransaction((compoundAction) => {
                 compoundAction.addAction(rootItem.createRemoveItemAction(stagingFolder));
             }, "Remove Template Import Staging Bin");
         });
@@ -859,8 +870,8 @@ export async function setSeqSettings(params: string): Promise<string | void> {
         }
     }
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             compoundAction.addAction(sequence.createSetSettingsAction(settings));
         }, "Set Sequence Settings");
     });
@@ -890,8 +901,8 @@ export async function toggleLinearColour(enableMaxRenderQual: boolean): Promise<
         await settings.setMaxRenderQuality(true);
     }
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             compoundAction.addAction(sequence.createSetSettingsAction(settings));
         }, "Toggle Linear Colour");
     });
@@ -924,8 +935,8 @@ async function findOrCreateFolderPath(rootItem: any, folderPath: string, createI
         if (!foundFolder) {
             if (createIfMissing && isLastFolder) {
                 const project = await ppro.Project.getActiveProject();
-                project.lockedAccess(() => {
-                    project.executeTransaction((compoundAction) => {
+                await project.lockedAccess(() => {
+                    return project.executeTransaction((compoundAction) => {
                         compoundAction.addAction(currentFolder.createBinAction(folderName, false));
                     }, "Create Bin");
                 });
@@ -1014,8 +1025,8 @@ export async function moveToAssetsBin(folderPath: string): Promise<boolean> {
     const targetFolder = await findOrCreateFolderPath(rootItem, folderPath, true);
     if (!targetFolder) return false;
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (let i = 0; i < selection.length; i++) {
                 compoundAction.addAction(targetFolder.createMoveItemAction(selection[i], targetFolder));
             }
@@ -1072,8 +1083,8 @@ export async function organiseProject(): Promise<void> {
     if (!linkedCompsFolder) foldersToCreate.push("_linked comps & renders");
 
     if (foldersToCreate.length > 0) {
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction) => {
+        await project.lockedAccess(() => {
+            return project.executeTransaction((compoundAction) => {
                 for (const name of foldersToCreate) {
                     compoundAction.addAction(root.createBinAction(name, false));
                 }
@@ -1117,8 +1128,8 @@ export async function organiseProject(): Promise<void> {
     }
 
     // move items
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (const item of images) compoundAction.addAction(imageFolder.createMoveItemAction(item, imageFolder));
             for (const item of videos) compoundAction.addAction(videoFolder.createMoveItemAction(item, videoFolder));
             for (const item of linkedComps) compoundAction.addAction(linkedCompsFolder.createMoveItemAction(item, linkedCompsFolder));
@@ -1175,8 +1186,8 @@ export async function setClipComponentParam(
         paramData.push({ param, keyframe });
     }
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (const { param, keyframe } of paramData) {
                 try {
                     compoundAction.addAction(param.createSetValueAction(keyframe, true));
@@ -1257,8 +1268,8 @@ export async function changeAllAudioLevels(levelInDb: number): Promise<void> {
         paramData.push({ param, keyframe, isTimeVarying });
     }
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (const { param, keyframe, isTimeVarying } of paramData) {
                 try {
                     if (isTimeVarying) {
@@ -1368,16 +1379,16 @@ export async function setMarker(colour: string): Promise<void> {
         const match = findMarkerAtFrame(existingList, alignedPos, frameRate);
 
         if (match) {
-            project.lockedAccess(() => {
-                project.executeTransaction((compoundAction) => {
+            await project.lockedAccess(() => {
+                return project.executeTransaction((compoundAction) => {
                     compoundAction.addAction(match.createSetColorByIndexAction(colourIndex));
                 }, "Set Sequence Marker Color");
             });
             return;
         }
 
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction) => {
+        await project.lockedAccess(() => {
+            return project.executeTransaction((compoundAction) => {
                 compoundAction.addAction(sequenceMarkers.createAddMarkerAction(
                     "",
                     ppro.Marker.MARKER_TYPE_COMMENT,
@@ -1393,8 +1404,8 @@ export async function setMarker(colour: string): Promise<void> {
         const updatedList = updatedMarkers.getMarkers();
         const newMarker = findMarkerAtFrame(updatedList, alignedPos, frameRate);
         if (newMarker) {
-            project.lockedAccess(() => {
-                project.executeTransaction((compoundAction) => {
+            await project.lockedAccess(() => {
+                return project.executeTransaction((compoundAction) => {
                     compoundAction.addAction(newMarker.createSetColorByIndexAction(colourIndex));
                 }, "Set Sequence Marker Color");
             });
@@ -1438,14 +1449,14 @@ export async function setMarker(colour: string): Promise<void> {
         const existingMarker = findMarkerAtFrame(existingMarkers, clipPos, frameRate);
 
         if (existingMarker) {
-            project.lockedAccess(() => {
-                project.executeTransaction((compoundAction) => {
+            await project.lockedAccess(() => {
+                return project.executeTransaction((compoundAction) => {
                     compoundAction.addAction(existingMarker.createSetColorByIndexAction(colourIndex));
                 }, "Set Marker Color");
             });
         } else {
-            project.lockedAccess(() => {
-                project.executeTransaction((compoundAction) => {
+            await project.lockedAccess(() => {
+                return project.executeTransaction((compoundAction) => {
                     compoundAction.addAction(markers.createAddMarkerAction(
                         "",
                         ppro.Marker.MARKER_TYPE_COMMENT,
@@ -1461,8 +1472,8 @@ export async function setMarker(colour: string): Promise<void> {
             const updatedList = updatedMarkers.getMarkers();
             const newMarker = findMarkerAtFrame(updatedList, clipPos, frameRate);
             if (newMarker) {
-                project.lockedAccess(() => {
-                    project.executeTransaction((compoundAction) => {
+                await project.lockedAccess(() => {
+                    return project.executeTransaction((compoundAction) => {
                         compoundAction.addAction(newMarker.createSetColorByIndexAction(colourIndex));
                     }, "Set Marker Color");
                 });
@@ -1498,8 +1509,8 @@ export async function removeMarkerAtPlayhead(): Promise<void> {
         const match = findMarkerAtFrame(existingList, alignedPos, frameRate);
 
         if (match) {
-            project.lockedAccess(() => {
-                project.executeTransaction((compoundAction) => {
+            await project.lockedAccess(() => {
+                return project.executeTransaction((compoundAction) => {
                     compoundAction.addAction(sequenceMarkers.createRemoveMarkerAction(match));
                 }, "Remove Sequence Marker");
             });
@@ -1540,8 +1551,8 @@ export async function removeMarkerAtPlayhead(): Promise<void> {
         const match = findMarkerAtFrame(existingMarkers, clipPos, frameRate);
 
         if (match) {
-            project.lockedAccess(() => {
-                project.executeTransaction((compoundAction) => {
+            await project.lockedAccess(() => {
+                return project.executeTransaction((compoundAction) => {
                     compoundAction.addAction(markers.createRemoveMarkerAction(match));
                 }, "Remove Marker");
             });
@@ -1633,8 +1644,8 @@ export async function applyEffectOnAllSelectedClips(effectName: string): Promise
 
     if (clipData.length === 0) return false;
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (const { chain, component } of clipData) {
                 try {
                     compoundAction.addAction(chain.createInsertComponentAction(component, 2));
@@ -1911,8 +1922,8 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
                     continue;
                 }
 
-                project.lockedAccess(() => {
-                    project.executeTransaction((compoundAction) => {
+                await project.lockedAccess(() => {
+                    return project.executeTransaction((compoundAction) => {
                         compoundAction.addAction(chain.createInsertComponentAction(component, 2));
                     }, "Insert Effect");
                 });
@@ -1991,7 +2002,7 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
                     }
                 }
 
-                project.lockedAccess(() => {
+                await project.lockedAccess(() => {
                     const result = project.executeTransaction((compoundAction) => {
                         for (const pd of paramData) {
                             try {
@@ -2119,8 +2130,8 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
     // transaction as the placement doesn't work. Committing it first guarantees the
     // placed clip can never be longer than the free space already verified above,
     // so it can't overwrite anything adjacent on the target track. ---
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             const setTempInOutAction = clipProjItem.createSetInOutPointsAction(zeroTime, durationTime);
             compoundAction.addAction(setTempInOutAction);
         }, "Set temporary adjustment layer duration");
@@ -2128,8 +2139,8 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
 
     // --- Step 2: place it, now that the project item's own duration already
     // matches exactly what we need. ---
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             const placeAction = needsNewTrack
                 ? editor.createInsertProjectItemAction(rawProjItem, startTime, targetTrackIndex, audioTrackIndex, false)
                 : editor.createOverwriteItemAction(rawProjItem, startTime, targetTrackIndex, audioTrackIndex);
@@ -2139,8 +2150,8 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
 
     // --- Step 3: restore the project item's original in/out points so manually
     // dragging it in from the bin afterward isn't affected. ---
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             const restoreInOutAction = hadOriginalInOut
                 ? clipProjItem.createSetInOutPointsAction(originalInPoint, originalOutPoint)
                 : clipProjItem.createClearInOutPointsAction();
@@ -2162,7 +2173,7 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
         }
 
         if (placedClip) {
-            ppro.TrackItemSelection.createEmptySelection((selection) => {
+            await ppro.TrackItemSelection.createEmptySelection((selection) => {
                 selection.addItem(placedClip);
                 sequence.setSelection(selection);
             });
@@ -2260,8 +2271,8 @@ export async function matchSelectedClipsToLowestTrack(): Promise<void> {
         return;
     }
 
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction) => {
             for (const target of selectedEntries) {
                 if (target.item === referenceEntry.item) continue;
 
@@ -2544,8 +2555,8 @@ export async function nestSelectionReplaceNestedAudio(
     const clipProjItem = await ppro.ClipProjectItem.cast(nestedProjItem);
 
     if (subsequenceName) {
-        project.lockedAccess(() => {
-            project.executeTransaction((compoundAction) => {
+        await project.lockedAccess(() => {
+            return project.executeTransaction((compoundAction) => {
                 const renameAction = nestedProjItem.createSetNameAction(subsequenceName);
                 compoundAction.addAction(renameAction);
             }, "Rename nested sequence");
@@ -2613,7 +2624,7 @@ export async function nestSelectionReplaceNestedAudio(
             const track = await sequence.getVideoTrack(highestVideoTrackIndex);
             const item = await helpers.findItemAtStart(track, videoStart);
             if (item) {
-                ppro.TrackItemSelection.createEmptySelection((selection) => {
+                await ppro.TrackItemSelection.createEmptySelection((selection) => {
                     selection.addItem(item);
                     sequence.setSelection(selection);
                 });
@@ -2631,7 +2642,7 @@ export async function nestSelectionReplaceNestedAudio(
             const track = await sequence.getAudioTrack(audioTarget.trackIndex);
             const item = await helpers.findItemAtStart(track, audioStart);
             if (item) {
-                ppro.TrackItemSelection.createEmptySelection((selection) => {
+                await ppro.TrackItemSelection.createEmptySelection((selection) => {
                     selection.addItem(item);
                     sequence.setSelection(selection);
                 });
@@ -2709,7 +2720,7 @@ export async function anchorToPosition(): Promise<boolean> {
     const positionKeyframe = await positionParam.createKeyframe(anchorPointF);
 
     let success = false;
-    project.lockedAccess(() => {
+    await project.lockedAccess(() => {
         success = project.executeTransaction((compoundAction) => {
             if (positionIsTimeVarying) {
                 compoundAction.addAction(positionParam.createAddKeyframeAction(positionKeyframe));
@@ -2719,4 +2730,28 @@ export async function anchorToPosition(): Promise<boolean> {
     });
 
     return success;
+}
+
+/**
+ * deselects the current selection then returns it as a selection
+ */
+export async function resetSelection(): Promise<boolean> {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) return false;
+
+    const origSeq = await project.getActiveSequence();
+    const origSelection = await origSeq.getSelection();
+    const items = await origSelection.getTrackItems();
+    await origSeq.clearSelection();
+    await deselectAll();
+
+    let ok = false;
+    await ppro.TrackItemSelection.createEmptySelection((newSelection) => {
+        for (const item of items) {
+            newSelection.addItem(item, true);
+        }
+        ok = origSeq.setSelection(newSelection);
+    });
+
+    return ok;
 }

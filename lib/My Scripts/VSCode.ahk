@@ -22,7 +22,7 @@ $^x::VSCode.cut()
 ;vscodeCopyHotkey;
 $^c::VSCode.copy()
 ;vscodeHideBarHotkey;
-^b::delaySI(15, KSA.vsocde.hideSideBar, KSA.vsocde.hideActivityBar)
+^b::delaySI(15, KSA.vscode.hideSideBar, KSA.vscode.hideActivityBar)
 ;vscodeAsterixHotkey;
 ; *::discord.surround("*")
 

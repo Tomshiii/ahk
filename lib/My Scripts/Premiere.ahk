@@ -379,6 +379,8 @@ $+d:: ;// deselect edit points after adding transitions
 !w::prem.closeActiveSequence() ;// ~~didn't realise `Application > File > Close` did this natively lol~~ ahh it closes any active panel that's why. ew
 !+w::prem.closeActiveSequence(true)
 
+!r::prem.__remoteUXP('custom/resetSelection', true)
+
 ;// this unfortunately causes tonnes of slowdown/lag on chunky timelines :( - I can only assume it's fighting with `__setCurrSeq()` as well
 /* $+x:: ;// stop keyframes getting added to all tracks (I never need that, it's super annoying)
 $s:: ;// stop "add edit" adding an edit to all tracks when nothing is selected (I have +s for that, fuck off)

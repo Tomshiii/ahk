@@ -228,8 +228,8 @@ export async function placeMediaSlice(
     const needsNewTrack = scratch.needsNewTrack; // real track is always pre-existing (see below)
 
     // Trim to this pass's slice.
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction: any) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction: any) => {
             const setTempInOutAction = clipProjItem.createSetInOutPointsAction(sliceIn, sliceOut);
             compoundAction.addAction(setTempInOutAction);
         }, "Set temporary nested-item slice");
@@ -238,8 +238,8 @@ export async function placeMediaSlice(
     // Place. NOTE: placement actions take the raw ProjectItem, not the cast
     // ClipProjectItem -- passing the cast object here is what caused
     // "Invalid parameter." Only the in/out-point actions want the cast one.
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction: any) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction: any) => {
             const placeAction = needsNewTrack
                 ? editor.createInsertProjectItemAction(nestedProjItem, startTime, videoTrackIndex, audioTrackIndex, false)
                 : editor.createOverwriteItemAction(nestedProjItem, startTime, videoTrackIndex, audioTrackIndex);
@@ -248,8 +248,8 @@ export async function placeMediaSlice(
     });
 
     // Restore original in/out immediately -- each pass is self-contained.
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction: any) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction: any) => {
             const restoreAction = hadOriginalInOut
                 ? clipProjItem.createSetInOutPointsAction(originalInPoint, originalOutPoint)
                 : clipProjItem.createClearInOutPointsAction();
@@ -314,8 +314,8 @@ export async function removeItems(
     undoString: string
 ): Promise<void> {
     if (items.length === 0) return;
-    project.lockedAccess(() => {
-        project.executeTransaction((compoundAction: any) => {
+    await project.lockedAccess(() => {
+        return project.executeTransaction((compoundAction: any) => {
             ppro.TrackItemSelection.createEmptySelection((selection: any) => {
                 for (const item of items) {
                     selection.addItem(item);

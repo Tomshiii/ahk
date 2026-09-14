@@ -217,7 +217,11 @@ export const host = {
    *          description: Deselects all video and audio clips
    */
   deselectAll: function () {
-    MarkerUtils.deselectAll();
+    const activeSequence = app.project.activeSequence;
+    const selection = activeSequence.getSelection();
+    for (let i = 0; i < selection.length; i++) {
+      selection[i].setSelected(false, true);
+    }
   },
 
   /**
@@ -653,7 +657,7 @@ export const host = {
 
   setPlayheadPosTicks: function (ticks: string) {
     const currentSequence = app.project.activeSequence;
-    return currentSequence.setPlayerPosition(String(ticks));;
+    return currentSequence.setPlayerPosition(String(ticks));
   },
 
   anchorToPosition: function () {
@@ -704,6 +708,28 @@ export const host = {
     var anchorValue = anchorPointProp.getValue();
     positionProp.setValue(anchorValue, true);
     return true;
+  },
+
+   resetSelection: function () {
+      var sequence = app.project.activeSequence;
+      if (!sequence) return false;
+
+      var selection = sequence.getSelection();
+      if (!selection || selection.length === 0) return true;
+
+      var items = [];
+      for (var i = 0; i < selection.length; i++) {
+          items.push(selection[i]);
+      }
+      this.deselectAll();
+
+      // Reselect them. Only refresh the UI on the very last call.
+      for (var i = 0; i < items.length; i++) {
+          var isLast = (i === items.length - 1);
+          items[i].setSelected(1, isLast ? 1 : 0);
+      }
+
+      return true;
   }
 }
 
