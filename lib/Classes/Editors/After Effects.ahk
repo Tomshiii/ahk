@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/09/10
- * @version 1.5.10
+ * @date 2026/09/14
+ * @version 1.5.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -742,6 +742,80 @@ class AE {
             }
         }
         return true
+    }
+
+    /**
+     * Uses UIA to determine the name of the currently active panel.
+     * @returns {String | false}
+     */
+    static getActivePanelName() {
+        static PANE_TYPE   := 50033
+        static DOC_TYPE    := 50030
+        static WINDOW_TYPE := 50032
+        static CEP_CLASS   := "WC_PLUGPLUG_HTMLEXTENSION_CLASS_NAME"
+
+        try n := WinGet.AEName()
+        if !WinActive(ae.winTitle) && !WinActive(ae.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
+            return false
+        }
+
+        try focusedEl := UIA.GetFocusedElement()
+        if !IsSet(focusedEl) || !focusedEl
+            return false
+
+        el := focusedEl
+        panelName := ""
+        loop {
+            try elType := el.Type
+            catch
+                elType := 0
+            try elName := el.Name
+            catch
+                elName := ""
+
+            if (elName != "" && (elType = PANE_TYPE || elType = DOC_TYPE || elType = WINDOW_TYPE)) {
+                panelName := elName
+                break
+            }
+
+            try parentEl := el.Parent
+            catch
+                parentEl := ""
+            if !IsSet(parentEl) || !parentEl
+                break
+
+            el := parentEl
+        }
+
+        if (panelName = "")
+            return false
+
+        ; CEP panels sometimes report focus at the outer window frame, whose Name
+        ; is the internal extension ID rather than the display title. When that
+        ; happens, drill down to the actual CEP-class pane and use its Name instead.
+        if (SubStr(panelName, 1, 17) = "AE CEP Extension-") {
+            try cepPane := el.FindFirst({ClassName: CEP_CLASS}, 4)
+            catch
+                cepPane := ""
+            if (cepPane) {
+                try cepName := cepPane.Name
+                catch
+                    cepName := ""
+                if (cepName != "")
+                    panelName := cepName
+            }
+        }
+
+        switch {
+            case SubStr(panelName, 1, 3) = "AE " && SubStr(panelName, 4, 3) != "CEP":
+                return SubStr(panelName, 4)
+            case SubStr(panelName, 1, 5) = "AEGP_":
+                return SubStr(panelName, 6)
+            case SubStr(panelName, 1, strPos := StrLen("Adobe Scripting-")) = "Adobe Scripting-":
+                p := SubStr(panelName, strPos+1)
+                return (SubStr(p, -4, 4) = ".jsx") ? SubStr(p, 1, StrLen(p)-4) : p
+            default: return panelName
+        }
     }
 
     __Delete() {

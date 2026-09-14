@@ -31,3 +31,25 @@ Space::
 }
 
 SC03A & v::ae.selectTool("Selection Tool")
+
+$!w::
+{
+	aeName := WinGet.AEName()
+    checkType := (Type(aeName) != "Object")
+    if !aeName || checkType
+        return
+    checkTitle := (aeName.winTitle = "" || !aeName.wintitle), checkCanSave := (aeName.titleCheck = null)
+    if checkTitle || checkCanSave {
+        return
+    }
+    if ae.getActivePanelName() == "Timeline" {
+        SendInput("!w")
+        KeyWait("w")
+        return
+    }
+    aeUIA := UIA.ElementFromHandle(aeName.winTitle,, false)
+    timeline := aeUIA.FindElement({Type: 50033, Name: "AE Timeline"})
+    timeline.SetFocus()
+    SendInput("!w")
+    KeyWait("w")
+}
