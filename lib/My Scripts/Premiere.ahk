@@ -417,13 +417,13 @@ F14 & F23::
 	delaySI(16, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement) ;alternate way to speed up playback on the timeline with mouse buttons
 	keys.allWait()
 }
-;// next/previous frame hotkeys
+;// next/previous edit point hotkeys
 <+F21::prem.wheelEditPoint(KSA.prem.effectControls, ksa.prem.previousKeyframe, 2, true) ;goes to the next keyframe point towards the left
 <+F23::prem.wheelEditPoint(KSA.prem.effectControls, ksa.prem.nextKeyframe, 2, true) ;goes to the next keyframe towards the right
 
 <!F21::prem.wheelEditPoint(ksa.prem.timelineWindow, ksa.prem.selectedClipStart, 2, true, "{LAlt}{F21}")
 <!F23::prem.wheelEditPoint(ksa.prem.timelineWindow, ksa.prem.selectedClipEnd, 2, true, "{LAlt}{F23}")
-;// next/previous edit point hotkeys
+;// next/previous frame hotkeys
 F21::prem.wheelEditPoint(KSA.prem.timelineWindow, KSA.prem.previousEditPoint,, true) ;goes to the next edit point towards the left
 F23::prem.wheelEditPoint(KSA.prem.timelineWindow, KSA.prem.nextEditPoint,, true) ;goes to the next edit point towards the right
 

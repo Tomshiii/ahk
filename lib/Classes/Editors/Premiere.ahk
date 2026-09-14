@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5
  * @author tomshi
- * @date 2026/09/11
- * @version 2.5.42
+ * @date 2026/09/14
+ * @version 2.5.43
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1575,7 +1575,7 @@ class Prem {
             keys.allWait()
             return
         }
-        if !this.__setEffContScrollbar(effCtrlNN) {
+        if !this.__setEffContScrollbar(effCtrlNN, 0) {
             block.Off()
             keys.allWait()
             return
@@ -1678,6 +1678,7 @@ class Prem {
                     notifyExt.showIfNotExist('wheelEditNoClip',, "No clip currently selected. Aborting...",,,, "DUR=3")
                     return
                 }
+                origTimecode := this.getPlayheadPosition(false)
                 effCtrlAct := premUIA_Values.__isUiaElementActive('effectControls', premUIA)
                 if !effCtrlAct || effCtrlAct == null {
                     try {
@@ -1696,6 +1697,21 @@ class Prem {
             default: SendInput(window) ;focuses the timeline/desired window
         }
         SendInput(direction)
+        if window = ksa.prem.effectControls {
+            newTimecode := this.getPlayheadPosition(false)
+            if origTimecode == newTimecode {
+                try {
+                    effCtrl := premUIA_Values.getLivePanel("effectControls")
+                    scroll := this.__getEffContScrollBar(effCtrl)
+                }
+                this.__remoteUXP('custom/resetSelection', true)
+                sleep 100
+                SendInput(direction)
+                if IsSet(effCtrl) {
+                    try this.__setEffContScrollbar(effCtrl, scroll.percent)
+                }
+            }
+        }
         keys.allWait(keyswait)
         blocker.Off()
     }
@@ -1721,7 +1737,7 @@ class Prem {
             keys.allWait()
             return
         }
-        if !this.__setEffContScrollbar(effCtrlNN) {
+        if !this.__setEffContScrollbar(effCtrlNN, 0) {
             block.Off()
             keys.allWait()
             return
@@ -1828,7 +1844,7 @@ class Prem {
             keys.allWait()
             return
         }
-        if !this.__setEffContScrollbar(effCtrlNN) {
+        if !this.__setEffContScrollbar(effCtrlNN, 0) {
             block.Off()
             keys.allWait()
             return
@@ -1846,12 +1862,33 @@ class Prem {
     /**
      * Sets the Effect Controls scrollbar to its topmost value if it has been moved
      * @param {UIA Object} [effCont] the effect controls UIA control. it is recommended to use `effCtrlNN := UIA.ElementFromHandle(premUIA.UIA_Hwnd["effectControls"],, false)` for an updated window
+     * @param {Integer} [value=0] a percentage value of how far down the scroll list you want the mouse to click. Keep in mind if you use small values and your scroll bar is large this may have no effect
      * @param {Integer} [mouseSpeed=0] the value to be passed to `SetDefaultMouseSpeed()`. Defaults to `0`
      * @param {Integer} [timeout=1000] the time in `ms` you want to check to ensure the scrollbar has moved. Will check every `50ms`
      * @returns {Boolean}
      */
-    static __setEffContScrollbar(effCont, mouseSpeed := 0, timeout := 1000) {
+    static __setEffContScrollbar(effCont, value := 0, mouseSpeed := 0, timeout := 1000) {
         SetDefaultMouseSpeed(mouseSpeed)
+        coord.s()
+        if !scrollBar := this.__getEffContScrollBar(effCont)
+            return false
+        if scrollBar.uiaObj.value = value
+            return true
+
+        getCoords := obj.MousePos()
+        scrollY := scrollBar.uiaObj.location.y
+        scrollH := scrollBar.uiaObj.location.h
+
+        yLoc := scrollY + (value / 100) * scrollH
+        yLoc := Max(scrollY + 1, Min(scrollY + scrollH - 1, Round(yLoc)))  ; clamp inside the track
+
+        Click(scrollBar.uiaObj.location.x + (scrollBar.uiaObj.location.w / 2) A_Space yLoc)
+        Sleep 50
+        MouseMove(getCoords.x, getCoords.y, 1)
+        return true
+    }
+
+    static __getEffContScrollBar(effCont, &scrollBar?) {
         coord.s()
         try scrollBar := effCont.FindElement({Type:50014, Name:"UI_ScrollBar"})
         catch {
@@ -1859,27 +1896,15 @@ class Prem {
             notifyExt.showIfNotExist("premEffContScrollbarFind",, 'Failed to find the Effect Controls scrollbar',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return false
         }
-        if scrollBar.value = 0
-            return true
-        getCoords := obj.MousePos()
-        Click(scrollBar.location.x + (scrollBar.location.w/2) A_Space scrollBar.location.y+1)
-        sleep 50
-        MouseMove(getCoords.x, getCoords.y, 1)
 
-        hasMoved := false
-        loop (50/timeout) {
-            if scrollBar.Value = 0 {
-                hasMoved := true
-                break
-            }
-            continue
-        }
-        if !hasMoved {
-            errorLog(Error("Failed to move the Effect Controls scrollbar", -1))
-            notifyExt.showIfNotExist("premEffContScrollbarMove",, 'Failed to move the Effect Controls scrollbar',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
-            return false
-        }
-        return true
+        trackTop    := scrollBar.location.y
+        trackHeight := scrollBar.location.h
+        thumb       := scrollBar.Children[1]
+        thumbMidY   := thumb.location.y + (thumb.location.h / 2)
+
+        percent := Round(((thumbMidY - trackTop) / trackHeight)*100)
+
+        return {value: scrollBar.value, uiaObj: scrollBar, percent: percent}
     }
 
     /**
@@ -1905,7 +1930,7 @@ class Prem {
             keys.allWait()
             return
         }
-        if !this.__setEffContScrollbar(effCtrlNN) {
+        if !this.__setEffContScrollbar(effCtrlNN, 0) {
             block.Off()
             keys.allWait()
             return
@@ -4948,6 +4973,26 @@ class Prem {
         }
         try transButton := progMon.WaitElement({Type:50000, Name:"Apply Default Transitions to Selection", matchmode:"Substring"}, wait)
         return (IsSet(transButton) && transButton != false)
+    }
+
+    /**
+     * returns the current timecode that the playhead is parked. Will use either UIA or CEP to retrieve.
+     * @param {Boolean} [useRemote=false] determines whether to use PremiereRemote or UIA to retrieve the information
+     * @returns {String} a timecode formatted string; `00;00;00;00`
+     */
+    static getPlayheadPosition(useRemote := false) {
+        switch useRemote {
+            case false:
+                try {
+                    t := premUIA_Values.getLivePanel("timelineWindow")
+                    return t.Children[1].Children[1].value
+                } catch as e {
+                    ;// throw
+                    errorLog(e,,, true)
+                    return
+                }
+            case true: return prem.__remoteFunc('properties/getPlayheadPosTimecode', true)
+        }
     }
 
     __Delete() {

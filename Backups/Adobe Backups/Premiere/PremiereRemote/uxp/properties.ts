@@ -2,6 +2,7 @@
  * @fileoverview Tomshi functions for basic property returns
  */
 import * as common from "./common";
+import * as helpers from "./helperfuncs";
 
 import type {
     premierepro,
@@ -130,6 +131,31 @@ export async function getSeqFrameRate(): Promise<string | null> {
     const settings = await sequence.getSettings();
     const frameRate = settings.getVideoFrameRate();
     return frameRate.value;
+}
+
+/**
+ * returns the current playhead position as a timecode string, formatted to the active sequence's settings
+ * @returns {string | false}
+ */
+export async function getPlayheadPosTimecode(): Promise<string | false> {
+    const sequence = await common.getActiveSequence();
+    if (!sequence) {
+        console.log("[getPlayheadPosTimecode] no active sequence");
+        return false;
+    }
+
+    const settings = await sequence.getSettings();
+    const frameRate = settings.getVideoFrameRate();
+    const timeDisplay = await sequence.getSequenceVideoTimeDisplayFormat();
+    const currentPos = await sequence.getPlayerPosition();
+
+    console.log("[getPlayheadPosTimecode] frameRate.value:", frameRate.value);
+    console.log("[getPlayheadPosTimecode] timeDisplay.type:", timeDisplay.type);
+    console.log("[getPlayheadPosTimecode] currentPos.seconds:", currentPos.seconds);
+    const result = helpers.formatTickTimeAsTimecode(currentPos, frameRate, timeDisplay.type);
+    console.log("[getPlayheadPosTimecode] result:", JSON.stringify(result));
+
+    return result;
 }
 
 // get/set proxies you can't do yet in uxp...

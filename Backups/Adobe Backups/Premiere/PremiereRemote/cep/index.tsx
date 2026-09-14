@@ -730,6 +730,17 @@ export const host = {
       }
 
       return true;
+  },
+
+  getPlayheadPosTimecode: function () {
+    var currentSequence = app.project.activeSequence;
+    if (!currentSequence) return false;
+
+    var settings = currentSequence.getSettings();
+    var frameRate = settings.videoFrameRate;
+    var displayFormat = settings.videoDisplayFormat;
+
+    return currentSequence.getPlayerPosition().getFormatted(frameRate, displayFormat);
   }
 }
 

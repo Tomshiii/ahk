@@ -1,7 +1,7 @@
 # <> Release 2.18.x - 
 
 ## Functions
-- ✏️ Added `ae.getActivePanelName()`
+- ✏️ Added `ae.getActivePanelName()`, `prem.getPlayheadPosition()`
 
 ## PremiereRemote
 - ✏️ Added `resetSelection()`

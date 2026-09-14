@@ -86,13 +86,23 @@ class OtherFuncs {
         prem.__remoteUXP('custom/addMatchedAdjustmentLayer', true, 'adjustmentLayerPath=' adjustmentLayerPath, "makeSelection=" makeSelection)
         if checkBool(makeSelection) != true
             return
+        __setScroll() {
+            if !effCtrlNN := premUIA_Values.getLivePanel("effectControls") {
+                block.Off()
+                return
+            }
+            prem.__setEffContScrollbar(effCtrlNN, 100)
+        }
+
         switch adjustName {
             case "_transform_adjust layer":
                 prem.__remoteUXP('custom/applyEffectOnAllSelectedClips', true, "effectName=Geometry2")
                 prem.__remoteUXP('custom/resetSelection', true) ;// hotkeys to move between keyframes won't work unless you reset the selection
+                __setScroll()
             case "_colour_adjust layer":
                 prem.__remoteUXP('custom/applyEffectOnAllSelectedClips', true, "effectName=Lumetri%20Color")
                 prem.__remoteUXP('custom/resetSelection', true) ;// hotkeys to move between keyframes won't work unless you reset the selection
+                __setScroll()
         }
     }
 
