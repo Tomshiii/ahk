@@ -1,14 +1,15 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2025/12/20
- * @version 1.3.0
+ * @date 2026/09/15
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
 #Include Classes\Mip.ahk
 #Include Classes\errorLog.ahk
+#Include Functions\getWindowScale.ahk
 ; }
 
 class coord {
@@ -150,5 +151,48 @@ class coord {
         A_CoordModeToolTip := coordObj.HasOwnProp("tooltip") ? coordObj.tooltip : A_CoordModeToolTip
         A_CoordModeMouse   := coordObj.HasOwnProp("mouse")   ? coordObj.mouse   : A_CoordModeMouse
         A_CoordModePixel   := coordObj.HasOwnProp("pixel")   ? coordObj.pixel   : A_CoordModePixel
+    }
+
+    /**
+     * convert screen coordinates to client coordinates
+     * @param {Integer} [x] the x coordinate you wish to convert
+     * @param {Integer} [y] the y coordinate you wish to convert
+     * @param {Integer} [hwnd] the hwnd of the window to use for scaling reference
+     * @param {Number} [scale=""] a custom scale paramater. If left unset, will use the current windows scaling setting
+     * @param {VarRef} [localX] converted x value
+     * @param {VarRef} [localY] converted y value
+     * @returns {Object} {x: localX, y: localY}
+     */
+    static screenToClient(x, y, hwnd, scale := "", &localX?, &localY?) {
+        if (scale = "")
+            scale := getWindowScale(hwnd)
+        pt := Buffer(8)
+        NumPut("int", x, pt, 0)
+        NumPut("int", y, pt, 4)
+        DllCall("ScreenToClient", "ptr", hwnd, "ptr", pt)
+        localX := Round(NumGet(pt, 0, "int") / scale)
+        localY := Round(NumGet(pt, 4, "int") / scale)
+        return {x: localX, y: localY}
+    }
+
+    /**
+     * convert client coordinates to screen coordinates
+     * @param {Integer} [x] the x coordinate you wish to convert
+     * @param {Integer} [y] the y coordinate you wish to convert
+     * @param {Integer} [hwnd] the hwnd of the window to use for scaling reference
+     * @param {Number} [scale=""] a custom scale paramater. If left unset, will use the current windows scaling setting
+     * @param {VarRef} [localX] converted x value
+     * @param {VarRef} [localY] converted y value
+     * @returns {Object} {x: localX, y: localY}
+     */
+    static clientToScreen(x, y, hwnd, scale := "", &localX?, &localY?) {
+        if (scale = "")
+            scale := getWindowScale(hwnd)
+        pt := Buffer(8)
+        NumPut("int", Round(x * scale), pt, 0)
+        NumPut("int", Round(y * scale), pt, 4)
+        DllCall("ClientToScreen", "ptr", hwnd, "ptr", pt)
+        localX := NumGet(pt, 0, "int"), localY := NumGet(pt, 4, "int")
+        return {x: localX, y: localY}
     }
 }

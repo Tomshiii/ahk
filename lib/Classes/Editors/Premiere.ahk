@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5
  * @author tomshi
- * @date 2026/09/14
- * @version 2.5.43
+ * @date 2026/09/15
+ * @version 2.5.44
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3656,38 +3656,62 @@ class Prem {
 
     /**
      * determines the coordinates of all layers currently visible in the timeline
-     * @param {Number} [midDivY=""] a parameter to pass in the middle divider `y` coordinate if it has already been located
+     * @param {Number} [midDivY=unset] a parameter to pass in the middle divider `y` coordinate if it has already been located
      * @param {String} [vidOrAud="aud"] whether to operate down on the audio layers or up on the video layers
      * @param {Integer} [stopAt=false] a track number to stop at to cancel operation early. Leave as `false` to return all visible values
      * @returns {Map | false} returns a map containing `["top"]`, `["bot"]`, `["mid"]`
      */
-    static __getAllLayerPos(midDivY := "", vidOrAud := "aud", stopAt := false) {
-        ;// avoid attempting to fire unless main window is active
-        getTitle := WinGet.PremName()
-        if WinGet.Title() != getTitle.winTitle
-            return false
-
-        coord.s()
+    static __getAllLayerPos(midDivY?, vidOrAud := "aud", stopAt := false) {
+        name := WinGet.PremName()
+        if !name || !isObjHasProp(name, "winTitle", false) {
+            errorLog(UnsetError("Could not determine Premiere window title", -1))
+            return null
+        }
         if !this.__checkTimelineValues()
             return false
-        if !midDivY {
+        if !this.setShinsIMG(name.winTitle)
+            return null
+
+        if !IsSet(midDivY) || !midDivY {
             if !this.__getlayerMid(, &midDivY)
                 return false
         }
-        A := Map()
-        startPos := (vidOrAud = "aud") ? midDivY += 6 : midDivY -= 3
-        loop {
-            if IsInteger(stopAt) && stopAt != false && A_Index > stopAt
-                break
-            getLayerPos := this.__getlayerTopBottom({x: this.timelineXValue+15, y: startPos}, false,,,,,,,, false)
-            if !!getLayerPos.error
+        startPos := (vidOrAud = "aud") ? midDivY += 4 : midDivY
+        switch {
+            case VerCompare(this.currentSetVer, "v26.3.2") <= 0: plus := 5
+            case VerCompare(this.currentSetVer, "v26.5") >= 0: plus := 12
+        }
+        x := this.timelineRawX+plus
+        y := startPos
+        coord.screenToClient(x, y, this._scan.hwnd, this._scan.WindowScale, &localX, &localY)
+        coord.screenToClient(x, this.timelineYValue, this._scan.hwnd, this._scan.WindowScale, &_, &timelineYValueLocal)
+
+        startY  := (vidOrAud = "aud") ? localY : timelineYValueLocal + 1
+        heightY := (vidOrAud = "aud") ? this.timelineYControl - y : localY - timelineYValueLocal
+
+        lines := []
+        this._scan.PixelArrayRegion(this.layerDivider, &lines, localX, startY, 1, heightY)
+
+        if vidOrAud = "vid"
+            lines.Reverse()
+
+        m := Map()
+        amount := vidOrAud = "vid" ? (Mod(lines.Length, 2) = 0 ? lines.Length - 1 : lines.Length - 2) : lines.Length-1
+        loop amount {
+            i := A_Index
+            if IsInteger(stopAt) && stopAt != false && i > stopAt
                 break
             current := Map()
-            current["top"] := getLayerPos.topY, current["bot"] := getLayerPos.botY, current["mid"] := getLayerPos.topY+((getLayerPos.botY-getLayerPos.topY)/2)
-            A[A_index] := current
-            startPos := (vidOrAud = "aud") ? getLayerPos.botY + 1 : getLayerPos.topY - 1
+            tempT := coord.clientToScreen(lines[i].x, lines[i].y, this._scan.hwnd, this._scan.WindowScale)
+            tempB := coord.clientToScreen(lines[i].x, lines[i+1].y, this._scan.hwnd, this._scan.WindowScale)
+            t := tempT.y
+            b := tempB.y
+            current["top"] := vidOrAud = "aud" ? t : b
+            current["bot"] := vidOrAud = "aud" ? b : t
+            current["mid"] := Round(current["top"] + ((current["bot"] - current["top"]) / 2))
+            m[i] := current
         }
-        return A
+        return m
     }
 
     static ignoreToggleEnabledKey := false

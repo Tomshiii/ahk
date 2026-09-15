@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/08/24
- * @version 1.0.23
+ * @date 2026/09/15
+ * @version 1.0.23.1
  ***********************************************************************/
 
 #SingleInstance Force
@@ -62,7 +62,7 @@ OnExit(revoke.Bind(allRegister, UserSettings))
 adjustTray()
 
 ;// set UIA on reload
-if UserSettings.Set_UIA_on_reload = true && (isReload(getReload ?? false))
+if UserSettings.Set_UIA_on_reload = true && (isReload(getReload ?? false)) && Loading.isLoading == false
     SetTimer(doStartup, -3000)
 
 ;// ================================================================================
