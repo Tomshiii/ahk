@@ -9,6 +9,8 @@
 - 📋 `__getAllLayerPos()` now uses `ShinsImageScanClass` to determine all layers
 - 📋 `selectTool()` now accepts parameter `uiaOrPrem` & `focusTimeline`
 - 📋 `__focusTimeline()` will first attempt to use UIA to focus the timeline before falling back to previous methods
+- 📋 `toggleEnabled()` now uses `ShinsImageScanClass` to check for transition handles
+    - This and a combination of other changes listed above, as well as changes in the previous release have made this function nearly 2x faster
 
 ### 📝 `ae {`
 - ✅ Fixed `selectTool()` crashing AE

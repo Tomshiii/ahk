@@ -5,7 +5,7 @@
  * @premVer 26.5
  * @author tomshi
  * @date 2026/09/16
- * @version 2.5.46
+ * @version 2.5.47
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2408,6 +2408,7 @@ class Prem {
      * This function will attempt to select the desired tool using UIA. This function may fail for some tools as Premiere doesn't distinguish between a few of them.
      * @param {String} [tool=selectionTool] the name of the tool. Must correspond to a tool set within `Premiere_UIA.ahk` (or the tool name as reported by UIA as long as `uiaOrPrem` is set to `"prem"`) or the function will throw.
      * @param {String} [uiaOrPrem="uia"] determines if `tool` parameter is expected to be a `premUIA_Values` value, or a UIA value as reported by UIA (not including any ` ([hotkey])` generally found at the end of tool names)
+     * @param {Boolean} [focusTimeline=false] determines whether the function will attempt to focus the timeline after the desired tool has been selected.
      * @returns {Boolean | null}
      */
     static selectTool(tool := "selectionTool", uiaOrPrem := "uia", focusTimeline := false) {
@@ -2419,7 +2420,7 @@ class Prem {
         if isSelected == null
             return false
         if isSelected = false {
-            try premUIA.UIA_Objs[tool].Click()
+            try premUIA.UIA_Objs[tool].Invoke()
             catch {
                 return false
             }
@@ -3771,6 +3772,7 @@ class Prem {
      * @param {Integer | String} [ignore=false] This parameter will determine if `allExcept - "all"` or `allExcept - true` will ignore any tracks. If provided with an `integer` (1->9), any tracks greater than that value (plus your offset) will be ignored. eg. if `offset` is set to `1` and `ignore` is set to `8` tracks `9` and beyond will be ignored. Alternatively, this parameter can be set to `settings` and then the value store in `settings.ini - toggleEnabled_ignore` will be used instead. This value can be adjusted within `settingsGUI()`
      */
     static toggleEnabled(track := A_ThisHotkey, audOrVid := false, offset := 0, allExcept := false, ignore := false) {
+        start := A_TickCount
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName(), actTitle := WinGet.Title()
         if !WinActive(editors.Premiere.winTitle) || !getTitle || actTitle != getTitle.winTitle {
@@ -3788,6 +3790,8 @@ class Prem {
             errorLog(TargetError("Couldn't determine Premiere Title", -1))
             return
         }
+        if !this.setShinsIMG(getTitle.winTitle)
+            return
         if !premUIA := premUIA_Values.initialise() {
             errorLog(TargetError("Failed to initialise premUIA object.", -1))
             return
@@ -3874,14 +3878,16 @@ class Prem {
                 }
             }
         }
-        selected := this.selectTool()
-        if !selected || selected == null {
+        origTool := premUIA_Values.getSelectedTool(premUIA, false)
+        selected := this.selectTool(,, true)
+        if !selected || selected == null || !origTool || origTool == null {
             blocker.Off()
             errorLog(MethodError("Selecting selection tool failed. Aborting...", -1))
             return
         }
         sleep 16
         if !origMouseCords := obj.MousePos() {
+            this.selectTool(origTool,, true)
             blocker.Off()
             errorLog(MethodError("Failed to gather mouse coordinates. Aborting...", -1))
             return
@@ -3893,6 +3899,7 @@ class Prem {
         }
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
+            this.selectTool(origTool,, true)
             errorLog(ValueError("Cursor isn't within timeline coordinates. Aborting...", -1))
             blocker.Off()
             return
@@ -3911,6 +3918,7 @@ class Prem {
             splitHotkey := getHotkeysArr()
             if !IsInteger(GetKeyName(splitHotkey[splitHotkey.Length])) {
                 ;// throw
+                this.selectTool(origTool,, true)
                 blocker.Off()
                 errorLog(PropertyError("No track provided and final hotkey isn't a number"),,, true)
                 return
@@ -3919,11 +3927,13 @@ class Prem {
         }
         if track != "queue" {
             if !IsInteger(track) {
+                this.selectTool(origTool,, true)
                 blocker.Off()
                 errorLog(ValueError("Track value isn't an integer. Aborting...", -1))
                 return
             }
             if track+offset < 1 {
+                this.selectTool(origTool,, true)
                 blocker.Off()
                 notifyExt.showIfNotExist("premIncorrectTrackIndex", 'toggleEnabled()', 'Desired track must be greater than 1',, 'Speech Misrecognition',, 'dur=6 ts=12 bdr=Red maxW=400 pad=,,,,,,,0')
                 errorLog(ValueError("Desired track must be greater than 1", -1))
@@ -3951,22 +3961,22 @@ class Prem {
 
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
         if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, maxTracks) {
+            this.selectTool(origTool,, true)
             blocker.Off()
             errorLog(UnsetError("Couldn't determine layers"))
             return
         }
 
-        __doToggle(isAll := false) {
+        __doToggle() {
             checkStuck()
+            coord.screenToClient(origMouseCords.x, allLayers[1]["mid"], this._scan.hwnd, this._scan.WindowScale, &localX, &localY)
+            h := Max(allLayers[1]["mid"], allLayers[allLayers.Count]["mid"])-Min(allLayers[1]["mid"], allLayers[allLayers.Count]["mid"])
+            handles := this._scan.PixelRegion(this.transitionHandleInsideSquare, localX, localY, 1, h)
+            handles := (handles = false) ? this._scan.PixelRegion(this.transitionHandleHalfSquare, localX, localY, 1, h) : handles
             SendInput("{LAlt Down}{LShift Down}")
-            handles := false
             for v in whichTracks {
                 MouseMove(origMouseCords.x, allLayers[Integer(v)]["mid"], 0)
                 sleep 0
-                getPixelCol := PixelGetColor(origMouseCords.x, allLayers[Integer(v)]["mid"])
-                if getPixelCol = this.transitionHandleInsideSquare || getPixelCol = this.transitionHandleHalfSquare {
-                    handles := true
-                }
                 SendInput("{LButton}")
                 sleep 0
             }
@@ -3986,6 +3996,7 @@ class Prem {
         if ignore = "settings" {
             try ignore := CLSID_Objs.loadProp("UserSettings", "toggleEnabled_ignore")
             catch {
+                this.selectTool(origTool,, true)
                 errorLog(TargetError("Failed to determine settings value: toggleEnabled_ignore"))
                 notifyExt.showIfNotExist("premignoreSetting", 'prem.toggleEnabled()', '"Failed to determine settings value: toggleEnabled_ignore"',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                 return
@@ -4002,6 +4013,7 @@ class Prem {
                         continue
                     if ignore != false && offset+1 >= ignore {
                         checkStuck()
+                        this.selectTool(origTool,, true)
                         blocker.Off()
                         this.ignoreKey := false
                         notifyExt.showIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
@@ -4034,6 +4046,7 @@ class Prem {
                         continue
                     if ignore != false && (offset+1 >= ignore) {
                         checkStuck()
+                        this.selectTool(origTool,, true)
                         blocker.Off()
                         this.ignoreKey := false
                         notifyExt.showIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Ignore value cannot be >= your offset.',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
@@ -4059,6 +4072,7 @@ class Prem {
         SendInput(ksa.prem.deselectAll)
         sleep 25
         checkStuck()
+        this.selectTool(origTool,, true)
         blocker.Off()
         this.ignoreKey := false
     }
