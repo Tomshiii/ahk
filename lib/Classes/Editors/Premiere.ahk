@@ -5,7 +5,7 @@
  * @premVer 26.5
  * @author tomshi
  * @date 2026/09/16
- * @version 2.5.45.1
+ * @version 2.5.45.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1046,7 +1046,7 @@ class Prem {
             return null
         x := tab.location.x, y := tab.location.y
         ; convert screen coords -> client-relative coords
-        coord.screenToClient(x, y, "ahk_id " this._scan.hwnd, this._scan.WindowScale, &localX, &localY)
+        coord.screenToClient(x, y, this._scan.hwnd, this._scan.WindowScale, &localX, &localY)
         return Format("0x{:x}", this._scan.GetPixel(localX, localY, true))
     }
 
@@ -1112,7 +1112,7 @@ class Prem {
         centerX := button.location.x + Round((button.Location.w/2))
         centerY := button.location.y + Round((button.Location.h/2))
         ; convert screen coords -> client-relative coords
-        coord.screenToClient(centerX, centerY, "ahk_id " this._scan.hwnd, this._scan.WindowScale, &localX, &localY)
+        coord.screenToClient(centerX, centerY, this._scan.hwnd, this._scan.WindowScale, &localX, &localY)
 
         centerPix := this._scan.GetPixel(localX, localY, true)
         abovePix  := this._scan.GetPixel(localX, localY - 4, true)
