@@ -9,6 +9,7 @@
 - 📋 `__getAllLayerPos()` now uses `ShinsImageScanClass` to determine all layers
 
 ### 📝 `ae {`
+- ✅ Fixed `selectTool()` crashing AE
 - ✏️ Added `ae.getActivePanelName()`
 - 📋 `__remoteFunc()` now uses `cmd.httpGet()` instead of `cmd.result()` to significantly reduce the response time
 

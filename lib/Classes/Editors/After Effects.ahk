@@ -4,7 +4,7 @@
  * @aeVer 26.5
  * @author tomshi
  * @date 2026/09/16
- * @version 1.5.12
+ * @version 1.5.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -708,7 +708,7 @@ class AE {
         if !WinActive(this.winTitle) && !WinActive(this.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
             return (returnObj=false) ? null : {error: true, selected: unset, toolEl: unset}
         }
-        aeUIA := UIA.ElementFromHandle(this.winTitle,, false)
+        aeUIA := UIA.ElementFromHandle(n.winTitle " " this.winTitle,, false)
         try toolsTab := aeUIA.FindElement({Type:50033, Name: "ToolsTab"})
         catch {
             errorLog(TargetError("Failed to find the Tools Tab", -1))
@@ -733,7 +733,7 @@ class AE {
         if selectedObj.error = true
             return null
         if selectedObj.selected = false {
-            try selectedObj.toolEl.FindElement({Type:50000, Name: toolName, matchmode:"Substring"}).Click()
+            try selectedObj.toolEl.FindElement({Type:50000, Name: toolName, matchmode:"Substring"}).Invoke()
             catch {
                 errorLog(TargetError("Failed to click the desired tool.", -1, toolName))
                 return false
