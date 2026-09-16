@@ -5,7 +5,7 @@
  * @premVer 26.5
  * @author tomshi
  * @date 2026/09/16
- * @version 2.5.45.2
+ * @version 2.5.46
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2186,6 +2186,17 @@ class Prem {
 
     /** This function will determine if the timeline is already focused or not. If it isn't, it will focus it. */
 	static __focusTimeline() {
+        __uiaMethod() {
+            try {
+                if !t := premUIA_Values.getLivePanel('timelineWindow')
+                    return false
+                t.FindElement({Type: 50000, Name: "UI_Button"},, -1).Invoke()
+                return true
+            }
+            return false
+        }
+        if __uiaMethod()
+            return
         if !this.timelineVals {
             this.__setTimelineValues()
             return
@@ -2394,13 +2405,16 @@ class Prem {
     }
 
     /**
-     * This function will attempt to select the desired tool using UIA.
-     * @param {String} [tool=selectionTool] the name of the tool. Must correspond to a tool set within `Premiere_UIA.ahk` or the function will throw.
-     * @returns {Boolean}
+     * This function will attempt to select the desired tool using UIA. This function may fail for some tools as Premiere doesn't distinguish between a few of them.
+     * @param {String} [tool=selectionTool] the name of the tool. Must correspond to a tool set within `Premiere_UIA.ahk` (or the tool name as reported by UIA as long as `uiaOrPrem` is set to `"prem"`) or the function will throw.
+     * @param {String} [uiaOrPrem="uia"] determines if `tool` parameter is expected to be a `premUIA_Values` value, or a UIA value as reported by UIA (not including any ` ([hotkey])` generally found at the end of tool names)
+     * @returns {Boolean | null}
      */
-    static selectTool(tool := "selectionTool") {
+    static selectTool(tool := "selectionTool", uiaOrPrem := "uia", focusTimeline := false) {
         if !premUIA := premUIA_Values.initialise()
             return false
+        if uiaOrPrem = "prem"
+            tool := premUIA_Values.toolsMap.Has(tool) ? premUIA_Values.toolsMap[tool] : tool
         isSelected := premUIA_Values.isToolSelected(tool, premUIA)
         if isSelected == null
             return false
@@ -2410,6 +2424,8 @@ class Prem {
                 return false
             }
         }
+        if focusTimeline = true
+            this.__focusTimeline()
         return true
     }
 

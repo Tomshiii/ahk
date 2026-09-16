@@ -495,7 +495,7 @@ $d::
 	KeyWait("d")
 	blocker := block_ext()
 	blocker.On()
-	SendInput(ksa.prem.deselectAll)
+	prem.__remoteFunc('deselectAll')
 	if colour1 = prem.playhead || colour2 = prem.playhead
 		prem.__remoteUXP("custom/movePlayheadFrames",, "subtract=false", "frames=2")
 	if !prem.__getlayerMid(&midDivX, &midDivY) {
@@ -504,9 +504,14 @@ $d::
 	}
 	aboveOrBelow := (origMouse.y < midDivY) ? true : false
 	drag := (aboveOrBelow = true) ? prem.timelineYControl : prem.timelineYValue+1
+	try origTool := premUIA_Values.getSelectedTool(, false)
+	try prem.selectTool("selectionTool",, true)
 	MouseClickDrag(, origMouse.x, origMouse.y, origMouse.x+1, drag, 0)
+	if origTool != false && origTool !== null
+		prem.selectTool(origTool,, true)
 	MouseMove(origMouse.x, origMouse.y, 0)
 	blocker.Off()
+	prem.__focusTimeline()
 }
 
 ^!+w::
