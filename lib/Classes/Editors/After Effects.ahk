@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/09/14
- * @version 1.5.11
+ * @date 2026/09/16
+ * @version 1.5.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -212,7 +212,7 @@ class AE {
         if !this.__checkRemoteParams(whichFunc, params, "cep")
             return false
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
-            errorLog(Error("Core Functionality.ahk is not open but is required.", -1),, true)
+            errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
             return false
         }
 
@@ -249,16 +249,14 @@ class AE {
         }
 
         paramsString := this.__sanitiseParams(params)
-        sendcommand := Format('curl "http://localhost:{3}/{1}?{2}"', whichFunc, String(paramsString), this.portCEP)
-        if !needResult {
-            Run(sendcommand,, "Hide")
-            return true
-        }
-        if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
-            if WinExist(this.winTitle) ;// will sometimes still fire after ae is closed
-                errorLog(Error("1. Unable to connect to localhost server. AERemote Extension may not be running.", -1),, true)
+        sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portCEP) : Format("http://localhost:{2}/{1}", whichFunc, this.portCEP)
+        getResp := cmd.httpGet(sendcommand)
+
+        if InStr(getResp, "Failed to connect to localhost") {
+            if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
+                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1),, true)
             else
-                errorLog(Error("1. remoteFunc was called but AE no longer appears to be open.", -1))
+                errorLog(Error("1. remoteFunc was called but Premiere no longer appears to be open.", -1))
             return false
         }
         try parse := JSON.parse(getResp)

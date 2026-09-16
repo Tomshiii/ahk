@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/09/14
- * @version 1.1.19
+ * @date 2026/09/16
+ * @version 1.1.20
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -98,10 +98,12 @@ class OtherFuncs {
             case "_transform_adjust layer":
                 prem.__remoteUXP('custom/applyEffectOnAllSelectedClips', true, "effectName=Geometry2")
                 prem.__remoteUXP('custom/resetSelection', true) ;// hotkeys to move between keyframes won't work unless you reset the selection
+                prem.__remoteUXP('custom/resetSelection', true)
                 __setScroll()
             case "_colour_adjust layer":
                 prem.__remoteUXP('custom/applyEffectOnAllSelectedClips', true, "effectName=Lumetri%20Color")
                 prem.__remoteUXP('custom/resetSelection', true) ;// hotkeys to move between keyframes won't work unless you reset the selection
+                prem.__remoteUXP('custom/resetSelection', true)
                 __setScroll()
         }
     }

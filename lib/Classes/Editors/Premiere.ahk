@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5
  * @author tomshi
- * @date 2026/09/15
- * @version 2.5.44
+ * @date 2026/09/16
+ * @version 2.5.45
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -755,7 +755,7 @@ class Prem {
     /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) function
      * @param {String} whichFunc the function you wish to call
-     * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window.
+     * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window. If you are chaining together multiple CEP functions and require one to finish before the next begins it is recommended to set this value to `true` even if you do not require a value.
      * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
      *
      * ## Warning
@@ -772,7 +772,7 @@ class Prem {
         if !this.__checkRemoteParams(whichFunc, params, "cep")
             return false
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
-            errorLog(Error("Core Functionality.ahk is not open but is required.", -1),, true)
+            errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
             return false
         }
 
@@ -809,14 +809,12 @@ class Prem {
         }
 
         paramsString := this.__sanitiseParams(params)
-        sendcommand := Format('curl "http://localhost:{3}/{1}?{2}"', whichFunc, String(paramsString), this.portCEP)
-        if !needResult {
-            Run(sendcommand,, "Hide")
-            return true
-        }
-        if InStr(getResp := cmd.result(sendcommand), "Failed to connect to localhost") {
+        sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portCEP) : Format("http://localhost:{2}/{1}", whichFunc, this.portCEP)
+        getResp := cmd.httpGet(sendcommand)
+
+        if InStr(getResp, "Failed to connect to localhost") {
             if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
-                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1),, true)
+                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1))
             else
                 errorLog(Error("1. remoteFunc was called but Premiere no longer appears to be open.", -1))
             return false
@@ -824,7 +822,7 @@ class Prem {
         try parse := JSON.parse(getResp)
         catch {
             if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
-                errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
+                errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
             else
                 errorLog(Error("2. remoteFunc was called but Premiere no longer appears to be open.", -1))
             return false
@@ -906,7 +904,7 @@ class Prem {
     /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) uxp function. This function is in testing as `PremiereRemote` uxp functionality is still in development
      * @param {String} whichFunc the function you wish to call. **must include the file name**, eg. `common/getActiveSequenceName`
-     * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window.
+     * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window. If you are chaining together multiple UXP functions and require one to finish before the next begins it is recommended to set this value to `true` even if you do not require a value.
      * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
      *
      * ## Warning
@@ -917,7 +915,7 @@ class Prem {
      */
     static __remoteUXP(whichFunc, needResult := false, params*) {
         if !InStr(whichFunc, "/") {
-            errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -1), whichFunc,, true)
+            errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -1, whichFunc), whichFunc,, true)
             return false
         }
         if !this.__checkPremRemoteDir(whichFunc, "uxp") {
@@ -927,7 +925,7 @@ class Prem {
         if !this.__checkRemoteParams(whichFunc, params, "uxp")
             return
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
-            errorLog(Error("Core Functionality.ahk is not open but is required.", -1),, true)
+            errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
             return false
         }
 
@@ -964,17 +962,21 @@ class Prem {
         }
 
         paramsString := prem.__sanitiseParams(params)
-        sendcommand := Format('curl -X GET "http://localhost:{3}/{1}?{2}"', whichFunc, String(paramsString), this.portUXP)
-        if !needResult {
-            Run(sendcommand,, "Hide")
-            return true
+        sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portUXP) : Format("http://localhost:{2}/{1}", whichFunc, this.portUXP)
+        getResp := cmd.httpGet(sendcommand)
+
+        if InStr(getResp, "Premiere Pro is not connected") {
+            if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
+                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote UXP Extension may not be running.", -1))
+            else
+                errorLog(Error("1. remoteUXP was called but Premiere no longer appears to be open.", -1))
+            return false
         }
-        getResp := cmd.result(sendcommand)
         try parse := JSON.parse(getResp)
         catch as e {
             if !InStr(e.Message, "Malformed JSON - unrecognized character") {
                 if WinExist(this.winTitle)
-                    errorLog(Error("Unable to connect to localhost server. PremiereRemote Extension may not be running."),, true)
+                    errorLog(Error("Unable to connect to localhost server. PremiereRemote Extension may not be running."))
                 else
                     errorLog(Error("remoteFunc was called but Premiere no longer appears to be open.", -1))
                 return false
@@ -1708,7 +1710,19 @@ class Prem {
                 sleep 100
                 SendInput(direction)
                 if IsSet(effCtrl) {
-                    try this.__setEffContScrollbar(effCtrl, scroll.percent)
+                    try {
+                        if scroll.percent != 0 {
+                            origPer := scroll.percent
+                            loop 3 {
+                                this.__setEffContScrollbar(effCtrl, origPer)
+                                newScroll := this.__getEffContScrollBar(effCtrl)
+                                if newScroll.percent != scroll.percent
+                                    break
+                                origPer += 20
+                            }
+
+                        }
+                    }
                 }
             }
         }
@@ -3721,7 +3735,7 @@ class Prem {
      * A function to toggle the `enabled`/`disabled` state of a clip on the desired layer. This function will operate on either the audio/video tracks depending on whether the cursor is above or below the middle dividing line.
      *
      * If you want this function to work at full speed you **CANNOT** place it under a `#HotIf`. If you do, any subsequent activations of the function will act as
-     * individual activations and the `inputhook` simply will not do its job. I don't know why, it hurts my brain. You also **CANNOT** activate this function with a <kbd><!</kbd> you **MUST** simply use <kbd>!</kbd>. ahk is weird. Misplacing these activation keys may result in slow performance with this function due to autohotkey
+     * individual activations and the `inputhook` simply will not do its job. I don't know why, it hurts my brain. You also **CANNOT** activate this function with a <kbd>\<!</kbd> you **MUST** simply use <kbd>!</kbd>. ahk is weird. Misplacing these activation keys may result in slow performance with this function due to autohotkey
      *
      * I recommend activating this function like so;
      * ```
@@ -3813,11 +3827,6 @@ class Prem {
         if !this.__setTimelineValues() {
             blocker.Off()
             errorLog(TargetError("Failed to set timeline values.", -1))
-            return
-        }
-        if !this.__checkPremRemoteDir() {
-            blocker.Off()
-            errorLog(MethodError('This function requires PremiereRemote functionality. __cepInstalled: ' this.__cepInstalled, -1))
             return
         }
         checkTrack := false
