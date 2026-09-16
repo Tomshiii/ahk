@@ -5,7 +5,7 @@
  * @premVer 26.5
  * @author tomshi
  * @date 2026/09/16
- * @version 2.5.45
+ * @version 2.5.45.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1046,9 +1046,7 @@ class Prem {
             return null
         x := tab.location.x, y := tab.location.y
         ; convert screen coords -> client-relative coords
-        WinGetClientPos(&clientOriginX, &clientOriginY, , , "ahk_id " this._scan.hwnd)
-        localX := Round((x - clientOriginX) / this._scan.WindowScale)
-        localY := Round((y - clientOriginY) / this._scan.WindowScale)
+        coord.screenToClient(x, y, "ahk_id " this._scan.hwnd, this._scan.WindowScale, &localX, &localY)
         return Format("0x{:x}", this._scan.GetPixel(localX, localY, true))
     }
 
@@ -1114,9 +1112,7 @@ class Prem {
         centerX := button.location.x + Round((button.Location.w/2))
         centerY := button.location.y + Round((button.Location.h/2))
         ; convert screen coords -> client-relative coords
-        WinGetClientPos(&clientOriginX, &clientOriginY, , , "ahk_id " this._scan.hwnd)
-        localX := Round((centerX - clientOriginX) / this._scan.WindowScale)
-        localY := Round((centerY - clientOriginY) / this._scan.WindowScale)
+        coord.screenToClient(centerX, centerY, "ahk_id " this._scan.hwnd, this._scan.WindowScale, &localX, &localY)
 
         centerPix := this._scan.GetPixel(localX, localY, true)
         abovePix  := this._scan.GetPixel(localX, localY - 4, true)
@@ -2161,12 +2157,16 @@ class Prem {
             errorLog(ValueError('A number could not be interpreted from the input keys', -1, sendGain), "Original: " orig " || Regex: " sendGain " || starCheck: " starCheck)
             return
         }
-        block.On()
+
         ;// otherwise we proceed
+        block.On()
         if needsTimelineFocus = true
             this.__focusTimeline()
-        if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels")
+        if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels") {
             this.gain(which sendGain)
+            block.Off()
+            return
+        }
         else {
             if title = gainTitle {
                 errorLog(MethodError("Levels cannot be adjusted while the gain window is open", -1))
@@ -2182,7 +2182,6 @@ class Prem {
                 return
             }
         }
-        block.Off()
     }
 
     /** This function will determine if the timeline is already focused or not. If it isn't, it will focus it. */
