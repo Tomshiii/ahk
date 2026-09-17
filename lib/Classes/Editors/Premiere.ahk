@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/16
- * @version 2.5.47
+ * @date 2026/09/17
+ * @version 2.5.48
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -812,7 +812,7 @@ class Prem {
         sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portCEP) : Format("http://localhost:{2}/{1}", whichFunc, this.portCEP)
         getResp := cmd.httpGet(sendcommand)
 
-        if InStr(getResp, "Failed to connect to localhost") {
+        if getResp == null || InStr(getResp, "Failed to connect to localhost") {
             if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
                 errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1))
             else
@@ -965,7 +965,7 @@ class Prem {
         sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portUXP) : Format("http://localhost:{2}/{1}", whichFunc, this.portUXP)
         getResp := cmd.httpGet(sendcommand)
 
-        if InStr(getResp, "Premiere Pro is not connected") {
+        if getResp == null || InStr(getResp, "Premiere Pro is not connected") {
             if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
                 errorLog(Error("1. Unable to connect to localhost server. PremiereRemote UXP Extension may not be running.", -1))
             else

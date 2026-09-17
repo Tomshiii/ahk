@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/09/16
- * @version 1.5.13
+ * @date 2026/09/17
+ * @version 1.5.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -252,7 +252,7 @@ class AE {
         sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portCEP) : Format("http://localhost:{2}/{1}", whichFunc, this.portCEP)
         getResp := cmd.httpGet(sendcommand)
 
-        if InStr(getResp, "Failed to connect to localhost") {
+        if getResp == null || InStr(getResp, "Failed to connect to localhost") {
             if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
                 errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1),, true)
             else

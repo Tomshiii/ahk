@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2026/09/16
- * @version 1.2.2
+ * @date 2026/09/17
+ * @version 1.2.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -91,13 +91,17 @@ class cmd {
      * Uses a comobj to make a http request
      * @param {String} [url] the url string to send over com
      * @param {Boolean} [async=false] whether to send the command synchronous or asynchornously
-     * @returns {String}
+     * @returns {String | null}
      */
     static httpGet(url, async := false) {
-        static whr := ComObject("WinHttp.WinHttpRequest.5.1")
-        whr.Open("GET", url, async)  ;// false = synchronous
-        whr.Send()
-        return whr.ResponseText
+        try {
+            static whr := ComObject("WinHttp.WinHttpRequest.5.1")
+            whr.Open("GET", url, async)  ;// false = synchronous
+            whr.Send()
+            return whr.ResponseText
+        } catch {
+            return null
+        }
     }
 
     static deleteMappedDrive(driveLocation) => this.run(,,, Format("net use {}: /delete", Chr(64+driveLocation)))
