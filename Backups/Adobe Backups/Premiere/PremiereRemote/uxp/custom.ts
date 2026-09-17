@@ -2755,3 +2755,11 @@ export async function resetSelection(): Promise<boolean> {
 
     return ok;
 }
+
+/**
+ * a simple ping to confirm the UXP extension is currently loaded and able to respond
+ * @returns {boolean}
+ */
+export async function isPanelOpen(): Promise<boolean> {
+    return true;
+}

@@ -741,6 +741,10 @@ export const host = {
     var displayFormat = settings.videoDisplayFormat;
 
     return currentSequence.getPlayerPosition().getFormatted(frameRate, displayFormat);
+  },
+
+  isPanelOpen: function () {
+    return true;
   }
 }
 

@@ -3,7 +3,7 @@
  * @file cmd.ahk
  * @author tomshi
  * @date 2026/09/17
- * @version 1.2.3
+ * @version 1.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -98,8 +98,11 @@ class cmd {
             static whr := ComObject("WinHttp.WinHttpRequest.5.1")
             whr.Open("GET", url, async)  ;// false = synchronous
             whr.Send()
+            if async = true
+                whr.WaitForResponse()
             return whr.ResponseText
-        } catch {
+        } catch as e {
+            errorLog(e)
             return null
         }
     }

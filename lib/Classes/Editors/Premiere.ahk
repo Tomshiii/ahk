@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/17
- * @version 2.5.48.1
+ * @version 2.5.49
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -755,25 +755,25 @@ class Prem {
     /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) function
      * @param {String} whichFunc the function you wish to call
-     * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window. If you are chaining together multiple CEP functions and require one to finish before the next begins it is recommended to set this value to `true` even if you do not require a value.
+     * @param {Boolean} [runAsync=false] determines whether tell `cmd.httpGet()` to run synchronously or asynchronously
      * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
      *
      * ## Warning
      *
      * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
      * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead. This function will attempt to rectify the issue itself but again, relying on such could result in issues.
-     * @returns {String} if the user sets `needResult` to `true` this function will return a string containing the response.
+     * @returns {String | Boolean | null}
      */
-    static __remoteFunc(whichFunc, needResult := false, params*) {
+    static __remoteFunc(whichFunc, runAsync := false, params*) {
         if !this.__checkPremRemoteDir(whichFunc) {
             errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
-            return false
+            return null
         }
         if !this.__checkRemoteParams(whichFunc, params, "cep")
-            return false
+            return null
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
-            return false
+            return null
         }
 
         checkPrem := WinGet.PremName()
@@ -782,7 +782,7 @@ class Prem {
             return false
         checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = null)
         if checkTitle || checkCanSave {
-            return false
+            return null
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
@@ -794,7 +794,7 @@ class Prem {
             if !remoteCEPState {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
                 notifyExt.showIfNotExist('premSocketConnectionErrorCEP',, "A socket connection could not be established to CEP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return false
+                return null
             }
         } else {
             if this.remoteActiveCEP = "loading" {
@@ -804,8 +804,16 @@ class Prem {
             if !this.remoteActiveCEP {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
                 notifyExt.showIfNotExist('premSocketConnectionErrorCEP',, "A socket connection could not be established to CEP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return false
+                return null
             }
+        }
+
+        checkPanelCommand := Format("http://localhost:{2}/{1}", "isPanelOpen", this.portCEP)
+        isPanelOpen := cmd.httpGet(checkPanelCommand, true)
+        if isPanelOpen == null || isPanelOpen != '{"message":"ok.","result":"true"}' {
+            errorLog(MethodError("PremiereRemote CEP panel is not open."))
+            notifyExt.showIfNotExist('premPanelNotOpenCEP',, "PremiereRemote CEP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+            return null
         }
 
         paramsString := this.__sanitiseParams(params)
@@ -820,7 +828,7 @@ class Prem {
             }
             else
                 errorLog(Error("1. remoteFunc was called but Premiere no longer appears to be open.", -1))
-            return false
+            return null
         }
         try parse := JSON.parse(getResp)
         catch {
@@ -828,13 +836,13 @@ class Prem {
                 errorLog(Error("2. Unable to connect to localhost server. PremiereRemote Extension may not be running."))
             else
                 errorLog(Error("2. remoteFunc was called but Premiere no longer appears to be open.", -1))
-            return false
+            return null
         }
         switch {
             case (!parse.has("result") && parse.has("message")):
                 errorLog(ValueError(parse["message"],-1), whichFunc "_" paramsString)
                 MsgBox("prem.__remoteFunc() failed.`n`nMessage: " parse["message"] "`nPassed Params:" paramsString)
-                return false
+                return null
             case parse.has("result") && parse["result"] != "true" && parse["result"] != "false":
                 return parse["result"]
             case parse.has("result") && isBool(parse["result"]):
@@ -907,38 +915,38 @@ class Prem {
     /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) uxp function. This function is in testing as `PremiereRemote` uxp functionality is still in development
      * @param {String} whichFunc the function you wish to call. **must include the file name**, eg. `common/getActiveSequenceName`
-     * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window. If you are chaining together multiple UXP functions and require one to finish before the next begins it is recommended to set this value to `true` even if you do not require a value.
+     * @param {Boolean} [runAsync=false] determines whether tell `cmd.httpGet()` to run synchronously or asynchronously
      * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
      *
      * ## Warning
      *
      * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
      * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead. This function will attempt to rectify the issue itself but again, relying on such could result in issues.
-     * @returns {String | null | false} if the user sets `needResult` to `true` this function will return a string containing the response. The response will have its surrounding `"` quotes removed (eg. `fd75a385-7c84-48af-b6ee-a6c5a69c4c24` *not* `"fd75a385-7c84-48af-b6ee-a6c5a69c4c24"`)
+     * @returns {String | Boolean | null}
      */
-    static __remoteUXP(whichFunc, needResult := false, params*) {
+    static __remoteUXP(whichFunc, runAsync := false, params*) {
         if !InStr(whichFunc, "/") {
             errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -1, whichFunc), whichFunc,, true)
-            return false
+            return null
         }
         if !this.__checkPremRemoteDir(whichFunc, "uxp") {
             errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
-            return false
+            return null
         }
         if !this.__checkRemoteParams(whichFunc, params, "uxp")
             return
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
-            return false
+            return null
         }
 
         checkPrem := WinGet.PremName()
         checkType := (Type(checkPrem) != "Object")
         if !checkPrem || checkType
-            return false
+            return null
         checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = null)
         if checkTitle || checkCanSave {
-            return false
+            return null
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
@@ -950,7 +958,7 @@ class Prem {
             if !remoteUXPState {
                 errorLog(Error("A socket connection could not be established to UXP plugin", -1),, false)
                 notifyExt.showIfNotExist('premSocketConnectionErrorUXP',, "A socket connection could not be established to UXP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return false
+                return null
             }
         } else {
             if this.remoteActiveUXP = "loading" {
@@ -960,8 +968,16 @@ class Prem {
             if !this.remoteActiveUXP {
                 errorLog(Error("A socket connection could not be established to the UXP plugin", -1),, false)
                 notifyExt.showIfNotExist('premSocketConnectionErrorUXP',, "A socket connection could not be established to UXP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return false
+                return null
             }
+        }
+
+        checkPanelCommand := Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP)
+        isPanelOpen := cmd.httpGet(checkPanelCommand, true)
+        if isPanelOpen == null || (isPanelOpen != "true" && isPanelOpen != true) {
+            errorLog(MethodError("PremiereRemote UXP panel isn't open."))
+            notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+            return null
         }
 
         paramsString := prem.__sanitiseParams(params)
@@ -976,7 +992,7 @@ class Prem {
             }
             else
                 errorLog(Error("1. remoteUXP was called but Premiere no longer appears to be open.", -1))
-            return false
+            return null
         }
         try parse := JSON.parse(getResp)
         catch as e {
@@ -985,7 +1001,7 @@ class Prem {
                     errorLog(Error("Unable to connect to localhost server. PremiereRemote Extension may not be running."))
                 else
                     errorLog(Error("remoteFunc was called but Premiere no longer appears to be open.", -1))
-                return false
+                return null
             }
         }
         switch {
@@ -993,23 +1009,23 @@ class Prem {
                 if Type(parse["error"]) = "String" {
                     errorLog(MethodError(parse["error"],-1), whichFunc "_" paramsString)
                     MsgBox("prem.__remoteUXP() failed.`n`nError: " parse["error"] "`nFunction:" whichFunc "`nPassed Params:" paramsString)
-                    return false
+                    return null
                 }
                 if parse.Has("instancePath") && parse.Has("message") {
                     errorLog(MethodError("UXP function encountered an error",-1), "func: " parse["instancePath"] " || error message: " parse["message"])
                     MsgBox("prem.__remoteUXP() failed.`n`nCheck logs for details")
-                    return false
+                    return null
                 }
 
                 e := JSON.stringify(parse)
                 errorLog(MethodError("UXP function encountered an error",-1), e)
                 MsgBox("prem.__remoteUXP() failed.`n`n" e)
-                return false
+                return null
             case !IsSet(parse) && getResp != "":
                 sanitiseResp := ((SubStr(getResp, 1, 1) = '"' && SubStr(getResp, -1, 1) = '"') ? SubStr(getResp, 2, StrLen(getResp)-2) : getResp)
                 return (isBool(sanitiseResp) ? checkBool(sanitiseResp) : sanitiseResp)
         }
-        return false
+        return null
     }
 
     static _scan := ""

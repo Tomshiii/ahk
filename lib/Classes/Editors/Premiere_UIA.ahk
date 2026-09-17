@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/16
- * @version 3.0.37
+ * @date 2026/09/17
+ * @version 3.0.38
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -244,7 +244,7 @@ class premUIA_Values {
             /* Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning') */
             Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }
-
+        __DelNotify() => (notifyExt.deleteIfExist("premUIAGenTree"), notifyExt.deleteIfExist("premUIAGenTreeWarning"))
         try premName := WinGet.PremName()
         if (!isObjHasProp(premName, 'titleCheck', false) && isObjHasProp(premName, 'titleCheck', null)) || premName.titleCheck != true {
             notifyExt.deleteIfExist("premUIAGenTree")
@@ -258,18 +258,20 @@ class premUIA_Values {
             throw Error("Socket")
         }
         if !remoteCEPState {
-            notifyExt.deleteIfExist("premUIAGenTree")
-            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            __DelNotify()
             errorLog(Error("A socket connection could not be established", -1),, true)
             throw Error("Socket")
         }
 
         currentVer := prem.__remoteFunc('premVer', true)
+        if currentVer == null {
+            __DelNotify()
+            throw Error("Socket")
+        }
         if !currentVer
             throw Error("Failed to return Premiere Version")
         if VerCompare(currentVer, prem.minVer) < 0 {
-            notifyExt.deleteIfExist("premUIAGenTree")
-            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            __DelNotify()
             throw MethodError("This version of Premiere is not supported.`nThe minimum supported version is: " prem.minVer "`nThe user has: " currentVer)
         }
         __TryCatchUIAobj(name, objOrPath, errorCode, pathName := "") {
@@ -290,6 +292,8 @@ class premUIA_Values {
                 throw UnsetError("throw code:" errorCode,, errorCode)
             }
         }
+
+        __DelNotify()
         try {
             if !WinActive(prem.winTitle) && !WinActive(prem.class)
                 switchTo.Premiere()
