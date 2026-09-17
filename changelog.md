@@ -2,6 +2,7 @@
 
 ## Functions
 - ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`, `premUIA_Values.getSelectedTool()`
+- 📋 `ps.Type()` no longer needs to move the cursor
 
 ### 📝 `prem {`
 - ✏️ Added `prem.getPlayheadPosition()`

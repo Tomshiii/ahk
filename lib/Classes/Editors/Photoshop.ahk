@@ -3,8 +3,8 @@
  * Last tested in the version of Photoshop listed below
  * @psVer 27.1
  * @author tomshi
- * @date 2026/08/31
- * @version 1.3.5
+ * @date 2026/09/17
+ * @version 1.3.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -92,10 +92,6 @@ class PS {
         if !WinExist(title)
             return false
         AdobeEl := UIA.ElementFromHandle(title,, false)
-        coord.w()
-        origCoords := obj.MousePos()
-        MouseMove(0, 0)
-        sleep 200 ;photoshop is slow as hell, if you notice it missing the png drop down you may need to increase this delay
         fileComboBox := {Name: "Save as type:", Type:50003, AutomationId: "FileTypeControlHost", ClassName: "AppControlHost"}
         try {
             switch filetype {
@@ -103,17 +99,14 @@ class PS {
                 case "jpg", "jpeg": __doSwap(AdobeEl, "JPEG (*.JPG;*.JPEG;*.JPE)")
             }
         } catch {
-            MouseMove(origCoords.x, origCoords.y, 2)
             notifyExt.showIfNotExist("psFailedFileType",, 'Failed to set the correct filetype. Try again later.', 'C:\Windows\System32\imageres.dll|icon94', 'Windows Balloon',, 'theme=Dark bdr=Red maxW=400')
             return false
         }
 
         __doSwap(el, value) {
             el.WaitElement(fileComboBox, 1500).Expand()
-            el.WaitElement({Type: 50007, Name: value}, 1500).ControlClick()
+            el.WaitElement({Type: 50007, Name: value}, 1500).Invoke()
             el.WaitElement({Name:"File name:", Type:50004}).SetFocus()
-            coord.w()
-            MouseMove(origCoords.x, origCoords.y)
         }
     }
 }
