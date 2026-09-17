@@ -22,3 +22,6 @@
 
 ### 📝 `UXP`
 - ✅ Fixed some actions not using `await`
+
+## Other Changes
+- 📋 `reloadAll.ahk` will now run `replaceHotkeyless.ahk` if `HotkeylessAHK.ahk` is open

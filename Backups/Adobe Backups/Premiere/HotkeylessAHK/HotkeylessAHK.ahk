@@ -122,6 +122,7 @@ class OtherFuncs {
     static setupMusicTracks(audioType := "Standard") {
         audTrackNum := prem.__remoteFunc('getAudioTracks', true)
         selectedTrack := ""
+        index := -1
         afterGUI := tomshiBasic(,,, "After Track")
         afterGUI.AddText(, "After which track:")
         dropDownArr := ["None", "Before First Track"]
@@ -135,6 +136,7 @@ class OtherFuncs {
         afterGUI.OnEvent("Close", (*) => (closed := true, afterGUI.Destroy()))
         __okButt(*) {
             selectedTrack := afterGUI["dropDwn"].Text
+            index += afterGUI["dropDwn"].value
             afterGUI.Destroy()
         }
         afterGUI.show()
@@ -180,7 +182,7 @@ class OtherFuncs {
                     continue
                 if i = 2 && selectedTrack != "None" {
                     audBoxes := group.FindElements({Type:50003})
-                    listItem := audBoxes[1].FindElement({Type:50007, Name: selectedTrack})
+                    listItem := audBoxes[1].FindElement({Type:50007},, index)
                     listItem.select()
                     trackType := audBoxes[2].FindElement({Type:50007, Name: audioType})
                     trackType.select()
@@ -196,6 +198,8 @@ class OtherFuncs {
 
             okButt := tracksUIA.FindElement({Type:50000, Name: "OK"})
             okButt.Invoke()
+        } catch as e {
+            throw e
         }
     }
 }

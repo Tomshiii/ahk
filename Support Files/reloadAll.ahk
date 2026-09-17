@@ -55,6 +55,7 @@ for v in list {
     }
     if itemObj.scriptName = "HotkeylessAHK.ahk" {
         RunWait(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\closeHotkeylessAHK.ahk")
+        try RunWait(ptf.Backups "\Adobe Backups\Premiere\HotkeylessAHK\replaceHotkeyless.ahk")
         continue
     }
     ; try pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""), false)
