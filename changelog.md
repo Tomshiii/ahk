@@ -2,7 +2,6 @@
 
 ## Functions
 - ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`, `premUIA_Values.getSelectedTool()`
-- 📋 `ps.Type()` no longer needs to move the cursor
 
 ### 📝 `prem {`
 - ✏️ Added `prem.getPlayheadPosition()`
@@ -17,6 +16,10 @@
 - ✅ Fixed `selectTool()` crashing AE
 - ✏️ Added `ae.getActivePanelName()`
 - 📋 `__remoteFunc()` now uses `cmd.httpGet()` instead of `cmd.result()` to significantly reduce the response time
+
+### 📝 `ps {`
+- ✅ Fixed using incorrect `ImageSearch` path
+- 📋 `Type()` no longer needs to move the cursor
 
 ## PremiereRemote
 - ✏️ Added `resetSelection()`

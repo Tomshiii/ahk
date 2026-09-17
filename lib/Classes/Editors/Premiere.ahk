@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/17
- * @version 2.5.48
+ * @version 2.5.48.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -813,8 +813,11 @@ class Prem {
         getResp := cmd.httpGet(sendcommand)
 
         if getResp == null || InStr(getResp, "Failed to connect to localhost") {
-            if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
+            ;// will sometimes still fire after premiere is closed
+            if WinExist(this.winTitle) {
                 errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1))
+                notifyExt.showIfNotExist('premFailedResponseCEP',, "Unable to connect to localhost server. PremiereRemote CEP Extension may not be running.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+            }
             else
                 errorLog(Error("1. remoteFunc was called but Premiere no longer appears to be open.", -1))
             return false
@@ -966,8 +969,11 @@ class Prem {
         getResp := cmd.httpGet(sendcommand)
 
         if getResp == null || InStr(getResp, "Premiere Pro is not connected") {
-            if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
+            ;// will sometimes still fire after premiere is closed
+            if WinExist(this.winTitle) {
                 errorLog(Error("1. Unable to connect to localhost server. PremiereRemote UXP Extension may not be running.", -1))
+                notifyExt.showIfNotExist('premFailedResponseUXP',, "Unable to connect to localhost server. PremiereRemote UXP Extension may not be running.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+            }
             else
                 errorLog(Error("1. remoteUXP was called but Premiere no longer appears to be open.", -1))
             return false
@@ -1101,7 +1107,7 @@ class Prem {
         if !this.setShinsIMG(name.winTitle)
             return null
         coord.s()
-        if !progMon := premUIA_Values.getLivePanel("programMonitor")
+        if !progMon := premUIA_Values.getLivePanel("programMonitor", UIAObj?)
             return null
         try button := progMon.FindElement({Type:50000, Name:"Play-Stop Toggle", matchmode:"Substring"})
         catch {
@@ -1135,7 +1141,7 @@ class Prem {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
             return null
         }
-        if !progMon := premUIA_Values.getLivePanel("programMonitor")
+        if !progMon := premUIA_Values.getLivePanel("programMonitor", UIAObj?)
             return null
         try progMon.FindElement({Type:50003, Name:"Select Multicam Page"})
         catch {
