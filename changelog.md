@@ -14,7 +14,7 @@
 - 📋 `mouseDrag()` will now automatically return the selected tool back to its original selection and only uses `toolorig` as a final fallback
 
 📍 `__remoteFunc()`/`__remoteUXP()`
-- 📋 Will now alert the user if the respective extension panel is not open
+- 📋 Will now alert the user if the respective extension panel is not open (once per reload)
 - 📋 Now returns `null` for all non response failures instead of a mix of `null`/`false`
 - 📋 Now use `cmd.httpGet()` instead of `cmd.result()` to significantly reduce the response time
 - 📋 Param `needResult` => `runAsync`

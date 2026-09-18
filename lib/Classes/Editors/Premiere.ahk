@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/18
- * @version 2.5.50
+ * @version 2.5.51
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -525,6 +525,8 @@ class Prem {
     static __cepFuncMap   := false
     static __uxpInstalled := null
     static __uxpFuncMap   := false
+    static __cepOpen      := false
+    static __uxpOpen      := false
 
     /**
      * This function checks for the existence of [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main). Can also check for the existence of a specific function within the `index.tsx` file, or desired UXP `ts` file
@@ -769,8 +771,10 @@ class Prem {
             errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
             return null
         }
-        if !this.__checkRemoteParams(whichFunc, params, "cep")
+        if !this.__checkRemoteParams(whichFunc, params, "cep") {
+            errorLog(TargetError("User passed incorred Parameters to function.", -1, whichFunc),,, true)
             return null
+        }
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
             return null
@@ -778,15 +782,20 @@ class Prem {
 
         checkPrem := WinGet.PremName()
         checkType := (Type(checkPrem) != "Object")
-        if !checkPrem || checkType
-            return false
+        if !checkPrem || checkType {
+            errorLog(Error("Failed to determine Premiere name", -1),, false)
+            return null
+        }
         checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = null)
         if checkTitle || checkCanSave {
+            errorLog(Error("Failed to determine Premiere name", -1),, false)
             return null
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
-            remoteCEPState := CLSID_Objs.loadProp("prem", "remoteActiveCEP")
+            props := CLSID_Objs.loadProp("prem", ["remoteActiveCEP", "__cepOpen"])
+            remoteCEPState := props["remoteActiveCEP"]
+            this.__cepOpen := props["__cepOpen"]
             if remoteCEPState = "loading" {
                 notifyExt.showIfNotExist("premSocketConnectionErrorCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null
@@ -808,12 +817,16 @@ class Prem {
             }
         }
 
-        checkPanelCommand := Format("http://localhost:{2}/{1}", "isPanelOpen", this.portCEP)
-        isPanelOpen := cmd.httpGet(checkPanelCommand, true)
-        if isPanelOpen == null || isPanelOpen != '{"message":"ok.","result":"true"}' {
-            errorLog(MethodError("PremiereRemote CEP panel is not open."))
-            notifyExt.showIfNotExist('premPanelNotOpenCEP',, "PremiereRemote CEP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-            return null
+        if !this.__cepOpen {
+            checkPanelCommand := Format("http://localhost:{2}/{1}", "isPanelOpen", this.portCEP)
+            isPanelOpen := cmd.httpGet(checkPanelCommand, true)
+            if isPanelOpen == null || isPanelOpen != '{"message":"ok.","result":"true"}' {
+                errorLog(MethodError("PremiereRemote CEP panel is not open."), isPanelOpen)
+                notifyExt.showIfNotExist('premPanelNotOpenCEP',, "PremiereRemote CEP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                return null
+            }
+            this.__cepOpen := true
+            CLSID_Objs.writeProp("prem", "__cepOpen", true)
         }
 
         paramsString := this.__sanitiseParams(params)
@@ -933,8 +946,10 @@ class Prem {
             errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
             return null
         }
-        if !this.__checkRemoteParams(whichFunc, params, "uxp")
-            return
+        if !this.__checkRemoteParams(whichFunc, params, "uxp") {
+            errorLog(TargetError("User passed incorred Parameters to function.", -1, whichFunc),,, true)
+            return null
+        }
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
             return null
@@ -942,16 +957,22 @@ class Prem {
 
         checkPrem := WinGet.PremName()
         checkType := (Type(checkPrem) != "Object")
-        if !checkPrem || checkType
+        if !checkPrem || checkType {
+            errorLog(Error("Failed to determine Premiere name", -1),, false)
             return null
+        }
         checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = null)
         if checkTitle || checkCanSave {
+            errorLog(Error("Failed to determine Premiere name", -1),, false)
             return null
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
-            remoteUXPState := CLSID_Objs.loadProp("prem", "remoteActiveUXP")
+            props := CLSID_Objs.loadProp("prem", ["remoteActiveUXP", "__uxpOpen"])
+            remoteUXPState := props["remoteActiveUXP"]
+            this.__uxpOpen := props["__uxpOpen"]
             if remoteUXPState = "loading" {
+                errorLog(Error("A socket connection could not be established to the UXP plugin", -1),, false)
                 notifyExt.showIfNotExist("premSocketLoadingUXP",, "Socket connection to UXP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null
             }
@@ -962,6 +983,7 @@ class Prem {
             }
         } else {
             if this.remoteActiveUXP = "loading" {
+                errorLog(Error("A socket connection could not be established to the UXP plugin", -1),, false)
                 notifyExt.showIfNotExist("premSocketLoadingUXP",, "Socket connection to UXP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null
             }
@@ -972,12 +994,16 @@ class Prem {
             }
         }
 
-        checkPanelCommand := Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP)
-        isPanelOpen := cmd.httpGet(checkPanelCommand, true)
-        if isPanelOpen == null || (isPanelOpen != "true" && isPanelOpen != true) {
-            errorLog(MethodError("PremiereRemote UXP panel isn't open."))
-            notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-            return null
+        if !this.__uxpOpen {
+            checkPanelCommand := Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP)
+            isPanelOpen := cmd.httpGet(checkPanelCommand, true)
+            if isPanelOpen == null || (isPanelOpen != "true" && isPanelOpen != true) {
+                errorLog(MethodError("PremiereRemote UXP panel isn't open."))
+                notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                return null
+            }
+            this.__uxpOpen := true
+            CLSID_Objs.writeProp("prem", "__uxpOpen", true)
         }
 
         paramsString := prem.__sanitiseParams(params)
@@ -1025,7 +1051,6 @@ class Prem {
                 sanitiseResp := ((SubStr(getResp, 1, 1) = '"' && SubStr(getResp, -1, 1) = '"') ? SubStr(getResp, 2, StrLen(getResp)-2) : getResp)
                 return (isBool(sanitiseResp) ? checkBool(sanitiseResp) : sanitiseResp)
         }
-        return null
     }
 
     static _scan := ""
