@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.3
  * @author tomshi, taranVH
- * @date 2026/09/10
- * @version 2.4.28
+ * @date 2026/09/18
+ * @version 2.4.29
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -91,6 +91,7 @@ class rbuttonPrem {
 	preHeldSpeed := false
 	playHeld  := false
 	speedHeld := false
+	origTool := false
 
 	/**
 	 * Checks to see whether the colour under the cursor indicates that it's a blank track
@@ -162,7 +163,8 @@ class rbuttonPrem {
 		;// then we check to see if it's relatively close to the cursors position
 		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
 			block.On()
-			prem.selectTool("selectionTool")
+			this.origTool := premUIA_Values.getSelectedTool()
+			prem.selectTool("Selection Tool", "hotkey")
 			SendInput(KSA.prem.selectionTool)
 			MouseMove(xcol, ycol)
 			SendInput("{LButton Down}")
@@ -203,7 +205,7 @@ class rbuttonPrem {
 
 	/** Reset class variables */
 	__resetClicks() {
-		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.colour := "", this.colour2 := "", this.preHeldPlay := false, this.preHeldSpeed := false, this.playHeld := false, this.speedHeld := false
+		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.origTool := false, this.colour := "", this.colour2 := "", this.preHeldPlay := false, this.preHeldSpeed := false, this.playHeld := false, this.speedHeld := false
 		try this.premObj.RClickIsActive := false
 		try this.premObj := {}
 	}
@@ -531,6 +533,8 @@ class rbuttonPrem {
 		;// releases the LButton if it was used to grab the playhead
 		if this.colourOrNorm = "colour" {
 			SendInput("{LButton Up}")
+			if this.origTool != false && this.origTool !== null
+				prem.selectTool(this.origTool, "hotkey")
 		}
 
 		;// checks original sequence is still active

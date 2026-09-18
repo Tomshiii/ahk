@@ -2,6 +2,7 @@
 
 ## Functions
 - ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`, `premUIA_Values.getSelectedTool()`
+- 📋 `rbuttonPrem().movePlayhead()` will now return the selected tool to its original selection if it manually selects the nearby playhead
 
 ### 📝 `prem {`
 - ✏️ Added `prem.getPlayheadPosition()`
