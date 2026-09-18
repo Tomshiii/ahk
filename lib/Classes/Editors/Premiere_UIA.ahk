@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/09/18
- * @version 3.0.39
+ * @version 3.0.40
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -187,6 +187,7 @@ class premUIA_Values {
         "Rectangle Tool", {uia: "rectangleTool", ksa: "rectangleTool"},
         "Ellipse Tool", {uia: "rectangleTool", ksa: "ellipseTool"},
         "Polygon Tool", {uia: "rectangleTool", ksa: "polygonTool"},
+        "Tools.ObjectSelectionLasso_18", {uia: "maskTool"},
         "Hand Tool", {uia: "handTool", ksa: "handTool"},
         "Zoom Tool", {uia: "handTool", ksa: "zoomTool"},
         "Type Tool", {uia: "textTool", ksa: "textTool"},
@@ -365,7 +366,7 @@ class premUIA_Values {
                 "slipTool", ["Slip Tool", "Slide Tool"],
                 "penTool", "Pen Tool",
                 "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
-                ; "maskTool", "Tools.ObjectSelectionLasso_18", ;// still can't discern between them for whatever reason...
+                "maskTool", "Tools.ObjectSelectionLasso_18", ;// still can't discern between them for whatever reason...
                 "handTool", ["Hand Tool", "Zoom Tool"],
                 "textTool", ["Type Tool", "Vertical Type Tool"],
                 "genAITool", ["Generative Media Tool", "Generative Extend Tool"]

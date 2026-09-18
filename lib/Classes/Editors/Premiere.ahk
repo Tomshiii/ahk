@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/18
- * @version 2.5.51
+ * @version 2.5.52
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2468,6 +2468,7 @@ class Prem {
      * @returns {Boolean | null}
      */
     static selectTool(tool := "selectionTool", selectMethod := "uia", focusTimeline := false) {
+        selectMethod := (tool = "Tools.ObjectSelectionLasso_18") ? "prem" : (tool = "maskTool" ? "uia" : selectMethod)
         if selectMethod = "hotkey" {
             try {
                 hot := premUIA_Values.toolsMap[tool].ksa
