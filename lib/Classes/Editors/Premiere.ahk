@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/17
- * @version 2.5.49
+ * @date 2026/09/18
+ * @version 2.5.50
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -818,7 +818,7 @@ class Prem {
 
         paramsString := this.__sanitiseParams(params)
         sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portCEP) : Format("http://localhost:{2}/{1}", whichFunc, this.portCEP)
-        getResp := cmd.httpGet(sendcommand)
+        getResp := cmd.httpGet(sendcommand, runAsync)
 
         if getResp == null || InStr(getResp, "Failed to connect to localhost") {
             ;// will sometimes still fire after premiere is closed
@@ -982,7 +982,7 @@ class Prem {
 
         paramsString := prem.__sanitiseParams(params)
         sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portUXP) : Format("http://localhost:{2}/{1}", whichFunc, this.portUXP)
-        getResp := cmd.httpGet(sendcommand)
+        getResp := cmd.httpGet(sendcommand, runAsync)
 
         if getResp == null || InStr(getResp, "Premiere Pro is not connected") {
             ;// will sometimes still fire after premiere is closed
@@ -2232,13 +2232,11 @@ class Prem {
 	}
 
     /**
-     * Press a button *(ideally a mouse button)*, this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline, then it will swap back to the tool of your choice (selection tool for example).
-
-     * This function will (on first use) check the coordinates of the timeline and store them, then on subsequent uses ensures the mouse position is within the bounds of the timeline before firing - this is useful to ensure you don't end up accidentally dragging around UI elements of Premiere.
-
+     * Press a button *(ideally a mouse button)*, this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline. This function will then make an attempt at returning the selected tool back to the original selection; if that fails it will fall back to whatever is passed into the `toolorig` parameter.
+     *
      * This function will timeout after 10s by default as a preventative measure for stuck keys
      * @param {String} tool is the hotkey you want the script to input to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
-     * @param {String} toolorig is the hotkey you want the script to input to bring you back to your tool of choice (consider using KSA values)
+     * @param {String} toolorig is the hotkey you want the script to input to bring you back to if the function fails to select it automatically.
      * @param {Integer} [timeout=10] the number of `seconds` you want the function to wait before intentionally timing out. Defaults to `10`
      * @param {String} [dragWait=KSA.windows.DragKeywait] The hotkey this function will wait for release before finalising logic. Defaults to the `KSA` value `DragKeyWait`. It is not recommended to simply use `A_ThisHotkey` as quick actions can trip up ahk causing that value to get poisoned
     */
@@ -2276,6 +2274,7 @@ class Prem {
             SetTimer(rdisable, 0)
             return
         }
+        origTool := premUIA_Values.getSelectedTool(premUIA)
 
         SetTimer(again.Bind(timeout), -400)
         again(timeout)
@@ -2313,7 +2312,12 @@ class Prem {
                     KeyWait(activationKey, "T" timeout)
                 }
                 SendInput("{LButton Up}")
-                SendInput(toolorig)
+                if origTool != "Hand Tool" {
+                    try this.selectTool(origTool, "hotkey", true)
+                    catch {
+                        SendInput(toolorig)
+                    }
+                }
                 SetTimer(rdisable, 0)
             }
         }
@@ -2321,7 +2325,7 @@ class Prem {
 
     /**
      * This function will check for the blue outline around the timeline (using stored values within the class) that a focused window in premiere will ususally have.
-     * @returns {null | boolean} true/false/null. `null` indicates that the timeline coordinates could not be determined.
+     * @returns {null | boolean} `null` indicates that the timeline coordinates could not be determined.
      */
     static timelineFocusStatus() {
         if !this.timelineVals {
@@ -2429,15 +2433,29 @@ class Prem {
     /**
      * This function will attempt to select the desired tool using UIA. This function may fail for some tools as Premiere doesn't distinguish between a few of them.
      * @param {String} [tool=selectionTool] the name of the tool. Must correspond to a tool set within `Premiere_UIA.ahk` (or the tool name as reported by UIA as long as `uiaOrPrem` is set to `"prem"`) or the function will throw.
-     * @param {String} [uiaOrPrem="uia"] determines if `tool` parameter is expected to be a `premUIA_Values` value, or a UIA value as reported by UIA (not including any ` ([hotkey])` generally found at the end of tool names)
-     * @param {Boolean} [focusTimeline=false] determines whether the function will attempt to focus the timeline after the desired tool has been selected.
+     * @param {String} [selectMethod="uia"] determines the method for reselecting the tool.
+     * ```
+     * "uia"    ; will attempt to use `UIA` to select the correct tool. Will expect `tool` to be a `premUIA_Values` formatted string; ie. `selectionTool` and NOT `Selection Tool`
+     * "prem"   ; will attempt to use `UIA` to select the correct tool. Will expect `tool` to be a `Premiere` formatted string; ie. `Selection Tool` and NOT `selectionTool`
+     * "hotkey" ; will attempt to send the `KSA` hotkey linked to `tool` param. If fails, will fall back to `"prem"` selectMethod. As a result `tool` is expected to be a `Premiere` formatted string; ie. `Selection Tool` and NOT `selectionTool`.
+     * ```
+     * @param {Boolean} [focusTimeline=false] determines whether the function will attempt to focus the timeline after the desired tool has been selected. This will do nothing if `tool` is `hotkey` and it succeeds.
      * @returns {Boolean | null}
      */
-    static selectTool(tool := "selectionTool", uiaOrPrem := "uia", focusTimeline := false) {
+    static selectTool(tool := "selectionTool", selectMethod := "uia", focusTimeline := false) {
+        if selectMethod = "hotkey" {
+            try {
+                hot := premUIA_Values.toolsMap[tool].ksa
+                SendInput(ksa.prem.%hot%)
+                return true
+            } catch {
+                selectMethod := "prem"
+            }
+        }
         if !premUIA := premUIA_Values.initialise()
             return false
-        if uiaOrPrem = "prem"
-            tool := premUIA_Values.toolsMap.Has(tool) ? premUIA_Values.toolsMap[tool] : tool
+        if selectMethod = "prem"
+            tool := premUIA_Values.toolsMap.Has(tool) ? premUIA_Values.toolsMap[tool].uia : tool
         isSelected := premUIA_Values.isToolSelected(tool, premUIA)
         if isSelected == null
             return false
@@ -2671,8 +2689,8 @@ class Prem {
 
     /** This function handles rendering `Previews` between the current `In`/`Out` point. This function *requires* `PremiereRemote` */
     static renderPreviewsInOut() {
-        prem.save(, 0, 0)
-        prem.__remoteFunc('renderPreviews')
+        this.save(, 0, 0)
+        this.__remoteFunc('renderPreviews')
     }
 
     /**

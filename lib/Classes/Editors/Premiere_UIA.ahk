@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/17
- * @version 3.0.38
+ * @date 2026/09/18
+ * @version 3.0.39
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -172,7 +172,28 @@ class premUIA_Values {
         }
     }
 
-    static toolsMap := Map("Selection Tool", "selectionTool", "Track Select Forward Tool", "trackForward", "Track Select Backward Tool", "trackForward", "Ripple Edit Tool", "rippleEdit", "Rolling Edit Tool", "rippleEdit", "Rate Stretch Tool", "rippleEdit", "Remix Tool", "rippleEdit", "Razor Tool", "razorTool", "Slip Tool", "slipTool", "Slide Tool", "slipTool", "Pen Tool", "penTool", "Rectangle Tool", "rectangleTool", "Ellipse Tool", "rectangleTool", "Polygon Tool", "rectangleTool", "Hand Tool", "handTool", "Zoom Tool", "handTool", "Type Tool", "textTool", "Vertical Type Tool", "textTool", "Generative Media Tool", "genAITool", "Generative Extend Tool", "genAITool")
+    static toolsMap := Map(
+        "Selection Tool", {uia: "selectionTool", ksa: "selectionTool"},
+        "Track Select Forward Tool", {uia: "trackForward", ksa: "trackForward"},
+        "Track Select Backward Tool", {uia: "trackForward", ksa: "trackBackward"},
+        "Ripple Edit Tool", {uia: "rippleEditTool", ksa: "rippleEditTool"},
+        "Rolling Edit Tool", {uia: "rippleEditTool", ksa: "rollingEditTool"},
+        "Rate Stretch Tool", {uia: "rippleEditTool", ksa: "rateStretchTool"},
+        "Remix Tool", {uia: "rippleEditTool", ksa: "remixTool"},
+        "Razor Tool", {uia: "razorTool", ksa: "razorTool"},
+        "Slip Tool", {uia: "slipTool", ksa: "slipTool"},
+        "Slide Tool", {uia: "slipTool", ksa: "slideTool"},
+        "Pen Tool", {uia: "penTool", ksa: "penTool"},
+        "Rectangle Tool", {uia: "rectangleTool", ksa: "rectangleTool"},
+        "Ellipse Tool", {uia: "rectangleTool", ksa: "ellipseTool"},
+        "Polygon Tool", {uia: "rectangleTool", ksa: "polygonTool"},
+        "Hand Tool", {uia: "handTool", ksa: "handTool"},
+        "Zoom Tool", {uia: "handTool", ksa: "zoomTool"},
+        "Type Tool", {uia: "textTool", ksa: "textTool"},
+        "Vertical Type Tool", {uia: "textTool", ksa: "vertTextTool"},
+        "Generative Media Tool", {uia: "genAITool", ksa: "genAITool"},
+        "Generative Extend Tool", {uia: "genAITool", ksa:"genExtendTool"}
+    )
 
     /**
      * Determines whether a given premiere tool is currently selected (using a UIA element)
@@ -182,7 +203,7 @@ class premUIA_Values {
      * ```
      * "selectionTool", "Selection Tool",
      * "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
-     * "rippleEdit", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
+     * "rippleEditTool", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
      * "razorTool", "Razor Tool",
      * "slipTool", ["Slip Tool", "Slide Tool"],
      * "penTool", "Pen Tool",
@@ -339,7 +360,7 @@ class premUIA_Values {
             tools := Map(
                 "selectionTool", "Selection Tool",
                 "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
-                "rippleEdit", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
+                "rippleEditTool", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
                 "razorTool", "Razor Tool",
                 "slipTool", ["Slip Tool", "Slide Tool"],
                 "penTool", "Pen Tool",

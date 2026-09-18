@@ -54,10 +54,95 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Selection Tool"
     },
-    "cutTool": {
+    "razorTool": {
         "command": "cmd.tools.06razor",
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Razor Tool"
+    },
+    "trackForward": {
+        "command": "cmd.tools.02trackselectforward",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Track Select Forward Tool"
+    },
+    "trackBackward": {
+        "command": "cmd.tools.02_5trackselectbackward",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Track Select Backward Tool"
+    },
+    "rippleEditTool": {
+        "command": "cmd.tools.03ripple",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Ripple Edit Tool"
+    },
+    "rollingEditTool": {
+        "command": "cmd.tools.04roll",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Rolling Edit Tool"
+    },
+    "rateStretchTool": {
+        "command": "cmd.tools.05ratestretch",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Rate Stretch Tool"
+    },
+    "remixTool": {
+        "command": "cmd.tools.16Remix",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Remix Tool"
+    },
+    "slipTool": {
+        "command": "cmd.tools.07slip",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Slip Tool"
+    },
+    "slideTool": {
+        "command": "cmd.tools.08slide",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Slide Tool"
+    },
+    "penTool": {
+        "command": "cmd.tools.09pen",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Pen Tool"
+    },
+    "rectangleTool": {
+        "command": "cmd.tools.13rectshape",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Rectangle Tool"
+    },
+    "ellipseTool": {
+        "command": "cmd.tools.15ellipseshape",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Ellipse Tool"
+    },
+    "polygonTool": {
+        "command": "cmd.tools.17polygonshape",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Polygon Tool"
+    },
+    "zoomTool": {
+        "command": "cmd.tools.11zoom",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Zoom Tool"
+    },
+    "textTool": {
+        "command": "cmd.tools.12text",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Type Tool"
+    },
+    "vertTextTool": {
+        "command": "cmd.tools.14verticaltype",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Vertical Type Tool"
+    },
+    "genAITool": {
+        "command": "cmd.tools.25rangeselection",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Generative Media Tool"
+    },
+    "genExtendTool": {
+        "command": "cmd.tools.24genextend",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Generative Extend Tool"
     },
     "findBox": {
         "command": "cmd.select.find.box",

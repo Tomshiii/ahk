@@ -6,10 +6,11 @@
 ### 📝 `prem {`
 - ✏️ Added `prem.getPlayheadPosition()`
 - 📋 `__getAllLayerPos()` now uses `ShinsImageScanClass` to determine all layers
-- 📋 `selectTool()` now accepts parameter `uiaOrPrem` & `focusTimeline`
+- 📋 `selectTool()` now accepts parameter `selectMethod` & `focusTimeline`
 - 📋 `__focusTimeline()` will first attempt to use UIA to focus the timeline before falling back to previous methods
 - 📋 `toggleEnabled()` now uses `ShinsImageScanClass` to check for transition handles
-    - This and a combination of other changes listed above, as well as changes in the previous release have made this function nearly 2x faster
+    - This and a combination of other changes listed, as well as changes in the previous release have made this function nearly 2x faster
+- 📋 `mouseDrag()` will now automatically return the selected tool back to its original selection and only uses `toolorig` as a final fallback
 
 📍 `__remoteFunc()`/`__remoteUXP()`
 - 📋 Will now alert the user if the respective extension panel is not open
@@ -32,6 +33,10 @@
 
 ### 📝 `UXP`
 - ✅ Fixed some actions not using `await`
+
+### KSA
+- ✏️ Added most tools
+- 📋 Renamed `cutTool` => `razorTool`
 
 ## Other Changes
 - 📋 `reloadAll.ahk` will now run `replaceHotkeyless.ahk` if `HotkeylessAHK.ahk` is open
