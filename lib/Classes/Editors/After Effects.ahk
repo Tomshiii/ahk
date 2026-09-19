@@ -25,6 +25,7 @@
 #Include Classes\null.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\_socket.ahk
+#Include Other\WinEvent.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\detect.ahk
 #Include Functions\determineAdobeVer.ahk

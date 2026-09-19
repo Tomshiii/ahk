@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/18
- * @version 3.0.40
+ * @date 2026/09/19
+ * @version 3.0.41
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -195,64 +195,6 @@ class premUIA_Values {
         "Generative Media Tool", {uia: "genAITool", ksa: "genAITool"},
         "Generative Extend Tool", {uia: "genAITool", ksa:"genExtendTool"}
     )
-
-    /**
-     * Determines whether a given premiere tool is currently selected (using a UIA element)
-     * @param {String} [tool] the name of the tool you wish to check. Tool names are listed below
-     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
-     * @returns {null | Boolean} returns `null` when; Premiere window cannot be determined, Premiere window is not active, or UIA object is unable to be set, else returns `true`/`false`
-     * ```
-     * "selectionTool", "Selection Tool",
-     * "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
-     * "rippleEditTool", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
-     * "razorTool", "Razor Tool",
-     * "slipTool", ["Slip Tool", "Slide Tool"],
-     * "penTool", "Pen Tool",
-     * "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
-     * "handTool", ["Hand Tool", "Zoom Tool"],
-     * "textTool", ["Type Tool", "Vertical Type Tool"],
-     * "genAITool", ["Generative Media Tool", "Generative Extend Tool"]
-     * ```
-     */
-    static isToolSelected(tool, UIAobj?) {
-        try n := WinGet.PremName()
-        if !WinActive(prem.winTitle) && !WinActive(prem.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
-            return null
-        }
-        uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
-        if !uiaEl
-            return null
-        try returnVal := (uiaEl.UIA_Objs[tool].value = "Selected" ? true : false)
-        return (IsSet(returnVal) && (returnVal = true || returnVal = false) ? returnVal : null)
-    }
-
-    /**
-     * Uses UIA to return the currently selected tool. This function may fail for some tools as Premiere doesn't distinguish between a few of them.
-     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
-     * @param {Boolean} [returnAsPremVal] determines whether to return the Premiere formatted string (ie. `Selection Tool`) or the `premUIA_Values` formatted string (ie. `selectionTool`)
-     * @returns {null | false | string} returns `null` when; Premiere window cannot be determined, Premiere window is not active, or UIA object is unable to be set, else returns `false` or the selected tool
-     */
-    static getSelectedTool(UIAobj?, returnAsPremVal := true) {
-        try n := WinGet.PremName()
-        if !WinActive(prem.winTitle) && !WinActive(prem.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
-            return null
-        }
-        if !toolBar := this.getLivePanel("toolsWindow")
-            return null
-        try {
-            tools := toolBar.FindAll({Type: 50000})
-            for tool in tools {
-                if tool.value = "Selected" {
-                    removeHotkey := RegExReplace(tool.name, "\s\([^)]*\)$")
-                    return returnAsPremVal = true ? removeHotkey : this.toolsMap[removeHotkey]
-                }
-            }
-        } catch {
-            errorLog(MethodError("Failed to iterate on tool bar", -1))
-            return false
-        }
-        return false
-    }
 
     /** sets UIA objects */
     static setObjs() {

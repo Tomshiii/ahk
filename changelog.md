@@ -1,7 +1,7 @@
 # <> Release 2.18.x - 
 
 ## Functions
-- ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`, `premUIA_Values.getSelectedTool()`
+- ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`, `prem.getSelectedTool()`
 - 📋 `rbuttonPrem().movePlayhead()` will now return the selected tool to its original selection if it manually selects the nearby playhead
 
 ### 📝 `prem {`
@@ -12,6 +12,7 @@
 - 📋 `toggleEnabled()` now uses `ShinsImageScanClass` to check for transition handles
     - This and a combination of other changes listed, as well as changes in the previous release have made this function nearly 2x faster
 - 📋 `mouseDrag()` will now automatically return the selected tool back to its original selection and only uses `toolorig` as a final fallback
+- 📋 `premUIA_Values.isToolSelected()` moved => `prem {`
 
 📍 `__remoteFunc()`/`__remoteUXP()`
 - 📋 Will now alert the user if the respective extension panel is not open (once per reload)

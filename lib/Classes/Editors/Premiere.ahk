@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/18
- * @version 2.5.52
+ * @date 2026/09/19
+ * @version 2.5.53
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2146,7 +2146,7 @@ class Prem {
 
         ;// logic to determine whether to send the fail hotkey and alert the user, or continue as expected
 		if (descernTitle || currTimelineStatus != 1) && title != gainTitle {
-            textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
+            textStatus := this.isToolSelected("textTool", premUIA)
             if textStatus == null {
                 ih.Stop(), star_ih.Stop()
                 return
@@ -2482,7 +2482,7 @@ class Prem {
             return false
         if selectMethod = "prem"
             tool := premUIA_Values.toolsMap.Has(tool) ? premUIA_Values.toolsMap[tool].uia : tool
-        isSelected := premUIA_Values.isToolSelected(tool, premUIA)
+        isSelected := this.isToolSelected(tool, premUIA)
         if isSelected == null
             return false
         if isSelected = false {
@@ -2494,6 +2494,64 @@ class Prem {
         if focusTimeline = true
             this.__focusTimeline()
         return true
+    }
+
+    /**
+     * Determines whether a given premiere tool is currently selected (using a UIA element)
+     * @param {String} [tool] the name of the tool you wish to check. Tool names are listed below
+     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {null | Boolean} returns `null` when; Premiere window cannot be determined, Premiere window is not active, or UIA object is unable to be set, else returns `true`/`false`
+     * ```
+     * "selectionTool", "Selection Tool",
+     * "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
+     * "rippleEditTool", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
+     * "razorTool", "Razor Tool",
+     * "slipTool", ["Slip Tool", "Slide Tool"],
+     * "penTool", "Pen Tool",
+     * "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
+     * "handTool", ["Hand Tool", "Zoom Tool"],
+     * "textTool", ["Type Tool", "Vertical Type Tool"],
+     * "genAITool", ["Generative Media Tool", "Generative Extend Tool"]
+     * ```
+     */
+    static isToolSelected(tool, UIAobj?) {
+        try n := WinGet.PremName()
+        if !WinActive(this.winTitle) && !WinActive(this.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
+            return null
+        }
+        uiaEl := IsSet(UIAobj) ? UIAobj : premUIA_Values.initialise()
+        if !uiaEl
+            return null
+        try returnVal := (uiaEl.UIA_Objs[tool].value = "Selected" ? true : false)
+        return (IsSet(returnVal) && (returnVal = true || returnVal = false) ? returnVal : null)
+    }
+
+    /**
+     * Uses UIA to return the currently selected tool. This function may fail for some tools as Premiere doesn't distinguish between a few of them.
+     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @param {Boolean} [returnAsPremVal] determines whether to return the Premiere formatted string (ie. `Selection Tool`) or the `premUIA_Values` formatted string (ie. `selectionTool`)
+     * @returns {null | false | string} returns `null` when; Premiere window cannot be determined, Premiere window is not active, or UIA object is unable to be set, else returns `false` or the selected tool
+     */
+    static getSelectedTool(UIAobj?, returnAsPremVal := true) {
+        try n := WinGet.PremName()
+        if !WinActive(this.winTitle) && !WinActive(this.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
+            return null
+        }
+        if !toolBar := premUIA_Values.getLivePanel("toolsWindow", UIAobj?)
+            return null
+        try {
+            tools := toolBar.FindAll({Type: 50000})
+            for tool in tools {
+                if tool.value = "Selected" {
+                    removeHotkey := RegExReplace(tool.name, "\s\([^)]*\)$")
+                    return returnAsPremVal = true ? removeHotkey : premUIA_Values.toolsMap[removeHotkey]
+                }
+            }
+        } catch {
+            errorLog(MethodError("Failed to iterate on tool bar", -1))
+            return false
+        }
+        return false
     }
 
     /**
@@ -2527,7 +2585,7 @@ class Prem {
             return
         toolsNN := premUIA.UIA_Objs["toolsWindow"]
         projActive := premUIA_Values.__isUiaElementActive("projectsWindow", premUIA)
-        textStatus := premUIA_Values.isToolSelected("textTool", premUIA)
+        textStatus := this.isToolSelected("textTool", premUIA)
         if !toolsNN || projActive == null || textStatus == null || (projActive = true) || textStatus {
             __sendOrig()
             return
