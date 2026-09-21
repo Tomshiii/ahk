@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/09/21
- * @version 1.9.14
+ * @date 2026/09/22
+ * @version 1.9.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -595,6 +595,8 @@ class Startup {
         startingVal++
         __addAndIncrement("") ;adds a divider bar
         __addAndIncrement("Settings (GUI)", (*) => settingsGUI())
+        startupTray(startingVal)
+        startingVal++
         __addAndIncrement("") ;adds a divider bar
 
         submenuRemote := Menu()
@@ -636,17 +638,9 @@ class Startup {
         submenuGUIS.Add("Notify Creator", (*) => Run(ptf.lib "\Other\Notify\Notify Creator.ahk"))
         submenuGUIS.Add("MsgBox Creator", (*) => Run(ptf.lib "\Other\MsgBoxCreator.ahk"))
         ; submenuGUIS.Add("Settings", (*) => settingsGUI())
+        submenuGUIS.Add("Open UIA Script", (*) => Run(ptf.lib "\Other\UIA\UIA.ahk"))
         submenuGUIS.Add("Thio's Windows Explorer Script Settings", (*) => ShowPathSelectorSettingsGUI())
         A_TrayMenu.Insert(startingVal "&", "GUIs", submenuGUIS)
-        startingVal++
-
-        startupTray(11)
-        startingVal++
-
-        submenuUIA := Menu()
-        submenuUIA.Add("Open UIA Script", (*) => Run(ptf.lib "\Other\UIA\UIA.ahk"))
-
-        A_TrayMenu.Insert(startingVal "&", "UIA", submenuUIA)
         startingVal++
 
         submenuHotkeyless := Menu()
@@ -681,24 +675,9 @@ class Startup {
         A_TrayMenu.Insert(startingVal "&", "HotkeylessAHK", submenuHotkeyless)
         startingVal++
 
-        __addAndIncrement("") ;adds a divider bar
-        __addAndIncrement("Check for Updates", checkUp)
         A_TrayMenu.Rename("&Help", "&Help/Documentation")
         ; A_TrayMenu.Delete("&Window Spy")
         A_TrayMenu.Delete("&Edit Script")
-        if check = true
-            A_TrayMenu.Check("Check for Updates")
-        checkUp(*) {
-            check := this.UserSettings.update_check ;has to be checked everytime you wish to toggle
-            switch check {
-                case true:
-                    this.UserSettings.update_check := false
-                    A_TrayMenu.Uncheck("Check for Updates")
-                case false:
-                    this.UserSettings.update_check := true
-                    A_TrayMenu.Check("Check for Updates")
-            }
-        }
         __hotkeyless(closeOrOpen, *) {
             canLaunch := (!FileExist(ptf['HotkeylessAHK'])) ? false : true
             exists := false
