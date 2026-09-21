@@ -19,7 +19,7 @@ class rclone {
      * @param `{2}` - gdrive folder AFTER `1. The Boys`
      * @param `{3}` - share/volume (e.g. CACHEDEV1_DATA/storage)
      */
-    static cmdSyncDir := "trap '' HUP; /share/CACHEDEV1_DATA/tools/rclone/rclone copy '/share/{3}/{1}' 'gdrive:2. Videos/1. The Boys/{2}' --config /share/CACHEDEV1_DATA/tools/rclone/rclone.conf --transfers 4 --checkers 8 --drive-chunk-size 128M --log-level INFO --log-file /share/CACHEDEV1_DATA/rclone.log --bwlimit 300M --exclude '_proxy/**' --exclude 'proxy/**' --exclude 'Monitor Baackup/**' --exclude 'Monitor Backup/**' --exclude 'MONITOR BACKUP/**' &"
+    static cmdSyncDir := "trap '' HUP; /share/CACHEDEV1_DATA/tools/rclone/rclone copy '/share/{3}/{1}' 'gdrive:2. Videos/1. The Boys/{2}' --config /share/CACHEDEV1_DATA/tools/rclone/rclone.conf --transfers 4 --checkers 8 --drive-chunk-size 128M --log-level INFO --log-file /share/CACHEDEV1_DATA/rclone.log --bwlimit 300M --exclude '_proxy/**' --exclude '_prores/**'  --exclude 'proxy/**' --exclude 'Monitor Baackup/**' --exclude 'Monitor Backup/**' --exclude 'MONITOR BACKUP/**' &"
 
     /**
      * @param `{1}` gdrive folder & FILENAME

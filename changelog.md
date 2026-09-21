@@ -1,18 +1,17 @@
 # <> Release 2.18.x - 
+This update focuses on optimisations to reduce unnecessary wait times across a wide variety of functions. This includes heavily reducing the startup delay for both `prem.__remote` functions, using `ShinsImageScanClass` when possible instead of `PixelSearch()`/`PixelGetColor()`, and more.
 
 ## Functions
-- ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`, `prem.getSelectedTool()`
-- 📋 `rbuttonPrem().movePlayhead()` will now return the selected tool to its original selection if it manually selects the nearby playhead
+- ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`
 
 ### 📝 `prem {`
-- ✏️ Added `prem.getPlayheadPosition()`
-- 📋 `__getAllLayerPos()` now uses `ShinsImageScanClass` to determine all layers
+- ✏️ Added `getPlayheadPosition()`, `getSelectedTool()`, `__getPixel()`, `__getPixelRegion()`
 - 📋 `selectTool()` now accepts parameter `selectMethod` & `focusTimeline`
 - 📋 `__focusTimeline()` will first attempt to use UIA to focus the timeline before falling back to previous methods
-- 📋 `toggleEnabled()` now uses `ShinsImageScanClass` to check for transition handles
-    - This and a combination of other changes listed, as well as changes in the previous release have made this function nearly 2x faster
 - 📋 `mouseDrag()` will now automatically return the selected tool back to its original selection and only uses `toolorig` as a final fallback
 - 📋 `premUIA_Values.isToolSelected()` moved => `prem {`
+- 📋 The following functions will now use `ShinsImageScanClass` instead of `PixelSearch()`/`PixelGetColor()` when possible;
+    - `__getAllLayerPos()`, `isClipUnderCursor()`, `timelineFocusStatus()`, `toggleEnabled()`, `disableDirectManip()`, `movepreview()`, `__layerDividerCheck()`, `disableAllMuteSolo()`, `soloVideo()`, `searchPlayhead()`, `__getlayerTopBottom()`
 
 📍 `__remoteFunc()`/`__remoteUXP()`
 - 📋 Will now alert the user if the respective extension panel is not open (once per reload)
@@ -20,6 +19,10 @@
 - 📋 Now use `cmd.httpGet()` instead of `cmd.result()` to significantly reduce the response time
 - 📋 Param `needResult` => `runAsync`
     - Both functions now always return their result
+
+### 📝 `rbuttonPrem {`
+- 📋 `movePlayhead()` will now return the selected tool to its original selection if it manually selects the nearby playhead
+- 📋 `__checkForPlayhead()`/`__setColours()` will now use `ShinsImageScanClass` when possible
 
 ### 📝 `ae {`
 - ✅ Fixed `selectTool()` crashing AE

@@ -3,7 +3,7 @@
  * @premVer 26.5.1
  * @author tomshi, taranVH
  * @date 2026/09/21
- * @version 2.4.31
+, this.title * @version 2.4.32
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -92,6 +92,7 @@ class rbuttonPrem {
 	playHeld  := false
 	speedHeld := false
 	origTool := false
+	title := ""
 
 	/**
 	 * Checks to see whether the colour under the cursor indicates that it's a blank track
@@ -161,7 +162,8 @@ class rbuttonPrem {
 		}
 
 		;// then we check to see if it's relatively close to the cursors position
-		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
+		search := prem.__getPixelRegion(prem.playhead, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y,, this.title, &xcol, &ycol)
+		if search.found = true {
 			block.On()
 			this.origTool := prem.getSelectedTool()
 			prem.selectTool("Selection Tool", "hotkey")
@@ -201,11 +203,11 @@ class rbuttonPrem {
 
 
 	/** Set class variables to the found colour */
-	__setColours(coordObj) => (this.colour := PixelGetColor(coordObj.x, coordObj.y), this.colour2 := PixelGetColor(coordObj.x + 1, coordObj.y))
+	__setColours(coordObj) => (this.colour := prem.__getPixel(coordObj.x, coordObj.y, this.title), this.colour2 := prem.__getPixel(coordObj.x + 1, coordObj.y, this.title))
 
 	/** Reset class variables */
 	__resetClicks() {
-		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.origTool := false, this.colour := "", this.colour2 := "", this.preHeldPlay := false, this.preHeldSpeed := false, this.playHeld := false, this.speedHeld := false
+		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.origTool := false, this.colour := "", this.colour2 := "", this.preHeldPlay := false, this.preHeldSpeed := false, this.playHeld := false, this.speedHeld := false, this.title := ""
 		try this.premObj.RClickIsActive := false
 		try this.premObj := {}
 	}
@@ -393,6 +395,7 @@ class rbuttonPrem {
 			this.__stopHook()
             return
         }
+		this.title := getTitle.wintitle
 
 		if prem.__OSwindow() && WinActive(prem.winTitle) {
             SendInput("{Escape}")

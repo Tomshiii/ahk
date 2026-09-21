@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/21
- * @version 2.5.54
+ * @version 2.5.55
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -510,7 +510,9 @@ class Prem {
         cursorObj := !IsSet(cursorObj) ? obj.MousePos() : cursorObj
         if !this.__checkCoords(cursorObj)
             return null
-        colour1 := PixelGetColor(cursorObj.x, cursorObj.y), colour2 := PixelGetColor(cursorObj.x + 1, cursorObj.y)
+
+        colour1 := this.__getPixel(cursorObj.x, cursorObj.y)
+        colour2 := this.__getPixel(cursorObj.x + 1, cursorObj.y)
         colour := (colour1 = this.playhead || colour2 = this.playhead) ? (colour1 = this.playhead ? colour2 : colour1) : colour1
         checkTimelineCols := (colour != this.timelineColArr[1] && colour != this.timelineColArr[2] &&
 			colour != this.timelineColArr[3] && colour != this.timelineColArr[4] &&
@@ -1191,7 +1193,19 @@ class Prem {
         return true
     }
 
-    static setShinsIMG(title) {
+    /**
+     * @returns {Boolean}
+     */
+    static setShinsIMG(title?) {
+        if !IsSet(title) {
+            getTitle := WinGet.PremName()
+            checkType := (Type(getTitle) != "Object")
+            checkTitle := isObjHasProp(getTitle, "winTitle", false) && isObjHasProp(getTitle, "titleCheck", null) && isObjHasProp(getTitle, "saveCheck", null)
+            if !getTitle || checkType || !checkTitle {
+                return false
+            }
+            title := getTitle.wintitle
+        }
         if !this._scan {
             this._scanTitle := title
             try this._scan := ShinsImageScanClass(this._scanTitle)
@@ -1527,13 +1541,57 @@ class Prem {
             return
         }
         progNN := premUIA.UIA_Objs["programMonitor"]
-        if PixelGetColor(progNN.location.x+15, progNN.location.y+(progNN.location.h-10)) != this.iconHighlight {
+        if this.__getPixel(progNN.location.x+15, progNN.location.y+(progNN.location.h-10)) != this.iconHighlight {
             block.Off()
             return
         }
         delaySI(25, toggleKey, toggleKey)
         block.Off()
         return
+    }
+
+    /**
+     * Attempts to use `ShinsImageScanClass` to retrive the pixel value at the desired coordinates. Will fallback to `PixelGetColor` on failure.
+     * @param {Integer} [x] the `x` coordinate you wish to check. Should be a `screen` coordinate
+     * @param {Integer} [y] the `y` coordinate you wish to check. Should be a `screen` coordinate
+     * @param {String} [title=unset] the title of the current premiere window. Can be left unset and will be determined automatically
+     * @returns {Hexadecimal}
+     */
+    static __getPixel(x, y, title?) {
+        if !this.setShinsIMG(title?)
+            return PixelGetColor(x, y)
+        else {
+            coord.screenToClient(x, y, this._scan.hwnd, this._scan.WindowScale, &localX, &localY)
+            return Format("0x{:x}", this._scan.GetPixel(localX, localY, true))
+        }
+    }
+
+    /**
+     * Attempts to use `ShinsImageScanClass` to search for the pixel value through the desired coordinates. Will fallback to `PixelSearch` on failure.
+     * @param {Hexadecimal} [colour]
+     * @param {Integer} [x1] the starting `x` coordinate you wish to check. Should be a `screen` coordinate
+     * @param {Integer} [y1] the starting `y` coordinate you wish to check. Should be a `screen` coordinate
+     * @param {Integer} [x2] the ending `x` coordinate you wish to check. Should be a `screen` coordinate
+     * @param {Integer} [y2] the ending `y` coordinate you wish to check. Should be a `screen` coordinate
+     * @param {Integer} [variance=0] the level of variance you wish to allow
+     * @param {String} [title=unset] the title of the current premiere window. Can be left unset and will be determined automatically
+     * @param {VarRef} [xPos] the `x` coordinate the colour was found (will only be set if `.found` is `true`)
+     * @param {VarRef} [yPos] the `y` coordinate the colour was found (will only be set if `.found` is `true`)
+     * @returns {Object} {x: {Integer}, y: {Integer}, found: {Boolean}}
+     */
+    static __getPixelRegion(colour, x1, y1, x2, y2, variance := 0, title?, &xPos?, &yPos?) {
+        if !this.setShinsIMG(title?) {
+            search := PixelSearch(&xCol, &yCol, x1, y1, x2, y2, colour, variance?)
+            return {x: xCol, y: yCol, found: search}
+        }
+        coord.screenToClient(x1, y1, prem._scan.hwnd, prem._scan.WindowScale, &startX, &startY)
+        coord.screenToClient(x2, y2, prem._scan.hwnd, prem._scan.WindowScale, &endX, &endY)
+        search := prem._scan.PixelRegion(colour, startX, startY, endX-startX, Min(endY-startY, 1), variance, &xCol, &yCol)
+        if !search
+            return {x: unset, y: unset, found: false}
+        coord.clientToScreen(xCol, yCol, prem._scan.hwnd, prem._scan.WindowScale, &sColX, &sColY)
+        xPos := sColX, yPos := sColY
+        return {x: sColX, y: sColY, found: search}
     }
 
     /**
@@ -1830,7 +1888,7 @@ class Prem {
                         keys.allWait()
                         return false
                     }
-                check := PixelGetColor(previewWin.x, previewWin.y)
+                check := this.__getPixel(previewWin.x, previewWin.y)
                 if check != 0x232323 && check != 0x000000 {
                     MouseMove(previewWin.x, previewWin.y)
                     break
@@ -1848,7 +1906,7 @@ class Prem {
         MouseMove(startX, startY) ;move to the preview window
         loop {
             MouseGetPos(&colX, &colY)
-            if PixelGetColor(colX, colY) != 0x000000
+            if this.__getPixel(colX, colY) != 0x000000
                 break
             if A_Index > 4
                 {
@@ -2361,7 +2419,8 @@ class Prem {
             return null
         origcoord := A_CoordModePixel, returnCoord() => A_CoordModePixel := origcoord
         coord.s()
-        if PixelGetColor(this.timelineRawX-1, this.timelineRawY+10) = this.focusColour {
+        checkTimeline := this.__getPixel(this.timelineRawX-1, this.timelineRawY+10)
+        if checkTimeline = this.focusColour {
             returnCoord()
             return true
         }
@@ -2779,8 +2838,8 @@ class Prem {
 
     /**
      * Checks to see if the playhead is within the defined coordinates
-     * @param {Integer} coordObj an object containing the cursor coordinates you want pixelsearch to check. This object should contain: `{x1: , y1: , x2: , y2: }`. The default to search the timeline (assuming values have been set) can be found in the example`
-     * @param {Hexadecimal} playheadCol the colour you wish pixelsearch to look for
+     * @param {Integer} coordObj an object containing the cursor coordinates you want `__getPixelRegion()` to check. This object should contain: `{x1: , y1: , x2: , y2: }`. The default to search the timeline (assuming values have been set) can be found in the example`
+     * @param {Hexadecimal} playheadCol the colour you wish `__getPixelRegion()` to look for
      * @returns {Obj/Boolean false} if successful and the playhead is found, returns object `{x: , y: }`. Else returns `false`
      * ```
      * if !origMouse := obj.MousePos()
@@ -2789,7 +2848,8 @@ class Prem {
      * ```
      */
     static searchPlayhead(coordObj, playheadCol := this.playhead) {
-        if PixelSearch(&pixX, &pixY, coordObj.x1, coordObj.y1, coordObj.x2, coordObj.y2, playheadCol)
+        search := this.__getPixelRegion(playheadCol, coordObj.x1, coordObj.y1, coordObj.x2, coordObj.y2,,, &pixX, &pixY)
+        if search.found = true
 			return {x: pixX, y: pixY}
         return false
     }
@@ -3346,7 +3406,7 @@ class Prem {
      * @returns {Boolean}
      */
     static __layerDividerCheck(coords) {
-        dividerCheck := PixelGetColor(this.timelineRawX+5, coords.y)
+        dividerCheck := this.__getPixel(this.timelineRawX+5, coords.y)
         if dividerCheck = this.layerDivider {
             notifyExt.showIfNotExist("premLayerDivider",, 'The user is currently hovering between a layer.`nThis function will not continue.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
             return false
@@ -3496,10 +3556,10 @@ class Prem {
             case VerCompare(this.currentSetVer, "v26.3.2") <= 0: plus := 5
             case VerCompare(this.currentSetVer, "v26.5") >= 0: plus := 12
         }
-        topDiv := PixelSearch(&topDivX, &topDivY, this.timelineRawX+plus, coords.y, this.timelineRawX+plus, this.timelineRawY, this.layerDivider)
-        botDiv := PixelSearch(&botDivX, &botDivY, this.timelineRawX+plus, coords.y, this.timelineRawX+plus, this.timelineYControl, this.layerDivider)
+        topDiv := this.__getPixelRegion(this.layerDivider, this.timelineRawX+plus, coords.y, this.timelineRawX+plus, this.timelineRawY,,, &topDivX, &topDivY)
+        botDiv := this.__getPixelRegion(this.layerDivider, this.timelineRawX+plus, coords.y, this.timelineRawX+plus, this.timelineYControl,,, &botDivX, &botDivY)
         mid := (searchMid = true) ? this.__getlayerMid(&midDivX, &midDivY, &midDivBot) : true
-        if (!topDiv || !botDiv || !mid) {
+        if (!topDiv.found || !botDiv.found || !mid) {
             if doNotify = true && !Notify.Exist("premLayerBounds")
                 Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424 tag=premLayerBounds')
             return {topX: topDivX ?? false, topY: topDivY ?? false, botX: botDivX ?? false, botY: botDivY ?? false, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: true}
@@ -4017,7 +4077,7 @@ class Prem {
             return
         }
         movedPlayhead  := false
-        if PixelGetColor(origMouseCords.x, origMouseCords.y) = this.playhead {
+        if this.__getPixel(origMouseCords.x, origMouseCords.y) = this.playhead {
             this.__remoteFunc('movePlayheadFrames',, "subtract=true", "frames=3")
             movedPlayhead := true
         }
@@ -4145,7 +4205,7 @@ class Prem {
                     }
                     if ignore != false && A_Index-offset >= ignore
                         break
-                    layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
+                    layerColour := this.__getPixel(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
                     if this.timelineCols.Has(layerColour)
                         continue
                     whichTracks.Push(A_Index)
@@ -4158,7 +4218,7 @@ class Prem {
                 for k, v in allLayers {
                     if (track != "queue" && A_Index = track+offset) || (offset != 0 && A_Index <= offset)
                         continue
-                    layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
+                    layerColour := this.__getPixel(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
                     if !hasMap.Has(A_Index) || this.timelineCols.Has(layerColour)
                         continue
                     whichTracks.Push(A_Index)
@@ -4181,7 +4241,7 @@ class Prem {
                             notifyExt.showIfNotExist("premIgnoreOffset", 'prem.toggleEnabled()', 'Selected Track is greater than set ``Ignore value``',, 'Windows Feed Discovered',, 'theme=Dark dur=5 bdr=Red maxW=400')
                         break
                     }
-                    layerColour := PixelGetColor(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
+                    layerColour := this.__getPixel(origMouseCords.x, allLayers[Integer(A_Index)]["mid"])
                     if this.timelineCols.Has(layerColour)
                         continue
                     whichTracks.Push(A_Index)
@@ -4303,8 +4363,8 @@ class Prem {
         }
         arr := []
         for k in allButtons {
-            getColour := PixelGetColor(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
-            getColourOffset := PixelGetColor(allButtons[k][muteOrSolo].x-5, allButtons[k][muteOrSolo].y) ;// required to stop `Mute` false positives
+            getColour := this.__getPixel(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
+            getColourOffset := this.__getPixel(allButtons[k][muteOrSolo].x-5, allButtons[k][muteOrSolo].y) ;// required to stop `Mute` false positives
             ; MouseMove(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
             ; MsgBox("col: " getColour "`noffset: " getColourOffset "`ncompare: " colour "`nsolo: " Format("0x{:x}", this.soloColour) "`nmute: " Format("0x{:x}", this.muteColour) "`ntheme: " this.theme)
             ; MsgBox(getColour) ;// uncomment to determine the pixelcolour
@@ -4370,7 +4430,7 @@ class Prem {
         }
         arr := []
         for k in allButtons {
-            getColour := PixelGetColor(allButtons[k]["mute"].x+7, allButtons[k]["mute"].y)
+            getColour := this.__getPixel(allButtons[k]["mute"].x+7, allButtons[k]["mute"].y)
             switch soloInverseDisable {
                 case "solo":
                     if (allButtons[k]["mouseLayer"] = "true" && getColour = this.eyeDisabled) || (allButtons[k]["mouseLayer"] != "true" && getColour != this.eyeDisabled) {

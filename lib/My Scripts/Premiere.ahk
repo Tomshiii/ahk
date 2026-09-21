@@ -497,8 +497,11 @@ $d::
 	blocker := block_ext()
 	blocker.On()
 	prem.__remoteFunc('deselectAll')
-	if colour1 = prem.playhead || colour2 = prem.playhead
-		prem.__remoteUXP("custom/movePlayheadFrames",, "subtract=false", "frames=2")
+	search := prem.searchPlayhead({x1: origMouse.x-6, y1: origMouse.y, x2: origMouse.x+6, y2: origMouse.y})
+	if search != false {
+		t := prem.__remoteFunc('getPlayheadPosTicks')
+		prem.__remoteUXP("custom/movePlayheadFrames",, "subtract=false", "frames=20")
+	}
 	if !prem.__getlayerMid(&midDivX, &midDivY) {
 		blocker.Off()
 		return
@@ -511,6 +514,8 @@ $d::
 	if origTool != false && origTool !== null
 		prem.selectTool(origTool,, true)
 	MouseMove(origMouse.x, origMouse.y, 0)
+	if IsSet(t)
+		prem.__remoteFunc('setPlayheadPosTicks',, "ticks=" t)
 	blocker.Off()
 	prem.__focusTimeline()
 }
@@ -713,7 +718,7 @@ $d::
 		__cleanup()
 		return
 	}
-	getCol := PixelGetColor(origMouse.x, origMouse.y)
+	getCol := prem.__getPixel(origMouse.x, origMouse.y)
 	switch getCol {
 		case prem.keyframeGrey, prem.keyframeBlue:
 			delaySI(16, "{LButton Down}", "{Ctrl Down}")
