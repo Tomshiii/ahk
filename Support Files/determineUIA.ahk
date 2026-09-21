@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/09/07
- * @version 1.0.13
+ * @date 2026/09/21
+ * @version 1.0.14
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -124,8 +124,32 @@ if WinExist(prem.winTitle) && !didReload {
     SetTimer((*) => (prem.__setTimelineValues(), prem.getTimeline(false)), -2500)
 }
 
+;// if the user closes prem
 if !WinEvent.IsRegistered("Close", prem.exeTitle)
     WinEvent.Close((*) => __doubleCheckExit(), prem.exeTitle)
+
+;// if the user closes all projects
+;{
+bareHook := __registerBareTitleHook()
+__registerBareTitleHook() {
+    ;// mode 3 = exact match. The default (mode 2) is "contains", which would match every Premiere title
+    prevMode := A_TitleMatchMode
+    SetTitleMatchMode(3)
+    hook := WinEvent.Exist(__onBareTitle, "Adobe Premiere " prem.class)
+    SetTitleMatchMode(prevMode)
+    return hook
+}
+
+__onBareTitle(hWnd, *) {
+    ;// short debounce in case Premiere flashes the bare title while opening/switching projects
+    SetTimer(__confirmBareTitle.Bind(hWnd), -500)
+}
+
+__confirmBareTitle(hWnd) {
+    if WinExist(hWnd) && WinGetTitle(hWnd) == "Adobe Premiere"
+        __doExit(premUIAobj)
+}
+;}
 
 __doubleCheckExit(*) {
     ;// prem is really weird and I guess fires the 'close' winevent doing seemingly meaningless things
@@ -177,6 +201,7 @@ __doExit(premUIAobj) {
 
     if WinEvent.IsRegistered("Close", prem.exeTitle)
         try WinEvent.Stop("Close", prem.exeTitle)
+    try bareHook.Stop()
     for v in allRegister {
         try ObjRegisterActive(v.obj, "")
     }

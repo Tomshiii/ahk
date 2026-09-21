@@ -45,3 +45,4 @@ This update focuses on optimisations to reduce unnecessary wait times across a w
 
 ## Other Changes
 - 📋 `reloadAll.ahk` will now run `replaceHotkeyless.ahk` if `HotkeylessAHK.ahk` is open
+- 📋 `determineUIA.ahk` will now close itself if the user closes all open projects
