@@ -3,7 +3,7 @@
  * @premVer 26.5.1
  * @author tomshi, taranVH
  * @date 2026/09/21
- * @version 2.4.33
+ * @version 2.4.34
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -490,8 +490,7 @@ class rbuttonPrem {
 
 		useRemote := this.premObj.remoteActiveCEP
 		if useRemote = true {
-			ckDir := prem.__checkPremRemoteDir("getActiveSequenceID"), ckFunc := prem.__checkPremRemoteFunc("focusSequence")
-			if !ckDir || !ckFunc {
+			if !prem.__checkPremRemoteFunc(["getActiveSequenceID", "focusSequence"]) {
 				useRemote := false
 				notifyExt.showIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
 			} else {

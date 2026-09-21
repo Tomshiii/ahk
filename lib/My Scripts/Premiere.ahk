@@ -779,8 +779,7 @@ F14 & MButton::
 {
 	if !__f14InitialChecks("MButton", &kwait)
 		return
-	ckDir := prem.__checkPremRemoteDir('isSelected'), ckEnabled := prem.__checkPremRemoteFunc('toggleEnabled')
-	if !ckDir || !ckEnabled
+	if !prem.__checkPremRemoteDir(['isSelected', 'toggleEnabled'])
 		return
 	selected := prem.isClipSelected()
 	if !selected || selected == null {

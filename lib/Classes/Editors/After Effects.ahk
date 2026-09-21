@@ -4,7 +4,7 @@
  * @aeVer 26.5
  * @author tomshi
  * @date 2026/09/21
- * @version 1.5.15
+ * @version 1.5.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -649,7 +649,7 @@ class AE {
      * @returns {Boolean | null}
      */
     static isClipSelected(single := false) {
-        if this.__checkPremRemoteDir("isSelected") != true
+        if !this.__checkPremRemoteFunc(["isSelected", 'isSelectedSingle', 'isSelectedMultiple'])
             return null
         switch single, 0 {
             case false:   which := 'isSelected'

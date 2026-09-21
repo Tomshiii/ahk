@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/21
- * @version 2.5.56
+ * @version 2.5.57
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1252,9 +1252,8 @@ class Prem {
      * @param {Boolean} [continueOnBusy=false] determine whether to continue with a save attempt even if Premiere may be busy
      * @returns {Boolean/String}
      * - `true`      : successful
-     * - `false`     : `PremiereRemote`/`saveProj` func/`projPath` not found/save attempt fails (server not running)
+     * - `false`     : `PremiereRemote` not installed/save attempt failed (server not running)
      * - `"timeout"` : waiting for the save project window to open/close timed out
-     * - `"noseq"`   : `focusSequence`/`getActiveSequence` func not found
      * - `"busy"`    : another window may be open in premiere that could cause saving to fail
      */
     static save(andWait := true, checkSeqTime := 1000, checkAmount := 1, continueOnBusy := false) {
@@ -1286,11 +1285,8 @@ class Prem {
         editTab := this.isEditTabActive()
         if continueOnBusy = false && ((procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (procClass != "Premiere Pro" && procClass != "Premiere Pro (Beta)")) || editTab = false
             return "busy"
-        if !this.__checkPremRemoteDir("saveProj")
+        if !this.__checkPremRemoteFunc(["saveProj", "getActiveSequenceID", "focusSequence"])
             return false
-        actSequence := this.__checkPremRemoteFunc("getActiveSequenceID"), focusSequence := this.__checkPremRemoteFunc("focusSequence")
-        if !actSequence || !focusSequence
-            return "noseq"
         if checkAmount != 0
             origSeq := this.__remoteFunc("getActiveSequenceID")
         state := {hasAppeared: false, hasClosed: false}
@@ -1605,11 +1601,9 @@ class Prem {
             errorLog(PropertyError("Incorrect Value in Parameter #1", -2, single),,, true)
             return null
         }
-        selectedFuncs := ['isSelected', 'isSelectedSingle', 'isSelectedMultiple']
-        for v in selectedFuncs {
-            if !this.__checkPremRemoteFunc(v, 'cep')
-                return null
-        }
+        if !this.__checkPremRemoteFunc(['isSelected', 'isSelectedSingle', 'isSelectedMultiple'])
+            return null
+
         switch single {
             case false:   which := 'isSelected'
             case true:    which := 'isSelectedSingle'
@@ -2267,7 +2261,8 @@ class Prem {
         block.On()
         if needsTimelineFocus = true
             this.__focusTimeline()
-        if !sendAsLevel || !this.__checkPremRemoteDir("changeAudioLevels") {
+        chkRemote := this.__checkPremRemoteDir("changeAudioLevels")
+        if !sendAsLevel || !chkRemote {
             this.gain(which sendGain)
             block.Off()
             return
@@ -3320,8 +3315,7 @@ class Prem {
             return
         }
 
-        ckDir := this.__checkPremRemoteDir("sourceMonName"), ckFunc := this.__checkPremRemoteFunc("sourceMonName"), ckLoad := this.__checkPremRemoteFunc("loadInSourceMonitor")
-        if !ckDir || !ckFunc || !ckLoad {
+        if !this.__checkPremRemoteFunc(["sourceMonName", "loadInSourceMonitor"]) {
             ;// throw
             blocker.Off()
             errorLog(MethodError("Some PremiereRemote functions are missing. Aborting", -1),,, true)
@@ -4061,7 +4055,7 @@ class Prem {
             errorLog(TargetError("Failed to set timeline values.", -1))
             return
         }
-        checkTrack := false
+
         funcs := ['isSelected', 'movePlayheadFrames', 'isClipEnabled', 'toggleEnabled', 'getAudioTracks', 'getVideoTracks']
         if !this.__checkPremRemoteFunc(funcs) {
             blocker.Off()
@@ -4343,7 +4337,7 @@ class Prem {
         if muteOrSolo != "solo" && muteOrSolo != "mute"
             return
 
-        if muteOrSolo = "mute" && this.__checkPremRemoteDir('unmuteAllMutedTracks') {
+        if muteOrSolo = "mute" && (this.__checkPremRemoteDir('unmuteAllMutedTracks') = true) {
             this.__remoteFunc('unmuteAllMutedTracks')
             return
         }
@@ -4416,7 +4410,7 @@ class Prem {
         SetDefaultMouseSpeed(0)
         coord.s()
 
-        if soloInverseDisable = "disable" && this.__checkPremRemoteDir('enableAllVideoTracks') {
+        if soloInverseDisable = "disable" && (this.__checkPremRemoteDir('enableAllVideoTracks') = true) {
             this.__remoteFunc('enableAllVideoTracks')
             return
         }
@@ -4723,11 +4717,8 @@ class Prem {
     static renderProjectSelection(outputPath, presetName, addToProj := true) {
         if !WinActive(this.exeTitle)
             return false
-        checkDir        := this.__checkPremRemoteDir('renderInPrem')
-        checkImport     := this.__checkPremRemoteFunc('importFile')
-        checkIsSequence := this.__checkPremRemoteFunc('selectionIsSequence')
-        checkBinPath    := this.__checkPremRemoteFunc('getSelectionBinPath')
-        if !checkDir || !checkImport || !checkIsSequence || !checkBinPath {
+        chkRemote := this.__checkPremRemoteFunc(['importFile', 'renderInPrem', 'selectionIsSequence', 'getSelectionBinPath', 'isMainThreadFree'])
+        if !chkRemote {
             notifyExt.showIfNotExist('premRenderRemoteFuncs',, 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return false
         }
