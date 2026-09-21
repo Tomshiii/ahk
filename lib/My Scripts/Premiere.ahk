@@ -505,7 +505,7 @@ $d::
 	}
 	aboveOrBelow := (origMouse.y < midDivY) ? true : false
 	drag := (aboveOrBelow = true) ? prem.timelineYControl : prem.timelineYValue+1
-	try origTool := premUIA_Values.getSelectedTool(, false)
+	try origTool := prem.getSelectedTool(, false)
 	try prem.selectTool("selectionTool",, true)
 	MouseClickDrag(, origMouse.x, origMouse.y, origMouse.x+1, drag, 0)
 	if origTool != false && origTool !== null

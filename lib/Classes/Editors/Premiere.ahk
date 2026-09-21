@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/19
- * @version 2.5.53
+ * @date 2026/09/21
+ * @version 2.5.54
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2299,7 +2299,7 @@ class Prem {
             SetTimer(rdisable, 0)
             return
         }
-        origTool := premUIA_Values.getSelectedTool(premUIA)
+        origTool := this.getSelectedTool(premUIA)
 
         SetTimer(again.Bind(timeout), -400)
         again(timeout)
@@ -4002,7 +4002,7 @@ class Prem {
                 }
             }
         }
-        origTool := premUIA_Values.getSelectedTool(premUIA, false)
+        origTool := this.getSelectedTool(premUIA, false)
         selected := this.selectTool(,, true)
         if !selected || selected == null || !origTool || origTool == null {
             blocker.Off()

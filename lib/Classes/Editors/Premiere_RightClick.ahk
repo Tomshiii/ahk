@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.5.1
  * @author tomshi, taranVH
- * @date 2026/09/18
- * @version 2.4.30
+ * @date 2026/09/21
+ * @version 2.4.31
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -163,7 +163,7 @@ class rbuttonPrem {
 		;// then we check to see if it's relatively close to the cursors position
 		if PixelSearch(&xcol, &ycol, coordObj.x - 4, coordObj.y, coordObj.x + 6, coordObj.y, prem.playhead) {
 			block.On()
-			this.origTool := premUIA_Values.getSelectedTool()
+			this.origTool := prem.getSelectedTool()
 			prem.selectTool("Selection Tool", "hotkey")
 			SendInput(KSA.prem.selectionTool)
 			MouseMove(xcol, ycol)
