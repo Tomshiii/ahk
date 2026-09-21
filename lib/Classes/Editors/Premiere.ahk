@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/21
- * @version 2.5.55
+ * @version 2.5.56
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1008,7 +1008,7 @@ class Prem {
             CLSID_Objs.writeProp("prem", "__uxpOpen", true)
         }
 
-        paramsString := prem.__sanitiseParams(params)
+        paramsString := this.__sanitiseParams(params)
         sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portUXP) : Format("http://localhost:{2}/{1}", whichFunc, this.portUXP)
         getResp := cmd.httpGet(sendcommand, runAsync)
 
@@ -1072,7 +1072,7 @@ class Prem {
 
         ;// if premver greater than 26.5 we can use UXP to determine the colour
         if VerCompare(this.currentSetVer, "v26.5") >= 0 {
-            remoteBG := prem.__remoteUXP('properties/getBackgroundColour', true)
+            remoteBG := this.__remoteUXP('properties/getBackgroundColour')
             if remoteBG != false && remoteBG !== null {
                 bgCol := json.parse(StrReplace(remoteBG, "\"))
                 if bgCol["value"]["red"] == bgCol["value"]["green"] && bgCol["value"]["green"] == bgCol["value"]["blue"] {
@@ -1174,7 +1174,7 @@ class Prem {
      * @returns {null | boolean} returns null if; Premiere does not exist, Premiere's name could not be determined, UIA values could not be initialised or are not set. Else returns `true`/`false`
      */
     static isMultiCamActive(UIAObj?) {
-        if !WinExist(prem.exeTitle) {
+        if !WinExist(this.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
             return null
@@ -1292,7 +1292,7 @@ class Prem {
         if !actSequence || !focusSequence
             return "noseq"
         if checkAmount != 0
-            origSeq := this.__remoteFunc("getActiveSequenceID", true)
+            origSeq := this.__remoteFunc("getActiveSequenceID")
         state := {hasAppeared: false, hasClosed: false}
         try WinEvent.Exist((*) => state.hasAppeared := true, "Save Project " this.exeTitle)
         try WinEvent.Close((*) => state.hasClosed := true, "Save Project " this.exeTitle)
@@ -1305,7 +1305,7 @@ class Prem {
         blocker := block_ext()
         blocker.On(false)
         SetTimer((*) => blocker.Off(), -250)
-        if !this.__remoteFunc("saveProj", true) {
+        if !this.__remoteFunc("saveProj") {
             __stopCallbacks()
             blocker.Off()
             return false
@@ -1330,7 +1330,7 @@ class Prem {
         }
         sleep checkSeqTime
         loop checkAmount {
-            currentSeq := this.__remoteFunc("getActiveSequenceID", true)
+            currentSeq := this.__remoteFunc("getActiveSequenceID")
             if currentSeq != origSeq {
                 errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" origSeq))
                 this.__remoteFunc("focusSequence",, "ID=" String(origSeq))
@@ -1584,14 +1584,14 @@ class Prem {
             search := PixelSearch(&xCol, &yCol, x1, y1, x2, y2, colour, variance?)
             return {x: xCol, y: yCol, found: search}
         }
-        coord.screenToClient(x1, y1, prem._scan.hwnd, prem._scan.WindowScale, &startX, &startY)
-        coord.screenToClient(x2, y2, prem._scan.hwnd, prem._scan.WindowScale, &endX, &endY)
-        search := prem._scan.PixelRegion(colour, startX, startY, endX-startX, Min(endY-startY, 1), variance, &xCol, &yCol)
+        coord.screenToClient(x1, y1, this._scan.hwnd, this._scan.WindowScale, &startX, &startY)
+        coord.screenToClient(x2, y2, this._scan.hwnd, this._scan.WindowScale, &endX, &endY)
+        w := ((Max(startX, endX) - Min(startX, endX)) <= 0) ? 1 : (Max(startX, endX) - Min(startX, endX))
+        h := ((Max(startY, endY) - Min(startY, endY)) <= 0) ? 1 : (Max(startY, endY) - Min(startY, endY))
+        search := this._scan.PixelRegion(colour, startX, startY, w, h, variance, &xPos, &yPos)
         if !search
             return {x: unset, y: unset, found: false}
-        coord.clientToScreen(xCol, yCol, prem._scan.hwnd, prem._scan.WindowScale, &sColX, &sColY)
-        xPos := sColX, yPos := sColY
-        return {x: sColX, y: sColY, found: search}
+        return {x: xPos, y: yPos, found: search}
     }
 
     /**
@@ -1753,10 +1753,10 @@ class Prem {
                         this.__focusTimeline()
                         sleep 150
                     }
-                    startTick := this.__remoteFunc('getPlayheadPosTicks', true)
+                    startTick := this.__remoteFunc('getPlayheadPosTicks')
                     SendInput(direction)
                     sleep 25
-                    newTick := this.__remoteFunc('getPlayheadPosTicks', true)
+                    newTick := this.__remoteFunc('getPlayheadPosTicks')
                     if startTick == newTick {
                         delaySI(30, ksa.prem.stepBackOneFrame, ksa.prem.stepforwardOneFrame)
                         try {
@@ -1807,7 +1807,7 @@ class Prem {
                     effCtrl := premUIA_Values.getLivePanel("effectControls")
                     scroll := this.__getEffContScrollBar(effCtrl)
                 }
-                this.__remoteUXP('custom/resetSelection', true)
+                this.__remoteUXP('custom/resetSelection')
                 sleep 100
                 SendInput(direction)
                 if IsSet(effCtrl) {
@@ -2134,7 +2134,7 @@ class Prem {
             return null
         }
 
-        if !this.__remoteFunc('isSelectedAudio', true) {
+        if !this.__remoteFunc('isSelectedAudio') {
             blocker.Off()
             notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No audio clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return false
@@ -2279,7 +2279,7 @@ class Prem {
                 block.Off()
                 return
             }
-            levels := this.__remoteFunc("changeAudioLevels", true, "level=" String(which sendGain))
+            levels := this.__remoteFunc("changeAudioLevels",, "level=" String(which sendGain))
             if levels != true && levels != "true" {
                 errorLog(MethodError("Unexpected response", -1), "sent value: " String(which sendGain) " Response: " levels " - Type: " Type(levels))
                 notifyExt.showIfNotExist("premLevelKeyframe", 'prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
@@ -2463,7 +2463,7 @@ class Prem {
             return false
         }
         timelineNN := premUIA.UIA_Objs['timelineWindow']
-        if !middleIndex := prem.__retrieveAudLayerIndex(premUIA) {
+        if !middleIndex := this.__retrieveAudLayerIndex(premUIA) {
             errorLog(MethodError("Failed to determine middle index object. Aborting...", -1))
             return false
         }
@@ -3021,7 +3021,7 @@ class Prem {
      * A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab.
      */
     static anchorToPosition() {
-        cepSync := this.__remoteFunc('anchorToPosition', true)
+        cepSync := this.__remoteFunc('anchorToPosition')
         if cepSync = true
             return
         selected := this.isClipSelected()
@@ -3243,7 +3243,7 @@ class Prem {
      * ```
      */
     static getSourceMonDragButtons(UIAObj?) {
-        if !WinExist(prem.exeTitle) {
+        if !WinExist(this.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
             return false
@@ -3339,7 +3339,7 @@ class Prem {
             return
         }
         if specificFile != false && specificFile != "" {
-            getName := this.__remoteFunc("sourceMonName", true)
+            getName := this.__remoteFunc("sourceMonName")
             sourceMonFile := SubStr(specificFile, (pos := instr(specificFile, "/",, -1) || pos := instr(specificFile, "\",, -1)) ? pos+1 : 1)
             if getName != specificFile {
                 __exit() {
@@ -3350,7 +3350,7 @@ class Prem {
                 if searchForFile = true {
                     this.__remoteFunc("loadInSourceMonitor",, "itemPath=" specificFile)
                     sleep 150
-                    recheck := this.__remoteFunc("sourceMonName", true)
+                    recheck := this.__remoteFunc("sourceMonName")
                     if recheck != sourceMonFile {
                         __exit()
                         return
@@ -3500,8 +3500,8 @@ class Prem {
             return false
         if !layerIndex := this.__retrieveAudLayerIndex(premUIA)
             return false
-        vidTrackNum := this.__remoteFunc('getVideoTracks', true)
-        audTrackNum := this.__remoteFunc('getAudioTracks', true)
+        vidTrackNum := this.__remoteFunc('getVideoTracks')
+        audTrackNum := this.__remoteFunc('getAudioTracks')
 
         vidTracksArr := []
         vidLayersChecked := 0
@@ -3552,19 +3552,48 @@ class Prem {
      */
     static __getlayerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, &midDivBot?, showError?) {
         doNotify := IsSet(showError) && (showError=true || showError=false) ? showError : true
-        switch {
-            case VerCompare(this.currentSetVer, "v26.3.2") <= 0: plus := 5
-            case VerCompare(this.currentSetVer, "v26.5") >= 0: plus := 12
+
+
+        midFound := this.__getlayerMid(&mX, &mY, &mBot)
+        layerTop := false, layerBot := false
+        if midFound {
+            vidOrAud := (coords.y < mY) ? "vid" : "aud"
+            if layers := this.__getAllLayerPos(mY, vidOrAud) {
+                for _, layer in layers {
+                    if coords.y >= layer["top"] && coords.y <= layer["bot"] {
+                        layerTop := layer["top"], layerBot := layer["bot"]
+                        break
+                    }
+                }
+
+                ;// not inside any full layer. the cursor may be within a layer that's cut off by the edge of the timeline.
+                ;// only one of its dividers is visible, so return that edge and leave the other as `false`.
+                ;// (layerSizeAdjust() already knows how to handle a result with only one edge)
+                if !layerTop && !layerBot && layers.Count > 0 {
+                    switch vidOrAud {
+                        case "aud":
+                            ;// below the last full audio layer: its bottom divider is the top of the cut off layer
+                            if coords.y > layers[layers.Count]["bot"]
+                                layerTop := layers[layers.Count]["bot"]
+                        case "vid":
+                            ;// above the last full video layer: its top divider is the bottom of the cut off layer
+                            if coords.y < layers[layers.Count]["top"]
+                                layerBot := layers[layers.Count]["top"]
+                    }
+                }
+            }
         }
-        topDiv := this.__getPixelRegion(this.layerDivider, this.timelineRawX+plus, coords.y, this.timelineRawX+plus, this.timelineRawY,,, &topDivX, &topDivY)
-        botDiv := this.__getPixelRegion(this.layerDivider, this.timelineRawX+plus, coords.y, this.timelineRawX+plus, this.timelineYControl,,, &botDivX, &botDivY)
-        mid := (searchMid = true) ? this.__getlayerMid(&midDivX, &midDivY, &midDivBot) : true
-        if (!topDiv.found || !botDiv.found || !mid) {
-            if doNotify = true && !Notify.Exist("premLayerBounds")
-                Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424 tag=premLayerBounds')
-            return {topX: topDivX ?? false, topY: topDivY ?? false, botX: botDivX ?? false, botY: botDivY ?? false, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: true}
-        }
-        return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: false}
+
+        if searchMid = true && midFound
+            midDivX := mX, midDivY := mY, midDivBot := mBot
+        topDivX := botDivX := this.timelineRawX
+        topDivY := layerTop, botDivY := layerBot
+
+        failed := (!midFound || !layerTop || !layerBot)
+        if failed && doNotify = true && !Notify.Exist("premLayerBounds")
+            Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424 tag=premLayerBounds')
+
+        return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: failed}
     }
 
     /**
@@ -4097,7 +4126,7 @@ class Prem {
             midDivY := false
             aboveOrBelow := (audOrVid = "vid") ? true : false
         }
-        maxTracks := (aboveOrBelow = true) ? this.__remoteFunc('getVideoTracks', true) : this.__remoteFunc('getAudioTracks', true)
+        maxTracks := (aboveOrBelow = true) ? this.__remoteFunc('getVideoTracks') : this.__remoteFunc('getAudioTracks')
         if !IsSet(splitHotkey) && track != "queue" && track = A_ThisHotkey && (StrLen(A_ThisHotkey) > 1) && !IsInteger(A_ThisHotkey) {
             splitHotkey := getHotkeysArr()
             if !IsInteger(GetKeyName(splitHotkey[splitHotkey.Length])) {
@@ -4514,7 +4543,7 @@ class Prem {
         chkQual := checkBool(enableMaxRenderQual)
         if chkQual != true && chkQual != false
             chkQual := true
-        toggle := this.__remoteFunc('toggleLinearColour', true, "enableMaxRenderQual=" chkQual)
+        toggle := this.__remoteFunc('toggleLinearColour',, "enableMaxRenderQual=" chkQual)
         switch toggle {
             case "failure": notifyExt.showIfNotExist("premFailLinColour",, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red')
             default:
@@ -4550,7 +4579,7 @@ class Prem {
 		if !premWindow || checkType || !checkTitle || checkCanSave {
             return
         }
-        seq := this.__remoteFunc("getActiveSequenceID", true)
+        seq := this.__remoteFunc("getActiveSequenceID")
         if !seq {
             return
         }
@@ -4704,12 +4733,12 @@ class Prem {
         }
         presetPath := ptf.Backups "\Adobe Backups\Media Encoder\Presets"
 
-        if !this.__remoteFunc('selectionIsSequence', true) {
+        if !this.__remoteFunc('selectionIsSequence') {
             notifyExt.showIfNotExist('premSelectionNotSeq',, 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
             return false
         }
 
-        binPath := this.__remoteFunc('getSelectionBinPath', true)
+        binPath := this.__remoteFunc('getSelectionBinPath')
 
         title := WinGet.PremName()
         if title.saveCheck != false
@@ -4731,14 +4760,14 @@ class Prem {
             return false
         }
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
-        file := this.__remoteFunc('renderInPrem', true, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
+        file := this.__remoteFunc('renderInPrem',, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
         this.save()
         if checkbool(addToProj) && (file != false) && FileExist(file) {
             notifyExt.showIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
             __waitFree() {
                 loop 20 {
                     sleep 1000
-                    if (this.__remoteFunc('isMainThreadFree', true) = true)
+                    if (this.__remoteFunc('isMainThreadFree') = true)
                         return true
                 }
                 return false
@@ -4747,7 +4776,7 @@ class Prem {
                 this.save()
                 return false
             }
-            if !this.__remoteFunc('importFile', true, "filePath=" StrReplace(file, "\", "/"), "importPath=" binPath, "importAsStills=0")
+            if !this.__remoteFunc('importFile',, "filePath=" StrReplace(file, "\", "/"), "importPath=" binPath, "importAsStills=0")
                 return false
         }
         this.save()
@@ -4948,7 +4977,7 @@ class Prem {
             case false:
                 if handlesState = false
                     handlesCheckbox.Toggle()
-                seqFrameRate := Round(this.__remoteFunc('getSeqFrameRate', true))
+                seqFrameRate := Round(this.__remoteFunc('getSeqFrameRate'))
                 handles := seqFrameRate
 
             case true:
@@ -4995,7 +5024,7 @@ class Prem {
     static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout := 3, handles?, includeEffects := true) {
         if !WinActive(this.winTitle)
             return false
-        clipType := this.__remoteFunc('clipType', true)
+        clipType := this.__remoteFunc('clipType')
         title := WinGet.PremName()
         if title.saveCheck != false
             attempt := this.saveAndFocusTimeline()
@@ -5048,7 +5077,7 @@ class Prem {
      * A function to activate the Project panel and select the last item in the list. Useful after you've moved an item into another bin and premiere defaults to no selection afterwards
      */
     static goToLastProjPanelItem() {
-        if !WinActive(prem.winTitle)
+        if !WinActive(this.winTitle)
             return
         premUIA := premUIA_Values.initialise()
         if !premUIA_Values.__isUiaElementActive("projectsWindow", premUIA) {
@@ -5090,7 +5119,7 @@ class Prem {
      * @returns {String}
      */
     static listAllUXPEffects() {
-        t := prem.__remoteUXP('custom/listAllAvailableEffects', true)
+        t := this.__remoteUXP('custom/listAllAvailableEffects')
         t := StrReplace(t, "||", "`n")
         t := StrReplace(t, "|", "`n")
         return t
@@ -5133,7 +5162,7 @@ class Prem {
         }
         switch checkBool(save) {
             case true:
-                t := this.__remoteFunc('saveEffectSlotJSON', true)
+                t := this.__remoteFunc('saveEffectSlotJSON')
                 if InStr(t, "error") {
                     __checkErrors(t)
                     return
@@ -5171,7 +5200,7 @@ class Prem {
                 switch checkBool(saveToFile) {
                     case false:
                         stringg := Base64Encode(slots.%slot%)
-                        try t := this.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                        try t := this.__remoteFunc('applyEffectSlotJSON',, "data=" stringg)
                         catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
                             notifyExt.deleteIfExist('premEffectSlotPreSend')
@@ -5181,7 +5210,7 @@ class Prem {
                     case true:
                         try {
                             stringg := Base64Encode(FileRead(slotFile))
-                            t := this.__remoteFunc('applyEffectSlotJSON', true, "data=" stringg)
+                            t := this.__remoteFunc('applyEffectSlotJSON',, "data=" stringg)
                         } catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
                             notifyExt.deleteIfExist('premEffectSlotPreSend')
@@ -5237,7 +5266,7 @@ class Prem {
                     errorLog(e,,, true)
                     return
                 }
-            case true: return prem.__remoteFunc('properties/getPlayheadPosTimecode', true)
+            case true: return this.__remoteFunc('properties/getPlayheadPosTimecode')
         }
     }
 

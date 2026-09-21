@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/09/17
- * @version 1.5.14
+ * @date 2026/09/21
+ * @version 1.5.15
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -472,7 +472,7 @@ class AE {
         blocker := block_ext()
         blocker.On(false)
         SetTimer((*) => blocker.Off(), -250)
-        if !this.__remoteFunc("save", true) {
+        if !this.__remoteFunc("save") {
             __stopCallbacks()
             blocker.Off()
             return false
@@ -657,12 +657,12 @@ class AE {
             case "multi": which := 'isSelectedMultiple'
         }
         return (!IsSet(which) ? null
-                              : (this.__remoteFunc(which, true) = false ? false : true))
+                              : (this.__remoteFunc(which) = false ? false : true))
     }
 
     /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
     static anchorToPosition() {
-        cepSync := this.__remoteFunc('anchorToPosition', true)
+        cepSync := this.__remoteFunc('anchorToPosition')
         if cepSync = true
             return
         selected := this.isClipSelected()

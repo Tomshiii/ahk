@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/09/16
- * @version 1.1.20
+ * @date 2026/09/21
+ * @version 1.1.21
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -83,7 +83,7 @@ class OtherFuncs {
     static addAdjustLayer(adjustmentLayerPath, makeSelection) {
         adjustName := SubStr(adjustmentLayerPath, InStr(adjustmentLayerPath, "/",, -1)+1)
         prem.stopPlayback()
-        prem.__remoteUXP('custom/addMatchedAdjustmentLayer', true, 'adjustmentLayerPath=' adjustmentLayerPath, "makeSelection=" makeSelection)
+        prem.__remoteUXP('custom/addMatchedAdjustmentLayer',, 'adjustmentLayerPath=' adjustmentLayerPath, "makeSelection=" makeSelection)
         if checkBool(makeSelection) != true
             return
         __setScroll() {
@@ -96,14 +96,14 @@ class OtherFuncs {
 
         switch adjustName {
             case "_transform_adjust layer":
-                prem.__remoteUXP('custom/applyEffectOnAllSelectedClips', true, "effectName=Geometry2")
-                prem.__remoteUXP('custom/resetSelection', true) ;// hotkeys to move between keyframes won't work unless you reset the selection
-                prem.__remoteUXP('custom/resetSelection', true)
+                prem.__remoteUXP('custom/applyEffectOnAllSelectedClips',, "effectName=Geometry2")
+                prem.__remoteUXP('custom/resetSelection') ;// hotkeys to move between keyframes won't work unless you reset the selection
+                prem.__remoteUXP('custom/resetSelection')
                 __setScroll()
             case "_colour_adjust layer":
-                prem.__remoteUXP('custom/applyEffectOnAllSelectedClips', true, "effectName=Lumetri%20Color")
-                prem.__remoteUXP('custom/resetSelection', true) ;// hotkeys to move between keyframes won't work unless you reset the selection
-                prem.__remoteUXP('custom/resetSelection', true)
+                prem.__remoteUXP('custom/applyEffectOnAllSelectedClips',, "effectName=Lumetri%20Color")
+                prem.__remoteUXP('custom/resetSelection') ;// hotkeys to move between keyframes won't work unless you reset the selection
+                prem.__remoteUXP('custom/resetSelection')
                 __setScroll()
         }
     }
@@ -120,7 +120,7 @@ class OtherFuncs {
      * @param {String} [audioType="Standard"] which type of audio channel to add. Can be `Standard`/`5.1`/`mono`/`adaptive`
      */
     static setupMusicTracks(audioType := "Standard") {
-        audTrackNum := prem.__remoteFunc('getAudioTracks', true)
+        audTrackNum := prem.__remoteFunc('getAudioTracks')
         selectedTrack := ""
         index := -1
         afterGUI := tomshiBasic(,,, "After Track")

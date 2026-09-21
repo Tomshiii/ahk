@@ -3,7 +3,7 @@
  * @premVer 26.5.1
  * @author tomshi, taranVH
  * @date 2026/09/21
-, this.title * @version 2.4.32
+ * @version 2.4.33
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -238,7 +238,7 @@ class rbuttonPrem {
 	 */
 	__ensureSeq(checkAmount := 1, timeWait := 1000, *) {
 		static count := 1
-		currentSeq := prem.__remoteFunc("getActiveSequenceID", true)
+		currentSeq := prem.__remoteFunc("getActiveSequenceID")
 
 		if !this.origSeq || this.origSeq == null || !currentSeq || currentSeq == null {
 			count := 1
@@ -495,7 +495,7 @@ class rbuttonPrem {
 				useRemote := false
 				notifyExt.showIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
 			} else {
-				this.origSeq := prem.__remoteFunc("getActiveSequenceID", true)
+				this.origSeq := prem.__remoteFunc("getActiveSequenceID")
 				if !this.origSeq || this.origSeq == null {
 					useRemote := false
 					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/19
- * @version 3.0.41
+ * @date 2026/09/21
+ * @version 3.0.42
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -227,7 +227,7 @@ class premUIA_Values {
             throw Error("Socket")
         }
 
-        currentVer := prem.__remoteFunc('premVer', true)
+        currentVer := prem.__remoteFunc('premVer')
         if currentVer == null {
             __DelNotify()
             throw Error("Socket")
