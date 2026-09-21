@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/09/09
- * @version 1.9.13
+ * @date 2026/09/21
+ * @version 1.9.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -597,6 +597,30 @@ class Startup {
         __addAndIncrement("Settings (GUI)", (*) => settingsGUI())
         __addAndIncrement("") ;adds a divider bar
 
+        submenuRemote := Menu()
+        submenuPrem := Menu()
+
+        submenuPremUXP := Menu()
+        submenuPremUXP.Add("Load Extension", (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\openDockerUXP.ahk"))
+        submenuPremUXP.Add("Open Extension Dir", (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\openRemoteDir.ahk"))
+        submenuPremUXP.Add("Replace && Reset", (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk"))
+        submenuPrem.Add("UXP", submenuPremUXP)
+
+        submenuPremCEP := Menu()
+        submenuPremCEP.Add("Replace && Reset", (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\cep\replaceAndReset.ahk"))
+        submenuPremCEP.Add("Open PremiereRemote", (*) => RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\openPremRemote.ahk.ahk"))
+        submenuPrem.Add("CEP", submenuPremCEP)
+
+        submenuRemote.Add("PremiereRemote", submenuPrem)
+
+        submenuAE := Menu()
+        ; submenuAECEP := Menu() ;// ae has no UXP yet anyway
+        submenuAE.Add("Replace && Reset", (*) => RunWait(ptf.Backups "\Adobe Backups\After Effects\AERemote\cep\replaceAndReset.ahk"))
+        submenuAE.Add("Open AERemote", (*) => RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\openAERemote.ahk"))
+        submenuRemote.Add("AERemote", submenuAE)
+
+        A_TrayMenu.Insert(startingVal "&", "AERemote/PremRemote", submenuRemote)
+        startingVal++
 
         submenuSC := Menu()
         submenuSC.Add("Reload All Scripts", (*) => reset.ext_reload())
