@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/09/21
- * @version 1.0.14
+ * @date 2026/09/22
+ * @version 1.0.15
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -193,6 +193,7 @@ __deleteUIA() {
 }
 
 __doExit(premUIAobj) {
+    try CLSID_Objs.writeProp("prem", Map("__cepOpen", false, "__uxpOpen", false))
     __deleteUIA()
     __resetIsActive()
     __resetObj(premUIAobj)
