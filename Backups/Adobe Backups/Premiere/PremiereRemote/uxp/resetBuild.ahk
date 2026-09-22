@@ -14,6 +14,9 @@ doHide := (hide = true) ? "Hide" : ""
 openDebug := false
 
 InstalledDir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
+if FileExist(InstalledDir "\compose.yaml") && !InStr(FileRead(InstalledDir "\compose.yaml"), "restart: unless-stopped") {
+    FileAppend("`t`trestart: unless-stopped", InstalledDir "\compose.yaml")
+}
 cmd.run(,, keepWindow, 'node scripts/generate-api.js', InstalledDir "\client", doHide)
 cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', InstalledDir "\client", doHide)
 cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', InstalledDir "\client", doHide)

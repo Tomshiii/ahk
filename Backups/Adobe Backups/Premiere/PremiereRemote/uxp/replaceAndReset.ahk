@@ -7,7 +7,11 @@
 SetWorkingDir(A_ScriptDir)
 
 ;// ======= manifest =======
-dir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\client"
+InstalledDir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
+if FileExist(InstalledDir "\compose.yaml") && !InStr(FileRead(InstalledDir "\compose.yaml"), "restart: unless-stopped") {
+    FileAppend("`t`trestart: unless-stopped", InstalledDir "\compose.yaml")
+}
+dir := InstalledDir "\client"
 manifest := dir "\manifest.json"
 if !FileExist(manifest)
     return
@@ -23,7 +27,7 @@ if fil['requiredPermissions']['localFileSystem'] != "fullAccess" {
 ;// ======= docker =======
 dockerAhk := "ahk_exe Docker Desktop.exe"
 dockerFile := "C:\Program Files\Docker\Docker\Docker Desktop.exe"
-__runAndWait(dockerAhk, dockerFile)
+__runAndWait(dockerAhk, dockerFile, true,, 0)
 
 ;// ======= uxp =======
 uxpAHK := "ahk_exe Adobe UXP Developer Tools.exe"

@@ -17,14 +17,14 @@ uxpFile := "C:\Program Files\Adobe\Adobe UXP Developer Tools\Adobe UXP Developer
 
 
 ;// ======= docker =======
-if !__runAndWait(dockerAhk, dockerFile, false,, 0)
+if !__runAndWait(dockerAhk, dockerFile, true,, 0)
     return
 ;// ======= uxp =======
 if !__runAndWait(uxpAHK, uxpFile, false,, 0)
     return
 
 ;// ======= docker =======
-if WinWait(dockerAhk,, 3) {
+/* if WinWait(dockerAhk,, 3) {
     WinActivate(dockerAhk)
     try {
         dockerUIA := UIA.ElementFromHandle(dockerAhk,, false)
@@ -34,7 +34,7 @@ if WinWait(dockerAhk,, 3) {
         }
         winExt.MinimizeRegex(dockerAhk)
     }
-}
+} */
 
 
 ;// ======= uxp =======
