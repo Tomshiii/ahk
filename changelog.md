@@ -2,7 +2,7 @@
 This update focuses on optimisations to reduce unnecessary wait times across a wide variety of functions. This includes; heavily reducing the startup delay for both `prem.__remote` functions, using `ShinsImageScanClass` when possible instead of `PixelSearch()`/`PixelGetColor()`, and more.
 
 ## Functions
-- ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`
+- ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`, `Base64Decode()`
 - 📋 `startup().trayMen()` now shows controls for `AERemote`/`PremiereRemote`
 
 ### 📝 `prem {`

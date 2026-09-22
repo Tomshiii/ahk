@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.5.1
  * @author tomshi, taranVH
- * @date 2026/09/21
- * @version 2.4.34
+ * @date 2026/09/22
+ * @version 2.4.35
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -364,6 +364,7 @@ class rbuttonPrem {
 		currHotkey := A_ThisHotkey
 		try (chkVar := GetKeyState(currHotkey), chkVar := GetKeyState(currHotkey, "P"))
 		catch {
+			errorLog(MethodError("GetKeyState will not work with the current hotkey"), currHotkey)
 			SendInput(this.sendHotkey)
 			return
 		}
@@ -380,6 +381,7 @@ class rbuttonPrem {
 		try {
 			if WinGet.Title() != gettitle.winTitle {
 				SendInput(this.sendHotkey)
+				errorLog(TargetError("Main Premiere window doesn't appear to be the focused window"))
 				this.__stopHook()
 				return
 			}
@@ -392,6 +394,7 @@ class rbuttonPrem {
         checkCanSave := isObjHasProp(getTitle, "titleCheck", true)
 		if !getTitle || checkType || !checkTitle || checkCanSave {
 			SendInput(this.sendHotkey)
+			errorLog(TargetError("Failed to determine Premiere's title"))
 			this.__stopHook()
             return
         }
@@ -400,6 +403,7 @@ class rbuttonPrem {
 		if prem.__OSwindow() && WinActive(prem.winTitle) {
             SendInput("{Escape}")
 			this.__stopHook()
+			errorLog(TargetError("An OS popup window appears to exist."))
 			return
         }
 
@@ -407,6 +411,7 @@ class rbuttonPrem {
 			prem.dismissWarning()
 			if !GetKeyState(currHotkey) {
 				this.__stopHook()
+				errorLog(TargetError("An OS popup window appears to exist."))
 				return
 			}
 		}
@@ -417,6 +422,7 @@ class rbuttonPrem {
 		try this.premObj := CLSID_Objs.load("prem")
 		catch {
 			this.__stopHook()
+			errorLog(TargetError("Failed to load Premiere UIA object"))
 			return
 		}
 		this.premObj.RClickIsActive := true
@@ -430,6 +436,7 @@ class rbuttonPrem {
 		coord.s()
 		if !origMouse := obj.MousePos() {
 			this.__stopHook()
+			errorLog(TargetError("Failed to determine the cursor position"))
 			return
 		}
 
@@ -443,6 +450,7 @@ class rbuttonPrem {
 		;// only continues if the cursor is within the timeline
 		if !prem.__checkCoords(origMouse) {
 			SendInput(this.sendHotkey)
+			errorLog(TargetError("Cursor does not appear to be within the timeline"))
 			this.__exit()
 		}
 
@@ -451,8 +459,10 @@ class rbuttonPrem {
 		;// unfortunately we can't use UIA to check if the program monitor is the focused window
 		;// because setting UIA vals this early can cause a tonne of lag during playback
 		focusStatus := prem.timelineFocusStatus()
-		if focusStatus == null
+		if focusStatus == null {
+			errorLog(MethodError("prem.timelineFocusStatus returned null"))
 			return
+		}
 		if !focusStatus {
 			SendInput("{Escape}")
 			sleep 16
@@ -468,6 +478,7 @@ class rbuttonPrem {
 
 			;// checks to see if the colour under the cursor is one already defined within the class
 			if !this.__checkColour(this.colour) {
+				errorLog(TargetError("Colour determined not within __checkColour()"))
 				this.__exit()
 			}
 		}
@@ -475,6 +486,7 @@ class rbuttonPrem {
 		;// determines the position of the playhead
 		if this.colour = prem.playhead {
 			if !this.__checkUnderCursor(this.colour2) {
+				errorLog(TargetError("Colour determined within __checkUnderCursor"))
 				this.__exit()
 			}
 		}

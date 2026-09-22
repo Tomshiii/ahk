@@ -62,11 +62,15 @@ class rclone {
         nPath   := SubStr(NAS_FullPath, 4)
         switch which {
             case 1:
+                gString := "1. The Boys\"
+                gPath   := SubStr(gdrive_FullPath, InStr(gdrive_FullPath, gString)+StrLen(gString))
                 nCommand := StrReplace(SubStr(nPath := this.__removeFile(NAS_FullPath), 4), "\", "/")
                 gCommand := StrReplace(SubStr(gPath := this.__removeFile(gdrive_FullPath), InStr(gPath, gString)+StrLen(gString)), "\", "/")
                 normalCommand := format(this.cmdSyncDir, nCommand, gCommand, altshare)
                 return this.__formatSSH(normalCommand)
             case 2:
+                gString := "1. The Boys\Main\"
+                gPath   := SubStr(gdrive_FullPath, InStr(gdrive_FullPath, gString)+StrLen(gString))
                 normalCommand := Format(this.cmdCopyFile, StrReplace(gPath, "\", "/"), StrReplace(nPath, "\", "/"), altshare)
                 return this.__formatSSH(normalCommand)
         }
