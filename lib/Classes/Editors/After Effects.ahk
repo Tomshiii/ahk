@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/09/21
- * @version 1.5.16
+ * @date 2026/09/22
+ * @version 1.5.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -192,42 +192,46 @@ class AE {
 
     static __cepInstalled := null
     static __cepFuncMap   := false
+    static __cepOpen      := false
+    ; static __uxpOpen      := false
 
     /**
      * This function is syntatic sugar to activate a [AERemote](https://github.com/Tomshiii/PremiereRemote/tree/AE) function
      * @param {String} whichFunc the function you wish to call
-     * @param {Boolean} [needResult=false] determines whether the user needs this function to return a result back from the cmd window.
+     * @param {Boolean} [runAsync=false] determines whether tell `cmd.httpGet()` to run synchronously or asynchronously
      * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
      *
      * ## Warning
      *
      * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
      * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead. This function will attempt to rectify the issue itself but again, relying on such could result in issues.
-     * @returns {String} if the user sets `needResult` to `true` this function will return a string containing the response.
+     * @returns {String | Boolean | null}
      */
-    static __remoteFunc(whichFunc, needResult := false, params*) {
+    static __remoteFunc(whichFunc, runAsync := false, params*) {
         if !this.__checkAERemoteDir(whichFunc) {
             errorLog(TargetError("AERemote is not installed or function does not exist.", -1, whichFunc),,, true)
-            return false
+            return null
         }
         if !this.__checkRemoteParams(whichFunc, params, "cep")
-            return false
+            return null
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
-            return false
+            return null
         }
 
         checkAE := WinGet.AEName()
         checkType := (Type(checkAE) != "Object")
         if !checkAE || checkType
-            return false
+            return null
         checkTitle := (checkAE.winTitle = "" || !checkAE.wintitle), checkCanSave := (checkAE.titleCheck = null)
         if checkTitle || checkCanSave {
-            return false
+            return null
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
-            remoteCEPState := CLSID_Objs.loadProp("ae", "remoteActiveCEP")
+            props := CLSID_Objs.loadProp("ae", ["remoteActiveCEP", "__cepOpen"])
+            remoteCEPState := props["remoteActiveCEP"]
+            this.__cepOpen := props["__cepOpen"]
             if remoteCEPState = "loading" {
                 notifyExt.showIfNotExist("aeSocketConnectionErrorCEP",, "Socket connection to CEP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null
@@ -235,7 +239,7 @@ class AE {
             if !remoteCEPState {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
                 notifyExt.showIfNotExist('aeSocketConnectionErrorCEP',, "A socket connection could not be established to CEP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return false
+                return null
             }
         } else {
             if this.remoteActiveCEP = "loading" {
@@ -245,20 +249,35 @@ class AE {
             if !this.remoteActiveCEP {
                 errorLog(Error("A socket connection could not be established to CEP plugin", -1),, false)
                 notifyExt.showIfNotExist('aeSocketConnectionErrorCEP',, "A socket connection could not be established to CEP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return false
+                return null
             }
+        }
+
+        if !this.__cepOpen {
+            checkPanelCommand := Format("http://localhost:{2}/{1}", "isPanelOpen", this.portCEP)
+            isPanelOpen := cmd.httpGet(checkPanelCommand, true)
+            if isPanelOpen == null || isPanelOpen != '{"message":"ok.","result":"true"}' {
+                errorLog(MethodError("AERemote CEP panel is not open."), isPanelOpen)
+                notifyExt.showIfNotExist('aePanelNotOpenCEP',, "AERemote CEP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                return null
+            }
+            this.__cepOpen := true
+            CLSID_Objs.writeProp("ae", "__cepOpen", true)
         }
 
         paramsString := this.__sanitiseParams(params)
         sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portCEP) : Format("http://localhost:{2}/{1}", whichFunc, this.portCEP)
-        getResp := cmd.httpGet(sendcommand)
+        getResp := cmd.httpGet(sendcommand, runAsync)
 
         if getResp == null || InStr(getResp, "Failed to connect to localhost") {
-            if WinExist(this.winTitle) ;// will sometimes still fire after premiere is closed
-                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote Extension may not be running.", -1),, true)
+            ;// will sometimes still fire after AE is closed
+            if WinExist(this.winTitle) {
+                errorLog(Error("1. Unable to connect to localhost server. AERemote Extension may not be running.", -1))
+                notifyExt.showIfNotExist('aeFailedResponseCEP',, "Unable to connect to localhost server. AERemote CEP Extension may not be running.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+            }
             else
-                errorLog(Error("1. remoteFunc was called but Premiere no longer appears to be open.", -1))
-            return false
+                errorLog(Error("1. remoteFunc was called but AE no longer appears to be open.", -1))
+            return null
         }
         try parse := JSON.parse(getResp)
         catch {
@@ -266,7 +285,7 @@ class AE {
                 errorLog(Error("2. Unable to connect to localhost server. AERemote Extension may not be running."),, true)
             else
                 errorLog(Error("2. remoteFunc was called but AE no longer appears to be open.", -1))
-            return false
+            return null
         }
         switch {
             case (!parse.has("result") && parse.has("message")):
@@ -649,7 +668,7 @@ class AE {
      * @returns {Boolean | null}
      */
     static isClipSelected(single := false) {
-        if !this.__checkPremRemoteFunc(["isSelected", 'isSelectedSingle', 'isSelectedMultiple'])
+        if !this.__checkAERemoteFunc(["isSelected", 'isSelectedSingle', 'isSelectedMultiple'])
             return null
         switch single, 0 {
             case false:   which := 'isSelected'

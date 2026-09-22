@@ -215,5 +215,9 @@ export const host = {
     }
 
     return comp.selectedLayers.length > 1;
+  },
+
+  isPanelOpen: function () {
+    return true;
   }
 };

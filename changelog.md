@@ -14,7 +14,7 @@ This update focuses on optimisations to reduce unnecessary wait times across a w
 - 📋 The following functions will now use `ShinsImageScanClass` instead of `PixelSearch()`/`PixelGetColor()` when possible;
     - `__getAllLayerPos()`, `isClipUnderCursor()`, `timelineFocusStatus()`, `toggleEnabled()`, `disableDirectManip()`, `movepreview()`, `__layerDividerCheck()`, `disableAllMuteSolo()`, `soloVideo()`, `searchPlayhead()`, `__getlayerTopBottom()`
 
-📍 `__remoteFunc()`/`__remoteUXP()`
+📍 `__remoteFunc()`/`__remoteUXP()`/`ae.remoteFunc()`
 - 📋 Will now alert the user if the respective extension panel is not open (once per reload)
 - 📋 Now returns `null` for all non response failures instead of a mix of `null`/`false`
 - 📋 Now use `cmd.httpGet()` instead of `cmd.result()` to significantly reduce the response time
@@ -27,8 +27,8 @@ This update focuses on optimisations to reduce unnecessary wait times across a w
 
 ### 📝 `ae {`
 - ✅ Fixed `selectTool()` crashing AE
+- ✅ Fixed `isClipSelected()` calling `__checkPremRemoteFunc()`
 - ✏️ Added `ae.getActivePanelName()`
-- 📋 `__remoteFunc()` now uses `cmd.httpGet()` instead of `cmd.result()` to significantly reduce the response time
 
 ### 📝 `ps {`
 - ✅ Fixed using incorrect `ImageSearch` path
