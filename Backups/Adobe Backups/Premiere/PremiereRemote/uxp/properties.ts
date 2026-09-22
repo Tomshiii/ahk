@@ -140,7 +140,6 @@ export async function getSeqFrameRate(): Promise<string | null> {
 export async function getPlayheadPosTimecode(): Promise<string | false> {
     const sequence = await common.getActiveSequence();
     if (!sequence) {
-        console.log("[getPlayheadPosTimecode] no active sequence");
         return false;
     }
 
@@ -149,13 +148,7 @@ export async function getPlayheadPosTimecode(): Promise<string | false> {
     const timeDisplay = await sequence.getSequenceVideoTimeDisplayFormat();
     const currentPos = await sequence.getPlayerPosition();
 
-    console.log("[getPlayheadPosTimecode] frameRate.value:", frameRate.value);
-    console.log("[getPlayheadPosTimecode] timeDisplay.type:", timeDisplay.type);
-    console.log("[getPlayheadPosTimecode] currentPos.seconds:", currentPos.seconds);
-    const result = helpers.formatTickTimeAsTimecode(currentPos, frameRate, timeDisplay.type);
-    console.log("[getPlayheadPosTimecode] result:", JSON.stringify(result));
-
-    return result;
+    return helpers.formatTickTimeAsTimecode(currentPos, frameRate, timeDisplay.type);;
 }
 
 // get/set proxies you can't do yet in uxp...

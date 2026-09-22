@@ -2,7 +2,7 @@
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
  * @date 2026/09/22
- * @version 1.0.15
+ * @version 1.0.16
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -216,8 +216,10 @@ _onExit(allRegister, *) {
     try getReload := A_Args.Get(1)
     if !isReload(getReload ?? false)
         errorLog(Error("determineUIA.ahk has exited"))
-    WinEvent.Stop("Close", prem.exeTitle)
+    try WinEvent.Stop("Close", prem.exeTitle)
+    try bareHook.Stop()
     for v in allRegister {
         try ObjRegisterActive(v.obj, "")
     }
+    try CLSID_Objs.writeProp("prem", Map("__cepOpen", false, "__uxpOpen", false))
 }
