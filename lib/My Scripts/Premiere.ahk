@@ -811,6 +811,16 @@ F14 & F18::
 	prem.__remoteFunc('setMarker',, "colour=0")
 }
 
+$!WheelUp::
+$!WheelDown::
+{
+	if prem.blockWheel
+        return
+	hot := getHotkeysArr()
+	key := GetKeyName(hot[-1])
+	if key = "WheelUp" || key = "WheelDown"
+		try SendInput("{LAlt Down}{" GetKeyName(hot[-1]) "}")
+}
 WheelUp::
 WheelDown::
 {

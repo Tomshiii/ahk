@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/21
- * @version 2.5.57
+ * @date 2026/09/23
+ * @version 2.5.58
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3590,20 +3590,39 @@ class Prem {
         return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: failed}
     }
 
+    static blockWheel := true
     /**
      * A function designed to allow you to quickly adjust the size of the layer the cursor is within. <kbd>LAlt</kbd> **MUST** be one of the activation hotkeys and is required to be held down for the duration of this function.
+     * #### Warning;
+     * - `WheelUp`/`WheelDown` inputs can leak before the mouse has a chance to move unless you also include a hotkey like;
+     * ```
+$!WheelUp::
+$!WheelDown::
+{
+	if prem.blockWheel
+        return
+	hot := getHotkeysArr()
+	key := GetKeyName(hot[-1])
+	if key = "WheelUp" || key = "WheelDown"
+		try SendInput("{LAlt Down}{" GetKeyName(hot[-1]) "}")
+}
+```
      * @param {Boolean} [capsLockDisable=true] (if the user does *NOT* use <kbd>CapsLock</kbd> to activate this function, they should set this value to `false`) because I use capslock as the activation key (and also have it set to "AlwaysOff"), ahk is a bit quirky and will sometimes just not reset that even if I use `SetStoreCapsLockMode(true)` - so setting this parameter to `true` will cause the function to manually call `SetCapsLockState('AlwaysOff')` at the end of its logic
      * @param {Boolean} [middle=false] determine whether you wish to adjust the middle divider instead of the current track. Be aware that due to windows/ahk issues when it comes to tracking whether keys are still held down; this function will not move the divider to the desired location until the user has let go of <kbd>LAlt</kbd>
      */
     static layerSizeAdjust(capsLockDisable := true, middle := false) {
-        if !WinActive(this.winTitle)
+        this.blockWheel := true
+        if !WinActive(this.winTitle) {
+            this.blockWheel := false
             return
+        }
         __resetCaps(storekey, capslockState) {
             if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
                 SetCapsLockState('AlwaysOff')
         }
         if !this.timelineVals {
             this.__setTimelineValues()
+            this.blockWheel := false
             return
         }
         SetDefaultMouseSpeed(0)
@@ -3611,40 +3630,42 @@ class Prem {
         InstallKeybdHook(true, true)
         capslockState := GetKeyState("CapsLock", "T")
         storeHotkey := A_ThisHotkey
+        coord.s()
         if !this.__setTimelineValues() {
             __resetCaps(storeHotkey, capslockState)
+            this.blockWheel := false
 			return
         }
         focusStatus := this.timelineFocusStatus()
-        if focusStatus == null
+        if focusStatus == null {
+            this.blockWheel := false
             return
+        }
         if !focusStatus  {
             this.__focusTimeline()
             tool.Cust("The timeline has been focused, you will need to reactive`nthe hotkey to continue", 3.0)
             __resetCaps(storeHotkey, capslockState)
+            this.blockWheel := false
             return
         }
-        coord.s()
-        blocker := block_ext()
-        blocker.On()
 
         getTitle := WinGet.PremName(), origMouseCords := obj.MousePos(), activationKey := getHotkeys(), LAltAct1 := GetKeyState("LAlt", "P"), LAltAct2 := GetKeyState("LAlt"), actWindow := WinGet.Title()
         ;// avoid attempting to fire unless main window is active
         if !getTitle || !origMouseCords || !activationKey || (!LAltAct1 && !LAltAct2) || actWindow != getTitle.winTitle {
-            blocker.Off()
+            this.blockWheel := false
             return
         }
         withinTimeline := this.__checkCoords(origMouseCords)
         if withinTimeline != true {
-            blocker.Off()
+            this.blockWheel := false
             return
         }
-        blocker.Off()
 
         switch middle {
             case false:
                 ;// adjust layers
                 if !this.__layerDividerCheck(origMouseCords) {
+                    this.blockWheel := false
                     return
                 }
                 layerObj := this.__getlayerTopBottom(origMouseCords, middle,,,,,,,, false)
@@ -3653,6 +3674,7 @@ class Prem {
                 if !layerObj.error {
                     MouseMove(this.timelineRawX+10, layerObj.topY+4)
                     newTop := layerObj.topY+4
+                    this.blockWheel := false
                     KeyWait("LAlt", "L")
                 } else {
                     if !layerObj.topY && !layerObj.botY {
@@ -3680,18 +3702,19 @@ class Prem {
             case true:
                 ;// adjust middle divider
                 if !this.__getlayerMid(, &midDivY) {
+                    this.blockWheel := false
                     return
                 }
                 MouseMove(origMouseCords.x, midDivY+2)
                 move.clipMouse("y", false)
                 tool.Cust("Move the mouse to the desired height,`nThen let go of LAlt.", 3000,,, 9)
+                this.blockWheel := false
                 KeyWait("LAlt", "L")
                 tool.Cust("",,,, 9)
                 move.setMouseClip()
                 coord.s() ;// clipMouse changes the coordmode to "mouse"
-                if !newCoords := obj.MousePos() {
+                if !newCoords := obj.MousePos()
                     return
-                }
                 MouseClickDrag("Left", this.timelineRawX+10, midDivY+2, this.timelineRawX+10, newCoords.y)
                 MouseMove(origMouseCords.x, newCoords.y)
                 keyss := getHotkeysArr()
@@ -3699,6 +3722,7 @@ class Prem {
         }
         __resetCaps(storeHotkey, capslockState)
         block.Off()
+        this.blockWheel := false
     }
 
     /**

@@ -2,6 +2,7 @@
 This update focuses on optimisations to reduce unnecessary wait times across a wide variety of functions. This includes; heavily reducing the startup delay for both `prem.__remote` functions, using `ShinsImageScanClass` when possible instead of `PixelSearch()`/`PixelGetColor()`, and more.
 
 ## Functions
+- ✅ Attempt to fix `vscode.cut()`/`vscode.copy()` erroneously adding a <kbd>~</kbd>
 - ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`, `Base64Decode()`
 - 📋 `startup().trayMen()` now shows controls for `AERemote`/`PremiereRemote`
 
@@ -13,6 +14,23 @@ This update focuses on optimisations to reduce unnecessary wait times across a w
 - 📋 `premUIA_Values.isToolSelected()` moved => `prem {`
 - 📋 The following functions will now use `ShinsImageScanClass` instead of `PixelSearch()`/`PixelGetColor()` when possible;
     - `__getAllLayerPos()`, `isClipUnderCursor()`, `timelineFocusStatus()`, `toggleEnabled()`, `disableDirectManip()`, `movepreview()`, `__layerDividerCheck()`, `disableAllMuteSolo()`, `soloVideo()`, `searchPlayhead()`, `__getlayerTopBottom()`
+- 📋 `layerSizeAdjust()` can now avoid leaking <kbd>Wheelup</kbd>/<kbd>WheelDown</kbd> inputs before the mouse moves into position if conditions are met;
+```ahk
+;// activation hotkey
+LAlt & SC03A::prem.layerSizeAdjust()
+
+;// The following code must also be in the user's script
+$!WheelUp::
+$!WheelDown::
+{
+	if prem.blockWheel
+        return
+	hot := getHotkeysArr()
+	key := GetKeyName(hot[-1])
+	if key = "WheelUp" || key = "WheelDown"
+		try SendInput("{LAlt Down}{" GetKeyName(hot[-1]) "}")
+}
+```
 
 📍 `__remoteFunc()`/`__remoteUXP()`/`ae.remoteFunc()`
 - 📋 Will now alert the user if the respective extension panel is not open (once per reload)

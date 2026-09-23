@@ -5,13 +5,16 @@
 ; }
 
 __runAndWait(ahkExe, filepath, minimise := true, timeout := 3, sleepTime := 5000) {
+    orig := detect()
     if !WinExist(ahkExe) {
         if !FileExist(filepath) {
+            resetOrigDetect(orig)
             MsgBox("File doesn't exist:`n" filepath)
             return false
         }
         Run(filepath)
         if !WinWait(ahkExe,, timeout) {
+            resetOrigDetect(orig)
             MsgBox("Waiting for file timed out:`n" filepath)
             return false
         }
@@ -20,11 +23,16 @@ __runAndWait(ahkExe, filepath, minimise := true, timeout := 3, sleepTime := 5000
             try WinMinimize(ahkExe)
         }
     }
+    resetOrigDetect(orig)
     return true
 }
 
 __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
     fullTitle := "Adobe UXP Developer Tools" A_Space title
+    if !WinWait(fullTitle,, 5) {
+        MsgBox("Failed to find the UXP plugin window",, "T3")
+        return false
+    }
     WinActivate(fullTitle)
     premRemote := UIA.ElementFromHandle(fullTitle,, false)
     if !premRow := premRemote.WaitElement({Type:50025, Name:"Premiere"}, 10000) {

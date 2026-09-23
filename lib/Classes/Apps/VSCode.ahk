@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2026/08/31
- * @version 1.3.1
+ * @date 2026/09/23
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -57,8 +57,8 @@ class VSCode {
     __getLine(&store, which := "") {
         SendInput("{End}")
         switch which {
-            case "cut": SendInput("{Shift Down}{Home}{Shift Up}" "^x")
-            default:    SendInput("{Shift Down}{Home}{Shift Up}" "^c" "{End}")
+            case "cut": SendInput("+{Home}^x")
+            default:    SendInput("+{Home}^c{End}")
         }
         sleep 50
         store := A_Clipboard
@@ -120,22 +120,25 @@ class VSCode {
      * It recreates the usual ability to completely remove a line by pressed ^x
      */
     static cut() {
+        Critical "On"
+        blocker := block_ext()
+        blocker.On()
         this().__getHighlightState(&orig, false, "^x")
-        if !ClipWait(0.1)
-            {
-                amount := 1
-                this().__getLine(&store, "cut")
-                A_Clipboard := ""
-                SendInput("{Shift Down}{Home}{Shift Up}" "^c")
-                sleep 50
-                if StrCompare(A_Clipboard, "", 1)
-                    amount := "2"
-                SendInput("{BackSpace " amount "}")
-                A_Clipboard := ""
-                A_Clipboard := orig ;restore the original clipboard - don't really know if this line makes a difference really
-                A_Clipboard := store ;add the cut content to the clipboard
-                return
-            }
+        if !ClipWait(0.1) {
+            amount := 1
+            this().__getLine(&store, "cut")
+            A_Clipboard := ""
+            SendInput("+{Home}^c")
+            sleep 50
+            if StrCompare(A_Clipboard, "", 1)
+                amount := "2"
+            SendInput("{BackSpace " amount "}")
+            A_Clipboard := ""
+            A_Clipboard := orig
+            A_Clipboard := store
+        }
+        blocker.Off()
+        Critical "Off"
     }
 
     /**
@@ -144,15 +147,21 @@ class VSCode {
      * It recreates the usual ability to copy a line by pressed ^c
      */
     static copy() {
+        Critical "On"
+        blocker := block_ext()
+        blocker.On()
         this().__getHighlightState(&orig, false)
-        if !ClipWait(0.1)
-            {
-                this().__getLine(&store)
-                A_Clipboard := ""
-                A_Clipboard := orig ;restore the original clipboard - don't really know if this line makes a difference really
-                A_Clipboard := store ;add the cut content to the clipboard
-                tool.Cust("Current line copied to clipboard")
-                return
-            }
+        if !ClipWait(0.1) {
+            this().__getLine(&store)
+            A_Clipboard := ""
+            A_Clipboard := orig ;restore the original clipboard - don't really know if this line makes a difference really
+            A_Clipboard := store ;add the cut content to the clipboard
+            blocker.Off()
+            Critical "Off"
+            tool.Cust("Current line copied to clipboard")
+            return
+        }
+        blocker.Off()
+        Critical "Off"
     }
 }
