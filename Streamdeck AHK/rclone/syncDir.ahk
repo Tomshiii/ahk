@@ -5,6 +5,8 @@
 #Include Classes\cmd.ahk
 ; }
 
+try which := A_Args[1]
+
 nPath := FileSelect("D2", "N:\The Boys Main", "Choose Directory to copy from")
 if !nPath
     return
@@ -15,6 +17,6 @@ gPath := FileSelect("D2", "G:\Shared drives\The Boys\2. Videos\1. The Boys", "Ch
 clip.returnClip(prevClip)
 if !gPath
     return
-command := rclone.formatCommand(nPath, gPath, 1)
+command := rclone.formatCommand(nPath, gPath, which ?? 1)
 cmd.run(false, false, false, command,, "Hide")
 ExitApp()

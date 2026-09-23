@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/09/21
- * @version 1.1.21
+ * @date 2026/09/23
+ * @version 1.1.22
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -66,6 +66,7 @@ Class CustomFunctions {
     setupProject()                                           => OtherFuncs.setupProject()
     setupMusicTracks(audioType := "Standard")                => OtherFuncs.setupMusicTracks(audioType)
 
+    reclone_syncDir(which)                                   => (Run(ptf.rootDir "\Streamdeck AHK\rclone\syncDir.ahk " which))
     closeExplorer() => (ProcessClose("explorer.exe"))
 }
 
