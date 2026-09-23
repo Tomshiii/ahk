@@ -14,9 +14,23 @@ doHide := (hide = true) ? "Hide" : ""
 openDebug := false
 
 InstalledDir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
-if FileExist(InstalledDir "\compose.yaml") && !InStr(FileRead(InstalledDir "\compose.yaml"), "restart: unless-stopped") {
-    FileAppend("`t`trestart: unless-stopped", InstalledDir "\compose.yaml")
+composeFile := InstalledDir "\compose.yaml"
+
+if FileExist(composeFile) {
+    content := FileRead(composeFile)
+
+    if !InStr(content, "restart: unless-stopped") {
+        indent := Chr(32) Chr(32) Chr(32) Chr(32)  ; 4 spaces, built from char codes, cannot be tab-corrupted
+        newLine := Chr(10)                          ; explicit LF
+        content := RTrim(content, " `t`r`n")
+        content := content . newLine . indent . "restart: unless-stopped" . newLine
+
+        f := FileOpen(composeFile, "w")
+        f.Write(content)
+        f.Close()
+    }
 }
+
 cmd.run(,, keepWindow, 'node scripts/generate-api.js', InstalledDir "\client", doHide)
 cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', InstalledDir "\client", doHide)
 cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', InstalledDir "\client", doHide)

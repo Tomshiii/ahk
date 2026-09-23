@@ -59,8 +59,11 @@ export async function save(): Promise<Boolean> {
  * focuses the desired sequence. may cause issues with current selection if you try to focus a sequence that is no longer open
  * @param {String} [ID] the id of the sequence
  * @returns {boolean}
+ * @version 26.3.0
  */
-export async function focusSequence(ID: string): Promise<boolean> {
+export async function focusSequence(ID: string): Promise<boolean | string> {
+    if (!(await helpers.isPremVerAtLeast("26.3.0")))
+        return "null_version_26.3"
     // if (!openSequences.has(ID)) return false;
 
     const project = await ppro.Project.getActiveProject();
@@ -2036,8 +2039,11 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
  * @param {string} [adjustmentLayerPath] the bin path to the adjustment layer you wish to add above the selected clips
  * @param {boolean} [makeSelection] whether you wish for the newly added adjustment layer to become the selected clip
  * @returns {void}
+ * @version 26.3.0
  */
-export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, makeSelection: boolean): Promise<void> {
+export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, makeSelection: boolean): Promise<void | string> {
+    if (!(await helpers.isPremVerAtLeast("26.3.0")))
+        return "null_version_26.3"
     const project = await ppro.Project.getActiveProject();
     if (!project) {
         alert("No active project.");
@@ -2482,6 +2488,7 @@ export async function applyAudioTransitionAtEditPoint(project: Project, leftClip
 
 /**
  * nest selection, remove audio and replace with nested audio track
+ * @version 26.3.0
  */
 export async function nestSelectionReplaceNestedAudio(
     ignoreTrackTargeting: boolean = false,
@@ -2489,7 +2496,9 @@ export async function nestSelectionReplaceNestedAudio(
     subsequenceName: string,
     ignoreVideoTracks: string = "",
     ignoreAudioTracks: string = ""
-): Promise<void> {
+): Promise<void | string> {
+    if (!(await helpers.isPremVerAtLeast("26.3.0")))
+        return "null_version_26.3"
     const project = await ppro.Project.getActiveProject();
     if (!project) {
         alert("No active project.");
@@ -2734,8 +2743,11 @@ export async function anchorToPosition(): Promise<boolean> {
 
 /**
  * deselects the current selection then returns it as a selection
+ * @version 26.3.0
  */
-export async function resetSelection(): Promise<boolean> {
+export async function resetSelection(): Promise<boolean | string> {
+    if (!(await helpers.isPremVerAtLeast("26.3.0")))
+        return "null_version_26.3"
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
 

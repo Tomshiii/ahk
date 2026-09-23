@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/23
- * @version 2.5.58
+ * @version 2.5.59
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1021,6 +1021,10 @@ class Prem {
             else
                 errorLog(Error("1. remoteUXP was called but Premiere no longer appears to be open.", -1))
             return null
+        }
+        if getResp ~= "null_version_\d+(?:\.\d+)*" {
+            split := StrSplit(getResp, "_")
+            throw MethodError("Unsupported minimum Premiere version for the desired function`n" whichFunc " - requires Premiere " split[-1], -2)
         }
         try parse := JSON.parse(getResp)
         catch as e {

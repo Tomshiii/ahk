@@ -57,6 +57,8 @@ $!WheelDown::
 
 ### 📝 `UXP`
 - ✅ Fixed some actions not using `await`
+- ✏️ Added `isPremVerAtLeast()`
+    - `__remoteUXP()` can now throw if a function requires a minimum version of `Premiere` that isn't met
 
 ### KSA
 - ✏️ Added most tools

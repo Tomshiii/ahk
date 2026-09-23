@@ -202,8 +202,11 @@ export async function getNextNestedSequenceName(): Promise<string | false> {
 
 /**
  * returns the rgb background colour as a json string
+ * @version 26.5.0
  */
 export async function getBackgroundColour(): Promise<string> {
+    if (!(await helpers.isPremVerAtLeast("26.5.0")))
+        return "null_version_26.5"
     const uxp = require("uxp");
     return await uxp.host.getBackgroundColor();
 }
