@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/23
- * @version 2.5.60
+ * @date 2026/09/24
+ * @version 2.5.61
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -292,9 +292,6 @@ class Prem {
     static indexFileUXP := this.remoteDirUXP "\src\generated\registry.ts"
     static funcDirUXP   := this.remoteDirUXP "\src\actions"
 
-    ;// swapChannels()
-    static secondChannel := 0
-
     ;// toggleLayerButtons()
     static layerSource := 16
     static layerLock   := 48
@@ -348,7 +345,7 @@ class Prem {
         switch this.UI {
             case "Spectrum":
                 ;// set timeline and playhead colours
-                this.playhead := 0x4096F3, this.focusColour := 0x4096F3, this.secondChannel := 65
+                this.playhead := 0x4096F3, this.focusColour := 0x4096F3
                 ;// edit tab
                 this.editTabX := 154, this.editTabY := 35
                 ;// keyframes
@@ -454,37 +451,6 @@ class Prem {
                         return true
                 }
         }
-    }
-
-    __fxPanel() => (delaySI(16, KSA.prem.effectControls, ksa.prem.programMonitor, KSA.prem.effectControls))
-
-    /**
-     * This function cuts repeat code. It activates the findbox and waits for the carot to appear.
-     */
-    static __findBox() {
-        SendInput(KSA.prem.findBox)
-        tool.Cust("if you hear windows, blame premiere")
-        coord.c("screen")
-        CaretGetPos(&findx)
-        if findx = "" ;This checks to see if premiere has found the findbox yet, if it hasn't it will initiate the below loop
-            {
-                loop {
-                        if A_Index > 5
-                            {
-                                SendInput(KSA.prem.findBox) ;adjust this in the ini file
-                                tool.Cust("if you hear windows, blame adobe", 2000)
-                            }
-                        sleep 30
-                        CaretGetPos(&findx)
-                        if A_Index > 20 ;if this loop fires 20 times and premiere still hasn't caught up, the function will cancel itself
-                            {
-                                block.Off()
-                                errorLog(IndexError("Couldn't find the findbox", -1),, 1)
-                                return false
-                            }
-                    } until findx != "" ; as soon as premiere has found the find box, this will populate and break the loop
-            }
-        return findx
     }
 
     /**
@@ -1398,131 +1364,53 @@ class Prem {
             block.Off()
             return
         }
-        if item = "loremipsum" ;YOUR PRESET MUST BE CALLED "loremipsum" FOR THIS TO WORK - IF YOU WANT TO RENAME YOUR PRESET, CHANGE THIS VALUE TOO - this if statement is code specific to text presets
-            this.__loremipsum({x: effNN.location.x, y: effNN.location.y}, {width: effNN.location.w, height: effNN.location.h}, &eyeX, &eyeY)
-        /** this is simply to cut needing to repeat this code below */
-        effectbox() {
-            effNN.SetFocus()
-            if !this.__findBox()
-                return
-            SendInput("^a" "+{BackSpace}")
-            SetTimer(delete, -250)
-            /** this function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job */
-            delete() {
-                if WinExist("Delete Item") {
-                    SendInput("{Esc}")
-                    sleep 100
-                    effNN.SetFocus()
-                    if !this.__findBox()
-                        return
-                    SendInput("^a" "+{BackSpace}")
-                    sleep 60
-                    if WinExist("Delete Item") {
-                        SendInput("{Esc}")
-                        sleep 50
-                    }
-                }
-            }
-        }
-        effectbox()
-        coord.c("screen") ;change caret coord mode to window
-        CaretGetPos(&carx, &cary) ;get the position of the caret (blinking line where you type stuff)
-        if !IsSet(carx) || !IsSet(cary) || (!carx && !cary)
+        if !this.fxSearch("", effNN) {
+            block.Off()
             return
-        MouseMove(carx-5, cary+5) ;move to the caret (instead of defined pixel coords) to make it less prone to breaking
-        SendInput(item) ;create a preset of any effect, must be in a folder as well
+        }
+        coord.c("screen")
+        CaretGetPos(&carx, &cary)
+        if !IsSet(carx) || !IsSet(cary) || (!carx && !cary) {
+            block.Off()
+            return
+        }
+        MouseMove(carx-5, cary+5)
+        SendInput(item)
         sleep 50
-        MouseMove(0, (32.5*(folderDepth+1)), 1, "R") ;move down to the saved preset (must be in an additional folder)
+        MouseMove(0, (32.5*(folderDepth+1)), 1, "R")
         SendInput("{Click Down}")
-        if item = "loremipsum" ;set this hotkey within the Keyboard Shortcut Adjustments.ini file
-            {
-                MouseMove(eyeX, eyeY - "5")
-                SendInput("{Click Up}")
-                effectbox()
-                this.__focusTimeline()
-                MouseMove(xpos, ypos, 1)
-                block.Off()
-                return
-            }
         MouseMove(xpos, ypos, 2) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
         SendInput("{Click Up}")
-        effectbox() ;this will delete whatever preset it had typed into the find box
+        this.fxSearch("", effNN)
         this.__focusTimeline()
         block.Off()
-        ToolTip("")
     }
 
     /**
-     * this function is called within `preset()` and is pulled out simply to make that function more readable
-     * @param {Object} classObj an object `{x: , y: }` to pass in the classNN variables
-     * @param {Object} widHeiObj an object `{width: , height: }` to pass in the classNN variables
-     * @param {VarRef} returnXY passing variables back to the function
+     * Highlights the searchbox within the desired panel. Allows the user to set its current search value.
+     * @param {String} [setValue=unset] The value you want the search field to be populated with. If the user want's the search field emptied, they will need to set this parameter to `""`
+     * @param {ComObj} [uiaObj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @param {String} [window="effectsWindow"] The window you wish to operate on. This parameter will not do anything unles `uiaObj` is `unset`
      */
-    static __loremipsum(classObj, widHeiObj, &returnX, &returnY) {
-        sleep 100
-        delaySI(150, KSA.prem.timelineWindow, KSA.prem.timelineWindow, KSA.prem.newText)
-        sleep 150
-        ;// premiere can slow down depending on the size of your project so it's best
-        ;// to build in multiple checks for most things
-        loop {
-            if A_Index > 30 { ;// 3s
-                block.Off()
-                errorLog(Error("Couldn't find the graphics tab", -1),, 1)
-                return
-            }
-            if ImageSearch(&x2, &y2, classObj.x, classObj.y, classObj.x + (widHeiObj.width/2), classObj.y + widHeiObj.height, "*2 " ptf.Premiere "graphics.png") ;checks for the graphics panel that opens when you select a text layer
-                break
-            sleep 100
-        }
-        loop {
-            if A_Index > 30 { ;// 3s
-                block.Off()
-                errorLog(Error("Couldn't find the eye icon", -1),, 1)
-                return
-            }
-            if A_Index > 1 && y2 < 900 ;// the y value it searches will increase as the loop index increases
-                y2 += 100
-            if ImageSearch(&xeye, &yeye, x2, y2, x2 + 200, y2 + 100, "*2 " ptf.Premiere "eye.png") ;searches for the eye icon for the original text
-                break
-            sleep 100
-        }
-        MouseMove(xeye, yeye)
-        SendInput("{Click}")
-        MouseGetPos(&returnX, &returnY)
-        sleep 50
-    }
-
-    /**
-     * This function is to move to the effects window and highlight the search box to allow manual typing
-     */
-    static fxSearch()
+    static fxSearch(setValue?, uiaObj?, window := "effectsWindow")
     {
         coord.s()
         block.On()
-        this().__fxPanel()
-        if !this.__findBox()
-            return
-        this().__fxPanel()
-        SendInput("^a" "+{BackSpace}")
-        SetTimer(delete, -250)
-        /** This function simply checks for premiere's "delete preset" window that will appear if the function accidentally tries to delete your desired preset. This is simply a failsafe just incase the loop above fails to do its intended job */
-        delete() {
-            if WinExist("Delete Item") {
-                SendInput("{Esc}")
-                sleep 100
-                this().__fxPanel()
-                if !this.__findBox()
-                    return
-                this().__fxPanel()
-                SendInput("^a" "+{BackSpace}")
-                sleep 60
-                if WinExist("Delete Item") {
-                    SendInput("{Esc}")
-                    sleep 50
-                }
-            }
+        if !effNN := IsSet(uiaObj) ? uiaObj : premUIA_Values.getLivePanel(window) {
+            block.Off()
+            return false
+        }
+        try {
+            searchBox := effNN.FindElement({Type: 50004, AutomationId: 1})
+            searchBox.SetFocus()
+            if IsSet(setValue) && Type(setValue) = "String"
+                searchBox.value := setValue
+        } catch {
+            block.Off()
+            return false
         }
         block.Off()
+        return true
     }
 
     /**
@@ -3056,102 +2944,6 @@ class Prem {
 
         clip.delayReturn(clipb.storedClip)
         blocker.Off()
-    }
-
-    /**
-     * This function is mostly designed for my own workflow and isn't really built out with an incredible amount of logic.
-     *
-     * This function was originally designed to swap the L/R channel on a single track stereo file but may also function on a dual track stereo file where you're expecting both the L & R channels to use the same media source channel. attempting to use this script on anything else will either produce unintended results or will simply not function at all
-     * @param {Integer} [mouseSpeed=2] what speed the mouse should move to interact with the Modify Clip window
-     * @param {Number} [adjustGain=false] determine whether to adjust gain after modifying the channels. It should be noted once again that this function is specifically designed for my workflow - if it swaps to the R channel it will increase gain by this parameter, if it swaps to the left it wil take away this parameter
-     * @param {String} [changeLabel?] leave unset if you do not wish to change the label colour of the selected clip(s), otherwise provide the hotkey required to change to the desired colour
-     */
-    static swapChannels(mouseSpeed := 2, adjustGain := false, changeLabel?) {
-        block.On()
-        clipWinTitle := "Modify Clip"
-        coord.s()
-        if !origCoords := obj.MousePos()
-            return
-        SetDefaultMouseSpeed(mouseSpeed)
-
-        if !WinActive(clipWinTitle) {
-            if this.__checkTimelineValues() = true {
-                sleep 100
-                if !this.__waitForTimeline(3)
-                    return
-            }
-            SendInput(ksa.prem.audioChannels)
-            if !WinWait(clipWinTitle,, 3) {
-                block.Off()
-                errorLog(Error("Timed out waiting for window", -1),, 1)
-                return
-            }
-            sleep 150
-        }
-
-        if !clipWin := obj.WinPos(clipWinTitle)
-            return
-        __searchChannel(&x, &y, &chan, &clip) => (chan := ImageSearch(&x, &y, clipWin.x, clipWin.y + 150, clipWin.x + 200, clipWin.y + 500, "*2 " ptf.Premiere "channel1.png"), clip := ImageSearch(&x, &y, clipWin.x, clipWin.y + 125, clipWin.x + 200, clipWin.y + 325, "*2 " ptf.Premiere "clip1.png"))
-        if !__searchChannel(&x, &y, &chan, &clip) {
-            sleep 150
-            if !__searchChannel(&x, &y, &chan, &clip) {
-                block.Off()
-                errorLog(TargetError("Couldn't find channel 1.", -1),, 1)
-                return
-            }
-        }
-        left  := obj.imgSrchMulti({x1: x, y1: y - 50, x2: x + 200, y2: y + 50},, &checkX, &checkY, ptf.Premiere "L_unchecked.png", ptf.Premiere "L_unchecked2.png") ? coords := {x: checkX, y: checkY} : false
-        right := obj.imgSrchMulti({x1: x+50, y1: y - 50, x2: x + 200, y2: y + 50},, &checkX, &checkY, ptf.Premiere "R_unchecked.png", ptf.Premiere "R_unchecked2.png") ? coords := {x: checkX, y: checkY} : false
-
-        ;// if the file isn't dual channel it might not have two checkboxes and thus `coords` won't be set
-        if (!IsSet(coords) || !coords) || (!left && !right) {
-            MouseMove(x, y)
-            block.Off()
-            errorLog(TargetError("Couldn't find unchecked channel.", -1),, true)
-            return
-        }
-        which := (left != 0) ? "L_unchecked.png" : "R_unchecked.png"
-        Click(Format("{} {}", coords.x+10, coords.y+30))
-        if chan != 0 {
-            ;// this block is to correct when L is one channel and R is another
-            ;// both should end up the same channel
-            if ImageSearch(&rX, &rY, x, y, x+60, y+60, ptf.Premiere "channel_R.png") {
-                secLeft := (IsSet(left)) ? obj.imgSrch(ptf.Premiere "channel_unchecked.png", {x1: rX, y1: ry, x2: rX + 200, y2: ry+15}) : false
-                secRight := (IsSet(right)) ? obj.imgSrch(ptf.Premiere "channel_unchecked.png", {x1: rX+50, y1: ry, x2: rX + 200, y2: ry+15}) : false
-                if !secLeft && !secRight {
-                    block.Off()
-                    errorLog(TargetError("Couldn't find unchecked channel.", -1),, 1)
-                    return
-                }
-                if which = "R_unchecked.png" && secRight != false || which = "L_unchecked.png" && secLeft != false
-                    Click(Format("{} {}", coords.x+10, coords.y+this.secondChannel))
-            }
-        }
-
-        if !ImageSearch(&okX, &okY, clipWin.x, (clipWin.y + clipWin.height) - 150, clipWin.x + clipWin.width, clipWin.y + clipWin.height, "*2 " ptf.Premiere "channels_ok.png") {
-            block.Off()
-            errorLog(TargetError("Couldn't find OK button.", -1),, 1)
-            return
-        }
-        MouseMove(okX, okY, 1)
-        SendInput("{Click}")
-        MouseMove(origCoords.x, origCoords.y, 2)
-
-        if WinExist(clipWinTitle)
-            WinWaitClose(clipWinTitle)
-        sleep 50
-
-        if adjustGain != false && IsNumber(adjustGain) {
-            addOrSub := (left != 0) ? "-" : ""
-            this.gain(addOrSub adjustGain)
-        }
-        if !IsSet(changeLabel) {
-            block.Off()
-            return
-        }
-        ; sleep 100
-        SendInput(changeLabel)
-        block.Off()
     }
 
     /**

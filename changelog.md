@@ -7,7 +7,9 @@ This update focuses on optimisations to reduce unnecessary wait times across a w
 - 📋 `startup().trayMen()` now shows controls for `AERemote`/`PremiereRemote`
 
 ### 📝 `prem {`
+- ❗ `prem {` functions no longer require any `ImageSearch()`
 - ✏️ Added `getPlayheadPosition()`, `getSelectedTool()`, `__getPixel()`, `__getPixelRegion()`
+- ❌ Removed `swapChannels()`
 - 📋 `selectTool()` now accepts parameter `selectMethod` & `focusTimeline`
 - 📋 `__focusTimeline()` will first attempt to use UIA to focus the timeline before falling back to previous methods
 - 📋 `mouseDrag()` will now automatically return the selected tool back to its original selection and only uses `toolorig` as a final fallback
@@ -38,6 +40,10 @@ $!WheelDown::
 - 📋 Now use `cmd.httpGet()` instead of `cmd.result()` to significantly reduce the response time
 - 📋 Param `needResult` => `runAsync`
     - Both functions now always return their result
+
+📍 `fxSearch()`/`__findBox()`
+- ❌ Removed `__findBox()` as it shared functionality with `fxSearch()`
+- 📋 `fxSearch()` will now use UIA to focus the search box and input/remove any text
 
 ### 📝 `rbuttonPrem {`
 - 📋 `movePlayhead()` will now return the selected tool to its original selection if it manually selects the nearby playhead

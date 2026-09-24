@@ -56,10 +56,6 @@ $Tab::
 {
 	titles := "Audio Gain|Sequence Settings " prem.winTitle
 	switch {
-		case isIn("Modify Clip", prem.winTitle):
-			(GetKeyState("LCtrl", "P") = true) ? prem.swapChannels(1) : prem.swapChannels(1, 16, ksa.prem.labelPurple)
-			KeyWait("LCtrl")
-			return
 		case isIn("Clip Fx Editor"), isIn("Track Fx Editor"):
 			SendInput("{Tab}")
 			return

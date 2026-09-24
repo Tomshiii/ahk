@@ -33,12 +33,15 @@ x::x */
 ;searchgoogleHotkey;
 ^+c::clip.search("https://duckduckgo.com/?t=ffab&q=", "firefox.exe") ;runs a google search of highlighted text
 
-~^c::
+$^c::
 {
-	if !WinActive("ahk_class #32770 ahk_exe AutoHotkey64.exe")
+	if !WinActive("ahk_class #32770 ahk_exe AutoHotkey64.exe") {
+		SendInput("^c")
     	return
-	sleep 25
-	clip.__scriptSplit(A_Clipboard)
+	}
+	window := uia.ElementFromHandle(WinActive("A"),, false)
+	text := window.FindElement({Type: 50020}).Name
+	A_Clipboard := RTrim(text, ' `n')
 }
 
 ;capitaliseHotkey;
