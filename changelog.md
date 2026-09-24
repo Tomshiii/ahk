@@ -8,8 +8,10 @@ This update focuses on optimisations to reduce unnecessary wait times across a w
 
 ### 📝 `prem {`
 - ❗ `prem {` functions no longer require any `ImageSearch()`
+- ✅ Fixed `stopPlayback()` param `checkIsPlaying` not doing anything
 - ✏️ Added `getPlayheadPosition()`, `getSelectedTool()`, `__getPixel()`, `__getPixelRegion()`
 - ❌ Removed `swapChannels()`
+- 📋 `__checkTimelineValues()` now only compares against class parameter `timelineVals` to avoid potential conflicts
 - 📋 `selectTool()` now accepts parameter `selectMethod` & `focusTimeline`
 - 📋 `__focusTimeline()` will first attempt to use UIA to focus the timeline before falling back to previous methods
 - 📋 `mouseDrag()` will now automatically return the selected tool back to its original selection and only uses `toolorig` as a final fallback
@@ -53,6 +55,8 @@ $!WheelDown::
 - ✅ Fixed `selectTool()` crashing AE
 - ✅ Fixed `isClipSelected()` calling `__checkPremRemoteFunc()`
 - ✏️ Added `ae.getActivePanelName()`
+- ✏️ Port the following functions from `prem {`; `__checkTimelineValues()`, `__setTimelineValues()`, `getTimeline()`, `setShinsIMG()`
+	- Timeline coordinates are now gathered using `UIA` & `ShinsImageScanClass`
 
 ### 📝 `ps {`
 - ✅ Fixed using incorrect `ImageSearch` path

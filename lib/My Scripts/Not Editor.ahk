@@ -7,6 +7,7 @@
 #Include Functions\fastWheel.ahk
 #Include Functions\youMouse.ahk
 #Include Functions\alwaysOnTop.ahk
+#Include Other\UIA\UIA.ahk
 ; }
 
 ;winleftHotkey;
@@ -40,7 +41,16 @@ $^c::
     	return
 	}
 	window := uia.ElementFromHandle(WinActive("A"),, false)
-	text := window.FindElement({Type: 50020}).Name
+	try text := window.FindElement({Type: 50020}).Name
+	catch {
+		try {
+			try text := window.FindElement({Type: 50030}).Value
+			catch {
+				SendInput("^c")
+    			return
+			}
+		}
+	}
 	A_Clipboard := RTrim(text, ' `n')
 }
 

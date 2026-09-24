@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/09/22
- * @version 1.5.17
+ * @date 2026/09/24
+ * @version 1.5.18
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,6 +26,7 @@
 #Include Other\UIA\UIA.ahk
 #Include Other\_socket.ahk
 #Include Other\WinEvent.ahk
+#Include Other\ShinsImageScanClass.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\detect.ahk
 #Include Functions\determineAdobeVer.ahk
@@ -85,6 +86,139 @@ class AE {
 
     static __checkedInstall := false
     static ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk"]
+
+    ;// whole timeline coords
+    static timelineVals := false
+    static w_timelineX  := false
+    static w_timelineY  := false
+    static w_timelineX2 := false
+    static w_timelineY2 := false
+    ;// panel timeline coords
+    static p_timelineX  := false
+    static p_timelineY  := false
+    static p_timelineX2 := false
+    static p_timelineY2 := false
+
+    static _scan := ""
+    static _scanTitle := ""
+
+    /**
+     * Checks class values to determine if timeline values need to be set. Will also check the `ae` object shared by `Core Functionality.ahk`
+     * @returns {Boolean}
+     */
+    static __checkTimelineValues() {
+        try ae_timelineVals := CLSID_Objs.loadProp("ae", "timelineVals")
+        catch {
+            return false
+        }
+        if (this.timelineVals = false || ae_timelineVals = false)
+            return false
+        return true
+    }
+
+    /**
+     * Checks to see if the timeline values within `ae {` have been set. If not, this function will attempt to retrieve them.
+     * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values
+     * @returns {Boolean}
+     */
+	static __setTimelineValues(tools := true) {
+		if !this.__checkTimelineValues() {
+			if !this.getTimeline(tools)
+				return false
+		}
+		return true
+	}
+
+    /**
+     * Determines the timeline coordinates. Will pull values from the `ae` object shared by `Core Functionality.ahk` if they have already been set.
+     * @returns {Boolean}
+     */
+    static getTimeline(tools := true) {
+        if this.__checkTimelineValues() != false
+            return true
+        Critical()
+        if A_ScriptName != "Core Functionality.ahk" {
+            try {
+                vars := ["w_timelineX", "w_timelineY", "w_timelineX2", "w_timelineY2", "p_timelineX", "p_timelineY", "p_timelineX2", "p_timelineY2", "timelineVals"]
+                ae_vals := CLSID_Objs.loadProp("ae", vars)
+                if ae_vals["timelineVals"] = true {
+                    coord.s()
+                    for v in vars {
+                        this.%v% := ae_vals[v]
+                    }
+                    this.timelineVals := true
+                    return true
+                }
+            } catch {
+                Critical("Off")
+                notifyExt.showIfNotExist("failedCSLIDobj",, "1_Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                keys.allWait()
+                return false
+            }
+        }
+
+        getTitle := WinGet.AEName()
+        if !getTitle || !isObjHasProp(getTitle, "winTitle", false) {
+            errorLog(UnsetError("Could not determine AE window title", -1))
+            Critical("Off")
+            keys.allWait()
+            return false
+        }
+        if !InStr(getTitle.winTitle, "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(getTitle.winTitle, "Adobe After Effects (Beta)") {
+            Critical("Off")
+            keys.allWait()
+            return false
+        }
+        if !this.setShinsIMG() {
+            Critical("Off")
+            keys.allWait()
+            return false
+        }
+        coord.s()
+        aeWin := uia.ElementFromHandle(getTitle.winTitle,, false)
+        timelinePanel := aeWin.FindElement({Type: 50033, Name: "AE Timeline"})
+        searchBars := timelinePanel.FindElements({Type: 50014, Name: "UI_ScrollBar"})
+        wholePanel := {x1: timelinePanel.location.x, x2: timelinePanel.location.x+timelinePanel.location.w, y1: timelinePanel.location.y, y2: timelinePanel.location.y+timelinePanel.location.h}
+        ; scroll1 := {x1: searchBars[1].location.x, x2: searchBars[1].location.x+searchBars[1].location.w, y1: searchBars[1].location.y, y2: searchBars[1].location.y+searchBars[1].location.h}
+        scroll2 := {x1: searchBars[2].location.x, x2: searchBars[2].location.x+searchBars[2].location.w, y1: searchBars[2].location.y, y2: searchBars[2].location.y+searchBars[2].location.h}
+
+
+        if (!this._scan.Image(ptf.AE "graph.png",, &x, &y) && !this._scan.Image(ptf.AE "graph2.png",, &x, &y)) || !this._scan.Image(ptf.AE "marker.png",, &endX, &endY) {
+            Critical("Off")
+            keys.allWait()
+            return false
+        }
+        coord.clientToScreen(x, y, this._scan.hwnd, this._scan.WindowScale, &x, &y)
+        coord.clientToScreen(endX, endY, this._scan.hwnd, this._scan.WindowScale, &endX, &endY)
+
+        if A_ScriptName != "Core Functionality.ahk" {
+            try {
+                activeObj := CLSID_Objs.load("ae")
+                coord.s()
+                activeObj.w_timelineX  := this.w_timelineX := wholePanel.x1
+                activeObj.w_timelineY  := this.w_timelineY := wholePanel.y1
+                activeObj.w_timelineX2 := this.w_timelineX2 := wholePanel.x2
+                activeObj.w_timelineY2 := this.w_timelineY2 := wholePanel.y2
+                activeObj.p_timelineX  := this.p_timelineX  := x + 30
+                activeObj.p_timelineY  := this.p_timelineY  := y + 8
+                activeObj.p_timelineX2 := this.p_timelineX2 := endX - 12
+                activeObj.p_timelineY2 := this.p_timelineY2 := scroll2.y1+7
+                activeObj.timelineVals := this.timelineVals := true
+                activeObj := ""
+            } catch {
+                notifyExt.showIfNotExist("failedCSLIDobj",, "2_Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                Critical("Off")
+                keys.allWait()
+                return false
+            }
+        }
+
+        if tools = true {
+            notifyExt.showIfNotExist("premTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=3 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
+        }
+        Critical("Off")
+        return true
+    }
 
     static __ignoreWinExist(ignoreWins := this.ignoreWins) {
         Critical()
@@ -443,6 +577,58 @@ class AE {
     }
 
     /**
+     * @param {String} [title=unset]
+     * @returns {Boolean}
+     */
+    static setShinsIMG(title?) {
+        if !IsSet(title) {
+            getTitle := WinGet.aeName()
+            checkType := (Type(getTitle) != "Object")
+            checkTitle := isObjHasProp(getTitle, "winTitle", false) && isObjHasProp(getTitle, "titleCheck", null) && isObjHasProp(getTitle, "saveCheck", null)
+            if !getTitle || checkType || !checkTitle {
+                return false
+            }
+            title := getTitle.wintitle
+        }
+        if !this._scan {
+            this._scanTitle := title
+            try this._scan := ShinsImageScanClass(this._scanTitle)
+            catch {
+                errorLog(UnsetError("ShinsImageScanClass failed to be set.", -1), "title: " title)
+                return false
+            }
+            this._scan.WindowScale := getWindowScale(this._scan.hwnd)
+            this._scan.autoUpdate := 0
+            try this._scan.Update()
+            catch {
+                errorLog(MethodError("ShinsImageScanClass failed to update. Had not been set.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
+                return false
+            }
+            return true
+        }
+        hwnd := WinExist(title)
+        if this._scanTitle != title || this._scan.hwnd != hwnd {
+            this._scanTitle := title
+            this._scan.hwnd := WinExist(this._scanTitle)
+            if !this._scan.hwnd || !this._scanTitle
+                return false
+            this._scan.WindowScale := getWindowScale(this._scan.hwnd)
+            try this._scan.Update()
+            catch {
+                errorLog(MethodError("ShinsImageScanClass failed to update. Was set but different values were present.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
+                return false
+            }
+            return true
+        }
+        try this._scan.Update(), this._scan.WindowScale := getWindowScale(this._scan.hwnd)
+        catch {
+            errorLog(MethodError("ShinsImageScanClass failed to update. Was already set", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
+            return false
+        }
+        return true
+    }
+
+    /**
      * Calls a `AERemote` function to directly save the current project.
      * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close. (This is simply to get information returned to you, it should be noted that the thread will still halt until the `AERemote` save function has completed)
      * @param {Boolean} [continueOnBusy=false] determine whether to continue with a save attempt even if AE may be busy
@@ -516,61 +702,25 @@ class AE {
      */
     static timeline()
     {
-        coord.w()
+        coord.s()
         MouseGetPos(&xpos, &ypos)
-        static graphX := unset
-        static graphY := unset
-        static end := unset
-        static bottom := unset
-        static set := unset
-
-        /*
-        A small function to get the coords of the graph icon, marker icon & mountain icon to determine the position of your timeline
-        */
-        getCoords(&graphX, &graphY, &end, &bottom)
-        {
-            activeWin := WinGet.Title()
-            if !InStr(activeWin, "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(activeWin, "Adobe After Effects (Beta)")
-                return
-            tool.Cust(A_ThisFunc "() is grabbing the timeline coords")
-            if ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph.png") || ImageSearch(&x, &y, 0, 0, A_ScreenWidth / 2, A_ScreenHeight, "*2 " ptf.AE "graph2.png")
-                {
-                    graphX := x + 30
-                    graphY := y + 8
-                }
-            if ImageSearch(&endX, &endY, A_ScreenWidth / 2, 200, A_ScreenWidth + 20, A_ScreenHeight, "*2 " ptf.AE "marker.png")
-                end := endX - 12
-            if ImageSearch(&mountX, &mountY, 0, A_ScreenHeight / 4, A_ScreenWidth / 1.5, A_ScreenWidth, "*2 " ptf.AE "mountain.png")
-                bottom := mountY - 8
-            set := true
+        if !this.__setTimelineValues() {
+            SendInput("{" A_ThisHotkey "}")
+            return
         }
-        if !IsSet(set)
-            getCoords(&graphX, &graphY, &end, &bottom)
-        if (!IsSet(graphX) || !IsSet(graphY) || !IsSet(end) || !IsSet(bottom)) || (!InStr(WinGet.Title(), "Adobe After Effects 20" ptf.AEYearVer " -") && !InStr(WinGet.Title(), "Adobe After Effects (Beta) -" ))
-            {
-                SendInput("{" A_ThisHotkey "}")
-                tool.Wait()
-                switch set ?? false {
-                    case true: tool.Cust("The main window is not active")
-                    default:
-                        errorLog(UnsetError("A variable was not assigned a value", -1)
-                                    , "Or the main window is not active", 1)
-                }
-                return
-            }
+
         MouseGetPos(&newX, &newY)
-        if(xpos > graphX and xpos < end) and (ypos > graphY and ypos < bottom)
-            {
-                block.On()
-                if newX > graphX and newX < end
-                    xpos := newX
-                MouseMove(xpos, graphY) ;this will warp the mouse to the top part of your timeline defined by &timeline
-                SendInput("{Click Down}")
-                MouseMove(xpos, ypos)
-                block.Off()
-                keys.allWait()
-                SendInput("{Click Up}")
-            }
+        if(xpos > this.p_timelineX && xpos < this.p_timelineX2) && (ypos > this.p_timelineY && ypos < this.p_timelineY2) {
+            block.On()
+            if newX > this.p_timelineX && newX < this.p_timelineX2
+                xpos := newX
+            MouseMove(xpos, this.p_timelineY) ;this will warp the mouse to the top part of your timeline defined by &timeline
+            SendInput("{Click Down}")
+            MouseMove(xpos, ypos)
+            block.Off()
+            keys.allWait()
+            SendInput("{Click Up}")
+        }
     }
 
     /**

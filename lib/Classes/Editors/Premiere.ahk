@@ -309,6 +309,9 @@ class Prem {
     ;// MButton
     static MButtonPanning := false
 
+    static _scan := ""
+    static _scanTitle := ""
+
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
     static __checkRemote(port := 8081, cepOrUXP := "cep") {
@@ -683,10 +686,10 @@ class Prem {
 
     /**
      * uses the user's `KSA.prem.shuttlestop` hotkey to stop playback
-     * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Requires `PremiereRemote`. Defaults to `false` (can cause slowdown in big comps). *Note: this parameter will only work if the multicam view is not enabled. adobe is dumb*
+     * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Defaults to `false`.
      * */
     static stopPlayback(checkIsPlaying := false) {
-        if !this.isPlaying()
+        if checkIsPlaying = true && !this.isPlaying()
             return
         SendInput(KSA.prem.shuttleStop)
     }
@@ -1025,9 +1028,6 @@ class Prem {
         }
     }
 
-    static _scan := ""
-    static _scanTitle := ""
-
     /**
      * attempts to use `UXP` or `ShinsImgClass` to retrieve the currently set UI hex colour
      * @since (uxp) 26.5
@@ -1164,6 +1164,7 @@ class Prem {
     }
 
     /**
+     * @param {String} [title=unset]
      * @returns {Boolean}
      */
     static setShinsIMG(title?) {
@@ -2324,22 +2325,24 @@ class Prem {
      */
     static getTimeline(tools := true) {
         coord.s()
-
+        Critical("On")
         ;// this block is called if the function originates from a script that isn't `Core Functionality.ahk`
         if A_ScriptName != "Core Functionality.ahk" {
             try {
-                premObj_vals := CLSID_Objs.loadProp("prem", ["timelineRawX", "timelineRawY", "timelineXValue", "timelineYValue", "timelineXControl", "timelineYControl", "timelineVals"])
+                vars := ["timelineRawX", "timelineRawY", "timelineXValue", "timelineYValue", "timelineXControl", "timelineYControl", "timelineVals"]
+                premObj_vals := CLSID_Objs.loadProp("prem", vars)
                 if premObj_vals["timelineVals"] = true {
                     coord.s()
-                    this.timelineRawX     := premObj_vals["timelineRawX"],     this.timelineRawY     := premObj_vals["timelineRawY"]
-                    this.timelineXValue   := premObj_vals["timelineXValue"],   this.timelineYValue   := premObj_vals["timelineYValue"]
-                    this.timelineXControl := premObj_vals["timelineXControl"], this.timelineYControl := premObj_vals["timelineYControl"]
-                    this.timelineVals     := true
+                    for v in vars {
+                        this.%v% := premObj_vals[v]
+                    }
+                    this.timelineVals := true
                     return true
                 }
             } catch {
-                Critical("Off")
                 notifyExt.showIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                errorLog(MethodError("Failed to interact with ComObj, it may not be initialised yet.", -1))
+                Critical("Off")
                 keys.allWait()
                 return false
             }
@@ -2347,12 +2350,15 @@ class Prem {
 
         if !premUIA_Values.getLivePanel("timelineWindow",, &premUIA) {
             errorLog(MethodError("Failed to initialise premUIA. Aborting...", -1))
+            Critical("Off")
             keys.allWait()
             return false
         }
         timelineNN := premUIA.UIA_Objs['timelineWindow']
         if !middleIndex := this.__retrieveAudLayerIndex(premUIA) {
             errorLog(MethodError("Failed to determine middle index object. Aborting...", -1))
+            Critical("Off")
+            keys.allWait()
             return false
         }
         scrollBarPos := middleIndex.children[middleIndex.indicies[1]].location.y
@@ -2368,7 +2374,6 @@ class Prem {
             break
         }
 
-        Critical()
         if A_ScriptName != "Core Functionality.ahk" {
             try {
                 ;// we're setting the Core Functionality object (and this object) with the timeline coords - this will allow other scripts to retrieve them without needing to set them again
@@ -2581,15 +2586,10 @@ class Prem {
     static __checkTimelineValues() {
         try premObj_timelineVals := CLSID_Objs.loadProp("prem", "timelineVals")
         catch {
-            premObj_timelineVals := ""
             return false
         }
-        if (this.timelineXValue = 0 || this.timelineYValue = 0 || this.timelineXControl = 0 || this.timelineYControl = 0) ||
-            (this.timelineVals = false || premObj_timelineVals = false) {
-            premObj_timelineVals := ""
+        if (this.timelineVals = false || premObj_timelineVals = false)
             return false
-        }
-        premObj_timelineVals := ""
         return true
     }
 
