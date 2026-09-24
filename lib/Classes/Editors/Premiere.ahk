@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/23
- * @version 2.5.59
+ * @version 2.5.60
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1567,7 +1567,7 @@ class Prem {
     }
 
     /**
-     * Attempts to use `ShinsImageScanClass` to search for the pixel value through the desired coordinates. Will fallback to `PixelSearch` on failure.
+     * Attempts to use `ShinsImageScanClass` to search for the pixel value through the desired coordinates. Will fallback to `PixelSearch` on failure. Returns `screen` coordinates.
      * @param {Hexadecimal} [colour]
      * @param {Integer} [x1] the starting `x` coordinate you wish to check. Should be a `screen` coordinate
      * @param {Integer} [y1] the starting `y` coordinate you wish to check. Should be a `screen` coordinate
@@ -1591,6 +1591,7 @@ class Prem {
         search := this._scan.PixelRegion(colour, startX, startY, w, h, variance, &xPos, &yPos)
         if !search
             return {x: unset, y: unset, found: false}
+        coord.clientToScreen(xPos, yPos, this._scan.hwnd, this._scan.WindowScale, &xPos, &yPos)
         return {x: xPos, y: yPos, found: search}
     }
 
@@ -3603,7 +3604,7 @@ class Prem {
 $!WheelUp::
 $!WheelDown::
 {
-	if prem.blockWheel
+	if prem.blockWheel ;// only works if this hotkey and activation hotkey are within the same script
         return
 	hot := getHotkeysArr()
 	key := GetKeyName(hot[-1])

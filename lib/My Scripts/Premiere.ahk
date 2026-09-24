@@ -496,11 +496,21 @@ $d::
 	KeyWait("d")
 	blocker := block_ext()
 	blocker.On()
+	try origTool := prem.getSelectedTool(, false)
+	try prem.selectTool("selectionTool",, true)
 	prem.__remoteFunc('deselectAll')
-	search := prem.searchPlayhead({x1: origMouse.x-6, y1: origMouse.y, x2: origMouse.x+6, y2: origMouse.y})
-	if search != false {
-		t := prem.__remoteFunc('getPlayheadPosTicks')
-		prem.__remoteUXP("custom/movePlayheadFrames",, "subtract=false", "frames=20")
+	t := unset
+	loop 40 {
+		search := prem.searchPlayhead({x1: origMouse.x-6, y1: origMouse.y, x2: origMouse.x+6, y2: origMouse.y})
+		MouseMove(origMouse.x+1, origMouse.y, 0)
+		MouseMove(origMouse.x, origMouse.y, 0)
+		if search != false || A_Cursor != "Arrow" {
+			if !IsSet(t)
+				t := prem.__remoteFunc('getPlayheadPosTicks')
+			prem.__remoteUXP("custom/movePlayheadFrames",, "subtract=false", "frames=60")
+			continue
+		}
+		break
 	}
 	if !prem.__getlayerMid(&midDivX, &midDivY) {
 		blocker.Off()
@@ -508,13 +518,18 @@ $d::
 	}
 	aboveOrBelow := (origMouse.y < midDivY) ? true : false
 	drag := (aboveOrBelow = true) ? prem.timelineYControl : prem.timelineYValue+1
-	try origTool := prem.getSelectedTool(, false)
-	try prem.selectTool("selectionTool",, true)
-	SendInput("{LButton Down}")
-	MouseMove(origMouse.x+1, drag, 0)
-	sleep 16
-	MouseMove(1, 0, 1, "R")
-	SendInput("{LButton Up}")
+
+	add := 1
+	loop 4 {
+		SendInput("{LButton Down}")
+		MouseMove(origMouse.x+add, drag, 0)
+		sleep 16
+		MouseMove(1, 0, 1, "R")
+		SendInput("{LButton Up}")
+		if prem.isClipSelected()
+			break
+		add += 2
+	}
 	if origTool != false && origTool !== null
 		prem.selectTool(origTool,, true)
 	MouseMove(origMouse.x, origMouse.y, 0)
