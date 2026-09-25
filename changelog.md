@@ -69,7 +69,10 @@ $!WheelDown::
 
 ### 📝 `ps {`
 - ✅ Fixed using incorrect `ImageSearch` path
-- 📋 `Type()` no longer needs to move the cursor
+
+📍 `Type()`
+- 📋 No longer needs to move the cursor
+- 📋 Now accepts most filetypes
 
 ## PremiereRemote
 - ✏️ Added `resetSelection()`, `isPanelOpen()`
