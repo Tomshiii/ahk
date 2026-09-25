@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/25
- * @version 2.5.62
+ * @version 2.5.63
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1459,18 +1459,23 @@ class Prem {
      * @param {String} [title=unset] the title of the current premiere window. Can be left unset and will be determined automatically
      * @param {VarRef} [xPos] the `x` coordinate the colour was found (will only be set if `.found` is `true`)
      * @param {VarRef} [yPos] the `y` coordinate the colour was found (will only be set if `.found` is `true`)
+     * @param {String} [scanType="LRTB"] accepts; `"LRTB"`, `"RLTB"`, `"LRBT"`, `"RLBT"`, `"TBRL"`, `"TBLR"`, `"BTRL"`, `"BTLR"`
      * @returns {Object} {x: {Integer}, y: {Integer}, found: {Boolean}}
      */
-    static __getPixelRegion(colour, x1, y1, x2, y2, variance := 0, title?, &xPos?, &yPos?) {
+    static __getPixelRegion(colour, x1, y1, x2, y2, variance := 0, title?, &xPos?, &yPos?, scanType := "LRTB") {
         if !this.setShinsIMG(title?) {
             search := PixelSearch(&xCol, &yCol, x1, y1, x2, y2, colour, variance?)
             return {x: xCol, y: yCol, found: search}
         }
         coord.screenToClient(x1, y1, this._scan.hwnd, this._scan.WindowScale, &startX, &startY)
         coord.screenToClient(x2, y2, this._scan.hwnd, this._scan.WindowScale, &endX, &endY)
-        w := ((Max(startX, endX) - Min(startX, endX)) <= 0) ? 1 : (Max(startX, endX) - Min(startX, endX))
-        h := ((Max(startY, endY) - Min(startY, endY)) <= 0) ? 1 : (Max(startY, endY) - Min(startY, endY))
-        search := this._scan.PixelRegion(colour, startX, startY, w, h, variance, &xPos, &yPos)
+
+        originX := Min(startX, endX)
+        originY := Min(startY, endY)
+        w := ((Max(startX, endX) - originX) <= 0) ? 1 : (Max(startX, endX) - originX)
+        h := ((Max(startY, endY) - originY) <= 0) ? 1 : (Max(startY, endY) - originY)
+
+        search := this._scan.PixelRegion(colour, originX, originY, w, h, variance, &xPos, &yPos, scanType)
         if !search
             return {x: unset, y: unset, found: false}
         coord.clientToScreen(xPos, yPos, this._scan.hwnd, this._scan.WindowScale, &xPos, &yPos)
@@ -2354,17 +2359,24 @@ class Prem {
             keys.allWait()
             return false
         }
-        scrollBarPos := middleIndex.children[middleIndex.indicies[1]].location.y
-        padding := 6
-
-        ;// determine how much to account for the column left of the timeline based on premiere version
-        xAddMap := Map("26.2", 204)
-        for k, v in xAddMap {
-            if VerCompare(this.currentSetVer, k) >= 0 {
-                xAdd := v
-                continue
+        r_scrollBarPosY := middleIndex.children[middleIndex.indicies[1]].location.y-6
+        r_scrollBarPosX := middleIndex.children[middleIndex.indicies[1]].location.x+3
+        b_scrollBarPos := middleIndex.children[middleIndex.bottomIndex+1].location.y
+        ;// determine left edge
+        __determineLeftColumn(middleIndex?) {
+            allLayers := this.__getAllLayerButtonPos(, middleIndex?)
+            xVals := []
+            yVal := 0
+            for _, buttonsMap in allLayers["vid"][1] {
+                if _ = "mouseLayer"
+                    continue
+                xVals.Push(allLayers["vid"][1][_].x)
+                yVal := allLayers["vid"][1][_].y
             }
-            break
+            if !this.setShinsIMG()
+                return
+            this.__getPixelRegion(this.layerDivider, Max(xVals*), yVal, this.timelineXValue, yVal,,, &retX, &retY)
+            return (retX+1)
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
@@ -2374,10 +2386,10 @@ class Prem {
                 coord.s()
                 activeObj.timelineRawX     := this.timelineRawX     := timelineNN.location.x
                 activeObj.timelineRawY     := this.timelineRawY     := timelineNN.location.y
-                activeObj.timelineXValue   := this.timelineXValue   := timelineNN.location.x + timelineNN.location.w - 22  ;accounting for the scroll bars on the right side of the timeline
-                activeObj.timelineYValue   := this.timelineYValue   := scrollBarPos - padding                              ;accounting for the area at the top of the timeline that you can drag to move the playhead
-                activeObj.timelineXControl := this.timelineXControl := timelineNN.location.x + xAdd                        ;accounting for the column to the left of the timeline
-                activeObj.timelineYControl := this.timelineYControl := timelineNN.location.y + timelineNN.location.h - 25  ;accounting for the scroll bars at the bottom of the timeline
+                activeObj.timelineXValue   := this.timelineXValue   := r_scrollBarPosX                      ;accounting for the scroll bars on the right side of the timeline
+                activeObj.timelineXControl := this.timelineXControl := __determineLeftColumn(middleIndex)   ;accounting for the column to the left of the timeline
+                activeObj.timelineYValue   := this.timelineYValue   := r_scrollBarPosY                      ;accounting for the area at the top of the timeline that you can drag to move the playhead
+                activeObj.timelineYControl := this.timelineYControl := b_scrollBarPos                       ;accounting for the scroll bars at the bottom of the timeline
                 activeObj.timelineVals     := this.timelineVals     := true
                 activeObj := ""
                 Critical("Off")
@@ -3204,42 +3216,42 @@ class Prem {
      * @returns {false | Object} returns `false` on failure or;
      * ```
      * {indicies, children, audIndex, bottomIndex}
-     * ;// {indicies: UIA reference to top/bottom timeline scrollbars, children: UIA children tree object for the timeline, audIndex: the index of the first audio layer (generally the first `Toggle Track Lock`), bottomIndex: the index of the second scrollbar}
+     * {
+     *     indicies: UIA reference to top/bottom timeline scrollbars,
+     *     children: UIA children tree array for the timeline,
+     *     audIndex: the index of the first audio layer (generally the first `Toggle Track Lock`),
+     *     bottomIndex: the index of the second scrollbar (indicates the end of the audio tracks)
+     * }
      * ```
      */
     static __retrieveAudLayerIndex(UIAObj?) {
         if !timelineWindow := premUIA_Values.getLivePanel("timelineWindow", UIAObj?, &premUIA)
             return false
-        timelineUIA    := timelineWindow.FindElement({Name:"Timeline", Type:50033})
-        children       := timelineUIA.Children
+        timelineUIA := timelineWindow.FindElement({Name:"Timeline", Type:50033})
+        children    := timelineUIA.Children
 
-        icvIndices := []
-        audIndex := 0
-        bottomIndex := 0
-        for i, child in children {
-            if child.Name == "UI_InteractiveControlView" {
-                ;// Check if any direct child is a text element - if so, skip it
-                hasText := false
-                for grandchild in child.Children {
-                    if grandchild.Type == 50020 || grandchild.Type == 50004 {
-                        hasText := true
-                        break
-                    }
-                }
-                if !hasText {
-                    icvIndices.Push(i)
-                    if icvIndices.Length = 1
-                        audIndex := i + 1
-                    else
-                        bottomIndex := i
-                }
-            }
-            if icvIndices.Length == 2
-                break
-        }
-        if icvIndices.Length < 2
+        UIControlViews := UIA.Filter(children, IsValidICV)
+        if UIControlViews.Length < 2
             return false
+        icvIndices := []
+        for v in UIControlViews
+            icvIndices.Push(v.Index)
+
+        audIndex    := icvIndices[1] + 1
+        bottomIndex := icvIndices[2]
+
         return {indicies: icvIndices, children: children, audIndex: audIndex, bottomIndex: bottomIndex}
+
+        IsValidICV(el) {
+            if !(el.Type = 50025 && el.Name = "UI_InteractiveControlView")
+                return false
+            if !el.Children.Length
+                return false
+            for gc in el.Children
+                if gc.Type = 50020 || gc.Type = 50004
+                    return false
+            return true
+        }
     }
 
     /**
@@ -3624,6 +3636,7 @@ $!WheelDown::
         /**
      * determines the coordinates of all buttons for all audio/video layers
      * @param {Object} [mouseCoords=unset] pass in an `obj.MousePos()` mouse coordinates. If not provided, they will be retrieved within this function
+     * @param {Object} [middleIndex=unset] pass in an `__retrieveAudLayerIndex()` if it has already been generated. If not provided, it will be retrieved within this function
      * @returns {Map | false} returns `false` if the main Premiere window isn't active, timeline values haven't been set, or the timeline layout couldn't be determined. Else returns a map containing `"aud"` and `"vid"`, each a map of track index -> button coordinates
      * ```
      * layers := prem.__getAllLayerButtonPos()
@@ -3645,16 +3658,10 @@ $!WheelDown::
      * }
      * ```
      */
-    static __getAllLayerButtonPos(mouseCoords?) {
-        ;// avoid attempting to fire unless main window is active
-        getTitle := WinGet.PremName()
-        if WinGet.Title() != getTitle.winTitle
-            return false
+    static __getAllLayerButtonPos(mouseCoords?, middleIndex?) {
         coord.s()
-        if !this.__checkTimelineValues()
-            return false
 
-        if !middleIndex := this.__retrieveAudLayerIndex()
+        if !middleIndex := (IsSet(middleIndex)) ? middleIndex : this.__retrieveAudLayerIndex()
             return false
 
         origMouseCords := !IsSet(mouseCoords) ? obj.MousePos() : mouseCoords

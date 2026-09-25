@@ -16,8 +16,6 @@ This update focuses on optimisations to reduce unnecessary wait times across a w
 - 📋 `__focusTimeline()` will first attempt to use UIA to focus the timeline before falling back to previous methods
 - 📋 `mouseDrag()` will now automatically return the selected tool back to its original selection and only uses `toolorig` as a final fallback
 - 📋 `premUIA_Values.isToolSelected()` moved => `prem {`
-- 📋 `__getAllLayerButtonPos()`/`__determineButtonPos()` now use `UIA` to determine button coordinates
-	- `__determineButtonPos()` now returns a `Map` of all button coordinates within the desired track
 - 📋 The following functions will now use `ShinsImageScanClass` instead of `PixelSearch()`/`PixelGetColor()` when possible;
     - `__getAllLayerPos()`, `isClipUnderCursor()`, `timelineFocusStatus()`, `toggleEnabled()`, `disableDirectManip()`, `movepreview()`, `__layerDividerCheck()`, `disableAllMuteSolo()`, `soloVideo()`, `searchPlayhead()`, `__getlayerTopBottom()`
 - 📋 `layerSizeAdjust()` can now avoid leaking <kbd>Wheelup</kbd>/<kbd>WheelDown</kbd> inputs before the mouse moves into position if conditions are met;
@@ -37,6 +35,15 @@ $!WheelDown::
 		try SendInput("{LAlt Down}{" GetKeyName(hot[-1]) "}")
 }
 ```
+
+📍 `getTimeline()`
+- 📋 Now uses `__getAllLayerButtonPos()` & `ShinsImageScanClass` to determine the left edge of the timeline instead of guessing a minimum value
+- 📋 Uses `UIA` values to more specifically define the timeline coordinates which should result in greater accuracy
+
+📍 `__determineButtonPos()`/`__getAllLayerButtonPos()`
+- 📋 Now uses `UIA` to determine button coordinates
+- 📋 Now returns a `Map` of all button coordinates within the desired track.
+	- This makes these functions much more reliable if the user is using a non standard button layout
 
 📍 `__remoteFunc()`/`__remoteUXP()`/`ae.remoteFunc()`
 - 📋 Will now alert the user if the respective extension panel is not open (once per reload)
