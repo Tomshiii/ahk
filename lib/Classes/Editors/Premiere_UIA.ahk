@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/21
- * @version 3.0.42
+ * @date 2026/09/25
+ * @version 3.0.43
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -162,12 +162,15 @@ class premUIA_Values {
     static getLivePanel(panel, UIAobj?, &uiaEl?) {
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
         if !uiaEl || !uiaEl.UIA_Hwnd.Has(panel) {
-            errorLog(MethodError("premUIA doesn't store the following panel: " panel, -1, panel))
+            if !uiaEl
+                errorLog(MethodError("uiaObject hadn't been initialised yet", -2))
+            else
+                errorLog(MethodError("premUIA doesn't store the following panel: " panel, -2, panel))
             return false
         }
         try return UIA.ElementFromHandle(uiaEl.UIA_Hwnd[panel],, false)
         catch {
-            errorLog(MethodError("failed to generate live UIA panel for the following panel: " panel, -1, panel))
+            errorLog(MethodError("failed to generate live UIA panel for the following panel: " panel, -2, panel))
             return false
         }
     }
@@ -257,12 +260,13 @@ class premUIA_Values {
             }
         }
 
-        __DelNotify()
         try {
             if !WinActive(prem.winTitle) && !WinActive(prem.class)
                 switchTo.Premiere()
-            if !prem.isEditTabActive()
+            if !prem.isEditTabActive() {
+                __DelNotify()
                 throw UnsetError("throw code:719")
+            }
             blocker := block_ext()
             blocker.On()
             SendInput(ksa.prem.shuttleStop)
@@ -278,6 +282,7 @@ class premUIA_Values {
                 title := (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") ? n.wintitle A_Space prem.winTitle : prem.winTitle
                 this.AdobeEl := UIA.ElementFromHandle(title, premCacheRequest, false)
             } catch {
+                __DelNotify()
                 throw UnsetError("throw code:701")
             }
 
@@ -323,6 +328,7 @@ class premUIA_Values {
                             }
                             try this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
                             catch {
+                                __DelNotify()
                                 errorLog(UnsetError("Failed to find tool: " k))
                                 throw(UnsetError("Failed to find tool: " k))
                             }
@@ -332,6 +338,7 @@ class premUIA_Values {
                             this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:50000,  Name: v, matchmode:"Substring"})
                             this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
                         } catch {
+                            __DelNotify()
                             errorLog(UnsetError("Failed to find tool: " k))
                             throw(UnsetError("Failed to find tool: " k))
                         }
@@ -339,8 +346,7 @@ class premUIA_Values {
             }
         } catch as e {
             try errorLog(Error(e.Message, e.What, e.Extra))
-            notifyExt.deleteIfExist("premUIAGenTree")
-            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            __DelNotify()
             this.AdobeEl   := false
             this.UIA_Objs  := Map()
             this.UIA_Path  := Map()
@@ -349,8 +355,7 @@ class premUIA_Values {
             throw ValueError(e.Message,, e.Extra)
         }
 
-        notifyExt.deleteIfExist("premUIAGenTree")
-        notifyExt.deleteIfExist("premUIAGenTreeWarning")
+        __DelNotify()
         notifyExt.deleteIfExist("determiningUIA")
         notifyExt.showIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", img,,, 'dur=3 bdr=0x5B009F show=Fade@225 hide=Fade@250 maxW=400')
         return true

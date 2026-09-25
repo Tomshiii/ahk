@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/09/15
- * @version 1.0.23.1
+ * @date 2026/09/25
+ * @version 1.0.24
  ***********************************************************************/
 
 #SingleInstance Force
@@ -103,7 +103,6 @@ revoke(allRegister, UserSet, *) {
 doStartup(*) {
     if !premUIA_Values.determineUIA_Exist() {
         __tryFunc(prem.__setTimelineValues())
-        __tryFunc(prem.getTimeline(false))
     }
 }
 __tryFunc(tryFunc*) {

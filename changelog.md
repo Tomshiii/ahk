@@ -5,6 +5,7 @@ This update focuses on optimisations to reduce unnecessary wait times across a w
 - ✅ Attempt to fix `vscode.cut()`/`vscode.copy()` erroneously adding a <kbd>~</kbd>
 - ✏️ Added `coord.screenToClient()`/`coord.clientToScreen()`, `cmd.httpGet()`, `Base64Decode()`
 - 📋 `startup().trayMen()` now shows controls for `AERemote`/`PremiereRemote`
+- 📋 `premUIA_Values.getLivePanel()` now shows more accurate logs if `initialise()` hasn't yet been run
 
 ### 📝 `prem {`
 - ❗ `prem {` functions no longer require any `ImageSearch()`
@@ -88,4 +89,7 @@ $!WheelDown::
 
 ## Other Changes
 - 📋 `reloadAll.ahk` will now run `replaceHotkeyless.ahk` if `HotkeylessAHK.ahk` is open
-- 📋 `determineUIA.ahk` will now close itself if the user closes all open projects
+
+🔗 `determineUIA.ahk`
+- 📋 Will now close itself if the user closes all open projects
+- 📋 Reduced delay before `prem.__setTimelineValues()` gets called

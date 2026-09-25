@@ -76,6 +76,22 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
             try debugButtBar.FindElement({Type:50000, Name:"Load"}).invoke()
         }
     } else {
+        if children[index+1].name = "Not loaded" {
+            try debugButtBar.FindElement({Type:50000, Name:"Load"}).invoke()
+            catch {
+                try ProcessWaitClose(fullTitle, 1)
+                catch {
+                    return false
+                }
+                sleep 150
+                if WinExist(fullTitle) {
+                    if !WinWaitClose(fullTitle,, 2)
+                        return false
+                }
+                v := __startUXP(, &debugButt)
+                return v
+            }
+        }
         try {
             reloadButt := debugButtBar.FindElement({Type:50000, Name:"Reload"})
             reloadButt.click()

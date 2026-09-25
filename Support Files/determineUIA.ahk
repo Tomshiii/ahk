@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/09/22
- * @version 1.0.16
+ * @date 2026/09/25
+ * @version 1.0.17
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -121,7 +121,7 @@ __deleteUIA()
 SetTimer((*) => (__deleteUIA()), -2500)
 didReload := isReload(getReload ?? false)
 if WinExist(prem.winTitle) && !didReload {
-    SetTimer((*) => (prem.__setTimelineValues(), prem.getTimeline(false)), -2500)
+    SetTimer((*) => (prem.__setTimelineValues()), -750)
 }
 
 ;// if the user closes prem

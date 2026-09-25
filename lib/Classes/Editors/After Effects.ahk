@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/09/24
- * @version 1.5.18
+ * @date 2026/09/25
+ * @version 1.5.18.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -214,7 +214,7 @@ class AE {
         }
 
         if tools = true {
-            notifyExt.showIfNotExist("premTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=3 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
+            notifyExt.showIfNotExist("aeTimelineCoords",, "Timeline Coordinates successfully determined.", 'C:\Windows\System32\imageres.dll|icon61',,, 'POS=BR DUR=3 MALI=CENTER BC=0x1F1F1F bdr=0x5959FF show=Fade@250 hide=Fade@250')
         }
         Critical("Off")
         return true

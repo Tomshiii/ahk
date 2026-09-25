@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/09/25
- * @version 2.5.63
+ * @version 2.5.64
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1034,7 +1034,7 @@ class Prem {
         }
 
         ;// if premver greater than 26.5 we can use UXP to determine the colour
-        if VerCompare(this.currentSetVer, "v26.5") >= 0 {
+        if VerCompare(this.currentSetVer, "v26.5") >= 0 && this.__checkPremRemoteFunc('properties/getBackgroundColour', "uxp") {
             remoteBG := this.__remoteUXP('properties/getBackgroundColour')
             if remoteBG != false && remoteBG !== null {
                 bgCol := json.parse(StrReplace(remoteBG, "\"))
@@ -1313,9 +1313,8 @@ class Prem {
     static saveAndFocusTimeline() {
         if !uiaVals := premUIA_Values.initialise()
             return
-        if !this.__checkTimelineValues() {
-            if !this.getTimeline(false)
-                return false
+        if !this.__setTimelineValues(false) {
+            return false
         }
         saveAttempt := this.save()
         if (saveAttempt = false || saveAttempt = "timeout" || saveAttempt = "timeout_nosave") {
@@ -1612,6 +1611,10 @@ class Prem {
         if Type(window) != "string" || Type(direction) != "string" || Type(keyswait) != "integer" || (Type(checkMButton) != "integer" && Type(checkMButton) != "object") {
             ;// throw
             errorLog(TypeError("Incorrect Parameter type passed to function", -1),,, true)
+            return
+        }
+        if !this.__checkPremRemoteFunc('getPlayheadPosTicks') || !this.__checkPremRemoteFunc('custom/resetSelection', "uxp") {
+            errorLog(MethodError("Required PremiereRemote functions missing.", -1),,, true)
             return
         }
         if checkMButton != false {
@@ -2020,7 +2023,7 @@ class Prem {
             return null
         }
 
-        if !this.__remoteFunc('isSelectedAudio') {
+        if !this.__checkPremRemoteFunc('isSelectedAudio') || !this.__remoteFunc('isSelectedAudio') {
             blocker.Off()
             notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No audio clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return false
@@ -2640,8 +2643,7 @@ class Prem {
      * @returns {Boolean} if the cursor is **not** within the timeline (or timeline coords haven't been set), returns `false`. Else returns `true`
      */
 	static __checkCoords(coordObj) {
-        if !this.__checkTimelineValues() {
-            this.getTimeline(false)
+        if !this.__setTimelineValues(false) {
             return false
         }
         coord.s()
@@ -2810,9 +2812,8 @@ class Prem {
     static delayPlayback(delayMS?, closeTrim := true) {
         if !premUIA := premUIA_Values.initialise()
             return
-        if !this.__checkTimelineValues() {
-            this.getTimeline(false)
-            return
+        if !this.__setTimelineValues(false) {
+            return false
         }
         focusStatus := this.timelineFocusStatus()
         if !focusStatus || focusStatus == null
@@ -2914,41 +2915,11 @@ class Prem {
      * A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab.
      */
     static anchorToPosition() {
-        cepSync := this.__remoteFunc('anchorToPosition')
-        if cepSync = true
-            return
-        selected := this.isClipSelected()
-        if !selected || selected == null {
-            errorLog(TargetError("No clip selected.", -1))
+        if !this.__checkPremRemoteFunc('anchorToPosition') {
+            errorLog(MethodError("Required PremiereRemote function missing: anchorToPosition", -1))
             return
         }
-        ;// check to see if the user is in a text field
-        if !CaretGetPos(&carx, &cary) {
-            tool.Cust("The user is not currently within a text field")
-            return
-        }
-        clipb := clip.clear()
-        if !clip.copyWait(clipb.storedClip)
-            return
-        blocker := block_ext()
-        blocker.On()
-        anch1 := A_Clipboard
-        clip.clear()
-        SendEvent("{Tab}")
-        if !clip.copyWait(clipb.storedClip) {
-            blocker.Off()
-            return
-        }
-        anch2 := A_Clipboard
-        switch {
-            ;// versions 25.4 and greater. They now focus the reset button when you tab
-            case VerCompare(this.currentSetVer, "25.5") >= 0: delaySI(50, "{Tab 2}", anch1, "{Tab}", anch2, "{Enter}")
-            ;// versions below 25.4
-            ; case VerCompare(this.currentSetVer, "25.4") < 0: delaySI(50, "{Tab}", anch1, "{Tab}", anch2, "{Enter}")
-        }
-
-        clip.delayReturn(clipb.storedClip)
-        blocker.Off()
+        this.__remoteFunc('anchorToPosition')
     }
 
     /**
@@ -3128,9 +3099,9 @@ class Prem {
             blocker.Off()
             return
         }
-        if !this.__checkTimelineValues()
-            this.__setTimelineValues()
-        if !this.__checkCoords(origMouse) {
+        setVals   := this.__setTimelineValues()
+        chkCoords := this.__checkCoords(origMouse)
+        if !setVals || !chkCoords {
             blocker.Off()
             return
         }
@@ -3296,6 +3267,10 @@ class Prem {
             return false
         if !layerIndex := this.__retrieveAudLayerIndex(premUIA)
             return false
+        if !this.__checkPremRemoteFunc(['getVideoTracks', 'getAudioTracks']) {
+            errorLog(MethodError("Required PremiereRemote functions missing.", -1))
+            return false
+        }
         vidTrackNum := this.__remoteFunc('getVideoTracks')
         audTrackNum := this.__remoteFunc('getAudioTracks')
 
@@ -3905,7 +3880,7 @@ $!WheelDown::
         }
 
         funcs := ['isSelected', 'movePlayheadFrames', 'isClipEnabled', 'toggleEnabled', 'getAudioTracks', 'getVideoTracks']
-        if !this.__checkPremRemoteFunc(funcs) {
+        if !this.__checkPremRemoteFunc(funcs) || !this.__checkPremRemoteFunc('custom/deselectAll', "uxp") {
             blocker.Off()
             errorLog(MethodError('This function requires additional PremiereRemote functions for proper functionality', -1))
             return
@@ -4412,8 +4387,10 @@ $!WheelDown::
         }
         if !this.remoteActiveCEP
             return
-        if !this.__checkPremRemoteDir("getActiveSequenceID")
+        if !this.__checkPremRemoteDir("getActiveSequenceID") {
             SetTimer(, 0)
+            return
+        }
         if !WinExist(this.winTitle) || !WinActive(this.winTitle)
             return
         premWindow := WinGet.PremName(,,, false)
@@ -4797,6 +4774,10 @@ $!WheelDown::
      * @returns {Boolean}
      */
     static setRnderRplcCheckBoxes(UIAObj?, &AdobeEl?, handles?, includeEffects := true) {
+        if !this.__checkPremRemoteFunc('getSeqFrameRate') {
+            errorLog(MethodError("Required PremiereRemote function missing.", -1))
+            return false
+        }
         if !IsSet(UIAObj) || (IsSet(UIAObj) && Type(UIAObj) != "UIA.IUIAutomationElement") {
             AdobeEl := UIA.ElementFromHandle("Render and Replace " this.exeTitle,, false)
         } else {
@@ -4865,6 +4846,10 @@ $!WheelDown::
     static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout := 3, handles?, includeEffects := true) {
         if !WinActive(this.winTitle)
             return false
+        if !this.__checkPremRemoteFunc('clipType') {
+            errorLog(MethodError("Required PremiereRemote function missing", -1))
+            return false
+        }
         clipType := this.__remoteFunc('clipType')
         title := WinGet.PremName()
         if title.saveCheck != false
@@ -4977,6 +4962,10 @@ $!WheelDown::
         notifs := ['premEffectSlotFailed', 'premEffectSlotNoneSaved', 'premEffectSlotJSONFailed', 'premEffectSlotSaved', 'premEffectSlotPreSend', 'premEffectSlotFailedRead', 'premEffectSlotApplied', 'premEffectERROR']
         for v in notifs
             notifyExt.deleteIfExist(v)
+        if !this.__checkPremRemoteFunc(['saveEffectSlotJSON', 'applyEffectSlotJSON']) {
+            errorLog(MethodError("Required PremiereRemote functions missing: saveEffectSlotJSON/applyEffectSlotJSON", -1))
+            return
+        }
         slotsDir := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\slots"
         if !DirExist(slotsDir)
             DirCreate(slotsDir)
@@ -5094,7 +5083,7 @@ $!WheelDown::
     /**
      * returns the current timecode that the playhead is parked. Will use either UIA or CEP to retrieve.
      * @param {Boolean} [useRemote=false] determines whether to use PremiereRemote or UIA to retrieve the information
-     * @returns {String} a timecode formatted string; `00;00;00;00`
+     * @returns {String | null} a timecode formatted string; `00;00;00;00`
      */
     static getPlayheadPosition(useRemote := false) {
         switch useRemote {
@@ -5107,7 +5096,12 @@ $!WheelDown::
                     errorLog(e,,, true)
                     return
                 }
-            case true: return this.__remoteFunc('properties/getPlayheadPosTimecode')
+            case true:
+                if !this.__checkPremRemoteFunc('getPlayheadPosTimecode') {
+                    errorLog(MethodError("Required PremiereRemote function missing.", -1))
+                    return null
+                }
+                return this.__remoteFunc('getPlayheadPosTimecode')
         }
     }
 
