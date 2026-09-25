@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/24
- * @version 2.5.61
+ * @date 2026/09/25
+ * @version 2.5.62
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -292,13 +292,6 @@ class Prem {
     static indexFileUXP := this.remoteDirUXP "\src\generated\registry.ts"
     static funcDirUXP   := this.remoteDirUXP "\src\actions"
 
-    ;// toggleLayerButtons()
-    static layerSource := 16
-    static layerLock   := 48
-    static layerTarget := 71
-    static layerSync   := 96
-    static layerMute   := 119
-    static layerSolo   := 142
     static layerDivider := 0x303030
     static toggleWaiting := false
     static toggleableButtons := Mip("source", true, "target", true, "sync", true, "mute", true, "solo", true, "lock", true)
@@ -3523,39 +3516,29 @@ $!WheelDown::
     }
 
     /**
-     * Determines the coordinates for where a specified button will be
-     * @param {String} [button] the button you wish to search for. Accepted buttons are found within the `toggleableButtons` map at the top of the class
+     * Determines the coordinates for all buttons in a given track
      * @param {Integer} [topDivY] the top divider line for the layer you're operating on
      * @param {Integer} [botDivY] the bottom divider line for the layer you're operating on
-     * @returns {Object} {x, y} returns the coordinates for the designated button
+     * @param {Object} [mouseCoords=unset] pass in an `obj.MousePos()` mouse coordinates. If not provided, they will be retrieved within this function
+     * @returns {Map | null} returns all buttons found on the desired track, as well as key `"layer"` which will either be `"aud"` or `"vid"`
      */
-    static __determineButtonPos(button, topDivY, botDivY) {
-            if !this.toggleableButtons.Has(button) {
-            ;// throw
-            errorLog(MethodError("Incorrect Value in Parameter #1", -1, button),,, true)
-            return
-        }
-            doMinusSmall := (button != "lock") ? "15" : "0"
-            doMinus := (button != "lock") ? "32" : "0"
-            diff := botDivY-topDivY
-            xpos := this.timelineRawX+this.layer%button%
-            ypos := 0
-            switch {
-                ;// versions less than 25.2
-                case (VerCompare(ptf.premSETver, "v25.2") < 0) && (button != "lock" || diff <= 54): ypos := topDivY+7
-                case (VerCompare(ptf.premSETver, "v25.2") < 0) && (button = "lock" && diff > 54):   ypos := topDivY+((diff/2)-doMinus)
-
-                ;// versions greater than or equal to 25.2
-                case (VerCompare(ptf.premSETver, "v25.2") >= 0):
-                    switch {
-                        case (diff <= 35):              ypos := topDivY+6
-                        case (diff > 35 && diff <= 54): ypos := topDivY+15
-                        case (diff > 54 && diff < 77):  ypos := topDivY+((diff/2)-doMinusSmall)
-                        case (diff >= 77):              ypos := topDivY+((diff/2)-doMinus)
-                    }
+    static __determineButtonPos(topDivY, botDivY, origMouseCords?) {
+        allButtons := this.__getAllLayerButtonPos()
+        if !allButtons
+            return null
+        for audOrVid, layer in allButtons {
+            for _, track in layer {
+                if !track.Has("lock")
+                    continue
+                y := track["lock"].y
+                if y > topDivY && y < botDivY {
+                    track.Set("layer", audOrVid)
+                    return track
+                }
             }
-            return {x: xpos, y: ypos}
         }
+        return null
+    }
 
     /**
      * A function to quickly toggle the state of various layer settings for the layer the cursor is within. This funtion uses offset values of the `timelineRawX` value and as such the use of `PremiereUIA` is required.
@@ -3591,29 +3574,22 @@ $!WheelDown::
             block.Off()
             return
         }
-        layerDiv    := this.__layerDividerCheck(origMouseCords)
-        layerCoords := this.__getlayerTopBottom(origMouseCords, true, &topDivX, &topDivY, &botDivX, &botDivY, &midDivX, &midDivY)
-        if !layerDiv || !!layerCoords.error {
+
+        this.__getlayerTopBottom(origMouseCords, true,, &topDivY,, &botDivY)
+        getMovePos := this.__determineButtonPos(topDivY, botDivY, origMouseCords)
+        if getMovePos == null {
             block.Off()
             return
         }
-        midDivY += 2
-        getMovePos := this.__determineButtonPos(which, topDivY, botDivY)
-        MouseMove(getMovePos.x, getMovePos.y, 1)
 
-        if which = "solo" {
-            ;// check to see if the user is hovering over a video track
-            ;// we have to do this otherwise if the user spams the solo button, the function will double click the layer and expand it
-            if !newCoords := obj.MousePos() {
+        switch {
+            case which = "mute" && getMovePos["layer"] = "vid": newX := getMovePos["visible"].x, newY := getMovePos["visible"].y
+            case which = "solo" && getMovePos["layer"] = "vid":
                 block.Off()
                 return
-            }
-            if origMouseCords.y < midDivY {
-                MouseMove(origMouseCords.x, origMouseCords.y, 1)
-                block.Off()
-                return
-            }
+            default: newX := getMovePos[which].x, newY := getMovePos[which].y
         }
+        MouseMove(newX, newY, 1)
         SendInput("{Click}")
         MouseMove(origMouseCords.x, origMouseCords.y, 1)
         if !(which = "target" || which = "source") {
@@ -3645,70 +3621,114 @@ $!WheelDown::
         this.__remoteFunc('setScale',, "scale=" String(scaleVal))
     }
 
-    /**
+        /**
      * determines the coordinates of all buttons for all audio/video layers
-     * @param {String} [audOrVid="aud"] whether you wish to return the locations for audio layers or video layers
-     * @param {Object} [mouseCoords?] pass in an `obj.MousePos()` mouse coordinates. If not provided, they will be retrieved within this function
-     * @returns {Map | false  | null} if the window title cannot be determined, or `audOrVid` != "aud" or "vid" - returns `false` ||
-     * if the middle divider line cannot be determined - returns `-1` ||
-     * else returns a map of all coordinates for all buttons
+     * @param {Object} [mouseCoords=unset] pass in an `obj.MousePos()` mouse coordinates. If not provided, they will be retrieved within this function
+     * @returns {Map | false} returns `false` if the main Premiere window isn't active, timeline values haven't been set, or the timeline layout couldn't be determined. Else returns a map containing `"aud"` and `"vid"`, each a map of track index -> button coordinates
      * ```
-     * layers := prem.__getAllLayerButtonPos("aud")
-     * ;// layers[1]["solo"].x
-{ 1:{
-    "lock":{
-      "x":456,
-      "y":919
-    },
-    "mouseLayer":"false",
-    "mute":{
-      "x":527,
-      "y":919
-    },
-    "solo":{
-      "x":550,
-      "y":919
-    },
-    "source":{
-      "x":424,
-      "y":919
-    },
-    "sync":{
-      "x":504,
-      "y":919
-    },
-    "target":{
-      "x":479,
-      "y":919
-    }
-  }
-}
+     * layers := prem.__getAllLayerButtonPos()
+     * ;// layers["aud"][1]["solo"].x
+     * ;// layers["vid"][2]["mouseLayer"]
+     * {
+     *   "aud": {
+     *     1: {
+     *       "lock":   {x: 468, y: 919},
+     *       "target": {x: 492, y: 919},
+     *       "source": {x: 453, y: 919},
+     *       "sync":   {x: 516, y: 919},
+     *       "mute":   {x: 540, y: 919},
+     *       "solo":   {x: 564, y: 919},
+     *       "mouseLayer": false ;// boolean, true if the cursor is currently within this layer
+     *     }
+     *   },
+     *   "vid": { ... }
+     * }
      * ```
      */
-    static __getAllLayerButtonPos(audOrVid := "aud", mouseCoords?) {
+    static __getAllLayerButtonPos(mouseCoords?) {
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName()
-        if WinGet.Title() != getTitle.winTitle || (audOrVid != "aud" && audOrVid != "vid")
+        if WinGet.Title() != getTitle.winTitle
             return false
         coord.s()
         if !this.__checkTimelineValues()
             return false
-        if !mid := this.__getlayerMid(, &midDivY)
-            return null
-        if !IsSet(mouseCoords) {
-            if !mouseCoords := obj.MousePos()
-                return false
+
+        if !middleIndex := this.__retrieveAudLayerIndex()
+            return false
+
+        origMouseCords := !IsSet(mouseCoords) ? obj.MousePos() : mouseCoords
+        mouseBounds := origMouseCords ? this.__getlayerTopBottom(origMouseCords, false,,,,,,,, false) : false
+
+        aud := Map(), vid := Map()
+        A := Map("aud", aud, "vid", vid)
+        currentTrack := 0
+        currentY := false
+        currentMid := 0
+        Names := Map("Toggle Track Lock", "lock", "Toggle Sync Lock", "sync", "Toggle Track Output", "visible", "Mute Track", "mute", "Solo Track", "solo")
+        currentMap := Map()
+        currentLayer := "vid"
+
+        ;// true if the given row's y sits between the top/bottom of the layer under the cursor
+        ;// a cut off layer only has one edge (the other is `false`), so treat a missing edge as open
+        __isMouseLayer(rowY) {
+            if !mouseBounds
+                return "false"
+            top := mouseBounds.topY, bot := mouseBounds.botY
+            if !top && !bot ;// cursor isn't inside any layer
+                return "false"
+            return ((!top || rowY > top) && (!bot || rowY < bot) ? "true" : "false")
         }
-        A := Map()
-        allPos := this.__getAllLayerPos(midDivY, audOrVid)
-        for i, v in allPos {
-            current := Map()
-            for k in this.toggleableButtons {
-                current[k] := this.__determineButtonPos(k, allPos[i]['top'], allPos[i]['bot'])
+
+        ;// stores the track currently being built (and derives its `target`/`source` button from the lock button's row)
+        __flush() {
+            if currentTrack = 0
+                return
+            if currentMap.Has("lock") && !currentMap.Has("target") {
+                nums := []
+                for name, btn in currentMap {
+                    if name != "lock"
+                        nums.Push(btn.x)
+                }
+                if nums.Length {
+                    lockBtn := currentMap["lock"]
+                    currentMap["target"] := {x: Round(lockBtn.x + ((Min(nums*) - lockBtn.x) / 2)), y: lockBtn.y}
+                    currentMap["source"] := {x: lockBtn.x-15, y: lockBtn.y}
+                }
             }
-            current["mouseLayer"] := (mouseCoords.y > allPos[i]['top'] && mouseCoords.y < allPos[i]['bot']) ? "true" : "false"
-            A[A_index] := current
+            ;// must be set after `target` is derived, that loop expects every value to have `.x`
+            currentMap["mouseLayer"] := __isMouseLayer(currentMid)
+            A[currentLayer][currentTrack] := currentMap
         }
+
+        for child in middleIndex.children {
+            if A_Index >= middleIndex.bottomIndex
+                break
+            if child.type != 50000 || !Names.Has(child.name)
+                continue
+
+            ;// first real button after the divider = first audio track
+            if A_Index >= middleIndex.audIndex && currentLayer = "vid" {
+                __flush()
+                currentLayer := "aud"
+                currentTrack := 0
+                currentMap := Map()
+                currentY := false
+            }
+
+            loc := child.location
+            if loc.y != currentY {
+                __flush()
+                currentMap := Map()
+                currentY := loc.y
+                currentMid := loc.y + (loc.h // 2)
+                currentTrack++
+            }
+
+            currentMap.Set(Names[child.Name], {x: loc.x+(loc.w//2), y: loc.y+(loc.h//2)})
+        }
+        __flush()
+
         return A
     }
 
@@ -4196,7 +4216,7 @@ $!WheelDown::
             blocker.Off()
             return
         }
-        allButtons := this.__getAllLayerButtonPos(, origMouseCords)
+        allButtons := this.__getAllLayerButtonPos(origMouseCords)
         if !allButtons || allButtons = null {
             blocker.Off()
             switch allButtons {
@@ -4206,14 +4226,13 @@ $!WheelDown::
             return
         }
         arr := []
-        for k in allButtons {
-            getColour := this.__getPixel(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
-            getColourOffset := this.__getPixel(allButtons[k][muteOrSolo].x-5, allButtons[k][muteOrSolo].y) ;// required to stop `Mute` false positives
-            ; MouseMove(allButtons[k][muteOrSolo].x-3, allButtons[k][muteOrSolo].y-3)
-            ; MsgBox("col: " getColour "`noffset: " getColourOffset "`ncompare: " colour "`nsolo: " Format("0x{:x}", this.soloColour) "`nmute: " Format("0x{:x}", this.muteColour) "`ntheme: " this.theme)
-            ; MsgBox(getColour) ;// uncomment to determine the pixelcolour
-            if getColour = colour && getColourOffset = colour
-                arr.Push({x: allButtons[k][muteOrSolo].x-3, y: allButtons[k][muteOrSolo].y-3})
+        for _, tracksMap in allButtons["aud"] {
+            if !tracksMap.has(muteOrSolo) {
+                continue
+            }
+            getColour := this.__getPixel(tracksMap[muteOrSolo].x-5, tracksMap[muteOrSolo].y-5)
+            if getColour = colour
+                arr.Push({x: tracksMap[muteOrSolo].x, y: tracksMap[muteOrSolo].y})
         }
         for i, v in arr {
             MouseMove(v.x, v.y, 1)
@@ -4263,7 +4282,7 @@ $!WheelDown::
             return
         }
 
-        allButtons := this.__getAllLayerButtonPos("vid", origMouseCords)
+        allButtons := this.__getAllLayerButtonPos(origMouseCords)
         if !allButtons || allButtons = null {
             blocker.Off()
             switch allButtons {
@@ -4273,20 +4292,23 @@ $!WheelDown::
             return
         }
         arr := []
-        for k in allButtons {
-            getColour := this.__getPixel(allButtons[k]["mute"].x+7, allButtons[k]["mute"].y)
+        for _, tracksMap in allButtons["vid"] {
+            if !tracksMap.has("visible") {
+                continue
+            }
+            getColour := this.__getPixel(tracksMap["visible"].x+7, tracksMap["visible"].y)
             switch soloInverseDisable {
                 case "solo":
-                    if (allButtons[k]["mouseLayer"] = "true" && getColour = this.eyeDisabled) || (allButtons[k]["mouseLayer"] != "true" && getColour != this.eyeDisabled) {
-                        arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
+                    if (tracksMap["mouseLayer"] = "true" && getColour = this.eyeDisabled) || (tracksMap["mouseLayer"] != "true" && getColour != this.eyeDisabled) {
+                        arr.Push({x: tracksMap["visible"].x, y: tracksMap["visible"].y+3})
                     }
                 case "inverse":
-                    if (allButtons[k]["mouseLayer"] = "true" && getColour != this.eyeDisabled) || (allButtons[k]["mouseLayer"] != "true" && getColour = this.eyeDisabled) {
-                        arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
+                    if (tracksMap["mouseLayer"] = "true" && getColour != this.eyeDisabled) || (tracksMap["mouseLayer"] != "true" && getColour = this.eyeDisabled) {
+                        arr.Push({x: tracksMap["visible"].x, y: tracksMap["visible"].y+3})
                     }
                 case "disable":
                         if getColour = this.eyeDisabled
-                            arr.Push({x: allButtons[k]["mute"].x, y: allButtons[k]["mute"].y+3})
+                            arr.Push({x: tracksMap["visible"].x, y: tracksMap["visible"].y+3})
             }
         }
         for i, v in arr {

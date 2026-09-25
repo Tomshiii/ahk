@@ -16,6 +16,8 @@ This update focuses on optimisations to reduce unnecessary wait times across a w
 - 📋 `__focusTimeline()` will first attempt to use UIA to focus the timeline before falling back to previous methods
 - 📋 `mouseDrag()` will now automatically return the selected tool back to its original selection and only uses `toolorig` as a final fallback
 - 📋 `premUIA_Values.isToolSelected()` moved => `prem {`
+- 📋 `__getAllLayerButtonPos()`/`__determineButtonPos()` now use `UIA` to determine button coordinates
+	- `__determineButtonPos()` now returns a `Map` of all button coordinates within the desired track
 - 📋 The following functions will now use `ShinsImageScanClass` instead of `PixelSearch()`/`PixelGetColor()` when possible;
     - `__getAllLayerPos()`, `isClipUnderCursor()`, `timelineFocusStatus()`, `toggleEnabled()`, `disableDirectManip()`, `movepreview()`, `__layerDividerCheck()`, `disableAllMuteSolo()`, `soloVideo()`, `searchPlayhead()`, `__getlayerTopBottom()`
 - 📋 `layerSizeAdjust()` can now avoid leaking <kbd>Wheelup</kbd>/<kbd>WheelDown</kbd> inputs before the mouse moves into position if conditions are met;
