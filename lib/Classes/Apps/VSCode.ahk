@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2026/09/23
- * @version 1.3.2
+ * @date 2026/09/28
+ * @version 1.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -77,14 +77,35 @@ class VSCode {
         sleep 50
         delaySI(50, KSA.vscode.focusExplorerWin, KSA.vscode.focusExplorerWin, KSA.vscode.focusWork, KSA.vscode.collapseFold, KSA.vscode.collapseFold, "{Up 5}", "{Enter}")
         __closeOut(ttp) => (sleep(50), block.Off(), tool.Wait(), tool.Cust(ttp, 2.0))
-        if script = 0 && A_ThisHotkey = KSA.vscode.testHotkey  || A_ThisHotkey = KSA.vscode.functionHotkey {
+        if script = 0 && DirExist(ptf.rootDir "\releases") && A_ThisHotkey = KSA.vscode.testHotkey  || A_ThisHotkey = KSA.vscode.functionHotkey {
+            downCount := 0
+            dir := ptf.rootDir "\releases"
+            loop files dir "\*", "D"
+                downCount++
+            __getFileCount(filename) {
+                fNum := 0
+                loop files dir "\*", "F" {
+                    fNum++
+                    if A_LoopFileName != filename
+                        continue
+                    return fNum
+                }
+            }
             switch A_ThisHotkey {
                 case KSA.vscode.testHotkey:
-                    delaySI(50, "{Down 6}{Enter}", "{Down 23}{Enter}")
+                    filename := "test.ahk"
+                    if !FileExist(dir "\" filename)
+                        return
+                    fileNum := __getFileCount(filename)
+                    delaySI(50, "{Down 6}{Enter}", "{Down " downCount+fileNum "}{Enter}")
                     __closeOut("The test file has been selected")
                     return
                 case KSA.vscode.functionHotkey:
-                    delaySI(50, "{Down 6}{Enter}", "{Down 22}{Enter}")
+                    filename := "emojis.md"
+                    if !FileExist(dir "\" filename)
+                        return
+                    fileNum := __getFileCount(filename)
+                    delaySI(50, "{Down 6}{Enter}", "{Down " downCount+fileNum "}{Enter}")
                     __closeOut("The emoji file has been selected")
                     return
             }

@@ -8,9 +8,7 @@ SetWorkingDir(A_ScriptDir)
 
 ;// ======= manifest =======
 InstalledDir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
-if FileExist(InstalledDir "\compose.yaml") && !InStr(FileRead(InstalledDir "\compose.yaml"), "restart: unless-stopped") {
-    FileAppend("`t`trestart: unless-stopped", InstalledDir "\compose.yaml")
-}
+__replaceCompose()
 dir := InstalledDir "\client"
 manifest := dir "\manifest.json"
 if !FileExist(manifest)

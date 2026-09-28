@@ -82,3 +82,9 @@ else if FileExist(ptf["textreplaceUser"])
 
 if FileExist(ptf["HotkeylessAHK"])
     Run(ptf["HotkeylessAHK"])
+
+dockerFile := "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+dockerAhk := "ahk_exe Docker Desktop.exe"
+runApp(dockerFile, dockerAhk, false)
+if WinWait(dockerAhk,, 5)
+    WinMinimize(dockerAhk)

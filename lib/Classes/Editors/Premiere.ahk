@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/25
- * @version 2.5.64
+ * @date 2026/09/28
+ * @version 2.5.65
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2416,7 +2416,7 @@ class Prem {
     }
 
     /**
-     * This function will attempt to select the desired tool using UIA. This function may fail for some tools as Premiere doesn't distinguish between a few of them.
+     * This function will attempt to select the desired tool using UIA. Some tools may not be available with certain methods depending on Premiere version.
      * @param {String} [tool=selectionTool] the name of the tool. Must correspond to a tool set within `Premiere_UIA.ahk` (or the tool name as reported by UIA as long as `uiaOrPrem` is set to `"prem"`) or the function will throw.
      * @param {String} [selectMethod="uia"] determines the method for reselecting the tool.
      * ```
@@ -2428,7 +2428,6 @@ class Prem {
      * @returns {Boolean | null}
      */
     static selectTool(tool := "selectionTool", selectMethod := "uia", focusTimeline := false) {
-        selectMethod := (tool = "Tools.ObjectSelectionLasso_18") ? "prem" : (tool = "maskTool" ? "uia" : selectMethod)
         if selectMethod = "hotkey" {
             try {
                 hot := premUIA_Values.toolsMap[tool].ksa

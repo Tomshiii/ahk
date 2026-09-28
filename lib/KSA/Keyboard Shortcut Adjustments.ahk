@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
- * @date 22026/09/08
- * @version 2.2.3
+ * @date 2026/09/28
+ * @version 2.2.4
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -209,12 +209,12 @@ class KeyShortAdjust {
                         ;//? in v27.0 of prem they added an extra tag in the xml, instead of just `/PremiereData/shortcuts/` there's now an additional `mode.X` to account for the new `Color` mode
 
                         ;//! v27.0+
-                        case VerCompare(premVer, "27.0") >= 0: RegExReplace(v["context"], "shortcuts/(?!mode\.)", "shortcuts/mode.Edit/")
+                        case VerCompare(premVer, "v27.0") >= 0: v["context"] := RegExReplace(v["context"], "shortcuts/(?!mode\.)", "shortcuts/mode.Edit/")
 
                         ;//! pre v27.0
                         ;// attempt to remove `mode.Edit` or `mode.Color` for slight backwards compat
                         ;// keep in mind that this won't work for any kbd shortcuts they add in the future or any contexts they change etc
-                        case VerCompare(premVer, "27.0") < 0: v["context"] := RegExReplace(v["context"], "/mode\.(Edit|Color)")
+                        case VerCompare(premVer, "v27.0") < 0: v["context"] := RegExReplace(v["context"], "/mode\.(Edit|Color)")
                     }
                     try xmlHotkey := xml.__premBuildHotkey(v["context"], v["command"])
                     if !IsSet(xmlHotkey) || (IsSet(xmlHotkey) && IsObject(xmlHotkey) && xmlHotkey.HasOwnProp('isSet') && xmlHotkey.isSet = false) {

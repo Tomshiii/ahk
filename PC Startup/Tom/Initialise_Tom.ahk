@@ -2,6 +2,8 @@
 #Requires AutoHotkey v2.0
 #Include '%A_Appdata%\tomshi\lib'
 #Include *i Classes\CLSID_Objs.ahk
+#Include *i Classes\winExt.ahk
+#Include *i Functions\isReload.ahk
 
 if !ProcessExist("explorer.exe") {
     WinWait("explorer.exe")
@@ -13,8 +15,18 @@ if !FileExist(A_Appdata "\tomshi\installDir")
     return
 installDir := FileRead(A_Appdata "\tomshi\installDir")
 
-Run(installDir "\Core Functionality.ahk")
-if !CLSID_Objs.waitCoreFuncs(6) {
+hotkeylessTitle := "\\Core Functionality\.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+ignore := "ahk_exe Code.exe"
+if exists := winExt.ExistRegex(hotkeylessTitle,, ignore,, true) {
+    try ProcessClose(winExt.PIDRegex("ahk_id " exists,, ignore,, true))
+}
+
+try Run(installDir "\Core Functionality.ahk")
+catch {
+    if !isReload()
+        Reload()
+}
+if !CLSID_Objs.waitCoreFuncs(15) {
     sleep 2000
     try CLSID_Objs.load("Loading")
     catch {

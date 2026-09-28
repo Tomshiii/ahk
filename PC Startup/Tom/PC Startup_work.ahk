@@ -69,6 +69,12 @@ try {
     }
 }
 
+dockerFile := "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+dockerAhk := "ahk_exe Docker Desktop.exe"
+runApp(dockerFile, dockerAhk, false)
+if WinWait(dockerAhk,, 5)
+    WinMinimize(dockerAhk)
+
 ;//backups
 ; FileCopy(ptf.lib "\My Scripts\Not Editor.ahk", ptf.rootDir "\Backups\Work\Not Editor.ahk", 1)
 ; FileCopy(ptf.lib "\Classes\move.ahk", ptf.rootDir "\Backups\Work\move.ahk", 1)

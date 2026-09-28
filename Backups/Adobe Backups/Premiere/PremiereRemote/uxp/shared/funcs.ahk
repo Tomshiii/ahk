@@ -102,3 +102,18 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
     WinMinimize("Adobe UXP Developer Tools" A_Space title)
     return true
 }
+
+__replaceCompose(composeFile := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\compose.yaml") {
+    content := FileRead(composeFile)
+
+    if !InStr(content, "restart: unless-stopped") {
+        indent := Chr(32) Chr(32) Chr(32) Chr(32)  ; 4 spaces, built from char codes, cannot be tab-corrupted
+        newLine := Chr(10)                          ; explicit LF
+        content := RTrim(content, " `t`r`n")
+        content := content . newLine . indent . "restart: unless-stopped" . newLine
+
+        f := FileOpen(composeFile, "w")
+        f.Write(content)
+        f.Close()
+    }
+}

@@ -144,6 +144,36 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Generative Extend Tool"
     },
+    "objectMaskTool": {
+        "command": "cmd.tools.18smartselection",
+        "context": "/PremiereData/shortcuts/mode.Edit/context.global",
+        "withinPrem": "(Application >) Object Mask Tool"
+    },
+    "ellipseMaskTool": {
+        "command": "cmd.tools.19ellipseselection",
+        "context": "/PremiereData/shortcuts/mode.Edit/context.global",
+        "withinPrem": "(Application >) Ellipse Mask Tool"
+    },
+    "rectangleMaskTool": {
+        "command": "cmd.tools.20rectselection",
+        "context": "/PremiereData/shortcuts/mode.Edit/context.global",
+        "withinPrem": "(Application >) Rectangle Mask Tool"
+    },
+    "penMaskTool": {
+        "command": "cmd.tools.21bezierselection",
+        "context": "/PremiereData/shortcuts/mode.Edit/context.global",
+        "withinPrem": "(Application >) Pen Mask Tool"
+    },
+    "hslMaskTool": {
+        "command": "cmd.tools.22hslselection",
+        "context": "/PremiereData/shortcuts/mode.Edit/context.global",
+        "withinPrem": "(Application >) HSL Mask Tool"
+    },
+    "luminanceMaskTool": {
+        "command": "cmd.tools.23luminanceselection",
+        "context": "/PremiereData/shortcuts/mode.Edit/context.global",
+        "withinPrem": "(Application >) Luminance Mask Tool"
+    },
     "findBox": {
         "command": "cmd.select.find.box",
         "context": "/PremiereData/shortcuts/context.global",

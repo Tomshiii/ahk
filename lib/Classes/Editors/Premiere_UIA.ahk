@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/25
- * @version 3.0.43
+ * @date 2026/09/28
+ * @version 3.0.44
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -190,7 +190,13 @@ class premUIA_Values {
         "Rectangle Tool", {uia: "rectangleTool", ksa: "rectangleTool"},
         "Ellipse Tool", {uia: "rectangleTool", ksa: "ellipseTool"},
         "Polygon Tool", {uia: "rectangleTool", ksa: "polygonTool"},
-        "Tools.ObjectSelectionLasso_18", {uia: "maskTool"},
+        "Tools.ObjectSelectionLasso_18", {uia: "maskTool", ksa: "objectMaskTool"},
+        "Tools.ObjectMask", {uia: "maskTool", ksa: "objectMaskTool"},
+        "Tools.EllipseMask", {uia: "maskTool", ksa: "ellipseMaskTool"},
+        "Tools.EllipseMask", {uia: "maskTool", ksa: "rectangleMaskTool"},
+        "Tools.PenMask", {uia: "maskTool", ksa: "penMaskTool"},
+        "Tools.HSLMask", {uia: "maskTool", ksa: "hslMaskTool"},
+        "Tools.LuminanceMask", {uia: "maskTool", ksa: "luminanceMaskTool"},
         "Hand Tool", {uia: "handTool", ksa: "handTool"},
         "Zoom Tool", {uia: "handTool", ksa: "zoomTool"},
         "Type Tool", {uia: "textTool", ksa: "textTool"},
@@ -313,11 +319,17 @@ class premUIA_Values {
                 "slipTool", ["Slip Tool", "Slide Tool"],
                 "penTool", "Pen Tool",
                 "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
-                "maskTool", "Tools.ObjectSelectionLasso_18", ;// still can't discern between them for whatever reason...
                 "handTool", ["Hand Tool", "Zoom Tool"],
                 "textTool", ["Type Tool", "Vertical Type Tool"],
-                "genAITool", ["Generative Media Tool", "Generative Extend Tool"]
+                "genAITool", ["Generative Media Tool", "Generative Extend Tool"],
+
+                ;// the object selection drop down pre 27.0 only contained `"Tools.ObjectSelectionLasso_18"`
+                "maskTool", ["Tools.ObjectMask", "Tools.EllipseMask", "Tools.RectangleMask", "Tools.PenMask", "Tools.HSLMask", "Tools.LuminanceMask"]
             )
+            switch {
+                ;// in versions lower than 27.0 all items in the Object Mask dropdown were simply called `Tools.ObjectSelectionLasso_18`
+                case VerCompare(currentVer, "v27.0") < 0: tools["maskTool"] := "Tools.ObjectSelectionLasso_18"
+            }
             for k, v in tools {
                 switch Type(v), false {
                     case "Array":
