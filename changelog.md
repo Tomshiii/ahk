@@ -1,6 +1,5 @@
-# <> Release 2.19.0.1 - Hotfix
+# <> Release 2.19.x - 
 
 ## Functions
-- ✏️ Added all tools under the `Object Mask` drop down for `Premiere v27.0+`
-- ✅ Fixed `KSA` failing to generate correct keyboard shortcuts in `Premiere v27.0`
-- 📋 `prem.selectTool()` can now select the `Object Mask` tools
+- ✅ Fixed `rbuttonPrem().movePlayhead()` leaving mouse movement blocked if the user activates the function while dragging a panel
+- ✅ Fixed `prem.dismissWarning()` potentially leaving inputs blocked
