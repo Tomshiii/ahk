@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/28
- * @version 2.5.65
+ * @date 2026/09/29
+ * @version 2.5.66
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2975,16 +2975,21 @@ class Prem {
 
         try WinClose(hwnd)
         catch {
+            block.Off()
             __manualMethod()
             return
         }
         if !WinExist(hwnd) {
-            if !waitWinClose
+            if !waitWinClose {
+                block.Off()
                 return
+            }
+            block.Off()
             WinWaitClose(window,, 5)
             return
         }
         __manualMethod()
+        block.Off()
 
         __manualMethod() {
             if !drover := obj.WinPos(window) {

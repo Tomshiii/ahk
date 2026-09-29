@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.5.1
  * @author tomshi, taranVH
- * @date 2026/09/22
- * @version 2.4.35
+ * @date 2026/09/29
+ * @version 2.4.36
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -76,6 +76,7 @@ class rbuttonPrem {
 	colour2 := ""
 
 	sendHotkey := ""
+	checkedHotkey := ""
 
 	premUIA := false
 	origSeq := ""
@@ -218,12 +219,16 @@ class rbuttonPrem {
 		try this.ihM := false
 	}
 
-	/** A functon to define what should happen anytime the class is closed */
-	__exit() {
+	/**
+	 * A functon to define what should happen anytime the class is closed
+	 * @param {String} [checkedKey=unset] Generally `this.checkedHotkey`. A hotkey to additionally check to ensure it isn't stuck - should be the activation hotkey. But if the value isn't set and the activation hotkey is obscure it may fail
+	 */
+	__exit(checkedKey?) {
+		checkedKey := (IsSet(checkedKey) && checkedKey != "") ? checkedKey : (IsSet(A_ThisHotkey) && A_ThisHotkey != "" && this.__chkHotkey(A_ThisHotkey) != false) ? A_ThisHotkey : ""
 		this.__stopHook()
 		block.Off()
 		this.__resetClicks()
-		checkstuck()
+		checkstuck(["XButton1", "XButton2", "Ctrl", "Shift", checkedKey])
 		try SetTimer(this.__ensureSeq, 0)
 		; try WinEvent.Stop("Exist")
 		try WinEvent.Stop("NotActive")
@@ -336,6 +341,19 @@ class rbuttonPrem {
 	}
 
 	/**
+	 * checks the passed in string to ensure `GetKeyState` can read it
+	 * @param {String} [hotkey]
+	 * @returns {Boolean}
+	 */
+	__chkHotkey(hotkey) {
+		try (chkVar := GetKeyState(hotkey), chkVar := GetKeyState(hotkey, "P"))
+		catch {
+			return false
+		}
+		return true
+	}
+
+	/**
 	 * This is the class method intended to be called by the user, it handles moving the playhead to the cursor when an activation key is pressed (mainly designed for <kbd>RButton</kbd> & <kbd>XButton1</kbd>).
 	 * This function has built in checks for <kbd>LButton</kbd> & <kbd>XButton2</kbd> by default during activation - this can be overwritten by using the `playbackKeys` parameter.
 	 * #### This function has code to exit early in the event that `A_ThisHotkey` gets set to something that `GetKeyState` cannot handle. If you want to do this on purpose, you will need to remove that block of code.
@@ -361,10 +379,9 @@ class rbuttonPrem {
 		;// If this happens, some code later on will throw because GetKeyState doesn't know how to handle
 		;// a hotkey that has modifiers in it; eg. `&`/`<`/`!` etc
 		this.sendHotkey := (IsSet(sendOnFailure)) ? sendOnFailure : "{Blind}{" A_ThisHotkey "}"
-		currHotkey := A_ThisHotkey
-		try (chkVar := GetKeyState(currHotkey), chkVar := GetKeyState(currHotkey, "P"))
-		catch {
-			errorLog(MethodError("GetKeyState will not work with the current hotkey"), currHotkey)
+		this.checkedHotkey := A_ThisHotkey
+		if !this.__chkHotkey(this.checkedHotkey) {
+			errorLog(MethodError("GetKeyState will not work with the current hotkey"), this.checkedHotkey)
 			SendInput(this.sendHotkey)
 			return
 		}
@@ -401,15 +418,17 @@ class rbuttonPrem {
 		this.title := getTitle.wintitle
 
 		if prem.__OSwindow() && WinActive(prem.winTitle) {
-            SendInput("{Escape}")
 			this.__stopHook()
 			errorLog(TargetError("An OS popup window appears to exist."))
 			return
-        }
+		}
 
 		if WinExist("DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
-			prem.dismissWarning()
-			if !GetKeyState(currHotkey) {
+			;// a popup window while LButton is held is a panel drag, not a menu.
+			;// no point "dismissing" something if LButton is pressed
+			if !GetKeyState("LButton", "P")
+				prem.dismissWarning()
+			if !GetKeyState(this.checkedHotkey) {
 				this.__stopHook()
 				errorLog(TargetError("An OS popup window appears to exist."))
 				return
@@ -417,7 +436,7 @@ class rbuttonPrem {
 		}
 
 		;try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class") ;// prem has fixed the issue of it spamming the error... for now
-		try WinEvent.NotActive((*) => (checkstuck(), this.__exit()), prem.exeTitle,, "Save Project ahk_exe Adobe Premiere Pro.exe")
+		try WinEvent.NotActive((*) => (checkstuck(), this.__exit(this.checkedHotkey)), prem.exeTitle,, "Save Project ahk_exe Adobe Premiere Pro.exe")
 		InstallMouseHook(1)
 		try this.premObj := CLSID_Objs.load("prem")
 		catch {
@@ -443,7 +462,7 @@ class rbuttonPrem {
 		;// checks to see whether the timeline position has been located
 		if !prem.__checkTimelineValues() {
 			; SendInput(this.sendHotkey)
-			(!this.premObj.timelineVals) ? (prem.__setTimelineValues(), this.__exit()) : prem.__setTimelineValues()
+			(!this.premObj.timelineVals) ? (prem.__setTimelineValues(), this.__exit(this.checkedHotkey)) : prem.__setTimelineValues()
 		}
 
 		;// checks the coordinates of the mouse against the coordinates of the timeline to ensure the function
@@ -451,7 +470,7 @@ class rbuttonPrem {
 		if !prem.__checkCoords(origMouse) {
 			SendInput(this.sendHotkey)
 			errorLog(TargetError("Cursor does not appear to be within the timeline"))
-			this.__exit()
+			this.__exit(this.checkedHotkey)
 		}
 
 		;// if the timeline isn't the focused window we send escape just in case - this is useful to stop
@@ -473,13 +492,13 @@ class rbuttonPrem {
 			this.__setColours(origMouse)
 			if this.__checkForBlank(this.colour) {
 				SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timeline, in addition to its other uses. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
-				; this.__exit()
+				; this.__exit(this.checkedHotkey)
 			}
 
 			;// checks to see if the colour under the cursor is one already defined within the class
 			if !this.__checkColour(this.colour) {
 				errorLog(TargetError("Colour determined not within __checkColour()"))
-				this.__exit()
+				this.__exit(this.checkedHotkey)
 			}
 		}
 
@@ -487,13 +506,13 @@ class rbuttonPrem {
 		if this.colour = prem.playhead {
 			if !this.__checkUnderCursor(this.colour2) {
 				errorLog(TargetError("Colour determined within __checkUnderCursor"))
-				this.__exit()
+				this.__exit(this.checkedHotkey)
 			}
 		}
-		this.__checkForPlayhead(origMouse, currHotkey, allChecks)
-		if !this.__checkForTap(currHotkey) {
+		this.__checkForPlayhead(origMouse, this.checkedHotkey, allChecks)
+		if !this.__checkForTap(this.checkedHotkey) {
 			SendInput(KSA.prem.playheadtoCursor)
-			this.__exit()
+			this.__exit(this.checkedHotkey)
 		}
 
 		;// we send a single input here so that in the event UIA is slow to respond because of premiere
@@ -511,7 +530,7 @@ class rbuttonPrem {
 					useRemote := false
 					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
 					notifyExt.showIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
-					this.__exit() */
+					this.__exit(this.checkedHotkey) */
 					notifyExt.showIfNotExist("RClickpremRemoteFailed",, 'PremiereRemote failed to retrieve the currently active sequence.`nFalling back to older method', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=400')
 				}
 			}
@@ -520,7 +539,7 @@ class rbuttonPrem {
 		prem.__focusTimeline()
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
-		while GetKeyState(currHotkey, "P") {
+		while GetKeyState(this.checkedHotkey, "P") {
 			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
 				if allChecks = true
 					checkstuck()
@@ -563,7 +582,7 @@ class rbuttonPrem {
 			SetTimer(this.__ensureSeq.Bind(this, 1), -1)
 		}
 		switch {
-			case (allChecks && !this.leftClick && !this.xbuttonClick): this.__exit()
+			case (allChecks && !this.leftClick && !this.xbuttonClick): this.__exit(this.checkedHotkey)
 			return
 			case (allChecks && this.doPlayback && this.leftClick && !this.xbuttonClick): prem.startPlayback()
 				;// unfortunately need to do it this way bc there's no way to set playback speed while multicam is active...
@@ -576,7 +595,7 @@ class rbuttonPrem {
 		}
 
 		;// cleans up
-		this.__exit()
+		this.__exit(this.checkedHotkey)
 	}
 
 	__Delete() {
