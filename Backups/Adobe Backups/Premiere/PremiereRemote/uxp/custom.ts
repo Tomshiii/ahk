@@ -143,26 +143,54 @@ export async function closeActiveSequence(): Promise<void> {
 }
 
 /**
- * Moves the playhead
- * @param {boolean} [subtract] whether to add or subtract the desired time to the current playhead position
- * @param {number} [seconds] the amount of seconds you wish to move the playhead. will be automatically converted to the current timebase
- * @returns {void}
+ * Moves the playhead by a number of seconds, snapped to the frame grid.
+ * @param {Integer} seconds Positive moves forward, negative moves backward.
  */
-export async function movePlayhead(subtract: boolean, seconds: number): Promise<void> {
+export async function movePlayhead(seconds: number): Promise<void> {
+    if (!Number.isFinite(seconds) || seconds === 0) return;
     const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
-    const settings = await sequence.getSettings();
-    const frameRate = settings.getVideoFrameRate(); // synchronous method call
+    const [settings, currentPos] = await Promise.all([
+        sequence.getSettings(),
+        sequence.getPlayerPosition(),
+    ]);
+    const frameRate = settings.getVideoFrameRate();
+    const offset = ppro.TickTime.createWithSeconds(Math.abs(seconds));
 
-    const frames = Math.round(seconds * frameRate.value);
-    const offset = ppro.TickTime.createWithFrameAndFrameRate(frames, frameRate);
-
-    const currentPos = await sequence.getPlayerPosition();
-
-    const newTime = subtract
+    let newTime = seconds < 0
         ? currentPos.subtract(offset)
         : currentPos.add(offset);
+
+    if (newTime.ticksNumber < 0) {
+        newTime = ppro.TickTime.createWithSeconds(0);
+    }
+
+    await sequence.setPlayerPosition(newTime.alignToNearestFrame(frameRate));
+}
+
+/**
+ * Moves the playhead by a number of frames, snapped to the frame grid.
+ * @param {Integer} frames Positive moves forward, negative moves backward.
+ */
+export async function movePlayheadFrames(frames: number): Promise<void> {
+    if (!Number.isInteger(frames) || frames === 0) return;
+
+    const sequence = await common.getActiveSequence();
+    if (!sequence) return;
+
+    const [settings, currentPos] = await Promise.all([
+        sequence.getSettings(),
+        sequence.getPlayerPosition(),
+    ]);
+
+    const frameRate = settings.getVideoFrameRate();
+    const offset = ppro.TickTime.createWithFrameAndFrameRate(Math.abs(frames), frameRate);
+    const base = currentPos.alignToNearestFrame(frameRate);
+    let newTime = frames < 0 ? base.subtract(offset) : base.add(offset);
+    if (newTime.ticksNumber < 0) {
+        newTime = ppro.TickTime.createWithSeconds(0);
+    }
 
     await sequence.setPlayerPosition(newTime);
 }
@@ -189,29 +217,6 @@ export async function setPlayheadPosTicks(ticks: string): Promise<boolean> {
     if (!sequence) return false;
 
     return await sequence.setPlayerPosition(ppro.TickTime.createWithTicks(ticks));
-}
-
-/**
- * Moves the playhead in frames
- * @param {boolean} [subtract] whether to add or subtract the desired time to the current playhead position
- * @param {number} [frames] the amount of frames you wish to move the playhead. will be automatically converted to the current timebase
- * @returns {void}
- */
-export async function movePlayheadFrames(subtract: boolean, frames: number): Promise<void> {
-    const sequence = await common.getActiveSequence();
-    if (!sequence) return;
-
-    const settings = await sequence.getSettings();
-    const frameRate = settings.getVideoFrameRate(); // synchronous method call
-    const offset = ppro.TickTime.createWithFrameAndFrameRate(frames, frameRate);
-
-    const currentPos = await sequence.getPlayerPosition();
-
-    const newTime = subtract
-        ? currentPos.subtract(offset)
-        : currentPos.add(offset);
-
-    await sequence.setPlayerPosition(newTime);
 }
 
 /**
@@ -535,32 +540,35 @@ export async function importFile(filePath: string, importPath: string, importAsS
 /**
  * move selected clips. may cause visual bugs. see link
  * @link https://forums.creativeclouddeveloper.com/t/reatemoveaction-bugs-invisible-same-source-clip-after-move-and-av-link-breaks-on-backward-audio-move/11831
+ * @param {number} seconds Positive moves the clips later, negative moves them earlier. (Signature changed: the old `subtract` boolean is gone.)
  * @returns {void}
  */
-export async function moveClip(subtract: boolean, seconds: number): Promise<void> {
+export async function moveClip(seconds: number): Promise<void> {
+    if (!Number.isFinite(seconds) || seconds === 0) return;
+
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
 
     const sequence = await project.getActiveSequence();
     if (!sequence) return;
 
-    const settings = await sequence.getSettings();
-    const frameRate = settings.getVideoFrameRate();
-    const frames = Math.round(seconds * frameRate.value);
-    const offset = subtract
-        ? ppro.TickTime.createWithFrameAndFrameRate(-frames, frameRate)
-        : ppro.TickTime.createWithFrameAndFrameRate(frames, frameRate);
-
-    const items = await common.getSelectedTrackItems();
+    const [settings, items] = await Promise.all([
+        sequence.getSettings(),
+        common.getSelectedTrackItems(),
+    ]);
     if (!items || items.length === 0) return;
 
+    const subtract = seconds < 0;
+    const frameRate = settings.getVideoFrameRate();
+    const frames = Math.round(Math.abs(seconds) * frameRate.value);
+    if (frames === 0) return;
+    const offset = ppro.TickTime.createWithFrameAndFrameRate(frames, frameRate);
+
     // gather start and end times before transaction
-    const startTimes = [];
-    const endTimes = [];
-    for (let i = 0; i < items.length; i++) {
-        startTimes.push(await items[i].getStartTime());
-        endTimes.push(await items[i].getEndTime());
-    }
+    const [startTimes, endTimes] = await Promise.all([
+        Promise.all(items.map((item) => item.getStartTime())),
+        Promise.all(items.map((item) => item.getEndTime())),
+    ]);
 
     await project.lockedAccess(() => {
         return project.executeTransaction((compoundAction: any) => {
