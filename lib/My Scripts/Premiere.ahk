@@ -465,7 +465,7 @@ $^v::
 	if seqName = "BONUS" {
 		SendInput(ksa.prem.Paste)
 		sleep 100
-		prem.__remoteUXP("custom/movePlayhead",, "subtract=false", "seconds=1")
+		prem.__remoteUXP("custom/movePlayhead",, "seconds=1")
 		return
 	}
 	t := prem.__remoteFunc('getPlayheadPosTicks')
@@ -503,7 +503,7 @@ $d::
 		if search != false || A_Cursor != "Arrow" {
 			if !IsSet(t)
 				t := prem.__remoteFunc('getPlayheadPosTicks')
-			prem.__remoteUXP("custom/movePlayheadFrames",, "subtract=false", "frames=60")
+			prem.__remoteUXP("custom/movePlayheadFrames",, "frames=60")
 			continue
 		}
 		break

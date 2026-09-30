@@ -54,7 +54,7 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
         return false
     }
     debugButtBar  := children[index+offset]
-    if debugButtBar.name = "Load Load & Watch" {
+    if debugButtBar.name = "Load Load & Watch" || debugButtBar.name = "Debug Reload Watch Unload" {
         set := false
         for children in debugButtBar.Children {
             if children.Name != "" {
@@ -68,12 +68,18 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
                 return false
             }
             v := __startUXP(, &debugButt)
+            try WinMinimize("Adobe UXP Developer Tools" A_Space title)
             return v
         }
         try debugButtBar.FindElement({Type:50000, Name:"Load"}).invoke()
         catch {
-            try debugButtBar.FindElement({Type:50000, Name:"Unload"}).invoke()
-            try debugButtBar.FindElement({Type:50000, Name:"Load"}).invoke()
+            try {
+                reloadButt := debugButtBar.FindElement({Type:50000, Name:"Reload"})
+                reloadButt.click()
+            } catch {
+                try debugButtBar.FindElement({Type:50000, Name:"Unload"}).invoke()
+                try debugButtBar.WaitElement({Type:50000, Name:"Load"}, 2000).invoke()
+            }
         }
     } else {
         if children[index+1].name = "Not loaded" {
@@ -89,6 +95,7 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
                         return false
                 }
                 v := __startUXP(, &debugButt)
+                try WinMinimize("Adobe UXP Developer Tools" A_Space title)
                 return v
             }
         }

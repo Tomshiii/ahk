@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/29
- * @version 2.5.66
+ * @date 2026/09/30
+ * @version 2.5.67
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -4997,10 +4997,9 @@ $!WheelDown::
         switch checkBool(save) {
             case true:
                 t := this.__remoteFunc('saveEffectSlotJSON')
-                if InStr(t, "error") {
-                    __checkErrors(t)
+                if __checkErrors(t) == false
                     return
-                }
+
                 try json.parse(t)
                 catch {
                     errorLog(ValueError('Failed to parse JSON data', -1, slot))
@@ -5057,7 +5056,6 @@ $!WheelDown::
                     notifyExt.showIfNotExist('premEffectSlotApplied',, 'Effects applied from slot: ' slot, 'C:\Windows\System32\imageres.dll|icon240',,, 'dur=4 bdr=Teal iw=26 show=Fade@250 hide=Fade@250 maxW=400', true)
                 return
         }
-
         __checkErrors(response) {
             switch {
                 case (InStr(response, "ERROR: ") || InStr(response, "EvalScript error.") || InStr(response, "FAILED")):

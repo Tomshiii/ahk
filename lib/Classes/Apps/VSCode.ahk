@@ -94,16 +94,20 @@ class VSCode {
             switch A_ThisHotkey {
                 case KSA.vscode.testHotkey:
                     filename := "test.ahk"
-                    if !FileExist(dir "\" filename)
+                    if !FileExist(dir "\" filename) {
+                        block.Off()
                         return
+                    }
                     fileNum := __getFileCount(filename)
                     delaySI(50, "{Down 6}{Enter}", "{Down " downCount+fileNum "}{Enter}")
                     __closeOut("The test file has been selected")
                     return
                 case KSA.vscode.functionHotkey:
                     filename := "emojis.md"
-                    if !FileExist(dir "\" filename)
+                    if !FileExist(dir "\" filename) {
+                        block.Off()
                         return
+                    }
                     fileNum := __getFileCount(filename)
                     delaySI(50, "{Down 6}{Enter}", "{Down " downCount+fileNum "}{Enter}")
                     __closeOut("The emoji file has been selected")
