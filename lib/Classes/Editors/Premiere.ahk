@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.1
  * @author tomshi
- * @date 2026/09/30
- * @version 2.5.67
+ * @date 2026/10/01
+ * @version 2.5.68
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2372,7 +2372,7 @@ class Prem {
             xVals := []
             yVal := 0
             for _, buttonsMap in allLayers["vid"][1] {
-                if _ = "mouseLayer"
+                if !buttonsMap.HasProp("x") || !buttonsMap.HasProp("y")
                     continue
                 xVals.Push(allLayers["vid"][1][_].x)
                 yVal := allLayers["vid"][1][_].y
@@ -3232,10 +3232,10 @@ class Prem {
 
     /**
      * Determines the x/y pos of the middle divider using UIA
-     * @param {VarRef} [] x/y values of middle divider
+     * @param {VarRef} [] x/y values of middle divider + UIA middle index returned by `__retrieveAudLayerIndex()`
      * @returns {boolean/VarRef}
      */
-    static __getlayerMid(&midDivX?, &midDivY?, &midDivYBottom?) {
+    static __getlayerMid(&midDivX?, &midDivY?, &midDivYBottom?, &midIndex?) {
         try {
             if !timelineWindow := premUIA_Values.getLivePanel("timelineWindow",, &premUIA)
                 return false
@@ -3247,6 +3247,7 @@ class Prem {
             midDivX       := timelineUIA.Location.x
             midDivY       := middleIndex.children[middleIndex.indicies[1]].Location.y + middleIndex.children[middleIndex.indicies[1]].Location.h + adjustVal
             midDivYBottom := middleIndex.children[middleIndex.indicies[2]].Location.y - adjustVal
+            midIndex := middleIndex
         } catch {
             return false
         }
@@ -3319,18 +3320,17 @@ class Prem {
      * Determines the top/bottom position of the layer the cursor is currently within. Will also optionally determine the position of the middle divider
      * @param {Object} [coords] an object containing the `x`/`y` value of the current cursor coords
      * @param {Boolean} [searchMid=true] determine whether to search for the middle divider
-     * @param {VarRef} `topDivX/topDivY/botDivX/botDivY/midDivX/midDivY/midDivBot` x/y values of `top`/`bot`/`mid` in that order
+     * @param {VarRef} `topDivX/topDivY/botDivX/botDivY/midDivX/midDivY/midDivBot/midIndex` x/y values of `top`/`bot`/`mid` in that order + the UIA index returned by `__retrieveAudLayerIndex()`
      * @param {Boolean} [showError=true] determine whether to show the `Notify {` error on failure. May be useful to disable this if systematically trying to determine all layer positions as it will show the error once it runs out of tracks
      * @returns {Object}
      * ```
-     * {topX: topDivX ?? false, topY: topDivY ?? false, botX: botDivX ?? false, botY: botDivY ?? false, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: bool}
+     * {topX: topDivX ?? false, topY: topDivY ?? false, botX: botDivX ?? false, botY: botDivY ?? false, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, midIndex: midIndex ?? false, error: failed, allLayers: layers ?? false}
      * ```
      */
-    static __getlayerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, &midDivBot?, showError?) {
+    static __getlayerTopBottom(coords, searchMid := true, &topDivX?, &topDivY?, &botDivX?, &botDivY?, &midDivX?, &midDivY?, &midDivBot?, &midIndex?, showError?) {
         doNotify := IsSet(showError) && (showError=true || showError=false) ? showError : true
 
-
-        midFound := this.__getlayerMid(&mX, &mY, &mBot)
+        midFound := this.__getlayerMid(&mX, &mY, &mBot, &midIndex)
         layerTop := false, layerBot := false
         if midFound {
             vidOrAud := (coords.y < mY) ? "vid" : "aud"
@@ -3369,7 +3369,7 @@ class Prem {
         if failed && doNotify = true && !Notify.Exist("premLayerBounds")
             Notify.Show(, 'Could not determine the layer boundaries. Please try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424 tag=premLayerBounds')
 
-        return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, error: failed}
+        return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, midIndex: midIndex ?? false, error: failed, allLayers: layers ?? false}
     }
 
     static blockWheel := true
@@ -3450,7 +3450,7 @@ $!WheelDown::
                     this.blockWheel := false
                     return
                 }
-                layerObj := this.__getlayerTopBottom(origMouseCords, middle,,,,,,,, false)
+                layerObj := this.__getlayerTopBottom(origMouseCords, middle,,,,,,,,, false)
                 block.On()
                 newTop := ""
                 if !layerObj.error {
@@ -3471,7 +3471,7 @@ $!WheelDown::
                     }
                     KeyWait("LAlt", "L")
                 }
-                checkAgain := this.__getlayerTopBottom({x:0, y: newTop}, false,,,,,,,, false)
+                checkAgain := this.__getlayerTopBottom({x:0, y: newTop}, false,,,,,,,,, false)
                 if !checkAgain.error && (checkAgain.topY != false && checkAgain.botY != false)
                     MouseMove(origMouseCords.x, (checkAgain.topY+checkAgain.botY)/2)
                 else {
@@ -3509,24 +3509,25 @@ $!WheelDown::
 
     /**
      * Determines the coordinates for all buttons in a given track
-     * @param {Integer} [topDivY] the top divider line for the layer you're operating on
-     * @param {Integer} [botDivY] the bottom divider line for the layer you're operating on
+     * @param {Integer | String} [track="mouse"] The track index you wish to return button positions for. Alternatively, pass `mouse` to determine based off the cursor's position. If this parameter is set as an `Integer` `audOrVid` must be set, else this function will fallback to `mouse`
+     * @param {String} [audOrVid=unset] `"aud"` or `"vid"`. Only necessary if `track` is set as in `Integer`
      * @param {Object} [mouseCoords=unset] pass in an `obj.MousePos()` mouse coordinates. If not provided, they will be retrieved within this function
+     * @param {Integer} [midIndex=unset] the UIA middle index returned from `__retrieveAudLayerIndex()`. Will be determined if not provided
      * @returns {Map | null} returns all buttons found on the desired track, as well as key `"layer"` which will either be `"aud"` or `"vid"`
      */
-    static __determineButtonPos(topDivY, botDivY, origMouseCords?) {
-        allButtons := this.__getAllLayerButtonPos()
+    static __determineButtonPos(track := "mouse", audOrVid?, origMouseCords?, midIndex?) {
+        allButtons := this.__getAllLayerButtonPos(origMouseCords?, midIndex?)
         if !allButtons
             return null
-        for audOrVid, layer in allButtons {
+        if IsInteger(track) && (IsSet(audOrVid) && (audOrVid = "aud" || audOrVid = "vid")) && allButtons[audOrVid].Has(track)
+            return allButtons[audOrVid][track]
+        for __, layer in allButtons {
             for _, track in layer {
                 if !track.Has("lock")
                     continue
-                y := track["lock"].y
-                if y > topDivY && y < botDivY {
-                    track.Set("layer", audOrVid)
-                    return track
-                }
+                if !track.Has("mouseLayer") || (track.Has("mouseLayer") && (track["mouseLayer"] = false || track["mouseLayer"] = "false"))
+                    continue
+                return track
             }
         }
         return null
@@ -3567,8 +3568,7 @@ $!WheelDown::
             return
         }
 
-        this.__getlayerTopBottom(origMouseCords, true,, &topDivY,, &botDivY)
-        getMovePos := this.__determineButtonPos(topDivY, botDivY, origMouseCords)
+        getMovePos := this.__determineButtonPos(,, origMouseCords)
         if getMovePos == null {
             block.Off()
             return
@@ -3613,7 +3613,7 @@ $!WheelDown::
         this.__remoteFunc('setScale',, "scale=" String(scaleVal))
     }
 
-        /**
+    /**
      * determines the coordinates of all buttons for all audio/video layers
      * @param {Object} [mouseCoords=unset] pass in an `obj.MousePos()` mouse coordinates. If not provided, they will be retrieved within this function
      * @param {Object} [middleIndex=unset] pass in an `__retrieveAudLayerIndex()` if it has already been generated. If not provided, it will be retrieved within this function
@@ -3625,13 +3625,14 @@ $!WheelDown::
      * {
      *   "aud": {
      *     1: {
-     *       "lock":   {x: 468, y: 919},
-     *       "target": {x: 492, y: 919},
-     *       "source": {x: 453, y: 919},
-     *       "sync":   {x: 516, y: 919},
-     *       "mute":   {x: 540, y: 919},
-     *       "solo":   {x: 564, y: 919},
+     *       "lock":       {x: 468, y: 919},
+     *       "target":     {x: 492, y: 919},
+     *       "source":     {x: 453, y: 919},
+     *       "sync":       {x: 516, y: 919},
+     *       "mute":       {x: 540, y: 919},
+     *       "solo":       {x: 564, y: 919},
      *       "mouseLayer": false ;// boolean, true if the cursor is currently within this layer
+     *       "layer":      Int ;// integer representing the layer index (ie. 1)
      *     }
      *   },
      *   "vid": { ... }
@@ -3645,7 +3646,7 @@ $!WheelDown::
             return false
 
         origMouseCords := !IsSet(mouseCoords) ? obj.MousePos() : mouseCoords
-        mouseBounds := origMouseCords ? this.__getlayerTopBottom(origMouseCords, false,,,,,,,, false) : false
+        mouseBounds := (IsObject(origMouseCords) && origMouseCords.HasProp("x") && origMouseCords.HasProp("y")) ? this.__getlayerTopBottom(origMouseCords, false,,,,,,,,, false) : false
 
         aud := Map(), vid := Map()
         A := Map("aud", aud, "vid", vid)
@@ -3681,6 +3682,7 @@ $!WheelDown::
                     lockBtn := currentMap["lock"]
                     currentMap["target"] := {x: Round(lockBtn.x + ((Min(nums*) - lockBtn.x) / 2)), y: lockBtn.y}
                     currentMap["source"] := {x: lockBtn.x-15, y: lockBtn.y}
+                    currentMap["layer"]  := currentTrack
                 }
             }
             ;// must be set after `target` is derived, that loop expects every value to have `.x`
