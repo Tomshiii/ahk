@@ -9,6 +9,7 @@ import type {
     VideoTrack,
     TrackItemSelection
 } from "@adobe/premierepro";
+import { registry } from "../generated/registry";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ppro = require("premierepro") as premierepro;
@@ -143,4 +144,17 @@ export async function getAllVideoClips(
     );
 
     return trackDetails;
+}
+
+/**
+ * returns all functions as a json string
+ */
+export async function getRegistryJSON(pretty = false): Promise<string> {
+    const serializable = Object.fromEntries(
+        Object.entries(registry).map(([name, entry]) => [
+            name,
+            { params: entry.params }
+        ])
+    );
+    return JSON.stringify(serializable, null, pretty ? 2 : 0);
 }

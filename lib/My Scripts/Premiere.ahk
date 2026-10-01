@@ -551,7 +551,7 @@ $d::
 
 	nestName := ""
 	closed := false
-	n := prem.__remoteUXP('properties/getNextNestedSequenceName', true)
+	n := prem.__remoteUXP('shared/projectUtils/getNextNestedSequenceName', true)
 	if !n
 		return
 	gTitle := "Nested Sequence Name:"
