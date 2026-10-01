@@ -6,6 +6,7 @@
 - ✅ Fixed `dismissWarning()` potentially leaving inputs blocked
 - ✅ Fixed `effectSlot()` potentially silently failing
 - 📋 `UXP` functions are now checked using `PremiereRemote`'s internal registry
+- 📋 Slight optimisations to `toggleLayerButtons()`
 
 ### 📝 `rbuttonPrem {`
 📍 `movePlayhead()`
