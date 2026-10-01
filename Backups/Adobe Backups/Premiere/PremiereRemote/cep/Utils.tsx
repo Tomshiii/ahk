@@ -106,24 +106,41 @@ export class Utils {
     return clip.parentTrackIndex;
   }
 
-  static movePlayheadFrames(subtract: string, frames: number) {
+  static movePlayheadFrames(frames: number) {
+    frames = Number(frames);
+    if (!isFinite(frames) || Math.floor(frames) !== frames || frames === 0) return;
+
     const currentSequence = app.project.activeSequence;
-    const timebase = parseInt(currentSequence.timebase)
-    if (subtract == "false") {
-      var newPlayhead = parseInt(currentSequence.getPlayerPosition().ticks) + (timebase * frames);
-    } else {
-      var newPlayhead = parseInt(currentSequence.getPlayerPosition().ticks) - (timebase * frames);
-    }
+    if (!currentSequence) return;
+
+    const timebase = parseInt(currentSequence.timebase, 10);
+    const currentTicks = parseInt(currentSequence.getPlayerPosition().ticks, 10);
+
+    // Snap to the frame grid first so stepping doesn't drift off-frame
+    const base = Math.round(currentTicks / timebase) * timebase;
+
+    // Clamp to the sequence start
+    const newPlayhead = Math.max(0, base + timebase * frames);
+
     currentSequence.setPlayerPosition(String(newPlayhead));
   }
 
-  static movePlayhead(subtract: string, seconds: number) {
+  static movePlayhead(seconds: number) {
+    seconds = Number(seconds);
+    if (!isFinite(seconds) || seconds === 0) return;
+
     const currentSequence = app.project.activeSequence;
-    if (subtract == "false") {
-      var newPlayhead = parseInt(currentSequence.getPlayerPosition().ticks) + (this.ticksPerSecond * seconds);
-    } else {
-      var newPlayhead = parseInt(currentSequence.getPlayerPosition().ticks) - (this.ticksPerSecond * seconds);
-    }
+    if (!currentSequence) return;
+
+    const timebase = parseInt(currentSequence.timebase, 10); // ticks per frame
+    const currentTicks = parseInt(currentSequence.getPlayerPosition().ticks, 10);
+
+    // Clamp to the sequence start
+    const target = Math.max(0, currentTicks + this.ticksPerSecond * seconds);
+
+    // Snap the result to the nearest frame boundary
+    const newPlayhead = Math.round(target / timebase) * timebase;
+
     currentSequence.setPlayerPosition(String(newPlayhead));
   }
 

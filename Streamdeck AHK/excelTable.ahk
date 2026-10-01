@@ -5,7 +5,7 @@
 if !WinExist("ahk_exe EXCEL.EXE")
     return
 
-arr1 := ["Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Rent", "Health"]
+arr1 := ["Groceries", "Gym", "Travel", "Shopping", "Others", "Entertainment", "Fuel", "Car", "Utilities", "Rent", "Health", "", "Dates Acc", "Transaction Acc"]
 
 SetTimer(MoveCaret, -10)
 MoveCaret() {
@@ -29,6 +29,8 @@ try {
 
 startCell := xl.ActiveCell
 for i, v in arr1 {
+    if v = ""
+        continue
     targetCell := startCell.Offset(0, i-1)
     targetCell.Formula := Format('=IFERROR(GETPIVOTDATA("Amount",{1},"Type","{2}"), 0)', getValExpenses.value, v)
 }

@@ -259,12 +259,12 @@ export const host = {
     app.project.activeSequence.setZeroPoint(tick);
   },
 
-  movePlayhead: function (subtract: string, seconds: string) {
-    Utils.movePlayhead(subtract, parseInt(seconds));
+  movePlayhead: function (seconds: string) {
+    Utils.movePlayhead(parseInt(seconds));
   },
 
-  movePlayheadFrames: function (subtract: string, frames: string) {
-    Utils.movePlayheadFrames(subtract, parseInt(frames));
+  movePlayheadFrames: function (frames: string) {
+    Utils.movePlayheadFrames(parseInt(frames));
   },
 
   moveClip: function (seconds: string) {
