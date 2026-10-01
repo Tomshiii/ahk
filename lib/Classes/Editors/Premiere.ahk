@@ -5,7 +5,7 @@
  * @premVer 26.5.1
  * @author tomshi
  * @date 2026/10/01
- * @version 2.5.68
+ * @version 2.5.69
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -587,6 +587,13 @@ class Prem {
                         return true
                 }
             case "uxp":
+                this.__isUXPInstalled()
+                if this.__uxpInstalled != true
+                    return false
+                if !this.__uxpFuncMap {
+                    if !this.__getUXPRegistry()
+                        return false
+                }
                 switch Type(checkFunc), 0 {
                     case "string": return !!this.__getUXPFuncInfo(checkFunc)
                     case "array":

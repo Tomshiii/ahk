@@ -5,6 +5,7 @@
 ### 📝 `prem {`
 - ✅ Fixed `dismissWarning()` potentially leaving inputs blocked
 - ✅ Fixed `effectSlot()` potentially silently failing
+- ✅ Fixed `__checkPremRemoteFunc(, "uxp")` not doing the `isInstalled` checks
 - 📋 `UXP` functions are now checked using `PremiereRemote`'s internal registry
 - 📋 Slight optimisations to `toggleLayerButtons()`
 
