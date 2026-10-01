@@ -562,60 +562,6 @@ class Prem {
     }
 
     /**
-     * retrieves all UXP functions, stores them in `__uxpFuncMap` along with all paramaters and parameter types
-     * @param {String} [filename] the filename the function resides within
-     */
-    static __setUXPfuncs(fileName) {
-        this.__isUXPInstalled()
-        if this.__uxpInstalled != true
-            return false
-
-        if !IsObject(this.__uxpFuncMap) && this.__uxpFuncMap == false
-            this.__uxpFuncMap := Map()
-
-        if this.__uxpFuncMap.Has(fileName)
-            return this.__uxpFuncMap[fileName]
-
-        filePath := this.funcDirUXP "\" fileName (InStr(fileName, ".ts") ? "" : ".ts")
-        if !FileExist(filePath)
-            return false
-
-        readFile := FileRead(filePath)
-        funcNames := Map()
-        pos := 1
-        while (pos := RegExMatch(readFile, "export async function\s+(\w+)\s*\(", &match, pos)) {
-            params := {set: false}
-            funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, pos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
-            if funcParamsString = "" {
-                funcNames.Set(match[1], params)
-                pos += match.Len(0)
-                continue
-            }
-            if !InStr(funcParamsString, ",") {
-                p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
-                params.arr := [p], params.map := Mip(p, true), params.set := true
-                funcNames.Set(match[1], params)
-                pos += match.Len(0)
-                continue
-            }
-            paramsSplit := StrSplit(funcParamsString, ",", A_Space "`n`r")
-            paramsArr := []
-            paramsMap := Mip()
-            for v in paramsSplit {
-                p := SubStr(v, 1, (splitPoint := InStr(v, ':'))-1)
-                t := LTrim(SubStr(v, splitPoint+1))
-                paramsArr.Push(p)
-                paramsMap.Set(p, t)
-            }
-            params.arr := paramsArr, params.map := paramsMap, params.set := true
-            funcNames.Set(match[1], params)
-            pos += match.Len(0)
-        }
-        this.__uxpFuncMap.Set(fileName, funcNames)
-        return this.__uxpFuncMap[fileName]
-    }
-
-    /**
      * This function checks the [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) `index` or UXP `.ts` file for the desired function
      * @param {String | array} checkFunc if `cepOrUXP` is set to `cep`; the function name you wish to search for. ie `projPath`, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
      * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
@@ -642,18 +588,12 @@ class Prem {
                 }
             case "uxp":
                 switch Type(checkFunc), 0 {
-                    case "string":
-                        if !ff := this.__splitUXPfileFunc(checkFunc)
-                            return false
-                        if !fileFuncs := this.__setUXPfuncs(ff.fileName)
-                            return false
-                        return fileFuncs.Has(ff.funcName)
+                    case "string": return !!this.__getUXPFuncInfo(checkFunc)
                     case "array":
                         for objs in checkFunc {
-                            if !fileFuncs  := this.__setUXPfuncs(objs.file)
-                                return false
+                            file := RegExReplace(StrReplace(objs.file, "\", "/"), "\.ts$")
                             for nfunc in objs.funcs {
-                                if !fileFuncs.Has(nfunc)
+                                if !this.__getUXPFuncInfo(file "/" nfunc)
                                     return false
                             }
                         }
@@ -663,18 +603,47 @@ class Prem {
     }
 
     /**
-     * split a UXP `whichFunc` string into its filename/function name
-     * @param {String} funcString the `whichFunc` string to split
-     * @returns {false | object} `{fileName: filename.ts, funcName: functionName}`
+     * Fetches the UXP function registry from the plugin once per script run and caches it in memory
+     * @param {Boolean} [forceRefresh=false] ignore the cache and re-fetch
+     * @returns {Map | false}
      */
-    static __splitUXPfileFunc(funcString) {
-        if !InStr(funcString, "/") {
-            ;// throw
-            errorLog(PropertyError("Can't check for UXP function, file wasn't specified", -1, funcString),,, true)
+    static __getUXPRegistry(forceRefresh := false) {
+        if !forceRefresh && IsObject(this.__uxpFuncMap)
+            return this.__uxpFuncMap
+
+        resp := cmd.httpGet(Format("http://localhost:{1}/common/getRegistryJSON", this.portUXP))
+        if resp == null || resp = "" || InStr(resp, "Premiere Pro is not connected")
             return false
+        if SubStr(resp, 1, 1) = '"' && SubStr(resp, -1, 1) = '"'
+            resp := SubStr(resp, 2, StrLen(resp)-2)
+
+        try registry := JSON.parse(StrReplace(resp, "\"))
+        catch
+            return false
+        if !(registry is Map)
+            return false
+        return this.__uxpFuncMap := registry
+    }
+
+    /**
+     * @param {String} whichFunc `file/func`, eg `custom/moveToAssetsBin`
+     * @param {Boolean} [forceRefresh=false] ignore the cache and re-fetch function registry
+     * @returns {false | Object} `{path, fileName, funcName, params}`
+     */
+    static __getUXPFuncInfo(whichFunc, forceRefresh := false) {
+        whichFunc := StrReplace(whichFunc, "\", "/")
+        if !registry := this.__getUXPRegistry(forceRefresh)
+            return false
+        if !registry.Has(whichFunc)
+            return false
+
+        lastSlash := InStr(whichFunc, "/",, -1)
+        return {
+            path: whichFunc,
+            fileName: SubStr(whichFunc, 1, lastSlash-1),
+            funcName: SubStr(whichFunc, lastSlash+1),
+            params: registry[whichFunc]["params"]
         }
-        split := StrSplit(funcString, "/")
-        return {fileName: split[1] ".ts", funcName: split[2]}
     }
 
     /**
@@ -859,30 +828,55 @@ class Prem {
                     }
                 }
             case "uxp":
-                if !ff := this.__splitUXPfileFunc(whichFunc)
+                if !info := this.__getUXPFuncInfo(whichFunc)
                     return false
-                if !fileFuncs := this.__setUXPfuncs(ff.fileName)
-                    return false
-                if !fileFuncs.Has(ff.funcName)
-                    return false
-                funcParams := fileFuncs[ff.funcName]
                 for v in params {
                     if !InStr(v, '=') {
-                        MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
+                        MsgBox("Parameter not specified`nFunction: " info.path,, "262160")
                         return false
                     }
                     splt := StrSplit(v, '=',, 2)
-                    for v in splt {
-                        if Mod(A_Index, 2) = 0
-                            continue
-                        if funcParams.set && !funcParams.map.has(v) {
-                            MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc "`ncepOrUXP: " cepOrUXP)
-                            return false
+                    name := splt[1], value := splt[2]
+
+                    def := false
+                    for p in info.params {
+                        if p["name"] == name {
+                            def := p
+                            break
                         }
-                        if funcParams.set && funcParams.map.get(v) = "boolean" && (splt[A_Index+1] = "1" || splt[A_Index+1] = "0") {
-                            MsgBox("Incorrect paramater type`n`n" v "=" splt[A_Index+1] "`nneeds to be boolean" )
-                            return false
+                    }
+                    if !def {
+                        MsgBox("Parameter not found for given function`n`nParam: " name "`nFunction: " info.path)
+                        return false
+                    }
+
+                    switch def["type"], 0 {
+                        case "boolean":
+                            if value != "true" && value != "false" {
+                                MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be boolean (true/false)")
+                                return false
+                            }
+                        case "number":
+                            if !IsNumber(value) {
+                                MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be a number")
+                                return false
+                            }
+                    }
+                }
+
+                for p in info.params {
+                    if !p["required"]
+                        continue
+                    found := false
+                    for v in params {
+                        if StrSplit(v, '=',, 2)[1] == p["name"] {
+                            found := true
+                            break
                         }
+                    }
+                    if !found {
+                        MsgBox("Required parameter missing`n`nParam: " p["name"] "`nFunction: " info.path)
+                        return false
                     }
                 }
         }
@@ -908,10 +902,6 @@ class Prem {
         }
         if !this.__checkPremRemoteDir(whichFunc, "uxp") {
             errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
-            return null
-        }
-        if !this.__checkRemoteParams(whichFunc, params, "uxp") {
-            errorLog(TargetError("User passed incorred Parameters to function.", -1, whichFunc),,, true)
             return null
         }
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
@@ -969,9 +959,20 @@ class Prem {
             this.__uxpOpen := true
             CLSID_Objs.writeProp("prem", "__uxpOpen", true)
         }
+        ;// param check needs to happen later as it needs to retrieve the json object from the plugin
+        if !info := this.__getUXPFuncInfo(whichFunc) {
+            errorLog(TargetError("UXP function does not exist in the plugin registry.", -1, whichFunc),,, true)
+            return null
+        }
+        if !this.__checkRemoteParams(whichFunc, params, "uxp") {
+            errorLog(TargetError("User passed incorrect Parameters to function.", -1, whichFunc),,, true)
+            return null
+        }
 
         paramsString := this.__sanitiseParams(params)
-        sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portUXP) : Format("http://localhost:{2}/{1}", whichFunc, this.portUXP)
+        sendcommand := paramsString != ""
+            ? Format('http://localhost:{3}/{1}?{2}', info.path, String(paramsString), this.portUXP)
+            : Format("http://localhost:{2}/{1}", info.path, this.portUXP)
         getResp := cmd.httpGet(sendcommand, runAsync)
 
         if getResp == null || InStr(getResp, "Premiere Pro is not connected") {

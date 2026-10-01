@@ -2,12 +2,11 @@
  * @fileoverview Tomshi functions
  * @aiDisclosure I'm not incredibly versed in typescript - I could mostly follow along with CEP logic but a lot of the coding patterns in UXP go relatively over my head (namely transactions, promise's, async vs sync, etc). As such I tend to use Claude to write/convert functions. Always happy to receive any pull requests to replace ai code with stronger code.
  */
-const lfs = storage.localFileSystem;
 
-import { storage } from 'uxp';
 import * as common from "./common";
 import * as prop from "./properties";
 import * as helpers from "./helperfuncs";
+import type { EffectEntry, PropertyEntry } from "./helperfuncs";
 
 import type {
     premierepro,
@@ -340,16 +339,14 @@ export async function isClipEnabled(): Promise<boolean> {
  * @returns {void}
  */
 export async function toggleEnabled(): Promise<void> {
-    const project = await ppro.Project.getActiveProject();
+    const [project, items] = await Promise.all([
+        ppro.Project.getActiveProject(),
+        common.getSelectedTrackItems(),
+    ]);
     if (!project) return;
-
-    const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return;
 
-    const states: boolean[] = [];
-    for (let i = 0; i < items.length; i++) {
-        states.push(await items[i].isDisabled());
-    }
+    const states = await Promise.all(items.map((item) => item.isDisabled()));
 
     await project.lockedAccess(() => {
         return project.executeTransaction((compoundAction) => {
@@ -411,7 +408,7 @@ export async function projectSelectionIsSequence(): Promise<boolean> {
     if (!items) return false;
 
     const selectedId = await items[0].getId();
-    const sequences = await findSequenceByProjectItemId(project, selectedId);
+    const sequences = await helpers.findSequenceByProjectItemId(project, selectedId);
     if (!sequences) return false;
 
     return true;
@@ -431,7 +428,7 @@ export async function clipSelectionIsSequence(): Promise<boolean> {
     const projItem = await selection[0].getProjectItem();
     const selectedId = await projItem.getId();
 
-    const sequences = await findSequenceByProjectItemId(project, selectedId);
+    const sequences = await helpers.findSequenceByProjectItemId(project, selectedId);
     if (!sequences) return false;
 
     return true;
@@ -450,7 +447,7 @@ export async function getSelectedProjectItemSequence() {
 
     const selectedId = await selection[0].getId();
 
-    const sequence = await findSequenceByProjectItemId(project, selectedId)
+    const sequence = await helpers.findSequenceByProjectItemId(project, selectedId)
     if (!sequence) return false;
     return sequence;
 }
@@ -468,7 +465,10 @@ export async function renderInPrem(outputPath: string, presetPath: string): Prom
     outputPath = outputPath.replace(/\//g, "\\");
     presetPath = presetPath.replace(/\//g, "\\");
 
-    const rawExtension = await ppro.EncoderManager.getExportFileExtension(sequence, presetPath);
+    const [rawExtension, encoder] = await Promise.all([
+        ppro.EncoderManager.getExportFileExtension(sequence, presetPath),
+        ppro.EncoderManager.getManager(),
+    ]);
     if (!rawExtension) return false;
     const extension = rawExtension.startsWith(".") ? rawExtension : "." + rawExtension;
 
@@ -476,7 +476,7 @@ export async function renderInPrem(outputPath: string, presetPath: string): Prom
     let finalPath = outputPath + "\\" + baseName;
     let counter = 1;
 
-    while (await fileExists(finalPath + extension)) {
+    while (await helpers.fileExists(finalPath + extension)) {
         console.log("file exists, incrementing:", finalPath + extension);
         finalPath = outputPath + "\\" + baseName + "_" + counter;
         counter++;
@@ -485,7 +485,6 @@ export async function renderInPrem(outputPath: string, presetPath: string): Prom
 
     finalPath = finalPath + extension;
 
-    const encoder = await ppro.EncoderManager.getManager();
     await encoder.exportSequence(
         sequence,
         ppro.Constants.ExportType.IMMEDIATELY,
@@ -494,25 +493,6 @@ export async function renderInPrem(outputPath: string, presetPath: string): Prom
     );
 
     return finalPath;
-}
-
-/**
- * check if file exists
- * @returns {boolean}
- */
-export async function fileExists(filePath: string): Promise<boolean> {
-    try {
-        const fs = require("fs");
-        const forwardPath = filePath.replace(/\\/g, "/");
-        const lastSlash = forwardPath.lastIndexOf("/");
-        const dir = forwardPath.substring(0, lastSlash);
-        const fileName = forwardPath.substring(lastSlash + 1);
-        const entries = fs.readdirSync(dir);
-        return entries.includes(fileName);
-    } catch (e) {
-        console.log("fileExists error:", e);
-        return false;
-    }
 }
 
 /**
@@ -530,7 +510,7 @@ export async function importFile(filePath: string, importPath: string, importAsS
 
     let targetFolder = rootBin;
     if (importPath) {
-        const folder = await findOrCreateFolderPath(rootBin, importPath, true);
+        const folder = await helpers.findOrCreateFolderPath(rootBin, importPath, true);
         if (folder) targetFolder = folder;
     }
 
@@ -562,6 +542,7 @@ export async function moveClip(seconds: number): Promise<void> {
     const frameRate = settings.getVideoFrameRate();
     const frames = Math.round(Math.abs(seconds) * frameRate.value);
     if (frames === 0) return;
+    // Always a positive offset; direction is handled with add/subtract below
     const offset = ppro.TickTime.createWithFrameAndFrameRate(frames, frameRate);
 
     // gather start and end times before transaction
@@ -588,10 +569,11 @@ export async function moveClip(seconds: number): Promise<void> {
  * @returns {void}
  */
 export async function setAllEnabledDisabled(enabled: boolean): Promise<void> {
-    const project = await ppro.Project.getActiveProject();
+    const [project, items] = await Promise.all([
+        ppro.Project.getActiveProject(),
+        common.getSelectedTrackItems(),
+    ]);
     if (!project) return;
-
-    const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return;
 
     await project.lockedAccess(() => {
@@ -676,7 +658,7 @@ export async function setupProjBin(
 
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    const assetsBin = await findOrCreateFolderPath(rootItem, "_Assets", false);
+    const assetsBin = await helpers.findOrCreateFolderPath(rootItem, "_Assets", false);
     if (!assetsBin) return;
 
     const assetsChildren = await getChildNames(assetsBin);
@@ -696,7 +678,7 @@ export async function setupProjBin(
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // "01_Other" is guaranteed to exist by now, so createIfMissing isn't needed here
-    const otherBin = await findOrCreateFolderPath(rootItem, "_Assets/01_Other", false);
+    const otherBin = await helpers.findOrCreateFolderPath(rootItem, "_Assets/01_Other", false);
     if (!otherBin) return;
 
     // Skip names already present, so re-running this is a no-op for items already imported
@@ -704,7 +686,7 @@ export async function setupProjBin(
 
     // Stage the entire template project in a throwaway bin at root so its full
     // contents don't dump directly into the project panel
-    const stagingFolder = await findOrCreateFolderPath(rootItem, "__TemplateImportStaging__", true);
+    const stagingFolder = await helpers.findOrCreateFolderPath(rootItem, "__TemplateImportStaging__", true);
     if (!stagingFolder) return;
 
     // Equivalent of File > Import > picking a .prproj — brings in the ENTIRE
@@ -730,7 +712,7 @@ export async function setupProjBin(
     // The template's own "01_Other" bin will be nested somewhere inside the
     // imported wrapper bin (named after the template file) — location is dynamic,
     // so this uses matchFolders rather than a fixed path
-    const templateOtherBin = await searchForItemByName(stagingFolder, "01_Other", true);
+    const templateOtherBin = await helpers.searchForItemByName(stagingFolder, "01_Other", true);
 
     if (templateOtherBin) {
         const wantedNames = includeOptionalAssets
@@ -759,7 +741,7 @@ export async function setupProjBin(
     }
 
     const audSeq = "Main Sequence-for audio"
-    const audSeqExists = await searchForItemByName(rootItem, audSeq)
+    const audSeqExists = await helpers.searchForItemByName(rootItem, audSeq)
     if (!audSeqExists) {
         await helpers.importSequencesFromProject(project, templateProjectPath, audSeq);
     }
@@ -774,10 +756,12 @@ export async function unhideAllVideoTracks(): Promise<void> {
     if (!sequence) return;
 
     const trackCount = await sequence.getVideoTrackCount();
-    for (let i = 0; i < trackCount; i++) {
-        const track = await sequence.getVideoTrack(i);
-        await track.setMute(false);
-    }
+    await Promise.all(
+        Array.from({ length: trackCount }, async (_, i) => {
+            const track = await sequence.getVideoTrack(i);
+            await track.setMute(false);
+        })
+    );
 }
 
 /**
@@ -789,10 +773,12 @@ export async function unmuteAllTracks(): Promise<void> {
     if (!sequence) return;
 
     const trackCount = await sequence.getAudioTrackCount();
-    for (let i = 0; i < trackCount; i++) {
-        const track = await sequence.getAudioTrack(i);
-        await track.setMute(false);
-    }
+    await Promise.all(
+        Array.from({ length: trackCount }, async (_, i) => {
+            const track = await sequence.getAudioTrack(i);
+            await track.setMute(false);
+        })
+    );
 }
 
 /**
@@ -922,56 +908,6 @@ export async function toggleLinearColour(enableMaxRenderQual: boolean): Promise<
 }
 
 /**
- * find or create a bin
- * @returns {any}
- */
-async function findOrCreateFolderPath(rootItem: any, folderPath: string, createIfMissing: boolean = true): Promise<any> {
-    const pathParts = folderPath.split(/[\/\\]+/).filter(p => p);
-    let currentFolder = await ppro.FolderItem.cast(rootItem);
-
-    for (let partIndex = 0; partIndex < pathParts.length; partIndex++) {
-        const folderName = pathParts[partIndex];
-        const isLastFolder = partIndex === pathParts.length - 1;
-
-        const children = await currentFolder.getItems();
-        let foundFolder = null;
-
-        for (let i = 0; i < children.length; i++) {
-            if (children[i].type === 2 && children[i].name === folderName) {
-                foundFolder = await ppro.FolderItem.cast(children[i]);
-                break;
-            }
-        }
-
-        if (!foundFolder) {
-            if (createIfMissing && isLastFolder) {
-                const project = await ppro.Project.getActiveProject();
-                await project.lockedAccess(() => {
-                    return project.executeTransaction((compoundAction) => {
-                        compoundAction.addAction(currentFolder.createBinAction(folderName, false));
-                    }, "Create Bin");
-                });
-                await new Promise(resolve => setTimeout(resolve, 500));
-                const updatedChildren = await currentFolder.getItems();
-                for (let i = 0; i < updatedChildren.length; i++) {
-                    if (updatedChildren[i].name === folderName) {
-                        foundFolder = await ppro.FolderItem.cast(updatedChildren[i]);
-                        break;
-                    }
-                }
-                if (!foundFolder) return null;
-            } else {
-                return null;
-            }
-        }
-
-        currentFolder = foundFolder;
-    }
-
-    return currentFolder;
-}
-
-/**
  * Recursively find the folder path (as a string) containing the item with the given nodeId.
  * @returns "" if the item lives directly under rootItem, or null if not found at all.
  */
@@ -1033,7 +969,7 @@ export async function moveToAssetsBin(folderPath: string): Promise<boolean> {
     const rootItem = await project.getRootItem();
     if (!rootItem) return false;
 
-    const targetFolder = await findOrCreateFolderPath(rootItem, folderPath, true);
+    const targetFolder = await helpers.findOrCreateFolderPath(rootItem, folderPath, true);
     if (!targetFolder) return false;
 
     await project.lockedAccess(() => {
@@ -1149,76 +1085,6 @@ export async function organiseProject(): Promise<void> {
 }
 
 /**
- * adjust component parameters of the selected clips
- * @param {number} [componentIndex] unassigned masks is `0`, `Motion` is `1`
- * @param {number} [paramIndex]
- * @param {number | string | boolean} [value]
- * @returns {void}
- */
-export async function setClipComponentParam(
-    componentIndex: number,
-    paramIndex: number,
-    value: number | string | boolean
-): Promise<void> {
-    const project = await ppro.Project.getActiveProject();
-    if (!project) return;
-    const sequence = await common.getActiveSequence();
-    if (!sequence) return;
-    const items = await common.getSelectedTrackItems(sequence);
-    if (!items || items.length === 0) return;
-
-    // coerce value to correct type
-    let coercedValue: any;
-    if (typeof value === "string" && value.includes(",")) {
-        const parts = value.split(",").map(Number);
-        const settings = await sequence.getSettings();
-        const frameRect = await settings.getVideoFrameRect();
-        coercedValue = await ppro.PointF(Number(parts[0] / frameRect.width), Number(parts[1] / frameRect.height));
-    } else if (value === "true" || value === "false") {
-        coercedValue = value === "true";
-    } else if (!isNaN(Number(value))) {
-        coercedValue = Number(value);
-    } else {
-        coercedValue = value;
-    }
-
-    const paramData: { param: any, keyframe: any }[] = [];
-    for (let i = 0; i < items.length; i++) {
-        const chain = await items[i].getComponentChain();
-        if (!chain) continue;
-
-        const component = await chain.getComponentAtIndex(componentIndex);
-        if (!component) continue;
-
-        const param = await component.getParam(paramIndex);
-        if (!param) continue;
-
-        const keyframe = await param.createKeyframe(coercedValue);
-        paramData.push({ param, keyframe });
-    }
-
-    await project.lockedAccess(() => {
-        return project.executeTransaction((compoundAction) => {
-            for (const { param, keyframe } of paramData) {
-                try {
-                    compoundAction.addAction(param.createSetValueAction(keyframe, true));
-                } catch (e) {
-                    console.log("error:", e);
-                }
-            }
-        }, "Set Component Param");
-    });
-}
-
-function dbToEncoded(db: number): number {
-    return Math.min(Math.pow(10, (db - 15) / 20), 1.0);
-}
-
-function encodedToDb(encoded: number): number {
-    return 20 * Math.log(encoded) * Math.LOG10E + 15;
-}
-
-/**
  * adjust the audio levels of all selected clips
  * @param {number} [levelInDb] the value to adjust by
  * @returns {void}
@@ -1230,27 +1096,26 @@ export async function changeAllAudioLevels(levelInDb: number): Promise<void> {
     const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
-    const selection = await sequence.getSelection();
+    const [selection, playerPosition] = await Promise.all([
+        sequence.getSelection(),
+        sequence.getPlayerPosition(),
+    ]);
     if (!selection) return;
 
     const items = await selection.getTrackItems();
     if (!items || items.length === 0) return;
 
-    const playerPosition = await sequence.getPlayerPosition();
+    const results = await Promise.all(items.map(async (item) => {
+        if (item.constructor.name !== "AudioClipTrackItem") return null;
 
-    const paramData: { param: any, keyframe: any, isTimeVarying: boolean }[] = [];
-
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].constructor.name !== "AudioClipTrackItem") continue;
-
-        const chain = await items[i].getComponentChain();
-        if (!chain) continue;
+        const chain = await item.getComponentChain();
+        if (!chain) return null;
 
         const component = await chain.getComponentAtIndex(0);
-        if (!component) continue;
+        if (!component) return null;
 
         const param = await component.getParam(1);
-        if (!param) continue;
+        if (!param) return null;
 
         const isTimeVarying = await param.isTimeVarying();
 
@@ -1258,26 +1123,31 @@ export async function changeAllAudioLevels(levelInDb: number): Promise<void> {
         let keyframe: any;
 
         if (isTimeVarying) {
-            const startTime = await items[i].getStartTime();
-            const inPoint = await items[i].getInPoint();
+            const [startTime, inPoint] = await Promise.all([
+                item.getStartTime(),
+                item.getInPoint(),
+            ]);
             const clipPos = inPoint.add(playerPosition.subtract(startTime));
 
             const valueAtTime = await param.getValueAtTime(clipPos);
             currentValue = (valueAtTime as any).value ?? (valueAtTime as any);
 
-            const newEncoded = dbToEncoded(encodedToDb(currentValue) + levelInDb);
+            const newEncoded = helpers.dbToEncoded(helpers.encodedToDb(currentValue) + levelInDb);
             keyframe = await param.createKeyframe(newEncoded);
             keyframe.position = clipPos;
         } else {
             const startValue = await param.getStartValue();
             currentValue = (startValue.value as any).value;
 
-            const newEncoded = dbToEncoded(encodedToDb(currentValue) + levelInDb);
+            const newEncoded = helpers.dbToEncoded(helpers.encodedToDb(currentValue) + levelInDb);
             keyframe = await param.createKeyframe(newEncoded);
         }
 
-        paramData.push({ param, keyframe, isTimeVarying });
-    }
+        return { param, keyframe, isTimeVarying };
+    }));
+    const paramData = results.filter(
+        (r): r is { param: any, keyframe: any, isTimeVarying: boolean } => r !== null
+    );
 
     await project.lockedAccess(() => {
         return project.executeTransaction((compoundAction) => {
@@ -1298,67 +1168,13 @@ export async function changeAllAudioLevels(levelInDb: number): Promise<void> {
 }
 
 /**
- * searches for a projectItem by name
- * @param {any} [bin] the bin you wish to search in
- * @param {string} [name] the name of the projectItem you wish to search for
- * @param {boolean} [matchFolders] if true, folders (bins) themselves are eligible matches, not just leaf items
- * @returns {any}
- */
-async function searchForItemByName(bin: any, name: string, matchFolders: boolean = false): Promise<any> {
-    const children = await bin.getItems();
-    for (let i = 0; i < children.length; i++) {
-        const child = children[i];
-        if (!child) continue;
-
-        if (child.type !== 2 && child.name === name) {
-            return child;
-        }
-
-        if (child.type === 2) {
-            if (matchFolders && child.name === name) {
-                return await ppro.FolderItem.cast(child);
-            }
-            const folder = await ppro.FolderItem.cast(child);
-            const found = await searchForItemByName(folder, name, matchFolders);
-            if (found) return found;
-        }
-    }
-    return null;
-}
-
-/**
  * load the desired item path into the source monitor.
  * @param {string} [itemPath] itemPath can be just a filename or a full path like "_Assets/Footage/clip.mov"
  * @returns {boolean}
  */
 export async function loadInSourceMonitor(itemPath: string): Promise<boolean> {
-    const loadItem = await projItemByPath(itemPath);
+    const loadItem = await helpers.projItemByPath(itemPath);
     return await ppro.SourceMonitor.openProjectItem(loadItem);
-}
-
-/**
- * find and return the desired project item
- * @param {string} [itemPath] itemPath can be just a filename or a full path like "_Assets/Footage/clip.mov"
- * @returns {false | null | ProjectItem}
- */
-export async function projItemByPath(itemPath: string): Promise<false | null | ProjectItem> {
-    const project = await ppro.Project.getActiveProject();
-    if (!project) return false;
-
-    const lastSlashIndex = Math.max(itemPath.lastIndexOf('/'), itemPath.lastIndexOf('\\'));
-    const folderPath = lastSlashIndex > -1 ? itemPath.substring(0, lastSlashIndex) : '';
-    const itemName = lastSlashIndex > -1 ? itemPath.substring(lastSlashIndex + 1) : itemPath;
-
-    const rootItem = await project.getRootItem();
-    const root = await ppro.FolderItem.cast(rootItem);
-
-    const searchFolder = folderPath
-        ? await findOrCreateFolderPath(rootItem, folderPath, false)
-        : root;
-
-    if (!searchFolder) return false;
-
-    return await searchForItemByName(searchFolder, itemName);
 }
 
 /**
@@ -1373,12 +1189,14 @@ export async function setMarker(colour: string): Promise<void> {
     const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
-    const playerPosition = await sequence.getPlayerPosition();
+    const [playerPosition, settings, selection] = await Promise.all([
+        sequence.getPlayerPosition(),
+        sequence.getSettings(),
+        sequence.getSelection(),
+    ]);
     const colourIndex = parseInt(colour);
-    const settings = await sequence.getSettings();
     const frameRate = settings.getVideoFrameRate();
 
-    const selection = await sequence.getSelection();
     const items = selection ? await selection.getTrackItems() : [];
 
     if (!items || items.length === 0) {
@@ -1387,7 +1205,7 @@ export async function setMarker(colour: string): Promise<void> {
         if (!sequenceMarkers) return;
 
         const existingList = sequenceMarkers.getMarkers();
-        const match = findMarkerAtFrame(existingList, alignedPos, frameRate);
+        const match = helpers.findMarkerAtFrame(existingList, alignedPos, frameRate);
 
         if (match) {
             await project.lockedAccess(() => {
@@ -1413,7 +1231,7 @@ export async function setMarker(colour: string): Promise<void> {
         await new Promise(resolve => setTimeout(resolve, 200));
         const updatedMarkers = await ppro.Markers.getMarkers(sequence);
         const updatedList = updatedMarkers.getMarkers();
-        const newMarker = findMarkerAtFrame(updatedList, alignedPos, frameRate);
+        const newMarker = helpers.findMarkerAtFrame(updatedList, alignedPos, frameRate);
         if (newMarker) {
             await project.lockedAccess(() => {
                 return project.executeTransaction((compoundAction) => {
@@ -1448,8 +1266,10 @@ export async function setMarker(colour: string): Promise<void> {
             if (seq) markerOwner = seq;
         }
 
-        const startTime = await items[i].getStartTime();
-        const inPoint = await items[i].getInPoint();
+        const [startTime, inPoint] = await Promise.all([
+            items[i].getStartTime(),
+            items[i].getInPoint(),
+        ]);
         const rawClipPos = inPoint.add(playerPosition.subtract(startTime));
         const clipPos = rawClipPos.alignToFrame(frameRate);
 
@@ -1457,7 +1277,7 @@ export async function setMarker(colour: string): Promise<void> {
         if (!markers) continue;
 
         const existingMarkers = markers.getMarkers();
-        const existingMarker = findMarkerAtFrame(existingMarkers, clipPos, frameRate);
+        const existingMarker = helpers.findMarkerAtFrame(existingMarkers, clipPos, frameRate);
 
         if (existingMarker) {
             await project.lockedAccess(() => {
@@ -1481,7 +1301,7 @@ export async function setMarker(colour: string): Promise<void> {
             await new Promise(resolve => setTimeout(resolve, 200));
             const updatedMarkers = await ppro.Markers.getMarkers(markerOwner);
             const updatedList = updatedMarkers.getMarkers();
-            const newMarker = findMarkerAtFrame(updatedList, clipPos, frameRate);
+            const newMarker = helpers.findMarkerAtFrame(updatedList, clipPos, frameRate);
             if (newMarker) {
                 await project.lockedAccess(() => {
                     return project.executeTransaction((compoundAction) => {
@@ -1503,12 +1323,14 @@ export async function removeMarkerAtPlayhead(): Promise<void> {
     const sequence = await common.getActiveSequence();
     if (!sequence) return;
 
-    const playerPosition = await sequence.getPlayerPosition();
-    const settings = await sequence.getSettings();
+    const [playerPosition, settings, selection] = await Promise.all([
+        sequence.getPlayerPosition(),
+        sequence.getSettings(),
+        sequence.getSelection(),
+    ]);
     const frameRate = settings.getVideoFrameRate();
     const alignedPos = playerPosition.alignToFrame(frameRate);
 
-    const selection = await sequence.getSelection();
     const items = selection ? await selection.getTrackItems() : [];
 
     if (!items || items.length === 0) {
@@ -1517,7 +1339,7 @@ export async function removeMarkerAtPlayhead(): Promise<void> {
         if (!sequenceMarkers) return;
 
         const existingList = sequenceMarkers.getMarkers();
-        const match = findMarkerAtFrame(existingList, alignedPos, frameRate);
+        const match = helpers.findMarkerAtFrame(existingList, alignedPos, frameRate);
 
         if (match) {
             await project.lockedAccess(() => {
@@ -1550,8 +1372,10 @@ export async function removeMarkerAtPlayhead(): Promise<void> {
             if (seq) markerOwner = seq;
         }
 
-        const startTime = await items[i].getStartTime();
-        const inPoint = await items[i].getInPoint();
+        const [startTime, inPoint] = await Promise.all([
+            items[i].getStartTime(),
+            items[i].getInPoint(),
+        ]);
         const rawClipPos = inPoint.add(playerPosition.subtract(startTime));
         const clipPos = rawClipPos.alignToFrame(frameRate);
 
@@ -1559,7 +1383,7 @@ export async function removeMarkerAtPlayhead(): Promise<void> {
         if (!markers) continue;
 
         const existingMarkers = markers.getMarkers();
-        const match = findMarkerAtFrame(existingMarkers, clipPos, frameRate);
+        const match = helpers.findMarkerAtFrame(existingMarkers, clipPos, frameRate);
 
         if (match) {
             await project.lockedAccess(() => {
@@ -1572,48 +1396,28 @@ export async function removeMarkerAtPlayhead(): Promise<void> {
 }
 
 /**
- * Finds a marker that starts on the exact same frame as targetTime.
- * Both the marker's start time and targetTime are aligned to the frame
- * grid before comparing, so this checks "same frame" rather than
- * "close enough" — no tolerance constant needed.
- */
-function findMarkerAtFrame(
-    markerList: any[],
-    targetTime: any, // already frame-aligned Time object (alignedPos or clipPos)
-    frameRate: any
-): any | null {
-    for (const marker of markerList) {
-        const markerAligned = marker.getStart().alignToFrame(frameRate);
-        if (markerAligned.ticks === targetTime.ticks) {
-            return marker;
-        }
-    }
-    return null;
-}
-
-/**
  * apply effects to all selected clips
  * @param {string} [effectName] the name of the effect
  * @returns {boolean}
  */
 export async function applyEffectOnAllSelectedClips(effectName: string): Promise<boolean> {
-    const project = await ppro.Project.getActiveProject();
+    const [project, items] = await Promise.all([
+        ppro.Project.getActiveProject(),
+        common.getSelectedTrackItems(),
+    ]);
     if (!project) return false;
-
-    const items = await common.getSelectedTrackItems();
     if (!items || items.length === 0) return false;
 
     const videoFilterFactory = ppro.VideoFilterFactory;
     const audioFilterFactory = ppro.AudioFilterFactory;
 
-    const clipData: { chain: any, component: any }[] = [];
-
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
+    // Clips are independent, so build their components in parallel. The name
+    // fallbacks *within* a clip stay sequential (try one, then the next).
+    const results = await Promise.all(items.map(async (item) => {
         const isVideo = item.constructor.name === "VideoClipTrackItem";
 
         const chain = await item.getComponentChain();
-        if (!chain) continue;
+        if (!chain) return null;
 
         let component: any = null;
 
@@ -1646,12 +1450,11 @@ export async function applyEffectOnAllSelectedClips(effectName: string): Promise
             }
         }
 
-        if (!component) {
-            continue;
-        }
+        if (!component) return null;
 
-        clipData.push({ chain, component });
-    }
+        return { chain, component };
+    }));
+    const clipData = results.filter((r): r is { chain: any, component: any } => r !== null);
 
     if (clipData.length === 0) return false;
 
@@ -1683,14 +1486,18 @@ export async function listEffectsOnSelectedClip(): Promise<string | false> {
     if (!chain) return false;
 
     const componentCount = await chain.getComponentCount();
-    let effectsList = "Effects on clip:\n";
 
-    for (let i = 0; i < componentCount; i++) {
-        const component = await chain.getComponentAtIndex(i);
-        const displayName = await component.getDisplayName();
-        const matchName = await component.getMatchName();
-        effectsList += `${i}: ${displayName} (matchName: ${matchName})\n`;
-    }
+    const lines = await Promise.all(
+        Array.from({ length: componentCount }, async (_, i) => {
+            const component = await chain.getComponentAtIndex(i);
+            const [displayName, matchName] = await Promise.all([
+                component.getDisplayName(),
+                component.getMatchName(),
+            ]);
+            return `${i}: ${displayName} (matchName: ${matchName})\n`;
+        })
+    );
+    const effectsList = "Effects on clip:\n" + lines.join("");
 
     console.log(effectsList);
     return effectsList
@@ -1704,8 +1511,10 @@ export async function listAllAvailableEffects(): Promise<string> {
     const videoFilterFactory = ppro.VideoFilterFactory;
     const audioFilterFactory = ppro.AudioFilterFactory;
 
-    const vidMatchNames = await videoFilterFactory.getMatchNames();
-    const audMatchNames = await audioFilterFactory.getDisplayNames();
+    const [vidMatchNames, audMatchNames] = await Promise.all([
+        videoFilterFactory.getMatchNames(),
+        audioFilterFactory.getDisplayNames(),
+    ]);
     console.log("all video match names:", vidMatchNames);
     console.log("all audio match names:", audMatchNames);
     return "VIDEO:||" + vidMatchNames.join("|") + "||AUDIO:||" + audMatchNames.join("|");
@@ -1719,19 +1528,6 @@ const SKIPPED_MATCH_NAMES: { [key: string]: boolean } = {
     "Internal Channel Volume Stereo": true,
     "Internal Volume Mono": true,
 };
-
-interface PropertyEntry {
-    displayName: string;
-    isTimeVarying: boolean;
-    value?: any;
-    keyframes?: { time: string; value: any }[];
-}
-
-interface EffectEntry {
-    matchName: string;
-    displayName?: string;
-    properties: PropertyEntry[];
-}
 
 /**
  * saves all effects on a selected clip (minus defaults) to a json string and returns it
@@ -1748,108 +1544,105 @@ export async function saveEffectSlotJSON(): Promise<string> {
         const items = await selection.getTrackItems();
         if (!items || items.length === 0) return "ERROR: no clip selected";
 
-        const payload: { mediaType: string, effects: EffectEntry[] }[] = [];
-
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
+        // Everything below is read-only, so items, components and params are
+        // resolved concurrently (Promise.all preserves ordering). Keyframe values
+        // are still read one at a time within each param.
+        const buckets = await Promise.all(items.map(async (item) => {
             const mediaType = item.constructor.name === "VideoClipTrackItem" ? "Video" : "Audio";
 
             const chain = await item.getComponentChain();
-            if (!chain) continue;
+            if (!chain) return null;
 
             const componentCount = await chain.getComponentCount();
-            const effects: EffectEntry[] = [];
 
-            for (let c = 0; c < componentCount; c++) {
-                const component = await chain.getComponentAtIndex(c);
-                const matchName = await component.getMatchName();
-                if (SKIPPED_MATCH_NAMES[matchName]) continue;
-
-                const displayName = await component.getDisplayName();
-                const paramCount = await component.getParamCount();
-                const properties: PropertyEntry[] = [];
-
-                for (let j = 0; j < paramCount; j++) {
-                    const param = await component.getParam(j);
-                    const paramDisplayName = param.displayName;
-                    const isTimeVarying = await param.isTimeVarying();
-
-                    const entry: PropertyEntry = { displayName: paramDisplayName, isTimeVarying };
-
-                    if (isTimeVarying) {
-                        const tickTimes = await param.getKeyframeListAsTickTimes();
-                        entry.keyframes = [];
-                        for (const tickTime of tickTimes) {
-                            const kfValue = await param.getValueAtTime(tickTime);
-                            entry.keyframes.push({
-                                time: tickTime.ticks,
-                                value: (kfValue as any)?.value ?? kfValue,
-                            });
-                        }
-                    } else {
-                        const startValue = await param.getStartValue();
-                        entry.value = (startValue?.value as any)?.value ?? startValue;
-                    }
-
-                    properties.push(entry);
-                }
-
-                effects.push({ matchName, displayName, properties });
+            // Clip timing, used to work out which time domain the keyframes are in.
+            // Best-effort: if it fails we just save without origin info.
+            let clipTimes: { inT: bigint, startT: bigint, durT: bigint } | null = null;
+            try {
+                const [inPoint, clipStart, clipDuration] = await Promise.all([
+                    item.getInPoint(),
+                    item.getStartTime(),
+                    item.getDuration(),
+                ]);
+                clipTimes = {
+                    inT: BigInt(inPoint.ticks),
+                    startT: BigInt(clipStart.ticks),
+                    durT: BigInt(clipDuration.ticks),
+                };
+            } catch (e) {
+                console.log("saveEffectSlotJSON: could not read clip timing:", e);
             }
 
-            payload.push({ mediaType, effects });
-        }
+            const maybeEffects = await Promise.all(
+                Array.from({ length: componentCount }, async (_, c): Promise<EffectEntry | null> => {
+                    const component = await chain.getComponentAtIndex(c);
+                    const matchName = await component.getMatchName();
+                    if (SKIPPED_MATCH_NAMES[matchName]) return null;
+
+                    const [displayName, paramCount] = await Promise.all([
+                        component.getDisplayName(),
+                        component.getParamCount(),
+                    ]);
+
+                    const properties = await Promise.all(
+                        Array.from({ length: paramCount }, async (_, j): Promise<PropertyEntry> => {
+                            const param = await component.getParam(j);
+                            const paramDisplayName = param.displayName;
+                            const isTimeVarying = await param.isTimeVarying();
+
+                            const entry: PropertyEntry = { displayName: paramDisplayName, isTimeVarying };
+
+                            if (isTimeVarying) {
+                                const tickTimes = await param.getKeyframeListAsTickTimes();
+                                // Sequential on purpose (matches the original behaviour)
+                                entry.keyframes = [];
+                                for (const tickTime of tickTimes) {
+                                    const kfValue = await param.getValueAtTime(tickTime);
+                                    entry.keyframes.push({
+                                        time: tickTime.ticks,
+                                        value: (kfValue as any)?.value ?? kfValue,
+                                    });
+                                }
+                            } else {
+                                const startValue = await param.getStartValue();
+                                entry.value = (startValue?.value as any)?.value ?? startValue;
+                            }
+
+                            return entry;
+                        })
+                    );
+
+                    const entry: EffectEntry = { matchName, displayName, properties };
+
+                    // Work out whether this effect's keyframe times sit in source time
+                    // (relative to the in-point) or sequence time (relative to clip start)
+                    const kfTimes = properties.flatMap((p) => p.keyframes ?? []).map((k) => BigInt(k.time));
+                    if (clipTimes && kfTimes.length > 0) {
+                        const { inT, startT, durT } = clipTimes;
+                        if (kfTimes.every((t) => t >= inT && t <= inT + durT)) {
+                            entry.timeDomain = "source";
+                            entry.timeOrigin = inT.toString();
+                        } else if (kfTimes.every((t) => t >= startT && t <= startT + durT)) {
+                            entry.timeDomain = "timeline";
+                            entry.timeOrigin = startT.toString();
+                        }
+                    }
+
+                    return entry;
+                })
+            );
+
+            const effects = maybeEffects.filter((e): e is EffectEntry => e !== null);
+            return { mediaType, effects };
+        }));
+
+        const payload = buckets.filter(
+            (b): b is { mediaType: string, effects: EffectEntry[] } => b !== null
+        );
 
         return JSON.stringify(payload);
     } catch (e: any) {
         return "ERROR in saveEffectSlotJSON: " + e.toString();
-    }
-}
-
-/**
- * parses already-decoded text (plain JSON or plain prfpset XML) into buckets
- */
-function parsePayloadText(text: string): { mediaType: string, effects: EffectEntry[] }[] | false {
-    try {
-        const trimmed = text.trim();
-        if (trimmed.startsWith("<?xml") || trimmed.startsWith("<PremiereData")) {
-            return helpers.prfpsetXmlToBuckets(text);
-        }
-        return JSON.parse(trimmed.replace(/\\"/g, '"'));
-    } catch (e: any) {
-        console.log("parsePayloadText error:", e);
-        return false;
-    }
-}
-
-/**
- * accepts either a real file path (.json or .prfpset) or a legacy base64-encoded
- * JSON string, and returns parsed buckets, or false on failure
- */
-export async function readAndDecodeText(filePathOrData: string): Promise<{ mediaType: string, effects: EffectEntry[] }[] | false> {
-    try {
-        const exists = await fileExists(filePathOrData);
-
-        if (exists) {
-            const url = "file:///" + filePathOrData.replace(/\\/g, "/");
-            console.log("resolved url:", url);
-
-            const entry = await lfs.getEntryWithUrl(url);
-            console.log("entry:", entry);
-
-            const text = await entry.read({ format: storage.formats.utf8 });
-            console.log("read length:", text?.length, "starts with:", text?.slice(0, 30));
-
-            const parsed = parsePayloadText(text);
-            console.log("parsed:", parsed);
-            return parsed;
-        }
-
-        const decoded = atob(filePathOrData);
-        return parsePayloadText(decoded);
-    } catch (e: any) {
-        console.log("readAndDecodeText error:", e);
-        return false;
     }
 }
 
@@ -1861,7 +1654,7 @@ export async function readAndDecodeText(filePathOrData: string): Promise<{ media
 export async function applyEffectSlotJSON(data: string): Promise<string> {
     let payload: { mediaType: string, effects: EffectEntry[] }[] | false;
     try {
-        payload = await readAndDecodeText(data);
+        payload = await helpers.readAndDecodeText(data);
     } catch (e: any) {
         return "ERROR at decode/parse: " + e.toString();
     }
@@ -1882,6 +1675,8 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
 
     const allResults: string[] = [];
 
+    // Items and effects stay sequential: each effect is inserted and then looked
+    // up again by match name, so parallel inserts would confuse that lookup.
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
         const mediaType = item.constructor.name === "VideoClipTrackItem" ? "Video" : "Audio";
@@ -1959,6 +1754,16 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
                 }
 
                 const paramCount = await newComponent.getParamCount();
+                const keyframeShift = await helpers.computeKeyframeShift(item, fx);
+                if (fx.properties.some((p) => p.isTimeVarying)) {
+                    console.log(
+                        `[applyEffectSlotJSON] ${fx.matchName}: domain=${fx.timeDomain ?? "none"} savedOrigin=${fx.timeOrigin ?? "n/a"} shift=${keyframeShift}`
+                    );
+                }
+
+                // Kept SEQUENTIAL on purpose: creating keyframes concurrently (per param or
+                // per keyframe) stopped the stored keyframes from being applied. Each keyframe
+                // is created and positioned before the next one is created.
                 const paramData: { param: any, keyframes?: { keyframe: any }[], staticKeyframe?: any }[] = [];
 
                 for (let j = 0; j < fx.properties.length && j < paramCount; j++) {
@@ -1971,8 +1776,8 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
 
                         if (hasAnchors) {
                             // PRESET PATH: scale keyframe timing to fit the target clip's duration
-                            const anchorIn = BigInt(fx.anchorInPoint);
-                            const anchorOut = BigInt(fx.anchorOutPoint);
+                            const anchorIn = BigInt(fx.anchorInPoint!);
+                            const anchorOut = BigInt(fx.anchorOutPoint!);
                             const originalSpan = anchorOut - anchorIn;
 
                             const clipDuration = await item.getDuration();
@@ -1985,15 +1790,18 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
                                     : relativeOffset;
 
                                 const tickTime = ppro.TickTime.createWithTicks(scaledOffset.toString());
-                                const keyframe = await param.createKeyframe(kf.value);
+                                const keyframe = await helpers.createParamKeyframe(param, kf.value, `${fx.matchName}/${savedProp.displayName} @ ${tickTime.ticks}`);
+                                if (!keyframe) continue;
                                 keyframe.position = tickTime;
                                 keyframes.push({ keyframe });
                             }
                         } else {
-                            // PLAIN JSON PATH: original behavior, use kf.time as-is (already clip-relative)
+                            // PLAIN JSON PATH: times are absolute, so re-map them onto this clip
+                            // (keyframeShift is 0 for the original clip / older saves)
                             for (const kf of savedProp.keyframes) {
-                                const tickTime = ppro.TickTime.createWithTicks(String(kf.time));
-                                const keyframe = await param.createKeyframe(kf.value);
+                                const tickTime = ppro.TickTime.createWithTicks((BigInt(kf.time) + keyframeShift).toString());
+                                const keyframe = await helpers.createParamKeyframe(param, kf.value, `${fx.matchName}/${savedProp.displayName} @ ${tickTime.ticks}`);
+                                if (!keyframe) continue;
                                 keyframe.position = tickTime;
                                 keyframes.push({ keyframe });
                             }
@@ -2007,14 +1815,18 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
                                 : typeof savedProp.value === "string" && !isNaN(Number(savedProp.value))
                                     ? Number(savedProp.value)
                                     : savedProp.value;
-                            const keyframe = await param.createKeyframe(coerced);
+                            const keyframe = await param.createKeyframe(await helpers.toParamValue(coerced));
                             paramData.push({ param, staticKeyframe: keyframe });
-                        } catch { }
+                        } catch (e) {
+                            console.log(`[applyEffectSlotJSON] static createKeyframe FAILED for ${fx.matchName}/${savedProp.displayName}, value=`, savedProp.value, e);
+                        }
                     }
                 }
 
+                const txErrors: string[] = [];
+                let txOk: any = undefined;
                 await project.lockedAccess(() => {
-                    const result = project.executeTransaction((compoundAction) => {
+                    txOk = project.executeTransaction((compoundAction) => {
                         for (const pd of paramData) {
                             try {
                                 if (pd.keyframes) {
@@ -2027,18 +1839,35 @@ export async function applyEffectSlotJSON(data: string): Promise<string> {
                                     compoundAction.addAction(pd.param.createSetTimeVaryingAction(false));
                                     compoundAction.addAction(pd.param.createSetValueAction(pd.staticKeyframe, false));
                                 }
-                            } catch (e: any) { }
+                            } catch (e: any) { txErrors.push(String(e)); }
                         }
                     }, "Restore Effect Params");
                 });
 
-                allResults.push(`[${mediaType}] ${fx.matchName}: OK`);
+                // Read back what actually landed so silent failures show up in the result
+                const details: string[] = [];
+                for (const pd of paramData) {
+                    if (!pd.keyframes) continue;
+                    try {
+                        const applied = await pd.param.getKeyframeListAsTickTimes();
+                        details.push(`${pd.param.displayName || "param"}: ${applied.length}/${pd.keyframes.length} keyframes`);
+                    } catch (e: any) {
+                        details.push(`${pd.param.displayName || "param"}: readback failed (${String(e)})`);
+                    }
+                }
+                const suffix = details.length ? ` [${details.join("; ")}]` : "";
+                if (txOk === false || txErrors.length > 0) {
+                    allResults.push(`[${mediaType}] ${fx.matchName}: PARTIAL (transaction=${txOk}, errors=${txErrors.join(" | ") || "none"})${suffix}`);
+                } else {
+                    allResults.push(`[${mediaType}] ${fx.matchName}: OK${suffix}`);
+                }
             } catch (e: any) {
                 allResults.push(`[${mediaType}] ${fx.matchName}: FAILED -- ${e.toString()}`);
             }
         }
     }
 
+    console.log("[applyEffectSlotJSON] result:\n" + allResults.join("\n"));
     return "DONE:\n" + allResults.join("\n");
 }
 
@@ -2064,33 +1893,22 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
         return;
     }
 
-    const rawProjItem = await projItemByPath(adjustmentLayerPath);
+    const [rawProjItem, editor] = await Promise.all([
+        helpers.projItemByPath(adjustmentLayerPath),
+        ppro.SequenceEditor.getEditor(sequence),
+    ]);
     if (!rawProjItem) {
         alert('Could not find adjustment layer at path: "' + adjustmentLayerPath + '"');
         return;
     }
     const clipProjItem = await ppro.ClipProjectItem.cast(rawProjItem);
 
-    const editor = await ppro.SequenceEditor.getEditor(sequence);
-
     // --- Gather selected clips per video track ---
     // Looping tracks and checking getIsSelected() per clip avoids having to
     // distinguish video vs audio items coming back from sequence.getSelection(),
     // since that returns a mixed VideoClipTrackItem | AudioClipTrackItem array.
     const videoTrackCount = await sequence.getVideoTrackCount();
-    const selectedEntries: Array<{ trackIndex: number; start: TickTime; end: TickTime }> = [];
-
-    for (let t = 0; t < videoTrackCount; t++) {
-        const track = await sequence.getVideoTrack(t);
-        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
-        for (const item of items) {
-            if (await item.getIsSelected()) {
-                const start = await item.getStartTime();
-                const end = await item.getEndTime();
-                selectedEntries.push({ trackIndex: t, start, end });
-            }
-        }
-    }
+    const selectedEntries = await helpers.gatherSelectedVideoClips(sequence, videoTrackCount);
 
     if (selectedEntries.length === 0) {
         alert("No video clips are selected in the timeline.");
@@ -2128,14 +1946,18 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
     );
 
     // --- Read the adjustment layer's original in/out points, to restore afterward ---
-    const originalInPoint = await clipProjItem.getInPoint(ppro.Constants.MediaType.VIDEO);
-    const originalOutPoint = await clipProjItem.getOutPoint(ppro.Constants.MediaType.VIDEO);
+    const [originalInPoint, originalOutPoint] = await Promise.all([
+        clipProjItem.getInPoint(ppro.Constants.MediaType.VIDEO),
+        clipProjItem.getOutPoint(ppro.Constants.MediaType.VIDEO),
+    ]);
     const invalidTime = ppro.TickTime.TIME_INVALID;
     const hadOriginalInOut = !originalInPoint.equals(invalidTime) && !originalOutPoint.equals(invalidTime);
 
     const zeroTime = ppro.TickTime.TIME_ZERO;
     const startTime = overallStart; // the exact TickTime Premiere gave us for the earliest selected clip's start
     const audioTrackIndex = 0;
+
+    // --- Steps 1-3 below MUST stay sequential (each is its own committed transaction) ---
 
     // --- Step 1: commit the temporary in/out points as their own transaction,
     // BEFORE the placement action is even created. The insert/overwrite action
@@ -2196,128 +2018,6 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
 }
 
 /**
- * match selected clips to the clip on the lowest track index
- */
-export async function matchSelectedClipsToLowestTrack(): Promise<void> {
-    const project = await ppro.Project.getActiveProject();
-    if (!project) {
-        alert("No active project.");
-        return;
-    }
-
-    const sequence = await project.getActiveSequence();
-    if (!sequence) {
-        alert("No active sequence.");
-        return;
-    }
-
-    // --- Gather selected clips per video track ---
-    const videoTrackCount = await sequence.getVideoTrackCount();
-    const selectedEntries: Array<{ trackIndex: number; item: any; start: TickTime; end: TickTime }> = [];
-
-    for (let t = 0; t < videoTrackCount; t++) {
-        const track = await sequence.getVideoTrack(t);
-        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
-        for (const item of items) {
-            if (await item.getIsSelected()) {
-                const start = await item.getStartTime();
-                const end = await item.getEndTime();
-                selectedEntries.push({ trackIndex: t, item, start, end });
-            }
-        }
-    }
-
-    if (selectedEntries.length === 0) {
-        alert("No video clips are selected in the timeline.");
-        return;
-    }
-    if (selectedEntries.length === 1) {
-        return;
-    }
-
-    // Find the entry on the lowest track index (ties broken by earliest start)
-    let referenceEntry = selectedEntries[0];
-    for (const entry of selectedEntries) {
-        if (
-            entry.trackIndex < referenceEntry.trackIndex ||
-            (entry.trackIndex === referenceEntry.trackIndex &&
-                entry.start.ticksNumber < referenceEntry.start.ticksNumber)
-        ) {
-            referenceEntry = entry;
-        }
-    }
-
-    const refStart = referenceEntry.start;
-    const refEnd = referenceEntry.end;
-    if (refEnd.ticksNumber - refStart.ticksNumber <= 0) {
-        alert("Invalid reference clip duration.");
-        return;
-    }
-
-    const selectedItems = new Set(selectedEntries.map((e) => e.item));
-
-    // Validate against unselected neighbors before touching anything
-    const blocked: string[] = [];
-    for (const target of selectedEntries) {
-        if (target.item === referenceEntry.item) continue;
-
-        const track = await sequence.getVideoTrack(target.trackIndex);
-        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
-
-        for (const other of items) {
-            if (other === target.item) continue;
-            if (selectedItems.has(other)) continue;
-
-            const otherStart = await other.getStartTime();
-            const otherEnd = await other.getEndTime();
-            if (otherStart.ticksNumber < refEnd.ticksNumber && otherEnd.ticksNumber > refStart.ticksNumber) {
-                blocked.push(await target.item.getName());
-                break;
-            }
-        }
-    }
-
-    if (blocked.length > 0) {
-        alert(
-            "Cannot match the following clip(s) to the reference range -- an unselected " +
-            "clip is in the way on the same track: " + blocked.join(", ")
-        );
-        return;
-    }
-
-    await project.lockedAccess(() => {
-        return project.executeTransaction((compoundAction) => {
-            for (const target of selectedEntries) {
-                if (target.item === referenceEntry.item) continue;
-
-                const endFirst = refStart.ticksNumber < target.start.ticksNumber;
-
-                if (endFirst) {
-                    compoundAction.addAction(target.item.createSetEndAction(refEnd));
-                    compoundAction.addAction(target.item.createSetStartAction(refStart));
-                } else {
-                    compoundAction.addAction(target.item.createSetStartAction(refStart));
-                    compoundAction.addAction(target.item.createSetEndAction(refEnd));
-                }
-            }
-        }, "Match selected clips to lowest track");
-    });
-}
-
-/**
- * finds sequence by projectitem id
- */
-async function findSequenceByProjectItemId(project: Project, targetId: string): Promise<Sequence | null> {
-    const sequences = await project.getSequences();
-    if (!sequences || sequences.length === 0) return null;
-    for (const seq of sequences) {
-        const seqProjItem = await seq.getProjectItem();
-        if ((await seqProjItem.getId()).toString() === targetId.toString()) return seq;
-    }
-    return null;
-}
-
-/**
  * add transitions to certain audio edit points. This will (hopefully in the future) enable adding audio transitions to any audio clips that are either enabled, or have an enabled clip adjacent to them. This will not add transitions to clips that already contain them.
  * ! Currently this function is non functional as there are api shortcomings. Hopefully this is one day useable
  * ! this function would need to be adjusted to not add transitions to bars and tone
@@ -2346,28 +2046,6 @@ export async function addTransitionsToEnabledAudioEditPoints(dryRun: boolean, de
 
         if (clips.length < 2) continue;
 
-        // Fetch every clip's disabled state ONCE, up front, in parallel.
-        // This is what guarantees clip N's state is never checked twice
-        // as we slide the window across edit points.
-        const disabledStates = await Promise.all(clips.map((clip) => clip.isDisabled()));
-
-        // Fetch every clip's start/end time ONCE too - needed both to locate
-        // the edit point and to cross-reference against existing transitions.
-        // ticks are used for the (precise) overlap comparison; seconds are
-        // used purely for the human-readable timecode in the log line.
-        const clipRanges = await Promise.all(
-            clips.map(async (clip) => {
-                const start = await clip.getStartTime();
-                const end = await clip.getEndTime();
-                return {
-                    startTicks: start.ticksNumber,
-                    endTicks: end.ticksNumber,
-                    startSeconds: start.seconds,
-                    endSeconds: end.seconds,
-                };
-            })
-        );
-
         // Pull back any transitions ALREADY on this track (existing, user-placed
         // ones included) so we can skip edit points that already have one.
         //
@@ -2379,14 +2057,40 @@ export async function addTransitionsToEnabledAudioEditPoints(dryRun: boolean, de
         // transitions exist, but not which edit points they're on, so this
         // check cannot safely be used to skip specific edit points right now.
         // Filtered for null/undefined entries; see debug logging below.
-        const rawTransitions = await audioTrack.getTrackItems(Constants.TrackItemType.TRANSITION, true);
-        const existingTransitions = (rawTransitions || []).filter(Boolean);
-        const transitionRanges = await Promise.all(
-            existingTransitions.map(async (t) => ({
-                start: (await t.getStartTime()).ticksNumber,
-                end: (await t.getEndTime()).ticksNumber,
-            }))
-        );
+        const loadTransitions = async () => {
+            const rawTransitions = await audioTrack.getTrackItems(Constants.TrackItemType.TRANSITION, true);
+            const existingTransitions = (rawTransitions || []).filter(Boolean);
+            const transitionRanges = await Promise.all(
+                existingTransitions.map(async (t) => {
+                    const [start, end] = await Promise.all([t.getStartTime(), t.getEndTime()]);
+                    return { start: start.ticksNumber, end: end.ticksNumber };
+                })
+            );
+            return { rawTransitions, existingTransitions, transitionRanges };
+        };
+
+        // Everything below is read-only and independent, so it's fetched in one go:
+        //  - every clip's disabled state ONCE (guarantees clip N's state is never
+        //    checked twice as we slide the window across edit points)
+        //  - every clip's start/end ONCE (ticks for the precise overlap comparison,
+        //    seconds purely for the human-readable timecode in the log line)
+        //  - any transitions already on the track
+        const [disabledStates, clipRanges, transitionInfo] = await Promise.all([
+            Promise.all(clips.map((clip) => clip.isDisabled())),
+            Promise.all(
+                clips.map(async (clip) => {
+                    const [start, end] = await Promise.all([clip.getStartTime(), clip.getEndTime()]);
+                    return {
+                        startTicks: start.ticksNumber,
+                        endTicks: end.ticksNumber,
+                        startSeconds: start.seconds,
+                        endSeconds: end.seconds,
+                    };
+                })
+            ),
+            loadTransitions(),
+        ]);
+        const { rawTransitions, existingTransitions, transitionRanges } = transitionInfo;
 
         if (debug) {
             console.log(`Track ${trackIndex}: raw transition item count = ${(rawTransitions || []).length}, after filtering nulls = ${existingTransitions.length}`);
@@ -2442,8 +2146,7 @@ export async function addTransitionsToEnabledAudioEditPoints(dryRun: boolean, de
             if (!dryRun) {
                 await applyAudioTransitionAtEditPoint(project, leftClip, rightClip);
             } else {
-                const leftName = await leftClip.getName();
-                const rightName = await rightClip.getName();
+                const [leftName, rightName] = await Promise.all([leftClip.getName(), rightClip.getName()]);
                 console.log(
                     `[${helpers.formatTimecode(editPointSeconds)}] Would add transition on track ${trackIndex}, edit point ${i} - between "${leftName}" (disabled=${leftDisabled}) and "${rightName}" (disabled=${rightDisabled})`
                 );
@@ -2524,11 +2227,15 @@ export async function nestSelectionReplaceNestedAudio(
     const ignoreAudioTrackIndexes = helpers.parseTrackList(ignoreAudioTracks);
 
     // --- Step 1: capture the FULL selection (video + audio) before nesting.
-    const videoTrackCount = await sequence.getVideoTrackCount();
-    const audioTrackCount = await sequence.getAudioTrackCount();
+    const [videoTrackCount, audioTrackCount] = await Promise.all([
+        sequence.getVideoTrackCount(),
+        sequence.getAudioTrackCount(),
+    ]);
 
-    const selectedVideoEntries = await helpers.gatherSelectedEntries((i) => sequence.getVideoTrack(i), videoTrackCount);
-    const selectedAudioEntries = await helpers.gatherSelectedEntries((i) => sequence.getAudioTrack(i), audioTrackCount);
+    const [selectedVideoEntries, selectedAudioEntries] = await Promise.all([
+        helpers.gatherSelectedEntries((i) => sequence.getVideoTrack(i), videoTrackCount),
+        helpers.gatherSelectedEntries((i) => sequence.getAudioTrack(i), audioTrackCount),
+    ]);
 
     if (selectedVideoEntries.length === 0 && selectedAudioEntries.length === 0) {
         alert("No clips are selected in the timeline.");
@@ -2581,9 +2288,12 @@ export async function nestSelectionReplaceNestedAudio(
     }
 
     // --- Step 3: re-scan and remove the original clips left behind by
-    // createSubsequence(). ---
-    const videoOrphans = await helpers.findMatchingItems((i) => sequence.getVideoTrack(i), selectedVideoEntries);
-    const audioOrphans = await helpers.findMatchingItems((i) => sequence.getAudioTrack(i), selectedAudioEntries);
+    // createSubsequence(). The two scans are read-only, so they run together;
+    // the two removals are transactions and stay sequential. ---
+    const [videoOrphans, audioOrphans] = await Promise.all([
+        helpers.findMatchingItems((i) => sequence.getVideoTrack(i), selectedVideoEntries),
+        helpers.findMatchingItems((i) => sequence.getAudioTrack(i), selectedAudioEntries),
+    ]);
 
     await helpers.removeItems(project, editor, videoOrphans, ppro.Constants.MediaType.VIDEO, "Remove original video after nest");
     await helpers.removeItems(project, editor, audioOrphans, ppro.Constants.MediaType.AUDIO, "Remove original audio after nest");
@@ -2592,8 +2302,10 @@ export async function nestSelectionReplaceNestedAudio(
     const zeroTime = ppro.TickTime.TIME_ZERO;
     const invalidTime = ppro.TickTime.TIME_INVALID;
     const inOutMediaType = haveVideo ? ppro.Constants.MediaType.VIDEO : ppro.Constants.MediaType.AUDIO;
-    const originalInPoint = await clipProjItem.getInPoint(inOutMediaType);
-    const originalOutPoint = await clipProjItem.getOutPoint(inOutMediaType);
+    const [originalInPoint, originalOutPoint] = await Promise.all([
+        clipProjItem.getInPoint(inOutMediaType),
+        clipProjItem.getOutPoint(inOutMediaType),
+    ]);
     const hadOriginalInOut = !originalInPoint.equals(invalidTime) && !originalOutPoint.equals(invalidTime);
 
     // --- Step 5: video pass -- reuse the topmost originally-selected video
@@ -2688,24 +2400,26 @@ export async function anchorToPosition(): Promise<boolean> {
 
     const componentCount = await chain.getComponentCount();
 
-    const transformComponents: any[] = [];
-    for (let i = 0; i < componentCount; i++) {
-        const component = await chain.getComponentAtIndex(i);
-        if ((await component.getDisplayName()) === "Transform") {
-            transformComponents.push(component);
-        }
-    }
+    // Look up every component's display name in parallel, then keep the Transforms
+    const components = await Promise.all(
+        Array.from({ length: componentCount }, (_, i) => chain.getComponentAtIndex(i))
+    );
+    const displayNames = await Promise.all(components.map((c: any) => c.getDisplayName()));
+    const transformComponents: any[] = components.filter((_: any, i: number) => displayNames[i] === "Transform");
 
     if (transformComponents.length !== 1) return false;
 
     const transform = transformComponents[0];
     const paramCount = await transform.getParamCount();
 
+    const transformParams = await Promise.all(
+        Array.from({ length: paramCount }, (_, p) => transform.getParam(p))
+    );
+
     let anchorPointParam: any = null;
     let positionParam: any = null;
 
-    for (let p = 0; p < paramCount; p++) {
-        const param = await transform.getParam(p);
+    for (const param of transformParams) {
         if (param.displayName === "Anchor Point") anchorPointParam = param;
         else if (param.displayName === "Position") positionParam = param;
     }

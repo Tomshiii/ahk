@@ -1,3 +1,7 @@
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Other\print.ahk
+; }
 installedPath := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\client"
 SplitPath(A_LineFile,, &linePath)
 backupPath := linePath
@@ -13,8 +17,14 @@ if !IsSet(override) || (override != false && override != "false") {
         return
 }
 
-if !DirExist(installedPath "\src\actions")
-    DirCreate(installedPath "\src\actions")
-loop files backupPath "\*.ts", "F" {
-    FileCopy(A_LoopFileFullPath, installedPath "\src\actions\*.*", true)
+actionsDir := installedPath "\src\actions"
+if !DirExist(actionsDir)
+    DirCreate(actionsDir)
+
+loop files backupPath "\*.ts", "FR" {
+    relDir := SubStr(A_LoopFileDir, StrLen(backupPath) + 2)
+    destDir := relDir = "" ? actionsDir : actionsDir "\" relDir
+    if !DirExist(destDir)
+        DirCreate(destDir)
+    FileCopy(A_LoopFileFullPath, destDir "\" A_LoopFileName, true)
 }
