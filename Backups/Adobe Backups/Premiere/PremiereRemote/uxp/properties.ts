@@ -6,6 +6,7 @@ import * as helpers from "./helperfuncs";
 
 import type {
     premierepro,
+    TickTime
 } from "@adobe/premierepro";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -143,14 +144,17 @@ export async function getPlayheadPosTimecode(): Promise<string | false> {
         return false;
     }
 
-    const [settings, timeDisplay, currentPos] = await Promise.all([
+    const [settings, tDisplay, currentPos] = await Promise.all([
         sequence.getSettings(),
         sequence.getSequenceVideoTimeDisplayFormat(),
         sequence.getPlayerPosition(),
     ]);
     const frameRate = settings.getVideoFrameRate();
 
-    return helpers.formatTickTimeAsTimecode(currentPos, frameRate, timeDisplay.type);
+    if (!(await helpers.isPremVerAtLeast("27.0"))) {
+        return helpers.formatTickTimeAsTimecode(currentPos, frameRate, tDisplay.type);
+    }
+    return ppro.TickTime.timeToTimecode(currentPos, frameRate, tDisplay);
 }
 
 // get/set proxies you can't do yet in uxp...

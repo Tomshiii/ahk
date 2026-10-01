@@ -13,9 +13,14 @@
 - ✅ Fixed `sendOnFailure` key not being sent if timeline values have not been set and no sequences are open
 
 ### 📝 `PremiereRemote`
+- 📋 `replacePremRemote.ahk` will now work correctly for any `.ts` files stored in folders
+
+📍 `UXP`
 - ✏️ Added `getRegistryJSON()`
 - ✅ Fixed `saveEffectSlotJSON()`/`applyEffectSlotJSON()`
-- 📋 `movePlayhead()`/`movePlayheadFrames()`/`moveClip()` no longer require parameter `subtract`
 - 📋 Adjust multiple functions to retrieve information concurrently
 - 📋 Moved alot of functions into their own files to organise them a bit better
-- 📋 `replacePremRemote.ahk` will now work correctly for any `.ts` files stored in folders
+- 📋 `getPlayheadPosTimecode()` will now use internal function `timeToTimecode()` in `v27.0+`
+
+📍 `Both`
+- 📋 `movePlayhead()`/`movePlayheadFrames()`/`moveClip()` no longer require parameter `subtract`
