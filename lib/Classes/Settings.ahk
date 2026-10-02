@@ -2,7 +2,7 @@
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
  * @date 2026/10/02
- * @version 1.4.14
+ * @version 1.5.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -10,14 +10,13 @@
 #Include Classes\Mip.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\errorLog.ahk
-#Include Functions\checkINI.ahk
 #Include Functions\formatPreReleaseTag.ahk
 ; }
 
 class UserPref {
     /**
      * @param [override=false] for scripts other than `Core Functionality.ahk` if set to `true` will generate and return its own local settings instance
-     * @param [checkVals=false] when set to `true` will check the user's `settints.ini` file against a fresh template to ensure all properties are accounted for and stale properties are removed
+     * @param [checkVals=false] when set to `true` will sync the user's `settings.ini` against a fresh template in place (missing keys added with defaults, stale keys removed, existing values untouched). When `false` the file is used as-is. `Core Functionality.ahk` always syncs
      * @constructor
      */
     __New(override := false, checkVals := false) {
@@ -35,15 +34,11 @@ class UserPref {
             throw TargetError("lib files have not been installed.")
         }
         this._store := {}
-        if FileExist(this.SettingsFile) && checkVals = true {
-            tempFile := this.SettingsDir "\settings_temp"
-            this.__createIni(tempFile)
-            checkINI(tempFile, this.SettingsFile)
-            FileDelete(tempFile)
-        }
         if !FileExist(this.SettingsFile) {
             this.__createIni()
             ; Run(A_ScriptFullPath)
+        } else if checkVals = true || A_ScriptName = "Core Functionality.ahk" {
+            this.__syncIni()
         }
         if A_ScriptName != "Core Functionality.ahk" {
             if override = false
@@ -183,59 +178,64 @@ class UserPref {
     doValChecks() {
         this.__setVersion()
         this.__checkDark()
+    }
 
-        genNewMap() => newMap := Mip()
-        ensureSpaces(inpString) => StrReplace(inpString, "_", A_Space)
-        result(res) {
-            switch res {
-                case true: return "true"
-                case false: return "false"
-                default: return res
-            }
-        }
-        allSettings := genNewMap(), allAdjust := genNewMap(), allTrack  := genNewMap()
-        for v in StrSplit(IniRead(this.SettingsFile), "`n") {
-            for k, v2 in valArr := StrSplit(IniRead(this.SettingsFile, v), ["=", "`n", "`r"]) {
-                if Mod(k, 2) = 0
-                    continue
-                all%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
-            }
-        }
-
+    /**
+     * Syncs the user's `settings.ini` with the current template **in place**.
+     * - keys missing from the user's file are added with their default value
+     * - keys/sections no longer in the template are removed
+     * - every other value is left untouched, so the user's settings are preserved
+     *
+     * The file is never deleted, so a failure part way through can't wipe the user's settings.
+     */
+    __syncIni() {
         tempDir := A_Temp "\tomshi"
-        tempSettingsPath := tempDir "\temp_settings.ini"
         if !DirExist(tempDir)
             DirCreate(tempDir)
-        if FileExist(tempSettingsPath)
-            FileDelete(tempSettingsPath)
-        this.__createIni(tempSettingsPath)
-        tempSettings := genNewMap(), tempAdjust := genNewMap(), tempTrack  := genNewMap()
-        tempCountSettings := genNewMap(), tempCountAdjust := genNewMap(), tempCountTrack  := genNewMap()
-        for v in StrSplit(IniRead(tempSettingsPath), "`n") {
-            for k, v2 in valArr := StrSplit(IniRead(tempSettingsPath, v), ["=", "`n", "`r"]) {
-                if Mod(k, 2) = 0
+        tmp := tempDir "\template.ini"
+        this.__createIni(tmp)
+
+        ;// read the fresh template into maps
+        tmplSections := Map(), tmplSections.CaseSense := "Off"
+        tmplKeys     := Map(), tmplKeys.CaseSense := "Off"
+        for section in StrSplit(IniRead(tmp), "`n", "`r") {
+            if section = ""
+                continue
+            tmplSections[section] := true
+            for line in StrSplit(IniRead(tmp, section), "`n", "`r") {
+                eq := InStr(line, "=")
+                if !eq
                     continue
-                if !all%v%.has(ensureSpaces(v2)) {
-                    temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
-                    continue
-                }
-                temp%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
-                tempCount%v%.Set(ensureSpaces(v2), result(valArr.Get(k+1)))
+                tmplKeys[section "|" SubStr(line, 1, eq - 1)] := SubStr(line, eq + 1)
             }
         }
+        FileDelete(tmp)
 
-        if (this.defaults.Count != (allSettings.Count + allAdjust.Count + allTrack.Count) || this.defaults.Count != (tempCountSettings.Count + tempCountAdjust.Count + tempCountTrack.Count)) {
-            FileDelete(this.SettingsFile)
-            this.__createIni()
-            this.Settings_ := []
-            this.Adjust_ := []
-            this.Track_ := []
-            this.__setSett(tempSettingsPath)
-            this.__setAdjust(tempSettingsPath)
-            this.__setTrack(tempSettingsPath)
+        ;// add any missing keys
+        missing := "__tomshi_missing__"
+        for id, default in tmplKeys {
+            parts := StrSplit(id, "|")
+            if IniRead(this.SettingsFile, parts[1], parts[2], missing) = missing
+                IniWrite(default, this.SettingsFile, parts[1], parts[2])
         }
-        if FileExist(tempSettingsPath)
-            FileDelete(tempSettingsPath)
+
+        ;// remove stale sections / keys
+        for section in StrSplit(IniRead(this.SettingsFile), "`n", "`r") {
+            if section = ""
+                continue
+            if !tmplSections.Has(section) {
+                IniDelete(this.SettingsFile, section)
+                continue
+            }
+            for line in StrSplit(IniRead(this.SettingsFile, section), "`n", "`r") {
+                eq := InStr(line, "=")
+                if !eq
+                    continue
+                key := SubStr(line, 1, eq - 1)
+                if !tmplKeys.Has(section "|" key)
+                    IniDelete(this.SettingsFile, section, key)
+            }
+        }
     }
 
     ;// [Settings]
@@ -256,33 +256,33 @@ class UserPref {
     ;// [Adjust]
     Adjust_ := []
     __setAdjust(settingsFile := this.SettingsFile) {
-    this.__fillArr("Adjust", this.Adjust_, settingsFile)
-    for v in this.Adjust_ {
-        if !this.HasOwnProp(v) {
-            defaultVal := this.__getDefault(v)
-            newVal := IniRead(settingsFile, "Adjust", this.__convertToKey(v), defaultVal)
-            this.__defineProp(v, "Adjust", newVal)
+        this.__fillArr("Adjust", this.Adjust_, settingsFile)
+        for v in this.Adjust_ {
+            if !this.HasOwnProp(v) {
+                defaultVal := this.__getDefault(v)
+                newVal := IniRead(settingsFile, "Adjust", this.__convertToKey(v), defaultVal)
+                this.__defineProp(v, "Adjust", newVal)
+            }
         }
     }
-}
     ;// [Track]
     Track_ := []
     __setTrack(settingsFile := this.SettingsFile) {
-    this.__fillArr("Track", this.Track_, settingsFile)
-    for v in this.Track_ {
-        if this.HasOwnProp(v)
-            continue
-        switch v {
-            case "first_check", "block_aware":
-                this.__defineProp(v, "Track", this.__convertToBool(this.__convertToKey(v), "Track"))
-            case "version": this.__setVersion()
-            default:
-                defaultVal := this.__getDefault(v)
-                newVal := IniRead(settingsFile, "Track", this.__convertToKey(v), defaultVal)
-                this.__defineProp(v, "Track", newVal)
+        this.__fillArr("Track", this.Track_, settingsFile)
+        for v in this.Track_ {
+            if this.HasOwnProp(v)
+                continue
+            switch v {
+                case "first_check", "block_aware":
+                    this.__defineProp(v, "Track", this.__convertToBool(this.__convertToKey(v), "Track"))
+                case "version": this.__setVersion()
+                default:
+                    defaultVal := this.__getDefault(v)
+                    newVal := IniRead(settingsFile, "Track", this.__convertToKey(v), defaultVal)
+                    this.__defineProp(v, "Track", newVal)
+            }
         }
     }
-}
 
     __defineProp(v, section, initialValue) {
         this._store.%v% := initialValue

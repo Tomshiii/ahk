@@ -2,6 +2,7 @@
 
 ## Functions
 - ✏️ Added `statusIcon {`
+- ✅ Fixed `settings.ini` values getting reset if a key is added
 - 📋 Increased default `adobe_GB` value from `45` => `100`
 
 ### 📝 `prem {`
@@ -14,16 +15,16 @@
 
 ### 📝 `rbuttonPrem {`
 📍 `movePlayhead()`
-- ✅ Fixed leaving mouse movement blocked if the user activates the function while dragging a panel
+- ✅ Fixed function leaving mouse movement blocked if the user activates the function while dragging a panel
 - ✅ Fixed `sendOnFailure` key not being sent if timeline values have not been set and no sequences are open
 
 ### 📝 `PremiereRemote`
-- 📋 `replacePremRemote.ahk` will now work correctly for any `.ts` files stored in folders
 
 📍 `UXP`
 - ✅ Fixed `saveEffectSlotJSON()`/`applyEffectSlotJSON()`
 - 📋 Adjust multiple functions to retrieve information concurrently
 - 📋 Moved alot of functions into their own files to organise them a bit better
+    - `replacePremRemote.ahk` will now work correctly for any `.ts` files stored in folders
 - 📋 `getPlayheadPosTimecode()` will now use internal function `timeToTimecode()` in `v27.0+`
 
 📍 `Both`
@@ -38,4 +39,5 @@
 🔗 `determineUIA.ahk`
 - ✅ Fixed function failing to properly close during `reloadAll.ahk`
 - 📋 Will now show a status icon for the connection status of the `cep` & `uxp` sockets
-    - Can be disabled in `settingsGUI()`
+    - Can be disabled in `settingsGUI()`  
+    <img width="222" height="74" alt="cep_uxp_status" src="https://github.com/user-attachments/assets/0713ea6f-e8b7-4aa4-a54d-f8a03710e2a1" />
