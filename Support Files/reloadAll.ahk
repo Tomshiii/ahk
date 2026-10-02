@@ -25,7 +25,7 @@ listArr := []
 coreFuncObj := unset
 __checkClose(hwnd, title) {
     if title = "determineUIA.ahk" {
-        WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk", 1000, false)
+        premUIA_Values.closeUIA()
     }
     if WinExist(hwnd) {
         ProcessClose(hwnd)

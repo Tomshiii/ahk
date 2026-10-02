@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/09/25
- * @version 1.0.17
+ * @date 2026/10/02
+ * @version 1.0.18
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -13,6 +13,8 @@
 #Include Classes\errorLog.ahk
 #Include Classes\notifyExt.ahk
 #Include Classes\WM.ahk
+#Include Classes\coord.ahk
+#Include Classes\statusIcon.ahk
 #Include Functions\isReload.ahk
 #Include Other\ObjRegisterActive.ahk
 #Include Other\WinEvent.ahk
@@ -23,6 +25,13 @@ try getReload := A_Args.Get(1)
 Persistent()
 onMsgObj := ObjBindMethod(WM, "__parseMessageResponse")
 OnMessage(0x004A, onMsgObj.Bind())  ; 0x004A is WM_COPYDATA
+determineRemoteStop := stopper()
+
+class stopper {
+    __remoteStop() {
+        __doExit()
+    }
+}
 
 if !WinExist(prem.exeTitle)
     ExitApp()
@@ -115,9 +124,24 @@ try {
     }
 }
 
+;// this needs to be a live read - otherwise if the user changes it to `false` in `settingsGUI.ahk` then reloads
+;// the code to reopen `determineUIA.ahk` on reload can retrieve the old setting
+uiaIconSet := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "UIA show Icon", false)
+if uiaIconSet != false && uiaIconSet != "false" {
+    SetTimer(__pollRemoteIcons.bind(premUIAobj), 2000)
+    __pollRemoteIcons(premUIAobj, *) {
+        try {
+            p := CLSID_Objs.loadProp("prem", ["remoteActiveCEP", "remoteActiveUXP"])
+            prem.__setRemoteIcon("cep", p["remoteActiveCEP"] = true, premUIAobj)
+            prem.__setRemoteIcon("uxp", p["remoteActiveUXP"] = true, premUIAobj)
+        }
+    }
+}
+
 __resetObj(premUIAobj)
 __resetIsActive()
 __deleteUIA()
+
 SetTimer((*) => (__deleteUIA()), -2500)
 didReload := isReload(getReload ?? false)
 if WinExist(prem.winTitle) && !didReload {
@@ -160,9 +184,13 @@ __doubleCheckExit(*) {
     }
 }
 
-__resetObj(premUIAobj) {
-    if !IsSet(premUIA) || (IsSet(premUIA) && Type(premUIA) != "ComObject")
-        premUIAobj := CLSID_Objs.load("determineUIA")
+__resetObj(premUIAobj?) {
+    if !IsSet(premUIA) || (IsSet(premUIA) && Type(premUIA) != "ComObject") {
+        try premUIAobj := CLSID_Objs.load("determineUIA")
+        catch {
+            return
+        }
+    }
     try {
         premUIAobj.isRunning := false
         premUIAobj.beenSet   := true
@@ -192,11 +220,11 @@ __deleteUIA() {
     notifyExt.deleteIfExist("determiningUIA")
 }
 
-__doExit(premUIAobj) {
+__doExit(premUIAobj?) {
     try CLSID_Objs.writeProp("prem", Map("__cepOpen", false, "__uxpOpen", false))
     __deleteUIA()
     __resetIsActive()
-    __resetObj(premUIAobj)
+    __resetObj(premUIAobj?)
     __resetTimelineVals()
     try SetTimer(__resetIsActive, 0)
 
@@ -206,6 +234,8 @@ __doExit(premUIAobj) {
     for v in allRegister {
         try ObjRegisterActive(v.obj, "")
     }
+    prem.__setRemoteIcon("reset", false)
+    try SetTimer(__pollRemoteIcons, 0)
     ExitApp()
 }
 
@@ -213,6 +243,7 @@ __doExit(premUIAobj) {
 
 OnExit(_onExit.Bind(allRegister))
 _onExit(allRegister, *) {
+    try SetTimer(__pollRemoteIcons, 0)
     try getReload := A_Args.Get(1)
     if !isReload(getReload ?? false)
         errorLog(Error("determineUIA.ahk has exited"))
@@ -222,4 +253,5 @@ _onExit(allRegister, *) {
         try ObjRegisterActive(v.obj, "")
     }
     try CLSID_Objs.writeProp("prem", Map("__cepOpen", false, "__uxpOpen", false))
+    prem.__setRemoteIcon("reset", false)
 }

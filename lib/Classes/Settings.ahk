@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/08/24
- * @version 1.4.13
+ * @date 2026/10/02
+ * @version 1.4.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -72,10 +72,10 @@ class UserPref {
         "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
         "Use_Thio_MButton", "false", "Use_MButton", "true",
         "Use_swapSequences", "true",
-        "Set_UIA_on_reload", "true",
+        "Set_UIA_on_reload", "true", "UIA_show_Icon", "true",
 
         ;// [Adjust]
-        "adobe_GB", 45, "adobe_FS", 2,
+        "adobe_GB", 100, "adobe_FS", 2,
         "autosave_MIN",  5, "game_SEC",  2, "multi_SEC", 5,
         "prem_year", 2026, "ae_year", 2026, "ps_year", 2026,
         "premVer", "v26.2", "aeVer", "v26.0", "psVer", "25.5", "resolveVer", "v18.5",
@@ -86,7 +86,7 @@ class UserPref {
         "toggleEnabled_ignore", "5",
 
         ;// [Track]
-        "adobe_temp", 0, "UIA_Daily_Limit_Day", 0,
+        "adobe_temp", 0,
         "first_check", "false", "block_aware", "false",
         "version", "v2.18.0", "skipVersion", "v2.0",
         "monitor_alert", "0"
@@ -332,6 +332,7 @@ class UserPref {
         disc disable autoreply={}
         adobeExeOverride={}
         Set UIA on reload={}
+        UIA show Icon={}
         Use Thio MButton={}
         Use MButton={}
         Use swapSequences={}
@@ -362,7 +363,6 @@ class UserPref {
 
         [Track]
         adobe temp={}
-        UIA Daily Limit Day={}
         first check={}
         block aware={}
         monitor alert={}

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/09/28
- * @version 3.0.44
+ * @date 2026/10/02
+ * @version 3.0.45
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -41,6 +41,7 @@ class premUIA_Values {
     static UIA_Hwnd := Map()
     static AdobeEl  := false
     static determineUIA_PID := false
+    static scriptTitle := "determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
 
     static KSA {
         get => CLSID_Objs.load("KSA")
@@ -378,31 +379,44 @@ class premUIA_Values {
      * @returns {Boolean}
      */
     static determineUIA_Exist() {
-        try {
-            ComObjActive(CLSID_Objs["determineUIA"])
-            return true
-        } catch {
-            title := "determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
-            scriptTitle := winExt.TitleRegex(title,,,, true)
-            if !scriptTitle
-                return false
-            if !winExt.ExistRegex(scriptTitle,,,, true)
-                return false
-            return true
-        }
+        scriptTitle := winExt.TitleRegex(this.scriptTitle,,,, true)
+        if !scriptTitle
+            return false
+        if !winExt.ExistRegex(scriptTitle,,,, true)
+            return false
+        return true
     }
 
+    /** closes `determineUIA.ahk` */
+    static closeUIA() {
+        if !this.determineUIA_Exist() {
+            Run(this.scriptLoc)
+            return true
+        }
+        scriptTitle := winExt.TitleRegex(this.scriptTitle,,,, true)
+        PID := winExt.PIDRegex(this.scriptTitle,,,, true)
+        try ProcessClose(PID)
+        if !checkPID := winExt.ExistRegex(PID,,,, true) {
+            try WinClose(checkPID)
+            if winExt.ExistRegex(checkPID,,,, true)
+                return false
+        }
+        if winExt.ExistRegex(scriptTitle,,,, true)
+            return false
+        return true
+    }
+
+    static scriptLoc := ptf.SupportFiles "\determineUIA.ahk"
     /**
      * Determines if UIA objects have been set and returns them if they have. If not, `determineUIA.ahk` will be run and this function will return early.
      * @returns {false|ComObject}
      */
     static initialise() {
         Critical('On')
-        scriptLoc := ptf.SupportFiles "\determineUIA.ahk"
         determineUIAExist := this.determineUIA_Exist()
 
         if !determineUIAExist {
-            Run(scriptLoc)
+            Run(this.scriptLoc)
             Critical('Off')
             return false
         }
@@ -417,10 +431,10 @@ class premUIA_Values {
             errorLog(TargetError("Script could not interact with ``determineUIA.ahk``. Script will reload.", -1))
             try WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk")
             sleep 100
-            if determineScript := winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey",,,, true)
+            if determineScript := winExt.ExistRegex(this.scriptTitle,,,, true)
                 try winExt.CloseRegex(determineScript,,,, true)
             sleep 500
-            if determineScript := winExt.ExistRegex("determineUIA.ahk ahk_class AutoHotkey",,,, true)
+            if determineScript := winExt.ExistRegex(this.scriptTitle,,,, true)
                 return false
             Run(ptf.SupportFiles "\determineUIA.ahk")
             return false

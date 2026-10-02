@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2026/05/15
- * @version 1.3.11
+ * @date 2026/10/02
+ * @version 1.3.12
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -15,7 +15,7 @@
 
 class WM {
 
-    static timerScripts := Mip("autosave.ahk", "autosave", "adobe fullscreen check.ahk", "adobeCheck", "premKeyCheck", "keyCheck", "gameCheck.ahk", "gameCheck", "Multi-Instance Close.ahk", "multiRemoteStop")
+    static timerScripts := Mip("autosave.ahk", "autosave", "adobe fullscreen check.ahk", "adobeCheck", "premKeyCheck", "keyCheck", "gameCheck.ahk", "gameCheck", "Multi-Instance Close.ahk", "multiRemoteStop", "determineUIA.ahk", "determineRemoteStop")
 
     static storeNotify := Map()
 
@@ -135,7 +135,7 @@ class WM {
             case "adobe_FS", "autosave_MIN":          %res[2]%.__changeVar(res[1]*1000)
             case "autosave_stop", "adobe_fullscreen_check_stop",
             "gameCheck_stop", "premKeyCheck_stop":    %res[1]%.__remoteStop()
-            case "Multi-Instance_Close_stop":         %res[1]%.__remoteStop()
+            case "Multi-Instance_Close_stop", "determineUIA_stop": %res[1]%.__remoteStop()
             case "autosave_beep":                     %res[2]%.beep := res[1]
             case "autosave_save_override":            %res[2]%.saveOverride := res[1]
             case "autosave_check_mouse":              %res[2]%.checkMouse := res[1]

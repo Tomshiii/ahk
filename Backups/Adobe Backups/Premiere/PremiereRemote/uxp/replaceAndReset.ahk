@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include shared\funcs.ahk
 #Include '%A_Appdata%\tomshi\lib'
+#Include Classes\CLSID_Objs.ahk
 #Include Other\JSON.ahk
 ; }
 
@@ -34,3 +35,4 @@ __runAndWait(uxpAHK, uxpFile)
 
 RunWait("replacePremRemote.ahk false")
 Run("resetBuild.ahk")
+try CLSID_Objs.writeProp("prem", "__uxpFuncMap", false)

@@ -1,0 +1,247 @@
+/************************************************************************
+ * @description a class designed to place a little icon on the screen and alternatively bind it to a window's position
+ * @author tomshi
+ * @ai_disclosure vibecoded with claude, I'm not super familiar with dll's
+ * @date 2026/10/02
+ * @version 1.0.0
+ ***********************************************************************/
+
+; =====================================================================
+; StatusIcon: click-through, per-pixel-alpha overlay icon (GDI+ + UpdateLayeredWindow)
+; Self-contained, no globals, no third-party library.
+;
+;   icon := StatusIcon(path, x, y, size, keepOnTop)
+;   icon.SetIcon(newPath)                 ; swap the image
+;   icon.Move(x, y)                       ; absolute screen coordinates
+;   icon.Follow(winTitle, dx, dy)         ; pin to a spot inside another window
+;   icon.StopFollowing()
+;   icon.Destroy()                        ; optional, also runs automatically on exit
+;
+; All x/y values are absolute screen pixels (top-left of the icon).
+; =====================================================================
+
+class statusIcon {
+    ; Pointers/handles owned by this instance
+    gdiToken := 0
+    bitmap := 0
+    graphics := 0
+    hdc := 0
+    hbm := 0
+    oldBm := 0
+
+    ; Window and layout
+    gui := ""
+    shown := true
+    posX := 0
+    posY := 0
+    size := 32
+    w := 0
+    h := 0
+
+    ; Callbacks kept so they can be unregistered later
+    keepOnTopFn := ""
+    followFn := ""
+    exitFn := ""
+
+    __New(path, x := 0, y := 0, size := 32, keepOnTop := true) {
+        this.posX := x
+        this.posY := y
+        this.size := size
+
+        DllCall("LoadLibrary", "Str", "gdiplus")
+        si := Buffer(A_PtrSize = 8 ? 24 : 16, 0)
+        NumPut("UInt", 1, si)                       ; GdiplusVersion = 1
+        token := 0
+        DllCall("gdiplus\GdiplusStartup", "Ptr*", &token, "Ptr", si, "Ptr", 0)
+        this.gdiToken := token
+
+        this.exitFn := (*) => this.Destroy()
+        OnExit(this.exitFn)
+
+        try this.SetIcon(path)
+        catch as err {
+            this.Destroy()
+            throw err
+        }
+
+        if keepOnTop {
+            ; Re-assert topmost in case other topmost windows push us down
+            this.keepOnTopFn := () => this.gui ? WinSetAlwaysOnTop(1, this.gui) : 0
+            SetTimer(this.keepOnTopFn, 2000)
+        }
+    }
+
+    /**
+     * Replace the displayed image. The previous icon stays if loading fails.
+     * @param {String} [path] the filepath of the desired icon.
+     */
+    SetIcon(path) {
+        if !FileExist(path)
+            throw Error("Icon file not found: " path)
+
+        pBitmap := 0
+        DllCall("gdiplus\GdipCreateBitmapFromFile", "WStr", path, "Ptr*", &pBitmap)
+        if !pBitmap
+            throw Error("GDI+ could not load: " path)
+
+        nw := 0, nh := 0
+        DllCall("gdiplus\GdipGetImageWidth",  "Ptr", pBitmap, "UInt*", &nw)
+        DllCall("gdiplus\GdipGetImageHeight", "Ptr", pBitmap, "UInt*", &nh)
+        this.w := this.size ? this.size : nw
+        this.h := this.size ? this.size : nh
+
+        this.FreeBuffers()
+        this.bitmap := pBitmap
+
+        ; 32-bit DIB to draw into
+        this.hdc := DllCall("CreateCompatibleDC", "Ptr", 0, "Ptr")
+        bi := Buffer(40, 0)
+        NumPut("UInt",   40, bi, 0)   ; biSize
+        NumPut("Int", this.w, bi, 4)  ; biWidth
+        NumPut("Int", this.h, bi, 8)  ; biHeight
+        NumPut("UShort",  1, bi, 12)  ; biPlanes
+        NumPut("UShort", 32, bi, 14)  ; biBitCount
+        bits := 0
+        this.hbm := DllCall("CreateDIBSection", "Ptr", this.hdc, "Ptr", bi, "UInt", 0
+                          , "Ptr*", &bits, "Ptr", 0, "UInt", 0, "Ptr")
+        this.oldBm := DllCall("SelectObject", "Ptr", this.hdc, "Ptr", this.hbm, "Ptr")
+
+        ; Draw smoothly scaled image
+        pGraphics := 0
+        DllCall("gdiplus\GdipCreateFromHDC", "Ptr", this.hdc, "Ptr*", &pGraphics)
+        this.graphics := pGraphics
+        DllCall("gdiplus\GdipSetInterpolationMode", "Ptr", pGraphics, "Int", 7)  ; high-quality bicubic
+        DllCall("gdiplus\GdipDrawImageRectI", "Ptr", pGraphics, "Ptr", pBitmap
+              , "Int", 0, "Int", 0, "Int", this.w, "Int", this.h)
+
+        ; Create the window once; later calls just re-push pixels
+        if !this.gui {
+            ; E0x80000   WS_EX_LAYERED     (required for UpdateLayeredWindow)
+            ; E0x20      WS_EX_TRANSPARENT (clicks pass through)
+            ; E0x8000000 WS_EX_NOACTIVATE  (never takes focus)
+            this.gui := Gui("-Caption +ToolWindow +AlwaysOnTop +E0x80000 +E0x20 +E0x08000000")
+            this.gui.Show("NA x0 y0 w" this.w " h" this.h)
+        }
+
+        this.Push()
+    }
+
+    ; Move the icon to absolute screen coordinates.
+    Move(x, y) {
+        this.posX := x
+        this.posY := y
+        this.Push()
+    }
+
+    ;
+    ;   winTitle   :
+    ;   dx, dy     : offset from the target window's CLIENT-area top-left corner
+    ;   activeOnly : only show the icon while the target window is the active window
+    ;
+    /**
+     * Pin the icon to a spot inside another window.
+     * @param {String} [winTitle] any AHK WinTitle ("ahk_exe notepad.exe", "ahk_class Foo", ...)
+     * @param {Integer} [dx]  x value, offset from the target window's CLIENT-area top-left corner
+     * @param {Integer} [dy]  y value, offset from the target window's CLIENT-area top-left corner
+     * @param {Boolean} [activeOnly=true] only show the icon while the target window is the active window. The icon is hidden when the window doesn't exist or is minimized.
+     * @param {Integer} [active=50] the interval passed to `SetTimer`. How frequently the position will be checked
+     */
+    Follow(winTitle, dx := 0, dy := 0, activeOnly := true, interval := 50) {
+        this.StopFollowing()
+        this.followFn := this.UpdateFollow.Bind(this, winTitle, dx, dy, activeOnly)
+        SetTimer(this.followFn, interval)
+        this.UpdateFollow(winTitle, dx, dy, activeOnly)
+    }
+
+    StopFollowing() {
+        if this.followFn {
+            SetTimer(this.followFn, 0)
+            this.followFn := ""
+        }
+    }
+
+    UpdateFollow(winTitle, dx, dy, activeOnly) {
+        if !this.gui
+            return
+        hwnd := WinExist(winTitle)
+        target := "ahk_id " hwnd
+        visible := hwnd
+            && WinGetMinMax(target) != -1
+            && (!activeOnly || WinActive(target))
+        if visible {
+            WinGetClientPos(&cx, &cy, , , target)   ; client area origin, in screen coordinates
+            nx := cx + dx, ny := cy + dy
+            if nx != this.posX || ny != this.posY
+                this.Move(nx, ny)
+        }
+        this.SetVisible(!!visible)
+    }
+
+    SetVisible(show) {
+        if show = this.shown || !this.gui
+            return
+        this.shown := show
+        if show
+            this.gui.Show("NA")
+        else
+            this.gui.Hide()
+    }
+
+    /** Send the current bitmap to the screen at the current position. */
+    Push() {
+        ptDst := Buffer(8), NumPut("Int", this.posX, "Int", this.posY, ptDst)
+        sz    := Buffer(8), NumPut("Int", this.w, "Int", this.h, sz)
+        ptSrc := Buffer(8, 0)
+        blend := 0x01FF0000                         ; AC_SRC_OVER, alpha 255, AC_SRC_ALPHA
+        DllCall("UpdateLayeredWindow", "Ptr", this.gui.Hwnd, "Ptr", 0
+              , "Ptr", ptDst, "Ptr", sz, "Ptr", this.hdc, "Ptr", ptSrc
+              , "UInt", 0, "UInt*", blend, "UInt", 2)   ; ULW_ALPHA
+    }
+
+    /** Release everything. Safe to call more than once. */
+    Destroy() {
+        this.StopFollowing()
+        if this.keepOnTopFn {
+            SetTimer(this.keepOnTopFn, 0)
+            this.keepOnTopFn := ""
+        }
+        if this.exitFn {
+            OnExit(this.exitFn, 0)
+            this.exitFn := ""
+        }
+        if this.gui {
+            this.gui.Destroy()
+            this.gui := ""
+        }
+        this.FreeBuffers()
+        if this.gdiToken {
+            DllCall("gdiplus\GdiplusShutdown", "Ptr", this.gdiToken)
+            this.gdiToken := 0
+        }
+    }
+
+    FreeBuffers() {
+        if this.graphics {
+            DllCall("gdiplus\GdipDeleteGraphics", "Ptr", this.graphics)
+            this.graphics := 0
+        }
+        if this.bitmap {
+            DllCall("gdiplus\GdipDisposeImage", "Ptr", this.bitmap)
+            this.bitmap := 0
+        }
+        if this.hdc {
+            if this.oldBm
+                DllCall("SelectObject", "Ptr", this.hdc, "Ptr", this.oldBm)
+            if this.hbm
+                DllCall("DeleteObject", "Ptr", this.hbm)
+            DllCall("DeleteDC", "Ptr", this.hdc)
+            this.oldBm := 0, this.hbm := 0, this.hdc := 0
+        }
+    }
+
+    __Delete() {
+        try SetTimer(this.keepOnTopFn, 0)
+        try SetTimer(this.followFn, 0)
+        try this.Destroy()
+    }
+}
