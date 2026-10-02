@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/02
- * @version 2.5.70
+ * @version 2.5.71
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -807,6 +807,8 @@ class Prem {
      * @returns {String | Boolean | null}
      */
     static __remoteFunc(whichFunc, runAsync := false, params*) {
+        if !WinExist(this.winTitle)
+            return null
         if !this.__checkPremRemoteDir(whichFunc) {
             errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
             return null
@@ -999,6 +1001,8 @@ class Prem {
      * @returns {String | Boolean | null}
      */
     static __remoteUXP(whichFunc, runAsync := false, params*) {
+        if !WinExist(this.winTitle)
+            return null
         if !InStr(whichFunc, "/") {
             errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -1, whichFunc), whichFunc,, true)
             return null
