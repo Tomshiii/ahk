@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Code is maintained for the version of Premiere listed below
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 26.5.1
+ * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/01
- * @version 2.5.69
+ * @date 2026/10/02
+ * @version 2.5.70
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -32,6 +32,7 @@
 #Include Classes\winExt.ahk
 #Include Classes\notifyExt.ahk
 #Include Classes\null.ahk
+#Include Classes\statusIcon.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\WinEvent.ahk
@@ -99,17 +100,19 @@ class Prem {
         }
 
         regInst := this.__isRegInstalledVer()
-        if A_ScriptName = "Core Functionality.ahk" && regInst != false && this.__isNodeInstalled() != false && this.__isRemoteInstalled() != false  {
-            if (this.useSwapSequences = true || this.useSwapSequences = "true")
-                SetTimer(this.__setCurrSeq.Bind(this), this.prevSeqDelay)
+        if A_ScriptName = "Core Functionality.ahk" && regInst != false && this.__isNodeInstalled() != false {
 
-            ;// check for premremote and NPM before setting timer
-            extensionsPath := A_AppData "\Adobe\CEP\extensions"
-            remotePath     := extensionsPath "\PremiereRemote"
+
+            ;// check for premremote and NPM before setting timers
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
-            if DirExist(remotePath) && (getNPM != false && getNPM != "") {
-                SetTimer(this.__checkRemote.Bind(this, this.portCEP, "cep"), 2000)
-                SetTimer(this.__checkRemote.Bind(this, this.portUXP, "uxp"), 2000)
+            if (getNPM != false && getNPM != "") {
+                if this.__isRemoteInstalled() != false {
+                    if (this.useSwapSequences = true || this.useSwapSequences = "true")
+                        SetTimer(this.__setCurrSeq.Bind(this), this.prevSeqDelay)
+                    SetTimer(this.__checkRemote.Bind(this), 2000)
+                }
+                if this.__isUXPInstalled() != false
+                    SetTimer(this.__checkRemoteUXP.Bind(this), 2000)
             }
 
             ;// toggle multicam when audio effect windows become active
@@ -302,21 +305,100 @@ class Prem {
     ;// MButton
     static MButtonPanning := false
 
+    ;// setShinsIMG
     static _scan := ""
     static _scanTitle := ""
 
+    ;// __setRemoteIcon
+    static cepIcon := false
+    static cepIconState := false
+    static uxpIcon := false
+    static uxpIconState := false
+
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
-    static __checkRemote(port := 8081, cepOrUXP := "cep") {
+    static __checkRemote() {
         if !WinExist(this.winTitle)
             return
         try {
-            sock := winsock("probe", (s,e,c) => this.__probeCB(s,e,c, cepOrUXP), "IPV4")
-            sock.Connect("localhost", port)
+            sock := winsock("probe", (s,e,c) => this.__probeCB(s,e,c, "cep"), "IPV4")
+            sock.Connect("localhost", this.portCEP)
         } catch {
             errorLog(TargetError("Couldn't probe localhost", -1))
             return
         }
+    }
+    static __checkRemoteUXP() {
+        if !WinExist(this.winTitle)
+            return
+        try {
+            sock := winsock("probe", (s,e,c) => this.__probeCB(s,e,c, "uxp"), "IPV4")
+            sock.Connect("localhost", this.portUXP)
+        } catch {
+            errorLog(TargetError("Couldn't probe localhost", -1))
+            return
+        }
+    }
+
+    /**
+     * handles setting the `cep` or `uxp` status icon within the timeline
+     * @param {String} [which] Either; `uxp`, `cep`, or `reset`. Passing `reset` will destroy both icons if they exist
+     * @param {Integer} [state] the current state of the plugin
+     * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. If `which` is set to `reset` this param can be omitted, otherwise is required
+     */
+    static __setRemoteIcon(which, state, uiaObj?) {
+        if which = "reset" {
+            __stateReset("cep")
+            __stateReset("uxp")
+            return
+        }
+        __stateReset(which) {
+            if this.%which%Icon != false
+                try this.%which%Icon.destroy()
+            this.%which%Icon := false
+            this.%which%IconState := false
+        }
+        if !IsSet(uiaObj) {
+            throw MethodError("Parameter #3 isn't set.")
+        }
+        uiaIconSet := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "UIA show Icon", false)
+        if !uiaIconSet || uiaIconSet = "false"
+            return
+
+        iconConnected := ptf.Icons "\" which ".ico"
+        iconDisonnected := ptf.Icons "\" which "_err.ico"
+        imgIcon := (state=1) ? iconConnected : iconDisonnected
+        premTitle := WinGet.PremName()
+        checkType := (Type(premTitle) != "Object")
+        checkTitle := isObjHasProp(premTitle, "winTitle", false) && isObjHasProp(premTitle, "titleCheck", -1) && isObjHasProp(premTitle, "saveCheck", -1)
+        if !premTitle || checkType || !checkTitle {
+            __stateReset(which)
+            return
+        }
+
+        if this.setShinsIMG(premTitle.winTitle) = false {
+            __stateReset(which)
+            return
+        }
+        if this.%which%Icon != false {
+            if state != this.%which%IconState {
+                this.%which%Icon.SetIcon(imgIcon)
+                this.%which%IconState := state
+            }
+            return
+        }
+        if !timelineObj := premUIA_Values.getLivePanel("timelineWindow", uiaObj)
+            return
+        buttonIndex := (which = "cep") ? 4 : 2
+        timecode := timelineObj.Children[1].Children[1]
+        button := timelineObj.FindElement({Type:50000},, buttonIndex)
+        coord.screenToClient(timecode.location.x, timecode.location.y, this._scan.hwnd, this._scan.WindowScale, &tX, &tY)
+        coord.screenToClient(button.location.x, button.location.y, this._scan.hwnd, this._scan.WindowScale, &bX, &bY)
+
+        this.%which%Icon := statusIcon(imgIcon,,, 16)
+        this.%which%Icon.follow(this._scan.hwnd, bX+4, tY+7, true, 5)
+        this.%which%IconState := state
+        timelineObj := ""
     }
 
     static __probeCB(sock, event, err, cepOrUXP) {
@@ -524,55 +606,52 @@ class Prem {
         this.__isRemoteInstalled()
         if this.__cepInstalled != true
             return false
-        if this.__cepFuncMap !== false
+        if IsObject(this.__cepFuncMap)
             return this.__cepFuncMap
-        readFile := FileRead(this.indexFileCEP)
-        funcNames := Map()
-        pos := 1
-        while (pos := RegExMatch(readFile, "(\w+)\s*:\s*function\s*\(", &match, pos)) {
-            params := {set: false}
-            funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, pos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
-            if funcParamsString = "" {
-                funcNames.Set(match[1], params)
-                pos += match.Len(0)
-                continue
-            }
-            if !InStr(funcParamsString, ",") {
-                p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
-                params.arr := [p], params.map := Mip(p, true), params.set := true
-                funcNames.Set(match[1], params)
-                pos += match.Len(0)
-                continue
-            }
-            paramsSplit := StrSplit(funcParamsString, ",", A_Space "`n`r")
-            paramsArr := []
-            paramsMap := Mip()
-            for v in paramsSplit {
-                p := SubStr(v, 1, (splitPoint := InStr(v, ':'))-1)
-                t := LTrim(SubStr(v, splitPoint+1))
-                paramsArr.Push(p)
-                paramsMap.Set(p, t)
-            }
-            params.arr := paramsArr, params.map := paramsMap, params.set := true
-            funcNames.Set(match[1], params)
-            pos += match.Len(0)
-        }
-        this.__cepFuncMap := funcNames
-        return funcNames
+
+        resp := cmd.httpGet(Format("http://localhost:{1}/getRegistryJSON", this.portCEP))
+        if resp == null || resp = ""
+            return false
+        try {
+            outer := JSON.parse(resp)
+            registry := JSON.parse(outer["result"])
+        } catch
+            return false
+        if !(registry is Map)
+            return false
+        return this.__cepFuncMap := registry
     }
 
     /**
      * This function checks the [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) `index` or UXP `.ts` file for the desired function
      * @param {String | array} checkFunc if `cepOrUXP` is set to `cep`; the function name you wish to search for. ie `projPath`, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
      * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
+     * @param {Boolean} [alerts=true] determines whether `Notify` alerts will appear for certain failures
      * @returns {Boolean}
      */
-    static __checkPremRemoteFunc(checkFunc, cepOrUXP := "cep") {
+    static __checkPremRemoteFunc(checkFunc, cepOrUXP := "cep", alerts := true) {
         switch cepOrUXP, 0 {
             case "cep":
                 this.__isRemoteInstalled()
-                if this.__cepInstalled != true
+                if this.__cepInstalled != true {
+                    errorLog(TargetError("PremiereRemote CEP is not installed.", -2),,, true)
+                    notifyExt.showIfNotExist('premCEPNotInstalled',, "PremiereRemote CEP is not installed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                     return false
+                }
+                try {
+                    open := json.parse(cmd.httpGet(Format("http://localhost:{1}/isPanelOpen", this.portCEP)))
+                    if open["result"] != "true" && open["result"] != true {
+                        errorLog(MethodError("PremiereRemote CEP panel isn't open.", -1))
+                        if alerts = true
+                            notifyExt.showIfNotExist('premCEPNotOpen',, "PremiereRemote CEP Panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        return false
+                    }
+                } catch {
+                    errorLog(MethodError("PremiereRemote CEP panel isn't open.", -1))
+                    if alerts = true
+                        notifyExt.showIfNotExist('premCEPNotOpen',, "PremiereRemote CEP Panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                    return false
+                }
                 if !this.__cepFuncMap {
                     if !this.__setCEPfuncs()
                         return false
@@ -588,11 +667,32 @@ class Prem {
                 }
             case "uxp":
                 this.__isUXPInstalled()
-                if this.__uxpInstalled != true
+                if this.__uxpInstalled != true {
+                    errorLog(TargetError("PremiereRemote UXP is not installed.", -2),,, true)
+                    notifyExt.showIfNotExist('premUXPNotInstalled',, "PremiereRemote UXP is not installed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                     return false
-                if !this.__uxpFuncMap {
-                    if !this.__getUXPRegistry()
+                }
+                try {
+                    open := cmd.httpGet(Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP))
+                    if open != "true" && open != true && alerts = true {
+                        errorLog(MethodError("PremiereRemote UXP panel isn't open.", -1))
+                        notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                         return false
+                    }
+                } catch {
+                    errorLog(MethodError("PremiereRemote UXP panel isn't open.", -1))
+                    if alerts = true
+                        notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                    return false
+                }
+                if !this.__uxpFuncMap {
+                    if !this.__getUXPRegistry() {
+                        if WinExist(this.winTitle) && alerts = true {
+                            errorLog(MethodError("PremiereRemote UXP panel isn't open.", -2))
+                            notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        }
+                        return false
+                    }
                 }
                 switch Type(checkFunc), 0 {
                     case "string": return !!this.__getUXPFuncInfo(checkFunc)
@@ -711,10 +811,6 @@ class Prem {
             errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
             return null
         }
-        if !this.__checkRemoteParams(whichFunc, params, "cep") {
-            errorLog(TargetError("User passed incorred Parameters to function.", -1, whichFunc),,, true)
-            return null
-        }
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
             return null
@@ -769,6 +865,12 @@ class Prem {
             CLSID_Objs.writeProp("prem", "__cepOpen", true)
         }
 
+        ;// param check needs to happen later as it needs to retrieve the json object from the plugin
+        if !this.__checkRemoteParams(whichFunc, params, "cep") {
+            errorLog(TargetError("User passed incorred Parameters to function.", -1, whichFunc),,, true)
+            return null
+        }
+
         paramsString := this.__sanitiseParams(params)
         sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portCEP) : Format("http://localhost:{2}/{1}", whichFunc, this.portCEP)
         getResp := cmd.httpGet(sendcommand, runAsync)
@@ -819,73 +921,67 @@ class Prem {
                     return false
                 if !this.__cepFuncMap.Has(whichFunc)
                     return false
-                for v in params {
-                    if !InStr(v, '=') {
-                        MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
-                        return false
-                    }
-                    splt := StrSplit(v, '=',, 2)
-                    for v in splt {
-                        if Mod(A_Index, 2) = 0
-                            continue
-                        if !this.__cepFuncMap[whichFunc].map.has(v) {
-                            MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc "`ncepOrUXP: " cepOrUXP)
-                            return false
-                        }
-                    }
-                }
+                funcPath := whichFunc
+                defs := this.__cepFuncMap[whichFunc]["params"]
             case "uxp":
                 if !info := this.__getUXPFuncInfo(whichFunc)
                     return false
-                for v in params {
-                    if !InStr(v, '=') {
-                        MsgBox("Parameter not specified`nFunction: " info.path,, "262160")
-                        return false
-                    }
-                    splt := StrSplit(v, '=',, 2)
-                    name := splt[1], value := splt[2]
+                funcPath := info.path
+                defs := info.params
+            default:
+                return false
+        }
 
-                    def := false
-                    for p in info.params {
-                        if p["name"] == name {
-                            def := p
-                            break
-                        }
-                    }
-                    if !def {
-                        MsgBox("Parameter not found for given function`n`nParam: " name "`nFunction: " info.path)
-                        return false
-                    }
+        passed := []
+        for v in params {
+            if !InStr(v, '=') {
+                MsgBox("Parameter not specified`nFunction: " funcPath,, "262160")
+                return false
+            }
+            splt := StrSplit(v, '=',, 2)
+            name := splt[1], value := splt[2]
 
-                    switch def["type"], 0 {
-                        case "boolean":
-                            if value != "true" && value != "false" {
-                                MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be boolean (true/false)")
-                                return false
-                            }
-                        case "number":
-                            if !IsNumber(value) {
-                                MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be a number")
-                                return false
-                            }
-                    }
+            def := false
+            for p in defs {
+                if p["name"] == name {
+                    def := p
+                    break
                 }
+            }
+            if !def {
+                MsgBox("Parameter not found for given function`n`nParam: " name "`nFunction: " funcPath "`ncepOrUXP: " cepOrUXP)
+                return false
+            }
 
-                for p in info.params {
-                    if !p["required"]
-                        continue
-                    found := false
-                    for v in params {
-                        if StrSplit(v, '=',, 2)[1] == p["name"] {
-                            found := true
-                            break
-                        }
-                    }
-                    if !found {
-                        MsgBox("Required parameter missing`n`nParam: " p["name"] "`nFunction: " info.path)
+            switch def["type"], 0 {
+                case "boolean":
+                    if value != "true" && value != "false" {
+                        MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be boolean (true/false)")
                         return false
                     }
+                case "number":
+                    if !IsNumber(value) {
+                        MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be a number")
+                        return false
+                    }
+            }
+            passed.Push(name)
+        }
+
+        for p in defs {
+            if !p["required"]
+                continue
+            found := false
+            for n in passed {
+                if n == p["name"] {
+                    found := true
+                    break
                 }
+            }
+            if !found {
+                MsgBox("Required parameter missing`n`nParam: " p["name"] "`nFunction: " funcPath "`ncepOrUXP: " cepOrUXP)
+                return false
+            }
         }
         return true
     }
@@ -908,7 +1004,7 @@ class Prem {
             return null
         }
         if !this.__checkPremRemoteDir(whichFunc, "uxp") {
-            errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
+            errorLog(TargetError("PremiereRemote UXP is not installed or function does not exist.", -1, whichFunc),,, true)
             return null
         }
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
@@ -959,7 +1055,7 @@ class Prem {
             checkPanelCommand := Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP)
             isPanelOpen := cmd.httpGet(checkPanelCommand, true)
             if isPanelOpen == null || (isPanelOpen != "true" && isPanelOpen != true) {
-                errorLog(MethodError("PremiereRemote UXP panel isn't open."))
+                errorLog(MethodError("PremiereRemote UXP panel isn't open.", -2))
                 notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null
             }
@@ -5118,6 +5214,10 @@ $!WheelDown::
     }
 
     __Delete() {
+        try this.cepIcon.destroy()
+        try this.uxpIcon.destroy()
+        try SetTimer(this.__checkRemote.Bind(this), 0)
+        try SetTimer(this.__checkRemoteUXP.Bind(this), 0)
 		try WinEvent.Stop('Exist', "Save Project " this.exeTitle)
         try WinEvent.Stop('Close', "Save Project " this.exeTitle)
         try WinEvent.Stop("Show", this.exeTitle " Clip Fx Editor")

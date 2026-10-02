@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/09/08
- * @version 2.4.18
+ * @date 2026/10/02
+ * @version 2.4.19
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -330,6 +330,10 @@ settingsGUI()
     ;// checklist tooltip
     settingsGUI.AddCheckbox("vchecklistTooltip Checked" UserSettings.checklist_tooltip " Y+5", setJSON.checklistTooltip.title).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
     settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
+
+    ;// Show UIA Icon
+    settingsGUI.AddCheckbox("vshowUIAicon Checked" UserSettings.UIA_show_Icon " Y+5", setJSON.showUIAicon.title).OnEvent("Click", toggle.Bind("UIA_show_Icon", "", ""))
+    settingsGUI["showUIAicon"].ToolTip := (UserSettings.UIA_show_Icon = true) ? setJSON.showUIAicon.tooltip.true : setJSON.showUIAicon.tooltip.false
 
     ;// set UIA on load
     settingsGUI.AddCheckbox("vUIAonReload Checked" UserSettings.Set_UIA_on_reload " Y+5", setJSON.UIAonReload.title).OnEvent("Click", toggle.Bind("Set_UIA_on_reload", "", ""))

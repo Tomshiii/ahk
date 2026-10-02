@@ -745,6 +745,26 @@ export const host = {
 
   isPanelOpen: function () {
     return true;
+  },
+
+  getRegistryJSON: function (): any {
+      var entries = [];
+      for (var key in host) {
+          if (typeof host[key] !== "function") continue;
+
+          // strip comments, then grab what's between the first ( and )
+          var src = host[key].toString().replace(/\/\*[\s\S]*?\*\/|\/\/.*$/mg, "");
+          var m = src.match(/\(([^)]*)\)/);
+          var names = (m && m[1]) ? m[1].match(/[^\s,]+/g) : null;
+          names = names || [];
+
+          var params = [];
+          for (var i = 0; i < names.length; i++) {
+              params.push('{"name":"' + names[i] + '","type":"string","required":true}');
+          }
+          entries.push('"' + key + '":{"params":[' + params.join(",") + ']}');
+      }
+      return "{" + entries.join(",") + "}";
   }
 }
 

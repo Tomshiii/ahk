@@ -161,5 +161,12 @@
       "true": "Premiere UIA values will be set briefly after reloading",
       "false": "Premiere UIA values will not be set after reloading and will need to be set manually"
     }
+  },
+  "showUIAicon": {
+    "title": " Show UIA status icon",
+    "tooltip": {
+      "true": "Show a status icon for the current UIA status",
+      "false": "Hide the UIA status icon"
+    }
   }
 }

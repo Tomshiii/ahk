@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/09/25
- * @version 1.5.18.1
+ * @date 2026/10/02
+ * @version 1.5.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -346,8 +346,6 @@ class AE {
             errorLog(TargetError("AERemote is not installed or function does not exist.", -1, whichFunc),,, true)
             return null
         }
-        if !this.__checkRemoteParams(whichFunc, params, "cep")
-            return null
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
             return null
@@ -397,6 +395,12 @@ class AE {
             }
             this.__cepOpen := true
             CLSID_Objs.writeProp("ae", "__cepOpen", true)
+        }
+
+        ;// param check needs to happen later as it needs to retrieve the json object from the plugin
+        if !this.__checkRemoteParams(whichFunc, params, "cep") {
+            errorLog(TargetError("User passed incorrect Parameters to function.", -2, whichFunc),,, true)
+            return null
         }
 
         paramsString := this.__sanitiseParams(params)
@@ -455,14 +459,32 @@ class AE {
      * This function checks the [AERemote](https://github.com/Tomshiii/PremiereRemote/tree/AE) `index` file for the desired function
      * @param {String | Array} checkFunc the function name (or an array of function names) you wish to search for. ie `projPath`, or `["projPath", "isSelected"]`
      * @param {String} [cepOrUXP=cep] determine whether to check CEP functions. Must be `cep`
+     * @param {Boolean} [alerts=true] determines whether `Notify` alerts will appear for certain failures
      * @returns {Boolean}
      */
-    static __checkAERemoteFunc(checkFunc, cepOrUXP := "cep") {
+    static __checkAERemoteFunc(checkFunc, cepOrUXP := "cep", alerts := true) {
         switch cepOrUXP, 0 {
             case "cep":
                 this.__isRemoteInstalled()
-                if this.__cepInstalled != true
+                if this.__cepInstalled != true {
+                    errorLog(TargetError("AERemote CEP is not installed.", -2),,, true)
+                    notifyExt.showIfNotExist('aeCEPNotInstalled',, "AERemote CEP is not installed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                     return false
+                }
+                try {
+                    open := json.parse(cmd.httpGet(Format("http://localhost:{1}/isPanelOpen", this.portCEP)))
+                    if open["result"] != "true" && open["result"] != true {
+                        errorLog(MethodError("AERemote CEP panel isn't open.", -1))
+                        if alerts = true
+                            notifyExt.showIfNotExist('aeCEPNotOpen',, "AERemote CEP Panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        return false
+                    }
+                } catch {
+                    errorLog(MethodError("AERemote CEP panel isn't open.", -1))
+                    if alerts = true
+                        notifyExt.showIfNotExist('aeCEPNotOpen',, "AERemote CEP Panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                    return false
+                }
                 if !this.__cepFuncMap {
                     if !this.__setCEPfuncs()
                         return false
@@ -479,46 +501,25 @@ class AE {
         }
     }
 
-    /** retrieves all CEP functions, stores them in `__cepFuncMap` along with all paramaters */
+    /** retrieves all CEP functions from the plugin, stores them in `__cepFuncMap` along with all parameters */
     static __setCEPfuncs() {
         this.__isRemoteInstalled()
         if this.__cepInstalled != true
             return false
-        if this.__cepFuncMap != false
+        if IsObject(this.__cepFuncMap)
             return this.__cepFuncMap
-        readFile := FileRead(this.indexFileCEP)
-        funcNames := Map()
-        pos := 1
-        while (pos := RegExMatch(readFile, "(\w+)\s*:\s*function\s*\(", &match, pos)) {
-            params := {set: false}
-            funcParamsString := SubStr(readFile, (openParenth := InStr(readFile, "(",, pos, 1)+1), (InStr(readFile, ")",, openParenth, 1))-openParenth)
-            if funcParamsString = "" {
-                funcNames.Set(match[1], params)
-                pos += match.Len(0)
-                continue
-            }
-            if !InStr(funcParamsString, ",") {
-                p := SubStr(funcParamsString, 1, InStr(funcParamsString, ':')-1)
-                params.arr := [p], params.map := Mip(p, true), params.set := true
-                funcNames.Set(match[1], params)
-                pos += match.Len(0)
-                continue
-            }
-            paramsSplit := StrSplit(funcParamsString, ",", A_Space "`n`r")
-            paramsArr := []
-            paramsMap := Mip()
-            for v in paramsSplit {
-                p := SubStr(v, 1, (splitPoint := InStr(v, ':'))-1)
-                t := LTrim(SubStr(v, splitPoint+1))
-                paramsArr.Push(p)
-                paramsMap.Set(p, t)
-            }
-            params.arr := paramsArr, params.map := paramsMap, params.set := true
-            funcNames.Set(match[1], params)
-            pos += match.Len(0)
-        }
-        this.__cepFuncMap := funcNames
-        return funcNames
+
+        resp := cmd.httpGet(Format("http://localhost:{1}/getRegistryJSON", this.portCEP))
+        if resp == null || resp = ""
+            return false
+        try {
+            outer := JSON.parse(resp)
+            registry := JSON.parse(outer["result"])
+        } catch
+            return false
+        if !(registry is Map)
+            return false
+        return this.__cepFuncMap := registry
     }
 
     /**
@@ -535,21 +536,62 @@ class AE {
                     return false
                 if !this.__cepFuncMap.Has(whichFunc)
                     return false
-                for v in params {
-                    if !InStr(v, '=') {
-                        MsgBox("Parameter not specified`nFunction: " whichFunc,, "262160")
+                funcPath := whichFunc
+                defs := this.__cepFuncMap[whichFunc]["params"]
+            default:
+                return false
+        }
+
+        passed := []
+        for v in params {
+            if !InStr(v, '=') {
+                MsgBox("Parameter not specified`nFunction: " funcPath,, "262160")
+                return false
+            }
+            splt := StrSplit(v, '=',, 2)
+            name := splt[1], value := splt[2]
+
+            def := false
+            for p in defs {
+                if p["name"] == name {
+                    def := p
+                    break
+                }
+            }
+            if !def {
+                MsgBox("Parameter not found for given function`n`nParam: " name "`nFunction: " funcPath "`ncepOrUXP: " cepOrUXP)
+                return false
+            }
+
+            switch def["type"], 0 {
+                case "boolean":
+                    if value != "true" && value != "false" {
+                        MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be boolean (true/false)")
                         return false
                     }
-                    splt := StrSplit(v, '=',, 2)
-                    for v in splt {
-                        if Mod(A_Index, 2) = 0
-                            continue
-                        if !this.__cepFuncMap[whichFunc].map.has(v) {
-                            MsgBox("Parameter not found for given function`n`nParam: " v "`nFunction: " whichFunc "`ncepOrUXP: " cepOrUXP)
-                            return false
-                        }
+                case "number":
+                    if !IsNumber(value) {
+                        MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be a number")
+                        return false
                     }
+            }
+            passed.Push(name)
+        }
+
+        for p in defs {
+            if !p["required"]
+                continue
+            found := false
+            for n in passed {
+                if n == p["name"] {
+                    found := true
+                    break
                 }
+            }
+            if !found {
+                MsgBox("Required parameter missing`n`nParam: " p["name"] "`nFunction: " funcPath "`ncepOrUXP: " cepOrUXP)
+                return false
+            }
         }
         return true
     }
