@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/10/02
- * @version 1.5.0
+ * @date 2026/10/03
+ * @version 1.5.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -67,7 +67,7 @@ class UserPref {
         "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
         "Use_Thio_MButton", "false", "Use_MButton", "true",
         "Use_swapSequences", "true",
-        "Set_UIA_on_reload", "true", "UIA_show_Icon", "true",
+        "Set_UIA_on_reload", "true", "Remote_show_Icon", "true", "Remote_ignore_uxp", "false",
 
         ;// [Adjust]
         "adobe_GB", 100, "adobe_FS", 2,
@@ -332,7 +332,8 @@ class UserPref {
         disc disable autoreply={}
         adobeExeOverride={}
         Set UIA on reload={}
-        UIA show Icon={}
+        Remote show Icon={}
+        Remote ignore uxp={}
         Use Thio MButton={}
         Use MButton={}
         Use swapSequences={}

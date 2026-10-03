@@ -38,6 +38,6 @@
 
 🔗 `determineUIA.ahk`
 - ✅ Fixed function failing to properly close during `reloadAll.ahk`
-- 📋 Will now show a status icon for the connection status of the `cep` & `uxp` sockets
+- 📋 Will now show a status icon for the connection status of the `cep` & `uxp` sockets/panels
     - Can be disabled in `settingsGUI()`  
     <img width="222" height="74" alt="cep_uxp_status" src="https://github.com/user-attachments/assets/0713ea6f-e8b7-4aa4-a54d-f8a03710e2a1" />

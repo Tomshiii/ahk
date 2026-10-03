@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/02
- * @version 2.5.71
+ * @date 2026/10/03
+ * @version 2.5.72
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -367,7 +367,6 @@ class Prem {
 
         iconConnected := ptf.Icons "\" which ".ico"
         iconDisonnected := ptf.Icons "\" which "_err.ico"
-        imgIcon := (state=1) ? iconConnected : iconDisonnected
         premTitle := WinGet.PremName()
         checkType := (Type(premTitle) != "Object")
         checkTitle := isObjHasProp(premTitle, "winTitle", false) && isObjHasProp(premTitle, "titleCheck", -1) && isObjHasProp(premTitle, "saveCheck", -1)
@@ -380,10 +379,20 @@ class Prem {
             __stateReset(which)
             return
         }
+        checkPanelCommand := (which = "cep") ? Format("http://localhost:{2}/{1}", "isPanelOpen", this.portCEP) : Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP)
+        switch which {
+            case "cep": this.__%which%Open := (cmd.httpGet(checkPanelCommand, true) == '{"message":"ok.","result":"true"}') ? true : false
+            case "uxp":
+                resp := cmd.httpGet(checkPanelCommand, true)
+                this.__%which%Open := ( resp == true || resp == "true") ? true : false
+        }
+
+        newState := (state=1 && this.__%which%Open = true)
+        imgIcon := newState ? iconConnected : iconDisonnected
         if this.%which%Icon != false {
-            if state != this.%which%IconState {
+            if newState != this.%which%IconState {
                 this.%which%Icon.SetIcon(imgIcon)
-                this.%which%IconState := state
+                this.%which%IconState := newState
             }
             return
         }
@@ -397,7 +406,7 @@ class Prem {
 
         this.%which%Icon := statusIcon(imgIcon,,, 16)
         this.%which%Icon.follow(this._scan.hwnd, bX+4, tY+7, true, 5)
-        this.%which%IconState := state
+        this.%which%IconState := newState
         timelineObj := ""
     }
 

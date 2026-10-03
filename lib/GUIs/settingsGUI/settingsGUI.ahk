@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/10/02
- * @version 2.4.19
+ * @date 2026/10/03
+ * @version 2.4.20
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -122,8 +122,8 @@ settingsGUI()
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! Top Titles
     settingsGUI.AddText("W100 H20 xs Y7", "✔️ Toggle").SetFont("S13 Bold")
-    settingsGUI.AddText("W100 H20 x+361", "↩ Adjust").SetFont("S13 Bold")
-    settingsGUI.AddButton("W23 H22 x+125", "❓").OnEvent("Click", (*) => (Run("https://github.com/Tomshiii/ahk/wiki/settingsGUI()")))
+    settingsGUI.AddText("W100 H20 x+366", "↩ Adjust").SetFont("S13 Bold")
+    settingsGUI.AddButton("W23 H22 x+130", "❓").OnEvent("Click", (*) => (Run("https://github.com/Tomshiii/ahk/wiki/settingsGUI()")))
 
     ;----------------------------------------------------------------------------------------------------------------------------------
     ;//! checkboxes
@@ -331,12 +331,16 @@ settingsGUI()
     settingsGUI.AddCheckbox("vchecklistTooltip Checked" UserSettings.checklist_tooltip " Y+5", setJSON.checklistTooltip.title).OnEvent("Click", msgboxToggle.Bind("checklist tooltip"))
     settingsGUI["checklistTooltip"].ToolTip := (UserSettings.checklist_tooltip = true) ? setJSON.checklistTooltip.tooltip.true : setJSON.checklistTooltip.tooltip.false
 
-    ;// Show UIA Icon
-    settingsGUI.AddCheckbox("vshowUIAicon Checked" UserSettings.UIA_show_Icon " Y+5", setJSON.showUIAicon.title).OnEvent("Click", toggle.Bind("UIA_show_Icon", "", ""))
-    settingsGUI["showUIAicon"].ToolTip := (UserSettings.UIA_show_Icon = true) ? setJSON.showUIAicon.tooltip.true : setJSON.showUIAicon.tooltip.false
+    ;// Show PremiereRemote Icon
+    settingsGUI.AddCheckbox("vshowRemoteicon Checked" UserSettings.Remote_show_Icon " Y+5", setJSON.showRemoteicon.title).OnEvent("Click", toggle.Bind("Remote_show_Icon", "", ""))
+    settingsGUI["showRemoteicon"].ToolTip := (UserSettings.Remote_show_Icon = true) ? setJSON.showRemoteicon.tooltip.true : setJSON.showRemoteicon.tooltip.false
+
+    ;// PremiereRemote status ignore uxp
+    settingsGUI.AddCheckbox("vRemoteignoreUXP Checked" UserSettings.Remote_ignore_uxp " Y+5 xs+15", setJSON.RemoteignoreUXP.title).OnEvent("Click", toggle.Bind("Remote_ignore_uxp", "", ""))
+    settingsGUI["RemoteignoreUXP"].ToolTip := (UserSettings.Remote_ignore_uxp = true) ? setJSON.RemoteignoreUXP.tooltip.true : setJSON.RemoteignoreUXP.tooltip.false
 
     ;// set UIA on load
-    settingsGUI.AddCheckbox("vUIAonReload Checked" UserSettings.Set_UIA_on_reload " Y+5", setJSON.UIAonReload.title).OnEvent("Click", toggle.Bind("Set_UIA_on_reload", "", ""))
+    settingsGUI.AddCheckbox("vUIAonReload Checked" UserSettings.Set_UIA_on_reload " xs Y+5", setJSON.UIAonReload.title).OnEvent("Click", toggle.Bind("Set_UIA_on_reload", "", ""))
     settingsGUI["UIAonReload"].ToolTip := (UserSettings.Set_UIA_on_reload = true) ? setJSON.UIAonReload.tooltip.true : setJSON.UIAonReload.tooltip.false
 
     /**
