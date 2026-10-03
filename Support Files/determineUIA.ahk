@@ -2,7 +2,7 @@
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
  * @date 2026/10/02
- * @version 1.0.18
+ * @version 1.0.19
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -127,13 +127,15 @@ try {
 ;// this needs to be a live read - otherwise if the user changes it to `false` in `settingsGUI.ahk` then reloads
 ;// the code to reopen `determineUIA.ahk` on reload can retrieve the old setting
 uiaIconSet := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "UIA show Icon", false)
+uiaIgnoreUXP := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "UIA ignore uxp", false)
 if uiaIconSet != false && uiaIconSet != "false" {
     SetTimer(__pollRemoteIcons.bind(premUIAobj), 2000)
     __pollRemoteIcons(premUIAobj, *) {
         try {
             p := CLSID_Objs.loadProp("prem", ["remoteActiveCEP", "remoteActiveUXP"])
             prem.__setRemoteIcon("cep", p["remoteActiveCEP"] = true, premUIAobj)
-            prem.__setRemoteIcon("uxp", p["remoteActiveUXP"] = true, premUIAobj)
+            if uiaIgnoreUXP != true
+                prem.__setRemoteIcon("uxp", p["remoteActiveUXP"] = true, premUIAobj)
         }
     }
 }
