@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/03
- * @version 2.5.72
+ * @date 2026/10/06
+ * @version 2.5.73
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -361,8 +361,8 @@ class Prem {
         if !IsSet(uiaObj) {
             throw MethodError("Parameter #3 isn't set.")
         }
-        uiaIconSet := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "UIA show Icon", false)
-        if !uiaIconSet || uiaIconSet = "false"
+        remoteIconSet := IniRead(A_MyDocuments "\tomshi\settings.ini", "Settings", "Remote show Icon", false)
+        if !remoteIconSet || remoteIconSet = "false"
             return
 
         iconConnected := ptf.Icons "\" which ".ico"
