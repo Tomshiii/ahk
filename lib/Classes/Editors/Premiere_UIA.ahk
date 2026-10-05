@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/10/02
- * @version 3.0.45
+ * @date 2026/10/06
+ * @version 3.0.46
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -382,7 +382,7 @@ class premUIA_Values {
         scriptTitle := winExt.TitleRegex(this.scriptTitle,,,, true)
         if !scriptTitle
             return false
-        if !winExt.ExistRegex(scriptTitle,,,, true)
+        if !winExt.ExistRegex(this.scriptTitle,,,, true)
             return false
         return true
     }
@@ -418,6 +418,7 @@ class premUIA_Values {
         if !determineUIAExist {
             Run(this.scriptLoc)
             Critical('Off')
+            errorLog(MethodError("Script location doesn't exist."))
             return false
         }
 
@@ -425,8 +426,10 @@ class premUIA_Values {
         catch {
             try {
                 isRunning := CLSID_Objs.loadProp("determineActive", "isRunning")
-                if isRunning = true
+                if isRunning = true {
+                    errorLog(MethodError("Initialising UIA Object is already in progress."))
                     return false
+                }
             }
             errorLog(TargetError("Script could not interact with ``determineUIA.ahk``. Script will reload.", -1))
             try WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk")
@@ -449,6 +452,7 @@ class premUIA_Values {
                 return uiaObj
             default:
                 ;// registered but not yet started - shouldn't normally happen
+                errorLog(MethodError("Initialising UIA Object seemingly failed."))
                 Critical('Off')
                 return false
         }
