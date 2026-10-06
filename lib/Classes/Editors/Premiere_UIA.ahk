@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/10/06
- * @version 3.0.46
+ * @version 3.0.47
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -39,6 +39,7 @@ class premUIA_Values {
     static UIA_Objs := Map()
     static UIA_Path := Map()
     static UIA_Hwnd := Map()
+    static allPanes := Map()
     static AdobeEl  := false
     static determineUIA_PID := false
     static scriptTitle := "determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
@@ -176,6 +177,46 @@ class premUIA_Values {
         }
     }
 
+    /** sets a class param with a map containing all open `pane` windows with their coords */
+    static __setAllPanes() {
+        el := this.AdobeEl.FindCachedElements({type: 50033}, 2)
+        for i, v in el {
+            this.allPanes.Set(v.NativeWindowHandle, {x: v.location.x, y: v.location.y, w: v.location.w, h: v.location.h})
+        }
+    }
+
+    /**
+     * Checks the currently open panels and their coordinates and checks them against the saved map to determine if they have been moved.
+     * @param {ComObj} [determineObj=unset] paramater to pass in an already set `determineUIA` UIA object. If not set will be determined
+     * @returns {null | boolean}
+     */
+    static __checkPanes(determineObj?) {
+        __getDetermine() {
+            try return CLSID_Objs.loadProp("determineUIA", "allPanes")
+            catch {
+                return null
+            }
+        }
+        uiaEl := IsSet(determineObj) ? determineObj : __getDetermine()
+        if uiaEl == null || !uiaEl
+            return null
+        for k, v in uiaEl {
+            try check := UIA.ElementFromHandle(k,, false)
+            catch {
+                ;// set img red
+                ;// set values
+                return false
+            }
+            tempObj := {x: check.location.x, y: check.location.y, w: check.location.w, h: check.location.h}
+            if !obj.isEqual(tempObj, v) {
+                ;// set img red
+                ;// set values
+                return false
+            }
+        }
+        return true
+    }
+
     static toolsMap := Map(
         "Selection Tool", {uia: "selectionTool", ksa: "selectionTool"},
         "Track Select Forward Tool", {uia: "trackForward", ksa: "trackForward"},
@@ -292,6 +333,7 @@ class premUIA_Values {
                 __DelNotify()
                 throw UnsetError("throw code:701")
             }
+            this.__setAllPanes()
 
             this.UIA_Objs["timelineWindow"]  := __TryCatchUIAobj("Timeline", "obj", "702")
             this.UIA_Path["timelineWindow"]  := __TryCatchUIAobj("Timeline", "path", "702", "timelineWindow")
