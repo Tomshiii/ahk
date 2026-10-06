@@ -79,7 +79,7 @@ $Tab::
 			return
 		}
 	}
-	prem.swapPreviousSequence()
+	prem.swapPreviousSequence(2)
 }
 
 Space:: ;// make space more useful by closing certain windows

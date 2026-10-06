@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/10/03
- * @version 1.5.1
+ * @date 2026/10/06
+ * @version 1.5.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -66,7 +66,6 @@ class UserPref {
         "checklist_hotkeys", "true", "checklist_tooltip", "true", "checklist_wait", "false",
         "tooltip", "true", "disc_disable_autoreply", "true", "adobeExeOverride", "true",
         "Use_Thio_MButton", "false", "Use_MButton", "true",
-        "Use_swapSequences", "true",
         "Set_UIA_on_reload", "true", "Remote_show_Icon", "true", "Remote_ignore_uxp", "false",
 
         ;// [Adjust]
@@ -76,7 +75,7 @@ class UserPref {
         "premVer", "v26.2", "aeVer", "v26.0", "psVer", "25.5", "resolveVer", "v18.5",
         "premIsBeta", "false", "aeIsBeta", "false", "psIsBeta", "false",
         "premCache", A_AppData "\Adobe\Common", "aeCache", A_AppData "\Adobe\Common",
-        "premDefaultTheme", "Darkest", "premPrevSeqDelay", "1.5", "premSwapSequencesLimit", 3,
+        "premDefaultTheme", "Darkest", "premSwapSequencesLimit", 3,
         "alternate_MButton_Key", "~F18",
         "toggleEnabled_ignore", "5",
 
@@ -336,7 +335,6 @@ class UserPref {
         Remote ignore uxp={}
         Use Thio MButton={}
         Use MButton={}
-        Use swapSequences={}
 
         [Adjust]
         adobe GB={}
@@ -359,7 +357,6 @@ class UserPref {
         aeCache={}
         premDefaultTheme={}
         alternate MButton Key={}
-        premPrevSeqDelay={}
         toggleEnabled ignore={}
 
         [Track]
