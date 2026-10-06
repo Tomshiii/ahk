@@ -3,6 +3,7 @@
 ## Functions
 - ✏️ Added `statusIcon {`
 - ✅ Fixed `settings.ini` values getting reset if a key is added
+- ✅ Fixed `adobeXML {` flooding the logs with empty values when a hotkey isn't found
 - 📋 Increased default `adobe_GB` value from `45` => `100`
 
 ### 📝 `prem {`

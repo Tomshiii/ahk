@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2026/09/17
- * @version 1.2.4
+ * @date 2026/10/06
+ * @version 1.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -95,7 +95,7 @@ class cmd {
      */
     static httpGet(url, async := false) {
         try {
-            static whr := ComObject("WinHttp.WinHttpRequest.5.1")
+            whr := ComObject("WinHttp.WinHttpRequest.5.1")
             whr.Open("GET", url, async)  ;// false = synchronous
             whr.Send()
             if async = true
