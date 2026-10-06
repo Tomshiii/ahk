@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2025/12/20
- * @version 1.2.0
+ * @date 2026/10/06
+ * @version 1.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -269,5 +269,32 @@ class obj {
         if var = "timed out"
             return false
         return {x: var.x, y: var.y}
+    }
+
+    /** quick and dirty check to see if two objects are equal
+     * @param {Object} [a/b] the two objects you wish to compare
+     * @returns {boolean}
+    */
+    static isEqual(a, b) {
+        if !IsObject(a) || !IsObject(b) {
+            errorLog(TypeError("Parameters must be objects", -1),,, true)
+            return false
+        }
+        if ObjOwnPropCount(a) != ObjOwnPropCount(b)
+            return false
+        for name, val in a.OwnProps() {
+            if !b.HasOwnProp(name)
+                return false
+            bVal := b.%name%
+            if IsObject(val) && IsObject(bVal) {
+                if !this.isEqual(val, bVal)
+                    return false
+            } else if IsObject(val) || IsObject(bVal) {
+                return false
+            } else if val != bVal {
+                return false
+            }
+        }
+        return true
     }
 }

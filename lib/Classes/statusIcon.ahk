@@ -144,7 +144,7 @@ class statusIcon {
      * @param {Integer} [dx]  x value, offset from the target window's CLIENT-area top-left corner
      * @param {Integer} [dy]  y value, offset from the target window's CLIENT-area top-left corner
      * @param {Boolean} [activeOnly=true] only show the icon while the target window is the active window. The icon is hidden when the window doesn't exist or is minimized.
-     * @param {Integer} [active=50] the interval passed to `SetTimer`. How frequently the position will be checked
+     * @param {Integer} [interval=50] the interval passed to `SetTimer`. How frequently the position will be checked
      */
     Follow(winTitle, dx := 0, dy := 0, activeOnly := true, interval := 50) {
         this.StopFollowing()
