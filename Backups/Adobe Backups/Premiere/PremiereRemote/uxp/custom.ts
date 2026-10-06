@@ -1883,13 +1883,13 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
         return "null_version_26.3"
     const project = await ppro.Project.getActiveProject();
     if (!project) {
-        alert("No active project.");
+        helpers.notify("No active project.");
         return;
     }
 
     const sequence = await project.getActiveSequence();
     if (!sequence) {
-        alert("No active sequence.");
+        helpers.notify("No active sequence.");
         return;
     }
 
@@ -1898,7 +1898,7 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
         ppro.SequenceEditor.getEditor(sequence),
     ]);
     if (!rawProjItem) {
-        alert('Could not find adjustment layer at path: "' + adjustmentLayerPath + '"');
+        helpers.notify('Could not find adjustment layer at path: "' + adjustmentLayerPath + '"');
         return;
     }
     const clipProjItem = await ppro.ClipProjectItem.cast(rawProjItem);
@@ -1911,7 +1911,7 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
     const selectedEntries = await helpers.gatherSelectedVideoClips(sequence, videoTrackCount);
 
     if (selectedEntries.length === 0) {
-        alert("No video clips are selected in the timeline.");
+        helpers.notify("No video clips are selected in the timeline.");
         return;
     }
 
@@ -1932,7 +1932,7 @@ export async function addMatchedAdjustmentLayer(adjustmentLayerPath: string, mak
 
     const durationTime = overallEnd.subtract(overallStart);
     if (durationTime.seconds <= 0) {
-        alert("Invalid selection duration.");
+        helpers.notify("Invalid selection duration.");
         return;
     }
 
@@ -2212,13 +2212,13 @@ export async function nestSelectionReplaceNestedAudio(
         return "null_version_26.3"
     const project = await ppro.Project.getActiveProject();
     if (!project) {
-        alert("No active project.");
+        helpers.notify("No active project.");
         return;
     }
 
     const sequence = await project.getActiveSequence();
     if (!sequence) {
-        alert("No active sequence.");
+        helpers.notify("No active sequence.");
         return;
     }
 
@@ -2238,7 +2238,7 @@ export async function nestSelectionReplaceNestedAudio(
     ]);
 
     if (selectedVideoEntries.length === 0 && selectedAudioEntries.length === 0) {
-        alert("No clips are selected in the timeline.");
+        helpers.notify("No clips are selected in the timeline.");
         return;
     }
 
@@ -2268,12 +2268,12 @@ export async function nestSelectionReplaceNestedAudio(
     // --- Step 2: build the nest. ---
     const subsequence = await sequence.createSubsequence(ignoreTrackTargeting);
     if (!subsequence) {
-        alert("Failed to create subsequence.");
+        helpers.notify("Failed to create subsequence.");
         return;
     }
     const nestedProjItem = await subsequence.getProjectItem();
     if (!nestedProjItem) {
-        alert("Could not resolve the nested item -- skipping timeline replacement.");
+        helpers.notify("Could not resolve the nested item -- skipping timeline replacement.");
         return;
     }
     const clipProjItem = await ppro.ClipProjectItem.cast(nestedProjItem);
@@ -2499,18 +2499,20 @@ export async function isPanelOpen(): Promise<boolean> {
 }
 
 /**
- * match selected clips to the clip on the lowest track index
+ * Match selected clips to the span of the selected clip(s) on the lowest track index.
+ * If several clips are selected on that lowest track, the earliest start and the latest end define the range.
+ * @returns {void}
  */
 export async function matchSelectedClipsToLowestTrack(): Promise<void> {
     const project = await ppro.Project.getActiveProject();
     if (!project) {
-        alert("No active project.");
+        helpers.notify("No active project.");
         return;
     }
 
     const sequence = await project.getActiveSequence();
     if (!sequence) {
-        alert("No active sequence.");
+        helpers.notify("No active sequence.");
         return;
     }
 
@@ -2519,49 +2521,58 @@ export async function matchSelectedClipsToLowestTrack(): Promise<void> {
     const selectedEntries = await helpers.gatherSelectedVideoClips(sequence, videoTrackCount);
 
     if (selectedEntries.length === 0) {
-        alert("No video clips are selected in the timeline.");
-        return;
-    }
-    if (selectedEntries.length === 1) {
+        helpers.notify("No video clips are selected in the timeline.");
         return;
     }
 
-    // Find the entry on the lowest track index (ties broken by earliest start)
-    let referenceEntry = selectedEntries[0];
-    for (const entry of selectedEntries) {
-        if (
-            entry.trackIndex < referenceEntry.trackIndex ||
-            (entry.trackIndex === referenceEntry.trackIndex &&
-                entry.start.ticksNumber < referenceEntry.start.ticksNumber)
-        ) {
-            referenceEntry = entry;
-        }
+    // --- Reference group: all selected clips on the lowest track index ---
+    let lowestTrack = selectedEntries[0].trackIndex;
+    for (const e of selectedEntries) {
+        if (e.trackIndex < lowestTrack) lowestTrack = e.trackIndex;
     }
 
-    const refStart = referenceEntry.start;
-    const refEnd = referenceEntry.end;
-    if (refEnd.ticksNumber - refStart.ticksNumber <= 0) {
-        alert("Invalid reference clip duration.");
+    const referenceEntries = selectedEntries.filter((e) => e.trackIndex === lowestTrack);
+    const targets = selectedEntries.filter((e) => e.trackIndex !== lowestTrack);
+
+    if (targets.length === 0) {
+        helpers.notify("Select at least one clip on a higher track than the reference clip(s).");
+        return;
+    }
+
+    // Earliest start / latest end across the reference clips
+    let refStart = referenceEntries[0].start;
+    let refEnd = referenceEntries[0].end;
+    for (const e of referenceEntries) {
+        if (e.start.ticksNumber < refStart.ticksNumber) refStart = e.start;
+        if (e.end.ticksNumber > refEnd.ticksNumber) refEnd = e.end;
+    }
+    const refStartTicks = refStart.ticksNumber;
+    const refEndTicks = refEnd.ticksNumber;
+    if (refEndTicks - refStartTicks <= 0) {
+        helpers.notify("Invalid reference range.");
         return;
     }
 
     const selectedItems = new Set(selectedEntries.map((e) => e.item));
 
-    // Validate against unselected neighbors before touching anything.
-    // Targets are checked in parallel; results come back in target order, so the
-    // "blocked" list reads the same as the old sequential version.
+    // --- Validate against unselected neighbors on each target's track ---
+    // The edit happens in two steps, so the clip temporarily covers the union of its
+    // old range and the new range; check that whole span.
     const blockedResults = await Promise.all(
-        selectedEntries.map(async (target) => {
-            if (target.item === referenceEntry.item) return null;
-
+        targets.map(async (target) => {
             const track = await sequence.getVideoTrack(target.trackIndex);
             const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
 
+            const lo = Math.min(refStartTicks, target.start.ticksNumber);
+            const hi = Math.max(refEndTicks, target.end.ticksNumber);
+
             const others = items.filter((other: any) => other !== target.item && !selectedItems.has(other));
-            const overlaps = await Promise.all(others.map(async (other: any) => {
-                const [otherStart, otherEnd] = await Promise.all([other.getStartTime(), other.getEndTime()]);
-                return otherStart.ticksNumber < refEnd.ticksNumber && otherEnd.ticksNumber > refStart.ticksNumber;
-            }));
+            const overlaps = await Promise.all(
+                others.map(async (other: any) => {
+                    const [otherStart, otherEnd] = await Promise.all([other.getStartTime(), other.getEndTime()]);
+                    return otherStart.ticksNumber < hi && otherEnd.ticksNumber > lo;
+                })
+            );
 
             return overlaps.some(Boolean) ? await target.item.getName() : null;
         })
@@ -2569,28 +2580,47 @@ export async function matchSelectedClipsToLowestTrack(): Promise<void> {
     const blocked = blockedResults.filter((n): n is string => n !== null);
 
     if (blocked.length > 0) {
-        alert(
+        helpers.notify(
             "Cannot match the following clip(s) to the reference range -- an unselected " +
             "clip is in the way on the same track: " + blocked.join(", ")
         );
         return;
     }
 
-    await project.lockedAccess(() => {
-        return project.executeTransaction((compoundAction) => {
-            for (const target of selectedEntries) {
-                if (target.item === referenceEntry.item) continue;
+    // --- Apply in two passes (see earlier explanation) ---
+    //   Moving later:   extend end first, then trim start.
+    //   Moving earlier: extend start first, then trim end.
+    const movesLater = (t: any) => refStartTicks > t.start.ticksNumber;
+    const needsStart = (t: any) => t.start.ticksNumber !== refStartTicks;
+    const needsEnd = (t: any) => t.end.ticksNumber !== refEndTicks;
 
-                const endFirst = refStart.ticksNumber < target.start.ticksNumber;
-
-                if (endFirst) {
-                    compoundAction.addAction(target.item.createSetEndAction(refEnd));
-                    compoundAction.addAction(target.item.createSetStartAction(refStart));
-                } else {
-                    compoundAction.addAction(target.item.createSetStartAction(refStart));
-                    compoundAction.addAction(target.item.createSetEndAction(refEnd));
+    const pass1 = targets.filter((t) => (movesLater(t) ? needsEnd(t) : needsStart(t)));
+    if (pass1.length > 0) {
+        await project.lockedAccess(() =>
+            project.executeTransaction((ca) => {
+                for (const t of pass1) {
+                    ca.addAction(
+                        movesLater(t)
+                            ? t.item.createSetEndAction(refEnd)
+                            : t.item.createSetStartAction(refStart)
+                    );
                 }
-            }
-        }, "Match selected clips to lowest track");
-    });
+            }, "Match selected clips to lowest track (1/2)")
+        );
+    }
+
+    const pass2 = targets.filter((t) => (movesLater(t) ? needsStart(t) : needsEnd(t)));
+    if (pass2.length > 0) {
+        await project.lockedAccess(() =>
+            project.executeTransaction((ca) => {
+                for (const t of pass2) {
+                    ca.addAction(
+                        movesLater(t)
+                            ? t.item.createSetStartAction(refStart)
+                            : t.item.createSetEndAction(refEnd)
+                    );
+                }
+            }, "Match selected clips to lowest track (2/2)")
+        );
+    }
 }

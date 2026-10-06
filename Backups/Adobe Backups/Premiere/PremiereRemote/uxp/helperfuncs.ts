@@ -39,3 +39,12 @@ export async function isPremVerAtLeast(minVersion: string): Promise<boolean> {
     const currentVersion = await prop.getPremVer();
     return compareVersions(currentVersion, minVersion) >= 0;
 }
+
+/** UXP in this host has no global alert, so fall back to the console. */
+export function notify(message: string): void {
+    const a = (globalThis as any).alert;
+    if (typeof a === "function") {
+        try { a(message); return; } catch { /* fall through */ }
+    }
+    console.warn("[matchSelectedClipsToLowestTrack] " + message);
+}

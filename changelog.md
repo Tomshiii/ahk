@@ -22,6 +22,7 @@
 
 📍 `UXP`
 - ✅ Fixed `saveEffectSlotJSON()`/`applyEffectSlotJSON()`
+- ✅ Fixed `matchSelectedClipsToLowestTrack()` throwing in some scenarios
 - 📋 Adjust multiple functions to retrieve information concurrently
 - 📋 Moved alot of functions into their own files to organise them a bit better
     - `replacePremRemote.ahk` will now work correctly for any `.ts` files stored in folders
