@@ -1,8 +1,8 @@
 /************************************************************************
  * @description parse premiere xml, excalibur xml, photoshop xml, and after effects ini keyboard shortcut files
  * @author tomshi
- * @date 2026/05/28
- * @version 1.3.0
+ * @date 2026/10/06
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -242,13 +242,14 @@ class adobeXML {
                 getItemNum   := nodes[which-1].nodename
                 secondPrompt := Format('{}[commandname="{}"]', start "/" getItemNum, codename)
                 getModifiers := this.__retriveModifiers(secondPrompt)
-                virtkey := this.__convVirtToKey(this.xml.selectSingleNode(secondPrompt "/virtualkey").text)
-                getKey  := (virtkey != -1) ? virtkey : "false"
-                if getKey == "false" {
+                vkNode := this.xml.selectSingleNode(secondPrompt "/virtualkey")
+                if !vkNode
                     return {isSet: false}
-                }
-                getKey := this.__wrapKey(getKey)
-                return (getModifiers getKey)
+
+                virtkey := this.__convVirtToKey(vkNode.text)
+                if IsObject(virtkey)
+                    return virtkey
+                return getModifiers this.__wrapKey(virtkey)
             }
         } catch as e {
             errorLog(e)

@@ -42,7 +42,6 @@ async function onActivated(e) {
 }
 
 async function onClosed(e) {
-    console.log("seq closed event:", e, e?.target);
     forget(idFromEvent(e));
 }
 
@@ -63,7 +62,8 @@ async function init() {
 init();
 
 /**
- * Exposed to AHK via PremiereRemote (register it the same way as your existing functions)
+ * Swap between previously active sequences. Closing sequences will remove them from the list.
+ * @param {number} [count=unset] The amount of sequences you wish to toggle between. If left unset, will toggle between the previous 10
  */
 export async function swapPreviousSequence(count?: number) {
     const parsed = Number(count);

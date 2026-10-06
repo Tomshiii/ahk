@@ -787,14 +787,13 @@ class Prem {
 
     /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) function
-     * @param {String} whichFunc the function you wish to call
-     * @param {Boolean} [runAsync=false] determines whether tell `cmd.httpGet()` to run synchronously or asynchronously
-     * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
-     *
      * ## Warning
      *
      * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
      * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead. This function will attempt to rectify the issue itself but again, relying on such could result in issues.
+     * @param {String} whichFunc the function you wish to call
+     * @param {Boolean} [runAsync=false] determines whether tell `cmd.httpGet()` to run synchronously or asynchronously
+     * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
      * @returns {String | Boolean | null}
      */
     static __remoteFunc(whichFunc, runAsync := false, params*) {
@@ -983,14 +982,13 @@ class Prem {
 
     /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) uxp function. This function is in testing as `PremiereRemote` uxp functionality is still in development
-     * @param {String} whichFunc the function you wish to call. **must include the file name**, eg. `common/getActiveSequenceName`
-     * @param {Boolean} [runAsync=false] determines whether tell `cmd.httpGet()` to run synchronously or asynchronously
-     * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
-     *
      * ## Warning
      *
      * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
      * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead. This function will attempt to rectify the issue itself but again, relying on such could result in issues.
+     * @param {String} whichFunc the function you wish to call. **must include the file name**, eg. `common/getActiveSequenceName`. If the file is stored in a folder, the entire path must be passed, eg. `shared/storeSequence/swapPreviousSequence`
+     * @param {Boolean} [runAsync=false] determines whether tell `cmd.httpGet()` to run synchronously or asynchronously
+     * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
      * @returns {String | Boolean | null}
      */
     static __remoteUXP(whichFunc, runAsync := false, params*) {
