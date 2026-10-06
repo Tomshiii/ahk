@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/06
- * @version 2.5.73
+ * @version 2.5.74
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -85,7 +85,7 @@ class Prem {
         if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) && !this.__ignoreWinExist() {
             try {
                 activeObj := CLSID_Objs.load("prem")
-                ignoreProps := Map('__checkedInstall', true, "ignoreWins", true, "KSA", true, "defaultTheme", true, "prevSeqDelay", true, "useSwapSequences", true, "toggleableButtons", true)
+                ignoreProps := Map('__checkedInstall', true, "ignoreWins", true, "KSA", true, "defaultTheme", true, "toggleableButtons", true)
                 for propName, propVal in activeObj.OwnProps() {
                     if this.HasProp(propName) && !ignoreProps.Has(propName) {
                         try this.%propName% := propVal
@@ -106,11 +106,8 @@ class Prem {
             ;// check for premremote and NPM before setting timers
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
             if (getNPM != false && getNPM != "") {
-                if this.__isRemoteInstalled() != false {
-                    if (this.useSwapSequences = true || this.useSwapSequences = "true")
-                        SetTimer(this.__setCurrSeq.Bind(this), this.prevSeqDelay)
+                if this.__isRemoteInstalled() != false
                     SetTimer(this.__checkRemote.Bind(this), 2000)
-                }
                 if this.__isUXPInstalled() != false
                     SetTimer(this.__checkRemoteUXP.Bind(this), 2000)
             }
@@ -210,16 +207,6 @@ class Prem {
     }
     static UI := "Spectrum"
     static defaultUI := "Spectrum"
-    static sequenceArr := []
-    static resetSeqTimer := false
-    static prevSeqDelay {
-        get => (this.UserSettings.premPrevSeqDelay * 1000)
-
-    }
-    static pauseSeqTimer := false
-    static useSwapSequences {
-        get => this.UserSettings.use_swapSequences
-    }
     static remoteActiveCEP := "loading"
     static remoteActiveUXP := "loading"
     static portCEP := 8081
@@ -787,20 +774,15 @@ class Prem {
      * @returns {String} the completed parameter string
      */
     static __sanitiseParams(params) {
-        paramsString := ""
-        if params.Length >= 1 {
-            for k, v in params {
-                if k = 1 {
-                    paramsString := StrReplace(v, "&", "%26")
-                    if params.Length == 1
-                        break
-                    continue
-                }
-                replaceStr := StrReplace(v, "&", "%26")
-                paramsString := paramsString "&" replaceStr
-            }
+        clean := []
+        for v in params {
+            if v != ""
+                clean.Push(StrReplace(StrReplace(v, "&", "%26"), A_Space, "%20"))
         }
-        return StrReplace(paramsString, A_Space, "%20")
+        paramsString := ""
+        for i, v in clean
+            paramsString .= (i = 1 ? "" : "&") v
+        return paramsString
     }
 
     /**
@@ -945,6 +927,8 @@ class Prem {
 
         passed := []
         for v in params {
+            if v = ""
+                continue
             if !InStr(v, '=') {
                 MsgBox("Parameter not specified`nFunction: " funcPath,, "262160")
                 return false
@@ -4494,103 +4478,17 @@ $!WheelDown::
         }
     }
 
-    /** handles setting a timer to check the user's current open sequence. This timer provides functionality to `swapPreviousSequence()` */
-    static __setCurrSeq(*) {
-        ListLines(0)
-        if this.pauseSeqTimer = true
-            return
-        if this.resetSeqTimer = true {
-            this.resetSeqTimer := false
-            newDelay := (this.useSwapSequences = "true" || this.useSwapSequences = true) ? this.prevSeqDelay : 0
-            if !newDelay {
-                this.sequenceArr := []
-            }
-            SetTimer(, newDelay)
-            return
-        }
-        if !this.remoteActiveCEP
-            return
-        if !this.__checkPremRemoteDir("getActiveSequenceID") {
-            SetTimer(, 0)
-            return
-        }
-        if !WinExist(this.winTitle) || !WinActive(this.winTitle)
-            return
-        premWindow := WinGet.PremName(,,, false)
-        checkType := (Type(premWindow) != "Object")
-        checkTitle := isObjHasProp(premWindow, "winTitle", false) && isObjHasProp(premWindow, "titleCheck", -1) && isObjHasProp(premWindow, "saveCheck", -1)
-        checkCanSave := isObjHasProp(premWindow, "titleCheck", true)
-		if !premWindow || checkType || !checkTitle || checkCanSave {
-            return
-        }
-        seq := this.__remoteFunc("getActiveSequenceID")
-        if !seq {
-            return
-        }
-
-        toggleLimit  := this.UserSettings.premSwapSequencesLimit
-        if this.sequenceArr.Length = 0 {
-            this.sequenceArr.Push(seq)
-            this.sequenceArr.Capacity := toggleLimit
-            return
-        }
-
-        switch {
-            case (seq = this.sequenceArr[1]): return
-            case (this.sequenceArr.Length > 1 && seq = this.sequenceArr[this.sequenceArr.Length]):
-                this.sequenceArr.InsertAt(1, this.sequenceArr.Pop())
-                return
-            case (!ind := this.sequenceArr.IndexOf(seq, 1)):
-                this.sequenceArr.InsertAt(1, seq)
-                this.sequenceArr.Capacity := toggleLimit
-                return
-            default:
-                this.sequenceArr.RemoveAt(this.sequenceArr.IndexOf(seq, 1))
-                this.sequenceArr.InsertAt(1, seq)
-                this.sequenceArr.Capacity := toggleLimit
-                return
-        }
-    }
-
     /**
-     * swaps to the previous sequence the user had open.
-     *
-     * requires the use of `__setCurrSeq` which requires `PremiereRemote`
+     * swaps to the previous sequence the user had open. Requires `PremiereRemote` `UXP` extension.
+     * @param {String} [count=unset] how many sequences you wish to toggle between. If left unset will toggle between the last 10.
      */
-    static swapPreviousSequence() {
-        if !this.__checkPremRemoteDir("focusSequence") {
-            ;// throw
+    static swapPreviousSequence(count?) {
+        if !this.__checkPremRemoteDir("shared/storeSequence/swapPreviousSequence", "uxp") {
             errorLog(MethodError("swapPreviousSequence() requires PremiereRemote to be installed"),,, true)
             return false
         }
-        if (this.useSwapSequences != true && this.useSwapSequences != "true")
-            return
-        Critical()
-        __pushToEnd() {
-            Critical()
-            this.sequenceArr.Push(this.sequenceArr[1])
-            this.sequenceArr.RemoveAt(1)
-            this.__remoteFunc("focusSequence",, "ID=" String(this.sequenceArr[1]))
-        }
-        if !winExt.ExistRegex("Core Functionality.ahk",,,, true)
-            return false
-        try {
-            activeObj := CLSID_Objs.load("prem")
-            activeObj.pauseSeqTimer := true
-            this.sequenceArr := activeObj.sequenceArr
-            if this.sequenceArr.Length != 0
-                __pushToEnd()
-            activeObj.sequenceArr := this.sequenceArr
-            activeObj.pauseSeqTimer := false
-            activeObj := ""
-            Critical("Off")
-            return true
-        } catch {
-            activeObj := ""
-            errorLog(MethodError("Failed to interact with Premiere Object", -1))
-            Critical("Off")
-            return false
-        }
+        params := IsSet(count) ? ["count=" count] : []
+        return this.__remoteUXP("shared/storeSequence/swapPreviousSequence",, params*)
     }
 
     /** A function to close the currently active sequence within premiere. This function **requires** `PremiereRemote` */

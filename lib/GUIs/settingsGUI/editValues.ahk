@@ -40,22 +40,6 @@ class set_Edit_Val {
         textControl: "gameCheckText",          Bind: "gameCheck.ahk",
         objName: "--",                         UpDownOpt: "Range1-999"
     }
-    premPrev := {
-        control: "premPrev",                       EditPos: "xs Y+14",
-        scriptText: "``swapPreviousSequence()``",  textPos: "X+5 Y+-28",
-        otherText: " check rate (sec)",            otherTextPos: "Y+-1",
-        iniInput: "premPrevSeqDelay",              colour: "c753288",
-        textControl: "premPrevText",               Bind: "",
-        objName: "--",                             UpDownOpt: "Range1-60"
-    }
-    premSeq := {
-        control: "premSeq",                        EditPos: "xs Y+3",
-        scriptText: "``swapPreviousSequence()``",  textPos: "X+5 Y+-28",
-        otherText: " store timelines",             otherTextPos: "Y+-1",
-        iniInput: "premSwapSequencesLimit",        colour: "c753288",
-        textControl: "premSeqText",                Bind: "",
-        objName: "--",                             UpDownOpt: "Range1-10"
-    }
     MIC := {
         control: "MIC",                                 EditPos: "xs Y+3",
         scriptText: "``Multi-Instance Close.ahk``",     textPos: "X+5 Y+-28",
@@ -73,7 +57,7 @@ class set_Edit_Val {
         objName: "--",                                  UpDownOpt: "Range1-999"
     }
 
-    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.premPrev, this.premSeq, this.MIC, this.toggleEnabledIgnore]
+    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.MIC, this.toggleEnabledIgnore]
     static control := []
     static EditPos := []
     static scriptText := []

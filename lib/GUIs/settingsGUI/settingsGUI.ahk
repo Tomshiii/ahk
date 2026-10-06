@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/10/03
- * @version 2.4.20
+ * @date 2026/10/06
+ * @version 2.4.21
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -295,28 +295,6 @@ settingsGUI()
                                    : (altGUI["Use_MButton"].Opt("-Disabled"), UserSettings.Use_MButton := "false")
             case "Use MButton":
                 (script.Value = 1) ? altGUI["thioHotkey"].Opt("+Disabled") : altGUI["thioHotkey"].Opt("-Disabled")
-            case "Use swapSequences":
-                (script.Value = 0) ? settingsGUI["premPrev"].Opt("+Disabled")
-                                   : settingsGUI["premPrev"].Opt("-Disabled")
-                origDetect := detect()
-                if WinExist("Core Functionality.ahk") {
-                    try {
-                        activeObj := CLSID_Objs.load("prem")
-                        switch script.Value {
-                            case 0:
-                                activeObj.useSwapSequences := false
-                                activeObj.resetSeqTimer    := true
-                            case 1:
-                                activeObj.useSwapSequences := true
-                                SetTimer(activeObj.__setCurrSeq.Bind(activeObj), activeObj.prevSeqDelay)
-                        }
-                        activeObj := ""
-                    } catch {
-                        activeObj := ""
-                        notifyExt.showIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
-                    }
-                }
-                resetOrigDetect(origDetect)
         }
         ;// changing requested value
         if InStr(script.text, "autosave") && WinExist("autosave.ahk - AutoHotkey")
@@ -373,11 +351,6 @@ settingsGUI()
         initVal := UserSettings.%initValVar%
         settingsGUI.Add("Edit", set_Edit_Val.EditPos[A_Index] " r1 W50 -E0200 Number v" set_Edit_Val.control[A_Index])
         settingsGUI.Add("UpDown", set_Edit_Val.UpDownOpt[A_Index], initVal)
-        switch set_Edit_Val.control[A_Index] {
-            case "premPrev":
-                (UserSettings.use_swapSequences = false || UserSettings.use_swapSequences = "false") ? settingsGUI[set_Edit_Val.control[A_Index]].Opt("+Disabled")
-                                                                                                     : settingsGUI[set_Edit_Val.control[A_Index]].Opt("-Disabled")
-        }
         settingsGUI.Add("Text", set_Edit_Val.textPos[A_Index] " v" set_Edit_Val.textControl[A_Index], set_Edit_Val.scriptText[A_Index])
         settingsGUI[set_Edit_Val.textControl[A_Index]].SetFont(set_Edit_Val.colour[A_Index])
         settingsGUI.Add("Text", set_Edit_Val.otherTextPos[A_Index], set_Edit_Val.otherText[A_Index])
@@ -388,21 +361,6 @@ settingsGUI()
     {
         iniVar := StrReplace(ini, A_Space, "_")
         UserSettings.%iniVar% := ctrl.text
-        switch ini {
-            case "premPrevSeqDelay":
-                if winExt.ExistRegex("Core Functionality.ahk",,,, true) {
-                    try {
-                        activeObj := CLSID_Objs.load("prem")
-                        activeObj.prevSeqDelay := (ctrl.text*1000)
-                        activeObj.resetSeqTimer := true
-                        activeObj := ""
-                    } catch {
-                        activeObj := ""
-                        notifyExt.showIfNotExist("settingsGUIswapSeq", "settingsGUI()", "Could not disable ``prem.swapSequences()``. A reload may be required", ptf.Icons "\myscript.ico", "Windows Pop-up Blocked",, "POS=BR DUR=5 SHOW=Fade@250 bdr=0xF59F10 maxW=400 Hide=Fade@250")
-                    }
-                }
-                return
-        }
         exists := winExt.ExistRegex(script " - AutoHotkey",,,, true)
         ignoreScripts := Mip("Multi-Instance Close.ahk", true, "gameCheck.ahk", true)
         if exists && script != "" && !ignoreScripts.Has(script) {
@@ -639,10 +597,6 @@ settingsGUI()
             ; adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose" defaults.Get(UserSettings.premDefaultTheme) " vthemeDefaultPrem", ["Light", "Dark", "Darkest"])
             adobeGui.AddDropDownList("x" ctrlX " y+-20 w100 Choose1 vthemeDefaultPrem", ["Darkest"])
             adobeGui['themeDefaultPrem'].OnEvent("change", (ctrl, *) => UserSettings.premDefaultTheme := ctrl.Text)
-
-            ;// swapSequences()
-            adobeGui.AddCheckbox("vuseSwapSequences Checked" UserSettings.use_swapSequences " xs Y+15", setJSON.useSwapSequences.title).OnEvent("Click", toggle.Bind("Use swapSequences", "", ""))
-            adobeGui["useSwapSequences"].ToolTip := (UserSettings.use_swapSequences = true) ? setJSON.useSwapSequences.tooltip.true : setJSON.useSwapSequences.tooltip.false
         }
 
         ;// warning & save button
