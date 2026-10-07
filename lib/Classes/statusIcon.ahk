@@ -2,8 +2,8 @@
  * @description a class designed to place a little icon on the screen and alternatively bind it to a window's position
  * @author tomshi
  * @ai_disclosure vibecoded with claude, I'm not super familiar with dll's
- * @date 2026/10/02
- * @version 1.1.0
+ * @date 2026/10/08
+ * @version 1.1.1
  ***********************************************************************/
 
 ; =====================================================================
@@ -46,6 +46,7 @@ class statusIcon {
     exitFn := ""
     onClick := ""
     clickMsgFn := ""
+    cursorMsgFn := ""
 
     /**
      * @param {String} path the filepath of the icon image
@@ -139,6 +140,8 @@ class statusIcon {
             ; Gui objects have no OnMessage method, so use the global OnMessage and filter by hwnd
             this.clickMsgFn := this.ClickMsg.Bind(this)
             OnMessage(0x201, this.clickMsgFn)                                  ; WM_LBUTTONDOWN
+            this.cursorMsgFn := this.CursorMsg.Bind(this)
+            OnMessage(0x20, this.cursorMsgFn)                                  ; WM_SETCURSOR
             this.gui.Show("NA x0 y0 w" this.w " h" this.h)
         }
 
@@ -168,6 +171,15 @@ class statusIcon {
         if this.gui && hwnd = this.gui.Hwnd {
             this.HandleClick()
             return 0
+        }
+    }
+
+    ; Global WM_SETCURSOR handler: show the hand cursor while hovering a clickable icon
+    CursorMsg(wParam, lParam, msg, hwnd) {
+        if this.onClick && this.gui && hwnd = this.gui.Hwnd {
+            hand := DllCall("LoadCursor", "Ptr", 0, "Ptr", 32649, "Ptr")   ; IDC_HAND
+            DllCall("SetCursor", "Ptr", hand)
+            return true                                                    ; stop default cursor handling
         }
     }
 
@@ -270,6 +282,10 @@ class statusIcon {
         if this.clickMsgFn {
             OnMessage(0x201, this.clickMsgFn, 0)
             this.clickMsgFn := ""
+        }
+        if this.cursorMsgFn {
+            OnMessage(0x20, this.cursorMsgFn, 0)
+            this.cursorMsgFn := ""
         }
         if this.gui {
             this.gui.Destroy()
