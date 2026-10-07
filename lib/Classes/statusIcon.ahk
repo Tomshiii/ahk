@@ -3,18 +3,20 @@
  * @author tomshi
  * @ai_disclosure vibecoded with claude, I'm not super familiar with dll's
  * @date 2026/10/02
- * @version 1.0.0
+ * @version 1.1.0
  ***********************************************************************/
 
 ; =====================================================================
-; StatusIcon: click-through, per-pixel-alpha overlay icon (GDI+ + UpdateLayeredWindow)
+; StatusIcon: per-pixel-alpha overlay icon (GDI+ + UpdateLayeredWindow)
+; Click-through by default, optionally clickable via a callback.
 ; Self-contained, no globals, no third-party library.
 ;
-;   icon := StatusIcon(path, x, y, size, keepOnTop)
+;   icon := StatusIcon(path, x, y, size, keepOnTop, onClick)
 ;   icon.SetIcon(newPath)                 ; swap the image
 ;   icon.Move(x, y)                       ; absolute screen coordinates
 ;   icon.Follow(winTitle, dx, dy)         ; pin to a spot inside another window
 ;   icon.StopFollowing()
+;   icon.SetOnClick(fn)                   ; set/clear the click callback, fn(icon)
 ;   icon.Destroy()                        ; optional, also runs automatically on exit
 ;
 ; All x/y values are absolute screen pixels (top-left of the icon).
@@ -42,11 +44,22 @@ class statusIcon {
     keepOnTopFn := ""
     followFn := ""
     exitFn := ""
+    onClick := ""
+    clickMsgFn := ""
 
-    __New(path, x := 0, y := 0, size := 32, keepOnTop := true) {
+    /**
+     * @param {String} path the filepath of the icon image
+     * @param {Integer} [x=0] absolute screen x
+     * @param {Integer} [y=0] absolute screen y
+     * @param {Integer} [size=32] width and height in pixels. 0 uses the image's native size.
+     * @param {Boolean} [keepOnTop=true] periodically re-assert always-on-top
+     * @param {Func} [onClick] called on left click, as onClick(icon) if it accepts a parameter, otherwise onClick(). If omitted the icon is click-through.
+     */
+    __New(path, x := 0, y := 0, size := 32, keepOnTop := true, onClick := "") {
         this.posX := x
         this.posY := y
         this.size := size
+        this.onClick := onClick          ; set before SetIcon so the window is created correctly
 
         DllCall("LoadLibrary", "Str", "gdiplus")
         si := Buffer(A_PtrSize = 8 ? 24 : 16, 0)
@@ -117,13 +130,62 @@ class statusIcon {
         ; Create the window once; later calls just re-push pixels
         if !this.gui {
             ; E0x80000   WS_EX_LAYERED     (required for UpdateLayeredWindow)
-            ; E0x20      WS_EX_TRANSPARENT (clicks pass through)
             ; E0x8000000 WS_EX_NOACTIVATE  (never takes focus)
-            this.gui := Gui("-Caption +ToolWindow +AlwaysOnTop +E0x80000 +E0x20 +E0x08000000")
+            ; E0x20      WS_EX_TRANSPARENT (clicks pass through) only when there is no callback
+            opts := "-Caption +ToolWindow +AlwaysOnTop +E0x80000 +E0x08000000"
+            if !this.onClick
+                opts .= " +E0x20"
+            this.gui := Gui(opts)
+            ; Gui objects have no OnMessage method, so use the global OnMessage and filter by hwnd
+            this.clickMsgFn := this.ClickMsg.Bind(this)
+            OnMessage(0x201, this.clickMsgFn)                                  ; WM_LBUTTONDOWN
             this.gui.Show("NA x0 y0 w" this.w " h" this.h)
         }
 
         this.Push()
+    }
+
+    /**
+     * Set or clear the click callback at any time.
+     * @param {Func} [fn] called as fn(icon) on left click. Pass "" to make the icon click-through again.
+     */
+    SetOnClick(fn := "") {
+        this.onClick := fn
+        if !this.gui
+            return
+        hwnd := this.gui.Hwnd
+        getFn := A_PtrSize = 8 ? "GetWindowLongPtr" : "GetWindowLong"
+        setFn := A_PtrSize = 8 ? "SetWindowLongPtr" : "SetWindowLong"
+        ex := DllCall(getFn, "Ptr", hwnd, "Int", -20, "Ptr")        ; GWL_EXSTYLE
+        ex := fn ? (ex & ~0x20) : (ex | 0x20)                       ; toggle WS_EX_TRANSPARENT
+        DllCall(setFn, "Ptr", hwnd, "Int", -20, "Ptr", ex, "Ptr")
+        if this.hdc
+            this.Push()
+    }
+
+    ; Global WM_LBUTTONDOWN handler: only reacts to clicks on this icon's window
+    ClickMsg(wParam, lParam, msg, hwnd) {
+        if this.gui && hwnd = this.gui.Hwnd {
+            this.HandleClick()
+            return 0
+        }
+    }
+
+    HandleClick() {
+        fn := this.onClick
+        if !fn
+            return
+        ; Try passing the icon; if the callback takes no parameters, call it without.
+        ; (MaxParams isn't reliable for bound functions, so don't inspect it.)
+        ; The "too many parameters" error is raised before the callback body runs, so nothing runs twice.
+        try
+            fn(this)
+        catch Error as e {
+            if InStr(e.Message, "Too many parameters")
+                fn()
+            else
+                throw e
+        }
     }
 
     ; Move the icon to absolute screen coordinates.
@@ -133,11 +195,6 @@ class statusIcon {
         this.Push()
     }
 
-    ;
-    ;   winTitle   :
-    ;   dx, dy     : offset from the target window's CLIENT-area top-left corner
-    ;   activeOnly : only show the icon while the target window is the active window
-    ;
     /**
      * Pin the icon to a spot inside another window.
      * @param {String} [winTitle] any AHK WinTitle ("ahk_exe notepad.exe", "ahk_class Foo", ...)
@@ -208,6 +265,11 @@ class statusIcon {
         if this.exitFn {
             OnExit(this.exitFn, 0)
             this.exitFn := ""
+        }
+        this.onClick := ""
+        if this.clickMsgFn {
+            OnMessage(0x201, this.clickMsgFn, 0)
+            this.clickMsgFn := ""
         }
         if this.gui {
             this.gui.Destroy()

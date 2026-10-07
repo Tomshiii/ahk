@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/09/22
- * @version 1.9.15
+ * @date 2026/10/07
+ * @version 1.9.16
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -597,6 +597,7 @@ class Startup {
         __addAndIncrement("Settings (GUI)", (*) => settingsGUI())
         startupTray(startingVal)
         startingVal++
+        __addAndIncrement("Reload UIA", (*) => premUIA_Values.forceReset())
         __addAndIncrement("") ;adds a divider bar
 
         submenuRemote := Menu()

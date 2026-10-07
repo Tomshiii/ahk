@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/10/06
- * @version 1.0.20
+ * @date 2026/10/07
+ * @version 1.1.0
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -42,86 +42,101 @@ for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }
 
-try {
-    coreIsActive := CLSID_Objs.load("determineActive")
-    coreIsActive.isRunning := true
-    coreIsActive := ""
-    SetTimer(__resetIsActive, -15000)
+__buildUIA()
+premUIA_Values.onRebuild := __rebuildUIA   ;// lets a remote `resetUIA()` trigger a rebuild inside this process
+
+/** retrieves the UIA values. Shared by the first run and by remote rebuilds */
+__buildUIA() {
+    global premUIAobj
+    try {
+        coreIsActive := CLSID_Objs.load("determineActive")
+        coreIsActive.isRunning := true
+        coreIsActive := ""
+        SetTimer(__resetIsActive, -15000)
+    }
+    premUIAobj := CLSID_Objs.load("determineUIA")
+    premUIAobj.isRunning := true
+
+    try {
+        if !premUIAobj.setObjs() {
+            __doExit(premUIAobj)
+        }
+    } catch as e {
+        ;// error codes
+        /**
+         * 701 - initialising UIA element
+         * 720 - Could not adjust user's Premiere settings file
+         * 702 - Timeline
+         * 703 - Effect Controls
+         * 704 - Effects
+         * 705 - Program Monitor
+         * 706 - Source Monitor
+         * 707 - Tools
+         * 708 - Project
+         * 709 - PremiereRemote
+         * 710 - Selection Tool
+         * 711 - Track Select Forward/Track Select Backward Tool
+         * 712 - Ripple Edit/Rolling Edit/Rate Stretch/Remix Tool
+         * 713 - Razor Tool
+         * 714 - Slip/Slide Tool
+         * 715 - Pen Tool
+         * 716 - Shape Tool
+         * 717 - Hand/Zoom Tool
+         * 718 - Type Tool
+         * 719 - Edit Tab may not be active
+         */
+
+        Codes := Map("701", "Failed initialising UIA element", "702", "Failed determining the Timeline", "703", "Failed determining the Effect Controls Panel", "704", "Failed determining the Effects Panel", "705", "Failed determining the Program Monitor", "706", "Failed determining the Source Monitor", "707", "Failed determining the Tools Panel", "708", "Failed determining the Project", "709", "Couldn't find PremiereRemote", "710", "Selection Tool", "711", "Track Select Forward/Track Select Backward Tool", "712", "Ripple Edit/Rolling Edit/Rate Stretch/Remix Tool", "713", "Razor Tool", "714", "Slip/Slide Tool", "715", "Pen Tool", "716", "Shape Tool", "717", "Hand/Zoom Tool", "718", "Type Tool", "719", "Edit Tab may not be active")
+        switch {
+            case InStr(e.Message, "This version of Premiere is not supported."):
+                __deleteUIA()
+                __resetIsActive()
+                __resetObj(premUIAobj)
+                for v in allRegister {
+                    try ObjRegisterActive(v.obj, "")
+                }
+                try SetTimer(__resetIsActive, 0)
+                __resetTimelineVals()
+                throw MethodError("This version of Premiere is not supported.", e.what)
+            case InStr(e.Message, "Failed to return Premiere Version"):
+                __deleteUIA()
+                errorLog(UnsetError("Determining Premiere's version failed, causing UIA value retrieval to abort.", -1))
+                notifyExt.showIfNotExist("UIApremNotReady",, "Determining Premiere's version failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+                __doExit(premUIAobj)
+            case InStr(e.Message, "Socket"):
+                __deleteUIA()
+                notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                __doExit(premUIAobj)
+            case InStr(e.Message, "Failed to retrieve Premiere title."):
+                __deleteUIA()
+                errorLog(UnsetError("Determining Premiere's title failed, causing UIA value retrieval to abort.", -1))
+                notifyExt.showIfNotExist("UIApremTitleFailed",, "Determining Premiere's title failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+                __doExit(premUIAobj)
+            case codePos := InStr(e.Message, "throw code:"):
+                __deleteUIA()
+                code := SubStr(e.Message, (codePos+StrLen("throw code:")))
+                codeArr := StrSplit(code, ["`r", "`n"])
+                throwString := (codes.Has(codeArr[1])) ? codes.Get(codeArr[1]) : "error code: " codeArr[1]
+                errorLog(ValueError(throwString))
+                notifyExt.showIfNotExist("UIApanelFail",, throwString, ptf.Icons "\prprj.ico",,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+                ; throw ValueError(throwString)
+                __doExit(premUIAobj)
+            default:
+                errorLog(ValueError(e.Message, -1))
+                __deleteUIA()
+                notifyExt.showIfNotExist("UIAgenericFail",, "Determining UIA values failed. ``determineUIA.ahk`` will safetly abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+                __doExit(premUIAobj)
+                ; throw e
+        }
+    }
 }
-premUIAobj := CLSID_Objs.load("determineUIA")
-premUIAobj.isRunning := true
 
-try {
-    if !premUIAobj.setObjs() {
-        __doExit(premUIAobj)
-    }
-} catch as e {
-    ;// error codes
-    /**
-     * 701 - initialising UIA element
-     * 720 - Could not adjust user's Premiere settings file
-     * 702 - Timeline
-     * 703 - Effect Controls
-     * 704 - Effects
-     * 705 - Program Monitor
-     * 706 - Source Monitor
-     * 707 - Tools
-     * 708 - Project
-     * 709 - PremiereRemote
-     * 710 - Selection Tool
-     * 711 - Track Select Forward/Track Select Backward Tool
-     * 712 - Ripple Edit/Rolling Edit/Rate Stretch/Remix Tool
-     * 713 - Razor Tool
-     * 714 - Slip/Slide Tool
-     * 715 - Pen Tool
-     * 716 - Shape Tool
-     * 717 - Hand/Zoom Tool
-     * 718 - Type Tool
-     * 719 - Edit Tab may not be active
-     */
-
-    Codes := Map("701", "Failed initialising UIA element", "702", "Failed determining the Timeline", "703", "Failed determining the Effect Controls Panel", "704", "Failed determining the Effects Panel", "705", "Failed determining the Program Monitor", "706", "Failed determining the Source Monitor", "707", "Failed determining the Tools Panel", "708", "Failed determining the Project", "709", "Couldn't find PremiereRemote", "710", "Selection Tool", "711", "Track Select Forward/Track Select Backward Tool", "712", "Ripple Edit/Rolling Edit/Rate Stretch/Remix Tool", "713", "Razor Tool", "714", "Slip/Slide Tool", "715", "Pen Tool", "716", "Shape Tool", "717", "Hand/Zoom Tool", "718", "Type Tool", "719", "Edit Tab may not be active")
-    switch {
-        case InStr(e.Message, "This version of Premiere is not supported."):
-            __deleteUIA()
-            __resetIsActive()
-            __resetObj(premUIAobj)
-            for v in allRegister {
-                try ObjRegisterActive(v.obj, "")
-            }
-            try SetTimer(__resetIsActive, 0)
-            __resetTimelineVals()
-            throw MethodError("This version of Premiere is not supported.", e.what)
-        case InStr(e.Message, "Failed to return Premiere Version"):
-            __deleteUIA()
-            errorLog(UnsetError("Determining Premiere's version failed, causing UIA value retrieval to abort.", -1))
-            notifyExt.showIfNotExist("UIApremNotReady",, "Determining Premiere's version failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
-            __doExit(premUIAobj)
-        case InStr(e.Message, "Socket"):
-            __deleteUIA()
-            notifyExt.showIfNotExist("premSocketLoading",, "Socket connection still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-            __doExit(premUIAobj)
-        case InStr(e.Message, "Failed to retrieve Premiere title."):
-            __deleteUIA()
-            errorLog(UnsetError("Determining Premiere's title failed, causing UIA value retrieval to abort.", -1))
-            notifyExt.showIfNotExist("UIApremTitleFailed",, "Determining Premiere's title failed, causing UIA value retrieval to abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
-            __doExit(premUIAobj)
-        case codePos := InStr(e.Message, "throw code:"):
-            __deleteUIA()
-            code := SubStr(e.Message, (codePos+StrLen("throw code:")))
-            codeArr := StrSplit(code, ["`r", "`n"])
-            throwString := (codes.Has(codeArr[1])) ? codes.Get(codeArr[1]) : "error code: " codeArr[1]
-            errorLog(ValueError(throwString))
-            notifyExt.showIfNotExist("UIApanelFail",, throwString, ptf.Icons "\prprj.ico",,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
-            ; throw ValueError(throwString)
-            __doExit(premUIAobj)
-        default:
-            errorLog(ValueError(e.Message, -1))
-            __deleteUIA()
-            notifyExt.showIfNotExist("UIAgenericFail",, "Determining UIA values failed. ``determineUIA.ahk`` will safetly abort.",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
-            __doExit(premUIAobj)
-            ; throw e
-    }
+/** called (via timer) after `premUIA_Values.resetUIA()` has wiped the stale values */
+__rebuildUIA(*) {
+    __buildUIA()               ;// on failure this ends in __doExit, same as a first run
+    __resetObj(premUIAobj)     ;// beenSet := true, isRunning := false
+    __resetIsActive()
+    __deleteUIA()
 }
 
 ;// this needs to be a live read - otherwise if the user changes it to `false` in `settingsGUI.ahk` then reloads
