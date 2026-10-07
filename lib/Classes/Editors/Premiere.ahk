@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/07
- * @version 2.5.76
+ * @version 2.5.77
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -302,6 +302,8 @@ class Prem {
     static cepIconState := false
     static uxpIcon := false
     static uxpIconState := false
+    static uiaIcon := false
+    static uiaIconState := false
 
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
@@ -330,7 +332,7 @@ class Prem {
 
     /**
      * handles setting the `cep` or `uxp` status icon within the timeline
-     * @param {String} [which] Either; `uxp`, `cep`, or `reset`. Passing `reset` will destroy both icons if they exist
+     * @param {String} [which] Either; `uxp`, `cep`, `uia`, or `reset`. Passing `reset` will destroy both icons if they exist
      * @param {Integer} [state] the current state of the plugin
      * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. If `which` is set to `reset` this param can be omitted, otherwise is required
      */
@@ -338,6 +340,7 @@ class Prem {
         if which = "reset" {
             __stateReset("cep")
             __stateReset("uxp")
+            __stateReset("uia")
             return
         }
         __stateReset(which) {
@@ -353,8 +356,8 @@ class Prem {
         if !remoteIconSet || remoteIconSet = "false"
             return
 
-        iconConnected := ptf.Icons "\" which ".ico"
-        iconDisonnected := ptf.Icons "\" which "_err.ico"
+        iconConnected := ptf.Icons "\determineUIA icons\" which ".ico"
+        iconDisonnected := ptf.Icons "\determineUIA icons\" which "_err.ico"
         premTitle := WinGet.PremName()
         checkType := (Type(premTitle) != "Object")
         checkTitle := isObjHasProp(premTitle, "winTitle", false) && isObjHasProp(premTitle, "titleCheck", -1) && isObjHasProp(premTitle, "saveCheck", -1)
@@ -375,7 +378,13 @@ class Prem {
                 this.__%which%Open := (resp == '"uxp visible=true"') ? true : false
         }
 
-        newState := (state=1 && this.__%which%Open = true)
+        if which = "uia" {
+            panes := premUIA_Values.__checkPanes(uiaObj)
+            if panes == null
+                return
+        }
+        newState := (which = "cep" || which = "uxp") ? (state=1 && this.__%which%Open = true) : panes
+
         imgIcon := newState ? iconConnected : iconDisonnected
         if this.%which%Icon != false {
             if newState != this.%which%IconState {
@@ -386,7 +395,7 @@ class Prem {
         }
         if !timelineObj := premUIA_Values.getLivePanel("timelineWindow", uiaObj)
             return
-        buttonIndex := (which = "cep") ? 4 : 2
+        buttonIndex := (which = "cep" || which = "uxp") ? (which = "cep" ? 2 : 1) : 4
         timecode := timelineObj.Children[1].Children[1]
         button := timelineObj.FindElement({Type:50000},, buttonIndex)
         coord.screenToClient(timecode.location.x, timecode.location.y, this._scan.hwnd, this._scan.WindowScale, &tX, &tY)

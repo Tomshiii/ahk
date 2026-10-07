@@ -133,6 +133,7 @@ if remoteIconSet != false && remoteIconSet != "false" {
     __pollRemoteIcons(premUIAobj, *) {
         try {
             p := CLSID_Objs.loadProp("prem", ["remoteActiveCEP", "remoteActiveUXP"])
+            prem.__setRemoteIcon("uia", true, premUIAobj)
             prem.__setRemoteIcon("cep", p["remoteActiveCEP"] = true, premUIAobj)
             if remoteIgnoreUXP != true && remoteIgnoreUXP != "true"
                 prem.__setRemoteIcon("uxp", p["remoteActiveUXP"] = true, premUIAobj)
@@ -227,6 +228,7 @@ __deleteUIA() {
 }
 
 __doExit(premUIAobj?) {
+    try SetTimer(__pollRemoteIcons, 0)
     try CLSID_Objs.writeProp("prem", Map("__cepOpen", false, "__uxpOpen", false))
     __deleteUIA()
     __resetIsActive()
@@ -241,7 +243,6 @@ __doExit(premUIAobj?) {
         try ObjRegisterActive(v.obj, "")
     }
     prem.__setRemoteIcon("reset", false)
-    try SetTimer(__pollRemoteIcons, 0)
     ExitApp()
 }
 
