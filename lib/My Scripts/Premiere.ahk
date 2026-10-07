@@ -479,11 +479,14 @@ $^v::
 
 $d::
 {
-	premActive := WinActive(prem.winTitle)
+	premActive := WinActive(prem.winTitle) && !WinExist("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME")
+	premTitle := WinGet.PremName()
+	checkType := (Type(premTitle) != "Object")
+	checkTitle := isObjHasProp(premTitle, "winTitle", false) && isObjHasProp(premTitle, "titleCheck", -1)
 	coord.s()
 	origMouse := obj.MousePos()
 	checkCoords := prem.__checkCoords(origMouse)
-	if !premActive || (premActive && CaretGetPos(&x, &y)) || (premActive && !checkCoords) {
+	if !premActive || (premActive && CaretGetPos(&x, &y)) || (premActive && !checkCoords) || (!premTitle || checkType || !checkTitle) {
 		SendInput("d")
 		errorLog(Error("cursor isn't within the timeline"))
 		return

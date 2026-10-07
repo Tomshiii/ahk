@@ -18,6 +18,11 @@ gPath := FileSelect("D2", end, "Choose Directory to copy to (" nPath ")")
 clip.returnClip(prevClip)
 if !gPath
     return
+if IsSet(which) && which = "2" {
+    c := nPath
+    nPath := gPath
+    gPath := c
+}
 command := rclone.formatCommand(nPath, gPath, which ?? "1")
 cmd.run(false, false, false, command,, "Hide")
 ExitApp()
