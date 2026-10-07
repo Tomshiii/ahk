@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/06
- * @version 2.5.74
+ * @date 2026/10/07
+ * @version 2.5.75
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -371,7 +371,7 @@ class Prem {
             case "cep": this.__%which%Open := (cmd.httpGet(checkPanelCommand, true) == '{"message":"ok.","result":"true"}') ? true : false
             case "uxp":
                 resp := cmd.httpGet(checkPanelCommand, true)
-                this.__%which%Open := ( resp == true || resp == "true") ? true : false
+                this.__%which%Open := (resp == '"uxp visible=true"') ? true : false
         }
 
         newState := (state=1 && this.__%which%Open = true)
@@ -670,7 +670,7 @@ class Prem {
                 }
                 try {
                     open := cmd.httpGet(Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP))
-                    if open != "true" && open != true && alerts = true {
+                    if open != '"uxp visible=true"' && open != true && alerts = true {
                         errorLog(MethodError("PremiereRemote UXP panel isn't open.", -1))
                         notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                         return false
@@ -1049,7 +1049,7 @@ class Prem {
         if !this.__uxpOpen {
             checkPanelCommand := Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP)
             isPanelOpen := cmd.httpGet(checkPanelCommand, true)
-            if isPanelOpen == null || (isPanelOpen != "true" && isPanelOpen != true) {
+            if isPanelOpen == null || (isPanelOpen != '"uxp visible=true"') {
                 errorLog(MethodError("PremiereRemote UXP panel isn't open.", -2))
                 notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null

@@ -11,6 +11,7 @@
 - ✅ Fixed `effectSlot()` potentially silently failing
 - ✅ Fixed `__checkPremRemoteFunc(, "uxp")` not doing the `isInstalled` checks
 - ✅ Fixed class not actually polling the `uxp` socket
+- ✅ Fixed `uxp` panel being marked as open even when it wasn't
 - 📋 `PremiereRemote` functions are now checked using `PremiereRemote`'s internal registry instead of string manipulation
 - 📋 Slight optimisations to `toggleLayerButtons()`
 - 📋 `swapPreviousSequence()` now requires the `UXP` `PremiereRemote` extension
