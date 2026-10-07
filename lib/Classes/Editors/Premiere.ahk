@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/07
- * @version 2.5.75
+ * @version 2.5.76
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -33,6 +33,7 @@
 #Include Classes\notifyExt.ahk
 #Include Classes\null.ahk
 #Include Classes\statusIcon.ahk
+#Include Classes\cursor.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\WinEvent.ahk
@@ -3586,12 +3587,12 @@ $!WheelDown::
                     return
                 }
                 MouseMove(origMouseCords.x, midDivY+2)
-                move.clipMouse("y", false)
+                cursor.clipMouse("y", false)
                 tool.Cust("Move the mouse to the desired height,`nThen let go of LAlt.", 3000,,, 9)
                 this.blockWheel := false
                 KeyWait("LAlt", "L")
                 tool.Cust("",,,, 9)
-                move.setMouseClip()
+                cursor.setMouseClip()
                 coord.s() ;// clipMouse changes the coordmode to "mouse"
                 if !newCoords := obj.MousePos()
                     return

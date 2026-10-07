@@ -1,9 +1,9 @@
 ; { \\ #Includes
 ;// these includes are only for things directly called within this script, any functions/classes may contain their own includes
 #Include '%A_Appdata%\tomshi\lib'
-#Include Classes\Move.ahk
 #Include Classes\winget.ahk
 #Include Classes\switchTo.ahk
+#Include Classes\cursor.ahk
 #Include Functions\jumpChar.ahk
 #Include Functions\refreshWin.ahk
 #Include Functions\isDoubleClick.ahk
@@ -59,9 +59,9 @@ RShift & RCtrl::switchTo.ahkDocs()
 ;---------------------------------------------------------------------------------------------------------------------------------------------
 ;move mouse along one axis
 ;moveXhotkey;
-SC03A & XButton2::move.clipMouse("x")
+SC03A & XButton2::cursor.clipMouse("x")
 ;moveYhotkey;
-SC03A & XButton1::move.clipMouse("y")
+SC03A & XButton1::cursor.clipMouse("y")
 
 ;SubUnderHotkey;
 +NumpadSub::_

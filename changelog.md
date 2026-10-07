@@ -1,10 +1,11 @@
 # <> Release 2.19.x - 
 
 ## Functions
-- ✏️ Added `statusIcon {`
+- ✏️ Added `statusIcon {`, `cursor {`
 - ✅ Fixed `settings.ini` values getting reset if a key is added
 - ✅ Fixed `adobeXML {` flooding the logs with empty values when a hotkey isn't found
 - 📋 Increased default `adobe_GB` value from `45` => `100`
+- 📋 Moved `XorY()`, `clipMouse()`, and `setMouseClip()` from `move {` => `cursor {`
 
 ### 📝 `prem {`
 - ✅ Fixed `dismissWarning()` potentially leaving inputs blocked
