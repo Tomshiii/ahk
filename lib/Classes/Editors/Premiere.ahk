@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/07
- * @version 2.5.77
+ * @version 2.5.78
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -367,6 +367,11 @@ class Prem {
         }
 
         if this.setShinsIMG(premTitle.winTitle) = false {
+            __stateReset(which)
+            return
+        }
+        tab := this.isEditTabActive(premTitle.winTitle)
+        if tab == null || !tab {
             __stateReset(which)
             return
         }
@@ -1186,19 +1191,22 @@ class Prem {
      * Uses `ShinsImageClass` to check the active Premiere window to see whether the `Edit` tab is currently active.
      * @returns {Boolean | null} returns `null` if; Premiere does not exist, Premiere's name could not be determined, or `ShinsImageClass` could not be set. Else returns `true`/`false`
      */
-    static isEditTabActive() {
+    static isEditTabActive(title?) {
         if !WinExist(this.exeTitle) {
             ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
             return null
         }
-        name := WinGet.PremName()
-        if !name || !isObjHasProp(name, "winTitle", false) {
-            errorLog(UnsetError("Could not determine Premiere window title", -1))
-            return null
+        if !IsSet(title) {
+            name := WinGet.PremName()
+            if !name || !isObjHasProp(name, "winTitle", false) {
+                errorLog(UnsetError("Could not determine Premiere window title", -1))
+                return null
+            }
+            title := name.wintitle
         }
 
-        if !this.setShinsIMG(name.winTitle)
+        if !this.setShinsIMG(title)
             return null
         return this._scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
     }

@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
  * @date 2026/10/07
- * @version 1.0.0
+ * @version 1.0.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -232,6 +232,6 @@ class cursor {
     }
 
     __Delete(*) {
-        try OnExit(this.setMouseClip())
+        try OnExit((*) => cursor.setMouseClip())
     }
 }

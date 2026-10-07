@@ -41,7 +41,7 @@ class set_Edit_Val {
         objName: "--",                         UpDownOpt: "Range1-999"
     }
     MIC := {
-        control: "MIC",                                 EditPos: "xs Y+3",
+        control: "MIC",                                 EditPos: "xs Y+10",
         scriptText: "``Multi-Instance Close.ahk``",     textPos: "X+5 Y+-28",
         otherText: " check rate (sec)",                 otherTextPos: "Y+-1",
         iniInput: "multi SEC",                          colour: "cc742c7",

@@ -2,8 +2,8 @@
  * @description A class to maintain "wrapper" functions that take normal ahk functions and instead return their variables as objects
  * @file obj.ahk
  * @author tomshi
- * @date 2026/10/06
- * @version 1.2.1
+ * @date 2026/10/07
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -150,10 +150,8 @@ class obj {
     static __produceCoords(obj?) {
         coord := {x1: this.x1, y1: this.y1, x2: this.x2, y2: this.y2}
         if IsSet(obj) {
-            for v in obj.OwnProps() {
-                for key, value in obj.OwnProps() {
-                    coord.%key% := value
-                }
+            for key, value in obj.OwnProps() {
+                coord.%key% := value
             }
         }
         return coord
