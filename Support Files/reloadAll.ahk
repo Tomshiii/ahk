@@ -24,7 +24,7 @@ list := resetter.__getList()
 listArr := []
 coreFuncObj := unset
 __checkClose(hwnd, title) {
-    if title = "determineUIA.ahk" {
+    if title = "determineUIA.ahk ahk_class AutoHotkey" {
         premUIA_Values.closeUIA()
     }
     if WinExist(hwnd) {
@@ -32,7 +32,7 @@ __checkClose(hwnd, title) {
         hwnd := winExt.ExistRegex(title,,,, true)
         if hwnd {
             try winExt.CloseRegex(hwnd,,,, true)
-            ; try WinClose(hwnd)
+            try WinClose(hwnd)
         }
     }
 }

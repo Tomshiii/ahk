@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/10/06
- * @version 3.0.47
+ * @date 2026/10/07
+ * @version 3.0.48
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -197,22 +197,19 @@ class premUIA_Values {
                 return null
             }
         }
-        uiaEl := IsSet(determineObj) ? determineObj : __getDetermine()
+        uiaEl := IsSet(determineObj) ? determineObj.allPanes : __getDetermine()
         if uiaEl == null || !uiaEl
             return null
         for k, v in uiaEl {
             try check := UIA.ElementFromHandle(k,, false)
             catch {
-                ;// set img red
-                ;// set values
-                return false
+                if !WinExist(k)
+                    return false
+                return null ;// panel may be updating/busy
             }
             tempObj := {x: check.location.x, y: check.location.y, w: check.location.w, h: check.location.h}
-            if !obj.isEqual(tempObj, v) {
-                ;// set img red
-                ;// set values
+            if !obj.isEqual(tempObj, v)
                 return false
-            }
         }
         return true
     }

@@ -27,14 +27,16 @@ __runAndWait(ahkExe, filepath, minimise := true, timeout := 3, sleepTime := 5000
     return true
 }
 
-__startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
+__startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe") {
     fullTitle := "Adobe UXP Developer Tools" A_Space title
     if !WinWait(fullTitle,, 5) {
         MsgBox("Failed to find the UXP plugin window",, "T3")
         return false
     }
     WinActivate(fullTitle)
-    premRemote := UIA.ElementFromHandle(fullTitle,, false)
+    WinWaitActive(fullTitle,, 2)
+    sleep 150
+    premRemote := UIA.ElementFromHandle(fullTitle,, true)
     if !premRow := premRemote.WaitElement({Type:50025, Name:"Premiere"}, 10000) {
         MsgBox("Failed to find the UXP plugin window",, "T3")
         return false
@@ -62,15 +64,6 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
                 break
             }
         }
-        if set = false {
-            try ProcessClose(fullTitle)
-            catch {
-                return false
-            }
-            v := __startUXP(, &debugButt)
-            try WinMinimize("Adobe UXP Developer Tools" A_Space title)
-            return v
-        }
         try debugButtBar.FindElement({Type:50000, Name:"Load"}).invoke()
         catch {
             try {
@@ -84,20 +77,7 @@ __startUXP(title := "ahk_exe Adobe UXP Developer Tools.exe", &debugButt?) {
     } else {
         if children[index+1].name = "Not loaded" {
             try debugButtBar.FindElement({Type:50000, Name:"Load"}).invoke()
-            catch {
-                try ProcessWaitClose(fullTitle, 1)
-                catch {
-                    return false
-                }
-                sleep 150
-                if WinExist(fullTitle) {
-                    if !WinWaitClose(fullTitle,, 2)
-                        return false
-                }
-                v := __startUXP(, &debugButt)
-                try WinMinimize("Adobe UXP Developer Tools" A_Space title)
-                return v
-            }
+            sleep 250
         }
         try {
             reloadButt := debugButtBar.FindElement({Type:50000, Name:"Reload"})
