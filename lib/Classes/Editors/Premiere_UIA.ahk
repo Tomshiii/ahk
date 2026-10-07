@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/10/07
- * @version 3.0.48
+ * @version 3.0.49
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -43,6 +43,8 @@ class premUIA_Values {
     static AdobeEl  := false
     static determineUIA_PID := false
     static scriptTitle := "determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
+    /** callback set by `determineUIA.ahk` so a remote `resetUIA()` can trigger a rebuild inside that process */
+    static onRebuild := ""
 
     static KSA {
         get => CLSID_Objs.load("KSA")
@@ -244,6 +246,61 @@ class premUIA_Values {
         "Generative Extend Tool", {uia: "genAITool", ksa:"genExtendTool"}
     )
 
+    /** clears the stored UIA elements/paths/handles. Flags live on the shared object, see `__setShared()` */
+    static wipe() {
+        this.AdobeEl   := false
+        this.UIA_Objs  := Map()
+        this.UIA_Path  := Map()
+        this.UIA_Hwnd  := Map()
+        this.allPanes  := Map()
+    }
+
+    /**
+     * sets `isRunning`/`beenSet` on the shared (registered) object, which is what other scripts read.
+     * Falls back to this class if the shared object can't be loaded.
+     */
+    static __setShared(isRunning, beenSet) {
+        try {
+            shared := CLSID_Objs.load("determineUIA")
+            shared.isRunning := isRunning
+            shared.beenSet   := beenSet
+            return
+        }
+        this.isRunning := isRunning
+        this.beenSet   := beenSet
+    }
+
+    /**
+     * Remote entry point. Wipes the stale values, then schedules a rebuild and returns immediately, so the calling script isn't blocked (or RPC timed out) while `setObjs()` runs.
+     * @returns {Boolean} false if a build is already in progress, or there's nothing to run the rebuild
+     */
+    static resetUIA() {
+        if !this.onRebuild
+            return false
+        try shared := CLSID_Objs.load("determineUIA")
+        catch
+            return false
+        if shared.isRunning
+            return false
+        this.wipe()
+        shared.beenSet   := false
+        shared.isRunning := true
+        try {
+            active := CLSID_Objs.load("determineActive")
+            active.isRunning := true
+            active := ""
+        }
+        SetTimer(this.onRebuild, -1)
+        return true
+    }
+
+    /** call from any script. Falls back to relaunching `determineUIA.ahk` if its COM object is unreachable */
+    static forceReset() {
+        try return CLSID_Objs.load("determineUIA").resetUIA()
+        try this.closeUIA()       ;// kills it if it's running
+        return this.initialise()  ;// relaunches it (returns false while it builds)
+    }
+
     /** sets UIA objects */
     static setObjs() {
         Critical('On')
@@ -399,11 +456,8 @@ class premUIA_Values {
         } catch as e {
             try errorLog(Error(e.Message, e.What, e.Extra))
             __DelNotify()
-            this.AdobeEl   := false
-            this.UIA_Objs  := Map()
-            this.UIA_Path  := Map()
-            this.beenSet := false
-            this.isRunning := false
+            this.wipe()
+            this.__setShared(false, false)
             throw ValueError(e.Message,, e.Extra)
         }
 

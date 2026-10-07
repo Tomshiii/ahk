@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/07
- * @version 2.5.78
+ * @version 2.5.79
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -408,6 +408,14 @@ class Prem {
 
         this.%which%Icon := statusIcon(imgIcon,,, 16)
         this.%which%Icon.follow(this._scan.hwnd, bX+4, tY+7, true, 5)
+        tryFunc(which) {
+            switch which {
+                case "uia": try premUIA_Values.forceReset()
+                case "cep": try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\cep\replaceAndReset.ahk")
+                case "uxp": try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\openDockerUXP.ahk")
+            }
+        }
+        this.%which%Icon.SetOnClick(tryFunc.Bind(which))
         this.%which%IconState := newState
         timelineObj := ""
     }

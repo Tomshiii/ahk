@@ -45,6 +45,7 @@
 
 🔗 `determineUIA.ahk`
 - ✅ Fixed function failing to properly close during `reloadAll.ahk`
+- 📋 `UIA` tree can now be regenerated from any script by calling `premUIA_Values.forceReset()`
 - 📋 Will now show a status icon for the connection status of the `cep` & `uxp` sockets/panels & the current `UIA` tree
     - Can be disabled in `settingsGUI()`  
     <img width="219" height="67" alt="statusIcons" src="https://github.com/user-attachments/assets/88771f4a-ef08-4ca1-b4e5-63080158570e" />
