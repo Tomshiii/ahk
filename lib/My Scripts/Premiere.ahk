@@ -8,6 +8,10 @@
 #Include Classes\winget.ahk
 #Include Classes\notifyExt.ahk
 #Include Classes\null.ahk
+#Include Classes\errorLog.ahk
+#Include Classes\coord.ahk
+#Include Classes\block.ahk
+#Include Classes\cursor.ahk
 #Include Functions\isDoubleClick.ahk
 #Include Functions\delaySI.ahk
 ; }
@@ -268,11 +272,11 @@ SC03A & LButton:: ;// lock vertical movement while adjusting keyframe handles
 	MouseMove(origCoord.x, origCoord.y)
 	SendInput("{LButton Down}")
 	blocker.Off()
-	move.clipMouse("x", true)
+	cursor.clipMouse("x", true)
 	KeyWait("vk14", "L")
 	if GetKeyState("LButton") || GetKeyState("LButton", "P")
 		SendInput("{LButton Up}")
-	move.setMouseClip()
+	cursor.setMouseClip()
 	__resetCaps(storeHotkey, capslockState)
 	checkStuck(["CapsLock", "LButton"])
 }
@@ -481,34 +485,51 @@ $d::
 	checkCoords := prem.__checkCoords(origMouse)
 	if !premActive || (premActive && CaretGetPos(&x, &y)) || (premActive && !checkCoords) {
 		SendInput("d")
+		errorLog(Error("cursor isn't within the timeline"))
+		return
+	}
+	if !prem.__checkPremRemoteFunc(["deselectAll", "getPlayheadPosTicks"]) || !prem.__checkPremRemoteFunc("custom/movePlayheadFrames", "uxp") {
+		errorLog(MethodError("Cannot determine PremiereRemote function", -1))
 		return
 	}
 	timelineActive := premUIA_Values.__isPremPanelActive('timelineWindow')
-	if !timelineActive || timelineActive == null
+	if !timelineActive || timelineActive == null {
+		errorLog(Error("timeline panel isn't active"))
 		return
+	}
 	isClip := prem.isClipUnderCursor(origMouse, &colour1, &colour2)
-	if isClip == null || isClip == true
+	if isClip == null || isClip == true {
+		errorLog(Error("clip may be under the cursor"))
 		return
+	}
 	KeyWait("d")
 	blocker := block_ext()
 	blocker.On()
 	try origTool := prem.getSelectedTool(, false)
 	try prem.selectTool("selectionTool",, true)
 	prem.__remoteFunc('deselectAll')
-	t := unset
-	loop 40 {
-		search := prem.searchPlayhead({x1: origMouse.x-6, y1: origMouse.y, x2: origMouse.x+6, y2: origMouse.y})
-		MouseMove(origMouse.x+1, origMouse.y, 0)
-		MouseMove(origMouse.x, origMouse.y, 0)
-		if search != false || A_Cursor != "Arrow" {
-			if !IsSet(t)
-				t := prem.__remoteFunc('getPlayheadPosTicks')
-			prem.__remoteUXP("custom/movePlayheadFrames",, "frames=60")
-			continue
-		}
-		break
+	t := prem.__remoteFunc('getPlayheadPosTicks')
+	name := cursor.MatchCursor(cursor.GetCursorSignature(), cursor.premMap)
+	switch name {
+		; case "arrow":
+		case "grab playhead":
+			loop {
+				prem.__remoteUXP("custom/movePlayheadFrames",, "frames=5")
+				MouseMove(origMouse.x+1, origMouse.y, 0)
+				MouseMove(origMouse.x, origMouse.y, 0)
+			} until (cursor.MatchCursor(cursor.GetCursorSignature(), cursor.premMap) = "arrow")
+		case "left trim", "left ripple", "right trim", "right ripple":
+			blocker.Off()
+			notifyExt.showIfNotExist('dHotkeyCursor',, "Move the cursor so no tools are shown.",,,, "DUR=4")
+			return
+		case "rolling edit":
+			blocker.Off()
+			notifyExt.showIfNotExist('dHotkeyRollEdit',, "what are you even doing...",,,, "DUR=4")
+			return
 	}
+
 	if !prem.__getlayerMid(&midDivX, &midDivY) {
+		errorLog(Error("failed to find the middle divider"))
 		blocker.Off()
 		return
 	}

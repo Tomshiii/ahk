@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions to interact with and move window elements.
  * @author tomshi
- * @date 2026/08/31
- * @version 1.3.3
+ * @date 2026/10/07
+ * @version 1.3.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -78,102 +78,6 @@ class Move {
         }
     }
 
-    /**
-     * A quick and dirty way to limit the axis your mouse can move
-     *
-     * This function has specific code for XButton1/2 and must be activated with 2 hotkeys
-    */
-    static XorY()
-    {
-        getHotkeys(&fr, &sc)
-        if sc != "XButton1" && sc != "XButton2"
-            return
-        MouseGetPos(&x, &y)
-        start:
-        oneAxis(sc)
-        {
-            while GetKeyState(sc, "P")
-                {
-                    SetTimer(tools, 15)
-                    tools() {
-                        MouseGetPos(&xx, &yy)
-                        static toolx := xx
-                        static tooly := yy
-                        if A_TimeIdleMouse < 500
-                            {
-                                switch sc {
-                                    case "XButton2": ToolTip("Your mouse will now only move along the x axis")
-                                    case "XButton1": ToolTip("Your mouse will now only move along the y axis")
-                                }
-                            }
-                        else if A_TimeIdleMouse > 500
-                            {
-                                MouseGetPos(&newX, &newY)
-                                switch sc {
-                                    case "XButton2":
-                                        if (newY = y) && (newX != toolx)
-                                            {
-                                                ToolTip("Your mouse will now only move along the x axis`nYou are currently level on the y axis")
-                                                toolx := newX
-                                            }
-                                    case "XButton1":
-                                        if (newX = x) && (newY != tooly)
-                                            {
-                                                ToolTip("Your mouse will now only move along the y axis`nYou are currently level on the x axis")
-                                                tooly := newY
-                                            }
-                                }
-                            }
-                    }
-                    MouseGetPos(&newX, &newY)
-                    switch sc {
-                        case "XButton2": MouseMove(newX, y)
-                        case "XButton1": MouseMove(x, newY)
-                    }
-                }
-                SetTimer(tools, 0)
-                ToolTip("")
-        }
-        oneAxis(sc)
-        if GetKeyState(fr, "P")
-            goto start
-    }
-
-    /**
-     * A function to lock mouse movement on a particular axis. Call `move.setMouseClip()` with no parameters, or set `keywait` to `true` to disable
-     * @link https://old.reddit.com/r/AutoHotkey/comments/1g8uqes/need_help/lt42sh7/
-     * @param {String} [axs] either "x", or "y"
-     * @param {Boolean} [keywait=true] determine whether to end the function after `keys.allWait(2)` or whether you wish to handle resetting manually
-     */
-    static clipMouse(Axs, keywait := true){
-        coord.s("mouse")
-        MouseGetPos(&x,&y)
-        if (Axs="X")
-            this.setMouseClip(1,0,y,A_ScreenWidth,y+1)
-        else
-            this.setMouseClip(1,x,0,x+1,A_ScreenHeight)
-
-        if keywait = true {
-            try keys.allWait(2)
-            this.setMouseClip()
-            return
-        }
-    }
-
-    /** helper function for `clipMouse`. call with no params to disable locked mouse movement */
-    static setMouseClip(Conf := 0, x1 := 0, y1 := 0, x2 := 1, y2 := 1) {
-        if !Conf {
-            DllCall("ClipCursor", "Ptr", 0)
-            return
-        }
-
-        pData := DllCall("GlobalAlloc", "UInt", 0, "UPtr", 16, "Ptr")
-        NumPut("Int", x1, pData, 0), NumPut("Int", y1, pData, 4)
-        NumPut("Int", x2, pData, 8), NumPut("Int", y2, pData, 12)
-        Val := DllCall("ClipCursor", "Ptr", pData)
-        DllCall("GlobalFree", "Ptr", pData)
-        return Val
-    }
 
     /**
      * This function allows the minorly adjust the width/height & x/y values of the active window
@@ -299,7 +203,5 @@ class Move {
         }
     }
 
-    __Delete(*) {
-        try OnExit(this.setMouseClip())
-    }
+
 }
