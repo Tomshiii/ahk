@@ -2,6 +2,7 @@
 
 ## Functions
 - ✏️ Added `statusIcon {`, `cursor {`
+- ✏️ Added `obj.isEqual()`
 - ✅ Fixed `settings.ini` values getting reset if a key is added
 - ✅ Fixed `adobeXML {` flooding the logs with empty values when a hotkey isn't found
 - 📋 Increased default `adobe_GB` value from `45` => `100`
@@ -44,6 +45,6 @@
 
 🔗 `determineUIA.ahk`
 - ✅ Fixed function failing to properly close during `reloadAll.ahk`
-- 📋 Will now show a status icon for the connection status of the `cep` & `uxp` sockets/panels
+- 📋 Will now show a status icon for the connection status of the `cep` & `uxp` sockets/panels & the current `UIA` tree
     - Can be disabled in `settingsGUI()`  
-    <img width="222" height="74" alt="cep_uxp_status" src="https://github.com/user-attachments/assets/0713ea6f-e8b7-4aa4-a54d-f8a03710e2a1" />
+    <img width="219" height="67" alt="statusIcons" src="https://github.com/user-attachments/assets/88771f4a-ef08-4ca1-b4e5-63080158570e" />

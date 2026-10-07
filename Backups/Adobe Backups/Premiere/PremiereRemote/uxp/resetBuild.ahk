@@ -32,7 +32,7 @@ if !winExt.ExistRegex(devTools,,,, true) {
     return
 }
 
-if !__startUXP(, &debugButt) {
+if !__startUXP() {
     notifyExt.showIfNotExist('uxpRebuildFailed',, "Failed to find UXP window")
     return
 }
