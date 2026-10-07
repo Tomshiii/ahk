@@ -69,8 +69,8 @@ class rclone {
                 normalCommand := format(this.cmdSyncDir, nCommand, gCommand, altshare)
                 return this.__formatSSH(normalCommand)
             case (2, "2"):
-                gString := "1. The Boys\Main\"
-                gPath   := SubStr(gdrive_FullPath, InStr(gdrive_FullPath, gString)+(StrLen(gString)+1))
+                gString := "1. The Boys\"
+                gPath   := SubStr(gdrive_FullPath, InStr(gdrive_FullPath, gString)+(StrLen(gString)))
                 normalCommand := Format(this.cmdCopyFile, StrReplace(gPath, "\", "/"), StrReplace(nPath, "\", "/"), altshare)
                 return this.__formatSSH(normalCommand)
         }
