@@ -2490,12 +2490,25 @@ export async function resetSelection(): Promise<boolean | string> {
     return ok;
 }
 
+let panelVisible = false;
+
+uxp.entrypoints.setup({
+    panels: {
+        "de.sebinside.premiereremote.statuspanel": {
+            create()  { console.log("create");  },
+            show()    { console.log("show");    panelVisible = true;  },
+            hide()    { console.log("hide");    panelVisible = false; },
+            destroy() { console.log("destroy"); panelVisible = false; }
+        }
+    }
+});
+
 /**
  * a simple ping to confirm the UXP extension is currently loaded and able to respond
  * @returns {boolean}
  */
-export async function isPanelOpen(): Promise<boolean> {
-    return true;
+export async function isPanelOpen(): Promise<string> {
+    return `uxp visible=${panelVisible}`;
 }
 
 /**
