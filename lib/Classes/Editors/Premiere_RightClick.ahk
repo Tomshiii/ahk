@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.5.1
  * @author tomshi, taranVH
- * @date 2026/09/30
- * @version 2.4.37
+ * @date 2026/10/08
+ * @version 2.4.38
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -227,6 +227,8 @@ class rbuttonPrem {
 		checkedKey := (IsSet(checkedKey) && checkedKey != "") ? checkedKey : (IsSet(A_ThisHotkey) && A_ThisHotkey != "" && this.__chkHotkey(A_ThisHotkey) != false) ? A_ThisHotkey : ""
 		this.__stopHook()
 		block.Off()
+		if this.colourOrNorm = "colour" && (GetKeyState("LButton") && !GetKeyState("LButton", "P"))
+			SendInput("{LButton Up}")
 		this.__resetClicks()
 		checkstuck(["XButton1", "XButton2", "Ctrl", "Shift", checkedKey])
 		try SetTimer(this.__ensureSeq, 0)

@@ -88,15 +88,20 @@ $Tab::
 
 Space:: ;// make space more useful by closing certain windows
 {
+	if WinExist("Save Project " prem.winTitle) {
+		v := UIA.ElementFromWindow("Save Project " prem.winTitle)
+		if !v.CanResize ;// project actually saving
+			return
+	}
 	switch {
 		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"):
 			SendInput("{Enter}")
 			return
-		case isIn("Save Project"):
+		/* case isIn("Save Project"):
 			if !CaretGetPos(&x, &y)
 				return
 			SendInput("{Space}")
-			return
+			return */
 		case isIn("Clip Fx Editor - DeNoise"):
 			SendInput("{Enter}")
 			if IsSet(A_PriorKey) && isDoubleClick(750, "key")

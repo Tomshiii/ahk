@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/09/23
- * @version 1.1.22
+ * @date 2026/10/08
+ * @version 1.1.23
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -74,6 +74,11 @@ Class CustomFunctions {
 class OtherFuncs {
     /** calls `prem.renderAndReplace()` then calls the `organiseProj` `PremiereRemote` function. Might not make sense for anyone else with a different prem bin structure */
     static rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) {
+        if !prem.__checkPremRemoteFunc('organiseProj') {
+            ;// throw
+            errorLog(MethodError("PremiereRemote CEP extension is required for this function"))
+            return
+        }
         if !prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?)
             return
         sleep 1000
@@ -82,6 +87,11 @@ class OtherFuncs {
 
     /** calls premremote func `addMatchedAdjustmentLayer()`. If it's my transform adjust layer, it also adds the transform effect */
     static addAdjustLayer(adjustmentLayerPath, makeSelection) {
+        if !prem.__checkPremRemoteFunc(['custom/addMatchedAdjustmentLayer', 'custom/applyEffectOnAllSelectedClips', 'custom/resetSelection'], "UXP") {
+            ;// throw
+            errorLog(MethodError("PremiereRemote UXP extension is required for this function"))
+            return
+        }
         adjustName := SubStr(adjustmentLayerPath, InStr(adjustmentLayerPath, "/",, -1)+1)
         prem.stopPlayback()
         prem.__remoteUXP('custom/addMatchedAdjustmentLayer',, 'adjustmentLayerPath=' adjustmentLayerPath, "makeSelection=" makeSelection)
@@ -111,6 +121,11 @@ class OtherFuncs {
 
     /** sets up a project using my template project file and desired bin structure */
     static setupProject() {
+        if !prem.__checkPremRemoteFunc('custom/setupProjBin', "UXP") {
+            ;// throw
+            errorLog(MethodError("PremiereRemote UXP extension is required for this function"))
+            return
+        }
         backupsPath := ptf.Backups
         templateFile := backupsPath "\Adobe Backups\Premiere\Template\v" SubStr(prem.currentSetVer, 1, 2) "_2160p29.97.prproj"
         prem.__remoteUXP('custom/setupProjBin',, "templateProjectPath=" templateFile, "includeOptionalAssets=true")
@@ -121,7 +136,12 @@ class OtherFuncs {
      * @param {String} [audioType="Standard"] which type of audio channel to add. Can be `Standard`/`5.1`/`mono`/`adaptive`
      */
     static setupMusicTracks(audioType := "Standard") {
-        audTrackNum := prem.__remoteFunc('getAudioTracks')
+        if !prem.__checkPremRemoteFunc("custom/getAudioTracks", "UXP") {
+            ;// throw
+            errorLog(MethodError("PremiereRemote UXP extension is required for this function"))
+            return
+        }
+        audTrackNum := prem.__remoteUXP("custom/getAudioTracks")
         selectedTrack := ""
         index := -1
         afterGUI := tomshiBasic(,,, "After Track")
@@ -202,5 +222,14 @@ class OtherFuncs {
         } catch as e {
             throw e
         }
+        loop {
+            sleep 1000
+        } until (prem.__remoteUXP("custom/getAudioTracks") > audTrackNum)
+        sleep 250
+        timelineObj := premUIA_Values.getLivePanel("timelineWindow",, &uiaEl)
+        audIndex := prem.__retrieveAudLayerIndex(uiaEl)
+        trackLocks := timelineObj.FindElements({Type:50000, Name:"Toggle Track Lock"},,, audIndex.children[audIndex.audIndex])
+        trackLocks[index-1].Invoke()
+        trackLocks[index+3].Invoke()
     }
 }

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/07
- * @version 2.5.79
+ * @date 2026/10/08
+ * @version 2.5.80
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -643,7 +643,7 @@ class Prem {
 
     /**
      * This function checks the [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) `index` or UXP `.ts` file for the desired function
-     * @param {String | array} checkFunc if `cepOrUXP` is set to `cep`; the function name you wish to search for. ie `projPath`, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
+     * @param {String | array} checkFunc if `cepOrUXP` is set to `cep`; the function name you wish to search for. ie `projPath`, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayer`
      * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
      * @param {Boolean} [alerts=true] determines whether `Notify` alerts will appear for certain failures
      * @returns {Boolean}
@@ -717,6 +717,13 @@ class Prem {
                     case "string": return !!this.__getUXPFuncInfo(checkFunc)
                     case "array":
                         for objs in checkFunc {
+                            ;// plain string: `file/func`
+                            if Type(objs) = "String" {
+                                if !this.__getUXPFuncInfo(objs)
+                                    return false
+                                continue
+                            }
+                            ;// object: {file: "custom", funcs: ["a", "b"]}
                             file := RegExReplace(StrReplace(objs.file, "\", "/"), "\.ts$")
                             for nfunc in objs.funcs {
                                 if !this.__getUXPFuncInfo(file "/" nfunc)
@@ -1334,20 +1341,21 @@ class Prem {
     }
 
     /**
-     * Calls a `PremiereRemote` function to directly save the current project. This function will also double check to ensure the active sequence does not change after the save attempt
-     * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close. (This is simply to get information returned to you, it should be noted that the thread will still halt until the `PremiereRemote` save function has completed)
-     * @param {Integer} [checkSeqTime=1000] the value you wish the function to sleep before checking if the active sequence was changed
-     * @param {Integer} [checkAmount=1] the amount of times you wish for the function to check (with a sleep delay of `checkSeqTime` inbetween each). Be aware that using a value higher than `1` may result in the function changing the sequence in the event that the user manually changes it after a save
-     * @param {Boolean} [continueOnBusy=false] determine whether to continue with a save attempt even if Premiere may be busy
+     * Calls a `PremiereRemote` function to directly save the current project, then verifies the active sequence didn't change.
+     * @param {Boolean} [andWait=true] wait for the `Save Project` window to open/close (the thread still halts until the `PremiereRemote` save function completes)
+     * @param {Integer} [checkSeqTime=1000] `ms` to sleep before each active-sequence check
+     * @param {Integer} [checkAmount=1] number of sequence checks (`0` disables). Values above `1` may switch the sequence back if the user changes it manually after a save
+     * @param {Boolean} [continueOnBusy=false] attempt the save even if Premiere's state looks busy
      * @returns {Boolean/String}
-     * - `true`      : successful
-     * - `false`     : `PremiereRemote` not installed/save attempt failed (server not running)
-     * - `"timeout"` : waiting for the save project window to open/close timed out
-     * - `"busy"`    : another window may be open in premiere that could cause saving to fail
+     * - `true`              : successful
+     * - `false`             : `PremiereRemote` not installed / save attempt failed / Premiere not found
+     * - `"timeout"`         : the save project window opened but never closed
+     * - `"timeout_nosave"`  : the save project window never opened
+     * - `"busy"`            : another window may be open in Premiere that could cause saving to fail
      */
     static save(andWait := true, checkSeqTime := 1000, checkAmount := 1, continueOnBusy := false) {
         if !IsInteger(checkAmount) || !IsInteger(checkSeqTime) || !isBool(andWait) || !isBool(continueOnBusy) {
-            errorLog(PropertyError("Incorrect Parameter Type"),,, true)
+            errorLog(TypeError("Incorrect Parameter Type"),,, true)
             return false
         }
         ;// the below windows will halt or delay the save process if they exist
@@ -1355,73 +1363,95 @@ class Prem {
         haltSave := "(?:Save Project) " this.winTitle
         if winExt.ExistRegex(haltSave)
             return "busy"
-        if winExt.ExistRegex(waitSave) {
-            if !winExt.WaitCloseRegex(waitSave,, 10)
-                return "busy"
-        }
+        if winExt.ExistRegex(waitSave) && !winExt.WaitCloseRegex(waitSave,, 10)
+            return "busy"
+
         premWindow := WinGet.PremName()
-        if !premWindow || Type(premWindow) != "Object" ||
-            ((premWindow.winTitle = "" || !premWindow.wintitle) &&
-            premWindow.titleCheck = null && premWindow.saveCheck = null) {
+        if !premWindow || Type(premWindow) != "Object"
+            || (!premWindow.HasProp("winTitle") || premWindow.winTitle = "")
+            && !premWindow.HasProp("titleCheck") && !premWindow.HasProp("saveCheck") {
             errorLog(UnsetError("prem.save() was unable to determine the title of the Premiere Pro window"), "The user may not have the correct year set within the settings", 1)
             return false
         }
-        try procName := WinGetProcessName(premWindow.winTitle), procClass := WinGetClass(premWindow.wintitle)
-        catch {
+
+        try {
+            procName  := WinGetProcessName(premWindow.winTitle)
+            procClass := WinGetClass(premWindow.winTitle)
+        } catch {
             ;// prem may have crashed
             return false
         }
-        editTab := this.isEditTabActive()
-        if continueOnBusy = false && ((procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe") && (procClass != "Premiere Pro" && procClass != "Premiere Pro (Beta)")) || editTab = false
-            return "busy"
+
+        if !continueOnBusy {
+            isPrem := (procName = "Adobe Premiere Pro.exe" || procName = "Adobe Premiere Pro (Beta).exe")
+            badClass := (procClass != "Premiere Pro" && procClass != "Premiere Pro (Beta)")
+            if (isPrem && badClass) || !this.isEditTabActive()
+                return "busy"
+        }
+
         if !this.__checkPremRemoteFunc(["saveProj", "getActiveSequenceID", "focusSequence"])
             return false
+
+        origSeq := ""
         if checkAmount != 0
             origSeq := this.__remoteFunc("getActiveSequenceID")
-        state := {hasAppeared: false, hasClosed: false}
-        try WinEvent.Exist((*) => state.hasAppeared := true, "Save Project " this.exeTitle)
-        try WinEvent.Close((*) => state.hasClosed := true, "Save Project " this.exeTitle)
-        __stopCallbacks() {
-            try WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
-            try WinEvent.Stop('Close', "Save Project " prem.exeTitle)
-        }
 
-        ;// func won't continue until this premiereremote func finishes (saving completes)
-        blocker := block_ext()
-        blocker.On(false)
-        SetTimer((*) => blocker.Off(), -250)
-        if !this.__remoteFunc("saveProj") {
-            __stopCallbacks()
+        ;// save
+        saveTitle := "Save Project " this.exeTitle
+        state     := {hasAppeared: false, hasClosed: false}
+        blocker   := block_ext()
+        unblock   := (*) => blocker.Off() ;// single function object so SetTimer can reset the same timer
+
+        onAppear(*) {
+            if state.hasAppeared
+                return
+            state.hasAppeared := true
+            SetTimer(unblock, -500) ;// dialog is up, release inputs shortly after
+        }
+        onClose(*) => state.hasClosed := true
+
+        saved := false
+        try {
+            try WinEvent.Exist(onAppear, saveTitle)
+            try WinEvent.Close(onClose, saveTitle)
+
+            blocker.On(false)
+            SetTimer(unblock, -1500) ;// failsafe in case Premiere hangs / the dialog never shows
+            saved := this.__remoteFunc("saveProj")
+        } finally {
+            SetTimer(unblock, 0)
             blocker.Off()
-            return false
+            try WinEvent.Stop("Exist", saveTitle)
+            try WinEvent.Stop("Close", saveTitle)
         }
-        __stopCallbacks()
 
-        blocker.Off()
+        if !saved
+            return false
         if !andWait
             return true
 
-        ;// waiting for save dialogue to open & close
+        ;// verify if dialog opened/closed
         if !state.hasAppeared
             return "timeout_nosave"
         if !state.hasClosed
             return "timeout"
 
+        ;// verify active sequence didn't change
         if checkAmount = 0
             return true
         if origSeq = "" {
             errorLog(Error("Premiere failed to retrieve the originally active sequence before saving. Aborting"))
             return true
         }
-        sleep checkSeqTime
+
         loop checkAmount {
+            sleep checkSeqTime
             currentSeq := this.__remoteFunc("getActiveSequenceID")
             if currentSeq != origSeq {
                 errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" origSeq))
                 this.__remoteFunc("focusSequence",, "ID=" String(origSeq))
                 return true
             }
-            sleep checkSeqTime
         }
 
         return true
