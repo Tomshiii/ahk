@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/10/07
- * @version 3.0.49
+ * @date 2026/10/08
+ * @version 3.0.50
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -362,9 +362,14 @@ class premUIA_Values {
             }
         }
 
+        originalWindow := null
         try {
-            if !WinActive(prem.winTitle) && !WinActive(prem.class)
+            if !WinActive(prem.winTitle) && !WinActive(prem.class) {
+                try aTitle := WinGet.Title()
+                try aClass := WinGetClass(aTitle)
+                try originalWindow := {title: aTitle ?? null, class: aClass ?? null}
                 switchTo.Premiere()
+            }
             if !prem.isEditTabActive() {
                 __DelNotify()
                 throw UnsetError("throw code:719")
@@ -386,6 +391,15 @@ class premUIA_Values {
             } catch {
                 __DelNotify()
                 throw UnsetError("throw code:701")
+            }
+            if originalWindow !== null {
+                try WinActivate(originalWindow.title " ahk_class " originalWindow.class)
+                catch {
+                    try WinActivate(originalWindow.title)
+                    catch {
+                        try WinActivate(originalWindow.class)
+                    }
+                }
             }
             this.__setAllPanes()
 
