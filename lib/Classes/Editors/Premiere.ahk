@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/08
- * @version 2.5.80
+ * @version 2.5.81
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1829,12 +1829,13 @@ class Prem {
                 effCtrlAct := premUIA_Values.__isUiaElementActive('effectControls', premUIA)
                 if !effCtrlAct || effCtrlAct == null {
                     try {
-                        premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
-                        Sleep(25)
-                        premUIA.AdobeEl.UIA_obj["programMonitor"].SetFocus()
-                        Sleep(25)
-                        premUIA.AdobeEl.UIA_obj["effectControls"].SetFocus()
-                        Sleep(50)
+                        eff  := premUIA_Values.getLivePanel('effectControls')
+                        prog := premUIA_Values.getLivePanel('programMonitor')
+                        effButt := eff.FindElement({Type: 50000, Name: "UI_Button"})
+                        effButt.Invoke()
+                        prog.FindElement({Type: 50000, Name: "UI_Button"}).Invoke()
+                        effButt.Invoke()
+                        sleep 25
                         delaySI(20, "^a", ksa.prem.deselectAll)
                     } catch {
                         errorLog(Error("UIA focus failed. falling back to manual method", -1))
@@ -2987,6 +2988,11 @@ class Prem {
                 } catch {
                     return
                 }
+            }
+            if WinExist("Save Project " prem.winTitle) {
+                v := UIA.ElementFromWindow("Save Project " prem.winTitle)
+                if !v.CanResize ;// project actually saving
+                    return
             }
             ;// I hate the stupid trim mode, I wish I could delete it from existence
             if closeTrim = true && this.isTrimModeActive() && premUIA_Values.__isUiaElementActive("timelineWindow", premUIA) = true {
