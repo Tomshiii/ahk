@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/10/02
- * @version 1.5.19
+ * @date 2026/10/08
+ * @version 1.5.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -790,10 +790,27 @@ class AE {
 
     /**
      * Sets the zoom state of the current viewer
-     * @param {String | Number} [zoom="Fit up to 100%"] The zoom value you wish to set. May be `Fit up to 100%`/`Fit`, or must otherwise be an number between `1` => `1600`
+     * @param {String | Number} [zoom="Fit up to 100%"] `Fit`, `Fit up to 100%`, or a number from `1` to `1600`
      * @returns {Boolean}
      */
     static setViewerZoom(zoom := "Fit up to 100%") {
+        isFit := (zoom = "Fit" || zoom = "Fit up to 100%")
+        if !isFit && (!IsNumber(zoom) || zoom < 1 || zoom > 1600) {
+            errorLog(TypeError("Incorrect Parameter type in Parameter #1", -1, zoom),,, true)
+            return false
+        }
+
+        if this.__checkAERemoteFunc("setViewerZoom", "cep", false) {
+            param := (zoom = "Fit") ? "fit" : (zoom = "Fit up to 100%") ? "fit100" : Number(zoom)
+            if this.__remoteFunc("setViewerZoom", false, "zoom=" param) = true
+                return true
+        }
+
+        ;// AERemote unavailable, function not registered yet, or the Fit menu lookup failed
+        return this.__uiaSetZoom(zoom)
+    }
+
+    static __uiaSetZoom(zoom) {
         if !WinActive(this.winTitle)
             switchTo.AE()
         aeName := WinGet.AEName()
@@ -805,47 +822,48 @@ class AE {
             return false
         }
         aeWin := UIA.ElementFromHandle(aeName.winTitle,, false)
-        coord.s()
-        origMouse := obj.MousePos()
-        SetMouseDelay(0)
-        if zoom != "Fit" && zoom != "Fit up to 100%" && !IsNumber(zoom) && zoom <= 1600 && zoom >= 1 {
-            ;// throw
-            errorLog(TypeError("Incorrect Paramater type in Parameter #1", -1, zoom),,, true)
-            return false
-        }
+
         if zoom = "Fit" || zoom = "Fit up to 100%" {
             try listItem := aeWin.FindElement({Type:50007, Name:zoom})
+            catch
+                return false
+            try listItem.select()
             catch {
                 return false
             }
-            listItem.select()
             return true
         }
-        try editTextBox := aeWin.FindElement({Type: 50004, Name: "Magnification percentage", matchmode:"Substring"})
-        try percent := aeWin.FindElement({Type:50020, Name:"%"})
-        catch {
+
+        coord.s()
+        origMouse := obj.MousePos()
+        SetMouseDelay(0)
+
+        try {
+            editTextBox := aeWin.FindElement({Type:50004, Name:"Magnification percentage", matchmode:"Substring"})
+            percent := aeWin.FindElement({Type:50020, Name:"%"})
+        } catch
             return false
-        }
-        MouseMove(percent.Location.x-10, editTextBox.Location.y+5)
+
+        MouseMove(percent.Location.x - 10, editTextBox.Location.y + 5)
         SendInput("{Click}")
+
         try editText := aeWin.FindElements({Type:50004, Name:"OS_EditText"})
         catch {
+            MouseMove(origMouse.x, origMouse.y)
             return false
         }
-        found := false
+
         el := false
         for v in editText {
             for child in v.children {
                 if InStr(child.Name, "Magnification percentage") {
-                    found := true
                     el := child
-                    break
+                    break 2
                 }
             }
-            if !found
-                continue
         }
-        if !found {
+        if !el {
+            MouseMove(origMouse.x, origMouse.y)
             return false
         }
         el.value := zoom

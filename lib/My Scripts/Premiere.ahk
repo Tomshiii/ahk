@@ -133,8 +133,13 @@ Space:: ;// make space more useful by closing certain windows
 }
 
 NumpadEnter::
-Enter:: ;// close windows by double tapping enter
+Enter::
 {
+	tab := prem.isEditTabActive()
+	if tab == null || !tab {
+		SendInput("{" A_ThisHotkey "}")
+		return
+	}
 	titles := "Audio Gain " prem.winTitle "|"
 	switch {
 		case isIn("Clip Fx Editor"), isIn("Track Fx Editor"):
