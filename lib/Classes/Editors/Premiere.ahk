@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/08
- * @version 2.5.81
+ * @date 2026/10/09
+ * @version 2.5.82
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -597,16 +597,17 @@ class Prem {
      * This function checks for the existence of [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main). Can also check for the existence of a specific function within the `index.tsx` file, or desired UXP `ts` file
      * @param {String} [checkFunc=""] if `cepOrUXP` is set to `cep`; the name of the function you wish to check for, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
      * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
+     * @param {Boolean} [alerts=true] determines whether `Notify` alerts will appear for certain failures
      * @returns {Boolean}
      */
-    static __checkPremRemoteDir(checkFunc := "", cepOrUXP := "cep") {
+    static __checkPremRemoteDir(checkFunc := "", cepOrUXP := "cep", alerts := true) {
         switch cepOrUXP, 0 {
             case "cep":
                 this.__isRemoteInstalled()
                 if this.__cepInstalled != true
                     return false
                 if checkFunc != ""
-                    return (this.__cepInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+                    return (this.__cepInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP, alerts) ? true : false)
                 else
                     return (this.__cepInstalled = true ? true : false)
             case "uxp":
@@ -614,7 +615,7 @@ class Prem {
                 if this.__uxpInstalled != true
                     return false
                 if checkFunc != ""
-                    return (this.__uxpInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP) ? true : false)
+                    return (this.__uxpInstalled = true && this.__checkPremRemoteFunc(checkFunc, cepOrUXP, alerts) ? true : false)
                 else
                     return (this.__uxpInstalled = true ? true : false)
         }
@@ -666,9 +667,9 @@ class Prem {
                         return false
                     }
                 } catch {
-                    errorLog(MethodError("PremiereRemote CEP panel isn't open.", -1))
+                    errorLog(MethodError("PremiereRemote CEP panel isn't open or communicating with the panel failed.", -1))
                     if alerts = true
-                        notifyExt.showIfNotExist('premCEPNotOpen',, "PremiereRemote CEP Panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        notifyExt.showIfNotExist('premCEPNotOpen',, "PremiereRemote CEP Panel is not open or communicating with the panel failed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                     return false
                 }
                 if !this.__cepFuncMap {
@@ -693,15 +694,16 @@ class Prem {
                 }
                 try {
                     open := cmd.httpGet(Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP))
-                    if open != '"uxp visible=true"' && open != true && alerts = true {
+                    if open != '"uxp visible=true"' && open != true {
                         errorLog(MethodError("PremiereRemote UXP panel isn't open.", -1))
-                        notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        if alerts = true
+                            notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                         return false
                     }
                 } catch {
-                    errorLog(MethodError("PremiereRemote UXP panel isn't open.", -1))
+                    errorLog(MethodError("PremiereRemote UXP panel isn't open or communicating with the panel failed.", -1))
                     if alerts = true
-                        notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open or communicating with the panel failed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                     return false
                 }
                 if !this.__uxpFuncMap {
@@ -829,8 +831,14 @@ class Prem {
     static __remoteFunc(whichFunc, runAsync := false, params*) {
         if !WinExist(this.winTitle)
             return null
-        if !this.__checkPremRemoteDir(whichFunc) {
-            errorLog(TargetError("PremiereRemote is not installed or function does not exist.", -1, whichFunc),,, true)
+        chkDir := this.__checkPremRemoteDir()
+        chkFunc := this.__checkPremRemoteFunc(whichFunc)
+        if !chkDir {
+            errorLog(TargetError("PremiereRemote CEP is not installed.", -2, whichFunc),,, true)
+            return null
+        }
+        if !chkFunc {
+            errorLog(TargetError("PremiereRemote function does not exist or CEP panel is not open.", -2, whichFunc),,, true)
             return null
         }
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
@@ -1025,15 +1033,21 @@ class Prem {
         if !WinExist(this.winTitle)
             return null
         if !InStr(whichFunc, "/") {
-            errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -1, whichFunc), whichFunc,, true)
+            errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -2, whichFunc), whichFunc,, true)
             return null
         }
-        if !this.__checkPremRemoteDir(whichFunc, "uxp") {
-            errorLog(TargetError("PremiereRemote UXP is not installed or function does not exist.", -1, whichFunc),,, true)
+        chkDir := this.__checkPremRemoteDir(, "uxp")
+        chkFunc := this.__checkPremRemoteFunc(whichFunc, "uxp")
+        if !chkDir {
+            errorLog(TargetError("PremiereRemote UXP is not installed.", -2, whichFunc),,, true)
+            return null
+        }
+        if !chkFunc {
+            errorLog(TargetError("PremiereRemote function does not exist or UXP panel is not open.", -2, whichFunc),,, true)
             return null
         }
         if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
-            errorLog(Error("Core Functionality.ahk is not open but is required.", -1),,, true)
+            errorLog(Error("Core Functionality.ahk is not open but is required.", -2),,, true)
             return null
         }
 
@@ -1572,11 +1586,10 @@ class Prem {
             return
         coord.s()
         block.On()
-        if !premUIA := premUIA_Values.initialise() {
+        if !progNN := premUIA_Values.getLivePanel("programMonitor") {
             block.Off()
             return
         }
-        progNN := premUIA.UIA_Objs["programMonitor"]
         if this.__getPixel(progNN.location.x+15, progNN.location.y+(progNN.location.h-10)) != this.iconHighlight {
             block.Off()
             return
@@ -1769,7 +1782,7 @@ class Prem {
             return
         }
         if !this.__checkPremRemoteFunc('getPlayheadPosTicks') || !this.__checkPremRemoteFunc('custom/resetSelection', "uxp") {
-            errorLog(MethodError("Required PremiereRemote functions missing.", -1),,, true)
+            errorLog(MethodError("Required PremiereRemote functions missing.", -1))
             return
         }
         if checkMButton != false {
@@ -1884,7 +1897,7 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls",, &premUIA) {
+        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls",, &premUIA) || !progMon := premUIA_Values.getLivePanel("programMonitor", premUIA) {
             block.Off()
             return
         }
@@ -1942,7 +1955,7 @@ class Prem {
             return true
         }
 
-        progClassNN := ControlGetClassNN(premUIA.UIA_Objs["programMonitor"].GetControlId()) ;gets the ClassNN value of the effects control window
+        progClassNN := ControlGetClassNN(progMon.GetControlId()) ;gets the ClassNN value of the effects control window
         previewWin := obj.CtrlPos(progClassNN)
         if !IsObject(previewWin)
             return
@@ -2505,13 +2518,13 @@ class Prem {
             }
         }
 
-        if !premUIA_Values.getLivePanel("timelineWindow",, &premUIA) {
+        if !timelineNN := premUIA_Values.getLivePanel("timelineWindow",, &premUIA) {
             errorLog(MethodError("Failed to initialise premUIA. Aborting...", -1))
             Critical("Off")
             keys.allWait()
             return false
         }
-        timelineNN := premUIA.UIA_Objs['timelineWindow']
+
         if !middleIndex := this.__retrieveAudLayerIndex(premUIA) {
             errorLog(MethodError("Failed to determine middle index object. Aborting...", -1))
             Critical("Off")
@@ -2597,14 +2610,15 @@ class Prem {
             return false
         if selectMethod = "prem"
             tool := premUIA_Values.toolsMap.Has(tool) ? premUIA_Values.toolsMap[tool].uia : tool
-        isSelected := this.isToolSelected(tool, premUIA)
-        if isSelected == null
+        if !el := premUIA_Values.getLiveTool(tool, premUIA)
             return false
-        if isSelected = false {
-            try premUIA.UIA_Objs[tool].Invoke()
-            catch {
+        try isSelected := (el.value = "Selected")
+        catch
+            return false
+        if !isSelected {
+            try el.Invoke()
+            catch
                 return false
-            }
         }
         if focusTimeline = true
             this.__focusTimeline()
@@ -2634,11 +2648,10 @@ class Prem {
         if !WinActive(this.winTitle) && !WinActive(this.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
             return null
         }
-        uiaEl := IsSet(UIAobj) ? UIAobj : premUIA_Values.initialise()
-        if !uiaEl
+        if !el := premUIA_Values.getLiveTool(tool, UIAobj?)
             return null
-        try returnVal := (uiaEl.UIA_Objs[tool].value = "Selected" ? true : false)
-        return (IsSet(returnVal) && (returnVal = true || returnVal = false) ? returnVal : null)
+        try return (el.value = "Selected")
+        return null
     }
 
     /**
@@ -2696,9 +2709,8 @@ class Prem {
             SendInput(command)
             return
         }
-        if !premUIA := premUIA_Values.initialise()
+        if !toolsNN := premUIA_Values.getLivePanel("toolsWindow",, &premUIA)
             return
-        toolsNN := premUIA.UIA_Objs["toolsWindow"]
         projActive := premUIA_Values.__isUiaElementActive("projectsWindow", premUIA)
         textStatus := this.isToolSelected("textTool", premUIA)
         if !toolsNN || projActive == null || textStatus == null || (projActive = true) || textStatus {

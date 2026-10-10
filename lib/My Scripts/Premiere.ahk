@@ -740,12 +740,11 @@ $d::
 				return false
 			}
 		}
-		if !premUIA := premUIA_Values.initialise() {
+		if !progmon := premUIA_Values.getLivePanel("programMonitor") {
 			KeyWait(A_ThisHotkey)
 			__cleanup()
 			return
 		}
-		progmon := premUIA.UIA_Objs["programMonitor"]
 		if __within(origMouse, progmon) {
 			if A_Cursor != "Unknown" {
 				block.On()

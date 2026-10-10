@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/10/08
- * @version 3.0.50
+ * @date 2026/10/09
+ * @version 3.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,9 +12,10 @@
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\notifyExt.ahk
-#Include Classes\switchTo.ahk
 #Include Classes\block.ahk
 #Include Classes\null.ahk
+#Include Classes\winExt.ahk
+#Include Classes\errorLog.ahk
 #Include KSA\Keyboard Shortcut Adjustments.ahk
 #Include Functions\isObjHasProp.ahk
 #Include Other\UIA\UIA.ahk
@@ -22,21 +23,28 @@
 ; }
 
 class premUIA_Values {
-    ;// current panels;
-        ;// homeTab         - The Home row at the top of premiere
-    ;// All below native panels require a hotkey set within Premiere to activate
-        ;// timelineWindow  - Timeline Panel
-        ;// effectControls  - Effect Controls Panel
-        ;// effectsWindow   - Effects Panel
-        ;// programMonitor  - Program Monitor
-        ;// sourceMonitor   - Source Monitor
-        ;// toolsWindow     - Tools Panel
-        ;// projectsWindow  - Project Panel
-        ;// premRemote      - PremiereRemote Extension
+    /**
+     * Panels tracked by this class.
+     * Map key = UIA element name to search for.
+     * `key`       - the name used in `UIA_Path` / `UIA_Hwnd`
+     * `type`      - UIA control type to match (default 50033 / pane)
+     * `matchmode` - optional, eg "Substring" when the full name isn't static
+     * `useParent` - optional, take the hwnd from the element's parent
+     */
+    static panels := Map(
+        "Timeline",                 {key: "timelineWindow", type: 50033, useParent: true},
+        "Effect Controls",          {key: "effectControls", type: 50033},
+        "Effects",                  {key: "effectsWindow",  type: 50033},
+        "Program Monitor",          {key: "programMonitor", type: 50033},
+        "Source Monitor",           {key: "sourceMonitor",  type: 50033},
+        "Tools",                    {key: "toolsWindow",    type: 50033},
+        "Project:",                 {key: "projectsWindow", type: 50033, matchmode: "Substring"},
+        "PremiereRemote",           {key: "premRemote",     type: 50019},
+        "PremiereUnifiedHeaderTab", {key: "homeTab",        type: 50033}
+    )
     static isRunning := false
     static beenSet   := false
 
-    static UIA_Objs := Map()
     static UIA_Path := Map()
     static UIA_Hwnd := Map()
     static allPanes := Map()
@@ -45,6 +53,22 @@ class premUIA_Values {
     static scriptTitle := "determineUIA.ahk ahk_class AutoHotkey ahk_exe AutoHotkey64.exe"
     /** callback set by `determineUIA.ahk` so a remote `resetUIA()` can trigger a rebuild inside that process */
     static onRebuild := ""
+    static currentVer {
+        get => prem.__remoteFunc('premVer')
+    }
+
+    static determineIcon {
+        get {
+            try return ptf.Icons "\determineUIA.ico"
+            return ""
+        }
+    }
+    static premIcon {
+        get {
+            try return ptf.Icons "\prprj.ico"
+            return ""
+        }
+    }
 
     static KSA {
         get => CLSID_Objs.load("KSA")
@@ -52,6 +76,23 @@ class premUIA_Values {
     static UserSettings {
         get => CLSID_Objs.load("UserSettings")
     }
+
+    ;// Tools
+    static tools := Map(
+        "selectionTool", "Selection Tool",
+        "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
+        "rippleEditTool", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
+        "razorTool", "Razor Tool",
+        "slipTool", ["Slip Tool", "Slide Tool"],
+        "penTool", "Pen Tool",
+        "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
+        "handTool", ["Hand Tool", "Zoom Tool"],
+        "textTool", ["Type Tool", "Vertical Type Tool"],
+        "genAITool", ["Generative Media Tool", "Generative Extend Tool"],
+
+        ;// the object selection drop down pre 27.0 only contained `"Tools.ObjectSelectionLasso_18"`
+        "maskTool", ["Tools.ObjectMask", "Tools.EllipseMask", "Tools.RectangleMask", "Tools.PenMask", "Tools.HSLMask", "Tools.LuminanceMask"]
+    )
 
     /**
      * Determine the UIA path of the active element
@@ -135,12 +176,16 @@ class premUIA_Values {
             if IsSet(panel) && (panel = true || panel == null)
                 return (panel = true ? true : null)
         }
-        focusedPath := this.__activeElementPath(true, (IsSet(UIAobj) ? UIAobj : ""))
+        if !uiaEl.UIA_Path.Has(elementPath) {
+            errorLog(MethodError("premUIA doesn't currently store a UIA path for: " elementPath, -2, elementPath))
+            return null
+        }
+        focusedPath := this.__activeElementPath(true, uiaEl)
         if !isObjHasProp(focusedPath, 'Path', null) || focusedPath.Path = null {
             errorLog(TypeError("focusPath isn't an object or returned null", -1))
             return null
         }
-        return (IsSet(UIAobj) ? (InStr(focusedPath.Path, UIAobj.UIA_Path[elementPath]) = 1) : (InStr(focusedPath.Path, focusedPath.uiaEl.UIA_Path[elementPath]) = 1))
+        return (InStr(focusedPath.Path, uiaEl.UIA_Path[elementPath]) = 1)
     }
 
     /**
@@ -161,6 +206,7 @@ class premUIA_Values {
      * syntatic sugar for creating a live `UIA.IUIAutomationElement` for the desired hwnd panel.
      * @param {String} [panel] the UIA element name you wish to check. Must be one of the elements tracked within this class.
      * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @param {ComObj} [uiaEal] pass back the `determineUIA` `UIA` comObj
      * @returns {UIA.IUIAutomationElement | false}
      */
     static getLivePanel(panel, UIAobj?, &uiaEl?) {
@@ -169,7 +215,7 @@ class premUIA_Values {
             if !uiaEl
                 errorLog(MethodError("uiaObject hadn't been initialised yet", -2))
             else
-                errorLog(MethodError("premUIA doesn't store the following panel: " panel, -2, panel))
+                errorLog(MethodError("premUIA doesn't currently store the following panel: " panel, -2, panel))
             return false
         }
         try return UIA.ElementFromHandle(uiaEl.UIA_Hwnd[panel],, false)
@@ -185,6 +231,86 @@ class premUIA_Values {
         for i, v in el {
             this.allPanes.Set(v.NativeWindowHandle, {x: v.location.x, y: v.location.y, w: v.location.w, h: v.location.h})
         }
+    }
+
+    /** sets all UIA panels */
+    static __setAllPanels() {
+        notSet := ""
+        for panel, opts in this.panels {
+            try {
+                cond := {Type: opts.type, Name: panel}
+                if opts.HasOwnProp("matchmode")
+                    cond.matchmode := opts.matchmode
+
+                el := this.AdobeEl.FindCachedElement(cond)
+                this.UIA_Path[opts.key] := this.AdobeEl.GetUIAPath(el, true)
+                this.UIA_Hwnd[opts.key] := (opts.HasOwnProp("useParent") && opts.useParent)
+                    ? el.Parent.NativeWindowHandle
+                    : el.NativeWindowHandle
+            } catch {
+                errorLog(ValueError("Determining panel: " panel " failed. It may not be visible.", -1))
+                notSet .= (notSet = "") ? panel : ", " panel
+                continue
+            }
+        }
+        if notSet != ""
+            notifyExt.showIfNotExist('UIApanelsFailed',, "Determining the following panels failed: " notSet "`nThey may not be visible.`nYou *may* still be able to generate live references once you show the panel.", this.determineIcon,,, "pos=BC dur=8 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+    }
+
+    /**
+     * Returns a live tools panel element. Uses the stored hwnd if there is one (and it's still valid),
+     * otherwise searches the live Premiere window for the panel and stores its hwnd, so a panel opened
+     * after `setObjs()` ran (or reopened with a new hwnd) still works.
+     * @param {ComObj} [UIAobj=unset] an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {UIA.IUIAutomationElement | false}
+     */
+    static getLiveToolsPanel(UIAobj?, &uiaEl?) {
+        uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
+        if !uiaEl
+            return false
+
+        if uiaEl.UIA_Hwnd.Has("toolsWindow") {
+            try return UIA.ElementFromHandle(uiaEl.UIA_Hwnd["toolsWindow"],, false)
+        }
+
+        try {
+            try n := WinGet.PremName()
+            title := (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") ? n.wintitle A_Space prem.winTitle : prem.winTitle
+            win   := UIA.ElementFromHandle(title,, false)
+            panel := win.FindElement({Type:50033, Name:"Tools"})
+            try uiaEl.UIA_Hwnd["toolsWindow"] := panel.NativeWindowHandle
+            return panel
+        }
+        errorLog(MethodError("Failed to find the Tools panel. It may not be visible.", -2))
+        return false
+    }
+
+    /**
+     * Creates a live `UIA.IUIAutomationElement` for a tool slot, so properties like `.value` are current.
+     * @param {String} tool the tool slot name, eg "razorTool" (a key of `tools`)
+     * @param {ComObj} [UIAobj=unset] an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {UIA.IUIAutomationElement | false}
+     */
+    static getLiveTool(tool, UIAobj?) {
+        if !this.tools.Has(tool) {
+            errorLog(MethodError("premUIA doesn't track the following tool: " tool, -2, tool))
+            return false
+        }
+        if !toolsPanel := this.getLiveToolsPanel(UIAobj?, &uiaEl)
+            return false
+
+        names := this.tools[tool]
+        ;// `setObjs()` adjusts `maskTool` on the shared object for pre 27.0. That's a plain string, which survives COM, unlike the arrays
+        if tool = "maskTool" {
+            try shared := uiaEl.tools["maskTool"]
+            if IsSet(shared) && Type(shared) = "String"
+                names := shared
+        }
+
+        ;// the group buttons rename themselves to the active sub-tool, so match any of the possible names (an array is built into an "or" condition by UIA)
+        try return toolsPanel.FindElement({Type:50000, Name: names, matchmode:"Substring"})
+        errorLog(MethodError("failed to generate live UIA tool for the following tool: " tool, -2, tool))
+        return false
     }
 
     /**
@@ -249,7 +375,6 @@ class premUIA_Values {
     /** clears the stored UIA elements/paths/handles. Flags live on the shared object, see `__setShared()` */
     static wipe() {
         this.AdobeEl   := false
-        this.UIA_Objs  := Map()
         this.UIA_Path  := Map()
         this.UIA_Hwnd  := Map()
         this.allPanes  := Map()
@@ -298,6 +423,10 @@ class premUIA_Values {
     static forceReset() {
         try return CLSID_Objs.load("determineUIA").resetUIA()
         try this.closeUIA()       ;// kills it if it's running
+        ;// give the process time to fully exit, otherwise `initialise()` can still see the dying script and try to reload it
+        endTime := A_TickCount + 3000
+        while this.determineUIA_Exist() && A_TickCount < endTime
+            Sleep 50
         return this.initialise()  ;// relaunches it (returns false while it builds)
     }
 
@@ -309,9 +438,7 @@ class premUIA_Values {
         notifyExt.deleteIfExist("UIAretrieveComplete")
         notifyExt.deleteIfExist("determineUIAFailed")
         if !Notify.Exist("premUIAGenTree") {
-            img := ptf.Icons "\prprj.ico"
-            /* Notify.Show(, 'Premiere must remain as the active window during this process.', img,,, 'dur=0 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400 tag=premUIAGenTreeWarning') */
-            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', img,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
+            Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', this.premIcon,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }
         __DelNotify() => (notifyExt.deleteIfExist("premUIAGenTree"), notifyExt.deleteIfExist("premUIAGenTreeWarning"))
         try premName := WinGet.PremName()
@@ -332,57 +459,29 @@ class premUIA_Values {
             throw Error("Socket")
         }
 
-        currentVer := prem.__remoteFunc('premVer')
+        currentVer := this.currentVer
         if currentVer == null {
             __DelNotify()
             throw Error("Socket")
         }
-        if !currentVer
+        if !currentVer {
+            __DelNotify()
             throw Error("Failed to return Premiere Version")
+        }
         if VerCompare(currentVer, prem.minVer) < 0 {
             __DelNotify()
             throw MethodError("This version of Premiere is not supported.`nThe minimum supported version is: " prem.minVer "`nThe user has: " currentVer)
         }
-        __TryCatchUIAobj(name, objOrPath, errorCode, pathName := "") {
-            try {
-                switch objOrPath {
-                    case "obj":  temp := this.AdobeEl.FindCachedElement({Type:50033, Name:name})
-                    case "path":
-                        switch pathName {
-                            case "timelineWindow":temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true), this.UIA_Hwnd[pathName] := this.UIA_Objs[pathName].Parent.NativeWindowHandle
-                            default: temp := this.AdobeEl.GetUIAPath(this.UIA_Objs[pathName], true), this.UIA_Hwnd[pathName] := this.UIA_Objs[pathName].NativeWindowHandle
-                        }
-
-                    case "premObj": temp := this.AdobeEl.FindCachedElement({Type:50033, Type:50019, Name:name})
-                    case "projObj": temp := this.AdobeEl.FindCachedElement({Type:50033, Name:name, matchmode:"Substring"})
-                }
-                return temp
-            } catch {
-                throw UnsetError("throw code:" errorCode,, errorCode)
-            }
+        switch {
+            ;// in versions lower than 27.0 all items in the Object Mask dropdown were simply called `Tools.ObjectSelectionLasso_18`
+            case VerCompare(currentVer, "v27.0") < 0: this.tools["maskTool"] := "Tools.ObjectSelectionLasso_18"
         }
 
-        originalWindow := null
         try {
-            if !WinActive(prem.winTitle) && !WinActive(prem.class) {
-                try aTitle := WinGet.Title()
-                try aClass := WinGetClass(aTitle)
-                try originalWindow := {title: aTitle ?? null, class: aClass ?? null}
-                switchTo.Premiere()
-            }
             if !prem.isEditTabActive() {
                 __DelNotify()
                 throw UnsetError("throw code:719")
             }
-            blocker := block_ext()
-            blocker.On()
-            SendInput(ksa.prem.shuttleStop)
-            keys := ["effectControls", "effectsWindow", "programMonitor", "sourceMonitor", "toolsWindow", "projectsWindow", "timelineWindow"]
-            for v in keys {
-                SendInput(ksa.prem.%v%)
-                sleep 25
-            }
-            blocker.Off()
             premCacheRequest := UIA.CreateCacheRequest(["Type", "Name", "Value", "ClassName", "AutomationId", "BoundingRectangle"],, "Descendants") ;// all necessary for `GetUIAPath()`
             try {
                 try n := winget.PremName()
@@ -392,81 +491,8 @@ class premUIA_Values {
                 __DelNotify()
                 throw UnsetError("throw code:701")
             }
-            if originalWindow !== null {
-                try WinActivate(originalWindow.title " ahk_class " originalWindow.class)
-                catch {
-                    try WinActivate(originalWindow.title)
-                    catch {
-                        try WinActivate(originalWindow.class)
-                    }
-                }
-            }
             this.__setAllPanes()
-
-            this.UIA_Objs["timelineWindow"]  := __TryCatchUIAobj("Timeline", "obj", "702")
-            this.UIA_Path["timelineWindow"]  := __TryCatchUIAobj("Timeline", "path", "702", "timelineWindow")
-            this.UIA_Objs["effectControls"]  := __TryCatchUIAobj("Effect Controls", "obj", "703")
-            this.UIA_Path["effectControls"]  := __TryCatchUIAobj("Effect Controls", "path", "703", "effectControls")
-            this.UIA_Objs["effectsWindow"]   := __TryCatchUIAobj("Effects", "obj", "704")
-            this.UIA_Path["effectsWindow"]   := __TryCatchUIAobj("Effects", "path", "704", "effectsWindow")
-            this.UIA_Objs["programMonitor"]  := __TryCatchUIAobj("Program Monitor", "obj", "705")
-            this.UIA_Path["programMonitor"]  := __TryCatchUIAobj("Program Monitor", "path", "705", "programMonitor")
-            this.UIA_Objs["sourceMonitor"]   := __TryCatchUIAobj("Source Monitor", "obj", "706")
-            this.UIA_Path["sourceMonitor"]   := __TryCatchUIAobj("Source Monitor", "path", "706", "sourceMonitor")
-            this.UIA_Objs["toolsWindow"]     := __TryCatchUIAobj("Tools", "obj", "707")
-            this.UIA_Path["toolsWindow"]     := __TryCatchUIAobj("Tools", "path", "707", "toolsWindow")
-            this.UIA_Objs["projectsWindow"]  := __TryCatchUIAobj("Project:", "projObj", "708")
-            this.UIA_Path["projectsWindow"]  := __TryCatchUIAobj("Project:", "path", "708", "projectsWindow")
-            this.UIA_Objs["premRemote"]      := __TryCatchUIAobj("PremiereRemote", "premObj", "709")
-            this.UIA_Path["premRemote"]      := __TryCatchUIAobj("PremiereRemote", "path", "709", "premRemote")
-            this.UIA_Objs["homeTab"]         := __TryCatchUIAobj("PremiereUnifiedHeaderTab", "obj", "719")
-            this.UIA_Path["homeTab"]         := __TryCatchUIAobj("PremiereUnifiedHeaderTab", "path", "719", "homeTab")
-            ;// Tools
-            tools := Map(
-                "selectionTool", "Selection Tool",
-                "trackForward", ["Track Select Forward Tool", "Track Select Backward Tool"],
-                "rippleEditTool", ["Ripple Edit Tool", "Rolling Edit Tool", "Rate Stretch Tool", "Remix Tool"],
-                "razorTool", "Razor Tool",
-                "slipTool", ["Slip Tool", "Slide Tool"],
-                "penTool", "Pen Tool",
-                "rectangleTool", ["Rectangle Tool", "Ellipse Tool", "Polygon Tool"],
-                "handTool", ["Hand Tool", "Zoom Tool"],
-                "textTool", ["Type Tool", "Vertical Type Tool"],
-                "genAITool", ["Generative Media Tool", "Generative Extend Tool"],
-
-                ;// the object selection drop down pre 27.0 only contained `"Tools.ObjectSelectionLasso_18"`
-                "maskTool", ["Tools.ObjectMask", "Tools.EllipseMask", "Tools.RectangleMask", "Tools.PenMask", "Tools.HSLMask", "Tools.LuminanceMask"]
-            )
-            switch {
-                ;// in versions lower than 27.0 all items in the Object Mask dropdown were simply called `Tools.ObjectSelectionLasso_18`
-                case VerCompare(currentVer, "v27.0") < 0: tools["maskTool"] := "Tools.ObjectSelectionLasso_18"
-            }
-            for k, v in tools {
-                switch Type(v), false {
-                    case "Array":
-                        for v2 in v {
-                            try this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:50000,  Name: v2, matchmode:"Substring"})
-                            catch {
-                                continue
-                            }
-                            try this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
-                            catch {
-                                __DelNotify()
-                                errorLog(UnsetError("Failed to find tool: " k))
-                                throw(UnsetError("Failed to find tool: " k))
-                            }
-                        }
-                    default:
-                        try {
-                            this.UIA_Objs[k] := this.AdobeEl.FindCachedElement({Type:50000,  Name: v, matchmode:"Substring"})
-                            this.UIA_Path[k] := this.AdobeEl.GetUIAPath(this.UIA_Objs[k], true)
-                        } catch {
-                            __DelNotify()
-                            errorLog(UnsetError("Failed to find tool: " k))
-                            throw(UnsetError("Failed to find tool: " k))
-                        }
-                }
-            }
+            this.__setAllPanels()
         } catch as e {
             try errorLog(Error(e.Message, e.What, e.Extra))
             __DelNotify()
@@ -477,7 +503,7 @@ class premUIA_Values {
 
         __DelNotify()
         notifyExt.deleteIfExist("determiningUIA")
-        notifyExt.showIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", img,,, 'dur=3 bdr=0x5B009F show=Fade@225 hide=Fade@250 maxW=400')
+        notifyExt.showIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", this.premIcon,,, 'dur=3 bdr=0x5B009F show=Fade@225 hide=Fade@250 maxW=400')
         return true
     }
 
@@ -496,16 +522,14 @@ class premUIA_Values {
 
     /** closes `determineUIA.ahk` */
     static closeUIA() {
-        if !this.determineUIA_Exist() {
-            Run(this.scriptLoc)
+        if !this.determineUIA_Exist()
             return true
-        }
         scriptTitle := winExt.TitleRegex(this.scriptTitle,,,, true)
         PID := winExt.PIDRegex(this.scriptTitle,,,, true)
-        try ProcessClose(PID)
-        if !checkPID := winExt.ExistRegex(PID,,,, true) {
-            try WinClose(checkPID)
-            if winExt.ExistRegex(checkPID,,,, true)
+        if PID {
+            try ProcessClose(PID)
+            ;// `ProcessWaitClose` returns the PID if the process still exists after the timeout, else 0
+            if ProcessWaitClose(PID, 2)
                 return false
         }
         if winExt.ExistRegex(scriptTitle,,,, true)
@@ -520,12 +544,15 @@ class premUIA_Values {
      */
     static initialise() {
         Critical('On')
+        if !FileExist(this.scriptLoc) {
+            errorLog(MethodError("Script location doesn't exist."))
+            Critical('Off')
+            return false
+        }
         determineUIAExist := this.determineUIA_Exist()
-
         if !determineUIAExist {
             Run(this.scriptLoc)
             Critical('Off')
-            errorLog(MethodError("Script location doesn't exist."))
             return false
         }
 
@@ -539,19 +566,13 @@ class premUIA_Values {
                 }
             }
             errorLog(TargetError("Script could not interact with ``determineUIA.ahk``. Script will reload.", -1))
-            try WM.Send_WM_COPYDATA("determineUIA_exitapp", "determineUIA.ahk")
-            sleep 100
-            if determineScript := winExt.ExistRegex(this.scriptTitle,,,, true)
-                try winExt.CloseRegex(determineScript,,,, true)
-            sleep 500
-            if determineScript := winExt.ExistRegex(this.scriptTitle,,,, true)
-                return false
-            Run(ptf.SupportFiles "\determineUIA.ahk")
+            if this.closeUIA()
+                Run(ptf.SupportFiles "\determineUIA.ahk")
             return false
         }
         switch {
             case uiaObj.isRunning:
-                notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined",,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
+                notifyExt.showIfNotExist("determiningUIA",, "UIA Coordinates are currently waiting to be determined", this.determineIcon,,, "dur=4 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
                 Critical('Off')
                 return false
             case uiaObj.beenSet && !uiaObj.isRunning:
