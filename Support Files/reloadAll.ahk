@@ -24,9 +24,6 @@ list := resetter.__getList()
 listArr := []
 coreFuncObj := unset
 __checkClose(hwnd, title) {
-    if title = "determineUIA.ahk ahk_class AutoHotkey" {
-        premUIA_Values.closeUIA()
-    }
     if WinExist(hwnd) {
         ProcessClose(hwnd)
         hwnd := winExt.ExistRegex(title,,,, true)
@@ -45,7 +42,7 @@ for v in list {
     itemObj := resetter.__parseInfo(v, incChecklist ?? false)
     if !itemObj
         continue
-    if itemObj.scriptName = "Core Functionality.ahk"
+    if itemObj.scriptName = "Core Functionality.ahk" || itemObj.scriptName = "determineUIA.ahk"
         continue
     listArr.Push(itemObj)
     if WM.timerScripts.Has(itemObj.scriptName) {
@@ -61,10 +58,9 @@ for v in list {
     ; try pause.pause(StrReplace(itemObj.scriptName, ".ahk", ""), false)
 }
 
+premUIA_Values.closeUIA() ;// needs to close first or can throw
 for i, v in listArr {
     __checkClose(v.PID, v.scriptName " ahk_class AutoHotkey")
-    if v.scriptName = "determineUIA.ahk"
-        listArr.RemoveAt(i)
 }
 
 if coreFunc := winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,,, true) {
@@ -78,6 +74,8 @@ if coreFunc := winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,
     __checkClose(coreFunc, "Core Functionality.ahk ahk_class AutoHotkey")
 }
 
+if !IsSet(coreFuncObj) || !IsObject(coreFuncObj)
+    return
 try Run(coreFuncObj.path A_Space (doReset ?? true))
 catch {
     try Run(ptf.rootDir "\Core Functionality.ahk " (doReset ?? true))
