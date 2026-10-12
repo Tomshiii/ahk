@@ -183,8 +183,10 @@ export const host = {
     qe.project.getActiveSequence().renderAll();
   },
 
-  sourceMonName: function () {
+  getSourceMonitorName: function () {
     const varr = app.sourceMonitor.getProjectItem();
+    if (varr==null)
+      return false;
     return varr.name;
   },
 
@@ -765,6 +767,12 @@ export const host = {
           entries.push('"' + key + '":{"params":[' + params.join(",") + ']}');
       }
       return "{" + entries.join(",") + "}";
+  },
+
+  sourceMonitorPlay: function (speed: string) {
+    if (!this.getSourceMonitorName())
+      return false;
+    return app.sourceMonitor.play(parseFloat(speed));
   }
 }
 

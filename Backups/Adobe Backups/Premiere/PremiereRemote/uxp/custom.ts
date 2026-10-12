@@ -2637,3 +2637,12 @@ export async function matchSelectedClipsToLowestTrack(): Promise<void> {
         );
     }
 }
+
+/**
+ * toggle playback within the source monitor
+ */
+export async function sourceMonitorPlay(speed: number): Promise<boolean> {
+    if (!Number.isFinite(speed)) return false;
+    if (!await prop.getSourceMonitorName()) return false;
+    return await ppro.SourceMonitor.play(speed);
+}
