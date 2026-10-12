@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/12
- * @version 2.5.84
+ * @version 2.5.85
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2677,7 +2677,12 @@ class Prem {
             for tool in tools {
                 if tool.value = "Selected" {
                     removeHotkey := RegExReplace(tool.name, "\s\([^)]*\)$")
-                    return returnAsPremVal = true ? removeHotkey : premUIA_Values.toolsMap[removeHotkey]
+                    if returnAsPremVal = true
+                        return removeHotkey
+                    if premUIA_Values.toolsMap.Has(removeHotkey)
+                        return premUIA_Values.toolsMap[removeHotkey].uia
+                    errorLog(MethodError("Selected tool isn't in premUIA_Values.toolsMap: " removeHotkey, -1))
+                    return false
                 }
             }
         } catch {

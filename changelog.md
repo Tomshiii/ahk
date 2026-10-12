@@ -27,6 +27,7 @@
 
 ### 📝 `premUIA_Values {`
 - ✏️ Added `forceReset()`, `getLiveTool()`, `getLiveToolsPanel()`
+- ✅ Fixed `toolsMap` containing two `EllipseMask` entries and no `RectangleMask`
 
 ### 📝 `PremiereRemote`
 

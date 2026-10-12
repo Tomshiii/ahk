@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/10/09
- * @version 3.1.0
+ * @date 2026/10/12
+ * @version 3.1.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -360,7 +360,7 @@ class premUIA_Values {
         "Tools.ObjectSelectionLasso_18", {uia: "maskTool", ksa: "objectMaskTool"},
         "Tools.ObjectMask", {uia: "maskTool", ksa: "objectMaskTool"},
         "Tools.EllipseMask", {uia: "maskTool", ksa: "ellipseMaskTool"},
-        "Tools.EllipseMask", {uia: "maskTool", ksa: "rectangleMaskTool"},
+        "Tools.RectangleMask", {uia: "maskTool", ksa: "rectangleMaskTool"},
         "Tools.PenMask", {uia: "maskTool", ksa: "penMaskTool"},
         "Tools.HSLMask", {uia: "maskTool", ksa: "hslMaskTool"},
         "Tools.LuminanceMask", {uia: "maskTool", ksa: "luminanceMaskTool"},
