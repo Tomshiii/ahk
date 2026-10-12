@@ -21,7 +21,7 @@ try {
 }
 
 startCell := xl.ActiveCell
-column := ["C", "H", "C", "H"]
+column := ["C", "I", "C", "I"]
 for i, v in column {
     targetCell := startCell.Offset(0, i-1)
     targetCell.Formula := Format("='{1}'!${2}${3}", A_YYYY, v, (A_Index=1||A_Index=4) ? rowNum.value : rowNum.value-2)

@@ -13,7 +13,7 @@ MoveCaret() {
         return
     SendInput("{End}")
 }
-getValExpenses := InputBox("Enter Coordinates for Expenses PivotTable`n`nExample: $N$323`n`nThis script assumes the second pivot table to be 3 cells to the right of this first one.", "Expenses PivotTable Coords", "H130", "$N$")
+getValExpenses := InputBox("Enter Coordinates for Expenses PivotTable`n`nExample: $O$323`n`nThis script assumes the second pivot table to be 3 cells to the right of this first one.", "Expenses PivotTable Coords", "H130", "$O$")
 if getValExpenses.result = "Cancel"
     return
 
