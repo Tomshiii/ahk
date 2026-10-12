@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.14
+;\\v2.35.15
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -259,7 +259,27 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;//? Attempts to stop adobe fs.ahk from freaking out at times
 ;stopfullscreenpremHotkey;
 Ctrl & \::return
-
+#HotIf WinActive(editors.Premiere.winTitle) && prem.__checkDialogueClass() && !GetKeyState("F24")
+;playstopHotkey;
+F18::
+{
+	timelineFocus := prem.timelineFocusStatus()
+	if timelineFocus == null {
+		errorLog(ValueError("Couldn't determine timeline focus", -1))
+		return
+	}
+	if timelineFocus = true {
+		prem.delayPlayback()
+		return
+	}
+	if premUIA_Values.__isPremPanelActive("sourceMonitor") == true {
+		prem.__remoteFunc('sourceMonitorPlay',, "speed=1")
+		return
+	}
+	prem.__focusTimeline()
+	sleep 50
+	prem.delayPlayback()
+}
 ;=============================================================================================================================================
 ;
 ;		other - NOT an editor
