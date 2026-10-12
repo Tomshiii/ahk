@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/09
- * @version 2.5.82
+ * @date 2026/10/12
+ * @version 2.5.83
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -409,6 +409,7 @@ class Prem {
         this.%which%Icon := statusIcon(imgIcon,,, 16)
         this.%which%Icon.follow(this._scan.hwnd, bX+4, tY+7, true, 5)
         tryFunc(which) {
+            try this.stopPlayback()
             switch which {
                 case "uia": try premUIA_Values.forceReset()
                 case "cep": try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\cep\replaceAndReset.ahk")
@@ -786,8 +787,11 @@ class Prem {
      * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Defaults to `false`.
      * */
     static stopPlayback(checkIsPlaying := false) {
-        if checkIsPlaying = true && !this.isPlaying()
-            return
+        if checkIsPlaying = true {
+            playing := this.isPlaying()
+            if !playing || playing == null
+                return
+        }
         SendInput(KSA.prem.shuttleStop)
     }
 
@@ -795,7 +799,8 @@ class Prem {
      * uses the user's `KSA.prem.playStop` hotkey to start playback
      */
     static startPlayback() {
-        if this.isPlaying() = true
+        playing := this.isPlaying()
+        if playing || playing == null
             return
         SendInput(KSA.prem.playStop)
     }
@@ -1796,7 +1801,7 @@ class Prem {
             return
         blocker := block_ext()
         blocker.On(,, "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}" activationKeys)
-        this.stopPlayback()
+        this.stopPlayback(true)
         sleep 50
 
         switch window {
@@ -2949,7 +2954,7 @@ class Prem {
             keys.allWait()
             return
         }
-        this.stopPlayback()
+        this.stopPlayback(true)
         MouseMove(playhead.x, playhead.y)
         SendInput("{LButton Down}")
         block.Off()
@@ -3063,7 +3068,7 @@ class Prem {
         }
         premObj.delayTime += 1
         if pauseFirst = true {
-            this.stopPlayback()
+            this.stopPlayback(true)
             sleep(delay)
         }
         SendEvent(A_ThisHotkey)
