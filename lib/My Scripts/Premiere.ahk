@@ -845,6 +845,28 @@ F14 & LButton::
 	KeyWait(kwait)
 	delaySI(16, "{LButton Up}", "{Ctrl Up}")
 }
+F18::
+{
+	if !prem.__checkDialogueClass() {
+		errorLog(ValueError("Couldn't toggle playback because of Dialogue Class", -1))
+		return
+	}
+	timelineFocus := prem.timelineFocusStatus()
+	if timelineFocus == null {
+		errorLog(ValueError("Couldn't determine timeline focus", -1))
+		return
+	}
+	if timelineFocus = true {
+		prem.delayPlayback()
+		return
+	}
+	if premUIA_Values.__isPremPanelActive("sourceMonitor") == true {
+		prem.__remoteFunc('sourceMonitorPlay',, "speed=1")
+		return
+	}
+	prem.__focusTimeline()
+	prem.delayPlayback()
+}
 F14 & F18::
 {
 	checkRemote := prem.__checkPremRemoteDir('setMarker')

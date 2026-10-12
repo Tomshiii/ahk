@@ -30,6 +30,9 @@
 
 ### 📝 `PremiereRemote`
 
+📍 `CEP`
+- 📋 Renamed `sourceMonName()` => `getSourceMonitorName()`
+
 📍 `UXP`
 - ✅ Fixed `saveEffectSlotJSON()`/`applyEffectSlotJSON()`
 - ✅ Fixed `matchSelectedClipsToLowestTrack()` throwing in some scenarios
@@ -39,8 +42,9 @@
 - 📋 `getPlayheadPosTimecode()` will now use internal function `timeToTimecode()` in `v27.0+`
 
 📍 `Both`
-- ✏️ Added `getRegistryJSON()`
+- ✏️ Added `getRegistryJSON()`, `sourceMonitorPlay()`
 - 📋 `movePlayhead()`/`movePlayheadFrames()`/`moveClip()` no longer require parameter `subtract`
+- 📋 `getSourceMonitorName()` now returns `false` if the `Source Monitor` is empty
 
 ### 📝 `AERemote`
 - ✏️ Added `getRegistryJSON()`, `setViewerZoom()`

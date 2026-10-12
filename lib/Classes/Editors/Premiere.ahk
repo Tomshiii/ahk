@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/12
- * @version 2.5.83
+ * @version 2.5.84
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -3270,7 +3270,7 @@ class Prem {
             return
         }
 
-        if !this.__checkPremRemoteFunc(["sourceMonName", "loadInSourceMonitor"]) {
+        if !this.__checkPremRemoteFunc(["getSourceMonitorName", "loadInSourceMonitor"]) {
             ;// throw
             blocker.Off()
             errorLog(MethodError("Some PremiereRemote functions are missing. Aborting", -1),,, true)
@@ -3288,7 +3288,7 @@ class Prem {
             return
         }
         if specificFile != false && specificFile != "" {
-            getName := this.__remoteFunc("sourceMonName")
+            getName := this.__remoteFunc("getSourceMonitorName")
             sourceMonFile := SubStr(specificFile, (pos := instr(specificFile, "/",, -1) || pos := instr(specificFile, "\",, -1)) ? pos+1 : 1)
             if getName != specificFile {
                 __exit() {
@@ -3299,7 +3299,7 @@ class Prem {
                 if searchForFile = true {
                     this.__remoteFunc("loadInSourceMonitor",, "itemPath=" specificFile)
                     sleep 150
-                    recheck := this.__remoteFunc("sourceMonName")
+                    recheck := this.__remoteFunc("getSourceMonitorName")
                     if recheck != sourceMonFile {
                         __exit()
                         return

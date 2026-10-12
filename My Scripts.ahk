@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.13
+;\\v2.35.14
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -259,10 +259,6 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 ;//? Attempts to stop adobe fs.ahk from freaking out at times
 ;stopfullscreenpremHotkey;
 Ctrl & \::return
-;//! Premiere
-#HotIf WinActive(editors.Premiere.winTitle) && prem.__checkDialogueClass() && !GetKeyState("F24")
-;playstopHotkey;
-F18::delayFuncs(, ObjBindMethod(prem, '__focusTimeline'), ObjBindMethod(prem, 'delayPlayback'))
 
 ;=============================================================================================================================================
 ;

@@ -71,8 +71,9 @@ export async function getPremVer(): Promise<string> {
  * return the source montior item name
  * @returns {string} name of the file open in the source monitor
  */
-export async function getSourceMonitorName(): Promise<string> {
+export async function getSourceMonitorName(): Promise<string | boolean> {
     const item = await ppro.SourceMonitor.getProjectItem();
+    if (item==null) return false;
     return item.name;
 }
 
