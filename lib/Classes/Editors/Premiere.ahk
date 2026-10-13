@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/12
- * @version 2.5.85
+ * @date 2026/10/13
+ * @version 2.5.86
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2570,10 +2570,11 @@ class Prem {
                 activeObj.timelineVals     := this.timelineVals     := true
                 activeObj := ""
                 Critical("Off")
-            } catch {
+            } catch as e {
                 activeObj := ""
                 Critical("Off")
                 notifyExt.showIfNotExist("failedCSLIDobj",, "Failed to interact with ComObj, it may not be initialised yet.`nTry again soon.",,,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
+                errorLog(e)
                 keys.allWait()
                 return false
             }
@@ -3516,7 +3517,8 @@ class Prem {
         layerTop := false, layerBot := false
         if midFound {
             vidOrAud := (coords.y < mY) ? "vid" : "aud"
-            if layers := this.__getAllLayerPos(mY, vidOrAud) {
+            layers := this.__getAllLayerPos(mY, vidOrAud)
+            if layers != null && layers != false {
                 for _, layer in layers {
                     if coords.y >= layer["top"] && coords.y <= layer["bot"] {
                         layerTop := layer["top"], layerBot := layer["bot"]
@@ -3632,7 +3634,11 @@ $!WheelDown::
                     this.blockWheel := false
                     return
                 }
-                layerObj := this.__getlayerTopBottom(origMouseCords, middle,,,,,,,,, false)
+                layerObj := this.__getSingleLayerBounds(origMouseCords.y)
+                if !layerObj || layerObj == null {
+                    this.blockWheel := false
+                    return
+                }
                 block.On()
                 newTop := ""
                 if !layerObj.error {
@@ -3642,6 +3648,7 @@ $!WheelDown::
                     KeyWait("LAlt", "L")
                 } else {
                     if !layerObj.topY && !layerObj.botY {
+                        this.blockWheel := false
                         KeyWait("LAlt", "L")
                         checkStuck(["LAlt", "CapsLock"])
                         block.Off()
@@ -3651,15 +3658,16 @@ $!WheelDown::
                         case layerObj.topY != false && !layerObj.botY: MouseMove(this.timelineRawX+10, layerObj.topY+4), newTop := layerObj.topY+4
                         case !layerObj.topY  && layerObj.botY != false: MouseMove(this.timelineRawX+10, layerObj.botY-4), newTop := layerObj.botY-4
                     }
+                    this.blockWheel := false
                     KeyWait("LAlt", "L")
                 }
-                checkAgain := this.__getlayerTopBottom({x:0, y: newTop}, false,,,,,,,,, false)
-                if !checkAgain.error && (checkAgain.topY != false && checkAgain.botY != false)
+                checkAgain := this.__getSingleLayerBounds(newTop)
+                if checkAgain && !checkAgain.error
                     MouseMove(origMouseCords.x, (checkAgain.topY+checkAgain.botY)/2)
-                else {
+                else if checkAgain {
                     switch {
                         case (checkAgain.topY != false && !checkAgain.botY): MouseMove(origMouseCords.x, checkAgain.topY+4)
-                        case (!checkAgain.topY && checkAgain.botY!= false): MouseMove(origMouseCords.x, checkAgain.botY-4)
+                        case (!checkAgain.topY && checkAgain.botY != false): MouseMove(origMouseCords.x, checkAgain.botY-4)
                     }
                 }
                 checkStuck(["LAlt", "CapsLock"])
@@ -3908,7 +3916,7 @@ $!WheelDown::
      * @param {Number} [midDivY=unset] a parameter to pass in the middle divider `y` coordinate if it has already been located
      * @param {String} [vidOrAud="aud"] whether to operate down on the audio layers or up on the video layers
      * @param {Integer} [stopAt=false] a track number to stop at to cancel operation early. Leave as `false` to return all visible values
-     * @returns {Map | false} returns a map containing `["top"]`, `["bot"]`, `["mid"]`
+     * @returns {Map | false | null} returns a map containing `["top"]`, `["bot"]`, `["mid"]`
      */
     static __getAllLayerPos(midDivY?, vidOrAud := "aud", stopAt := false) {
         name := WinGet.PremName()
@@ -3917,18 +3925,18 @@ $!WheelDown::
             return null
         }
         if !this.__checkTimelineValues()
-            return false
+            return null
         if !this.setShinsIMG(name.winTitle)
             return null
 
         if !IsSet(midDivY) || !midDivY {
             if !this.__getlayerMid(, &midDivY)
-                return false
+                return null
         }
         startPos := (vidOrAud = "aud") ? midDivY += 4 : midDivY
         switch {
             case VerCompare(this.currentSetVer, "v26.3.2") <= 0: plus := 5
-            case VerCompare(this.currentSetVer, "v26.5") >= 0: plus := 12
+            case VerCompare(this.currentSetVer, "v26.5") >= 0:   plus := 12
         }
         x := this.timelineRawX+plus
         y := startPos
@@ -3961,6 +3969,59 @@ $!WheelDown::
             m[i] := current
         }
         return m
+    }
+
+    /**
+     * A fast alternative to `__getlayerTopBottom()` for when only the layer under a given `y` coordinate is needed.
+     * Scans up and down a single pixel column for the nearest `layerDivider` colour instead of enumerating every layer.
+     * @param {Integer} y the `screen` y coordinate to search outward from (generally the cursor's y)
+     * @returns {Object | false | null} returns `false` if the timeline values / ShinsImg couldn't be set, else;
+     * ```
+     * {topY: Integer | false, botY: Integer | false, error: Boolean}
+     * ```
+     * `topY`/`botY` will be `false` if no divider was found in that direction (ie. the layer is cut off by the edge of the timeline). `error` is `true` if either edge is `false`
+     */
+    static __getSingleLayerBounds(y) {
+        name := WinGet.PremName()
+        if !name || !isObjHasProp(name, "winTitle", false) {
+            errorLog(UnsetError("Could not determine Premiere window title", -1))
+            return null
+        }
+        if !this.__checkTimelineValues()
+            return null
+        if !this.setShinsIMG(name.winTitle)
+            return null
+        coord.s()
+
+        switch {
+            case VerCompare(this.currentSetVer, "v26.3.2") <= 0: plus := 5
+            case VerCompare(this.currentSetVer, "v26.5") >= 0:   plus := 12
+        }
+        x := this.timelineRawX + plus
+
+        hwnd  := this._scan.hwnd
+        scale := this._scan.WindowScale
+        coord.screenToClient(x, y, hwnd, scale, &localX, &localY)
+        coord.screenToClient(x, this.timelineYValue, hwnd, scale, &_, &topLimit)
+        coord.screenToClient(x, this.timelineYControl, hwnd, scale, &_, &botLimit)
+
+        topY := false, botY := false
+
+        ;// search upwards - scan bottom->top so the first hit is the divider closest to the cursor
+        hUp := localY - topLimit - 1
+        if hUp >= 1 && this._scan.PixelRegion(this.layerDivider, localX, topLimit, 1, hUp, 0, &fx, &fy, "LRBT") {
+            coord.clientToScreen(fx, fy, hwnd, scale, &_, &sy)
+            topY := sy
+        }
+
+        ;// search downwards - scan top->bottom
+        hDown := botLimit - localY - 1
+        if hDown >= 1 && this._scan.PixelRegion(this.layerDivider, localX, localY + 1, 1, hDown, 0, &fx, &fy, "LRTB") {
+            coord.clientToScreen(fx, fy, hwnd, scale, &_, &sy)
+            botY := sy
+        }
+
+        return {topY: topY, botY: botY, error: (!topY || !botY)}
     }
 
     static ignoreToggleEnabledKey := false
@@ -4179,7 +4240,8 @@ $!WheelDown::
         }
 
         vidOrAud := (aboveOrBelow=true) ? "vid" : "aud"
-        if !allLayers := this.__getAllLayerPos(midDivY, vidOrAud, maxTracks) {
+        allLayers := this.__getAllLayerPos(midDivY, vidOrAud, maxTracks)
+        if !allLayers || allLayers == null {
             this.selectTool(origTool,, true)
             blocker.Off()
             errorLog(UnsetError("Couldn't determine layers"))
