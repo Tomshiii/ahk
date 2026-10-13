@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/10/08
- * @version 1.5.20
+ * @date 2026/10/13
+ * @version 1.5.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -930,27 +930,27 @@ class AE {
      *   - returns `null` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
      *   - Else returns `true`/`false`
      * if `returnObj` is `true`;
-     *   - returns `{error: true, selected: unset, toolEl: unset}` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
-     *   - Else returns `{error: false, selected: Boolean, toolEl: UIA.IUIAutomationElement}`
+     *   - returns `{error: true, selected: null, toolEl: null, tool:null}` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
+     *   - Else returns `{error: false, selected: Boolean, toolEl: UIA.IUIAutomationElement, tool: UIA.IUIAutomationElement}`
      */
     static isToolSelected(toolName, returnObj := false) {
         try n := WinGet.AEName()
         if !WinActive(this.winTitle) && !WinActive(this.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
-            return (returnObj=false) ? null : {error: true, selected: unset, toolEl: unset}
+            return (returnObj=false) ? null : {error: true, selected: null, toolEl: null, tool: null}
         }
         aeUIA := UIA.ElementFromHandle(n.winTitle " " this.winTitle,, false)
         try toolsTab := aeUIA.FindElement({Type:50033, Name: "ToolsTab"})
         catch {
             errorLog(TargetError("Failed to find the Tools Tab", -1))
-            return (returnObj=false) ? null : {error: true, selected: unset, toolEl: unset}
+            return (returnObj=false) ? null : {error: true, selected: null, toolEl: null, tool: null}
         }
         try tool := toolsTab.FindElement({Type:50000, Name:toolName, matchmode:"Substring"})
         catch {
             errorLog(TargetError("Failed to find the desired tool", -1, toolName))
-            return (returnObj=false) ? null : {error: true, selected: unset, toolEl: unset}
+            return (returnObj=false) ? null : {error: true, selected: null, toolEl: null, tool: null}
         }
         toolBool := (tool.Value = "Selected") ? true : false
-        return (returnObj = false ? toolBool : {error: false, selected: toolBool, toolEl: toolsTab})
+        return (returnObj = false ? toolBool : {error: false, selected: toolBool, toolbarEl: toolsTab, tool: tool})
     }
 
     /**
@@ -962,8 +962,8 @@ class AE {
         selectedObj := this.isToolSelected(toolName, true)
         if selectedObj.error = true
             return null
-        if selectedObj.selected = false {
-            try selectedObj.toolEl.FindElement({Type:50000, Name: toolName, matchmode:"Substring"}).Invoke()
+        if selectedObj.selected = false && selectedObj.tool !== null {
+            try selectedObj.tool.Invoke()
             catch {
                 errorLog(TargetError("Failed to click the desired tool.", -1, toolName))
                 return false
