@@ -5,9 +5,12 @@
 - ✏️ Added `obj.isEqual()`
 - ✅ Fixed `settings.ini` values getting reset if a key is added
 - ✅ Fixed `adobeXML {` flooding the logs with empty values when a hotkey isn't found
-- ✅ Fixed `ae.setViewerZoom()` sometimes throwing
 - 📋 Increased default `adobe_GB` value from `45` => `100`
 - 📋 Moved `XorY()`, `clipMouse()`, and `setMouseClip()` from `move {` => `cursor {`
+
+### 📝 `AE {`
+- ✅ Fixed `setViewerZoom()` sometimes throwing
+- ✅ Fixed `selectTool()` throwing if text was selected
 
 ### 📝 `prem {`
 - ✅ Fixed `dismissWarning()` potentially leaving inputs blocked

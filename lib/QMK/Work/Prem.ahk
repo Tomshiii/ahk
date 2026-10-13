@@ -15,7 +15,7 @@
 BackSpace:: ;this hotkey will activate the program monitor, then send the hotkey to activate safe margins
 {
 	SendInput(KSA.prem.programMonitor)
-	SendInput(ksa.prem.prem.SafeMargins)
+	SendInput(ksa.prem.SafeMargins)
 	sleep 100
 	prem.__focusTimeline()
 }
