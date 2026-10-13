@@ -4,7 +4,7 @@
  * @aeVer 26.5
  * @author tomshi
  * @date 2026/10/13
- * @version 1.5.21
+ * @version 1.5.22
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -930,44 +930,89 @@ class AE {
      *   - returns `null` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
      *   - Else returns `true`/`false`
      * if `returnObj` is `true`;
-     *   - returns `{error: true, selected: null, toolEl: null, tool:null}` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
-     *   - Else returns `{error: false, selected: Boolean, toolEl: UIA.IUIAutomationElement, tool: UIA.IUIAutomationElement}`
+     *   - returns `{error: true, selected: null, toolEl: null, tool:null, aeUIA: null}` when; AE window cannot be determined, AE window is not active, UIA cannot find the `ToolsTab` or the desired tool's button.
+     *   - Else returns `{error: false, selected: Boolean, toolEl: UIA.IUIAutomationElement, tool: UIA.IUIAutomationElement, aeUIA: UIA.IUIAutomationElement}`
      */
     static isToolSelected(toolName, returnObj := false) {
         try n := WinGet.AEName()
         if !WinActive(this.winTitle) && !WinActive(this.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
-            return (returnObj=false) ? null : {error: true, selected: null, toolEl: null, tool: null}
+            return (returnObj=false) ? null : {error: true, selected: null, toolEl: null, tool: null, aeUIA: null}
+        }
+        if !this.toolsMap.Has(toolName) {
+            errorLog(TargetError("Desired tool does not exist", -1, toolName))
+            return null
         }
         aeUIA := UIA.ElementFromHandle(n.winTitle " " this.winTitle,, false)
         try toolsTab := aeUIA.FindElement({Type:50033, Name: "ToolsTab"})
         catch {
             errorLog(TargetError("Failed to find the Tools Tab", -1))
-            return (returnObj=false) ? null : {error: true, selected: null, toolEl: null, tool: null}
+            return (returnObj=false) ? null : {error: true, selected: null, toolEl: null, tool: null, aeUIA: null}
         }
         try tool := toolsTab.FindElement({Type:50000, Name:toolName, matchmode:"Substring"})
         catch {
             errorLog(TargetError("Failed to find the desired tool", -1, toolName))
-            return (returnObj=false) ? null : {error: true, selected: null, toolEl: null, tool: null}
+            return (returnObj=false) ? null : {error: true, selected: null, toolEl: null, tool: null, aeUIA: null}
         }
         toolBool := (tool.Value = "Selected") ? true : false
-        return (returnObj = false ? toolBool : {error: false, selected: toolBool, toolbarEl: toolsTab, tool: tool})
+        return (returnObj = false ? toolBool : {error: false, selected: toolBool, toolbarEl: toolsTab, tool: tool, aeUIA: aeUIA})
     }
+
+    static toolsMap := Map(
+        "Selection Tool", true,
+        "Hand Tool", true,
+        "Zoom Tool", true,
+        "Orbit Around Cursor Tool", true,
+        "Pan Under Cursor Tool", true,
+        "Dolly Towards Cursor Tool", true,
+        "Rotation Tool", true,
+        "Pan Behind (Anchor Point) Tool", true,
+        "Rectangle Tool", true,
+        "Cube Tool", true,
+        "Pen Tool", true,
+        "Horizontal Type Tool", true,
+        "Brush Tool", true,
+        "Clone Stamp Tool", true,
+        "Eraser Tool", true,
+        "Object Matte Tool", true,
+        "Puppet Position Pin Tool", true
+    )
 
     /**
      * This function will attempt to select the desired tool using UIA.
-     * @param {String} [toolName=Selection Tool] the name of the tool as seen in UIA. ie; `Selection Tool`, `Hand Tool`, `Zoom Tool`, `Orbit Around Cursor Tool`, `Pan Under Cursor Tool`, `Dolly Towards Cursor Tool`, `Rotation Tool`, `Pan Behind (Anchor Point) Tool`, `Rectangle Tool`, `Cube Tool`, `Pen Tool`, `Horizontal Type Tool`, `Brush Tool`, `Clone Stamp Tool`, `Eraser Tool`, Object Matte Tool`, `Puppet Position Pin Tool`
+     * @param {String} [toolName=Selection Tool] the name of the tool as seen in UIA. ie; `Selection Tool`, `Hand Tool`, `Zoom Tool`, `Orbit Around Cursor Tool`, `Pan Under Cursor Tool`, `Dolly Towards Cursor Tool`, `Rotation Tool`, `Pan Behind (Anchor Point) Tool`, `Rectangle Tool`, `Cube Tool`, `Pen Tool`, `Horizontal Type Tool`, `Brush Tool`, `Clone Stamp Tool`, `Eraser Tool`, `Object Matte Tool`, `Puppet Position Pin Tool`
      * @returns {null | Boolean}
      */
     static selectTool(toolName := "Selection Tool") {
-        selectedObj := this.isToolSelected(toolName, true)
-        if selectedObj.error = true
+        if !this.toolsMap.Has(toolName) {
+            errorLog(TargetError("Desired tool does not exist", -1, toolName))
             return null
-        if selectedObj.selected = false && selectedObj.tool !== null {
-            try selectedObj.tool.Invoke()
-            catch {
-                errorLog(TargetError("Failed to click the desired tool.", -1, toolName))
+        }
+        obj := this.isToolSelected(toolName, true)
+        if obj.error
+            return null
+        if obj.selected
+            return true
+
+        ;// switching away from the Type tool: commit any text edit first otherwise AE will hard crash
+        if !InStr(toolName, "Type Tool") {
+            try {
+                typeTool := obj.toolbarEl.FindElement({Type:50000, Name:"Type Tool", matchmode:"Substring"})
+                if typeTool.Value = "Selected" {
+                    obj.aeUIA.FindElement({Type: 50033, Name: "AE Composition"}).SetFocus()
+                    sleep 25
+                    SendInput("{NumpadEnter}")
+                    Sleep 50
+                }
+            } catch as e {
+                errorLog(e)
                 return false
             }
+        }
+
+        try obj.tool.Invoke()
+        catch {
+            errorLog(TargetError("Failed to click the select tool.", -1, toolName))
+            return false
         }
         return true
     }
