@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/10/08
- * @version 1.1.23
+ * @date 2026/10/15
+ * @version 1.1.24
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -222,9 +222,24 @@ class OtherFuncs {
         } catch as e {
             throw e
         }
-        loop {
-            sleep 1000
-        } until (prem.__remoteUXP("custom/getAudioTracks") > audTrackNum)
+        if selectedTrack != "None" {
+            added := false
+            loop 20 {
+                sleep 500
+                if (prem.__remoteUXP("custom/getAudioTracks") > audTrackNum) {
+                    added := true
+                    break
+                }
+            }
+            if !added {
+                errorLog(TimeoutError("Timed out waiting for audio tracks to be added"))
+                return
+            }
+        } else {
+            ;// submixes only: the audio track count never changes, so just wait for the dialog to close
+            WinWaitClose("Add Tracks",, 10)
+            return
+        }
         sleep 250
         timelineObj := premUIA_Values.getLivePanel("timelineWindow",, &uiaEl)
         audIndex := prem.__retrieveAudLayerIndex(uiaEl)

@@ -14,7 +14,7 @@ SetWorkingDir(A_ScriptDir)
 version := (IsSet(premIsBeta)) ? ptf.PremYearVer ".0" : IniRead(A_WorkingDir "\readme.ini", "INFO", "version")
 incBeta := (IsSet(premIsBeta) && (premIsBeta = true || premIsBeta = "true")) ? " (Beta)" : ""
 
-Dir := A_MyDocuments "\Adobe\Premiere Pro" incBeta "\" version "\Profile-" A_UserName "\Win"
+Dir := A_MyDocuments "\Adobe\Premiere Pro" incBeta "\" version "\Profile-" A_UserName "\Settings\Track Height Presets"
 dirver := IsSet(premIsBeta) ? ptf.premSETver : version
 if !DirExist(Dir) {
     MsgBox("You either have the incorrect version set within ``settingsGUI()`` (current version set: " dirver ") or you have installed Premiere Pro to a different location.`n`nThis folder is usually in the \My Documents\ directory.`nIf you have moved this directory, please adjust the .ini file and try again", "Error attempting to run Adobe folder", 0x30)
