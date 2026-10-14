@@ -773,6 +773,19 @@ export const host = {
     if (!this.getSourceMonitorName())
       return false;
     return app.sourceMonitor.play(parseFloat(speed));
+  },
+
+  openSelectedProjItemInSourceMonitor: function() {
+    if (!app.project)
+        return false;
+    var selection = app.getCurrentProjectViewSelection();
+    if (!selection || selection.length === 0)
+        return false;
+    var item = selection[0];
+    if (item.type === 2) {
+        return false;
+    }
+    return app.sourceMonitor.openProjectItem(item);
   }
 }
 

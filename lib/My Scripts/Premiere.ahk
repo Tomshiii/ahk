@@ -388,7 +388,19 @@ $s:: ;// stop "add edit" adding an edit to all tracks when nothing is selected (
 
 F20::prem.dragSourceMon("video")
 F14 & F20::prem.dragSourceMon("both")
-F19::prem.dragSourceMon("audio", "_Assets/01_Other/Bars and Tone - Rec 709", true)
+F19::
+{
+	panel := prem.cursorWithinPanel()
+	if panel == null {
+		errorLog(TargetError("Could not determine which panel the cursor was within", -1))
+		return
+	}
+	switch panel, false {
+		case "Timeline": prem.dragSourceMon("audio", "_Assets/01_Other/Bars and Tone - Rec 709", true)
+		case "Project": prem.__remoteFunc('openSelectedProjItemInSourceMonitor')
+	}
+
+}
 F14 & F19::prem.dragSourceMon("audio")
 
 ;// playback speed change hotkeys

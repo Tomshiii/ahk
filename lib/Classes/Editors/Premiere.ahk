@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/13
- * @version 2.5.86
+ * @date 2026/10/14
+ * @version 2.5.87
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2829,6 +2829,91 @@ class Prem {
 			return false
 		return true
 	}
+
+    /**
+     * Returns the name of the panel the cursor is currently within using `UIA`
+     * @returns {String | null}
+     */
+    static cursorWithinPanel() {
+        coord.s()
+        if !origMouse := obj.MousePos()
+            return null
+
+        try el := UIA.ElementFromPoint(origMouse.x, origMouse.y,, false)
+        catch
+            return null
+
+        depth := 0
+        while el && depth++ < 30 {
+            name := "", type := 0
+            try name := el.Name, type := el.Type
+            catch
+                break
+
+            if name = "OS_Window" {
+                try {
+                    if (n := el.Parent.Name) != ""
+                        return __cleanName(n)
+                }
+            }
+
+            ; Cursor is over the container itself (eg tab bar): go DOWN to the child under the cursor
+            if name = "WorkspaceFrame" || name = "TabPanelContainer" {
+                return __panelFromContainer(el, origMouse)
+            }
+
+            ; Only accept named panes; unnamed ones (plugins etc.) keep walking up
+            if type = 50033 && name != ""
+                return __cleanName(name)
+
+            try el := el.Parent
+            catch
+                break
+        }
+        return null
+
+
+        ; Descends through children containing the point until a named pane / OS_Window is found
+        __panelFromContainer(el, pt) {
+            loop 10 {
+                child := __childAtPoint(el, pt)
+                if !child
+                    return null
+                el := child
+                name := "", type := 0
+                try name := el.Name, type := el.Type
+                catch
+                    return null
+                if name = "OS_Window" {
+                    try return el.Parent.Name
+                    return null
+                }
+                if type = 50033 && name != ""
+                    return name
+            }
+            return null
+        }
+
+        __childAtPoint(el, pt) {
+            try children := el.Children
+            catch
+                return 0
+            for child in children {
+                try {
+                    loc := child.Location
+                    if pt.x >= loc.x && pt.x < loc.x + loc.w && pt.y >= loc.y && pt.y < loc.y + loc.h
+                        return child
+                }
+            }
+            return 0
+        }
+
+        __cleanName(name) {
+            if SubStr(name, 1, 8) = "Project:"
+                return "Project"
+            return name
+        }
+    }
 
     /**
      * This function handles accelorating scrolling within premiere. It specifically expects the first activation hotkey to be either `alt` or `shift`.

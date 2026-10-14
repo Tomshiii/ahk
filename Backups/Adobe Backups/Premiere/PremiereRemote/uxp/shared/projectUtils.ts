@@ -44,7 +44,11 @@ export async function findFirstFreeTrack(
         if (ignoreTracks.has(t)) continue;
 
         const track = await getTrack(t);
-        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+        if (!track) continue; // can't verify it's free, so treat as occupied
+
+        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false) ?? [];
+        console.log(`track ${t}: ${items.length} items, ${items.filter((i: any) => i == null).length} null`);
+        if (items.some((item: any) => item == null)) continue;
 
         const overlaps = await Promise.all(items.map(async (item: any) => {
             const [start, end] = await Promise.all([item.getStartTime(), item.getEndTime()]);
@@ -123,9 +127,10 @@ export async function gatherSelectedVideoClips(sequence: Sequence, trackCount: n
     );
 
     const perTrack = await Promise.all(tracks.map(async (track, trackIndex) => {
-        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+        if (!track) return [];
+        const items = track.getTrackItems(ppro.Constants.TrackItemType.CLIP, false) ?? [];
         const entries = await Promise.all(items.map(async (item: any) => {
-            if (!(await item.getIsSelected())) return null;
+            if (!item || !(await item.getIsSelected())) return null;
             const [start, end] = await Promise.all([item.getStartTime(), item.getEndTime()]);
             return { trackIndex, item, start, end } as SelectedVideoClip;
         }));
