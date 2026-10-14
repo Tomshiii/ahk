@@ -2646,3 +2646,32 @@ export async function sourceMonitorPlay(speed: number): Promise<boolean> {
     if (!await prop.getSourceMonitorName()) return false;
     return await ppro.SourceMonitor.play(speed);
 }
+
+/**
+ * open selected ProjectItem in the source monitor
+ */
+export async function openSelectedProjItemInSourceMonitor(): Promise<boolean> {
+    const project = await ppro.Project.getActiveProject();
+    if (!project) return false;
+
+    const selection = await ppro.ProjectUtils.getSelection(project);
+    const items = await selection.getItems();
+    if (!items || items.length === 0) return false;
+
+    for (const item of items) {
+        let isClip = false;
+        try {
+            isClip = !!ppro.ClipProjectItem.cast(item);
+        } catch {
+            isClip = false;
+        }
+        if (!isClip) continue;
+
+        try {
+            return await ppro.SourceMonitor.openProjectItem(item);
+        } catch (e) {
+            console.warn(`openProjectItem failed for "${item.name}":`, e);
+        }
+    }
+    return false;
+}

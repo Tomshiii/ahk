@@ -8,16 +8,13 @@
 - 📋 Increased default `adobe_GB` value from `45` => `100`
 - 📋 Moved `XorY()`, `clipMouse()`, and `setMouseClip()` from `move {` => `cursor {`
 
-### 📝 `AE {`
-- ✅ Fixed `setViewerZoom()` sometimes throwing
-- ✅ Fixed `selectTool()` throwing if text was selected
-
 ### 📝 `prem {`
 - ✅ Fixed `dismissWarning()` potentially leaving inputs blocked
 - ✅ Fixed `effectSlot()` potentially silently failing
 - ✅ Fixed `__checkPremRemoteFunc(, "uxp")` not doing the `isInstalled` checks
 - ✅ Fixed class not actually polling the `uxp` socket
 - ✅ Fixed `uxp` panel being marked as open even when it wasn't
+- ✏️ Added `cursorWithinPanel()`
 - 📋 `PremiereRemote` functions are now checked using `PremiereRemote`'s internal registry instead of string manipulation
 - 📋 Slight optimisations to `toggleLayerButtons()` & `layerSizeAdjust()`
 - 📋 `swapPreviousSequence()` now requires the `UXP` `PremiereRemote` extension
@@ -32,8 +29,11 @@
 - ✏️ Added `forceReset()`, `getLiveTool()`, `getLiveToolsPanel()`
 - ✅ Fixed `toolsMap` containing two `EllipseMask` entries and no `RectangleMask`
 
-### 📝 `PremiereRemote`
+### 📝 `AE {`
+- ✅ Fixed `setViewerZoom()` sometimes throwing
+- ✅ Fixed `selectTool()` throwing if text was selected
 
+### 📝 `PremiereRemote`
 📍 `CEP`
 - 📋 Renamed `sourceMonName()` => `getSourceMonitorName()`
 
@@ -46,7 +46,7 @@
 - 📋 `getPlayheadPosTimecode()` will now use internal function `timeToTimecode()` in `v27.0+`
 
 📍 `Both`
-- ✏️ Added `getRegistryJSON()`, `sourceMonitorPlay()`
+- ✏️ Added `getRegistryJSON()`, `sourceMonitorPlay()`, `openSelectedProjItemInSourceMonitor()`
 - 📋 `movePlayhead()`/`movePlayheadFrames()`/`moveClip()` no longer require parameter `subtract`
 - 📋 `getSourceMonitorName()` now returns `false` if the `Source Monitor` is empty
 
