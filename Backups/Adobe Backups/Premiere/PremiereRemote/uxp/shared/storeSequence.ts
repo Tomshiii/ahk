@@ -23,9 +23,7 @@ function forget(id) {
 }
 
 function idFromEvent(e) {
-    return e?.target?.guid?.toString?.()
-        ?? e?.sequence?.guid?.toString?.()
-        ?? null;
+    return e?.id ?? null;
 }
 
 async function onActivated(e) {
