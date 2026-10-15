@@ -50,7 +50,7 @@ function onProjectChange() {
 
 async function init() {
     ppro.EventManager.addGlobalEventListener(ppro.Constants.SequenceEvent.ACTIVATED, onActivated, false);
-    ppro.EventManager.addGlobalEventListener(ppro.Constants.SequenceEvent.CLOSED, onClosed, false);
+    ppro.EventManager.addGlobalEventListener(ppro.Constants.SequenceEvent.CLOSED, onClosed, true);
     ppro.EventManager.addGlobalEventListener(ppro.Constants.ProjectEvent.ACTIVATED, onProjectChange, false);
     ppro.EventManager.addGlobalEventListener(ppro.Constants.ProjectEvent.CLOSED, () => { seqIds = []; }, false);
 
