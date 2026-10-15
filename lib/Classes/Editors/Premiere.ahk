@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/14
- * @version 2.5.87
+ * @date 2026/10/15
+ * @version 2.5.88
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -4830,7 +4830,7 @@ $!WheelDown::
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
         file := this.__remoteFunc('renderInPrem',, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
         this.save()
-        if checkbool(addToProj) && (file != false) && FileExist(file) {
+        if checkbool(addToProj) && (file != false && file != null) && FileExist(file) {
             notifyExt.showIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
             __waitFree() {
                 loop 20 {

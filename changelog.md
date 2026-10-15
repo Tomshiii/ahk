@@ -10,6 +10,7 @@
 
 ### 📝 `prem {`
 - ✅ Fixed `dismissWarning()` potentially leaving inputs blocked
+- ✅ Fixed `renderProjectSelection()` throwing during long renders
 - ✅ Fixed `effectSlot()` potentially silently failing
 - ✅ Fixed `__checkPremRemoteFunc(, "uxp")` not doing the `isInstalled` checks
 - ✅ Fixed class not actually polling the `uxp` socket
