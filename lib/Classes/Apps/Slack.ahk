@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2026/08/21
- * @version 1.2.1
+ * @date 2026/10/16
+ * @version 1.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -80,12 +80,12 @@ class Slack {
 
         pressButton(uiaObj, type, button) {
             if button = "Delete message… delete" || button = "Edit message E" {
-                if !uiaObj.WaitElement({Type:50000, Name: "Save for later"}, 2000) {
+                if !uiaObj.WaitElement({Type:50000, Name: "Add to-do"}, 2000) {
                     blocker.Off()
-                    errorLog(UnsetError("Failed to find Save for later element", -1),, true)
+                    errorLog(UnsetError("Failed to find Add to-do element", -1),, true)
                     return
                 }
-                findLocation := uiaObj.FindCachedElement({Type:50000, Name: "Save for later"})
+                findLocation := uiaObj.FindCachedElement({Type:50000, Name: "Add to-do"})
                 for el in uiaObj.FindCachedElements({Type:50000, Name: "More actions"}) {
                     if el.location.y != findLocation.location.y
                         continue
