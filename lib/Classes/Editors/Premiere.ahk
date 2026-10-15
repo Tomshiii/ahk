@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/15
- * @version 2.5.88
+ * @version 2.5.89
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -4561,11 +4561,10 @@ $!WheelDown::
     }
 
     /**
-     * This function allows quick manipulation of a sequences video track visability
+     * This function allows quick manipulation of a sequences video track visability using UIA
      * @param {String} [soloInverseDisable="solo"] determines whether to hide all visable tracks other than the track the cursor is hovering within (`solo`), whether to unhide all other visible tracks other than the track the cursor is within (`Inverse`), or whether to unhide all visible tracks (`disable`).
      */
     static soloVideo(soloInverseDisable := "solo") {
-        SetDefaultMouseSpeed(0)
         coord.s()
 
         if soloInverseDisable = "disable" && (this.__checkPremRemoteDir('enableAllVideoTracks') = true) {
@@ -4574,67 +4573,48 @@ $!WheelDown::
         }
 
         if !this.__setTimelineValues()
-			return
+            return
         if soloInverseDisable != "solo" && soloInverseDisable != "inverse" && soloInverseDisable != "disable" {
             ;// throw
             errorLog(Error("Incorrect value in Parameter #1", -1),,, true)
             return
         }
-        blocker := block_ext()
-        blocker.On()
 
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName(), actWin := WinGet.Title(), activationKey := getHotkeys()
-        if !getTitle || actWin != getTitle.winTitle || !activationKey {
-            blocker.Off()
+        if !getTitle || actWin != getTitle.winTitle || !activationKey
             return
-        }
 
-        if !origMouseCords := obj.MousePos() {
-            blocker.Off()
+        if !origMouseCords := obj.MousePos()
             return
-        }
-        withinTimeline := this.__checkCoords(origMouseCords)
-        if withinTimeline != true {
-            blocker.Off()
+        if this.__checkCoords(origMouseCords) != true
             return
-        }
 
-        allButtons := this.__getAllLayerButtonPos(origMouseCords)
-        if !allButtons || allButtons = null {
-            blocker.Off()
-            switch allButtons {
-                case false: notifyExt.showIfNotExist("premInvalidLayerVals", 'prem.soloVideo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case null: notifyExt.showIfNotExist("premMiddleDivider", 'prem.soloVideo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-            }
-            return
-        }
-        arr := []
-        for _, tracksMap in allButtons["vid"] {
-            if !tracksMap.has("visible") {
+        layerObj := this.__getSingleLayerBounds(origMouseCords.y)
+        indexObj := this.__retrieveAudLayerIndex()
+
+        for i, v in indexObj.Children {
+            if i > indexObj.audIndex - 1
+                break
+            if v.type != 50000 || v.name != "Toggle Track Output"
                 continue
-            }
-            getColour := this.__getPixel(tracksMap["visible"].x+7, tracksMap["visible"].y)
+            isHidden  := (v.state = 8)
+            btnY      := v.location.y
+            onMouseLayer := (btnY > layerObj.topY && btnY < layerObj.botY)
+
             switch soloInverseDisable {
-                case "solo":
-                    if (tracksMap["mouseLayer"] = "true" && getColour = this.eyeDisabled) || (tracksMap["mouseLayer"] != "true" && getColour != this.eyeDisabled) {
-                        arr.Push({x: tracksMap["visible"].x, y: tracksMap["visible"].y+3})
-                    }
-                case "inverse":
-                    if (tracksMap["mouseLayer"] = "true" && getColour != this.eyeDisabled) || (tracksMap["mouseLayer"] != "true" && getColour = this.eyeDisabled) {
-                        arr.Push({x: tracksMap["visible"].x, y: tracksMap["visible"].y+3})
-                    }
-                case "disable":
-                        if getColour = this.eyeDisabled
-                            arr.Push({x: tracksMap["visible"].x, y: tracksMap["visible"].y+3})
+                case "solo": ;// hovered track must be visible, every other track hidden
+                    if onMouseLayer ? isHidden : !isHidden
+                        v.Invoke()
+                case "inverse": ;// hovered track gets hidden, every other hidden track gets shown
+
+                    if onMouseLayer ? !isHidden : isHidden
+                        v.Invoke()
+                case "disable": ;// show every hidden track
+                    if isHidden
+                        v.Invoke()
             }
         }
-        for i, v in arr {
-            MouseMove(v.x, v.y, 1)
-            SendInput("{Click}")
-        }
-        MouseMove(origMouseCords.x, origMouseCords.y, 1)
-        blocker.Off()
     }
 
     /**

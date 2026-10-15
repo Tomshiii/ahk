@@ -18,6 +18,7 @@
 - ✏️ Added `cursorWithinPanel()`
 - 📋 `PremiereRemote` functions are now checked using `PremiereRemote`'s internal registry instead of string manipulation
 - 📋 Slight optimisations to `toggleLayerButtons()` & `layerSizeAdjust()`
+- 📋 `soloVideo()` now completely uses `UIA` without needing to move the mouse for speedier and more reliable results
 - 📋 `swapPreviousSequence()` now requires the `UXP` `PremiereRemote` extension
     - All swapping/sequence storing logic is now held within the plugin's memory using [`Sequence Events`](<https://developer.adobe.com/premiere-pro/uxp/ppro-reference/constants/#sequenceevent>)
 
