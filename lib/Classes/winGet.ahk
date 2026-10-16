@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain a library of functions that interact with windows and gain information.
  * @author tomshi
- * @date 2026/09/08
- * @version 1.7.15
+ * @date 2026/10/16
+ * @version 1.8.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -458,5 +458,59 @@ class WinGet {
         DllCall("Kernel32\GetFullPathNameW", "str", path, "uint",260, "str", OutFile, "ptr", 0)
         ; DllCall("Shell32\PathYetAnotherMakeUniqueName", "str", OutFile, "str", OutFile, "ptr", 0, "ptr", 0)
         return OutFile
+    }
+
+    /**
+	 * Probes whether the window's UI thread is actually pumping messages right now by sending it a `WM_NULL` message with a timeout (`SMTO_ABORTIFHUNG`).
+	 * @param {Integer} hwnd
+	 * @param {Integer} [timeout=100] ms to wait for a reply
+	 * @returns {Boolean} `true` if the window answered within `timeout`
+	 */
+    static isResponsive(hwnd, timeout := 100) {
+        return DllCall("User32\SendMessageTimeoutW", "Ptr", hwnd, "UInt", 0, "Ptr", 0, "Ptr", 0
+            , "UInt", 0x2, "UInt", timeout, "Ptr*", &r := 0)  ; SMTO_ABORTIFHUNG
+    }
+
+    /**
+	 * Windows' own "not responding" detection. Only trips after ~5s of no message pumping, but returns instantly and never blocks
+	 * @param {Integer} hwnd
+	 * @returns {Boolean} `true` if windows considers the window hung
+	 */
+    static isHung(hwnd) => DllCall("User32\IsHungAppWindow", "Ptr", hwnd)
+
+    /**
+     * Combined check of `isHung()` and `isResponsive()`. Cheap non-blocking hung check first, then the responsiveness probe.
+     * @param {Integer} hwnd
+     * @param {Integer} [timeout=100] ms the responsiveness probe is allowed to wait
+     * @returns {Boolean} `true` if window is hung, gone, or too busy to answer
+     */
+    static isBusy(hwnd, timeout := 100) {
+        if !hwnd || !WinExist(hwnd)
+            return true
+        if this.isHung(hwnd)
+            return true
+        return !this.isResponsive(hwnd, timeout)
+    }
+
+    /**
+     * Blocks until window answers again, `maxWait` passes, or (optionally) the user lets go of `keyName`
+     * @param {Integer} hwnd
+     * @param {Integer} [maxWait=15000] ms
+     * @param {String} [keyName] if set, gives up as soon as this key is no longer physically held
+     * @returns {Boolean} `true` if window became responsive, `false` if we gave up
+     */
+    static waitUntilResponsive(hwnd, maxWait := 15000, keyName?) {
+        ;// no window to wait for - don't burn the whole timeout
+        if !hwnd || !WinExist(hwnd)
+            return false
+        start := A_TickCount
+        while this.isBusy(hwnd, 250) {
+            if IsSet(keyName) && !GetKeyState(keyName, "P")
+                return false
+            if (A_TickCount - start) > maxWait
+                return false
+            Sleep 50
+        }
+        return true
     }
 }

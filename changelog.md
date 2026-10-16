@@ -16,6 +16,7 @@
 - ✅ Fixed `__checkPremRemoteFunc(, "uxp")` not doing the `isInstalled` checks
 - ✅ Fixed class not actually polling the `uxp` socket
 - ✅ Fixed `uxp` panel being marked as open even when it wasn't
+- ✅ Fixed `mousedrag()` leaving the cursor dragging the timeline if activated while Premiere is encountering a heavy load
 - ✏️ Added `cursorWithinPanel()`
 - 📋 `PremiereRemote` functions are now checked using `PremiereRemote`'s internal registry instead of string manipulation
 - 📋 Slight optimisations to `toggleLayerButtons()` & `layerSizeAdjust()`
@@ -27,6 +28,7 @@
 📍 `movePlayhead()`
 - ✅ Fixed function leaving mouse movement blocked if the user activates the function while dragging a panel
 - ✅ Fixed `sendOnFailure` key not being sent if timeline values have not been set and no sequences are open
+- ✅ Fixed Premiere not responding during a heavy load leaving the playhead trailing the cursor until reactivation
 
 ### 📝 `premUIA_Values {`
 - ✏️ Added `forceReset()`, `getLiveTool()`, `getLiveToolsPanel()`
@@ -55,6 +57,9 @@
 
 ### 📝 `AERemote`
 - ✏️ Added `getRegistryJSON()`, `setViewerZoom()`
+
+### 📝 `WinGet {`
+- ✏️ Added `isResponsive()`, `isHung()`, `isBusy()`, `waitUntilResponsive()`
 
 ## Other Changes
 - 📋 `autosave.ahk` no longer uses `WinEvent {` (it would clash with `prem.save()`/`ae.save()`)

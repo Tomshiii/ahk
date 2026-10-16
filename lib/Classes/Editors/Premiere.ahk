@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/16
- * @version 2.5.91
+ * @version 2.5.92
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2428,6 +2428,8 @@ class Prem {
      * Press a button *(ideally a mouse button)*, this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline. This function will then make an attempt at returning the selected tool back to the original selection; if that fails it will fall back to whatever is passed into the `toolorig` parameter.
      *
      * This function will timeout after 10s by default as a preventative measure for stuck keys
+     *
+     * If Premiere is hung/busy (ie. loading a large sequence) this function will not send anything into it. If Premiere becomes busy *during* the drag, the function waits for it to catch up before restoring the original tool.
      * @param {String} tool is the hotkey you want the script to input to swap TO (ie, hand tool, zoom tool, etc). (consider using KSA values)
      * @param {String} toolorig is the hotkey you want the script to input to bring you back to if the function fails to select it automatically.
      * @param {Integer} [timeout=10] the number of `seconds` you want the function to wait before intentionally timing out. Defaults to `10`
@@ -2436,6 +2438,15 @@ class Prem {
     static mousedrag(premtool, toolorig, timeout := 10, dragWait := ksa.windows.DragKeywait) {
         if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
             return
+
+        ;// if premiere is hung or busy (ie. loading a large sequence) don't send anything into it.
+        ;// a short stall (ie. right after zooming the timeline) is normal though, so we wait a moment
+        ;// for it to catch up instead of bailing - but only while the activation key is still held.
+        ;// this happens before `rdisable` starts so there's nothing to clean up
+        prHwnd := WinExist(this.winTitle)
+        if !WinGet.waitUntilResponsive(prHwnd, 2000, dragWait)
+            return
+
         SetTimer(rdisable, -1)
         rdisable() {
             if GetKeyState("RButton", "P") ;this check is to allow some code in `Premiere_RightClick.ahk` to work
@@ -2448,11 +2459,14 @@ class Prem {
             this.__focusTimeline()
         }
         coord.s()
-        if !coordObj := obj.MousePos()
+        if !coordObj := obj.MousePos() {
+            SetTimer(rdisable, 0)
             return
+        }
         ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
         if !this.timelineVals {
             this.__setTimelineValues()
+            SetTimer(rdisable, 0)
             return
         }
 
@@ -2469,9 +2483,20 @@ class Prem {
         }
         origTool := this.getSelectedTool(premUIA)
 
-        SetTimer(again.Bind(timeout), -400)
+        ;// the UIA work above can block while premiere is busy, so check again before committing to anything
+        if !WinGet.waitUntilResponsive(prHwnd, 1000, dragWait) {
+            SetTimer(rdisable, 0)
+            return
+        }
+
+        attempts := 0
+        retry := again.Bind(timeout)
+        ;// this second run is intentional. premiere often ignores the hand tool for a moment after a
+        ;// scroll-zoom, so if the key is still held 400ms later we run the whole thing again
+        SetTimer(retry, -400)
         again(timeout)
         again(timeout) {
+            attempts++
             ;// we check for the defined value `dragWait` (`ksa.windows.DragKeywait` by default) here because LAlt in premiere is used to zoom in/out and sometimes if you're pressing buttons too fast you can end up pressing both at the same time
             isKey := false
             i := 0
@@ -2485,33 +2510,88 @@ class Prem {
             }
             if !isKey || (i != 0 && !GetKeyState(activationKey := GetKeyName(hot[i]), "P")) {
                 SetTimer(rdisable, 0)
-                this.__focusTimeline()
+                if WinGet.waitUntilResponsive(prHwnd, 500)
+                    this.__focusTimeline()
                 __finish()
                 return
             }
 
-            focusStatus := this.timelineFocusStatus()
-            if !focusStatus || focusStatus == null
+            ;// give a briefly busy premiere a moment to answer before we skip this attempt.
+            ;// the first attempt retries once via the 400ms timer; if the retry also fails we clean up and give up
+            focusStatus := WinGet.waitUntilResponsive(prHwnd, 1000, dragWait) ? this.timelineFocusStatus() : false
+            if !focusStatus {
+                if attempts >= 2
+                    SetTimer(rdisable, 0)
                 return
+            }
 
             __finish()
 
             __finish() {
+                ;// this is meant to be able to run twice (direct call + the 400ms retry).
+                ;// the retry re-sends the tool swap + click if the first one didn't take.
+                ;// if the key was already released the second run does nothing (toolChanged stays false)
+
                 ;// bc we're in a timer here, it's possible for another hotkey to start before this timer begins
                 ;// this check here avoids that scenario causing issues
                 activationKey := IsSet(activationKey) ? activationKey : ((i != 0) ? GetKeyName(hot[i]) : dragWait)
-                if GetKeyState(activationKey, "P") {
-                    SendInput(premtool "{LButton Down}")
-                    KeyWait(activationKey, "T" timeout)
-                }
-                SendInput("{LButton Up}")
-                if origTool != "Hand Tool" {
-                    try this.selectTool(origTool, "hotkey", true)
-                    catch {
-                        SendInput(toolorig)
+                toolChanged := false
+                downSent    := false
+                wasBusy     := false
+
+                try {
+                    if GetKeyState(activationKey, "P") {
+                        ;// never fire the tool swap + click into a busy premiere (it would replay them late
+                        ;// and out of order). wait for it to answer, but give up if the user lets go
+                        if WinGet.waitUntilResponsive(prHwnd, 2000, activationKey) && GetKeyState(activationKey, "P") {
+                            SendInput(premtool "{LButton Down}")
+                            toolChanged := true
+                            downSent    := true
+                            ;// same as KeyWait(activationKey, "T" timeout) but we keep an eye on premiere while we wait
+                            start := A_TickCount
+                            while !KeyWait(activationKey, "T0.03") && (A_TickCount - start) < (timeout * 1000) {
+                                if WinGet.isBusy(prHwnd, 50)
+                                    wasBusy := true
+                            }
+                        }
                     }
+                } finally {
+                    ;// always release LButton if we pressed it, even if something above throws
+                    if downSent
+                        SendInput("{LButton Up}")
                 }
-                SetTimer(rdisable, 0)
+
+                try {
+                    ;// if we never changed the tool there is nothing to restore (and nothing to send into premiere)
+                    if toolChanged && origTool != "Hand Tool" {
+                        ;// premiere was busy at some point: let it chew through the queued tool swap/click/release
+                        ;// *before* we ask for the original tool back, otherwise the restore can land first
+                        ;// and then get overridden by the late hand tool keypress, leaving you stuck on it
+                        if wasBusy {
+                            WinGet.waitUntilResponsive(prHwnd, 15000)
+                            Sleep 50
+                        }
+                        try this.selectTool(origTool, "hotkey", true)
+                        catch {
+                            SendInput(toolorig)
+                        }
+
+                        ;// only bother verifying after a stall
+                        if wasBusy {
+                            Sleep 100
+                            try {
+                                if this.getSelectedTool(premUIA) != origTool {
+                                    try this.selectTool(origTool, "hotkey", true)
+                                    catch {
+                                        SendInput(toolorig)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } finally {
+                    SetTimer(rdisable, 0)
+                }
             }
         }
     }
@@ -3687,7 +3767,7 @@ class Prem {
         return {topX: topDivX, topY: topDivY, botX: botDivX, botY: botDivY, midX: midDivX ?? false, midY: midDivY ?? false, midBot: midDivBot ?? false, midIndex: midIndex ?? false, error: failed, allLayers: layers ?? false}
     }
 
-    static blockWheel := true
+    static blockWheel := false
     /**
      * A function designed to allow you to quickly adjust the size of the layer the cursor is within. <kbd>LAlt</kbd> **MUST** be one of the activation hotkeys and is required to be held down for the duration of this function.
      * #### Warning;
