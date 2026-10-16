@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.5.1
  * @author tomshi, taranVH
- * @date 2026/10/08
- * @version 2.4.38
+ * @date 2026/10/16
+ * @version 2.5.0
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -94,6 +94,10 @@ class rbuttonPrem {
 	speedHeld := false
 	origTool := false
 	title := ""
+
+	abort    := false   ;// set by the NotActive callback instead of tearing state down from another thread
+	wasBusy  := false   ;// set true if Premiere was ever hung/unresponsive/slow during this run
+	prHwnd   := 0       ;// cached premiere hwnd for the current run
 
 	/**
 	 * Checks to see whether the colour under the cursor indicates that it's a blank track
@@ -209,6 +213,7 @@ class rbuttonPrem {
 	/** Reset class variables */
 	__resetClicks() {
 		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.origTool := false, this.colour := "", this.colour2 := "", this.preHeldPlay := false, this.preHeldSpeed := false, this.playHeld := false, this.speedHeld := false, this.title := ""
+		this.abort := false, this.wasBusy := false, this.prHwnd := 0
 		try this.premObj.RClickIsActive := false
 		try this.premObj := {}
 	}
@@ -289,7 +294,7 @@ class rbuttonPrem {
 
 		;// if the playback keys are ALREADY physically down the instant we start hooking,
 		;// Premiere has already received a real "Down" message for them. We must let their
-		;// matching "Up" through (instead of swallowing it) or Premiere's UI thinks the
+		;// matching "Up" through (instead of swallowing it) or Premiere's UI thread thinks the
 		;// button is still held
 		this.preHeldPlay  := GetKeyState(this.playbackKeys.play, "P")
 		this.preHeldSpeed := GetKeyState(this.playbackKeys.speed, "P")
@@ -374,7 +379,10 @@ class rbuttonPrem {
 			this.doPlayback := false
 		}
 		this.playbackKeys := playbackKeys
-		this.origSeq := ""
+		this.origSeq  := ""
+		this.abort    := false
+		this.wasBusy  := false
+		this.prHwnd   := 0
 		;// sometimes ahk can be a bit slow off the mark if the user clicks multiple buttons at the same time
 		;// as their activation hotkey (and those other buttons are setup with other functions)
 		;// which can cause A_ThisHotkey to become something else other than RButton (ie. <!3)
@@ -408,16 +416,26 @@ class rbuttonPrem {
 			this.__stopHook()
 			return
 		}
-        checkType := (Type(getTitle) != "Object")
-        checkTitle := isObjHasProp(getTitle, "winTitle", false) && isObjHasProp(getTitle, "titleCheck", -1) && isObjHasProp(getTitle, "saveCheck", -1)
-        checkCanSave := isObjHasProp(getTitle, "titleCheck", true)
+		checkType := (Type(getTitle) != "Object")
+		checkTitle := isObjHasProp(getTitle, "winTitle", false) && isObjHasProp(getTitle, "titleCheck", -1) && isObjHasProp(getTitle, "saveCheck", -1)
+		checkCanSave := isObjHasProp(getTitle, "titleCheck", true)
 		if !getTitle || checkType || !checkTitle || checkCanSave {
 			SendInput(this.sendHotkey)
 			errorLog(TargetError("Failed to determine Premiere's title"))
 			this.__stopHook()
-            return
-        }
+			return
+		}
 		this.title := getTitle.wintitle
+
+		;// cache the hwnd and make sure premiere is actually able to respond RIGHT NOW.
+		;// if it's hung or busy (ie. loading a large sequence) we bail before touching UIA/pixel
+		;// reads (which can block) and before queueing any input it will replay later
+		this.prHwnd := WinExist(this.title)
+		if WinGet.isBusy(this.prHwnd, 100) {
+			SendInput(this.sendHotkey)
+			this.__stopHook()
+			return
+		}
 
 		if prem.__OSwindow() && WinActive(prem.winTitle) {
 			this.__stopHook()
@@ -438,7 +456,11 @@ class rbuttonPrem {
 		}
 
 		;try WinEvent.Exist((*) => (prem.dismissWarning()), "DroverLord - Overlay Window ahk_class DroverLord - Window Class") ;// prem has fixed the issue of it spamming the error... for now
-		try WinEvent.NotActive((*) => (checkstuck(), this.__exit(this.checkedHotkey)), prem.exeTitle,, "Save Project ahk_exe Adobe Premiere Pro.exe")
+
+		;// the callback only flags an abort. tearing state down from here would wipe `title`/`premObj`
+		;// etc. while the main thread is still mid-run (focus can briefly shift during sequence loads).
+		;// the main thread checks `this.abort` and cleans up itself
+		try WinEvent.NotActive((*) => (this.abort := true), prem.exeTitle,, "Save Project ahk_exe Adobe Premiere Pro.exe")
 		InstallMouseHook(1)
 		try this.premObj := CLSID_Objs.load("prem")
 		catch {
@@ -481,7 +503,7 @@ class rbuttonPrem {
 		focusStatus := prem.timelineFocusStatus()
 		if focusStatus == null {
 			errorLog(MethodError("prem.timelineFocusStatus returned null"))
-			return
+			this.__exit(this.checkedHotkey)
 		}
 		if !focusStatus {
 			SendInput("{Escape}")
@@ -493,7 +515,6 @@ class rbuttonPrem {
 			this.__setColours(origMouse)
 			if this.__checkForBlank(this.colour) {
 				SendInput("{ESC}") ;in Premiere 13.0+, ESCAPE will now deselect clips on the timeline, in addition to its other uses. But you can swap this out with the hotkey for "DESELECT ALL" within premiere if you'd like.
-				; this.__exit(this.checkedHotkey)
 			}
 
 			;// checks to see if the colour under the cursor is one already defined within the class
@@ -510,6 +531,14 @@ class rbuttonPrem {
 				this.__exit(this.checkedHotkey)
 			}
 		}
+
+		;// premiere may have gone busy while we were doing the UIA/pixel work above.
+		;// re-check right before we start sending anything it will replay
+		if this.abort || WinGet.isBusy(this.prHwnd, 100) {
+			SendInput(this.sendHotkey)
+			this.__exit(this.checkedHotkey)
+		}
+
 		this.__checkForPlayhead(origMouse, this.checkedHotkey, allChecks)
 		if !this.__checkForTap(this.checkedHotkey) {
 			SendInput(KSA.prem.playheadtoCursor)
@@ -541,6 +570,10 @@ class rbuttonPrem {
 
 		;// the main loop that will continuously move the playhead to the cursor while RButton is held down
 		while GetKeyState(this.checkedHotkey, "P") {
+			if this.abort
+				break
+			loopStart := A_TickCount
+
 			if (GetKeyState("Ctrl") || GetKeyState("Ctrl", "P")) || GetKeyState("Shift") {
 				if allChecks = true
 					checkstuck()
@@ -551,9 +584,39 @@ class rbuttonPrem {
 					break
 				}
 			}
-			if this.colourOrNorm != "colour"
-				SendInput(ksa.prem.playheadtoCursor)
+
+			if this.colourOrNorm != "colour" {
+				;// only queue input if premiere can actually take it. otherwise we flood its queue
+				;// and it replays a pile of key down/ups once it unfreezes, leaving the
+				;// move-to-cursor state stuck on
+				if WinGet.isBusy(this.prHwnd, 50)
+					this.wasBusy := true
+				else
+					SendInput(ksa.prem.playheadtoCursor)
+			}
 			sleep 30
+
+			;// an iteration that takes far longer than expected means premiere (or the system) stalled
+			if (A_TickCount - loopStart) > 150
+				this.wasBusy := true
+		}
+
+		;// the NotActive callback fired - release anything we're holding and clean up
+		if this.abort {
+			if this.colourOrNorm = "colour"
+				SendInput("{LButton Up}")
+			this.__exit(this.checkedHotkey)
+		}
+
+		;// if premiere was ever busy/hung/slow, let it drain its queue and then send one clean tap
+		;// so any stuck "follow cursor" state is released. this is the same thing the user was
+		;// doing manually by pressing the hotkey again
+		if this.wasBusy {
+			if WinGet.waitUntilResponsive(this.prHwnd, 15000) {
+				Sleep 50
+				if this.colourOrNorm != "colour"
+					SendInput(KSA.prem.playheadtoCursor)
+			}
 		}
 
 		;// covers the user still physically holding play/speed when RButton comes up
