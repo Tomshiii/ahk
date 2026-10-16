@@ -2,8 +2,8 @@
  * @description a class designed to place a little icon on the screen and alternatively bind it to a window's position
  * @author tomshi
  * @ai_disclosure vibecoded with claude, I'm not super familiar with dll's
- * @date 2026/10/08
- * @version 1.1.1
+ * @date 2026/10/16
+ * @version 1.1.2
  ***********************************************************************/
 
 ; =====================================================================
@@ -47,6 +47,12 @@ class statusIcon {
     onClick := ""
     clickMsgFn := ""
     cursorMsgFn := ""
+
+    ; Follow settings (stored so the offset can be updated live)
+    followWin := ""
+    followDX := 0
+    followDY := 0
+    followActiveOnly := true
 
     /**
      * @param {String} path the filepath of the icon image
@@ -217,9 +223,25 @@ class statusIcon {
      */
     Follow(winTitle, dx := 0, dy := 0, activeOnly := true, interval := 50) {
         this.StopFollowing()
-        this.followFn := this.UpdateFollow.Bind(this, winTitle, dx, dy, activeOnly)
+        this.followWin := winTitle
+        this.followDX := dx
+        this.followDY := dy
+        this.followActiveOnly := activeOnly
+        this.followFn := this.UpdateFollow.Bind(this)
         SetTimer(this.followFn, interval)
-        this.UpdateFollow(winTitle, dx, dy, activeOnly)
+        this.UpdateFollow()
+    }
+
+    /**
+     * Change the follow offset without restarting the follow timer.
+     * Does nothing if the offset is unchanged.
+     */
+    SetFollowOffset(dx, dy) {
+        if dx = this.followDX && dy = this.followDY
+            return
+        this.followDX := dx
+        this.followDY := dy
+        this.UpdateFollow()
     }
 
     StopFollowing() {
@@ -229,17 +251,17 @@ class statusIcon {
         }
     }
 
-    UpdateFollow(winTitle, dx, dy, activeOnly) {
+    UpdateFollow() {
         if !this.gui
             return
-        hwnd := WinExist(winTitle)
+        hwnd := WinExist(this.followWin)
         target := "ahk_id " hwnd
         visible := hwnd
             && WinGetMinMax(target) != -1
-            && (!activeOnly || WinActive(target))
+            && (!this.followActiveOnly || WinActive(target))
         if visible {
-            WinGetClientPos(&cx, &cy, , , target)   ; client area origin, in screen coordinates
-            nx := cx + dx, ny := cy + dy
+            WinGetClientPos(&cx, &cy, , , target)
+            nx := cx + this.followDX, ny := cy + this.followDY
             if nx != this.posX || ny != this.posY
                 this.Move(nx, ny)
         }

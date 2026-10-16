@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/10/13
- * @version 1.5.22
+ * @date 2026/10/16
+ * @version 1.5.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -675,14 +675,15 @@ class AE {
      * @param {Boolean} [andWait=true] determines whether you wish for the function to wait for the `Save Project` window to open/close. (This is simply to get information returned to you, it should be noted that the thread will still halt until the `AERemote` save function has completed)
      * @param {Boolean} [continueOnBusy=false] determine whether to continue with a save attempt even if AE may be busy
      * @returns {Boolean/String}
-     * - `true`      : successful
-     * - `false`     : `AERemote`/`save` func/`projPath` not found/save attempt fails (server not running)
-     * - `"timeout"` : waiting for the save project window to open/close timed out
-     * - `"busy"`    : another window may be open in AE that could cause saving to fail
+     * - `true`              : successful
+     * - `false`             : `AERemote`/`save` func/`projPath` not found/save attempt fails (server not running)
+     * - `"timeout"`         : the save project window opened but never closed
+     * - `"timeout_nosave"`  : the save project window never opened
+     * - `"busy"`            : another window may be open in AE that could cause saving to fail
      */
     static save(andWait := true, continueOnBusy := false) {
         if !isBool(andWait) || !isBool(continueOnBusy) {
-            errorLog(PropertyError("Incorrect Parameter Type"),,, true)
+            errorLog(TypeError("Incorrect Parameter Type"),,, true)
             return false
         }
         ;// the below windows will halt or delay the save process if they exist
@@ -695,42 +696,63 @@ class AE {
                 return "busy"
         } */
         aeWindow := WinGet.AEName()
-        if !aeWindow || Type(aeWindow) != "Object" ||
-            ((aeWindow.winTitle = "" || !aeWindow.wintitle) &&
-            aeWindow.titleCheck = null && aeWindow.saveCheck = null) {
+        if !aeWindow || Type(aeWindow) != "Object"
+            || (!aeWindow.HasProp("winTitle") || aeWindow.winTitle = "")
+            && !aeWindow.HasProp("titleCheck") && !aeWindow.HasProp("saveCheck") {
             errorLog(UnsetError("ae.save() was unable to determine the title of the After Effects window"), "The user may not have the correct year set within the settings", 1)
             return false
         }
-        try procName := WinGetProcessName(aeWindow.winTitle), procClass := WinGetClass(aeWindow.wintitle)
-        catch {
+        try {
+            procName  := WinGetProcessName(aeWindow.winTitle)
+            procClass := WinGetClass(aeWindow.winTitle)
+        } catch {
             ;// ae may have crashed
             return false
         }
-        if continueOnBusy = false && ((procName = "ahk_exe AfterFX.exe.exe" || procName = "ahk_exe AfterFX.exe (Beta).exe") && (procClass ~= "^AE_CApplication_\d{2}(\.\d+)*$"))
-            return "busy"
-        state := {hasAppeared: false, hasClosed: false}
-        try WinEvent.Exist((*) => state.hasAppeared := true, "Save Project " this.exeTitle)
-        try WinEvent.Close((*) => state.hasClosed := true, "Save Project " this.exeTitle)
-        __stopCallbacks() {
-            try WinEvent.Stop('Exist', "Save Project " this.exeTitle)
-            try WinEvent.Stop('Close', "Save Project " this.exeTitle)
+        if !continueOnBusy {
+            isAE     := (procName = "AfterFX.exe" || procName = "AfterFX (Beta).exe")
+            badClass := !(procClass ~= "^AE_CApplication_\d{2}(\.\d+)*$")
+            if isAE && badClass
+                return "busy"
         }
-        ;// func won't continue until this aeremote func finishes (saving completes)
-        blocker := block_ext()
-        blocker.On(false)
-        SetTimer((*) => blocker.Off(), -250)
-        if !this.__remoteFunc("save") {
-            __stopCallbacks()
-            blocker.Off()
-            return false
-        }
-        __stopCallbacks()
 
-        blocker.Off()
+        if !this.__checkAERemoteFunc("save")
+            return false
+
+        saveTitle := "Save Project " this.exeTitle
+        state     := {hasAppeared: false, hasClosed: false}
+        blocker   := block_ext()
+        unblock   := (*) => blocker.Off() ;// single function object so SetTimer can reset the same timer
+
+        onAppear(*) {
+            if state.hasAppeared
+                return
+            state.hasAppeared := true
+            SetTimer(unblock, -500) ;// dialog is up, release inputs shortly after
+        }
+        onClose(*) => state.hasClosed := true
+
+        saved := false
+        try {
+            try WinEvent.Exist(onAppear, saveTitle)
+            try WinEvent.Close(onClose, saveTitle)
+
+            blocker.On(false)
+            SetTimer(unblock, -1500) ;// failsafe in case AE hangs / the dialog never shows
+            saved := this.__remoteFunc("save", true)
+        } finally {
+            SetTimer(unblock, 0)
+            blocker.Off()
+            try WinEvent.Stop("Exist", saveTitle)
+            try WinEvent.Stop("Close", saveTitle)
+        }
+
+        if !saved || saved == null
+            return false
         if !andWait
             return true
 
-        ;// waiting for save dialogue to open & close
+        ;// verify if dialog opened/closed
         if !state.hasAppeared
             return "timeout_nosave"
         if !state.hasClosed
