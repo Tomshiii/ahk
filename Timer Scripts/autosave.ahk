@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/10/08
- * @version 2.2.27
+ * @date 2026/10/15
+ * @version 2.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -27,8 +27,8 @@
 #Include Functions\detect.ahk
 #Include Functions\isObjHasProp.ahk
 #Include Other\Notify\Notify.ahk
-#Include Other\WinEvent.ahk
 #Include Other\HighPrecisionSleep.ahk
+#Include Other\Promise.ahk
 ; }
 
 #SingleInstance force ;only one instance of this script may run at a time!
@@ -53,10 +53,7 @@ OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode) {
     block.Off()
-    try {
-        WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
-        autoSave.stop()
-    }
+    try autoSave.stop() ;// also tears down the save override InputHook
     checkstuck()
 }
 
@@ -128,28 +125,53 @@ class adobeAutoSave extends count {
     origPanelFocus := ""
     resetAlreadyWaited := false
 
+    ;// state for the save override
+    active        := false
+    ticking       := false
+    saveHook      := ""
+    restartFn     := ""
+    saveAsWatchFn := ""
+
+    ;// state for the idle check
+    idleTotal     := 5
+    idleRetryMs   := 2000
+    idleThreshold := 500
+    idleTimerFn   := ""
+    idleResolve   := ""
+    idleBarFn     := ""
+    idleClearFn   := ""
+
     /** This function is called every increment */
     Tick() {
-        ;// start the saving process
-        this.begin()
+        this.ticking := true
+        try {
+            this.begin()
 
-        ;// if the above function got to the point that it was able to determine an active window and has been set
-        ;// attempt to reactivate it
-        if this.origWindow != ""
-            this.__reactivateWindow()
+            ;// if the above function got to the point that it was able to determine an active window and has been set
+            ;// attempt to reactivate it
+            if this.origWindow != ""
+                this.__reactivateWindow()
 
-        ;// finish up
-        if this.aeExist = true
-            this.__resetAETrans()
-        this.__reset()
-        block.Off()
+            ;// finish up
+            if this.aeExist = true
+                this.__resetAETrans()
+            this.__reset()
+            block.Off()
+        } finally {
+            this.ticking := false
+        }
     }
 
     /** stops the timer */
     Stop(doCheckStuck := true) {
+        this.active := false
         super.stop()
-        try {
-            WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
+        this.__stopSaveHook()
+        this.__cancelIdleWait()
+        this.__stopSaveAsWatch()
+        if this.restartFn {
+            SetTimer(this.restartFn, 0)
+            this.restartFn := ""
         }
         if doCheckStuck
             checkstuck()
@@ -158,13 +180,10 @@ class adobeAutoSave extends count {
 
     /** starts the timer */
     Start() {
-        if this.saveOverride == true {
-            if !WinEvent.IsRegistered("Exist", "Save Project " prem.exeTitle) {
-                try WinEvent.Exist(this.__stopAndReset.Bind(this), "Save Project " prem.exeTitle)
-                catch {
-                    SetTimer((*) => tool.Cust("Attempting to start lib ``WinEvent`` failed.`nA reload may be required for proper functionality."), -1)
-                }
-            }
+        this.active := true
+        try this.__startSaveHook()
+        catch {
+            SetTimer((*) => tool.Cust("Attempting to start the save override ``InputHook`` failed.`nA reload may be required for proper functionality."), -1)
         }
         super.start()
     }
@@ -212,14 +231,74 @@ class adobeAutoSave extends count {
         }
     }
 
-    __stopAndReset(*) {
-        if this.selfInitiatedSave = true
+    /** starts an `InputHook` that notifies us whenever `s` is pressed (the keystroke itself is passed through untouched) */
+    __startSaveHook() {
+        if this.saveOverride != true
             return
-        this.Stop(false)
-        this.resetingSave := true, this.idleAttempt := true
-        WinWaitClose("Save Project " prem.exeTitle, 2)
-        sleep 500
-        SetTimer((*) => (this.resetAlreadyWaited := true, this.__reset(), this.Start()), -1000)
+        if this.saveHook && this.saveHook.InProgress
+            return
+        ih := InputHook("V I1") ;// V = don't block keys, I1 = ignore input sent by scripts (ours included)
+        ih.KeyOpt("s", "N")     ;// N = fire OnKeyDown for this key
+        ih.OnKeyDown := this.__onSaveKey.Bind(this)
+        ih.OnEnd     := this.__onHookEnd.Bind(this)
+        ih.Start()
+        this.saveHook := ih
+    }
+
+    __stopSaveHook() {
+        if !this.saveHook
+            return
+        ih := this.saveHook
+        this.saveHook := "" ;// cleared first so `__onHookEnd` knows this stop was intentional
+        try ih.Stop()
+    }
+
+    /** InputHooks end on their own once they've collected 1023 characters, so quietly start a new one if that happens */
+    __onHookEnd(ih) {
+        if ih !== this.saveHook
+            return
+        this.saveHook := ""
+        if this.active && this.saveOverride = true
+            SetTimer((*) => this.__startSaveHook(), -1)
+    }
+
+    /** fires whenever `s` is pressed - we only care about Ctrl+S inside Premiere/AE */
+    __onSaveKey(ih, vk, sc) {
+        if this.selfInitiatedSave
+            return
+        if !GetKeyState("Ctrl", "P") || GetKeyState("Alt", "P") || GetKeyState("Shift", "P")
+            return
+        if !(WinActive(prem.winTitle) || WinActive(ae.winTitle))
+            return
+        SetTimer((*) => this.__userSaved(), -1)
+    }
+
+    /** the user saved manually: abort anything in progress and restart the countdown */
+    __userSaved() {
+        if this.selfInitiatedSave || !this.active
+            return
+        super.stop()
+        this.resetingSave := true
+        this.__cancelIdleWait()
+
+        if this.restartFn
+            SetTimer(this.restartFn, 0)
+        this.restartFn := this.__restartAfterUserSave.Bind(this)
+        SetTimer(this.restartFn, -1500)
+    }
+
+    __restartAfterUserSave() {
+        if !this.active
+            return
+        ;// let a running tick wind down / the save window close before resetting
+        if this.ticking || WinExist("Save Project ahk_exe " prem.exeTitle) {
+            SetTimer(this.restartFn, -500)
+            return
+        }
+        this.restartFn := ""
+        this.resetAlreadyWaited := true
+        this.__reset()
+        super.start()
     }
 
     /** This function handles changing the timer frequency when the user adjusts it within `settingsGUI()` */
@@ -253,90 +332,143 @@ class adobeAutoSave extends count {
         SoundSetVolume(this.currentVolume,, this.soundName)
     }
 
-    /** check whether the user has recently interacted with their computer */
-    __checkIdle() {
-        if this.idleAttempt = true
+    /**
+     * Makes sure the user has been idle before we save. Safe to call multiple times per tick.
+     * `Promise.await()` keeps pumping messages so the retry timers below still fire while we wait.
+     * @returns {Boolean} true if it's safe to save
+     */
+    __ensureIdle() {
+        if this.resetingSave = true
             return false
-        loopTotal := 5
-        loop loopTotal {
-            __destroyNotify() {
-                if Notify.Exist("autosavepremDelay")
-                    Notify.Destroy("autosavepremDelay", true)
-                if Notify.Exist("autosavepremNextAttempt")
-                    __waitAndCheckAttempt()
-            }
-            if this.resetingSave = true || WinExist("Save Project") {
-                this.resetingSave := true
-                __destroyNotify()
-                break
-            }
-            ;// if the user has interacted with the keyboard recently
-            ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
-            ;// the save attempt will be paused and retried
-            if (A_TimeIdleKeyboard <= 500)
-                || (this.checkMouse = true && ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = this.movePlayhead) && A_TimeIdleMouse <= 500))
-                || this.__checkRClick() {
-                if A_Index > 1 && this.beep = true
-                    this.__playBeep()
-                ;// do this manually, otherwise the `notify.show()` down below will come out first
-                if !Notify.Exist("autosavepremDelay")
-                    Notify.Show(A_ScriptName, "Script tried to save but the user interacted with the keyboard/mouse in the last 0.5s.`nPlease wait for the next save attempt:", 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 hide=Fade@250 maxW=400 tag=autosavepremDelay')
+        try {
+            ;// no timeout on purpose: `Promise.await()` re-subtracts total elapsed time on every message it pumps,
+            ;// so a finite timeout expires far too early. The poll chain always ends on its own (max `idleTotal` attempts).
+            return this.__waitForIdle().await() = true
+        } catch {
+            this.__cancelIdleWait()
+            return false
+        }
+    }
 
-                __waitAndCheckAttempt() {
-                    loop 50 {
-                        if !Notify.Exist("autosavepremNextAttempt")
-                            break
-                        HighPrecisionSleep(10)
-                    }
-                    if Notify.Exist("autosavepremNextAttempt")
-                        try Notify.Destroy("autosavepremNextAttempt", true)
-                }
-                __doAttemptNotify(index, loopTotal, *) {
-                    range := 1500 ;// ms (500ms extra is waited afterwards)
-                    nextAttempt := Notify.Show(index "/" loopTotal " - Next Attempt:",, 'iconi',,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' range ' Smooth tag=autosavepremNextAttempt')
-                    loop range {
-                        if !Notify.Exist('autosavepremNextAttempt') ;// might get deleted if the user manually saves
-                            break
-                        try nextAttempt["prog"].value := A_Index
-                        HighPrecisionSleep(1)
-                    }
-                    if !Notify.Exist('autosavepremNextAttempt') {
-                        SetTimer(, 0)
-                        return
-                    }
-                    if nextAttempt["prog"].value < range
-                        nextAttempt["prog"].value := range
-                    HighPrecisionSleep(500)
-                    try Notify.Destroy("autosavepremNextAttempt", true)
-                    SetTimer(, 0)
-                    return
-                }
-                ;// ---
-                if Notify.Exist("autosavepremNextAttempt")
-                    __waitAndCheckAttempt()
-                if A_Index != loopTotal {
-                    SetTimer(__doAttemptNotify.Bind(A_Index, loopTotal), -1)
-                    sleep 3000
-                    __waitAndCheckAttempt()
-                    continue
-                }
-                errorLog(Error(A_ScriptName " tried to save but the user kept interacting with the keyboard/mouse"))
-                break
-            }
+    /**
+     * @returns {Promise<Boolean>} resolves `true` once the user is idle, `false` if we gave up or the save was reset
+     */
+    __waitForIdle() {
+        this.__cancelIdleWait()
+        return Promise(executor)
+        executor(resolve, reject) {
+            this.idleResolve := resolve
+            this.__idlePoll(1)
+        }
+    }
+
+    /** is the user currently interacting with the keyboard/mouse? */
+    __userIsBusy() {
+        ;// if the user has interacted with the keyboard recently
+        ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
+        ;// the save attempt will be paused and retried
+        return (A_TimeIdleKeyboard <= this.idleThreshold)
+            || (this.checkMouse = true && ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = this.movePlayhead) && A_TimeIdleMouse <= 500))
+            || this.__checkRClick()
+    }
+
+    /** a single idle check. If the user is busy it schedules itself again with a timer instead of looping/sleeping */
+    __idlePoll(attempt) {
+        this.idleTimerFn := ""
+
+        ;// the user (or a save window) beat us to it
+        if this.resetingSave = true || WinExist("Save Project") {
+            this.resetingSave := true
+            return this.__finishIdle(false)
+        }
+
+        ;// user is idle, we're good to go
+        if !this.__userIsBusy() {
             this.idleAttempt := true
-            __destroyNotify()
-            break
+            return this.__finishIdle(true)
         }
-        if this.resetingSave = true {
-            __destroyNotify()
-            return false
+
+        if attempt > 1 && this.beep = true
+            this.__playBeep()
+        if !Notify.Exist("autosavepremDelay")
+            Notify.Show(A_ScriptName, "Script tried to save but the user interacted with the keyboard/mouse in the last 0.5s.`nPlease wait for the next save attempt:", 'C:\Windows\System32\imageres.dll|icon244', 'Speech Misrecognition',, 'theme=Dark dur=0 show=Fade@250 hide=Fade@250 maxW=400 tag=autosavepremDelay')
+
+        if attempt >= this.idleTotal {
+            errorLog(Error(A_ScriptName " tried to save but the user kept interacting with the keyboard/mouse"))
+            return this.__finishIdle(false)
         }
-        __destroyNotify()
-        this.premWindow := WinGet.PremName()
-        if !this.premWindow || Type(this.premWindow) != "Object" || !this.premWindow.saveCheck {
-            return false
+
+        this.__showNextAttempt(attempt)
+        this.idleTimerFn := this.__idlePoll.Bind(this, attempt + 1)
+        SetTimer(this.idleTimerFn, -this.idleRetryMs)
+    }
+
+    /** settles the pending idle promise and cleans up the notifications */
+    __finishIdle(result) {
+        this.__clearNextAttempt()
+        if Notify.Exist("autosavepremDelay")
+            try Notify.Destroy("autosavepremDelay", true)
+        resolve := this.idleResolve
+        this.idleResolve := ""
+        if resolve
+            resolve(result)
+    }
+
+    /** cancels a pending idle wait (if any) - the awaiting code gets `false` */
+    __cancelIdleWait() {
+        if this.idleTimerFn {
+            SetTimer(this.idleTimerFn, 0)
+            this.idleTimerFn := ""
         }
-        return true
+        if this.idleResolve
+            this.__finishIdle(false)
+    }
+
+    /** shows the "Next Attempt" progress bar, animated by a timer rather than a blocking loop */
+    __showNextAttempt(attempt) {
+        this.__clearNextAttempt()
+        ;// timeline per attempt (with the default 2000ms):
+        ;//   0 - 1300ms : bar fills
+        ;//   1300 - 1600ms : bar sits full so the progress bar's own animation can catch up
+        ;//   1600ms : bar is destroyed
+        ;//   2000ms : next poll - the gap stops the old bar's fade-out from colliding with the new bar (same tag)
+        range := Max(this.idleRetryMs - 700, 500) ;// ms
+        nextAttempt := Notify.Show(attempt "/" this.idleTotal " - Next Attempt:",, 'iconi',,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w240 Range0-' range ' Smooth tag=autosavepremNextAttempt')
+        this.idleBarFn := this.__animateBar.Bind(this, nextAttempt, A_TickCount, range)
+        SetTimer(this.idleBarFn, 15)
+    }
+
+    __animateBar(nextAttempt, startTick, range) {
+        ;// might get deleted if the user manually saves
+        if !Notify.Exist("autosavepremNextAttempt") {
+            this.__stopBar()
+            return
+        }
+        elapsed := Min(A_TickCount - startTick, range)
+        try nextAttempt["prog"].value := elapsed
+        ;// once full, stop updating and remove it after a short hold
+        if elapsed >= range {
+            this.__stopBar()
+            this.idleClearFn := this.__clearNextAttempt.Bind(this)
+            SetTimer(this.idleClearFn, -300)
+        }
+    }
+
+    __stopBar() {
+        if this.idleBarFn {
+            SetTimer(this.idleBarFn, 0)
+            this.idleBarFn := ""
+        }
+    }
+
+    __clearNextAttempt() {
+        this.__stopBar()
+        if this.idleClearFn {
+            SetTimer(this.idleClearFn, 0)
+            this.idleClearFn := ""
+        }
+        if Notify.Exist("autosavepremNextAttempt")
+            try Notify.Destroy("autosavepremNextAttempt", true)
     }
 
     /** @returns {Boolean} true/false on whether it can grab the active window */
@@ -487,10 +619,17 @@ class adobeAutoSave extends count {
             return
         }
 
+        ;// the idle check only matters if Premiere is the active window.
+        ;// if it isn't, we save in the background straight away
         if (this.origWindow = "Adobe Premiere Pro.exe" || this.origWindow = "Adobe Premiere Pro (Beta).exe") {
             ;// checking idle status
-            checkIdle := this.__checkIdle()
-            if (this.idleAttempt = false || checkIdle = false || this.resetingSave = true)
+            checkIdle := this.__ensureIdle()
+            if !checkIdle || this.resetingSave = true
+                return
+
+            ;// the user may have saved (or the title changed) while we were waiting, so check again
+            this.premWindow := WinGet.PremName()
+            if !this.premWindow || Type(this.premWindow) != "Object" || !this.premWindow.saveCheck
                 return
 
             if this.restartPlayback = true
@@ -499,14 +638,14 @@ class adobeAutoSave extends count {
 
         notifyExt.showIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
         this.saveAttemptNotify := true
-        ; tool.Cust("A save attempt is being made`nInputs may be temporarily blocked", 1.5,, -25, 7)
 
         ;// attempts to save using `PremiereRemote`
         this.selfInitiatedSave := true
         saveAttempt := prem.save()
-        if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "timeout_nosave" || saveAttempt = "busy" || saveAttempt = "noseq") {
+        if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy") {
             sleep 500
             this.selfInitiatedSave := false
+            SetTimer((*) => notifyExt.deleteIfExist("autosavepremSaveAttempt"), -500)
             return
         }
         notifyExt.showIfNotExist("autosavepremFailed",, 'PremiereRemote failed to save, falling back`nto a manual save attempt.', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark dur=5 bdr=0xE96969 show=Fade@250 hide=Fade@250')
@@ -522,7 +661,7 @@ class adobeAutoSave extends count {
                 throw
             }
 
-            this.__startSaveAsWinEvent(saveAsTitle)
+            this.__startSaveAsWatch(saveAsTitle)
 
             ;// attempt to send save
             if GetKeyState("Shift") || GetKeyState("Shift", "P")
@@ -537,18 +676,18 @@ class adobeAutoSave extends count {
             ControlSend("{Ctrl Up}",, this.premWindow.wintitle)
         } catch {
             block.Off()
-            this.__stopSaveAsWinEvent(saveAsTitle)
+            this.__stopSaveAsWatch(saveAsTitle)
             return
         }
 
         ;// waiting for save dialogue to open & close
         if !WinWait("Save Project",, 3) {
             block.Off()
-            this.__stopSaveAsWinEvent(saveAsTitle)
+            this.__stopSaveAsWatch(saveAsTitle)
             return
         }
         block.Off()
-        this.__stopSaveAsWinEvent(saveAsTitle)
+        this.__stopSaveAsWatch(saveAsTitle)
         if !WinWaitClose("Save Project",, 3)
             return
     }
@@ -585,23 +724,22 @@ class adobeAutoSave extends count {
         }
 
         ;// checking idle status
-        this.__checkIdle()
-        if this.idleAttempt = false
+        if !this.__ensureIdle()
             return
 
         if this.saveAttemptNotify = false && !Notify.Exist("autosaveaeSaveAttempt")
-            notifyExt.showIfNotExist("autosaveaeSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
+            notifyExt.showIfNotExist("autosaveaeSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
 
         block.On()
         checkStuck()
         saveAsTitle := "Save As " editors.AE.winTitle
-        this.__startSaveAsWinEvent(saveAsTitle)
+        this.__startSaveAsWatch(saveAsTitle)
         this.selfInitiatedSave := true
 
-        try procName := WinGetProcessName(this.aeWindow.winTitle), procClass := WinGetClass(this.aeWindow.wintitle), procClassIsAE := RegExMatch(procClass, "^AE_CApplication_(\d+(?:\.\d+)*)$")
+        try procName := WinGetProcessName(this.aeWindow.winTitle), procClass := WinGetClass(this.aeWindow.wintitle), procClassIsAE := RegExMatch(procClass, "^AE_CApplication_\d{2}(\.\d+)*$")
         catch {
             ;// ae may have crashed
-            this.__stopSaveAsWinEvent(saveAsTitle)
+            this.__stopSaveAsWatch(saveAsTitle)
             block.Off()
             this.__resetAETrans()
             return
@@ -609,7 +747,7 @@ class adobeAutoSave extends count {
         checkAgain := this.__checkDialogueClass("AfterFX")
         if ((procName = "AfterFX.exe" || procName = "AfterFX (Beta).exe") && (procClassIsAE != true)) || !checkAgain {
             ;// ae may be busy
-            this.__stopSaveAsWinEvent(saveAsTitle)
+            this.__stopSaveAsWatch(saveAsTitle)
             block.Off()
             this.__resetAETrans()
             errorLog(TargetError("After Effects may be busy, aborting save attempt", -1))
@@ -621,13 +759,13 @@ class adobeAutoSave extends count {
         if this.origWindow = procName {
             AE.save()
             if !WinWait("Save Project " editors.AE.winTitle,, 3) {
-                this.__stopSaveAsWinEvent(saveAsTitle)
+                this.__stopSaveAsWatch(saveAsTitle)
                 block.Off()
                 errorLog(TimeoutError("Failed to wait for AE save window to appear"))
-                notifyExt.showIfNotExist("autosaveaeBusier",, 'After Effects is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250     hide=Fade@250 maxW=400 bdr=0x75aedc')
+                notifyExt.showIfNotExist("autosaveaeBusier",, 'After Effects is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
                 return
             }
-            this.__stopSaveAsWinEvent(saveAsTitle)
+            this.__stopSaveAsWatch(saveAsTitle)
             WinWaitClose("Save Project " editors.AE.winTitle,, 3)
             block.Off()
             sleep 200
@@ -645,7 +783,7 @@ class adobeAutoSave extends count {
             AE.save()
         } catch {
             block.Off()
-            this.__stopSaveAsWinEvent(saveAsTitle)
+            this.__stopSaveAsWatch(saveAsTitle)
             this.__resetAETrans()
             return
         }
@@ -660,20 +798,31 @@ class adobeAutoSave extends count {
                     WinMoveBottom(editors.AE.winTitle)
             }
         }
-        this.__stopSaveAsWinEvent(saveAsTitle)
+        this.__stopSaveAsWatch(saveAsTitle)
         this.__resetAETrans()
     }
 
-    /** start a winevent hook to cancel the "Save As" window if it appears */
-    __startSaveAsWinEvent(saveAsTitle) {
-        if !WinEvent.IsRegistered('Exist', saveAsTitle)
-            try WinEvent.Exist(((*) => ControlSend("{Esc}",, saveAsTitle)), saveAsTitle)
+    /** start a timer that cancels the "Save As" window if it appears */
+    __startSaveAsWatch(saveAsTitle) {
+        if this.saveAsWatchFn
+            return
+        this.saveAsWatchFn := this.__cancelSaveAs.Bind(this, saveAsTitle)
+        SetTimer(this.saveAsWatchFn, 20)
     }
 
-    /** stop the winevent hook to cancel the "Save As" window */
-    __stopSaveAsWinEvent(saveAsTitle) {
-        if WinEvent.IsRegistered('Exist', saveAsTitle)
-            WinEvent.Stop('Exist', saveAsTitle)
+    __cancelSaveAs(saveAsTitle) {
+        try {
+            if WinExist(saveAsTitle)
+                ControlSend("{Esc}",, saveAsTitle)
+        }
+    }
+
+    /** stop the timer that cancels the "Save As" window */
+    __stopSaveAsWatch(saveAsTitle := "") {
+        if this.saveAsWatchFn {
+            SetTimer(this.saveAsWatchFn, 0)
+            this.saveAsWatchFn := ""
+        }
         this.selfInitiatedSave := false
     }
 
@@ -731,6 +880,5 @@ class adobeAutoSave extends count {
     __Delete() {
         block.Off()
         try this.Stop()
-        try WinEvent.Stop('Exist', "Save Project " prem.exeTitle)
     }
 }

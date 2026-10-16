@@ -57,6 +57,7 @@
 - ✏️ Added `getRegistryJSON()`, `setViewerZoom()`
 
 ## Other Changes
+- 📋 `autosave.ahk` no longer uses `WinEvent {` (it would clash with `prem.save()`/`ae.save()`)
 
 🔗 `determineUIA.ahk`
 - ❗ Panels can no longer be accessed using the `UIA_Objs[]` map and must be accessed using `premUIA_Values.getLivePanel()`
