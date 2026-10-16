@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2026/10/06
- * @version 1.2.5
+ * @date 2026/10/16
+ * @version 1.2.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -45,14 +45,17 @@ class cmd {
             }
         }
         commandOrKeep := (keepWindow = true) ? "/k" : "/c"
+        command := Params[1]
+        if (admin = true && Params[2] != defaultDir && DirExist(Params[2]))
+            command := Format('cd /d "{}" && {}', Params[2], command)
+
         try {
             switch wait {
                 case false:
-                    ;// replace /c with /k if user wants to keep cmd window open
-                    Run(elevation A_ComSpec A_Space commandOrKeep A_Space Params[1], Params[2], Params[3], &returnPID)
+                    Run(elevation A_ComSpec A_Space commandOrKeep A_Space command, Params[2], Params[3], &returnPID)
                     return returnPID
                 default:
-                    var := RunWait(elevation A_ComSpec A_Space commandOrKeep A_Space Params[1], Params[2], Params[3], &returnPID)
+                    var := RunWait(elevation A_ComSpec A_Space commandOrKeep A_Space command, Params[2], Params[3], &returnPID)
                     return {exitCode: var, PID: returnPID}
             }
         }

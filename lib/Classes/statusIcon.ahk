@@ -15,7 +15,9 @@
 ;   icon.SetIcon(newPath)                 ; swap the image
 ;   icon.Move(x, y)                       ; absolute screen coordinates
 ;   icon.Follow(winTitle, dx, dy)         ; pin to a spot inside another window
+;   icon.SetFollowOffset(dx, dy)          ; change the pin offset without restarting the timer
 ;   icon.StopFollowing()
+;   icon.SetVisible(show)                 ; show/hide without destroying (overridden by Follow)
 ;   icon.SetOnClick(fn)                   ; set/clear the click callback, fn(icon)
 ;   icon.Destroy()                        ; optional, also runs automatically on exit
 ;

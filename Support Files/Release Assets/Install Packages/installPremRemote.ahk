@@ -3,7 +3,7 @@
 #Include Classes\errorLog.ahk
 #Include Classes\ptf.ahk
 #Include Classes\cmd.ahk
-#Include Functions\unzip.ahk
+#Include Classes\zip.ahk
 ; }
 
 ;//! This script will NOT complete without NodeJS already being installed
@@ -50,8 +50,8 @@ if !FileExist(extensionsPath "\premExtract.zip")
 if !FileExist(extensionsPath "\aeExtract.zip")
     Download(AE_dlURL, extensionsPath "\aeExtract.zip")
 ;// unzip
-unzip(extensionsPath "\premExtract.zip", extensionsPath "\.premRemoteExtract\")
-unzip(extensionsPath "\aeExtract.zip", extensionsPath "\.aeRemoteExtract\")
+zip.unzip(extensionsPath "\premExtract.zip", extensionsPath "\.premRemoteExtract\")
+zip.unzip(extensionsPath "\aeExtract.zip", extensionsPath "\.aeRemoteExtract\")
 if !DirExist(remoteFolder)
     throw TargetError("Error During PremiereRemote Installation. Incorrect version")
 if !DirExist(AEremoteFolder)
