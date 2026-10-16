@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/15
- * @version 2.5.89
+ * @date 2026/10/16
+ * @version 2.5.90
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1436,7 +1436,7 @@ class Prem {
 
             blocker.On(false)
             SetTimer(unblock, -1500) ;// failsafe in case Premiere hangs / the dialog never shows
-            saved := this.__remoteFunc("saveProj")
+            saved := this.__remoteFunc("saveProj", true)
         } finally {
             SetTimer(unblock, 0)
             blocker.Off()
@@ -1485,23 +1485,32 @@ class Prem {
      * @returns {Boolean|String} returns boolean or `"active"` if timeline was the active window
      */
     static saveAndFocusTimeline() {
+        haltSave := "(?:Save Project) " this.winTitle
         if !uiaVals := premUIA_Values.initialise()
-            return
+            return false
         if !this.__setTimelineValues(false) {
             return false
         }
         saveAttempt := this.save()
-        if (saveAttempt = false || saveAttempt = "timeout" || saveAttempt = "timeout_nosave") {
+        if saveAttempt = "timeout"
+            return false
+        if saveAttempt = "busy" {
+            if winExt.ExistRegex(haltSave)
+                return false
+            return true
+        }
+        if (saveAttempt = false ||  saveAttempt = "timeout_nosave") {
             SendEvent("^s")
-            if !WinWait("Save Project",, 3) {
+            if !winExt.WaitRegex(haltSave,, 3) {
                 tool.Cust("Function timed out waiting for save prompt")
                 return false
             }
-            if !WinWaitClose("Save Project",, 5) {
+            if !winExt.WaitCloseRegex(haltSave,, 10) {
                 tool.Cust("Function timed out waiting for save prompt to close")
                 return false
             }
         }
+        sleep 150
         if !premUIA_Values.__isUiaElementActive("timelineWindow", uiaVals) {
             tool.Cust("Premiere should automatically refocus the timeline")
             if !this.__waitForTimeline()
