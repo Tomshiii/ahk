@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/16
- * @version 2.5.90
+ * @version 2.5.91
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -300,10 +300,12 @@ class Prem {
     ;// __setRemoteIcon
     static cepIcon := false
     static cepIconState := false
+    static cepOffset := false
     static uxpIcon := false
     static uxpIconState := false
     static uiaIcon := false
     static uiaIconState := false
+    static uxpOffset := false
 
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
 
@@ -348,6 +350,7 @@ class Prem {
                 try this.%which%Icon.destroy()
             this.%which%Icon := false
             this.%which%IconState := false
+            this.%which%Offset := false
         }
         if !IsSet(uiaObj) {
             throw MethodError("Parameter #3 isn't set.")
@@ -383,6 +386,8 @@ class Prem {
                 this.__%which%Open := (resp == '"uxp visible=true"') ? true : false
         }
 
+        timelineObj := premUIA_Values.getLivePanel("timelineWindow", uiaObj)
+        try timelineUIA := timelineObj[1]
         if which = "uia" {
             panes := premUIA_Values.__checkPanes(uiaObj)
             if panes == null
@@ -391,23 +396,55 @@ class Prem {
         newState := (which = "cep" || which = "uxp") ? (state=1 && this.__%which%Open = true) : panes
 
         imgIcon := newState ? iconConnected : iconDisonnected
-        if this.%which%Icon != false {
+        iconExists := this.%which%Icon != false
+
+        ; Update the existing icon's image/state
+        if iconExists {
             if newState != this.%which%IconState {
                 this.%which%Icon.SetIcon(imgIcon)
                 this.%which%IconState := newState
             }
+            if !IsSet(timelineUIA) {
+                __stateReset(which)
+                return
+            }
+        }
+
+        if !timelineObj
+            return
+
+        ;// panel's current top-left in screen coords
+        panelLoc := timelineObj.location
+
+        ;// compute the offsets once, then reuse them
+        if !this.HasOwnProp(which "Offset") || !this.%which%Offset {
+            buttonIndex := (which = "cep" || which = "uxp") ? (which = "cep" ? 2 : 1) : 4
+            timecode := timelineObj.Children[1].Children[1]
+            button := timelineObj.FindElement({Type:50000},, buttonIndex)
+            if !button
+                return
+            this.%which%Offset := {
+                x: button.location.x - panelLoc.x,
+                y: timecode.location.y - panelLoc.y
+            }
+        }
+        off := this.%which%Offset
+
+        ;// where the icon should be initially
+        coord.screenToClient(panelLoc.x + off.x, panelLoc.y + off.y, this._scan.hwnd, this._scan.WindowScale, &cX, &cY)
+        dx := cX + 4
+        dy := cY + 7
+
+        ;// icon already exists: SetFollowOffset is a no-op if nothing changed
+        if iconExists {
+            this.%which%Icon.SetFollowOffset(dx, dy)
+            timelineObj := ""
             return
         }
-        if !timelineObj := premUIA_Values.getLivePanel("timelineWindow", uiaObj)
-            return
-        buttonIndex := (which = "cep" || which = "uxp") ? (which = "cep" ? 2 : 1) : 4
-        timecode := timelineObj.Children[1].Children[1]
-        button := timelineObj.FindElement({Type:50000},, buttonIndex)
-        coord.screenToClient(timecode.location.x, timecode.location.y, this._scan.hwnd, this._scan.WindowScale, &tX, &tY)
-        coord.screenToClient(button.location.x, button.location.y, this._scan.hwnd, this._scan.WindowScale, &bX, &bY)
 
+        ;// otherwise create it
         this.%which%Icon := statusIcon(imgIcon,,, 16)
-        this.%which%Icon.follow(this._scan.hwnd, bX+4, tY+7, true, 5)
+        this.%which%Icon.follow(this._scan.hwnd, dx, dy, true, 5)
         tryFunc(which) {
             try this.stopPlayback()
             switch which {
@@ -1444,7 +1481,7 @@ class Prem {
             try WinEvent.Stop("Close", saveTitle)
         }
 
-        if !saved
+        if !saved || saved == null
             return false
         if !andWait
             return true
