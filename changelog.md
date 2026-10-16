@@ -1,13 +1,18 @@
 # <> Release 2.19.x - 
 
 ## Functions
-- ✏️ Added `statusIcon {`, `cursor {`
+- ✏️ Added `statusIcon {`, `cursor {`, `zip {`
 - ✏️ Added `obj.isEqual()`
 - ✅ Fixed `settings.ini` values getting reset if a key is added
 - ✅ Fixed `adobeXML {` flooding the logs with empty values when a hotkey isn't found
 - ✅ Fixed `slack.button()` failing because they changed a button
+- ✅ Fixed `cmd.run()` not using the passed `Working Dir` when run as admin
 - 📋 Increased default `adobe_GB` value from `45` => `100`
 - 📋 Moved `XorY()`, `clipMouse()`, and `setMouseClip()` from `move {` => `cursor {`
+
+📍 `unzip()`
+- 📋 Moved function => `zip.unzip()`
+- 📋 Now accepts parameter `checkExt`
 
 ### 📝 `prem {`
 - ✅ Fixed `dismissWarning()` potentially leaving inputs blocked

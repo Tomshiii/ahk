@@ -1,7 +1,7 @@
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\ptf.ahk
-#Include Functions\unzip.ahk
+#Include Classes\zip.ahk
 ; #Include Classes\winGet.ahk
 #Include Classes\errorLog.ahk
 #Include Classes\cmd.ahk
@@ -12,7 +12,7 @@
 ;//! This script will NOT complete without NodeJS already being installed
 
 ;// this script must be called AFTER symlinks have been generated
-;// it requires cmd { & unzip()
+;// it requires cmd { & zip {
 installDir := FileRead(A_Appdata "\tomshi\installDir")
 SetWorkingDir(installDir)
 
@@ -32,7 +32,7 @@ if !dlLocation
 
 Download(downloadURl, dlLocation "hotkeylessExtract.zip")
 ;// unzip
-unzip(dlLocation "hotkeylessExtract.zip", dlLocation ".hotkeylessExtract\")
+zip.unzip(dlLocation "hotkeylessExtract.zip", dlLocation ".hotkeylessExtract\")
 dirName := ""
 loop files dlLocation "\.hotkeylessExtract\*", "D" {
     DirMove(A_LoopFileFullPath, dlLocation A_LoopFileName)
