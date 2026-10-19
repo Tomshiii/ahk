@@ -28,6 +28,7 @@
 - 📋 `soloVideo()` now completely uses `UIA` without needing to move the mouse for speedier and more reliable results
 - 📋 `swapPreviousSequence()` now requires the `UXP` `PremiereRemote` extension
     - All swapping/sequence storing logic is now held within the plugin's memory using [`Sequence Events`](<https://developer.adobe.com/premiere-pro/uxp/ppro-reference/constants/#sequenceevent>)
+- 📋 `__checkTimelineValues()` will now verify values against the `prem` comObj, and replace local values if there are discrepancies 
 
 ### 📝 `rbuttonPrem {`
 📍 `movePlayhead()`
@@ -42,6 +43,7 @@
 ### 📝 `AE {`
 - ✅ Fixed `setViewerZoom()` sometimes throwing
 - ✅ Fixed `selectTool()` throwing if text was selected
+- 📋 `__checkTimelineValues()` will now verify values against the `ae` comObj, and replace local values if there are discrepancies 
 
 ### 📝 `PremiereRemote`
 📍 `CEP`

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/19
- * @version 2.5.93
+ * @date 2026/10/20
+ * @version 2.5.94
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2279,10 +2279,8 @@ class Prem {
             return
         }
 
-        if !this.timelineVals {
-            this.__setTimelineValues()
+        if !this.__setTimelineValues()
             return
-        }
 
         needsTimelineFocus := false
 		title := WinGet.Title()
@@ -2412,10 +2410,8 @@ class Prem {
         }
         if __uiaMethod()
             return
-        if !this.timelineVals {
-            this.__setTimelineValues()
+        if !this.__setTimelineValues()
             return
-        }
         focusStatus := this.timelineFocusStatus()
 		if focusStatus !== false
             return
@@ -2464,8 +2460,7 @@ class Prem {
             return
         }
         ;// from here down to the begining of again() is checking for the width of your timeline and then ensuring this function doesn't fire if your mouse position is beyond that, this is to stop the function from firing while you're hoving over other elements of premiere causing you to drag them across your screen
-        if !this.timelineVals {
-            this.__setTimelineValues()
+        if !this.__setTimelineValues() {
             SetTimer(rdisable, 0)
             return
         }
@@ -2601,10 +2596,8 @@ class Prem {
      * @returns {null | boolean} `null` indicates that the timeline coordinates could not be determined.
      */
     static timelineFocusStatus() {
-        if !this.timelineVals {
-            this.__setTimelineValues()
+        if !this.__setTimelineValues()
             return null
-        }
         if !this.__setTimelineValues()
             return null
         origcoord := A_CoordModePixel, returnCoord() => A_CoordModePixel := origcoord
@@ -2896,12 +2889,27 @@ class Prem {
      * @returns {Boolean}
      */
     static __checkTimelineValues() {
-        try premObj_timelineVals := CLSID_Objs.loadProp("prem", "timelineVals")
+        timelineValsArr := ["timelineVals", "timelineRawX", "timelineRawY", "timelineXValue", "timelineYValue", "timelineXControl", "timelineYControl", "focusColour", "editTabX", "editTabY", "editTabCol"]
+        try premObj_timelineVals := CLSID_Objs.loadProp("prem", timelineValsArr)
         catch {
+            errorLog(MethodError("Checking timeline values failed to connect to Premiere comobj"))
             return false
         }
-        if (this.timelineVals = false || premObj_timelineVals = false)
+        if (this.timelineVals = false || premObj_timelineVals["timelineVals"] = false)
             return false
+        try {
+            for i, v in timelineValsArr {
+                if Mod(i, 2) != 0
+                    continue
+                if v = "timelineVals"
+                    continue
+                if this.%v% != premObj_timelineVals[v]
+                    this.%v% := premObj_timelineVals[v]
+            }
+        } catch as e {
+            errorLog(e)
+            return false
+        }
         return true
     }
 
@@ -2910,10 +2918,8 @@ class Prem {
      * @param {Integer} timout how many `seconds` you want to wait before this function times out
      */
     static __waitForTimeline(timeout := 5) {
-        if !this.timelineVals {
-            this.__setTimelineValues()
+        if !this.__setTimelineValues()
             return
-        }
         loop timeout {
             focusStatus := this.timelineFocusStatus()
             if focusStatus == null
@@ -3273,10 +3279,8 @@ class Prem {
             return
         }
 
-        if !this.timelineVals {
-            this.__setTimelineValues()
+        if !this.__setTimelineValues()
             return
-        }
         ;// ensure the user isn't typing
         focusStatus := this.timelineFocusStatus()
         if CaretGetPos(&x, &y) || !focusStatus || focusStatus == null {
@@ -3797,8 +3801,7 @@ $!WheelDown::
             if (InStr(storeHotkey, "CapsLock") || InStr(storeHotkey, "sc03a")) && !capslockState && capsLockDisable = true
                 SetCapsLockState('AlwaysOff')
         }
-        if !this.timelineVals {
-            this.__setTimelineValues()
+        if !this.__setTimelineValues() {
             this.blockWheel := false
             return
         }
@@ -3951,10 +3954,8 @@ $!WheelDown::
         if WinGet.Title() != getTitle.winTitle
             return
 
-        if !this.timelineVals {
-            this.__setTimelineValues()
+        if !this.__setTimelineValues()
             return
-        }
 
         keys.allWait(2)
         block.On()

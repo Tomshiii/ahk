@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/10/19
- * @version 3.1.3
+ * @date 2026/10/20
+ * @version 3.1.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -397,7 +397,7 @@ class premUIA_Values {
     }
 
     /**
-     * Remote entry point. Wipes the stale values, then schedules a rebuild and returns immediately, so the calling script isn't blocked (or RPC timed out) while `setObjs()` runs.
+     * Remote entry point. Wipes the stale values, then schedules a rebuild and returns immediately, so the calling script isn't blocked (or RPC timed out) while `setObjs()` runs. Additionally attempts to reset `Premiere` timeline values.
      * @returns {Boolean} false if a build is already in progress, or there's nothing to run the rebuild
      */
     static resetUIA() {
@@ -415,6 +415,11 @@ class premUIA_Values {
             active := CLSID_Objs.load("determineActive")
             active.isRunning := true
             active := ""
+        }
+        try {
+            premObj := CLSID_Objs.load("prem")
+            premObj.timelineVals := false
+            premObj.__setTimelineValues()
         }
         SetTimer(this.onRebuild, -1)
         return true

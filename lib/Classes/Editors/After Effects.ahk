@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/10/16
- * @version 1.5.23
+ * @date 2026/10/20
+ * @version 1.5.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -107,12 +107,27 @@ class AE {
      * @returns {Boolean}
      */
     static __checkTimelineValues() {
-        try ae_timelineVals := CLSID_Objs.loadProp("ae", "timelineVals")
+        timelineValsArr := ["timelineVals", "w_timelineX", "w_timelineY", "w_timelineX2", "w_timelineY2", "p_timelineX", "p_timelineY", "p_timelineX2", "p_timelineY2"]
+        try ae_timelineVals := CLSID_Objs.loadProp("ae", timelineValsArr)
         catch {
+            errorLog(MethodError("Checking timeline values failed to connect to After Effects comobj"))
             return false
         }
-        if (this.timelineVals = false || ae_timelineVals = false)
+        if (this.timelineVals = false || ae_timelineVals["timelineVals"] = false)
             return false
+        try {
+            for i, v in timelineValsArr {
+                if Mod(i, 2) != 0
+                    continue
+                if v = "timelineVals"
+                    continue
+                if this.%v% != ae_timelineVals[v]
+                    this.%v% := ae_timelineVals[v]
+            }
+        } catch as e {
+            errorLog(e)
+            return false
+        }
         return true
     }
 
