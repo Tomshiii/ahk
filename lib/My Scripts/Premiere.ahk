@@ -34,6 +34,11 @@ $Tab::
 		case isIn("Clip Fx Editor"), isIn("Track Fx Editor"):
 			SendInput("{Tab}")
 			return
+		case isIn("Modify Clip"):
+			modify := (GetKeyState("LCtrl", "P") = true) ? prem.syncClipChannels(true) : prem.syncClipChannels()
+			KeyWait("LCtrl")
+			if modify !== null
+				return
 		case winExt.ExistRegex(titles):
 			sendMod := (GetKeyState("Shift", "P") || GetKeyState("Shift")) ? "+" : ""
 			SendInput(sendMod "{Tab}")

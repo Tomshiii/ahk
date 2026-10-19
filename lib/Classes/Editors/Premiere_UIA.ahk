@@ -2,7 +2,7 @@
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
  * @date 2026/10/19
- * @version 3.1.2
+ * @version 3.1.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -56,6 +56,9 @@ class premUIA_Values {
     static currentVer {
         get => prem.__remoteFunc('premVer')
     }
+
+    static UIA_PREM_INACTIVE := 1048576
+    static UIA_PREM_ACTIVE := 1048580
 
     static determineIcon {
         get {
@@ -197,9 +200,7 @@ class premUIA_Values {
     static __isPremPanelActive(panel, UIAobj?) {
         if !element := this.getLivePanel(panel, UIAobj?)
             return null
-        UIA_PREM_INACTIVE := 1048576
-        UIA_PREM_ACTIVE := 1048580
-        return ((element.state = 4 || element.state = UIA_PREM_ACTIVE) ? true : false)
+        return ((element.state = 4 || element.state = this.UIA_PREM_ACTIVE) ? true : false)
     }
 
     /**

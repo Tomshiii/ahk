@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/16
- * @version 2.5.92
+ * @date 2026/10/19
+ * @version 2.5.93
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -5456,6 +5456,102 @@ $!WheelDown::
                     return null
                 }
                 return this.__remoteFunc('getPlayheadPosTimecode')
+        }
+    }
+
+    /**
+     * Uses UIA to toggle between audio channels in the `Modify Clip` window. The goal is to make the `L`/`R` channels on the same index. This function is generally designed for my own workflow and is not overly siphisticated.
+     * @param {Boolean} [reverse=false] whether the index will be pushed forwards or backwards
+     */
+    static syncClipChannels(reverse := false) {
+        clipTitle := "Modify Clip"
+        el := UIA.ElementFromHandle(clipTitle A_Space prem.winTitle,, false)
+        if !IsAudioChannelsTabActive(el)
+            return null
+        tree := el.FindFirst({Type: 50023})
+        if !tree {
+            errorLog(TargetError("Couldn't find the channel tree"))
+            notifyExt.showIfNotExist('premModifyClipChannelTree',, "Couldn't find the channel tree",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            return false
+        }
+
+        outputs := tree.Children ;// top-level items: [1] = L, [2] = R
+        if outputs.Length < 2 {
+            errorLog(IndexError("Only one channel can be found"))
+            notifyExt.showIfNotExist('premModifyClipChannelCount',, "Only one channel can be found",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            return false
+        }
+
+        lSubs := outputs[1].Children
+        rSubs := outputs[2].Children
+        count := lSubs.Length
+        if count < 2 {
+            errorLog(IndexError("Only ear can be found"))
+            notifyExt.showIfNotExist('premModifyClipChannelEar',, "Only ear can be found",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            return false
+        }
+
+        lIdx := GetCheckedIndex(lSubs)
+        rIdx := GetCheckedIndex(rSubs)
+        if !lIdx {
+            errorLog(TargetError("L has nothing selected, nothing to match against"))
+            notifyExt.showIfNotExist('premModifyClipLNotSelected',, "L has nothing selected, nothing to match against",,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            return false
+        }
+
+        if (lIdx != rIdx) {
+            ; R doesn't match L -> set R to L's index
+            SetChannel(rSubs, lIdx)
+        } else {
+            ;// Both match -> step both forward or back, wrapping around
+            if reverse
+                next := (lIdx = 1) ? count : lIdx - 1
+            else
+                next := (lIdx = count) ? 1 : lIdx + 1
+            SetChannel(lSubs, next)
+            SetChannel(rSubs, next)
+        }
+
+        el.FindFirst({Type: 50000, Name: "OK"}).Invoke()
+        return true
+
+        ;// ======= helpers =======
+
+        /** Returns the 1-based index of the checked checkbox in a list of UI_SubView items (0 if none) */
+        GetCheckedIndex(subViews) {
+            for i, sub in subViews {
+                if IsChecked(sub.FindFirst({Type: 50002}))
+                    return i
+            }
+            return 0
+        }
+
+        /** Ensures the checkbox at `idx` is checked */
+        SetChannel(subViews, idx) {
+            cb := subViews[idx].FindFirst({Type: 50002})
+            if !IsChecked(cb)
+                cb.Toggle()
+        }
+
+        /** returns state of checkbox */
+        IsChecked(cb) {
+            s := cb.State
+            return !(s = 0 || s = premUIA_Values.UIA_PREM_INACTIVE)
+        }
+
+        /** determines whether the audio tab is selected */
+        isAudioChannelsTabActive(el) {
+            try {
+                preset := el.FindFirst({Name: "Choose a preset audio channel configuration."})
+                tree   := el.FindFirst({Type: 50023})
+                if !preset || !tree
+                    return false
+                if preset.IsOffscreen || tree.IsOffscreen
+                    return false
+                r := tree.BoundingRectangle
+                return (r.r - r.l) > 0 && (r.b - r.t) > 0
+            }
+            return false
         }
     }
 
