@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/10/12
- * @version 3.1.1
+ * @date 2026/10/19
+ * @version 3.1.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -436,7 +436,7 @@ class premUIA_Values {
         notifyExt.deleteIfExist("premUIAGenTree")
         notifyExt.deleteIfExist("premUIAGenTreeWarning")
         notifyExt.deleteIfExist("UIAretrieveComplete")
-        notifyExt.deleteIfExist("determineUIAFailed")
+        notifyExt.deleteIfExist("UIApanelsFailed")
         if !Notify.Exist("premUIAGenTree") {
             Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', this.premIcon,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }

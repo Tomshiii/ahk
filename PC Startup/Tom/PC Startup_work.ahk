@@ -34,7 +34,7 @@ Run(ptf.TimerScripts "\gameCheck.ahk")
 Run(ptf.TimerScripts "\Multi-Instance Close.ahk")
 Run(ptf.TimerScripts "\premKeyCheck.ahk")
 Run(ptf["textreplace"])
-Run(ptf["HotkeylessAHK"], "HotkeylessAHK.ahk")
+Run(ptf["HotkeylessAHK"])
 
 ;// run kleopatra
 if runApp("C:\Program Files (x86)\Gpg4win\bin\kleopatra.exe", "ahk_exe kleopatra.exe") = false
