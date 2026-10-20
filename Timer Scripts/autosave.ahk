@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/10/15
- * @version 2.3.0
+ * @date 2026/10/20
+ * @version 2.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -530,6 +530,9 @@ class adobeAutoSave extends count {
                 case "CabinetWClass": WinActivate("CabinetWClass")
                 case "AfterFX.exe", "AfterFX (Beta).exe": switchTo.AE()
                 case "Adobe Premiere Pro.exe", "Adobe Premiere Pro (Beta).exe":
+                    isPlaying := prem.isPlaying()
+                    if this.restartPlayback = false && isPlaying = true && WinActive("ahk_exe " this.origWindow)
+                        prem.stopPlayback()
                     if this.restartPlayback = false && this.userPlayback = false && this.premRemoteSave = true && !WinActive("ahk_exe " this.origWindow)
                         return
                     if !WinActive("ahk_exe " this.origWindow)
@@ -549,14 +552,14 @@ class adobeAutoSave extends count {
 
                     prem.__focusTimeline()
                     sleep 100
-                    SendEvent(KSA.prem.playStop)
+                    SendInput(KSA.prem.playStop)
                     sleep 1000
                     loop 3 {
                         checkPlaying := prem.isPlaying()
                         if checkPlaying != true {
                             prem.__focusTimeline()
                             sleep 100
-                            SendEvent(KSA.prem.playStop)
+                            prem.startPlayback()
                             sleep 100
                             continue
                         }
@@ -570,6 +573,12 @@ class adobeAutoSave extends count {
             errorLog(TargetError("Couldn't determine the active window"),, 1)
             return
         }
+    }
+
+    /** checks against `prem.delayPlayback()` */
+    __pendingPlaybackDelay() {
+        try return CLSID_Objs.loadProp("prem", "delayTime") != 0
+        return false
     }
 
     /** saves premiere */
@@ -634,6 +643,11 @@ class adobeAutoSave extends count {
 
             if this.restartPlayback = true
                 this.userPlayback := (prem.isPlaying() = true) ? true : false
+
+            if this.__userIsBusy() || this.__pendingPlaybackDelay() {
+                if !this.__ensureIdle()
+                    return
+            }
         }
 
         notifyExt.showIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
@@ -642,6 +656,22 @@ class adobeAutoSave extends count {
         ;// attempts to save using `PremiereRemote`
         this.selfInitiatedSave := true
         saveAttempt := prem.save()
+        if !(saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy") {
+            errorLog(Error("Save failed: " saveAttempt),
+                Format("kbIdle={} || priorKey={} || priorHotkey={} || sincePriorHotkey={} || delayTime={}",
+                    A_TimeIdleKeyboard, A_PriorKey, A_PriorHotkey, A_TimeSincePriorHotkey,
+                    (CLSID_Objs.loadProp("prem", "delayTime"))))
+        }
+        if saveAttempt = false || saveAttempt = "timeout_nosave" {
+            sleep 750
+            if this.__userIsBusy() && !this.__ensureIdle() {
+                this.selfInitiatedSave := false
+                return
+            }
+            prem.stopPlayback(true) ;// a stray Space may have started playback
+            sleep 100
+            saveAttempt := prem.save()
+        }
         if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy") {
             sleep 500
             this.selfInitiatedSave := false

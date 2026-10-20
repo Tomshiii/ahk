@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/20
- * @version 2.5.95
+ * @version 2.5.96
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -862,7 +862,8 @@ class Prem {
             if !playing || playing == null
                 return
         }
-        SendInput(KSA.prem.shuttleStop)
+        if !this.__isSaving()
+            SendInput(KSA.prem.shuttleStop)
     }
 
     /**
@@ -3250,13 +3251,19 @@ class Prem {
         focusStatus := this.timelineFocusStatus()
         if !focusStatus || focusStatus == null
             return
-        try premObj := CLSID_Objs.load("prem")
+        ;// don't do this early check. idk why but the stop button can just get stuck sometimes!! YIPPIE
+        /* isPlaying := this.isPlaying(premUIA)
+        if isPlaying == true {
+            this.stopPlayback(false)
+            return
+        } */
+        try premObj := CLSID_Objs.loadProp("prem", ["delayTime", "defaultDelay"])
         catch {
             errorLog(MemoryError("Failed to load prem UIA object", -1))
             return
         }
-        premObj.defaultDelay := IsSet(delayMS) ? delayMS : premObj.defaultDelay
-        delayMS := IsSet(delayMS) ? delayMS : premObj.defaultDelay
+        premObj["defaultDelay"] := IsSet(delayMS) ? delayMS : premObj["defaultDelay"]
+        delayMS := IsSet(delayMS) ? delayMS : premObj["defaultDelay"]
         __sendSpace(premUIA?, closeTrim := true, *) {
             if !IsSet(premUIA) || (IsSet(premUIA) && Type(premUIA) != "ComObject") {
                 try {
@@ -3275,12 +3282,12 @@ class Prem {
             SendEvent(ksa.prem.playStop)
         }
         if (A_PriorKey != ksa.prem.ripplePrev && A_PriorKey != ksa.prem.rippleNext) ||
-            ((A_PriorKey = ksa.prem.ripplePrev || A_PriorKey = ksa.prem.rippleNext) && (premObj.delayTime >= delayMS) || premObj.delayTime = 0) {
+            ((A_PriorKey = ksa.prem.ripplePrev || A_PriorKey = ksa.prem.rippleNext) && (premObj["delayTime"] >= delayMS) || premObj["delayTime"] = 0) {
                 __sendSpace(premUIA, closeTrim)
                 premObj := ""
                 return
             }
-        SetTimer(__sendSpace.Bind(premUIA, closeTrim), -(delayMS-premObj.delayTime))
+        SetTimer(__sendSpace.Bind(premUIA, closeTrim), -(delayMS-premObj["delayTime"]))
     }
 
     static __rippleTrack(premObj, initialTime, *) {

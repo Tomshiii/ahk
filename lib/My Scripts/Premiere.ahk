@@ -70,11 +70,6 @@ Space:: ;// make space more useful by closing certain windows
 		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"):
 			SendInput("{Enter}")
 			return
-		/* case isIn("Save Project"):
-			if !CaretGetPos(&x, &y)
-				return
-			SendInput("{Space}")
-			return */
 		case isIn("Clip Fx Editor - DeNoise"):
 			SendInput("{Enter}")
 			if IsSet(A_PriorKey) && isDoubleClick(750, "key")
@@ -92,7 +87,7 @@ Space:: ;// make space more useful by closing certain windows
 		prem.__focusTimeline()
 		sleep 50
 		if !prem.__isSaving()
-			SendInput("{Space}")
+			SendInput(KSA.prem.playStop)
 		SetCapsLockState('AlwaysOff')
 		return
 	}
@@ -101,7 +96,7 @@ Space:: ;// make space more useful by closing certain windows
 		return
 	if !timelineStatus || CaretGetPos(&x, &y) {
 		if !prem.__isSaving()
-			SendInput("{Space}")
+			SendInput(KSA.prem.playStop)
 		return
 	}
 	prem.delayPlayback()
