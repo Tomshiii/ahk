@@ -307,7 +307,32 @@ class Prem {
     static uiaIconState := false
     static uxpOffset := false
 
+    /** determines if some premiere errors are open as they tend to steal focus/inputs. Most common are Frame recursion errors & the `Please select a clip` warning. */
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
+
+    /** Attempts to close some Premiere errors using UIA. */
+    static __closeOSWindow() {
+        try {
+            if !this.__OSwindow()
+                return true
+            windowUIA := UIA.ElementFromHandle("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle,, false)
+
+            ;// "Please select a clip" error (obj select tool)
+            ;// I still need to generate a tree on a frame recursion error to see if this same code will work
+            try toastPane := windowUIA.FindElement({Type: 50033, Name:"ToastContainer"})
+            if IsSet(toastPane) {
+                try closeButt := toastPane.FindElement({Type: 50000, Name:"UI_PictureButton"}).Invoke()
+                catch as e {
+                    errorLog(e)
+                    return false
+                }
+                return true
+            }
+        } catch {
+            return false
+        }
+        return false
+    }
 
     static __checkRemote() {
         if !WinExist(this.winTitle)
@@ -2451,8 +2476,11 @@ class Prem {
         }
 
         if this.__OSwindow() && WinActive(this.winTitle) {
-            SendInput("{Escape}")
-            this.__focusTimeline()
+            if !this.__closeOSWindow() {
+                SendInput("{Escape}")
+                this.__focusTimeline()
+                return
+            }
         }
         coord.s()
         if !coordObj := obj.MousePos() {

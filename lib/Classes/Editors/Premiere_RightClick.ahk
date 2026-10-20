@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.5.1
  * @author tomshi, taranVH
- * @date 2026/10/16
- * @version 2.5.0
+ * @date 2026/10/20
+ * @version 2.5.1
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -438,9 +438,11 @@ class rbuttonPrem {
 		}
 
 		if prem.__OSwindow() && WinActive(prem.winTitle) {
-			this.__stopHook()
-			errorLog(TargetError("An OS popup window appears to exist."))
-			return
+			if !prem.__closeOSWindow() {
+				this.__stopHook()
+				errorLog(TargetError("An OS popup window appears to exist."))
+				return
+			}
 		}
 
 		if WinExist("DroverLord - Overlay Window ahk_class DroverLord - Window Class") {
