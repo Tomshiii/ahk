@@ -64,11 +64,8 @@ $Tab::
 
 Space:: ;// make space more useful by closing certain windows
 {
-	if WinExist("Save Project " prem.winTitle) {
-		v := UIA.ElementFromWindow("Save Project " prem.winTitle)
-		if !v.CanResize ;// project actually saving
-			return
-	}
+	if prem.__isSaving()
+		return
 	switch {
 		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"):
 			SendInput("{Enter}")
@@ -94,7 +91,8 @@ Space:: ;// make space more useful by closing certain windows
 			return
 		prem.__focusTimeline()
 		sleep 50
-		SendInput("{Space}")
+		if !prem.__isSaving()
+			SendInput("{Space}")
 		SetCapsLockState('AlwaysOff')
 		return
 	}
@@ -102,7 +100,8 @@ Space:: ;// make space more useful by closing certain windows
 	if timelineStatus == null
 		return
 	if !timelineStatus || CaretGetPos(&x, &y) {
-		SendInput("{Space}")
+		if !prem.__isSaving()
+			SendInput("{Space}")
 		return
 	}
 	prem.delayPlayback()

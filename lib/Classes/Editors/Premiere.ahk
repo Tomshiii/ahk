@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/20
- * @version 2.5.94
+ * @version 2.5.95
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -224,8 +224,6 @@ class Prem {
     ;// colour of various icons
     static iconHighlight := 0x6A6A6A
     static eyeDisabled   := 0x4B4B4B
-    static soloColour    := 0xE9C700
-    static muteColour    := 0xE9C700
 
     ;// transition handles
     static transitionHandleInsideSquare := 0xB0B0B0
@@ -330,6 +328,16 @@ class Prem {
             }
         } catch {
             return false
+        }
+        return false
+    }
+
+    /** determines if Premiere is currently saving */
+    static __isSaving() {
+        if WinExist("Save Project " this.winTitle) {
+            v := UIA.ElementFromWindow("Save Project " this.winTitle,, false)
+            if !v.CanResize ;// project actually saving
+                return true
         }
         return false
     }
@@ -864,7 +872,8 @@ class Prem {
         playing := this.isPlaying()
         if playing || playing == null
             return
-        SendInput(KSA.prem.playStop)
+        if !this.__isSaving()
+            SendInput(KSA.prem.playStop)
     }
 
     /**
@@ -3257,11 +3266,8 @@ class Prem {
                     return
                 }
             }
-            if WinExist("Save Project " prem.winTitle) {
-                v := UIA.ElementFromWindow("Save Project " prem.winTitle)
-                if !v.CanResize ;// project actually saving
-                    return
-            }
+            if this.__isSaving()
+                return
             ;// I hate the stupid trim mode, I wish I could delete it from existence
             if closeTrim = true && this.isTrimModeActive() && premUIA_Values.__isUiaElementActive("timelineWindow", premUIA) = true {
                 SendInput("{Escape}")
@@ -4628,15 +4634,15 @@ $!WheelDown::
                     ;// these colours may change in future versions
                     ;// but should work between 25.0->25.5 at a minimum
                     case "darkest":
-                        this.eyeDisabled := 0x4B4B4B, this.iconHighlight := 0x6A6A6A, this.layerDivider := 0x303030, this.editTabCol := 0xD0D0D0, this.soloColour := 0xE9C700, this.muteColour := 0x67DEA8
+                        this.eyeDisabled := 0x4B4B4B, this.iconHighlight := 0x6A6A6A, this.layerDivider := 0x303030, this.editTabCol := 0xD0D0D0
                         this.transitionHandleInsideSquare := 0xB0B0B0
                         this.transitionHandleHalfSquare := 0x6A6A6A
                     case "dark":
-                        this.eyeDisabled := 0x545454, this.iconHighlight := 0x3F3F3F, this.layerDivider := 0x3F3F3F, this.editTabCol := 0xD1D1D1, this.soloColour := 0xF4D500, this.muteColour := 0x81E9B8
+                        this.eyeDisabled := 0x545454, this.iconHighlight := 0x3F3F3F, this.layerDivider := 0x3F3F3F, this.editTabCol := 0xD1D1D1
                         this.transitionHandleInsideSquare := 0xB2B2B2
                         this.transitionHandleHalfSquare := 0x707070
                     case "light":
-                        this.eyeDisabled := 0xD5D5D5, this.iconHighlight := 0xE6E6E6, this.layerDivider := 0xE6E6E6, this.editTabCol := 0x464646, this.soloColour := 0xF8D904, this.muteColour := 0x67DEA8
+                        this.eyeDisabled := 0xD5D5D5, this.iconHighlight := 0xE6E6E6, this.layerDivider := 0xE6E6E6, this.editTabCol := 0x464646
                         this.transitionHandleInsideSquare := 0x6D6D6D
                         this.transitionHandleHalfSquare := 0x000000
                 }
@@ -4644,8 +4650,8 @@ $!WheelDown::
 	}
 
     /**
-     * A function to disable all muted or solo'd tracks
-     * @param {String} [muteOrSolo="solo"] which you wish to operate on
+     * A function to disable all muted or solo'd tracks. If `muteOrSolo` is set to `mute`, `PremiereRemote` will be used to toggle mute states, else `UIA` will be used.
+     * @param {String} [muteOrSolo="solo"] which you wish to operate on. Must be either `solo` or `mute`
      */
     static disableAllMuteSolo(muteOrSolo := "solo") {
         if muteOrSolo != "solo" && muteOrSolo != "mute"
@@ -4657,62 +4663,26 @@ $!WheelDown::
         }
 
         SetDefaultMouseSpeed(0)
-        coord.s()
         if !this.__setTimelineValues()
 			return
 
         getKeys := getHotkeysArr()
         if IsInteger(GetKeyName(getKeys[-1]))
             KeyWait(getKeys[-1])
-        blocker := block_ext()
-        blocker.On()
 
         ;// avoid attempting to fire unless main window is active
         getTitle := WinGet.PremName(), actWin := WinGet.Title()
-        if !getTitle || actWin != getTitle.winTitle {
-            blocker.Off()
+        if !getTitle || actWin != getTitle.winTitle
             return
-        }
 
-        colour := 0
-        switch muteOrSolo {
-            case "solo": colour := this.soloColour
-            case "mute": colour := this.muteColour
-        }
-
-        if !origMouseCords := obj.MousePos() {
-            blocker.Off()
+        if !timeline := premUIA_Values.getLivePanel("timelineWindow")
             return
-        }
-        withinTimeline := this.__checkCoords(origMouseCords)
-        if withinTimeline != true {
-            blocker.Off()
-            return
-        }
-        allButtons := this.__getAllLayerButtonPos(origMouseCords)
-        if !allButtons || allButtons = null {
-            blocker.Off()
-            switch allButtons {
-                case false: notifyExt.showIfNotExist("premInvalidLayerVals", 'prem.disableAllMuteSolo()', 'Could not determine layer values',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-                case null: notifyExt.showIfNotExist("premMiddleDivider", 'prem.disableAllMuteSolo()', 'Failed to find the middle divider',,,, 'theme=Dark dur=4 bdr=Red maxW=400')
-            }
-            return
-        }
-        arr := []
-        for _, tracksMap in allButtons["aud"] {
-            if !tracksMap.has(muteOrSolo) {
+	    tracks := timeline.FindAll({Type: 50000, Name: ((muteOrSolo = "solo") ? "Solo Track" : "Mute Track")})
+        for i, v in tracks {
+            if v.state != 8
                 continue
-            }
-            getColour := this.__getPixel(tracksMap[muteOrSolo].x-5, tracksMap[muteOrSolo].y-5)
-            if getColour = colour
-                arr.Push({x: tracksMap[muteOrSolo].x, y: tracksMap[muteOrSolo].y})
+            v.Invoke()
         }
-        for i, v in arr {
-            MouseMove(v.x, v.y, 1)
-            SendInput("{Click}")
-        }
-        MouseMove(origMouseCords.x, origMouseCords.y, 1)
-        blocker.Off()
     }
 
     /**

@@ -3,7 +3,7 @@
  * @premVer 26.5.1
  * @author tomshi, taranVH
  * @date 2026/10/20
- * @version 2.5.1
+ * @version 2.5.2
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -521,7 +521,7 @@ class rbuttonPrem {
 
 			;// checks to see if the colour under the cursor is one already defined within the class
 			if !this.__checkColour(this.colour) {
-				errorLog(TargetError("Colour determined not within __checkColour()"))
+				errorLog(TargetError("Colour determined not within __checkColour() | 0x" this.colour))
 				this.__exit(this.checkedHotkey)
 			}
 		}
