@@ -22,6 +22,7 @@
 - ✅ Fixed class not actually polling the `uxp` socket
 - ✅ Fixed `uxp` panel being marked as open even when it wasn't
 - ✅ Fixed `mousedrag()` leaving the cursor dragging the timeline if activated while Premiere is encountering a heavy load
+- ✅ Fixed `rippleTrim()`/`delayPlayback()` not properly interacting with each other
 - ✏️ Added `cursorWithinPanel()`, `syncClipChannels()`, `__closeOSWindow()`
 - 📋 `PremiereRemote` functions are now checked using `PremiereRemote`'s internal registry instead of string manipulation
 - 📋 Slight optimisations to `toggleLayerButtons()` & `layerSizeAdjust()`

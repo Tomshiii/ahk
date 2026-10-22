@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/22
- * @version 2.5.98
+ * @version 2.5.99
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -258,7 +258,8 @@ class Prem {
 
     ;// variables for `delayPlayback()` && `rippleTrim()`
     static defaultDelay := 400
-    static delayTime    := 0
+    static lastTrimTick := 0
+    static pendingSpace := 0
 
     ;// variables for `wheelEditPoint()`
     static didWiggle := false
@@ -337,6 +338,9 @@ class Prem {
 
     /** determines if Premiere is currently saving */
     static __isSaving() {
+        if this.__autoSaveActive()
+            return true
+
         if WinExist("Save Project " this.winTitle) {
             v := UIA.ElementFromWindow("Save Project " this.winTitle,, false)
             if !v.CanResize ;// project actually saving
@@ -3251,9 +3255,13 @@ class Prem {
     }
 
     /**
-     * #### This function requires you to properly set your ripple trim previous/next keys correctly within `KSA` as well as requires you to make those same keys call `prem.rippleTrim()` in your main ahk script. This function must also then be called from the key you generally use to toggle playback (default is `Space`)
-     * If the user immediately attempts to resume playback after ripple trimming the playhead will sometimes either; not be placed at the beginning of the clip and will inadvertently begin playback where you might not expect it to, or will simply not resume playback if the user tries to resume playback immediately after ripple trimming
+     * If the user attempts to immediately resume playback after ripple trimming the playhead will sometimes either; not be placed at the beginning of the clip and will inadvertently begin playback where you might not expect it to, or will simply not resume playback if the user tries to resume playback immediately after ripple trimming
      * This function attempts to delay playback immediately after a trim to mitigate this behaviour. This function might require some adjustment from the user depending on how fast/slow their pc is
+     * ### Warning
+     * - This function requires you to properly set your ripple trim previous/next keys correctly within `KSA` as well as requires you to make those same keys call `prem.rippleTrim()` in your main ahk script.
+     * - This function must be called from the key you generally use to toggle playback (default is `Space`).
+     * - `ksa.prem.ripplePrev/ksa.prem.rippleNext` must read the same way `A_PriorKey` reports them. ie something like `{F24}` may simply return early.
+     * - The user's hotkeys to activate `rippleTrim()` & `delayPlayback()` must be within the same script or `A_PriorKey` may not work as expected
      * @param {Integer} delayMS the delay in `ms` that you want the function to wait before attempting to resume playback. Defaults to a value set within the class
      * @param {Boolean} [closeTrim=true] determine whether to check for, and close `Trim Mode` before playback. Defaults to `true`
      */
@@ -3272,12 +3280,11 @@ class Prem {
             this.stopPlayback(false)
             return
         } */
-        try premObj := CLSID_Objs.loadProp("prem", ["delayTime", "defaultDelay"])
+        try premObj := CLSID_Objs.loadProp("prem", ["defaultDelay", "lastTrimTick"])
         catch {
             errorLog(MemoryError("Failed to load prem UIA object", -1))
             return
         }
-        premObj["defaultDelay"] := IsSet(delayMS) ? delayMS : premObj["defaultDelay"]
         delayMS := IsSet(delayMS) ? delayMS : premObj["defaultDelay"]
         __sendSpace(premUIA?, closeTrim := true, *) {
             if !IsSet(premUIA) || (IsSet(premUIA) && Type(premUIA) != "ComObject") {
@@ -3291,35 +3298,28 @@ class Prem {
             if this.__isSaving() || this.__autoSaveActive()
                 return
             ;// I hate the stupid trim mode, I wish I could delete it from existence
-            if closeTrim = true && this.isTrimModeActive() && premUIA_Values.__isUiaElementActive("timelineWindow", premUIA) = true {
-                SendInput("{Escape}")
+            if closeTrim = true {
+                trimActive := this.isTrimModeActive()
+                timelineActive := premUIA_Values.__isPremPanelActive("timelineWindow")
+                if trimActive = true && timelineActive = true
+                    SendInput("{Escape}")
             }
             SendEvent(ksa.prem.playStop)
         }
-        if (A_PriorKey != ksa.prem.ripplePrev && A_PriorKey != ksa.prem.rippleNext) ||
-            ((A_PriorKey = ksa.prem.ripplePrev || A_PriorKey = ksa.prem.rippleNext) && (premObj["delayTime"] >= delayMS) || premObj["delayTime"] = 0) {
-                __sendSpace(premUIA, closeTrim)
-                premObj := ""
-                return
-            }
-        SetTimer(__sendSpace.Bind(premUIA, closeTrim), -(delayMS-premObj["delayTime"]))
+        elapsed := A_TickCount - premObj["lastTrimTick"]
+        wasRipple := (A_PriorKey = ksa.prem.ripplePrev || A_PriorKey = ksa.prem.rippleNext)
+
+        if this.pendingSpace
+            SetTimer(this.pendingSpace, 0), this.pendingSpace := 0
+
+        if !wasRipple || elapsed >= delayMS {
+            __sendSpace(premUIA, closeTrim)
+            return
+        }
+        this.pendingSpace := __sendSpace.Bind(premUIA, closeTrim)
+        SetTimer(this.pendingSpace, -(delayMS - elapsed))
     }
 
-    static __rippleTrack(premObj, initialTime, *) {
-        ListLines(0)
-        try {
-            currentTime := A_TickCount - initialTime
-            if currentTime >= premObj.defaultDelay {
-                premObj.delayTime := 0
-                SetTimer(, 0)
-                return
-            }
-            premObj.delayTime := currentTime
-        } catch {
-            premObj := ""
-            SetTimer(, 0)
-        }
-    }
     /**
      * Tracks how long it has been since the user used a ripple trim. This function is to provide proper functionality to `prem.delayPlayback()`
      * @param {Boolean} [pauseFirst=true] determnines whether to stop playback before attempting to ripple trim (requires `ksa.prem.shuttleStop` to be set correctly)
@@ -3327,29 +3327,21 @@ class Prem {
      */
     static rippleTrim(pauseFirst := true, delay := 50) {
         Critical()
-        if !premUIA := premUIA_Values.initialise()
-            return
-        try premObj := CLSID_Objs.load("prem")
-        catch {
-            errorLog(MemoryError("Failed to load prem UIA object", -1))
-            return
-        }
-
         if !this.__setTimelineValues()
             return
         ;// ensure the user isn't typing
         focusStatus := this.timelineFocusStatus()
-        if CaretGetPos(&x, &y) || !focusStatus || focusStatus == null {
+        caret := CaretGetPos(&x, &y)
+        if caret || !focusStatus || focusStatus == null {
             SendInput(A_ThisHotkey)
             return
         }
-        premObj.delayTime += 1
         if pauseFirst = true {
             this.stopPlayback(true)
             sleep(delay)
         }
         SendEvent(A_ThisHotkey)
-        SetTimer(this.__rippleTrack.Bind(this, premObj, A_TickCount), 16)
+        CLSID_Objs.writeProp("prem", "lastTrimTick", A_TickCount)
     }
 
     /**
@@ -5586,7 +5578,6 @@ $!WheelDown::
         try WinEvent.Stop("Show", this.exeTitle " Clip Fx Editor")
         try WinEvent.Stop("Close", this.exeTitle " Clip Fx Editor")
         try WinEvent.Stop("Close", this.exeTitle)
-        try SetTimer(this.__rippleTrack, 0)
 	}
 
     ;//! *** ===============================================
