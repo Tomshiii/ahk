@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/09/25
- * @version 1.0.24
+ * @date 2026/10/22
+ * @version 1.0.25
  ***********************************************************************/
 
 #SingleInstance Force

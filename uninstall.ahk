@@ -5,6 +5,20 @@ if userResponse = "No"
     return
 
 SplitPath(A_LineFile,, &currentDir)
+if MsgBox("Would you also like to uninstall PremiereRemote/AERemote?",, "4 4096") = "yes" {
+    if WinExist("ahk_exe Adobe Premiere Pro.exe") || WinExist("ahk_exe AfterFX.exe") {
+        MsgBox("Adobe apps currently open. Aborting...")
+        return
+    }
+    if DirExist(A_Appdata "\Adobe\CEP\extensions\PremiereRemote")
+        try DirDelete(A_Appdata "\Adobe\CEP\extensions\PremiereRemote", true)
+    if DirExist(A_Appdata "\Adobe\CEP\extensions\AERemote")
+        try DirDelete(A_Appdata "\Adobe\CEP\extensions\PremiereRemote", true)
+    if DirExist(A_Appdata "\Adobe\UXP\Plugins\External\PremiereRemote-uxp")
+        try DirDelete(A_Appdata "\Adobe\UXP\Plugins\External\PremiereRemote-uxp", true)
+    try RunWait(currentDir "\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\build\uninstall_PremiereRemoteUXP.ahk")
+}
+
 RunWait(currentDir "\Support Files\closeAll.ahk")
 docFolder := RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "Personal", EnvGet("USERPROFILE") "\Documents")
 if DirExist(docFolder "\tomshi")
