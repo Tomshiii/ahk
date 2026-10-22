@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/20
- * @version 2.5.96
+ * @date 2026/10/22
+ * @version 2.5.97
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -288,6 +288,9 @@ class Prem {
     static prevMulticamState := true
     static audioWaitClose    := false
 
+    ;// set by autosave.ahk while a save is in progress, so other scripts can hold off sending playback keys
+    static autoSaveStamp := 0
+
     ;// MButton
     static MButtonPanning := false
 
@@ -340,6 +343,14 @@ class Prem {
                 return true
         }
         return false
+    }
+
+    /** true while autosave.ahk is mid-save. Goes stale after 3s so a crashed autosave can never lock playback out */
+    static __autoSaveActive() {
+        try stamp := CLSID_Objs.loadProp("prem", "autoSaveStamp")
+        catch
+            return false
+        return IsSet(stamp) && stamp != 0 && (A_TickCount - stamp) < 3000
     }
 
     static __checkRemote() {
@@ -820,12 +831,14 @@ class Prem {
         resp := cmd.httpGet(Format("http://localhost:{1}/common/getRegistryJSON", this.portUXP))
         if resp == null || resp = "" || InStr(resp, "Premiere Pro is not connected")
             return false
-        if SubStr(resp, 1, 1) = '"' && SubStr(resp, -1, 1) = '"'
+        if resp is String && SubStr(resp, 1, 1) = '"' && SubStr(resp, -1, 1) = '"'
             resp := SubStr(resp, 2, StrLen(resp)-2)
 
-        try registry := JSON.parse(StrReplace(resp, "\"))
-        catch
-            return false
+        if !IsObject(resp) {
+            try registry := JSON.parse(StrReplace(resp, "\"))
+            catch
+                return false
+        }
         if !(registry is Map)
             return false
         return this.__uxpFuncMap := registry
@@ -1096,7 +1109,7 @@ class Prem {
     }
 
     /**
-     * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) uxp function. This function is in testing as `PremiereRemote` uxp functionality is still in development
+     * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) uxp function. This function is in testing as `PremiereRemote` uxp functionality is still in development. If the uxp function returns a `json` object, this function will attempt to pass that back as such.
      * ## Warning
      *
      * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
@@ -1104,7 +1117,7 @@ class Prem {
      * @param {String} whichFunc the function you wish to call. **must include the file name**, eg. `common/getActiveSequenceName`. If the file is stored in a folder, the entire path must be passed, eg. `shared/storeSequence/swapPreviousSequence`
      * @param {Boolean} [runAsync=false] determines whether tell `cmd.httpGet()` to run synchronously or asynchronously
      * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
-     * @returns {String | Boolean | null}
+     * @returns {String | Boolean | Object | null}
      */
     static __remoteUXP(whichFunc, runAsync := false, params*) {
         if !WinExist(this.winTitle)
@@ -1237,7 +1250,10 @@ class Prem {
                 return null
             case !IsSet(parse) && getResp != "":
                 sanitiseResp := ((SubStr(getResp, 1, 1) = '"' && SubStr(getResp, -1, 1) = '"') ? SubStr(getResp, 2, StrLen(getResp)-2) : getResp)
-                return (isBool(sanitiseResp) ? checkBool(sanitiseResp) : sanitiseResp)
+                try return json.parse(StrReplace(sanitiseResp, "\"))
+                catch {
+                    return (isBool(sanitiseResp) ? checkBool(sanitiseResp) : sanitiseResp)
+                }
         }
     }
 
@@ -1257,9 +1273,8 @@ class Prem {
         if VerCompare(this.currentSetVer, "v26.5") >= 0 && this.__checkPremRemoteFunc('properties/getBackgroundColour', "uxp") {
             remoteBG := this.__remoteUXP('properties/getBackgroundColour')
             if remoteBG != false && remoteBG !== null {
-                bgCol := json.parse(StrReplace(remoteBG, "\"))
-                if bgCol["value"]["red"] == bgCol["value"]["green"] && bgCol["value"]["green"] == bgCol["value"]["blue"] {
-                    switch bgCol["value"]["red"] {
+                if remoteBG["value"]["red"] == remoteBG["value"]["green"] && remoteBG["value"]["green"] == remoteBG["value"]["blue"] {
+                    switch remoteBG["value"]["red"] {
                         case "0": return Format("0x{:x}", 0x1d1d1d)
                         case "0.11372549086809158": return Format("0x{:x}", 0x323232)
                         case "0.8352941274642944": return Format("0x{:x}", 0xf8f8f8)
@@ -3273,7 +3288,7 @@ class Prem {
                     return
                 }
             }
-            if this.__isSaving()
+            if this.__isSaving() || this.__autoSaveActive()
                 return
             ;// I hate the stupid trim mode, I wish I could delete it from existence
             if closeTrim = true && this.isTrimModeActive() && premUIA_Values.__isUiaElementActive("timelineWindow", premUIA) = true {
@@ -4382,7 +4397,7 @@ $!WheelDown::
             return
         }
 
-        funcs := ['isSelected', 'movePlayheadFrames', 'isClipEnabled', 'toggleEnabled', 'getAudioTracks', 'getVideoTracks']
+        funcs := ['isSelected', 'movePlayheadFrames', 'toggleEnabled', 'getAudioTracks', 'getVideoTracks']
         if !this.__checkPremRemoteFunc(funcs) || !this.__checkPremRemoteFunc('custom/deselectAll', "uxp") {
             blocker.Off()
             errorLog(MethodError('This function requires additional PremiereRemote functions for proper functionality', -1))

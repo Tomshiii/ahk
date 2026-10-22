@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/10/20
- * @version 2.3.1
+ * @date 2026/10/22
+ * @version 2.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -158,12 +158,14 @@ class adobeAutoSave extends count {
             this.__reset()
             block.Off()
         } finally {
+            this.__setSaveGuard(false)
             this.ticking := false
         }
     }
 
     /** stops the timer */
     Stop(doCheckStuck := true) {
+        this.__setSaveGuard(false)
         this.active := false
         super.stop()
         this.__stopSaveHook()
@@ -424,6 +426,11 @@ class adobeAutoSave extends count {
             this.__finishIdle(false)
     }
 
+    /** tells other scripts (the `Space` hotkey etc.) that a save is in progress */
+    __setSaveGuard(on) {
+        try CLSID_Objs.writeProp("prem", "autoSaveStamp", on ? A_TickCount : 0)
+    }
+
     /** shows the "Next Attempt" progress bar, animated by a timer rather than a blocking loop */
     __showNextAttempt(attempt) {
         this.__clearNextAttempt()
@@ -471,15 +478,38 @@ class adobeAutoSave extends count {
             try Notify.Destroy("autosavepremNextAttempt", true)
     }
 
+    /**
+     * Returns the process name of the active window, skipping AutoHotkey's own windows (notifications, GUIs, etc.)
+     * Never throws.
+     * @returns {String} the process name, or an empty string if it couldn't be determined
+     */
+    __activeProc() {
+        static isAHK := "i)^AutoHotkey(64|32|U64|U32)?\.exe$"
+        try {
+            proc := WinGetProcessName("A")
+            if !(proc ~= isAHK)
+                return proc
+            ;// one of our own windows has focus, so take the first real visible window below it
+            for h in WinGetList() {
+                if !WinGetTitle(h) || !(WinGetStyle(h) & 0x10000000) ;// untitled or not visible
+                    continue
+                p := WinGetProcessName(h)
+                if p ~= isAHK || (p = "explorer.exe" && WinGetClass(h) = "Shell_TrayWnd")
+                    continue
+                return p
+            }
+        }
+        return ""
+    }
+
     /** @returns {Boolean} true/false on whether it can grab the active window */
     __getOrigWindow() {
-        try{
-            this.origWindow := winExt.ProcessNameRegex()
-            return true
-        } catch {
+        this.origWindow := this.__activeProc()
+        if this.origWindow = "" {
             errorLog(TargetError("Unable to determine the active window"),, 1)
             return false
         }
+        return true
     }
 
     /** backs up all project files in the working directory */
@@ -523,16 +553,12 @@ class adobeAutoSave extends count {
     /** Attempts to reactivate the originally active window. If the original window is Premiere, it will attempt to resume playback if necessary */
     __reactivateWindow() {
         try {
-            checkActive := winExt.ProcessNameRegex()
+            checkActive := this.__activeProc()
             if (this.origWindow = checkActive && this.userPlayback = false)
                 return
             switch this.origWindow {
-                case "CabinetWClass": WinActivate("CabinetWClass")
                 case "AfterFX.exe", "AfterFX (Beta).exe": switchTo.AE()
                 case "Adobe Premiere Pro.exe", "Adobe Premiere Pro (Beta).exe":
-                    isPlaying := prem.isPlaying()
-                    if this.restartPlayback = false && isPlaying = true && WinActive("ahk_exe " this.origWindow)
-                        prem.stopPlayback()
                     if this.restartPlayback = false && this.userPlayback = false && this.premRemoteSave = true && !WinActive("ahk_exe " this.origWindow)
                         return
                     if !WinActive("ahk_exe " this.origWindow)
@@ -575,12 +601,6 @@ class adobeAutoSave extends count {
         }
     }
 
-    /** checks against `prem.delayPlayback()` */
-    __pendingPlaybackDelay() {
-        try return CLSID_Objs.loadProp("prem", "delayTime") != 0
-        return false
-    }
-
     /** saves premiere */
     __savePrem() {
 
@@ -620,7 +640,7 @@ class adobeAutoSave extends count {
         }
 
         ;// this should cover occurrences where another window is open within premiere
-        currentProg := winExt.ProcessNameRegex()
+        currentProg := this.__activeProc()
         name := WinGet.Title()
         if ("ahk_exe " currentProg = prem.winTitle && (name != "" && name != this.premWindow.wintitle) && ((WinGetClass(this.premWindow.wintitle)) = "#32770")) {
             errorLog(TargetError("Premiere is potentially busy and the save attempt was aborted", -1))
@@ -644,34 +664,20 @@ class adobeAutoSave extends count {
             if this.restartPlayback = true
                 this.userPlayback := (prem.isPlaying() = true) ? true : false
 
-            if this.__userIsBusy() || this.__pendingPlaybackDelay() {
-                if !this.__ensureIdle()
+            ;// make sure the user is *still* idle right before saving
+            if this.__userIsBusy() {
+                if !this.__ensureIdle() || this.resetingSave = true
                     return
             }
         }
 
+        this.__setSaveGuard(true)
         notifyExt.showIfNotExist("autosavepremSaveAttempt",, 'A save attempt is being made...`nInputs may be temporarily blocked', 'C:\Windows\System32\shell32.dll|icon259',,, 'dur=4 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xDCCC75')
         this.saveAttemptNotify := true
 
         ;// attempts to save using `PremiereRemote`
         this.selfInitiatedSave := true
         saveAttempt := prem.save()
-        if !(saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy") {
-            errorLog(Error("Save failed: " saveAttempt),
-                Format("kbIdle={} || priorKey={} || priorHotkey={} || sincePriorHotkey={} || delayTime={}",
-                    A_TimeIdleKeyboard, A_PriorKey, A_PriorHotkey, A_TimeSincePriorHotkey,
-                    (CLSID_Objs.loadProp("prem", "delayTime"))))
-        }
-        if saveAttempt = false || saveAttempt = "timeout_nosave" {
-            sleep 750
-            if this.__userIsBusy() && !this.__ensureIdle() {
-                this.selfInitiatedSave := false
-                return
-            }
-            prem.stopPlayback(true) ;// a stray Space may have started playback
-            sleep 100
-            saveAttempt := prem.save()
-        }
         if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy") {
             sleep 500
             this.selfInitiatedSave := false
