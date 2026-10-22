@@ -2,7 +2,7 @@
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
  * @date 2026/10/22
- * @version 2.3.2
+ * @version 2.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -54,6 +54,7 @@ OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode) {
     block.Off()
     try autoSave.stop() ;// also tears down the save override InputHook
+    try CLSID_Objs.writeProp("prem", "autoSaveSaving", false)
     checkstuck()
 }
 
@@ -428,7 +429,7 @@ class adobeAutoSave extends count {
 
     /** tells other scripts (the `Space` hotkey etc.) that a save is in progress */
     __setSaveGuard(on) {
-        try CLSID_Objs.writeProp("prem", "autoSaveStamp", on ? A_TickCount : 0)
+        try CLSID_Objs.writeProp("prem", "autoSaveSaving", on ? true : false)
     }
 
     /** shows the "Next Attempt" progress bar, animated by a timer rather than a blocking loop */
@@ -916,5 +917,6 @@ class adobeAutoSave extends count {
     __Delete() {
         block.Off()
         try this.Stop()
+        try CLSID_Objs.writeProp("prem", "autoSaveSaving", false) ;// just incase
     }
 }

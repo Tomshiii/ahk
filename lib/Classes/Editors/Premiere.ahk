@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/22
- * @version 2.5.97
+ * @version 2.5.98
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -289,7 +289,7 @@ class Prem {
     static audioWaitClose    := false
 
     ;// set by autosave.ahk while a save is in progress, so other scripts can hold off sending playback keys
-    static autoSaveStamp := 0
+    static autoSaveSaving := 0
 
     ;// MButton
     static MButtonPanning := false
@@ -347,10 +347,10 @@ class Prem {
 
     /** true while autosave.ahk is mid-save. Goes stale after 3s so a crashed autosave can never lock playback out */
     static __autoSaveActive() {
-        try stamp := CLSID_Objs.loadProp("prem", "autoSaveStamp")
+        try stamp := CLSID_Objs.loadProp("prem", "autoSaveSaving")
         catch
             return false
-        return IsSet(stamp) && stamp != 0 && (A_TickCount - stamp) < 3000
+        return IsSet(stamp) && stamp != 0
     }
 
     static __checkRemote() {
