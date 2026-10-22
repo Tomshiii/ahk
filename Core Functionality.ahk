@@ -8,6 +8,7 @@
 #SingleInstance Force
 #Requires AutoHotkey v2.0
 ; #Warn VarUnset, StdOut
+coreReadyEvt := DllCall("CreateEventW", "Ptr", 0, "Int", true, "Int", false, "Str", "Global\CoreFunc_Ready", "Ptr")
 
 try installDir := FileRead(A_AppData "\tomshi\installDir")
 SplitPath(A_LineFile,, &currentDir)
@@ -64,6 +65,10 @@ adjustTray()
 ;// set UIA on reload
 if UserSettings.Set_UIA_on_reload = true && (isReload(getReload ?? false)) && Loading.isLoading == false
     SetTimer(doStartup, -3000)
+
+;// alerts that it has finished registering objects
+;//! must be LAST
+DllCall("SetEvent", "Ptr", coreReadyEvt)
 
 ;// ================================================================================
 adjustTray() {

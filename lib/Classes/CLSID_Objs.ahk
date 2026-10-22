@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/09/08
- * @version 1.1.22
+ * @date 2026/10/22
+ * @version 1.1.23
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -78,20 +78,35 @@ class CLSID_Objs {
         }
     }
 
-    /** a quick and dirty function to wait for `Core Functionality.ahk` to finish loading */
+    /**
+     * Checks `Core Functionality.ahk`'s event and waits for it to return true.
+     * @param {Integer} [waitSec=2]
+    */
     static waitCoreFuncs(waitSec := 2) {
-        delay := 16
-        loop Round(((waitSec*1000)/delay)) {
-            try loading := this.load("Loading")
-            catch {
-                sleep delay
-                continue
-            }
-            if loading.isLoading = true {
-                sleep delay
-                continue
-            }
-            return loading
+        deadline := A_TickCount + (waitSec * 1000)
+        hEvt := 0
+        while !(hEvt := DllCall("OpenEventW", "UInt", 0x00100000, "Int", false, "Str", "Global\CoreFunc_Ready", "Ptr")) {
+            if A_TickCount >= deadline
+                return false
+            Sleep(16)
+        }
+        result := 0x102
+        while A_TickCount < deadline {
+            result := DllCall("WaitForSingleObject", "Ptr", hEvt, "UInt", 0)
+            if result != 0x102
+                break
+            Sleep(15)
+        }
+        DllCall("CloseHandle", "Ptr", hEvt)
+        if result != 0
+            return false
+
+        ;// event is set, but tolerate a brief ROT lag
+        while A_TickCount < deadline {
+            loading := this.load("Loading", true, 100)
+            if loading
+                return true
+            Sleep(16)
         }
         return false
     }
@@ -115,9 +130,12 @@ class CLSID_Objs {
                 case WAIT_OBJECT_0, WAIT_ABANDONED:
                     try {
                         return ComObjActive(((inClass = true) ? CLSID_Objs[clsid] : clsid))
+                    } catch OSError as e {
+                        ;// MK_E_UNAVAILABLE: object isn't in the ROT yet (core script still loading)
+                        if (e.Number & 0xFFFFFFFF) = 0x800401E3
+                            return false
+                        throw e
                     } finally {
-                        /* if Notify.Exist("mutexLock_" clsid)
-                            try Notify.Destroy("mutexLock_" clsid) */
                         mtx.Release()
                         notifyExt.destroyDupes("mutexLock_" clsid)
                     }
