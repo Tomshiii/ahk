@@ -11,8 +11,12 @@
 
 ;//! This script will NOT complete without NodeJS already being installed
 
-;// this script must be called AFTER symlinks have been generated
-;// it requires cmd { & zip {
+if !FileExist(A_Appdata "\tomshi\installDir") {
+    ;// throw
+    errorLog(TargetError("Installation did not complete correctly. Please uninstall and try again.", -1),,, 1)
+    return
+}
+
 installDir := FileRead(A_Appdata "\tomshi\installDir")
 SetWorkingDir(installDir)
 

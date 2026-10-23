@@ -6,12 +6,14 @@
 #Include Classes\Settings.ahk
 #Include Classes\ptf.ahk
 #Include Classes\tool.ahk
+#Include Classes\CLSID_Objs.ahk
 #Include Functions\getLocalVer.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\getLocalVer.ahk
 #Include Functions\formatPreReleaseTag.ahk
 #Include Other\7zip\SevenZip.ahk
 #Include Classes\winGet.ahk
+#Include Classes\cmd.ahk
 #Include Classes\CLSID_Objs.ahk
 
 ; }
@@ -27,9 +29,6 @@ SetWorkingDir(ptf.rootDir "\releases") ;this folder isn't included in the public
 if DirExist(ptf.rootDir "\releases\release")
     DirDelete(ptf.rootDir "\releases\release", 1)
 
-if WinExist("Ahk2Exe for AutoHotkey")
-    WinClose("Ahk2Exe for AutoHotkey")
-
 ;=====================================================================
 ;// backup adobe stuff
 ;//! premiere
@@ -38,15 +37,13 @@ UserSettings := CLSID_Objs.load("UserSettings")
 
 ;//* PremiereRemote
 RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\cep\backupPremRemote.ahk"))
+RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\backupPremRemote.ahk"))
 
 ;//* KotET
 try DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
 if FileExist("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
     FileDelete("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
 try DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
-
-;//* labels
-FileCopy(A_MyDocuments "\Adobe\Common\Assets\Label Color Presets\Mine.prlabelpreset", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Labels\Mine.prlabelpreset", 1)
 
 __backupPremFolders(ahkDir, pcDir, title) {
     files := FileSelect("M3", pcDir, title)
@@ -231,15 +228,51 @@ versions := "verChangeLog: " verChangeLog "`n" "verNew: " verNew "`n" "name: " n
 MsgBox(versions)
 */
 
+;// build the UXP version of PremiereRemote (.ccx) from my local install
+;// this needs to happen BEFORE the repo is copied below so the freshly built .ccx ends up in the release
+ccxCMD        := '-NoProfile -Command "Compress-Archive -Path `'{1}`' -DestinationPath `'{2}`' -Force; Rename-Item -LiteralPath `'{2}`' -NewName `'{3}`'"'
+uxpPluginLoc  := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
+uxpInstallLoc := uxpPluginLoc "\client"
+ccxLoc        := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\build\"
+ccxName       := "de.sebinside.premiereremote_premierepro.ccx"
+if MsgBox("rebuild UXP .ccx file?",, "4") = "yes" {
+    if !DirExist(uxpInstallLoc)
+        throw TargetError("Couldn't find the local UXP PremiereRemote client folder`n" uxpInstallLoc)
+    if FileExist(ccxLoc ccxName)
+        FileDelete(ccxLoc ccxName)
+
+    fullCmd := Format("powershell " ccxCMD, uxpInstallLoc "\*", ccxLoc "premiereRemote.zip", ccxName)
+    cmd.run(,,, fullCmd)
+    if !FileExist(ccxLoc ccxName)
+        throw TargetError("Failed to build " ccxName)
+}
+
+/**
+ * Copies a folder with `robocopy` so directories (like `node_modules`) can be excluded.
+ * @param {String} src the folder to copy
+ * @param {String} dst the destination folder (created if it doesn't exist)
+ * @param {Array} [excludeDirs] directory names to skip at any depth
+ */
+copyFolder(src, dst, excludeDirs := []) {
+    if !DirExist(src)
+        throw TargetError("Folder doesn't exist: " src, -1)
+    xd := ""
+    for v in excludeDirs
+        xd .= ' "' v '"'
+    code := RunWait(Format('robocopy "{1}" "{2}" /E /NFL /NDL /NJH /NJS /NP{3}', RTrim(src, "\"), RTrim(dst, "\"), xd ? " /XD" xd : ""),, "Hide")
+    if code >= 8 ;// robocopy: 0-7 are success/informational codes, 8+ are failures
+        throw OSError("robocopy failed (" code ") copying " src, -1)
+}
+
 ;// copying over the repo to a temp folder
 loop files ptf.rootDir "\*", "DF" {
     ignore := Map(".vscode", true, ".git", true, "releases", true, ".gitignore", true, ".gitmodules", true)
     if ignore.Has(A_LoopFileName)
         continue
-    switch FileExist(A_LoopFileFullPath) {
-        case "D": DirCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value "\" A_LoopFileName, 1)
-        default: FileCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value, 1)
-    }
+    if InStr(FileExist(A_LoopFileFullPath), "D")
+        DirCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value "\" A_LoopFileName, 1)
+    else
+        FileCopy(A_LoopFileFullPath, A_WorkingDir "\release\" yes.Value, 1)
 }
 cleanUpInstall(A_WorkingDir "\release\" yes.Value)
 
@@ -250,11 +283,17 @@ if FileExist(A_WorkingDir "\release\" yes.Value "\lib\Other\ThioJoe\ExplorerDial
 ;// wipe `My Scripts.ahk`
 FileCopy(A_WorkingDir "\release\" yes.Value "\Support Files\Release Assets\Install Packages\My Scripts-template.ahk", A_WorkingDir "\release\" yes.Value "\My Scripts.ahk", true)
 
+;// staging my local PremiereRemote/AERemote (CEP) + PremiereRemote-uxp so they ship inside the release
+;// this happens before the `-patch` copy so the patch installer includes them as well
+;// `node_modules` is skipped for CEP - `installPremRemote.ahk` runs `npm i` on the user's machine
+premRemoteStage := A_WorkingDir "\release\" yes.Value "\premiereRemote"
+copyFolder(A_AppData "\Adobe\CEP\extensions\PremiereRemote", premRemoteStage "\cep\PremiereRemote", ["node_modules", ".git"])
+copyFolder(A_AppData "\Adobe\CEP\extensions\AERemote",       premRemoteStage "\cep\AERemote",       ["node_modules", ".git"])
+copyFolder(uxpPluginLoc,                                     premRemoteStage "\uxp\PremiereRemote-uxp")
+
 DirCopy(A_WorkingDir "\release\" yes.Value, A_WorkingDir "\release\" yes.Value "-patch")
 
 downloadNode(A_WorkingDir "\release\" yes.Value "\nodejs.msi")
-Download("https://github.com/sebinside/PremiereRemote/archive/refs/tags/v2.2.0.zip", A_WorkingDir "\release\" yes.Value "\premExtract.zip")
-Download("https://github.com/Tomshiii/PremiereRemote/archive/refs/heads/AE.zip", A_WorkingDir "\release\" yes.Value "\aeExtract.zip")
 ;// zipping the temp repo
 zip := SevenZip().AutoZip(A_WorkingDir "\release\" yes.value)
 sleep 1000
@@ -310,38 +349,24 @@ doCompile(version) {
 }
 
 currentDir := ""
-getverNum() {
-    num := LTrim(yes.value, "v")
-    dot := InStr(num, ".",,, 2)
-    beta := InStr(num, "beta")
-    alpha := InStr(num, "alpha")
-    pre := InStr(num, "pre")
-    if (beta != false || alpha != false || pre != false) && !dot {
-        if beta != false
-            return (SubStr(num, 1, beta-1))
-        if alpha != false
-            return (SubStr(num, 1, alpha-1))
-        if pre != false
-            return (SubStr(num, 1, pre-1))
-    }
-    return (dot != false ? SubStr(num, 1, (dot-1)) : num)
+parseVer(v) {
+    v := LTrim(v, "v")
+    isPre := RegExMatch(v, "i)(pre|beta|alpha)", &m)
+    core  := isPre ? SubStr(v, 1, m.Pos - 1) : v
+    dot   := InStr(core, ".",, 1, 2)
+    series := dot ? SubStr(core, 1, dot - 1) : core
+    return {isPre: isPre, core: core, series: series}
 }
-verNum := getverNum()
+verNum := parseVer(yes.Value).series
 
 ;// using logic to determine where to place this release
-if !DirExist(A_WorkingDir "\" verNum ".x")
-    DirCreate(A_WorkingDir "\" verNum ".x")
-if (InStr(yes.value, "pre") || InStr(yes.value, "beta") || InStr(yes.value, "alpha")) {
-    if !DirExist(A_WorkingDir "\" verNum ".x\pre")
-        DirCreate(A_WorkingDir "\" verNum ".x\pre")
-    FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\pre\" yes.value ".exe", 1)
-    FileMove(A_WorkingDir "\release\" yes.value "-patch.exe", A_WorkingDir "\" verNum ".x\pre\" yes.value "-patch.exe", 1)
-    currentDir := A_WorkingDir "\" verNum ".x\pre\"
-} else {
-    FileMove(A_WorkingDir "\release\" yes.value ".exe", A_WorkingDir "\" verNum ".x\" yes.value ".exe", 1)
-    FileMove(A_WorkingDir "\release\" yes.value "-patch.exe", A_WorkingDir "\" verNum ".x\" yes.value "-patch.exe", 1)
-    currentDir := A_WorkingDir "\" verNum ".x\"
-}
+v := parseVer(yes.value)
+destDir := A_WorkingDir "\" v.series ".x" (v.isPre ? "\pre" : "")
+DirCreate(destDir)
+
+for suffix in ["", "-patch"]
+    FileMove(A_WorkingDir "\release\" yes.value suffix ".exe", destDir "\" yes.value suffix ".exe", 1)
+currentDir := destDir "\"
 
 ;// closing any uneeded programs ready for completion
 sleep 500
@@ -352,13 +377,10 @@ else
 WinWait(verNum ".x",, 3)
 if DirExist(A_WorkingDir "\release") && FileExist(currentDir yes.value ".exe") && FileExist(currentDir yes.value "-patch.exe")
     DirDelete(A_WorkingDir "\release", 1)
+else if WinExist(A_WorkingDir "\release")
+    WinActivate(A_WorkingDir "\release")
 else
-    {
-        if WinExist(A_WorkingDir "\release")
-            WinActivate(A_WorkingDir "\release")
-        else
-            Run("explore " A_WorkingDir "\release")
-    }
+    Run("explore " A_WorkingDir "\release")
 
 if WinExist("Ahk2Exe for AutoHotkey")
     WinClose()
@@ -374,24 +396,16 @@ ahkWiki       := "E:\Github\ahk_wiki"
 ahkWikiBackup := "N:\Backup\Github\ahk_wiki"
 
 ;// backup ahk folder
-if MsgBox("Backup ahk folder?",, 0x3) = "Yes" {
-    if DirExist(ahkBackup)
-        DirDelete(ahkBackup, 1)
-    ToolTip("Backing up ahk folder")
-    sleep 1000
-    DirCopy(ptf.rootDir, ahkBackup, 2)
+backupFolder(src, dst, label) {
+    if MsgBox("Backup " label " folder?",, 0x3) != "Yes"
+        return
+    if DirExist(dst)
+        DirDelete(dst, 1)
+    ToolTip("Backing up " label)
+    Sleep(1000)
+    DirCopy(src, dst, 2)
     ToolTip("")
-    tool.Cust("AHK folder backup complete")
+    tool.Cust(label " backup complete")
 }
-
-;// backup wiki
-tool.Wait()
-if MsgBox("Backup wiki folder?",, 0x3) = "Yes" {
-    if DirExist(ahkWikiBackup)
-        DirDelete(ahkWikiBackup, 1)
-    ToolTip("Backing up wiki")
-    sleep 1000
-    DirCopy(ahkWiki, ahkWikiBackup, 2)
-    ToolTip("")
-    tool.Cust("Backing up wiki folder complete")
-}
+backupFolder(ptf.rootDir, ahkBackup, "ahk")
+backupFolder(ahkWiki, ahkWikiBackup, "wiki")

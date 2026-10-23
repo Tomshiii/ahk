@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/08/25
- * @version 1.1.27
+ * @date 2026/10/23
+ * @version 1.1.28
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -227,7 +227,7 @@ class installGUI extends Gui {
                 throw TargetError
             }
             patchDir := A_Temp "\tomshi\yes.value"
-            this.__addLogEntry("unzipping release contents")
+            this.__addLogEntry("unzipping release contents - this may take a while")
             if this.__unzip(A_Temp "\tomshi\yes.value.zip", patchDir) != true {
                 try DirDelete(A_Temp "\tomshi\yes.Value", true)
                 try FileDelete(this.InstallDir "\yes.value.zip")
@@ -436,18 +436,6 @@ class installGUI extends Gui {
             extensionsPath := A_AppData "\Adobe\CEP\extensions"
             if !DirExist(extensionsPath) {
                 try DirCreate(extensionsPath)
-                catch {
-                    return false
-                }
-            }
-            if FileExist(this.InstallDir "\premExtract.zip") && DirExist(extensionsPath) {
-                try FileMove(this.InstallDir "\premExtract.zip", extensionsPath "\premExtract.zip", true)
-                catch {
-                    return false
-                }
-            }
-            if FileExist(this.InstallDir "\aeExtract.zip") && DirExist(extensionsPath) {
-                try FileMove(this.InstallDir "\aeExtract.zip", extensionsPath "\aeExtract.zip", true)
                 catch {
                     return false
                 }

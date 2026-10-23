@@ -22,7 +22,7 @@ The roots of this repo were heavily inspired by [Taran (previous editor for LTT)
 
 ### Prerequisites:
 > [!Warning]
-> `nodejs` & `PremiereRemote` are both **requirements** for my repo's functionality. As of `Release v2.18.0` they will both be installed alongside my repo.
+> `nodejs`, `docker` & `PremiereRemote` are **requirements** for my repo's functionality. `nodejs` & `PremiereRemote` will attempt to be installed alongside the repo, the user is expected to install `docker` on their own.
 
 Depending on which sections of my repo you intend to use will determine how much manual setup is required from the user; For indepth instructions on how to get started with my repo, alongside any important notices head [over to the wiki page](https://github.com/Tomshiii/ahk/wiki).  
 There you will also find complete definitions of all scripts/functions of my repo, important prerequisite information that is required of the user before my repo will function as expected, as well as detailed [installation instructions](https://github.com/Tomshiii/ahk/wiki/Installation).

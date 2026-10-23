@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.5.1
  * @author tomshi, taranVH
- * @date 2026/10/20
- * @version 2.5.2
+ * @date 2026/10/23
+ * @version 2.5.3
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -563,7 +563,7 @@ class rbuttonPrem {
 					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
 					notifyExt.showIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
 					this.__exit(this.checkedHotkey) */
-					notifyExt.showIfNotExist("RClickpremRemoteFailed",, 'PremiereRemote failed to retrieve the currently active sequence.`nFalling back to older method', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=400')
+					notifyExt.showIfNotExist("RClickpremRemoteFailed",, 'PremiereRemote failed to retrieve the currently active sequence.`nSequence will not be checked for any changes', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=400')
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 ; { \\ #Includes
-#Include shared\funcs.ahk
+#Include funcs.ahk
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\CLSID_Objs.ahk
 #Include Other\JSON.ahk
