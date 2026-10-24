@@ -324,7 +324,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>0</int>
+<int type='unsigned' size='32'>1</int>
 </prop.pair>
 <prop.pair>
 <key>StackedViewFlags</key>
@@ -730,7 +730,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.28894806</float>
+<float>0.2942743</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -744,7 +744,7 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.18800461</float>
+<float>0.19953863</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -754,7 +754,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>1</int>
+<int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
 <key>HidTabState-0</key>
@@ -1180,7 +1180,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TabID&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;3&lt;/int&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;2&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -1319,10 +1319,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>67</int>
-<int type='signed' size='32'>0</int>
-<int type='signed' size='32'>3440</int>
-<int type='signed' size='32'>1440</int>
+<int type='signed' size='32'>304</int>
+<int type='signed' size='32'>-473</int>
+<int type='signed' size='32'>3677</int>
+<int type='signed' size='32'>967</int>
 </array>
 </prop.pair>
 <prop.pair>

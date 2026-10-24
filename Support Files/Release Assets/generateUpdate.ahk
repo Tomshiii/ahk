@@ -164,69 +164,83 @@ getVer()
 getVer()
 
 ;// dealing with the changelog
-changelog := FileRead(ptf.rootDir "\changelog.md")
-loop files ptf.rootDir "\Backups\Changelogs\*", "F"
-    {
-        name := A_LoopFileName
-        loopDir := A_LoopFileFullPath
-        newFileDir := A_LoopFileDir
-        /* MsgBox(Format("
-        (
-            name: {}
-            loopDir: {}
-            newFileDir: {}
-            currentVer: {}
-
-        )", name, loopDir, newFileDir, currentVer)) */
-        if InStr(name, LTrim(currentVer, "v"), 1, 1, 1)
-            break
+/**
+ * Compares two versions of up to 4 parts, padding missing parts with 0 (so `2.19.0` = `2.19.0.0`)
+ * @returns {Integer} 1 if a > b, -1 if a < b, 0 if equal
+ */
+compareVer(a, b) {
+    pad(v) {
+        parts := StrSplit(v, ".")
+        while parts.Length < 4
+            parts.Push("0")
+        return parts[1] "." parts[2] "." parts[3] "." parts[4]
     }
+    return VerCompare(pad(a), pad(b))
+}
+
+/**
+ * Finds the highest version in a changelog by parsing every `# <> Release <ver> - title` heading.
+ * Supports up to 4 numeric parts (ie. `2.20.0.1`) and an optional leading `v`.
+ * @param {String} text the changelog contents
+ * @returns {String} the highest version found, or "" if no headings match
+ */
+getLatestChangelogVer(text) {
+    latest := ""
+    pos := 1
+    while pos := RegExMatch(text, "mi)^#[ \t]+(?:<>[ \t]+)?Release[ \t]+v?(\d+(?:\.\d+){0,3})\b", &m, pos) {
+        if latest = "" || compareVer(m[1], latest) > 0
+            latest := m[1]
+        pos := m.Pos + m.Len
+    }
+    return latest
+}
+
+changelog := FileRead(ptf.rootDir "\changelog.md")
+
+name := "", loopDir := "", newFileDir := ""
+loop files ptf.rootDir "\Backups\Changelogs\*", "F" {
+    name := A_LoopFileName
+    loopDir := A_LoopFileFullPath
+    newFileDir := A_LoopFileDir
+    if InStr(name, LTrim(currentVer, "v"), 1, 1, 1)
+        break
+}
+
+;// highest release heading across ALL archived changelogs, regardless of filename
+latestLogged := ""
+loop files ptf.rootDir "\Backups\Changelogs\*.md", "F" {
+    fileLatest := getLatestChangelogVer(FileRead(A_LoopFileFullPath))
+    if fileLatest != "" && (latestLogged = "" || compareVer(fileLatest, latestLogged) > 0)
+        latestLogged := fileLatest
+}
+
+sameAsLatest := false
+if latestLogged != "" && RegExMatch(yes.value, "^v?(\d+(?:\.\d+){0,3})", &inputVer)
+    sameAsLatest := (compareVer(inputVer[1], latestLogged) = 0)
 
 ;// dealing with file names
-if pre != false || beta != false || alpha != false
-    {
-        verNew := pre != 0   ? SubStr(yes.value, 1, pre-1)   : yes.value
-        verNew := beta != 0  ? SubStr(yes.value, 1, beta-1)  : verNew
-        verNew := alpha != 0 ? SubStr(yes.value, 1, alpha-1) : verNew
-        verChangeLog := verNew
-    }
-else
-    {
-        removeFiletype := StrReplace(name, ".md", "")
-        verChangeLog   := InStr(removeFiletype, "-",, 1, 1) ? SubStr(removeFiletype, 1, (InStr(removeFiletype, "-",, 1, 1)-1))    : removeFiletype
-        verNew         := InStr(yes.value, ".",, 1, 2)      ? SubStr(yes.value, 1, InStr(yes.value, ".",, 1, 2)-1) : yes.value
-        /* MsgBox(Format("
-        (
-            name: {}
-            loopDir: {}
-            newFileDir: {}
-            currentVer: {}
-            removeFiletype: {}
-            verChangeLog: {}
-            verNew: {}
+if pre != false || beta != false || alpha != false {
+    verNew := pre != 0   ? SubStr(yes.value, 1, pre-1)   : yes.value
+    verNew := beta != 0  ? SubStr(yes.value, 1, beta-1)  : verNew
+    verNew := alpha != 0 ? SubStr(yes.value, 1, alpha-1) : verNew
+    verChangeLog := verNew
+} else {
+    removeFiletype := StrReplace(name, ".md", "")
+    verChangeLog   := InStr(removeFiletype, "-",, 1, 1) ? SubStr(removeFiletype, 1, (InStr(removeFiletype, "-",, 1, 1)-1))    : removeFiletype
+    verNew         := InStr(yes.value, ".",, 1, 2)      ? SubStr(yes.value, 1, InStr(yes.value, ".",, 1, 2)-1) : yes.value
+}
 
-        )", name, loopDir, newFileDir, currentVer, removeFiletype, verChangeLog, verNew)) */
+;// only write for full releases whose version isn't already the latest one in the archive file
+if !pre && !beta && !alpha && !sameAsLatest && !InStr(name, Trim(yes.value, "v"), 1, 1, 1) {
+    if verChangeLog = verNew {
+        FileAppend(changelog "`n`n.`n`n.`n`n.`n`n", loopDir)
+        FileMove(loopDir, newFileDir "\" verChangeLog "-" LTrim(yes.value, "v") ".md")
     }
-
-if !pre && !InStr(yes.value, "alpha") && !beta && !alpha && !InStr(name, Trim(yes.value, "v"), 1, 1, 1)
-    {
-        if IsSet(name) && (SubStr(name, 1, StrLen(name)-3) = yes.value) ;if inputbox ver is the same as the current changelog, ignore
-            return
-        if verChangeLog = verNew
-            {
-                FileAppend(changelog "`n`n.`n`n.`n`n.`n`n", loopDir)
-                FileMove(loopDir, newFileDir "\" verChangeLog "-" LTrim(yes.value, "v") ".md")
-            }
-        else
-            FileAppend(changelog "`n`n.`n`n.`n`n.`n`n", newFileDir "\" verNew ".md")
-    }
+    else
+        FileAppend(changelog "`n`n.`n`n.`n`n.`n`n", newFileDir "\" verNew ".md")
+}
 
 sleep 100
-;// checking values for testing
-/*
-versions := "verChangeLog: " verChangeLog "`n" "verNew: " verNew "`n" "name: " name "`n" "yes.value: " yes.value "`n"
-MsgBox(versions)
-*/
 
 ;// build the UXP version of PremiereRemote (.ccx) from my local install
 ;// this needs to happen BEFORE the repo is copied below so the freshly built .ccx ends up in the release
@@ -287,9 +301,9 @@ FileCopy(A_WorkingDir "\release\" yes.Value "\Support Files\Release Assets\Insta
 ;// this happens before the `-patch` copy so the patch installer includes them as well
 ;// `node_modules` is skipped for CEP - `installPremRemote.ahk` runs `npm i` on the user's machine
 premRemoteStage := A_WorkingDir "\release\" yes.Value "\premiereRemote"
-copyFolder(A_AppData "\Adobe\CEP\extensions\PremiereRemote", premRemoteStage "\cep\PremiereRemote", ["node_modules", ".git"])
-copyFolder(A_AppData "\Adobe\CEP\extensions\AERemote",       premRemoteStage "\cep\AERemote",       ["node_modules", ".git"])
-copyFolder(uxpPluginLoc,                                     premRemoteStage "\uxp\PremiereRemote-uxp")
+copyFolder(A_AppData "\Adobe\CEP\extensions\PremiereRemote", premRemoteStage "\cep\PremiereRemote",     ["node_modules", ".git"])
+copyFolder(A_AppData "\Adobe\CEP\extensions\AERemote",       premRemoteStage "\cep\AERemote",           ["node_modules", ".git"])
+copyFolder(uxpPluginLoc,                                     premRemoteStage "\uxp\PremiereRemote-uxp", ["node_modules"])
 
 DirCopy(A_WorkingDir "\release\" yes.Value, A_WorkingDir "\release\" yes.Value "-patch")
 

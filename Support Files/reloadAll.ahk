@@ -84,7 +84,7 @@ catch {
     }
 }
 
-if !CLSID_Objs.waitCoreFuncs(2) {
+if !CLSID_Objs.waitCoreFuncs(10) {
     sleep 2000
     try CLSID_Objs.load("Loading")
     catch {

@@ -56,7 +56,7 @@ installCEP(name) {
     ;// /MIR copies new/changed files AND deletes anything in dst that isn't in src. `node_modules` is excluded so it's left alone
     code := RunWait(Format('robocopy "{1}" "{2}" /MIR /XD node_modules /R:1 /W:1 /NFL /NDL /NJH /NJS /NP', src, dst),, "Hide")
     if code >= 8 { ;// 8+ means at least one file failed to copy/delete, usually because Premiere/AE has it open
-        errorLog(TargetError("Couldn't update " name ". Please close Premiere Pro/After Effects, then run`n" installDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk`nagain.", -1),,, 1)
+        errorLog(TargetError("Couldn't update " name ". Please close Premiere Pro/After Effects, then run`n" installDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk", -1),,, 1)
         return false
     }
 
@@ -69,22 +69,45 @@ installCEP(name) {
     RunWait(installDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk 0 1 " name)
     return true
 }
-premOK := installCEP("PremiereRemote")
-aeOK   := installCEP("AERemote")
+premOK  := installCEP("PremiereRemote")
+premUXP := true
+aeOK    := installCEP("AERemote")
 
 ;//* UXP - PremiereRemote-uxp
 ;// extracts the plugin folder. The `client` folder is removed after the .ccx gets installed by `update_PremiereRemoteUXP.ahk`
-DirCreate(uxpPluginsPath)
-DirCopy(uxpStaging, uxpPluginsPath "\PremiereRemote-uxp", 1)
-if FileExist(updateUXP)
-    try RunWait(updateUXP)
+try {
+    uxpDst := uxpPluginsPath "\PremiereRemote-uxp"
+    DirCreate(uxpPluginsPath)
+
+    ;// /MIR copies new/changed files and removes stale ones. `node_modules` is excluded so it's left alone
+    code := RunWait(Format('robocopy "{1}" "{2}" /MIR /XD node_modules /R:1 /W:1 /NFL /NDL /NJH /NJS /NP', uxpStaging, uxpDst),, "Hide")
+    if code >= 8 ;// 8+ means at least one file failed to copy/delete, usually because Premiere has it open
+        throw OSError("robocopy failed (" code ") copying PremiereRemote-uxp")
+
+    ;// has its own version check, so it's not gated
+    if FileExist(updateUXP)
+        RunWait(updateUXP)
+
+    ;// rebuild if files were copied (bit 1), stale files were removed (bit 2), or this is a fresh install
+    if (code & 3) || !DirExist(uxpDst "\client\node_modules") {
+        cmd.run(,,, 'node scripts/generate-api.js', uxpDst "\client", "Hide")
+        cmd.run(,,, 'xcopy /s /e /y static\. build\', uxpDst "\client", "Hide")
+        cmd.run(,,, 'npx pnpm run bundle', uxpDst "\client", "Hide")
+        cmd.run(,,, 'docker compose down && docker compose up --build -d', uxpDst, "Hide")
+    }
+} catch {
+    premUXP := false
+    errorLog(TargetError("Couldn't update PremiereRemote UXP. Please close Premiere Pro then run`n" installDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk", -1),,, 1)
+}
 
 ;// only remove the packaged files for extensions that installed, a failed one is kept so it can be retried
 if premOK
     try DirDelete(cepStaging "\PremiereRemote", 1)
 if aeOK
     try DirDelete(cepStaging "\AERemote", 1)
-if premOK && aeOK
-    try DirDelete(stagingDir, 1) ;// also clears the leftover uxp files
+if premUXP
+    try DirDelete(uxpStaging, true)
+if premOK && aeOK && premUXP
+    try DirDelete(stagingDir, 1)
 
 ExitApp()

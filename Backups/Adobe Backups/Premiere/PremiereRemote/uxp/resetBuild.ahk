@@ -18,7 +18,6 @@ __replaceCompose()
 
 cmd.run(,, keepWindow, 'node scripts/generate-api.js', InstalledDir "\client", doHide)
 cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', InstalledDir "\client", doHide)
-cmd.run(,, keepWindow, 'xcopy /s /e /y static\. build\', InstalledDir "\client", doHide)
 cmd.run(,, keepWindow, 'npx pnpm run bundle', InstalledDir "\client", doHide)
 
 cmd.run(,, keepWindow, 'docker compose down && docker compose up --build -d', InstalledDir, doHide)

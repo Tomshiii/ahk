@@ -1,4 +1,4 @@
-# <> Release 2.20.0 - 
+# <> Release 2.20.0 - Stability & Functionality
 
 ## Functions
 - ✏️ Added `statusIcon {`, `cursor {`, `zip {`
@@ -70,9 +70,6 @@
 - ✏️ Added `isResponsive()`, `isHung()`, `isBusy()`, `waitUntilResponsive()`
 
 ## Other Changes
-- ✅ Fixed `Keyboard Shortcut Adjustments.ahk` throwing if `Core Functionality.ahk` hadn't finished registering objects
-    - Should fix issues of scripts throwing during repo installation
-- 📋 `Core Functionality.ahk` will now alert with an event when it has finished registering objects
 - 📋 `PremiereRemote` (CEP & UXP) and `AERemote` are now bundled along with the installation and will be automatically installed/updated during the installation process
 
 🔗 `autosave.ahk`

@@ -5,6 +5,8 @@
 #Include Other\JSON.ahk
 ; }
 
+;// this script is designed for me -- if you installed my repo this script will not work correctly as your `\client` folder will be installed in a different location
+
 SetWorkingDir(A_ScriptDir)
 
 ;// ======= manifest =======
@@ -12,16 +14,16 @@ InstalledDir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
 __replaceCompose()
 dir := InstalledDir "\client"
 manifest := dir "\manifest.json"
-if !FileExist(manifest)
-    return
-fil := json.parse(FileRead(manifest))
-if fil['requiredPermissions']['localFileSystem'] != "fullAccess" || fil["entrypoints"][1]["label"]["default"] != "PremiereRemote (UXP)" {
-    ;// full access is required for some functions to check if files exist (ie. `renderInPrem` to ensure it doesn't overwrite a file that already exists)
-    fil['requiredPermissions']['localFileSystem'] := "fullAccess"
-    fil["entrypoints"][1]["label"]["default"] := "PremiereRemote (UXP)"
-    FileAppend(json.stringify(fil), dir "\manifest_temp.json")
-    FileDelete(manifest)
-    FileMove(dir "\manifest_temp.json", manifest, true)
+if FileExist(manifest) {
+    fil := json.parse(FileRead(manifest))
+    if fil['requiredPermissions']['localFileSystem'] != "fullAccess" || fil["entrypoints"][1]["label"]["default"] != "PremiereRemote (UXP)" {
+        ;// full access is required for some functions to check if files exist (ie. `renderInPrem` to ensure it doesn't overwrite a file that already exists)
+        fil['requiredPermissions']['localFileSystem'] := "fullAccess"
+        fil["entrypoints"][1]["label"]["default"] := "PremiereRemote (UXP)"
+        FileAppend(json.stringify(fil), dir "\manifest_temp.json")
+        FileDelete(manifest)
+        FileMove(dir "\manifest_temp.json", manifest, true)
+    }
 }
 
 ;// ======= docker =======
