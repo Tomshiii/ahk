@@ -1,95 +1,13 @@
-# <> Release 2.20.0 - Stability & Functionality
+# <> Release 2.20.0.1 - Hotfix
 
 ## Functions
-- ✏️ Added `statusIcon {`, `cursor {`, `zip {`
-- ✏️ Added `obj.isEqual()`
-- ✅ Fixed `settings.ini` values getting reset if a key is added
-- ✅ Fixed `adobeXML {` flooding the logs with empty values when a hotkey isn't found
-- ✅ Fixed `slack.button()` failing because they changed a button
-- ✅ Fixed `cmd.run()` not using the passed `Working Dir` when run as admin
-- 📋 Increased default `adobe_GB` value from `45` => `100`
-- 📋 Moved `XorY()`, `clipMouse()`, and `setMouseClip()` from `move {` => `cursor {`
-
-📍 `unzip()`
-- 📋 Moved function => `zip.unzip()`
-- 📋 Now accepts parameter `checkExt`
 
 ### 📝 `prem {`
-- ✅ Fixed `dismissWarning()` potentially leaving inputs blocked
-- ✅ Fixed `renderProjectSelection()` throwing during long renders
-- ✅ Fixed `effectSlot()` potentially silently failing
-- ✅ Fixed `__checkPremRemoteFunc(, "uxp")` not doing the `isInstalled` checks
-- ✅ Fixed class not actually polling the `uxp` socket
-- ✅ Fixed `uxp` panel being marked as open even when it wasn't
-- ✅ Fixed `mousedrag()` leaving the cursor dragging the timeline if activated while Premiere is encountering a heavy load
-- ✅ Fixed `rippleTrim()`/`delayPlayback()` not properly interacting with each other
-- ✏️ Added `cursorWithinPanel()`, `syncClipChannels()`, `__closeOSWindow()`
-- 📋 `PremiereRemote` functions are now checked using `PremiereRemote`'s internal registry instead of string manipulation
-- 📋 Slight optimisations to `toggleLayerButtons()` & `layerSizeAdjust()`
-- 📋 `soloVideo()`/`disableAllMuteSolo()` now completely use `UIA` without needing to move the mouse for speedier and more reliable results
-- 📋 `swapPreviousSequence()` now requires the `UXP` `PremiereRemote` extension
-    - All swapping/sequence storing logic is now held within the plugin's memory using [`Sequence Events`](<https://developer.adobe.com/premiere-pro/uxp/ppro-reference/constants/#sequenceevent>)
-- 📋 `__checkTimelineValues()` will now verify values against the `prem` comObj, and replace local values if there are discrepancies 
+- ✅ Fixed `soloVideo()` ignoring the hovered track if it was partially outside the timeline
 
-### 📝 `rbuttonPrem {`
-📍 `movePlayhead()`
-- ✅ Fixed function leaving mouse movement blocked if the user activates the function while dragging a panel
-- ✅ Fixed `sendOnFailure` key not being sent if timeline values have not been set and no sequences are open
-- ✅ Fixed Premiere not responding during a heavy load leaving the playhead trailing the cursor until reactivation
-
-### 📝 `premUIA_Values {`
-- ✏️ Added `forceReset()`, `getLiveTool()`, `getLiveToolsPanel()`
-- ✅ Fixed `toolsMap` containing two `EllipseMask` entries and no `RectangleMask`
-
-### 📝 `AE {`
-- ✅ Fixed `setViewerZoom()` sometimes throwing
-- ✅ Fixed `selectTool()` throwing if text was selected
-- 📋 `__checkTimelineValues()` will now verify values against the `ae` comObj, and replace local values if there are discrepancies 
-
-### 📝 `PremiereRemote`
-📍 `CEP`
-- 📋 Renamed `sourceMonName()` => `getSourceMonitorName()`
-
-📍 `UXP`
-- ✅ Fixed `saveEffectSlotJSON()`/`applyEffectSlotJSON()`
-- ✅ Fixed `matchSelectedClipsToLowestTrack()` throwing in some scenarios
-- 📋 Adjust multiple functions to retrieve information concurrently
-- 📋 Moved alot of functions into their own files to organise them a bit better
-    - `replacePremRemote.ahk` will now work correctly for any `.ts` files stored in folders
-- 📋 `getPlayheadPosTimecode()` will now use internal function `timeToTimecode()` in `v27.0+`
-
-📍 `Both`
-- ✏️ Added `getRegistryJSON()`, `sourceMonitorPlay()`, `openSelectedProjItemInSourceMonitor()`
-- 📋 `movePlayhead()`/`movePlayheadFrames()`/`moveClip()` no longer require parameter `subtract`
-- 📋 `getSourceMonitorName()` now returns `false` if the `Source Monitor` is empty
-
-### 📝 `AERemote`
-- ✏️ Added `getRegistryJSON()`, `setViewerZoom()`
-
-### 📝 `WinGet {`
-- ✏️ Added `isResponsive()`, `isHung()`, `isBusy()`, `waitUntilResponsive()`
+📍 `toggleLayerButtons()`
+- ✅ Fixed attempting to click a button off screen if the track was only partially visible
+- ✅ Fixed throwing if a track was partially expanded
 
 ## Other Changes
-- 📋 `PremiereRemote` (CEP & UXP) and `AERemote` are now bundled along with the installation and will be automatically installed/updated during the installation process
-
-🔗 `autosave.ahk`
-- ✅ Fixed not determining the correct active window
-- 📋 No longer uses `WinEvent {` (it would clash with `prem.save()`/`ae.save()`)
-
-🔗 `determineUIA.ahk`
-- ❗ Panels can no longer be accessed using the `UIA_Objs[]` map and must be accessed using `premUIA_Values.getLivePanel()`
-- ❗ `Tools` must now be accessed using `premUIA_Values.getLiveTool()` ie;
-```ahk
-if !premUIA := premUIA_Values.initialise()
-    return
-if !el := premUIA_Values.getLiveTool(tool, premUIA)
-    return
-Msgbox(el.value) ;// Selected or Not Selected
-```
-- ✅ Fixed script failing to properly close during `reloadAll.ahk`
-- 📋 `UIA` tree can now be regenerated from any script by calling `premUIA_Values.forceReset()`
-- 📋 No longer *requires* panels to be visible for initial generation (will still need to be *open*)
-    - For some panels this may cause issues if they aren't initially visible
-- 📋 Will now show a status icon for the connection status of the `cep` & `uxp` sockets/panels & the current `UIA` tree
-    - Can be disabled in `settingsGUI()`  
-    <img width="219" height="67" alt="statusIcons" src="https://github.com/user-attachments/assets/88771f4a-ef08-4ca1-b4e5-63080158570e" />
+- ✅ Fixed `install_PremiereRemoteUXP.ahk` silently failing

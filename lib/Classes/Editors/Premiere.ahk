@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/22
- * @version 2.5.99
+ * @date 2026/10/26
+ * @version 2.5.100
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -4011,8 +4011,10 @@ $!WheelDown::
 
         origMouseCords := obj.MousePos()
         focusStatus := this.timelineFocusStatus()
-        if focusStatus == null
+        if focusStatus == null {
+            block.Off()
             return
+        }
         if !origMouseCords || (!focusStatus && !this.__checkCoords(origMouseCords)) {
             block.Off()
             return
@@ -4024,12 +4026,24 @@ $!WheelDown::
             return
         }
 
+        layer := getMovePos.Has("layer") ? getMovePos["layer"] : ""
         switch {
-            case which = "mute" && getMovePos["layer"] = "vid": newX := getMovePos["visible"].x, newY := getMovePos["visible"].y
-            case which = "solo" && getMovePos["layer"] = "vid":
+            case which = "mute" && layer = "vid": newX := getMovePos["visible"].x, newY := getMovePos["visible"].y
+            case which = "solo" && layer = "vid":
                 block.Off()
                 return
-            default: newX := getMovePos[which].x, newY := getMovePos[which].y
+            default:
+                if !getMovePos.Has(which) {
+                    block.Off()
+                    return
+                }
+                newX := getMovePos[which].x, newY := getMovePos[which].y
+        }
+        ;// the track may be partially visible, so every button is in the UIA tree even if this one is cut off by the timeline edge
+        if newY < this.timelineYValue || newY > this.timelineYControl {
+            block.Off()
+            notifyExt.showIfNotExist("premLayerButtonsClipped",, 'The button you wish to press is partially or completely hidden.`nScroll it fully into view and try again.', 'C:\Windows\System32\imageres.dll|icon90',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0xC72424')
+            return
         }
         MouseMove(newX, newY, 1)
         SendInput("{Click}")
@@ -4082,7 +4096,8 @@ $!WheelDown::
      *       "mute":       {x: 540, y: 919},
      *       "solo":       {x: 564, y: 919},
      *       "mouseLayer": false ;// boolean, true if the cursor is currently within this layer
-     *       "layer":      Int ;// integer representing the layer index (ie. 1)
+     *       "layer":      "vid"|"aud"
+     *       "index":      Int ;// integer representing the layer index (ie. 1)
      *     }
      *   },
      *   "vid": { ... }
@@ -4101,7 +4116,6 @@ $!WheelDown::
         aud := Map(), vid := Map()
         A := Map("aud", aud, "vid", vid)
         currentTrack := 0
-        currentY := false
         currentMid := 0
         Names := Map("Toggle Track Lock", "lock", "Toggle Sync Lock", "sync", "Toggle Track Output", "visible", "Mute Track", "mute", "Solo Track", "solo")
         currentMap := Map()
@@ -4122,20 +4136,22 @@ $!WheelDown::
         __flush() {
             if currentTrack = 0
                 return
+            ;// always set these, regardless of how many buttons were found
+            currentMap["layer"] := currentLayer
+            currentMap["index"] := currentTrack
+
             if currentMap.Has("lock") && !currentMap.Has("target") {
                 nums := []
                 for name, btn in currentMap {
-                    if name != "lock"
+                    if name != "lock" && IsObject(btn)
                         nums.Push(btn.x)
                 }
                 if nums.Length {
                     lockBtn := currentMap["lock"]
                     currentMap["target"] := {x: Round(lockBtn.x + ((Min(nums*) - lockBtn.x) / 2)), y: lockBtn.y}
                     currentMap["source"] := {x: lockBtn.x-15, y: lockBtn.y}
-                    currentMap["layer"]  := currentTrack
                 }
             }
-            ;// must be set after `target` is derived, that loop expects every value to have `.x`
             currentMap["mouseLayer"] := __isMouseLayer(currentMid)
             A[currentLayer][currentTrack] := currentMap
         }
@@ -4152,19 +4168,17 @@ $!WheelDown::
                 currentLayer := "aud"
                 currentTrack := 0
                 currentMap := Map()
-                currentY := false
             }
 
             loc := child.location
-            if loc.y != currentY {
+            btnName := Names[child.Name]
+            if currentTrack = 0 || currentMap.Has(btnName) {
                 __flush()
                 currentMap := Map()
-                currentY := loc.y
                 currentMid := loc.y + (loc.h // 2)
                 currentTrack++
             }
-
-            currentMap.Set(Names[child.Name], {x: loc.x+(loc.w//2), y: loc.y+(loc.h//2)})
+            currentMap.Set(btnName, {x: loc.x+(loc.w//2), y: loc.y+(loc.h//2)})
         }
         __flush()
 
@@ -4730,26 +4744,35 @@ $!WheelDown::
             return
 
         layerObj := this.__getSingleLayerBounds(origMouseCords.y)
+        if !layerObj || (!layerObj.topY && !layerObj.botY)
+            return
         indexObj := this.__retrieveAudLayerIndex()
+        if !indexObj
+            return
+
+        ;// a missing edge means the layer is cut off by the timeline, so clamp to the timeline edge instead of treating it as open
+        topLimit := layerObj.topY ? layerObj.topY : this.timelineYValue
+        botLimit := layerObj.botY ? layerObj.botY : this.timelineYControl
 
         for i, v in indexObj.Children {
             if i > indexObj.audIndex - 1
                 break
             if v.type != 50000 || v.name != "Toggle Track Output"
                 continue
-            isHidden  := (v.state = 8)
-            btnY      := v.location.y
-            onMouseLayer := (btnY > layerObj.topY && btnY < layerObj.botY)
+            loc := v.location
+            ;// compare the button's centre rather than its top edge
+            btnY := loc.y + (loc.h // 2)
+            onMouseLayer := (btnY > topLimit && btnY < botLimit)
+            isHidden := (v.state = 8)
 
             switch soloInverseDisable {
-                case "solo": ;// hovered track must be visible, every other track hidden
+                case "solo":
                     if onMouseLayer ? isHidden : !isHidden
                         v.Invoke()
-                case "inverse": ;// hovered track gets hidden, every other hidden track gets shown
-
+                case "inverse":
                     if onMouseLayer ? !isHidden : isHidden
                         v.Invoke()
-                case "disable": ;// show every hidden track
+                case "disable":
                     if isHidden
                         v.Invoke()
             }

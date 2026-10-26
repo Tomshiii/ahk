@@ -196,19 +196,11 @@ getLatestChangelogVer(text) {
 }
 
 changelog := FileRead(ptf.rootDir "\changelog.md")
-
-name := "", loopDir := "", newFileDir := ""
-loop files ptf.rootDir "\Backups\Changelogs\*", "F" {
-    name := A_LoopFileName
-    loopDir := A_LoopFileFullPath
-    newFileDir := A_LoopFileDir
-    if InStr(name, LTrim(currentVer, "v"), 1, 1, 1)
-        break
-}
+changelogDir := ptf.rootDir "\Backups\Changelogs"
 
 ;// highest release heading across ALL archived changelogs, regardless of filename
 latestLogged := ""
-loop files ptf.rootDir "\Backups\Changelogs\*.md", "F" {
+loop files changelogDir "\*.md", "F" {
     fileLatest := getLatestChangelogVer(FileRead(A_LoopFileFullPath))
     if fileLatest != "" && (latestLogged = "" || compareVer(fileLatest, latestLogged) > 0)
         latestLogged := fileLatest
@@ -218,45 +210,62 @@ sameAsLatest := false
 if latestLogged != "" && RegExMatch(yes.value, "^v?(\d+(?:\.\d+){0,3})", &inputVer)
     sameAsLatest := (compareVer(inputVer[1], latestLogged) = 0)
 
-;// dealing with file names
-if pre != false || beta != false || alpha != false {
-    verNew := pre != 0   ? SubStr(yes.value, 1, pre-1)   : yes.value
-    verNew := beta != 0  ? SubStr(yes.value, 1, beta-1)  : verNew
-    verNew := alpha != 0 ? SubStr(yes.value, 1, alpha-1) : verNew
-    verChangeLog := verNew
-} else {
-    removeFiletype := StrReplace(name, ".md", "")
-    verChangeLog   := InStr(removeFiletype, "-",, 1, 1) ? SubStr(removeFiletype, 1, (InStr(removeFiletype, "-",, 1, 1)-1))    : removeFiletype
-    verNew         := InStr(yes.value, ".",, 1, 2)      ? SubStr(yes.value, 1, InStr(yes.value, ".",, 1, 2)-1) : yes.value
+;// find this release series' archive file, ie. `2.20.md` or `2.20-2.20.0.md` (a leading `v` is tolerated)
+rel     := parseVer(yes.value)
+fullVer := LTrim(yes.value, "v")
+archiveFile := ""
+loop files changelogDir "\*.md", "F" {
+    if RegExMatch(A_LoopFileName, "i)^v?\Q" rel.series "\E(?:-.*)?\.md$") {
+        archiveFile := A_LoopFileFullPath
+        break
+    }
 }
 
-;// only write for full releases whose version isn't already the latest one in the archive file
-if !pre && !beta && !alpha && !sameAsLatest && !InStr(name, Trim(yes.value, "v"), 1, 1, 1) {
-    if verChangeLog = verNew {
-        FileAppend(changelog "`n`n.`n`n.`n`n.`n`n", loopDir)
-        FileMove(loopDir, newFileDir "\" verChangeLog "-" LTrim(yes.value, "v") ".md")
+;// only write for full releases whose version isn't already the latest one logged
+if !pre && !beta && !alpha && !sameAsLatest {
+    sep := "`n`n.`n`n.`n`n.`n`n"
+    if archiveFile {
+        FileAppend(changelog sep, archiveFile)
+        newPath := changelogDir "\v" rel.series "-" fullVer ".md"
+        if archiveFile != newPath
+            FileMove(archiveFile, newPath, 1)
     }
-    else
-        FileAppend(changelog "`n`n.`n`n.`n`n.`n`n", newFileDir "\" verNew ".md")
+    else ;// first release of a new series
+        FileAppend(changelog sep, changelogDir "\v" rel.series ".md")
 }
 
 sleep 100
 
 ;// build the UXP version of PremiereRemote (.ccx) from my local install
 ;// this needs to happen BEFORE the repo is copied below so the freshly built .ccx ends up in the release
-ccxCMD        := '-NoProfile -Command "Compress-Archive -Path `'{1}`' -DestinationPath `'{2}`' -Force; Rename-Item -LiteralPath `'{2}`' -NewName `'{3}`'"'
 uxpPluginLoc  := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
 uxpInstallLoc := uxpPluginLoc "\client"
 ccxLoc        := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\build\"
 ccxName       := "de.sebinside.premiereremote_premierepro.ccx"
+sevenZipExe := "C:\Program Files\7-Zip\7z.exe"
+ccxCMD := '"' . '"' sevenZipExe '" a -tzip "' ccxLoc ccxName '" manifest.json build icons' . '"'
 if MsgBox("rebuild UXP .ccx file?",, "4") = "yes" {
     if !DirExist(uxpInstallLoc)
         throw TargetError("Couldn't find the local UXP PremiereRemote client folder`n" uxpInstallLoc)
+    if MsgBox("update manifest version?",, "4") = "yes" {
+        mani := JSON.parse(FileRead(uxpInstallLoc "\manifest.json"))
+        version := mani["version"]
+        split := StrSplit(version, ".")
+        mani["version"] := split[1] "." split[2] "." (split[3] += 1)
+        try FileDelete(uxpInstallLoc "\manifest.json")
+        catch as e {
+            throw e
+        }
+        FileAppend(json.stringify(mani), uxpInstallLoc "\manifest.json")
+    }
+    if !FileExist(sevenZipExe)
+        throw TargetError("7-Zip not found at:`n" sevenZipExe)
     if FileExist(ccxLoc ccxName)
         FileDelete(ccxLoc ccxName)
 
-    fullCmd := Format("powershell " ccxCMD, uxpInstallLoc "\*", ccxLoc "premiereRemote.zip", ccxName)
-    cmd.run(,,, fullCmd)
+    exitObj := cmd.run(, true,, ccxCMD, uxpInstallLoc, "Hide")
+    if exitObj.exitCode != 0
+        throw MethodError("7z failed, exitcode: " exitObj.exitCode)
     if !FileExist(ccxLoc ccxName)
         throw TargetError("Failed to build " ccxName)
 }
