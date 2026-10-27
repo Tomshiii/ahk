@@ -17,7 +17,8 @@ if !DirExist(dir) {
     return
 }
 
-resp := RegExReplace(cmd.result(command, true, keepWin, dir), "^(?:.*\R){4}", "")
+getResp := cmd.result(command, keepWin,, dir)
+resp := RegExReplace(getResp, "^(?:.*\R){4}", "")
 if !InStr(resp, "Build successful. Modifying index.jsx now.") {
     A_Clipboard := resp
     MsgBox("Build failed with the following error (also copied to clipboard):`n`n" resp)

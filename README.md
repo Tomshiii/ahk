@@ -53,7 +53,8 @@ A script that will automatically suspend `My Scripts.ahk` when a game is detecte
       B --> C[is a game in the list open?];
 
       C -- yes --> D[Suspend 'My Scripts.ahk']
-      C -- no --> E[Wait 2.5s] --> C
+      C -- no --> E[Wait 2.5s]
+      E --> C
 
       D --> H --> F[is game still active?]
       F -- yes --> H[Wait 2.5s]

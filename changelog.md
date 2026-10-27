@@ -2,12 +2,8 @@
 
 ## Functions
 
-### 📝 `prem {`
-- ✅ Fixed `soloVideo()` ignoring the hovered track if it was partially outside the timeline
-
-📍 `toggleLayerButtons()`
-- ✅ Fixed attempting to click a button off screen if the track was only partially visible
-- ✅ Fixed throwing if a track was partially expanded
+### 📝 `AERemote`
+- Added `replaceSeqWithSequence()`
 
 ## Other Changes
-- ✅ Fixed `install_PremiereRemoteUXP.ahk` silently failing
+- ✅ Fixed `resetNPM.ahk` throwing

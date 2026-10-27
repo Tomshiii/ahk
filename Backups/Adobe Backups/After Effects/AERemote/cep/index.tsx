@@ -242,32 +242,86 @@ export const host = {
   },
 
   setViewerZoom: function (zoom: string) {
-      try {
-        const viewer = app.activeViewer;
-        if (!viewer) return false;
-        viewer.setActive();
+    try {
+      const viewer = app.activeViewer;
+      if (!viewer) return false;
+      viewer.setActive();
 
-        // Fit modes have no property, so they use the menu commands
-        if (zoom === "fit" || zoom === "fit100") {
-            const names = zoom === "fit"
-                ? ["Fit"]
-                : ["Fit up to 100%", "Fit Up To 100%"];
-            for (let i = 0; i < names.length; i++) {
-                const id = app.findMenuCommandId(names[i]);
-                if (id) {
-                    app.executeCommand(id);
-                    return true;
-                }
-            }
-            return false;
+      // Fit modes have no property, so they use the menu commands
+      if (zoom === "fit" || zoom === "fit100") {
+        const names = zoom === "fit"
+          ? ["Fit"]
+          : ["Fit up to 100%", "Fit Up To 100%"];
+        for (let i = 0; i < names.length; i++) {
+          const id = app.findMenuCommandId(names[i]);
+          if (id) {
+            app.executeCommand(id);
+            return true;
+          }
         }
-
-        const n = Number(zoom);
-        if (isNaN(n) || n < 1 || n > 1600) return false;
-        viewer.views[0].options.zoom = n / 100;
-        return true;
-    } catch (e) {
         return false;
+      }
+
+      const n = Number(zoom);
+      if (isNaN(n) || n < 1 || n > 1600) return false;
+      viewer.views[0].options.zoom = n / 100;
+      return true;
+    } catch (e) {
+      return false;
     }
   },
+
+  replaceSeqWithSequence: function (targetNames: string, sequenceName: string) {
+    app.beginUndoGroup("Replace Linked Comps with " + sequenceName);
+
+    // Split the comma-delimited string into a trimmed array, dropping empties
+    const targetList: string[] = [];
+    const parts = targetNames.split(",");
+    for (let p = 0; p < parts.length; p++) {
+      const trimmed = parts[p].replace(/^\s+|\s+$/g, ""); // ExtendScript has no String.trim()
+      if (trimmed !== "") targetList.push(trimmed);
+    }
+
+    function isTarget(name: string) {
+      for (let i = 0; i < targetList.length; i++) {
+        if (name === targetList[i]) return true;
+      }
+      return false;
+    }
+
+    // Find the replacement comp
+    let replacement: CompItem | null = null;
+    for (let i = 1; i <= app.project.numItems; i++) {
+      const it = app.project.item(i);
+      if (it instanceof CompItem && it.name === sequenceName) {
+        replacement = it;
+        break;
+      }
+    }
+    if (!replacement) {
+      app.endUndoGroup();
+      alert("Couldn't find a comp named '" + sequenceName + "'.");
+      return;
+    }
+
+    let count = 0;
+    for (let c = 1; c <= app.project.numItems; c++) {
+      const comp = app.project.item(c);
+      if (!(comp instanceof CompItem) || comp === replacement) continue;
+
+      for (let l = 1; l <= comp.numLayers; l++) {
+        const layer = comp.layer(l);
+        if (!(layer instanceof AVLayer)) continue;
+
+        const src = layer.source;
+        if (src instanceof CompItem && isTarget(src.name)) {
+          layer.replaceSource(replacement, true);
+          count++;
+        }
+      }
+    }
+
+    app.endUndoGroup();
+    alert("Replaced " + count + " layer(s).");
+  }
 };
