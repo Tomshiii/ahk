@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/08/28
+ * @date 2026/10/28
  ***********************************************************************/
-global currentVer := "1.3.13"
+global currentVer := "1.3.14"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -52,7 +52,7 @@ class multiDL extends tomshiBasic {
                 promptNightlyUpgrade := MsgBox("yt-dlp is installed but isn't on the nightly track.`nThis is recommended to ensure quick fixes.`n`nWould you like to update to the nightly track?", "Upgrade to Nightly?", "0x4 0x20 0x1000")
                 if promptNightlyUpgrade = "No"
                     ExitApp()
-                nightlyComm := "yt-dlp --update-to nightly"
+                nightlyComm := "choco uninstall yt-dlp && choco feature enable -n=useRememberedArgumentsForUpgrades && choco install yt-dlp --pre"
                 cmd.run(true,,, nightlyComm)
             }
         }
@@ -287,6 +287,8 @@ class multiDL extends tomshiBasic {
         for v in newArr {
             cmnd := Format('choco outdated | Select-String "{1}"', v)
             getres := cmd.result("powershell -c " cmnd)
+            if v = "yt-dlp"
+                v := "yt-dlp --pre"
             if getres != ""
                 buildStr := (buildStr = "") ? Format("choco upgrade chocolatey --yes && choco upgrade {1} --yes ", v) : Format("{1} && choco upgrade {2} --yes ", buildStr, v)
         }
@@ -397,7 +399,7 @@ class multiDL extends tomshiBasic {
         if !this.__checkChoco()
             return
         dlVal := (val = "ytdlp") ? "yt-dlp --pre" : val
-        cmd.run(true,,, "choco install " dlVal " --yes")
+        cmd.run(true,,, "choco feature enable -n=useRememberedArgumentsForUpgrades && choco install " dlVal " --yes")
         this[val].text := "done"
         this[val].Opt("Disabled")
     }

@@ -4,6 +4,7 @@
 #Include Classes\cmd.ahk
 #Include Classes\zip.ahk
 #Include Classes\errorLog.ahk
+#Include Functions\getCCXVersion.ahk
 #Include Other\JSON.ahk
 ; }
 

@@ -2,11 +2,14 @@
 #Include funcs.ahk
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\CLSID_Objs.ahk
+#Include Functions\getCCXVersion.ahk
 #Include Other\JSON.ahk
 ; }
 
 ;// this script is designed for me -- if you installed my repo this script will not work correctly as your `\client` folder will be installed in a different location
-
+try isCCx := A_Args[1]
+if !IsSet(isCCx)
+    isCCx := getExtensionVersion()
 SetWorkingDir(A_ScriptDir)
 
 ;// ======= manifest =======
@@ -34,8 +37,10 @@ __runAndWait(dockerAhk, dockerFile, true,, 0)
 ;// ======= uxp =======
 uxpAHK := "ahk_exe Adobe UXP Developer Tools.exe"
 uxpFile := "C:\Program Files\Adobe\Adobe UXP Developer Tools\Adobe UXP Developer Tools.exe"
-__runAndWait(uxpAHK, uxpFile)
+if !isCCx
+    __runAndWait(uxpAHK, uxpFile)
 
 RunWait("replacePremRemote.ahk false")
-Run("resetBuild.ahk")
-try CLSID_Objs.writeProp("prem", "__uxpFuncMap", false)
+RunWait("resetBuild.ahk " isCCx)
+if !isCCx
+    RunWait("reloadDebugExt.ahk")

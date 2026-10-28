@@ -158,3 +158,12 @@ export async function getRegistryJSON(pretty = false): Promise<string> {
     );
     return JSON.stringify(serializable, null, pretty ? 2 : 0);
 }
+
+/**
+ * Reloads the panel so a freshly built bundle/registry is picked up.
+ */
+export async function reloadPanel(delayMs = 200): Promise<string> {
+    // Delay so the response can be sent back over the websocket first
+    setTimeout(() => location.reload(), delayMs);
+    return "reloading";
+}

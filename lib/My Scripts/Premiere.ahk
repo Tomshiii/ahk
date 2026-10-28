@@ -294,7 +294,7 @@ SC03A & 6::
 >!2::prem.soloVideo("disable")
 
 q::
-w::prem.rippleTrim()
+w::prem.delayTick()
 
 F12::prem.thumbScroll()
 
@@ -341,18 +341,10 @@ $+f::
 ^!f::prem.flattenAndColour(ksa.prem.labelIris)
 $+d:: ;// deselect edit points after adding transitions
 {
-	if prem.timelineVals = false {
-		prem.__setTimelineValues()
+	if !prem.delayTick(false)
 		return
-	}
-	focusStatus := prem.timelineFocusStatus()
-	if focusStatus == null
-		return
-	if !focusStatus || CaretGetPos(&carx, &cary) {
-		SendInput("+d")
-		return
-	}
-	delaySI(16, "+d", "{Escape}")
+	sleep 16
+	SendInput("{Escape}")
 	return
 }
 
