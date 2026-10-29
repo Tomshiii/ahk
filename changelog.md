@@ -4,6 +4,7 @@
 - ✅ Fixed `getExtensionVersion()` stalling multiple functions
 
 ### 📝 `prem {`
+- ✅ Fixed `__checkTimelineValues()` not checking against all values
 - 📋 `__setRemoteIcon()` will now perform a different button action for `UXP` if the extension is installed via the `.ccx` file
 - 📋 `__getUXPRegistry()` will now automatically regenerate if the `index.js` file has changed
 - 📋 Renamed `rippleTrim()` => `delayTick()`

@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/29
- * @version 2.5.102
+ * @version 2.5.103
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2984,8 +2984,6 @@ class Prem {
             return false
         try {
             for i, v in timelineValsArr {
-                if Mod(i, 2) != 0
-                    continue
                 if v = "timelineVals"
                     continue
                 if this.%v% != premObj_timelineVals[v]
