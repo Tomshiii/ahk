@@ -4,15 +4,14 @@
 #Include Classes\cmd.ahk
 #Include Classes\zip.ahk
 #Include Classes\errorLog.ahk
+#Include Classes\docker.ahk
 #Include Functions\getCCXVersion.ahk
 #Include Other\JSON.ahk
 ; }
 
 SplitPath(A_LineFile,, &buildDir)
 
-
-docker := cmd.result("docker --version")
-if InStr(docker, "'docker' is not recognized") {
+if !docker.isInstalled() {
     e := TargetError("Docker needs to be installed to install UXP plugin", -1)
     errorLog(e)
     MsgBox(e.Message)

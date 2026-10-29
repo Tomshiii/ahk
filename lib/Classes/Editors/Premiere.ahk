@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/29
- * @version 2.5.104
+ * @date 2026/10/30
+ * @version 2.5.105
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,6 +34,7 @@
 #Include Classes\null.ahk
 #Include Classes\statusIcon.ahk
 #Include Classes\cursor.ahk
+#Include Classes\docker.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\WinEvent.ahk
@@ -440,12 +441,18 @@ class Prem {
 
         timelineObj := premUIA_Values.getLivePanel("timelineWindow", uiaObj)
         try timelineUIA := timelineObj[1]
-        if which = "uia" {
-            panes := premUIA_Values.__checkPanes(uiaObj)
-            if panes == null
-                return
+
+        switch which {
+            case "uia":
+                panes := premUIA_Values.__checkPanes(uiaObj)
+                if panes == null
+                    return
+                newState := panes
+            case "cep": newState := (state=1 && this.__%which%Open = true)
+            case "uxp":
+                dockerInstalled := docker.isInstalled(), premRemoteRunning := docker.isContainerRunning("premiereremote-uxp", "premiere-remote")
+                newState := (state=1 && this.__%which%Open = true && dockerInstalled && premRemoteRunning)
         }
-        newState := (which = "cep" || which = "uxp") ? (state=1 && this.__%which%Open = true) : panes
 
         imgIcon := newState ? iconConnected : iconDisonnected
         iconExists := this.%which%Icon != false
@@ -509,6 +516,15 @@ class Prem {
                     }
                     try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\cep\replaceAndReset.ahk")
                 case "uxp":
+                    if !docker.isInstalled() {
+                        errorLog(MethodError("Docker is not currently installed.", -1))
+                        notifyExt.showIfNotExist('premUXPButtonDocker',, "Docker is not currently installed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        return
+                    }
+                    if !docker.isContainerRunning("premiereremote-uxp", "premiere-remote") {
+                        docker.startComposeService("premiereremote-uxp", "premiere-remote")
+                        return
+                    }
                     if !this.__%which%Open {
                         n := WinGet.PremName()
                         try MenuSelect(n.winTitle,, "Window", "UXP Plugins", "PremiereRemote")
@@ -1212,6 +1228,13 @@ class Prem {
                 notifyExt.showIfNotExist('premSocketConnectionErrorUXP',, "A socket connection could not be established to UXP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                 return null
             }
+        }
+
+        dockerInstalled := docker.isInstalled(), dockerIsRunning := docker.isRunning(), premRemoteRunning := docker.isContainerRunning("premiereremote-uxp", "premiere-remote")
+        if !dockerInstalled || !dockerIsRunning || !premRemoteRunning {
+            errorLog(MethodError("Docker server for PremiereRemote UXP panel is not currently running.", -2))
+            notifyExt.showIfNotExist('premPanelDockerError',, "Docker server for PremiereRemote UXP panel is not currently running.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+            return null
         }
 
         if !this.__uxpOpen {
@@ -3370,7 +3393,8 @@ class Prem {
         ;// ensure the user isn't typing
         focusStatus := this.timelineFocusStatus()
         caret := CaretGetPos(&x, &y)
-        if caret || !focusStatus || focusStatus == null {
+        dialogueClass := prem.__checkDialogueClass()
+        if caret || !focusStatus || focusStatus == null || !dialogueClass {
             SendInput(A_ThisHotkey)
             return false
         }
@@ -3688,7 +3712,10 @@ class Prem {
     static __retrieveAudLayerIndex(UIAObj?) {
         if !timelineWindow := premUIA_Values.getLivePanel("timelineWindow", UIAObj?, &premUIA)
             return false
-        timelineUIA := timelineWindow.FindElement({Name:"Timeline", Type:50033})
+        try timelineUIA := timelineWindow.FindElement({Name:"Timeline", Type:50033})
+        catch {
+            return false
+        }
         children    := timelineUIA.Children
 
         UIControlViews := UIA.Filter(children, IsValidICV)

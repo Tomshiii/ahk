@@ -307,14 +307,11 @@ NumpadAdd::prem.numpadGain()
 
 $+c:: ;// stop playback before ripple deleting as it can go funky in laggy comps
 {
-	if prem.timelineVals = false {
-		prem.__setTimelineValues()
-		return
-	}
-	focusStatus := prem.timelineFocusStatus()
-	if focusStatus == null
-		return
-	if !focusStatus || CaretGetPos(&carx, &cary) {
+	timelineVals     := prem.__setTimelineValues()
+	dialogueClass    := prem.__checkDialogueClass()
+	focusStatus      := prem.timelineFocusStatus()
+	caretPos         := CaretGetPos(&carx, &cary)
+	if !timelineVals || focusStatus == null || !dialogueClass || !focusStatus || !!caretPos {
 		SendInput("+c")
 		return
 	}
@@ -330,8 +327,10 @@ $+3::prem.zoomPreviewWindow("+3", true)
 
 $+f::
 {
+	dialogueClass    := prem.__checkDialogueClass()
+	caretPos         := CaretGetPos(&carx, &cary)
 	try defTrans := ksa.prem.addDefaultTransition
-	if !IsSet(defTrans) || Type(defTrans) != "string" {
+	if !IsSet(defTrans) || Type(defTrans) != "string" || !dialogueClass || !!caretPos {
 		SendInput("+f")
 		return
 	}
@@ -343,6 +342,12 @@ $+f::
 ^!f::prem.flattenAndColour(ksa.prem.labelIris)
 $+d:: ;// deselect edit points after adding transitions
 {
+	dialogueClass    := prem.__checkDialogueClass()
+	caretPos         := CaretGetPos(&carx, &cary)
+	if !dialogueClass || !!caretPos {
+		SendInput("+d")
+		return
+	}
 	if !prem.delayTick(false)
 		return
 	sleep 16
@@ -385,10 +390,11 @@ $d::
 	premTitle := WinGet.PremName()
 	checkType := (Type(premTitle) != "Object")
 	checkTitle := isObjHasProp(premTitle, "winTitle", false) && isObjHasProp(premTitle, "titleCheck", -1)
+	dialogueClass := prem.__checkDialogueClass()
 	coord.s()
 	origMouse := obj.MousePos()
 	checkCoords := prem.__checkCoords(origMouse)
-	if !premActive || (premActive && CaretGetPos(&x, &y)) || (premActive && !checkCoords) || (!premTitle || checkType || !checkTitle) {
+	if !premActive || (premActive && CaretGetPos(&x, &y)) || (premActive && !checkCoords) || (!premTitle || checkType || !checkTitle) || !!dialogueClass {
 		SendInput("d")
 		errorLog(Error("cursor isn't within the timeline"))
 		return

@@ -2,10 +2,10 @@
 #Include shared.ahk
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\cmd.ahk
+#Include Classes\docker.ahk
 ; }
 
-docker := cmd.result("docker --version")
-if InStr(docker, "'docker' is not recognized")
+if !docker.isInstalled()
     throw TargetError("Docker needs to be installed", -2)
 SplitPath(A_LineFile,, &buildDir)
 try arg := A_Args[1]

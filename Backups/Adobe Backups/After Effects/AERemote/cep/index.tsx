@@ -271,6 +271,10 @@ export const host = {
     }
   },
 
+  /**
+   * @param {String} [targetNames] a comma delimitted list of all pre-comp names you wish to replace
+   * @param {String} [sequenceName] the name of the sequence you wish to replace the targets with
+   */
   replaceSeqWithSequence: function (targetNames: string, sequenceName: string) {
     app.beginUndoGroup("Replace Linked Comps with " + sequenceName);
 
