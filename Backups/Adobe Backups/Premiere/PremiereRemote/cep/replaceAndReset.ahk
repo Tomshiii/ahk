@@ -4,7 +4,8 @@
 #Include Classes\CLSID_Objs.ahk
 ; }
 
-SetWorkingDir(A_ScriptDir)
+SplitPath(A_LineFile,, &dir)
+SetWorkingDir(dir)
 RunWait("closePremRemote.ahk")
 RunWait("replacePremRemote.ahk false")
 RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk")

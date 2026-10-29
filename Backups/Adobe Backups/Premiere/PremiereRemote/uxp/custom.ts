@@ -2491,17 +2491,10 @@ export async function resetSelection(): Promise<boolean | string> {
 }
 
 let panelVisible = false;
-
-uxp.entrypoints.setup({
-    panels: {
-        "de.sebinside.premiereremote.statuspanel": {
-            create()  { console.log("create");  },
-            show()    { console.log("show");    panelVisible = true;  },
-            hide()    { console.log("hide");    panelVisible = false; },
-            destroy() { console.log("destroy"); panelVisible = false; }
-        }
-    }
-});
+/**
+ * sets panel state var
+ */
+export async function setPanelVisible(v: boolean) { panelVisible = v; }
 
 /**
  * a simple ping to confirm the UXP extension is currently loaded and able to respond

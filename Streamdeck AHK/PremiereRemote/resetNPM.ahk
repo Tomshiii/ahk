@@ -17,7 +17,7 @@ if !DirExist(dir) {
     return
 }
 
-getResp := cmd.result(command, keepWin,, dir)
+getResp := cmd.result(command, keepWin ?? false,, dir)
 resp := RegExReplace(getResp, "^(?:.*\R){4}", "")
 if !InStr(resp, "Build successful. Modifying index.jsx now.") {
     A_Clipboard := resp

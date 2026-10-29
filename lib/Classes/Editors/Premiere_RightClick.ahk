@@ -3,7 +3,7 @@
  * @premVer 26.5.1
  * @author tomshi, taranVH
  * @date 2026/10/29
- * @version 2.5.3.1
+ * @version 2.5.4
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -383,6 +383,7 @@ class rbuttonPrem {
 		this.abort    := false
 		this.wasBusy  := false
 		this.prHwnd   := 0
+		this.__resetClicks()
 		;// sometimes ahk can be a bit slow off the mark if the user clicks multiple buttons at the same time
 		;// as their activation hotkey (and those other buttons are setup with other functions)
 		;// which can cause A_ThisHotkey to become something else other than RButton (ie. <!3)

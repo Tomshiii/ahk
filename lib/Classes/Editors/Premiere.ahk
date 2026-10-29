@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/10/29
- * @version 2.5.103
+ * @version 2.5.104
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -429,10 +429,13 @@ class Prem {
         }
         checkPanelCommand := (which = "cep") ? Format("http://localhost:{2}/{1}", "isPanelOpen", this.portCEP) : Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP)
         switch which {
-            case "cep": this.__%which%Open := (cmd.httpGet(checkPanelCommand, true) == '{"message":"ok.","result":"true"}') ? true : false
+            case "cep":
+                this.__%which%Open := (cmd.httpGet(checkPanelCommand, true) == '{"message":"ok.","result":"true"}') ? true : false
+                CLSID_Objs.writeProp("prem", "__" which "Open", this.__%which%Open)
             case "uxp":
                 resp := cmd.httpGet(checkPanelCommand, true)
                 this.__%which%Open := (resp == '"uxp visible=true"') ? true : false
+                CLSID_Objs.writeProp("prem", "__" which "Open", this.__%which%Open)
         }
 
         timelineObj := premUIA_Values.getLivePanel("timelineWindow", uiaObj)
@@ -498,8 +501,20 @@ class Prem {
             try this.stopPlayback()
             switch which {
                 case "uia": try premUIA_Values.forceReset()
-                case "cep": try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\cep\replaceAndReset.ahk")
-                case "uxp": try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk " isCCX)
+                case "cep":
+                    if !this.__%which%Open {
+                        n := WinGet.PremName()
+                        try MenuSelect(n.winTitle,, "Window", "Extensions", "PremiereRemote")
+                        return
+                    }
+                    try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\cep\replaceAndReset.ahk")
+                case "uxp":
+                    if !this.__%which%Open {
+                        n := WinGet.PremName()
+                        try MenuSelect(n.winTitle,, "Window", "UXP Plugins", "PremiereRemote")
+                        return
+                    }
+                    try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk " isCCX)
             }
         }
         if which = "uxp" {
