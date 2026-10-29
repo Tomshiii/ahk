@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/28
- * @version 2.5.101
+ * @date 2026/10/29
+ * @version 2.5.102
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1642,7 +1642,7 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        if !effNN := premUIA_Values.getLivePanel("effectsWindow") {
+        if !effNN := premUIA_Values.getLivePanel("effectsWindow",, &premUIA) {
             block.Off()
             return
         }
@@ -1664,7 +1664,7 @@ class Prem {
         MouseMove(xpos, ypos, 2) ;in some scenarios if the mouse moves too fast a video editing software won't realise you're dragging. if this happens to you, add ', "2" ' to the end of this mouse move
         SendInput("{Click Up}")
         this.fxSearch("", effNN)
-        this.__focusTimeline()
+        this.__focusTimeline(premUIA)
         block.Off()
     }
 
@@ -1840,7 +1840,7 @@ class Prem {
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls") {
+        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls",, &premUIA) {
             block.Off()
             return
         }
@@ -1856,7 +1856,7 @@ class Prem {
             keys.allWait()
             return
         }
-        this.__focusTimeline()
+        this.__focusTimeline(premUIA)
 
         paramObj := this.__determineEffCtrlObj(effCtrlNN, control, secondText)
         if !IsSet(paramObj) || paramObj = false {
@@ -1927,7 +1927,7 @@ class Prem {
                     ;// hopefully one day adobe fixes this bug - https://community.adobe.com/t5/premiere-pro-bugs/next-previous-edit-point-on-any-track-gets-stuck-in-multi-camera-view/idi-p/15250392#M48002
                     timelineAct := premUIA_Values.__isUiaElementActive('timelineWindow', premUIA)
                     if !timelineAct {
-                        this.__focusTimeline()
+                        this.__focusTimeline(premUIA)
                         sleep 150
                     }
                     startTick := this.__remoteFunc('getPlayheadPosTicks')
@@ -1944,7 +1944,7 @@ class Prem {
                             errorLog("failed to interact with Premiere ComObject", -1)
                         }
                     }
-                    this.__focusTimeline()
+                    this.__focusTimeline(premUIA)
                     keys.allWait(keyswait)
                     blocker.Off()
                     return
@@ -2017,11 +2017,16 @@ class Prem {
         coord.s()
         block.On()
         MouseGetPos(&xpos, &ypos)
-        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls",, &premUIA) || !progMon := premUIA_Values.getLivePanel("programMonitor", premUIA) {
+        if !premUIA := premUIA_Values.initialise() {
             block.Off()
             return
         }
-        this.__focusTimeline() ;focuses the timeline
+        effCtrlNN := premUIA_Values.getLivePanel("effectControls", premUIA), progMon := premUIA_Values.getLivePanel("programMonitor", premUIA)
+        if !effCtrlNN || !progMon {
+            block.Off()
+            return
+        }
+        this.__focusTimeline(premUIA)
         sleep 25
         selected := this.isClipSelected()
         if !selected || selected == null {
@@ -2129,7 +2134,7 @@ class Prem {
             return
         }
         timelineAct := premUIA_Values.__isUiaElementActive('timelineWindow', premUIA)
-        this.__focusTimeline() ;focuses the timeline
+        this.__focusTimeline(premUIA)
         selected := this.isClipSelected()
         if !selected || selected == null {
             block.Off()
@@ -2147,7 +2152,7 @@ class Prem {
         }
         if timelineAct {
             sleep 50
-            this.__focusTimeline() ;focuses the timeline
+            this.__focusTimeline(premUIA)
         }
         block.Off()
     }
@@ -2212,7 +2217,7 @@ class Prem {
         coord.s()
         MouseGetPos(&xpos, &ypos)
         block.On()
-        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls") {
+        if !effCtrlNN := premUIA_Values.getLivePanel("effectControls",, &premUIA) {
             block.Off()
             return
         }
@@ -2228,7 +2233,7 @@ class Prem {
             keys.allWait()
             return
         }
-        this.__focusTimeline()
+        this.__focusTimeline(premUIA)
 
         paramObj := this.__determineEffCtrlObj(effCtrlNN, control, secondText)
         if !IsSet(paramObj) || paramObj = false {
@@ -2466,27 +2471,37 @@ class Prem {
         }
     }
 
-    /** This function will determine if the timeline is already focused or not. If it isn't, it will focus it. */
-	static __focusTimeline() {
-        __uiaMethod() {
+    /**
+     * This function will determine if the timeline is already focused or not. If it isn't, it will focus it.
+     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {true | null}
+     */
+	static __focusTimeline(uiaObj?) {
+        __uiaMethod(uiaObj?) {
             try {
-                if !t := premUIA_Values.getLivePanel('timelineWindow')
+                if !t := premUIA_Values.getLivePanel('timelineWindow', uiaObj?)
                     return false
-                t.FindElement({Type: 50000, Name: "UI_Button"},, -1).Invoke()
+                timelineUIA := t[1]
+                children    := timelineUIA.Children
+                lastEntry   := children[children.Length].Children ;// children[children.Length] = UI_InteractiveControlView
+                if lastEntry.Name != "UI_Button"
+                    throw
+                lastEntry[1].Invoke()                             ;// lastEntry[1] = UI_Button
                 return true
             }
             return false
         }
-        if __uiaMethod()
-            return
-        if !this.__setTimelineValues()
-            return
+        if __uiaMethod(uiaObj?)
+            return true
         focusStatus := this.timelineFocusStatus()
+        if focusStatus == null
+            return null
 		if focusStatus !== false
-            return
+            return true
         sleep 1
         SendEvent(KSA.prem.timelineWindow)
         sleep 25
+        return true
 	}
 
     /**
@@ -2543,11 +2558,11 @@ class Prem {
             return
         }
 
-        this.__focusTimeline()
         if !premUIA := premUIA_Values.initialise() {
             SetTimer(rdisable, 0)
             return
         }
+        this.__focusTimeline(premUIA)
         origTool := this.getSelectedTool(premUIA)
 
         ;// the UIA work above can block while premiere is busy, so check again before committing to anything
@@ -2668,8 +2683,6 @@ class Prem {
      * @returns {null | boolean} `null` indicates that the timeline coordinates could not be determined.
      */
     static timelineFocusStatus() {
-        if !this.__setTimelineValues()
-            return null
         if !this.__setTimelineValues()
             return null
         origcoord := A_CoordModePixel, returnCoord() => A_CoordModePixel := origcoord
@@ -2818,7 +2831,7 @@ class Prem {
                 return false
         }
         if focusTimeline = true
-            this.__focusTimeline()
+            this.__focusTimeline(premUIA)
         return true
     }
 
@@ -4823,7 +4836,7 @@ $!WheelDown::
             SendInput(labelHotkey)
             return
         }
-        this.__focusTimeline()
+        this.__focusTimeline(premUIA)
         selected := this.isClipSelected()
         if !selected || selected == null
             return

@@ -92,8 +92,10 @@ Space:: ;// make space more useful by closing certain windows
 		return
 	}
 	timelineStatus := prem.timelineFocusStatus()
-	if timelineStatus == null
+	if timelineStatus == null {
+		errorLog(ValueError("Couldn't determine timeline focus", -1))
 		return
+	}
 	if !timelineStatus || CaretGetPos(&x, &y) {
 		if !prem.__isSaving()
 			SendInput(KSA.prem.playStop)
@@ -161,7 +163,7 @@ Enter::
 						SendInput("{Escape}")
 						prem.selectTool("selectionTool")
 						sleep 50
-						prem.__focusTimeline()
+						prem.__focusTimeline(premUIA)
 						return
 					}
 					SendInput("{Blind}{" A_ThisHotkey "}")

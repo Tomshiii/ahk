@@ -5,4 +5,4 @@
 ; }
 
 plugin := "PremiereRemote"
-cmd.run(,,, Format('.\UnifiedPluginInstallerAgent.exe /remove "{}"', plugin), workDir, "Hide")
+cmd.run(true,,, Format('.\UnifiedPluginInstallerAgent.exe /remove "{}"', plugin), workDir, "Hide")

@@ -16,7 +16,7 @@ F12::KeyHistory  ;debugging
 */
 ;reloadHotkey;
 #+r::reset.ext_reload() ;this reload script will attempt to reload all* active ahk scripts, not only this main script
-
+#!r::Reload()
 ;hardresetHotkey;
 #+^r::reset.reset() ;this will hard rerun all active ahk scripts
 

@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.15
+;\\v2.35.16
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -261,8 +261,10 @@ GroupAdd("explore_group", "ahk_class File Pilot ahk_exe FPilot.exe")
 Ctrl & \::return
 #HotIf WinActive(editors.Premiere.winTitle) && prem.__checkDialogueClass() && !GetKeyState("F24")
 ;playstopHotkey;
-F18::
+F18:: ;// needs to be here or thio's script won't work
 {
+	if prem.__isSaving() || prem.__autoSaveActive()
+		return
 	timelineFocus := prem.timelineFocusStatus()
 	if timelineFocus == null {
 		errorLog(ValueError("Couldn't determine timeline focus", -1))

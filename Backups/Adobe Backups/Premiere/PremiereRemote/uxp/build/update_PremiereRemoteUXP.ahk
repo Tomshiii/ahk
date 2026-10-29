@@ -28,5 +28,7 @@ manifest := JSON.parse(zip.readFile(buildDir "\de.sebinside.premiereremote_premi
 if VerCompare(manifest["version"], ver) <= 0
     return
 
+if MsgBox("You will now be prompted for elevation a few times to uninstall/reinstall the PremiereRemote UXP extension.`n`nDo you wish to continue?",, "4 262144") = "no"
+    return
 RunWait(Format('"{1}\uninstall_PremiereRemoteUXP.ahk"', buildDir))
 RunWait(Format('"{1}\install_PremiereRemoteUXP.ahk" "{1}\de.sebinside.premiereremote_premierepro.ccx"', buildDir))
