@@ -28,11 +28,11 @@ if !IsSet(Hide) {
     switch which {
         case "PremiereRemote":
             if WinExist(Editors.Premiere.winTitle) {
-                MsgBox("The PremiereRemote extension will need to be closed and reopened within Premiere",, "T1.5")
+                MsgBox("The PremiereRemote extension will need to be closed and reopened within Premiere",, "T2 262144")
             }
         case "AERemote":
             if WinExist(Editors.AE.winTitle) {
-                MsgBox("The AERemote extension will need to be closed and reopened within After Effects",, "T1.5")
+                MsgBox("The AERemote extension will need to be closed and reopened within After Effects",, "T2 262144")
             }
     }
 }

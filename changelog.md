@@ -1,8 +1,9 @@
-# <> Release 2.20.x - 
+# <> Release 2.20.1 - Critical Fixes
 
 ## Functions
 - ✏️ Added `docker {`
 - ✅ Fixed `getExtensionVersion()` stalling multiple functions
+- ✅ Fixed `cmd.result()` not using the `workingDir` in some scenarios
 
 ### 📝 `prem {`
 - ✅ Fixed `__checkTimelineValues()` not checking against all values

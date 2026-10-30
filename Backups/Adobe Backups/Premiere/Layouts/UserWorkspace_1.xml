@@ -136,7 +136,21 @@
 </prop.pair>
 <prop.pair>
 <key>Place</key>
-<float>0.26833388</float>
+<float>0.63703954</float>
+</prop.pair>
+<prop.pair>
+<key>Sub1</key>
+<prop.list>
+<prop.pair>
+<key>Splitter</key>
+<prop.list>
+<prop.pair>
+<key>Orient</key>
+<true/>
+</prop.pair>
+<prop.pair>
+<key>Place</key>
+<float>0.42122015</float>
 </prop.pair>
 <prop.pair>
 <key>Sub1</key>
@@ -277,9 +291,48 @@
 </string>
 </prop.pair>
 <prop.pair>
+<key>HidTabState-3</key>
+<string>&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;AllowViewPersistence&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;FrameViewFlags&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;SaveViewStateWhenDestroyed&lt;/key&gt;
+&lt;false/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPExtensionType&lt;/key&gt;
+&lt;string&gt;panel&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPMinorVersion&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPPanelId&lt;/key&gt;
+&lt;string&gt;exportSettingsPanel&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPPluginId&lt;/key&gt;
+&lt;string&gt;com.adobe.dva.export.settings&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPVersion&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+</string>
+</prop.pair>
+<prop.pair>
 <key>ReanimTabs</key>
 <array>
 <array.type><string/></array.type>
+<string>dvauxpuiUXPPanel:com.adobe.dva.export.settings-&gt;exportSettingsPanel</string>
 <string>dvauxpuiUXPPanel:com.adobe.dva.export.settings-&gt;exportSettingsPanel</string>
 <string>dvauxpuiUXPPanel</string>
 <string>dvauxpuiUXPPanel</string>
@@ -459,20 +512,6 @@
 <key>Sub2</key>
 <prop.list>
 <prop.pair>
-<key>Splitter</key>
-<prop.list>
-<prop.pair>
-<key>Orient</key>
-<true/>
-</prop.pair>
-<prop.pair>
-<key>Place</key>
-<float>0.5039261</float>
-</prop.pair>
-<prop.pair>
-<key>Sub1</key>
-<prop.list>
-<prop.pair>
 <key>Frame</key>
 <prop.list>
 <prop.pair>
@@ -503,6 +542,14 @@
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
+</prop.pair>
+</prop.list>
+</prop.pair>
+</prop.list>
+</prop.pair>
+<prop.pair>
+<key>Sub2Vis</key>
+<true/>
 </prop.pair>
 </prop.list>
 </prop.pair>
@@ -560,8 +607,8 @@
 <key>ReanimTabs</key>
 <array>
 <array.type><string/></array.type>
-<string>AudioClipMixer</string>
 <string>CsxsTabcom.frameio.panel</string>
+<string>AudioClipMixer</string>
 </array>
 </prop.pair>
 <prop.pair>
@@ -593,7 +640,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;HandlerEffectControls.SeparatorRatio&lt;/key&gt;
-&lt;float&gt;0.40059346&lt;/float&gt;
+&lt;float&gt;0.39020771&lt;/float&gt;
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;HandlerEffectControls.SeparatorRatioWhenMaximized&lt;/key&gt;
@@ -745,14 +792,6 @@
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
-</prop.pair>
-</prop.list>
-</prop.pair>
-</prop.list>
-</prop.pair>
-<prop.pair>
-<key>Sub2Vis</key>
-<true/>
 </prop.pair>
 </prop.list>
 </prop.pair>
@@ -3459,48 +3498,10 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>0</int>
+<int type='unsigned' size='32'>4</int>
 </prop.pair>
 <prop.pair>
 <key>HidTabState-0</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;AllowViewPersistence&lt;/key&gt;
-&lt;false/&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;SaveViewStateWhenDestroyed&lt;/key&gt;
-&lt;false/&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPExtensionType&lt;/key&gt;
-&lt;string&gt;panel&lt;/string&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPMinorVersion&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPPanelId&lt;/key&gt;
-&lt;string&gt;de.sebinside.premiereremote.statuspanel&lt;/string&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPPluginId&lt;/key&gt;
-&lt;string&gt;de.sebinside.premiereremote&lt;/string&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;UXPVersion&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>HidTabState-1</key>
 <string>&lt;prop.list&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;FrameViewFlags&lt;/key&gt;
@@ -3513,7 +3514,6 @@
 <key>ReanimTabs</key>
 <array>
 <array.type><string/></array.type>
-<string>dvauxpuiUXPPanel:de.sebinside.premiereremote-&gt;de.sebinside.premiereremote.statuspanel</string>
 <string>CsxsTabtv.misterhorse.premierecomposer.browser</string>
 </array>
 </prop.pair>
@@ -3529,6 +3529,7 @@
 <string>Essential Sound</string>
 <string>dvauxpuiUXPPanel:com.adobe.dva.text-&gt;mainPanel</string>
 <string>Events</string>
+<string>dvauxpuiUXPPanel:de.sebinside.premiereremote-&gt;de.sebinside.premiereremote.statuspanel</string>
 </array>
 </prop.pair>
 <prop.pair>
@@ -3599,6 +3600,44 @@
 &lt;prop.pair&gt;
 &lt;key&gt;FrameViewFlags&lt;/key&gt;
 &lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;/prop.list&gt;
+</string>
+</prop.pair>
+<prop.pair>
+<key>VisTabState-4</key>
+<string>&lt;prop.list&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;AllowViewPersistence&lt;/key&gt;
+&lt;true/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;FrameViewFlags&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;SaveViewStateWhenDestroyed&lt;/key&gt;
+&lt;true/&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPExtensionType&lt;/key&gt;
+&lt;string&gt;panel&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPMinorVersion&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPPanelId&lt;/key&gt;
+&lt;string&gt;de.sebinside.premiereremote.statuspanel&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPPluginId&lt;/key&gt;
+&lt;string&gt;de.sebinside.premiereremote&lt;/string&gt;
+&lt;/prop.pair&gt;
+&lt;prop.pair&gt;
+&lt;key&gt;UXPVersion&lt;/key&gt;
+&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;1&lt;/int&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -3694,7 +3733,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>3</int>
+<int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
 <key>HidTabState-0</key>
@@ -3765,7 +3804,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TL.view.proplist.key&lt;/key&gt;
-&lt;ustring&gt;4&lt;/ustring&gt;
+&lt;ustring&gt;1&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -3794,7 +3833,6 @@
 <string>Timeline</string>
 <string>Timeline</string>
 <string>Timeline</string>
-<string>Timeline</string>
 </array>
 </prop.pair>
 <prop.pair>
@@ -3810,7 +3848,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;TL.view.proplist.key&lt;/key&gt;
-&lt;ustring&gt;3&lt;/ustring&gt;
+&lt;ustring&gt;0&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -3839,20 +3877,6 @@
 &lt;prop.pair&gt;
 &lt;key&gt;TL.view.proplist.key&lt;/key&gt;
 &lt;ustring&gt;1&lt;/ustring&gt;
-&lt;/prop.pair&gt;
-&lt;/prop.list&gt;
-</string>
-</prop.pair>
-<prop.pair>
-<key>VisTabState-3</key>
-<string>&lt;prop.list&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;FrameViewFlags&lt;/key&gt;
-&lt;int type=&apos;signed&apos; size=&apos;32&apos;&gt;4&lt;/int&gt;
-&lt;/prop.pair&gt;
-&lt;prop.pair&gt;
-&lt;key&gt;TL.view.proplist.key&lt;/key&gt;
-&lt;ustring&gt;0&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -14373,7 +14397,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>1</int>
+<int type='unsigned' size='32'>0</int>
 </prop.pair>
 <prop.pair>
 <key>HidTabState-0</key>
@@ -16758,8 +16782,8 @@
 <array>
 <array.type><string/></array.type>
 <string>Project:b35c85bf-658c-4432-b223-a57e11f075f1:1000000</string>
-<string>CsxsTabcom.misterhorse.premierecomposer.browser</string>
 <string>Graphics</string>
+<string>CsxsTabcom.misterhorse.premierecomposer.browser</string>
 </array>
 </prop.pair>
 <prop.pair>
@@ -16791,7 +16815,7 @@
 &amp;lt;PremiereData Version=&amp;quot;3&amp;quot;&amp;gt;
 	&amp;lt;ProjectViewState ObjectRef=&amp;quot;1&amp;quot;/&amp;gt;
 	&amp;lt;ProjectViewState ObjectID=&amp;quot;1&amp;quot; ClassID=&amp;quot;18fb911d-4f21-4b7b-b196-b250dad79838&amp;quot; Version=&amp;quot;3&amp;quot;&amp;gt;
-		&amp;lt;ProjectViewState.ID&amp;gt;a294f07b-e59c-413d-8235-4ae1ad2b7532&amp;lt;/ProjectViewState.ID&amp;gt;
+		&amp;lt;ProjectViewState.ID&amp;gt;ff43c1e3-59bb-4461-977e-b35691a0bb65&amp;lt;/ProjectViewState.ID&amp;gt;
 		&amp;lt;Columns.List ObjectRef=&amp;quot;2&amp;quot;/&amp;gt;
 		&amp;lt;ProjectViewState.OriginalID&amp;gt;84c04016-3ef2-43a0-bc7f-da414740b2c7&amp;lt;/ProjectViewState.OriginalID&amp;gt;
 		&amp;lt;ProjectViewState.BinID&amp;gt;-1&amp;lt;/ProjectViewState.BinID&amp;gt;
@@ -17352,7 +17376,7 @@
 &lt;/prop.pair&gt;
 &lt;prop.pair&gt;
 &lt;key&gt;ProjectView.ID&lt;/key&gt;
-&lt;ustring&gt;a294f07b-e59c-413d-8235-4ae1ad2b7532&lt;/ustring&gt;
+&lt;ustring&gt;ff43c1e3-59bb-4461-977e-b35691a0bb65&lt;/ustring&gt;
 &lt;/prop.pair&gt;
 &lt;/prop.list&gt;
 </string>
@@ -25733,10 +25757,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>-8</int>
-<int type='signed' size='32'>239</int>
-<int type='signed' size='32'>1539</int>
-<int type='signed' size='32'>1098</int>
+<int type='signed' size='32'>612</int>
+<int type='signed' size='32'>214</int>
+<int type='signed' size='32'>2159</int>
+<int type='signed' size='32'>1073</int>
 </array>
 </prop.pair>
 <prop.pair>

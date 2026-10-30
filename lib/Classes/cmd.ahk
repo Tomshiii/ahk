@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2026/10/16
- * @version 1.2.6
+ * @date 2026/10/30
+ * @version 1.2.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,7 +69,7 @@ class cmd {
      * @param {String} command is the command you wish to send to the commandline
      * @param {Boolean} [hide=true] whether you wish for the cmd window to launch hidden or not
      * @param {Boolean} [returnObj=false] whether you wish for the function to return a string containing the response or an object containing `StdOut`, `StdErr` & `ExitCode`
-     * @param {String} [workingDir=""] the working dir that will be passed to `pipeCommand()` if `hide` is set to `true`
+     * @param {String} [workingDir=""] the working dir to use
      * @returns {String/Object} either a string containing the response from the commandline or an object containing `StdOut`, `StdErr` & `ExitCode`
      */
     static result(command, hide := true, returnObj := false, workingDir := "") {
@@ -80,6 +80,8 @@ class cmd {
         }
         __whichOutput(stOutput, erOutput) => ((stOutput != "") ? stOutput : erOutput)
         if !hide {
+            if (workingDir != "")
+                command := 'cd /d "' workingDir '" && ' command
             shell := ComObject("WScript.Shell")
             exec := shell.Exec(A_ComSpec " /C " command)
             return __whichOutput(exec.StdOut.ReadAll(), exec.StdErr.ReadAll())
