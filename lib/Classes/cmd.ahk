@@ -3,7 +3,7 @@
  * @file cmd.ahk
  * @author tomshi
  * @date 2026/11/02
- * @version 1.2.8
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -20,12 +20,15 @@ class cmd {
      * @param {Boolean} [admin=false] is whether you want the commandline to be run elevated
      * @param {Boolean} [wait=true] whether you want this function to use `RunWait()` or `Run()`. It will default to `RunWait()`
      * @param {Boolean} [keepWindow=false] whether you wish for the cmd window to remain once it has finished excecuting your command
-     * @param {Varadic-String} runParams* the paramaters you wish to pass to run()
+     * @param {Varadic | String} runParams* the paramaters you wish to pass to run()
      * ```
      * runParams[1] ;// the command you wish to pass to run()
      * runParams[2] ;// the workingdir you wish run() to use
      * runParams[3] ;// any options you wish to pass to run()
      * ```
+     * @returns {Object | Integer | Boolean}
+     * - `wait = true`: an object `{exitCode, PID}`. If `Run` throws, the error is logged and both properties are `null`.
+     * - `wait = false`: the PID as an integer. If `Run` throws, the error is logged and `false` is returned.
      */
     static run(admin := false, wait := true, keepWindow := false, runParams*) {
         if runParams.Length > 3 {
@@ -58,19 +61,41 @@ class cmd {
                     var := RunWait(elevation A_ComSpec A_Space commandOrKeep A_Space command, Params[2], Params[3], &returnPID)
                     return {exitCode: var, PID: returnPID}
             }
+        } catch as err {
+            errorLog(err)
+            switch wait {
+                case false: return false
+                default: return {exitCode: null, PID: null}
+            }
         }
     }
 
     /**
-     * This function sends commands to the commandline and returns the result from either stOutput or erOutput.
+     * Internal helper. Picks which output stream to treat as the response.
+     * @param {String} stOutput the standard output
+     * @param {String} erOutput the standard error
+     * @returns {String} `stOutput` if it isn't empty, otherwise `erOutput`
+     */
+    static __whichOutput(stOutput, erOutput) => ((stOutput != "") ? stOutput : erOutput)
+
+    /**
+     * This function sends commands to the commandline and returns the response and, optionally, the exit code.
      * @link `!hide` code orginally from [here](https://lexikos.github.io/v2/docs/commands/Run.htm#Examples)
      * @link `hide` code originally from [here](https://discord.com/channels/115993023636176902/1209347616513720342/1209485394270224406)
      * @author lexikos, DepthTrawler, g33k
      * @param {String} command is the command you wish to send to the commandline
-     * @param {Boolean} [hide=true] whether you wish for the cmd window to launch hidden or not
-     * @param {Boolean} [returnObj=false] whether you wish for the function to return a string containing the response or an object containing `StdOut`, `StdErr` & `ExitCode`
+     * @param {Boolean} [hide=true] whether you wish for the command to run with no visible window
+     * @param {Boolean} [returnObj=false] whether you wish for the function to return a string containing the response or an object containing the response, both output streams and the `ExitCode`
      * @param {String} [workingDir=""] the working dir to use
-     * @returns {String/Object} either a string containing the response from the commandline or an object containing `StdOut`, `StdErr` & `ExitCode`
+     * @returns {String | Object}
+     * - `returnObj = false`: a string containing `StdOut`, or `StdErr` if `StdOut` is empty.
+     * - `returnObj = true`: an object `{response, StdOut, StdErr, ExitCode}`, where `response` is `StdOut`, or `StdErr` if `StdOut` is empty. The shape is the same whether `hide` is `true` or `false`.
+     *
+     * **`hide = true`** runs through `pipeCommand()` (`CREATE_NO_WINDOW`). If `command` contains any of `& | < > ^ %` it is run through `cmd /S /C "command"` so the shell can interpret those operators. Otherwise it is launched directly, and if that launch throws it falls back to `cmd /S /C`.
+     *
+     * **`hide = false`** runs through `WScript.Shell.Exec` as `cmd /C`. Output is captured, so it is **not** displayed in the window. `workingDir` is applied with `cd /d`.
+     *
+     * Always check `ExitCode` for success rather than testing whether the output is empty.
      */
     static result(command, hide := true, returnObj := false, workingDir := "") {
         if (hide != true && hide != false) || (returnObj != true && returnObj != false) || Type(command) != "string" {
@@ -78,18 +103,31 @@ class cmd {
             errorLog(PropertyError("Incorrect value type in Parameter #1", -1),,, 1)
             return
         }
-        __whichOutput(stOutput, erOutput) => ((stOutput != "") ? stOutput : erOutput)
         if !hide {
             if (workingDir != "")
                 command := 'cd /d "' workingDir '" && ' command
-            shell := ComObject("WScript.Shell")
-            exec := shell.Exec(A_ComSpec " /C " command)
-            return __whichOutput(exec.StdOut.ReadAll(), exec.StdErr.ReadAll())
+            shell  := ComObject("WScript.Shell")
+            exec   := shell.Exec(A_ComSpec " /C " command)
+            stdOut := exec.StdOut.ReadAll()
+            stdErr := exec.StdErr.ReadAll()
+            resp   := cmd.__whichOutput(stdOut, stdErr)
+            if !returnObj
+                return resp
+            return {response: resp, StdOut: stdOut, StdErr: stdErr, ExitCode: exec.ExitCode}
         }
-        try return pipeCommand(command, workingDir, returnObj)
-        catch {
-            return pipeCommand(A_ComSpec " /C " command, workingDir, returnObj)
+
+        shellCmd := A_ComSpec ' /S /C "' command '"'
+        if RegExMatch(command, "[&|<>^%]")
+            r := pipeCommand(shellCmd, workingDir, returnObj)
+        else {
+            try r := pipeCommand(command, workingDir, returnObj)
+            catch
+                r := pipeCommand(shellCmd, workingDir, returnObj)
         }
+
+        if !returnObj
+            return r
+        return {response: this.__whichOutput(r.StdOut, r.StdErr), StdOut: r.StdOut, StdErr: r.StdErr, ExitCode: r.ExitCode}
     }
 
     /**
