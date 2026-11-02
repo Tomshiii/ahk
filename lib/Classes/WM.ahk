@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2026/10/02
- * @version 1.3.12
+ * @date 2026/11/02
+ * @version 1.3.13
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -143,33 +143,43 @@ class WM {
             case "autosave_restart_playback":         %res[2]%.restartPlayback := res[1]
             case "NotifyNotExist":
                 paramSplit := StrSplit(SubStr(backup, StrLen("NotifyNotExist,")+1), "|||")
-                tag := paramSplit[1]
-                title := paramSplit[2]
-                msgg := paramSplit[3]
-                image := paramSplit[4]
-                sound := paramSplit[5]
-                callback := paramSplit[6]
-                options := paramSplit[7]
-                duration := RegExMatch(options, "dur=(\d+)", &match) ? match[1] : "8"
-                duration := (duration=0) ? "1" : duration
+                tag      := paramSplit[1]
+                title    := paramSplit[2]
+                msgg     := paramSplit[3]
+                image    := paramSplit[4]
+                sound    := paramSplit[5]
+                ; callback := paramSplit[6]
+                options  := paramSplit[7]
+                duration := RegExMatch(options, "i)dur=(\d+)", &match) ? match[1] : "8"
+                duration := (duration = 0) ? "1" : duration
+
                 if !Notify.Exist(tag) && !this.storeNotify.Has(tag) {
-                    this.storeNotify.Set(tag, true)
-                    SetTimer(() => Notify.Show(title, msgg, image, sound, callback, options " tag=" tag), -1)
-                    SetTimer(__checkFinished.Bind(tag), -(duration*1000))
-                    __checkFinished(tag, *) {
-                        static count := 1
+                    this.storeNotify.Set(tag, 0) ; value doubles as the tick counter
+                    checkObj := __checkFinished.Bind(tag)
+                    callback := __callback.Bind(tag, checkObj)
+                    showObj  := () => Notify.Show(title, msgg, image, sound, callback, options " tag=" tag)
+
+                    SetTimer(showObj, -1)
+                    SetTimer(checkObj, -(duration*1000))
+                    ; WinWait("_" tag,, 1) ;// doing anything here causes audio not to play
+                    return
+
+                    __callback(tag, checkObj, *) {
                         notifyExt.destroyDupes(tag)
-                        if !Notify.Exist(tag) || count > 30 {
+                        this.storeNotify.Delete(tag)
+                        SetTimer(checkObj, 0)
+                    }
+                    __checkFinished(tag, *) {
+                        notifyExt.destroyDupes(tag)
+                        count := this.storeNotify.Has(tag) ? this.storeNotify[tag] : 0
+                        if !Notify.Exist(tag) {
                             this.storeNotify.Delete(tag)
                             SetTimer(, 0)
                             return
                         }
-                        count += 1
+                        this.storeNotify[tag] := count + 1
                         SetTimer(, -16)
-                        return
                     }
-                    ; WinWait("_" tag,, 1) ;// doing anything here causes audio not to play
-                    return
                 }
 
             default:

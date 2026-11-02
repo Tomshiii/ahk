@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/10/30
- * @version 2.5.105
+ * @date 2026/11/02
+ * @version 2.5.106
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -181,7 +181,9 @@ class Prem {
     static __isUXPInstalled() {
         if this.__uxpInstalled = false || this.__uxpInstalled = true
             return this.__uxpInstalled
-        if (DirExist(this.remoteDirUXP) && FileExist(this.indexFileUXP)) {
+        ver := getExtensionVersion()
+        dockerInstalled := docker.isInstalled()
+        if ver && dockerInstalled && (DirExist(this.remoteDirUXP) && FileExist(this.indexFileUXP)) {
             this.__uxpInstalled := true
             return true
         }
@@ -280,6 +282,7 @@ class Prem {
     ;// PremiereRemote variables
     static remoteDirCEP := A_AppData "\Adobe\CEP\extensions\PremiereRemote"
     static remoteDirUXP := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\client"
+    static ccxDirUXP    := EnvGet("CommonProgramFiles") "\Adobe\UXP\Plugins\External"
     static indexFileCEP := this.remoteDirCEP "\host\src\index.tsx"
     static indexFileUXP := this.remoteDirUXP "\src\generated\registry.ts"
     static funcDirUXP   := this.remoteDirUXP "\src\actions"
@@ -784,7 +787,12 @@ class Prem {
                     return false
                 }
                 try {
-                    open := json.parse(cmd.httpGet(Format("http://localhost:{1}/isPanelOpen", this.portCEP)))
+                    if !WinGet.waitUntilResponsive(WinExist(this.exeTitle), 5000) {
+                        notifyExt.showIfNotExist('premNotResponsive',, "Premiere appears to be not responsive.`nThe current function (prem.__checkPremRemoteFunc) will abort.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        return false
+                    }
+                    getPanel := cmd.httpGet(Format("http://localhost:{1}/isPanelOpen", this.portCEP))
+                    open := json.parse(getPanel)
                     if open["result"] != "true" && open["result"] != true {
                         errorLog(MethodError("PremiereRemote CEP panel isn't open.", -1))
                         if alerts = true

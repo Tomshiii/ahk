@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2026/10/30
- * @version 1.2.7
+ * @date 2026/11/02
+ * @version 1.2.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -93,22 +93,37 @@ class cmd {
     }
 
     /**
-     * Uses a comobj to make a http request
-     * @param {String} [url] the url string to send over com
-     * @param {Boolean} [async=false] whether to send the command synchronous or asynchornously
-     * @returns {String | null}
+     * Uses a ComObject to make an HTTP GET request, retrying when the connection is dropped.
+     * @param {String} url the url string to send over com
+     * @param {Boolean} [async=false] if `false`, `Send()` blocks until the response arrives; if `true`, `Send()` returns immediately and `WaitForResponse()` then blocks until the response is ready. Either way this function does not return until the request completes.
+     * @param {Integer} [retries=3] the total number of attempts to make (not additional retries) when the connection is terminated abnormally
+     * @param {Integer} [timeoutMs=5000] timeout in `ms`, applied separately to each of the DNS resolve, connect, send, and receive stages
+     * @returns {String | null} the response text, or null if the request failed
      */
-    static httpGet(url, async := false) {
-        try {
-            whr := ComObject("WinHttp.WinHttpRequest.5.1")
-            whr.Open("GET", url, async)  ;// false = synchronous
-            whr.Send()
-            if async = true
-                whr.WaitForResponse()
-            return whr.ResponseText
-        } catch as e {
-            errorLog(e)
-            return null
+    static httpGet(url, async := false, retries := 3, timeoutMs := 5000) {
+        loop retries {
+            try {
+                whr := ComObject("WinHttp.WinHttpRequest.5.1")
+                whr.SetTimeouts(timeoutMs, timeoutMs, timeoutMs, timeoutMs)
+                whr.Open("GET", url, async)
+                whr.SetRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                whr.SetRequestHeader("Connection", "close")
+                whr.Send()
+                if async
+                    whr.WaitForResponse()
+                return whr.ResponseText
+            } catch as e {
+                if InStr(e.Message, "The connection with the server was terminated abnormally") {
+                    if A_Index >= retries {
+                        errorLog(e)
+                        return null
+                    }
+                    sleep(150 * A_Index)
+                    continue
+                }
+                errorLog(e)
+                return null
+            }
         }
     }
 

@@ -394,7 +394,7 @@ $d::
 	coord.s()
 	origMouse := obj.MousePos()
 	checkCoords := prem.__checkCoords(origMouse)
-	if !premActive || (premActive && CaretGetPos(&x, &y)) || (premActive && !checkCoords) || (!premTitle || checkType || !checkTitle) || !!dialogueClass {
+	if !premActive || (premActive && CaretGetPos(&x, &y)) || (premActive && !checkCoords) || (!premTitle || checkType || !checkTitle) || !dialogueClass {
 		SendInput("d")
 		errorLog(Error("cursor isn't within the timeline"))
 		return
