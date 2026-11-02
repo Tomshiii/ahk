@@ -789,6 +789,7 @@ class Prem {
                 try {
                     if !WinGet.waitUntilResponsive(WinExist(this.exeTitle), 5000) {
                         notifyExt.showIfNotExist('premNotResponsive',, "Premiere appears to be not responsive.`nThe current function (prem.__checkPremRemoteFunc) will abort.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        errorLog(MethodError("Premiere appears to be not responsive.", -1))
                         return false
                     }
                     getPanel := cmd.httpGet(Format("http://localhost:{1}/isPanelOpen", this.portCEP))
@@ -826,6 +827,11 @@ class Prem {
                     return false
                 }
                 try {
+                    if !WinGet.waitUntilResponsive(WinExist(this.exeTitle), 5000) {
+                        notifyExt.showIfNotExist('premNotResponsive',, "Premiere appears to be not responsive.`nThe current function (prem.__checkPremRemoteFunc) will abort.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        errorLog(MethodError("Premiere appears to be not responsive.", -1))
+                        return false
+                    }
                     open := cmd.httpGet(Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP))
                     if open != '"uxp visible=true"' && open != true {
                         errorLog(MethodError("PremiereRemote UXP panel isn't open.", -1))

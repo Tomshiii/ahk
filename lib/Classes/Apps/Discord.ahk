@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2026/09/08
- * @version 1.7.9
+ * @date 2026/11/02
+ * @version 1.7.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -95,7 +95,7 @@ class discord {
                     dms := InStr(currentTitle, "|") ? false : true ;// determines if we're in dm's or a server
                 }
                 if dms != false || disableAutoReplyPing != true {
-                    discMenu.FindCachedElement({Type: 50011, AutomationId: "message-reply"}).ControlClick()
+                    discMenu.FindCachedElement({Type: 50011, AutomationId: "message-reply"}).Invoke()
                     blocker.Off()
                     return
                 }
@@ -104,33 +104,35 @@ class discord {
                     blocker.Off()
                     return
                 }
-                try findReply.ControlClick()
+                try findReply.Invoke()
                 catch {
                     blocker.Off()
                     return
                 }
-                try this.DiscordEl.WaitElement({Type:50000, Name:"Mention ON"}, 800).ControlClick()
+                try this.DiscordEl.WaitElement({Type:50000, Name:"Mention ON"}, 800).Toggle()
                 ;// get rid of the annoying popup window
                 MouseMove(2, 2, 1, "R")
                 MouseMove(-2, -2, 1, "R")
-            case "edit": try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-edit"}).ControlClick()
-            case "react": try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-add-reaction"}).ControlClick()
-            case "report": try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-report"}).ControlClick()
+            case "edit": try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-edit"}).Invoke()
+            case "react": try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-add-reaction"}).Expand()
+            case "report": try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-report"}).Invoke()
             case "delete":
                 if GetKeyState("Shift", "P") {
                     SendInput("{Shift Down}")
-                    try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-delete"}).ControlClick()
+                    try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-delete"}).Invoke()
                     SendInput("{Shift Up}")
                 } else {
-                    try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-delete"}).ControlClick()
+                    try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-delete"}).Invoke()
                 }
         }
         blocker.Off()
     }
 
     /**
-     * This function will search for and automatically click on either unread servers or unread channels depending on which image you feed into the function
+     * This function will search for and automatically click on either unread servers or unread channels depending on parameter `which`. As this function currently relies of a `PixelSearch` to find unread message indicators, it may not function as intended in different themes.
      *
+     * > #### [!Warning]
+     * > As this function is reliant on `UIA` and discord is constantly updating their `UIA` tree, this function may be prone to randomly breaking.
      * @param {String} which whether you wish to search for unread `servers` or `channels`.
      */
     static Unread(which := "servers")
@@ -150,37 +152,44 @@ class discord {
             return
         }
         try header  := this.DiscordEl.FindElement({Type:50026, Name: "Channel header", LocalizedType: "region"})
-        try directM := header.FindElement({Type: 50020, Name: "Direct Message"})
+        try directM := header.FindElement({Type: 50020, Name: "Direct Messages"})
         try groupDM := header.FindElement({Type: 50020, Name: "Group DM"})
         headerText := ((IsSet(directM) && IsObject(directM)) || (IsSet(groupDM) && IsObject(groupDM))) ? true : false
 
         __findGrey(x, y, returnVals := false) {
             coord.s()
-            if PixelSearch(&x, &y, x, y, x + 8, saveY + height - 60, 0xe3e3e6) {
+            if PixelSearch(&x2, &y2, x, y, x + 12, saveY + height - 60, 0xDCDCDF) {
                 if returnVals = true
-                    return {x: x, y: y}
-                MouseMove(x+20, y+3, 2)
+                    return {x: x2, y: y2}
+                MouseMove(x2+20, y2+3, 2)
                 SendInput("{Click}")
                 MouseMove(origMousePos.x, origMousePos.y, 2)
+                return true
             }
+            return false
         }
 
         switch which {
             case "servers":
                 getServerName := (headerText = true || !InStr(currentTitle, "|") && SubStr(currentTitle, 1, 1) = "@") ? "Direct Messages" : SubStr(currentTitle, start := InStr(currentTitle, "|", , -1) + 2, StrLen(currentTitle) - (start + 9))
-                activeServer := this.DiscordEl.FindElement({Type:50024, Name: getServerName, matchmode:"Substring"})
+                sideBar := this.discordEl.FindElement({Type: 50026, Name: "Servers sidebar"})
+                try activeServer := sideBar.FindElement({ClassName:"selected__", matchmode:"Substring"}).Parent
+                catch {
+                    errorLog(TargetError("Failed to find active server.", -1, getServerName),,, true)
+                    return
+                }
                 findFirstGrey := __findGrey(xpos, ypos, true)
                 if !findFirstGrey
                     return
                 serverY := (getServerName = "Direct Messages") ? activeServer.location.y + 1 : activeServer.location.y + 1
                 if findFirstGrey.y != serverY {
                     __findGrey(xpos, ypos)
-                    try this.DiscordEl.WaitElement({Name: "Mark as Read", Type: 50000}, 2000).ControlClick()
+                    try this.DiscordEl.WaitElement({Name: "Mark as Read", Type: 50000}, 2000).Invoke()
                     return
                 }
                 ypos := activeServer.location.y + activeServer.location.h + 2
-                __findGrey(xpos, ypos, height)
-                try this.DiscordEl.WaitElement({Name: "Mark as Read", Type: 50000}, 2000).ControlClick()
+                __findGrey(xpos, ypos)
+                try this.DiscordEl.WaitElement({Name: "Mark as Read", Type: 50000}, 2000).Invoke()
                 return
             case "channels":
                 if headerText = true {
@@ -190,7 +199,7 @@ class discord {
                 getLoc := this.DiscordEl.FindElement({Type: 50026, AutomationId: "channels"})
 
                 __findGrey(getLoc.location.x, getLoc.location.y, getLoc.location.h)
-                try this.DiscordEl.WaitElement({Name: "Mark as Read", Type: 50000}, 2000).ControlClick()
+                try this.DiscordEl.WaitElement({Name: "Mark as Read", Type: 50000}, 2000).Invoke()
                 return
         }
     }
