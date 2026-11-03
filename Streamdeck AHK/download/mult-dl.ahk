@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/10/28
+ * @date 2026/11/03
  ***********************************************************************/
-global currentVer := "1.3.14"
+global currentVer := "1.4.0"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -130,7 +130,10 @@ class multiDL extends tomshiBasic {
         this.AddText("Section x25 y" startY+35, "URL: ")
         this.AddEdit("x+12 y+-20 r1 vlistURL w165 -Wrap", checkClipboard)
         this.AddButton("x+10 y+-27", "Add").OnEvent("Click", this.__addListURL.Bind(this))
-        this.AddListView("x25 y+5 r5 vlist w340 Grid -Multi NoSort -ReadOnly -Hdr", ["URL"])
+        this.AddListView("x25 y+5 r5 vlist w340 Grid -Multi NoSort -ReadOnly -Hdr", ["URL", "Progress"])
+        this["list"].ModifyCol(1, 215)
+        this["list"].ModifyCol(2, 105)
+        this["list"].OnNotify(-12, this.__customDraw.Bind(this))   ; NM_CUSTOMDRAW
         this["list"].OnEvent("ContextMenu", listContextMenu.Bind(this))
         ContextMenu := Menu()
         ContextMenu.Add("Remove", listRemove)
@@ -140,6 +143,8 @@ class multiDL extends tomshiBasic {
             ContextMenu.Show(X, Y)
         }
         listRemove(*) {
+            if this.downloading
+                return
             this["list"].Delete(this["list"].GetNext(, "F"))
         }
         this.AddButton("vDL w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
@@ -193,14 +198,20 @@ class multiDL extends tomshiBasic {
 
         ;// adding current folder path
         this.AddText("BackgroundTrans x9 yp+35", "Current Download Path").SetFont("underline")
-        this.AddButton("x+15 w60 h25 y+-18", "change").OnEvent("Click", this.__changeDlDir.bind(this))
+        this.AddButton("vDirChange x+15 w60 h25 y+-18", "change").OnEvent("Click", this.__changeDlDir.bind(this))
         this.AddButton("x+6 w60 h25 y+-25", "show").OnEvent("Click", (*) => (Run(this.getFile)))
         showDir := this.__cullDirectory(this.getFile)
         this.AddText("vCurrDir BackgroundTrans x9 y+5 h50 r1 w" listwid+10, showDir)
         this["currDir"].SetFont("Bold s10")
 
         this.show(, {DarkColour: "F0F0F0"})
-        LVICE := LVICE_XXS(this["list"])
+        this.OnEvent("Close", this.__onClose.Bind(this), -1)
+        OnExit((*) => this.__killDownloads())
+
+        this.lvice := LVICE_XXS(this["list"])
+        ;// swap the lib's NM_DBLCLK handler for a wrapper that ignores the progress column
+        this["list"].OnNotify(-3, this.lvice.DoubleClickFunc, 0)
+        this["list"].OnNotify(-3, this.__listDblClick.Bind(this))
 
         ;// attempt check package updates
         ;// ================================================================
@@ -242,6 +253,11 @@ class multiDL extends tomshiBasic {
     defaultListText := "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files."
     checkCommand := 'powershell -c "$env:Path = [System.Environment]::GetEnvironmentVariable(`'Path`',`'Machine`') + `';`' + [System.Environment]::GetEnvironmentVariable(`'Path`',`'User`'); Get-Command -Name {1} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"'
 
+    downloading := false
+    activeProc  := 0
+    lvice := unset
+    job := 0
+
     __getPosObj(ctrl) {
         this[ctrl].GetPos(&x, &y, &width, &height)
         return {x: x, y: y, width: width, height: height}
@@ -263,6 +279,8 @@ class multiDL extends tomshiBasic {
         if InStr(this["listURL"].text, ",") {
             urls := StrSplit(this["listURL"].text, ",", " `t")
             for v in urls {
+                if SubStr(v, 1, 1) = '"' && SubStr(v, -1, 1) = '"'
+                    v := SubStr(v, 2, StrLen(v)-2)
                 if !isURL(v)
                     continue
                 this["list"].Add("", v)
@@ -286,11 +304,12 @@ class multiDL extends tomshiBasic {
         newArr.RemoveAt(1, 1)
         for v in newArr {
             cmnd := Format('choco outdated | Select-String "{1}"', v)
-            getres := cmd.result("powershell -c " cmnd)
-            if v = "yt-dlp"
-                v := "yt-dlp --pre"
-            if getres != ""
+            getres := cmd.result('powershell -c "' cmnd '"')
+            if getres != "" {
+                if v = "yt-dlp"
+                    v := "yt-dlp --pre"
                 buildStr := (buildStr = "") ? Format("choco upgrade chocolatey --yes && choco upgrade {1} --yes ", v) : Format("{1} && choco upgrade {2} --yes ", buildStr, v)
+            }
         }
         return buildStr
     }
@@ -303,6 +322,7 @@ class multiDL extends tomshiBasic {
         this["DL"].Enabled := false, this["Aud"].Enabled := false, this["thumb"].Enabled := false
         this["DL_single"].Enabled := false, this["Aud_single"].Enabled := false, this["thumb_single"].Enabled := false
         this["DL_part"].Enabled := false, this["Aud_part"].Enabled := false
+        this["DirChange"].Enabled := false
         cookiesSingle  := ((this["cookies_single"].value = 1) ? "--cookies-from-browser firefox" : "")
         cookiesMulti   := ((this["cookies_multi"].value = 1)  ? "--cookies-from-browser firefox" : "")
         cookiesPart    := ((this["cookies_part"].value = 1)   ? "--cookies-from-browser firefox" : "")
@@ -329,30 +349,29 @@ class multiDL extends tomshiBasic {
                         case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle, dlPlaySingle)
                     }
             case 2: ;// multi
-                values := this["list"].GetCount()
-                if values = 0 {
+                rows := this["list"].GetCount()
+                if rows = 0 {
                     yt.doAlert := false
                     goto break
                 }
-                this.Hide()
-                list := []
-                loop values {
-                    list.Push(this["list"].GetText(A_Index))
-                }
-                for v in list {
-                    switch {
-                        case (vidOrAud = "vid" && this["deprioritise"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, v,, false,, cookiesMulti, dlPlayMulti)
-                        case (vidOrAud = "vid" && this["deprioritise"].value = true):
-                            altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesMulti
-                            yt.download(altCommand, this.getFile, v,, false,, "", dlPlayMulti)
-                        case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, v,, false,, cookiesMulti, dlPlayMulti)
-                        case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, v,, false,, cookiesMulti, dlPlayMulti)
+                this.downloading := true
+                urls := []
+                loop rows
+                    urls.Push(this["list"].GetText(A_Index, 1))
+                for url in urls {
+                    this.__multiDownload(A_Index, url, vidOrAud, cookiesMulti, dlPlayMulti, yt)
+                    if A_Index < urls.Length {
+                        ;// reduce the risk of youtube thinking you're a bot
+                        this["list"].Modify(A_Index + 1, "Col2", "Queued")
+                        Sleep(Random(18, 26) * 1000)
                     }
-                    ;// reduce the risk of youtube thinking you're a bot
-                    pickDelay := Random(18, 26) "000"
-                    sleep(pickDelay)
                 }
-                this["list"].Delete()
+                ;// remove finished rows, leave failed ones visible
+                loop (n := this["list"].GetCount()) {
+                    if this["list"].GetText(n - A_Index + 1, 2) = "100"
+                        this["list"].Delete(n - A_Index + 1)
+                }
+                this.downloading := false
             case 3: ;// part
                 this.timecodeValue := (Format("{:02}", this["H1"].value) ":" Format("{:02}", this["M1"].value) ":" Format("{:02}", this["S1"].value) "-" Format("{:02}", this["H2"].value) ":" Format("{:02}", this["M2"].value) ":" Format("{:02}", this["S2"].value))
                 if this.timecodeValue == "00:00:00-00:00:00" || this["partURL"].value = "" {
@@ -374,6 +393,7 @@ class multiDL extends tomshiBasic {
         this["DL"].Enabled := true, this["Aud"].Enabled := true, this["thumb"].Enabled := true
         this["DL_single"].Enabled := true, this["Aud_single"].Enabled := true, this["thumb_single"].Enabled := true
         this["DL_part"].Enabled := true, this["Aud_part"].Enabled := true
+        this["DirChange"].Enabled := true
 
         this.show(, {DarkColour: "F0F0F0"})
         yt := ""
@@ -475,6 +495,252 @@ class multiDL extends tomshiBasic {
             MsgBox("An error occurred while attempting to update the exe. Please try again later")
             return
         }
+    }
+
+    /** ==== The below functions are AI written/assisted for the progress bar functionality ==== */
+    __getJob() {
+        if this.job
+            return this.job
+        this.job := DllCall("CreateJobObject", "Ptr", 0, "Ptr", 0, "Ptr")
+        info := Buffer(A_PtrSize = 8 ? 144 : 112, 0)          ; JOBOBJECT_EXTENDED_LIMIT_INFORMATION
+        NumPut("UInt", 0x2000, info, 16)                       ; JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        DllCall("SetInformationJobObject", "Ptr", this.job, "Int", 9, "Ptr", info, "UInt", info.Size)
+        return this.job
+    }
+
+    __killDownloads(*) {
+        if this.job
+            DllCall("TerminateJobObject", "Ptr", this.job, "UInt", 1)
+    }
+
+    __listDblClick(LV, lParam) {
+        subItem := NumGet(lParam + A_PtrSize * 3, 4, "Int")   ; 0-based column
+        if subItem != 0
+            return
+        this.lvice.DoubleClick(LV, lParam)
+    }
+
+    __multiDownload(row, url, vidOrAud, cookies, playlist, yt) {
+        LV := this["list"]
+        folder := RTrim(this.getFile, "\")
+        if !DirExist(folder)
+            DirCreate(folder)
+
+        extra := cookies (playlist ? "" : " --no-playlist")
+        base  := '-N 8 -o "' yt.defaultFilename '" --windows-filenames --no-overwrites --encoding utf-8 --newline --progress '
+            . '--progress-template "download:PROG|%(info.playlist_index)s|%(info.n_entries)s|%(info.format_id)s|%(progress._percent_str)s" '
+            . '--print "after_move:FINAL %(filepath)s" '
+        switch {
+            case vidOrAud = "vid" && !this["deprioritise"].value:
+                args := base '-f "bestvideo+bestaudio/best" --merge-output-format mp4 ' extra
+                expected := 2   ;// video + audio streams
+            case vidOrAud = "vid":
+                args := base '-f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --merge-output-format mp4 ' extra
+                expected := 2
+            case vidOrAud = "aud":
+                args := base '--extract-audio --audio-format wav ' extra
+                expected := 1
+            case vidOrAud = "thumb":
+                args := base '--write-thumbnail --skip-download ' extra
+                expected := 1
+        }
+
+        finalPaths := [], item := 1, total := 1, fmt := "", stream := 1, shown := -1
+        LV.Modify(row, "Col2", 0)
+
+        onLine(line) {
+            if RegExMatch(line, "PROG\|([^|]*)\|([^|]*)\|([^|]*)\|\s*([\d.]+)%", &m) {
+                idx   := IsInteger(m[1]) ? Integer(m[1]) : 1      ; "NA" when it isn't a playlist
+                total := IsInteger(m[2]) ? Integer(m[2]) : 1
+                if idx != item {
+                    item := idx, stream := 1, fmt := m[3]          ; new playlist item
+                } else if m[3] != fmt {
+                    if fmt != ""
+                        stream++                                   ; second stream (audio) of the same item
+                    fmt := m[3]
+                }
+                within  := Min(1, ((stream - 1) + Float(m[4]) / 100) / expected)
+                overall := Min(99, Floor(((item - 1) + within) / total * 100))
+                if overall != shown {
+                    shown := overall
+                    LV.Modify(row, "Col2", overall)
+                }
+            } else if RegExMatch(line, "^FINAL\s+(.+)$", &m)
+                finalPaths.Push(Trim(m[1]))
+        }
+
+        exitCode := this.__runStream(Format('yt-dlp {1} -P "{2}" "{3}"', args, folder, url), onLine)
+        if exitCode != 0 {
+            LV.Modify(row, "Col2", "Failed")
+            return false
+        }
+
+        ;// reencode to h264 if needed
+        if vidOrAud = "vid" {
+            for finalPath in finalPaths {
+                if !FileExist(finalPath)
+                    continue
+                LV.Modify(row, "Col2", "Checking codec...")
+                codec := Trim(cmd.result(Format('ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "{1}"', finalPath)), " `t`r`n")
+                if codec != "h264" && codec != "h265"
+                    this.__reencode(finalPath, row, A_Index, finalPaths.Length, yt)
+            }
+        }
+        LV.Modify(row, "Col2", 100)
+        return true
+    }
+
+    /** reencodes a file to h264 in place, driving the blue bar from ffmpeg's -progress output */
+    __reencode(path, row, idx, count, yt) {
+        LV := this["list"]
+        SplitPath(path, &name, &dir)
+        temp := dir "\temp_" name
+        label := "Reencode" (count > 1 ? " " idx "/" count : "")
+
+        durTxt := Trim(cmd.result(Format('ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "{1}"', path)), " `t`r`n")
+        duration := IsNumber(durTxt) ? Float(durTxt) : 0
+
+        LV.Modify(row, "Col2", "E0|" label)
+        shown := -1
+        onLine(line) {
+            if duration > 0 && RegExMatch(line, "^out_time_us=(\d+)", &m) {
+                pct := Min(99, Floor(Integer(m[1]) / (duration * 1000000) * 100))
+                if pct != shown {
+                    shown := pct
+                    LV.Modify(row, "Col2", "E" pct "|" label)
+                }
+            }
+        }
+
+        enc := (useNVENC() = true) ? yt.defaultGPU : yt.defaultCPU
+        ffCmd := Format('ffmpeg -y -loglevel error -nostats -progress pipe:1 -i "{1}" {2} -c:a aac -b:a 192k "{3}"', path, enc, temp)
+        exitCode := this.__runStream(ffCmd, onLine)
+
+        if exitCode = 0 && FileExist(temp) {
+            FileDelete(path)
+            FileMove(temp, path)
+        } else if FileExist(temp)
+            FileDelete(temp)               ; failed: keep the original file untouched
+    }
+
+    /** runs a command hidden and feeds each line of its output to onLine through an in-memory pipe (nothing touches disk). Messages keep pumping, so the GUI stays responsive. Returns the exit code */
+    __runStream(cmdLine, onLine) {
+        hRead := 0, hWrite := 0, code := 0, avail := 0, got := 0
+        sa := Buffer(A_PtrSize * 3, 0)
+        NumPut("UInt", sa.Size, sa, 0)
+        NumPut("Int", 1, sa, A_PtrSize * 2)                      ; bInheritHandle
+        if !DllCall("CreatePipe", "Ptr*", &hRead, "Ptr*", &hWrite, "Ptr", sa, "UInt", 0)
+            return -1
+        DllCall("SetHandleInformation", "Ptr", hRead, "UInt", 1, "UInt", 0)   ; read end not inherited
+
+        x64 := (A_PtrSize = 8)
+        si := Buffer(x64 ? 104 : 68, 0)
+        NumPut("UInt", si.Size, si, 0)
+        NumPut("UInt", 0x100, si, x64 ? 60 : 44)                 ; STARTF_USESTDHANDLES
+        NumPut("Ptr", hWrite, si, x64 ? 88 : 60)                 ; hStdOutput
+        NumPut("Ptr", hWrite, si, x64 ? 96 : 64)                 ; hStdError
+        pi := Buffer(A_PtrSize * 2 + 8, 0)
+        cmdBuf := Buffer((StrLen(cmdLine) + 1) * 2, 0)
+        StrPut(cmdLine, cmdBuf)
+
+        ok := DllCall("CreateProcess", "Ptr", 0, "Ptr", cmdBuf, "Ptr", 0, "Ptr", 0, "Int", true
+            , "UInt", 0x08000004, "Ptr", 0, "Ptr", 0, "Ptr", si, "Ptr", pi)
+        DllCall("CloseHandle", "Ptr", hWrite)
+        if !ok {
+            DllCall("CloseHandle", "Ptr", hRead)
+            return -1
+        }
+        hProc   := NumGet(pi, 0, "Ptr")
+        hThread := NumGet(pi, A_PtrSize, "Ptr")
+        DllCall("AssignProcessToJobObject", "Ptr", this.__getJob(), "Ptr", hProc)
+        DllCall("ResumeThread", "Ptr", hThread)
+        DllCall("CloseHandle", "Ptr", hThread)
+        this.activeProc := hProc
+
+        buf := Buffer(4096), partial := ""
+        loop {
+            DllCall("PeekNamedPipe", "Ptr", hRead, "Ptr", 0, "UInt", 0, "Ptr", 0, "UInt*", &avail, "Ptr", 0)
+            if avail {
+                DllCall("ReadFile", "Ptr", hRead, "Ptr", buf, "UInt", Min(avail, buf.Size), "UInt*", &got, "Ptr", 0)
+                partial .= StrGet(buf, got, "UTF-8")
+                lines := StrSplit(partial, "`n", "`r")
+                partial := lines.Pop()
+                for l in lines
+                    onLine(l)
+                continue
+            }
+            if DllCall("WaitForSingleObject", "Ptr", hProc, "UInt", 0) = 0 {
+                DllCall("PeekNamedPipe", "Ptr", hRead, "Ptr", 0, "UInt", 0, "Ptr", 0, "UInt*", &avail, "Ptr", 0)
+                if !avail
+                    break
+                continue
+            }
+            Sleep(40)
+        }
+        if partial != ""
+            onLine(partial)
+        DllCall("GetExitCodeProcess", "Ptr", hProc, "UInt*", &code)
+        DllCall("CloseHandle", "Ptr", hProc)
+        DllCall("CloseHandle", "Ptr", hRead)
+        this.activeProc := 0
+        return code
+    }
+
+    /** paints a bar when column 2 holds a number, otherwise leaves the text (Queued / Failed / Reencoding...) alone */
+    __customDraw(LV, lParam) {
+        static CDDS_PREPAINT := 0x1, CDDS_ITEMPREPAINT := 0x10001, CDDS_SUBITEM := 0x30001
+            , CDRF_NOTIFYITEMDRAW := 0x20, CDRF_NOTIFYSUBITEMDRAW := 0x20, CDRF_SKIPDEFAULT := 0x4
+        stage := NumGet(lParam, A_PtrSize * 3, "UInt")
+        if stage = CDDS_PREPAINT
+            return CDRF_NOTIFYITEMDRAW
+        if stage = CDDS_ITEMPREPAINT
+            return CDRF_NOTIFYSUBITEMDRAW
+        if stage != CDDS_SUBITEM
+            return 0
+
+        rcOff := A_PtrSize * 5
+        if NumGet(lParam, (A_PtrSize = 8) ? 88 : 56, "Int") + 1 != 2
+            return 0
+        row := NumGet(lParam, rcOff + 16, "UPtr") + 1
+        txt := LV.GetText(row, 2)
+        if IsInteger(txt) {
+            pct := Integer(txt), fillCol := 0x50C850, label := pct "%"            ; green (BGR)
+        } else if RegExMatch(txt, "^E(\d+)\|(.*)$", &m) {
+            pct := Integer(m[1]), fillCol := 0xE68232, label := m[2] " " pct "%"  ; blue (BGR)
+        } else
+            return 0
+        hdc := NumGet(lParam, A_PtrSize * 4, "Ptr")
+
+        L := NumGet(lParam, rcOff,      "Int") + 2
+        T := NumGet(lParam, rcOff + 4,  "Int") + 2
+        R := NumGet(lParam, rcOff + 8,  "Int") - 2
+        B := NumGet(lParam, rcOff + 12, "Int") - 2
+
+        rc := Buffer(16)
+        bgBrush   := DllCall("gdi32\CreateSolidBrush", "UInt", 0xE0E0E0, "Ptr")
+        fillBrush := DllCall("gdi32\CreateSolidBrush", "UInt", fillCol, "Ptr")
+        NumPut("Int", L, "Int", T, "Int", R, "Int", B, rc)
+        DllCall("user32\FillRect", "Ptr", hdc, "Ptr", rc, "Ptr", bgBrush)
+        NumPut("Int", L, "Int", T, "Int", L + (R - L) * pct // 100, "Int", B, rc)
+        DllCall("user32\FillRect", "Ptr", hdc, "Ptr", rc, "Ptr", fillBrush)
+        NumPut("Int", L, "Int", T, "Int", R, "Int", B, rc)
+        DllCall("gdi32\SetBkMode", "Ptr", hdc, "Int", 1)
+        DllCall("user32\DrawText", "Str", label, "Int", -1, "Ptr", rc, "UInt", 0x25, "Ptr", hdc)
+        NumPut("Int", L, "Int", T, "Int", R, "Int", B, rc)
+        DllCall("gdi32\SetBkMode", "Ptr", hdc, "Int", 1)
+        DllCall("user32\DrawText", "Ptr", hdc, "Str", label, "Int", -1, "Ptr", rc, "UInt", 0x25)
+        DllCall("gdi32\DeleteObject", "Ptr", bgBrush)
+        DllCall("gdi32\DeleteObject", "Ptr", fillBrush)
+        return CDRF_SKIPDEFAULT
+    }
+
+    __onClose(*) {
+        if !this.downloading
+            ExitApp()
+        if MsgBox("A download is in progress. Closing will cancel it.`n`nExit anyway?", "Cancel downloads?", "0x4 0x30 0x1000") = "No"
+            return true ; non-empty return blocks the library's handler and the close
+        this.__killDownloads()
+        ExitApp()
     }
 }
 

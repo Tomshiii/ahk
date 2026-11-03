@@ -19,3 +19,12 @@
 📍 `showIfNotExist()`
 - ✅ Fixed always using a duration of `8` if passed in caps; ie. `DUR=`
 - ✅ Fixed clicking the GUI to close it not restarting the duration
+
+## Other Changes
+
+🔗 `mult-dl.ahk`
+###### *(v1.3.14 -> v1.4.0)*
+- ✅ Fixed always prompting for updates even when none were available
+- 📋 Comma delimited list of URLs added to `Multi` will now work if individually encased in `"`
+- 📋 `Multi` tab now shows progress bars
+- 📋 `change` button will now be disabled during downloads

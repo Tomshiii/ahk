@@ -104,8 +104,6 @@ class Prem {
 
         regInst := this.__isRegInstalledVer()
         if A_ScriptName = "Core Functionality.ahk" && regInst != false && this.__isNodeInstalled() != false {
-
-
             ;// check for premremote and NPM before setting timers
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
             if (getNPM != false && getNPM != "") {

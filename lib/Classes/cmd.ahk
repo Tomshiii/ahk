@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2026/11/02
- * @version 1.3.0
+ * @date 2026/11/03
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -117,7 +117,8 @@ class cmd {
         }
 
         shellCmd := A_ComSpec ' /S /C "' command '"'
-        if RegExMatch(command, "[&|<>^%]")
+        unquoted := RegExReplace(command, '"[^"]*"')
+        if RegExMatch(unquoted, "[&|<>^%]")
             r := pipeCommand(shellCmd, workingDir, returnObj)
         else {
             try r := pipeCommand(command, workingDir, returnObj)

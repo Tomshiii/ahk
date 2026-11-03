@@ -1,6 +1,7 @@
 ; { \\ #Includes
 #Include rclone.ahk
 #Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
 ; }
 
 gPath := FileSelect("1", "G:\Shared drives\The Boys\2. Videos\1. The Boys", "Choose file to copy")
