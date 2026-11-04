@@ -245,6 +245,11 @@ export const host = {
     try {
       const viewer = app.activeViewer;
       if (!viewer) return false;
+
+      // Fit commands need a comp viewer context
+      const isFit = (zoom === "fit" || zoom === "fit100");
+      if (isFit && viewer.type !== ViewerType.VIEWER_COMPOSITION) return false;
+
       viewer.setActive();
 
       // Fit modes have no property, so they use the menu commands

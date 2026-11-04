@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/10/20
- * @version 1.5.24
+ * @date 2026/11/04
+ * @version 1.5.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -858,14 +858,13 @@ class AE {
         if checkTitle || checkCanSave {
             return false
         }
-        aeWin := UIA.ElementFromHandle(aeName.winTitle,, false)
+        aeWin := UIA.ElementFromHandle(aeName.winTitle A_Space this.winTitle,, false)
 
         if zoom = "Fit" || zoom = "Fit up to 100%" {
-            try listItem := aeWin.FindElement({Type:50007, Name:zoom})
-            catch
-                return false
-            try listItem.select()
-            catch {
+            try {
+                combo := aeWin.FindElement({Type:50003, Name:"Magnification percentage", matchmode:"Substring"})
+                combo.FindElement({Type:50007, Name:zoom}).Select()
+            } catch {
                 return false
             }
             return true
@@ -877,7 +876,7 @@ class AE {
 
         try {
             editTextBox := aeWin.FindElement({Type:50004, Name:"Magnification percentage", matchmode:"Substring"})
-            percent := aeWin.FindElement({Type:50020, Name:"%"})
+            percent := editTextBox.WalkTree("+1") ;// finds {Type: 50020, Name:"%"}
         } catch
             return false
 
