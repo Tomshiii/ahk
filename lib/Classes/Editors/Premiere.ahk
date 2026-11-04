@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/11/04
- * @version 2.5.108
+ * @version 2.5.109
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -919,8 +919,11 @@ class Prem {
         whichFunc := StrReplace(whichFunc, "\", "/")
         if !registry := this.__getUXPRegistry(forceRefresh)
             return false
-        if !registry.Has(whichFunc)
-            return false
+        if !registry.Has(whichFunc) {
+            whichFunc := this.__warnUXPFuncCase(whichFunc, registry)
+            if !registry := this.__getUXPRegistry(forceRefresh)
+                return false
+        }
 
         lastSlash := InStr(whichFunc, "/",, -1)
         return {
@@ -929,6 +932,22 @@ class Prem {
             funcName: SubStr(whichFunc, lastSlash+1),
             params: registry[whichFunc]["params"]
         }
+    }
+
+    /**
+     * if `whichFunc` only fails to match because of casing, warn the user with the correct path
+     * @returns {String} the correctly cased registry key, or `""` if there's no case-insensitive match either
+     */
+    static __warnUXPFuncCase(whichFunc, registry) {
+        for key in registry {
+            if key = whichFunc {    ;// `=` is case-insensitive on strings
+                msg := "UXP function path has incorrect casing.`nPassed: " whichFunc "`nExpected: " key
+                errorLog(ValueError(msg, -2, whichFunc))
+                notifyExt.showIfNotExist("premUXPFuncCase", "prem.__remoteUXP()", msg, 'C:\Windows\System32\imageres.dll|icon80',,, "theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=800 POS=BC")
+                return key
+            }
+        }
+        return ""
     }
 
     /**
@@ -3826,6 +3845,8 @@ class Prem {
     }
 
     /**
+     * If the user is using Premiere `v27.1` or greater, this function will use the API to determine all locked tracks (*this is currently in beta, or atleast is coming soon to the beta version*). Else
+     *
      * Uses UIA to determine any video/audio tracks that are locked. Will encounter issues if some layers are not currently visible as they no longer exist within the UIA tree.
      * > #### [!Caution]
      * > This function returns a `0` indexed array of locked layers. This is to line up with how tracks are generally indexed within the Premiere api
@@ -3839,6 +3860,28 @@ class Prem {
      * ```
      */
     static determineLockedTracks(UIAObj?) {
+        if this.__checkPremRemoteFunc(['properties/getPremVer', 'custom/getVideoTracks', 'custom/getAudioTracks'], "uxp", false) {
+            premVer := this.__remoteUXP('properties/getPremVer')
+            if VerCompare(premVer, "27.1.0") >= 0 {
+                audTracks := this.__remoteUXP('custom/getAudioTracks')
+                vidTracks := this.__remoteUXP('custom/getVideoTracks')
+                lockedTracks := JSON.stringify(this.__remoteUXP('shared/trackLocks/getAllTrackLockStates'))
+                video := {total: vidTracks, notVisible: false}
+                audio := {total: audTracks, notVisible: false}
+                videoArr := []
+                audioArr := []
+                for trackType, _ in lockedTracks {
+                    for trackIndex, status in trackType {
+                        if status = "Locked"
+                            %trackType%Arr.Push(trackIndex-1)
+                    }
+                }
+                video.locked := videoArr
+                audio.locked := audioArr
+                return {video: video, audio: audio}
+            }
+        }
+
         premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
         if !premUIA
             return false

@@ -6,6 +6,7 @@
 ### 📝 `prem {`
 - ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession
 - 📋 `__isUXPInstalled()` will now check that; the `ccx` extension has been installed, and that `docker` is installed
+- 📋 `determineLockedTracks()` can now use `UXP` to return its object on `Premiere` versions greater than `27.1.0`
 
 ### 📝 `discord {`
 - 📋 `button()` now makes use of `Toggle()`/`Invoke()` `UIA` functions instead of relying on `ControlClick()`
@@ -23,6 +24,9 @@
 📍 `showIfNotExist()`
 - ✅ Fixed always using a duration of `8` if passed in caps; ie. `DUR=`
 - ✅ Fixed clicking the GUI to close it not restarting the duration
+
+### 📝 `PremiereRemote`
+- ✏️ Added `getAllTrackLockStates()`, `toggleTrackLocks()`
 
 ## Other Changes
 - 📋 `uninstall_PremiereRemoteUXP.ahk` will now attempt to delete any stale, leftover directories
