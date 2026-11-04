@@ -4,10 +4,12 @@
 #Include Classes\CLSID_Objs.ahk
 ; }
 
-SplitPath(A_LineFile,, &dir)
-SetWorkingDir(dir)
+SplitPath(A_LineFile,, &currentDir)
+origWorkingDir := A_WorkingDir
+SetWorkingDir(currentDir)
 RunWait("closePremRemote.ahk")
 RunWait("replacePremRemote.ahk false")
 RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk")
 RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\openPremRemote.ahk")
 try CLSID_Objs.writeProp("prem", "__cepFuncMap", false)
+A_WorkingDir := origWorkingDir

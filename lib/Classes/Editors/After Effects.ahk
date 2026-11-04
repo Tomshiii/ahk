@@ -4,7 +4,7 @@
  * @aeVer 26.5
  * @author tomshi
  * @date 2026/11/04
- * @version 1.5.25
+ * @version 1.5.26
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -837,9 +837,8 @@ class AE {
             return false
         }
 
-        if this.__checkAERemoteFunc("setViewerZoom", "cep", false) {
-            param := (zoom = "Fit") ? "fit" : (zoom = "Fit up to 100%") ? "fit100" : Number(zoom)
-            if this.__remoteFunc("setViewerZoom", false, "zoom=" param) = true
+        if this.__checkAERemoteFunc("setViewerZoom", "cep", false) && !isFit {
+            if this.__remoteFunc("setViewerZoom", false, "zoom=" Number(zoom)) = true
                 return true
         }
 
@@ -859,33 +858,47 @@ class AE {
             return false
         }
         aeWin := UIA.ElementFromHandle(aeName.winTitle A_Space this.winTitle,, false)
-
-        if zoom = "Fit" || zoom = "Fit up to 100%" {
-            try {
-                combo := aeWin.FindElement({Type:50003, Name:"Magnification percentage", matchmode:"Substring"})
-                combo.FindElement({Type:50007, Name:zoom}).Select()
-            } catch {
-                return false
-            }
-            return true
-        }
-
         coord.s()
         origMouse := obj.MousePos()
         SetMouseDelay(0)
+        if zoom = "Fit" || zoom = "Fit up to 100%" {
+            ;// we need to resort to manually clicking and opening the dropdown
+            ;// because if we don't ae will throw up an error window complaining
+            try {
+                origCoords := obj.MousePos()
+                zoom := "Fit up to 100%"
+                combo := aeWin.FindElement({Type:50003, Name:"Magnification percentage", matchmode:"Substring"})
+                combo.Click()
+
+                if !WinWait("OS_PopupWindow" A_Space ae.winTitle,, 3) {
+                    ;//
+                    return false
+                }
+                newHandle := UIA.ElementFromHandle("OS_PopupWindow" A_Space ae.winTitle,, false)
+                dropdown := newHandle.FindElement({Type: 50020, Name:zoom})
+                MouseMove(dropdown.location.x, dropdown.Location.y, 0)
+                SendInput("{LButton}")
+                MouseMove(origCoords.x, origCoords.y, 0)
+                return true
+            } catch {
+                MouseMove(origCoords.x, origCoords.y, 0)
+                return false
+            }
+        }
 
         try {
             editTextBox := aeWin.FindElement({Type:50004, Name:"Magnification percentage", matchmode:"Substring"})
             percent := editTextBox.WalkTree("+1") ;// finds {Type: 50020, Name:"%"}
-        } catch
+        } catch {
             return false
+        }
 
         MouseMove(percent.Location.x - 10, editTextBox.Location.y + 5)
         SendInput("{Click}")
+        MouseMove(origMouse.x, origMouse.y)
 
         try editText := aeWin.FindElements({Type:50004, Name:"OS_EditText"})
         catch {
-            MouseMove(origMouse.x, origMouse.y)
             return false
         }
 
@@ -898,13 +911,10 @@ class AE {
                 }
             }
         }
-        if !el {
-            MouseMove(origMouse.x, origMouse.y)
+        if !el
             return false
-        }
         el.value := zoom
         SendInput("{Enter}")
-        MouseMove(origMouse.x, origMouse.y)
         return true
     }
 

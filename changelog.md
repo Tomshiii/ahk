@@ -1,6 +1,7 @@
 # <> Release 2.20.x - 
 
 ## Functions
+- ✅ Fixed `ae.setViewerZoom()` causing `After Effects` to show an error message when in the `Layer` view
 
 ### 📝 `prem {`
 - ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession

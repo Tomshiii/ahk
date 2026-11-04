@@ -246,27 +246,7 @@ export const host = {
       const viewer = app.activeViewer;
       if (!viewer) return false;
 
-      // Fit commands need a comp viewer context
-      const isFit = (zoom === "fit" || zoom === "fit100");
-      if (isFit && viewer.type !== ViewerType.VIEWER_COMPOSITION) return false;
-
       viewer.setActive();
-
-      // Fit modes have no property, so they use the menu commands
-      if (zoom === "fit" || zoom === "fit100") {
-        const names = zoom === "fit"
-          ? ["Fit"]
-          : ["Fit up to 100%", "Fit Up To 100%"];
-        for (let i = 0; i < names.length; i++) {
-          const id = app.findMenuCommandId(names[i]);
-          if (id) {
-            app.executeCommand(id);
-            return true;
-          }
-        }
-        return false;
-      }
-
       const n = Number(zoom);
       if (isNaN(n) || n < 1 || n > 1600) return false;
       viewer.views[0].options.zoom = n / 100;
