@@ -5,7 +5,7 @@
  * @premVer 26.5.2
  * @author tomshi
  * @date 2026/11/04
- * @version 2.5.107
+ * @version 2.5.108
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -311,6 +311,10 @@ class Prem {
     static uiaIcon := false
     static uiaIconState := false
     static uxpOffset := false
+
+    ;// mouseDrag
+    static mouseDrag__gen := 0
+    static mouseDrag__lbOwner := 0   ; which activation currently has LButton held
 
     /** determines if some premiere errors are open as they tend to steal focus/inputs. Most common are Frame recursion errors & the `Please select a clip` warning. */
     static __OSwindow() => WinExist("OS_PopupWindow ahk_class DroverLord - Window Class " this.winTitle)
@@ -2554,6 +2558,14 @@ class Prem {
         return true
 	}
 
+    /** helper function for `mouseDrag()` to help avoid rapid activations from holding down `LButton` */
+    static __lbRelease(owner) {
+        if this.mouseDrag__lbOwner = owner {
+            this.mouseDrag__lbOwner := 0
+            SendInput("{LButton Up}")
+        }
+    }
+
     /**
      * Press a button *(ideally a mouse button)*, this function then changes to the "hand tool" and clicks so you can drag and easily move along the timeline. This function will then make an attempt at returning the selected tool back to the original selection; if that fails it will fall back to whatever is passed into the `toolorig` parameter.
      *
@@ -2583,6 +2595,11 @@ class Prem {
                 return
             SetTimer(rdisable, -50)
         }
+        myGen := ++this.mouseDrag__gen
+        sessionDone := false
+        ;// a previous activation may still be holding LButton under a buried thread: let go before we start
+        if this.mouseDrag__lbOwner
+            this.__lbRelease(this.mouseDrag__lbOwner)
 
         if this.__OSwindow() && WinActive(this.winTitle) {
             if !this.__closeOSWindow() {
@@ -2641,6 +2658,7 @@ class Prem {
                 }
             }
             if !isKey || (i != 0 && !GetKeyState(activationKey := GetKeyName(hot[i]), "P")) {
+                sessionDone := true
                 SetTimer(rdisable, 0)
                 if WinGet.waitUntilResponsive(prHwnd, 500)
                     this.__focusTimeline()
@@ -2671,26 +2689,55 @@ class Prem {
                 downSent    := false
                 wasBusy     := false
 
+                if (myGen != this.mouseDrag__gen) || sessionDone
+                    return
+
+                released := false
+                watch := 0
                 try {
                     if GetKeyState(activationKey, "P") {
-                        ;// never fire the tool swap + click into a busy premiere (it would replay them late
-                        ;// and out of order). wait for it to answer, but give up if the user lets go
-                        if WinGet.waitUntilResponsive(prHwnd, 2000, activationKey) && GetKeyState(activationKey, "P") {
-                            SendInput(premtool "{LButton Down}")
-                            toolChanged := true
-                            downSent    := true
-                            ;// same as KeyWait(activationKey, "T" timeout) but we keep an eye on premiere while we wait
-                            start := A_TickCount
-                            while !KeyWait(activationKey, "T0.03") && (A_TickCount - start) < (timeout * 1000) {
-                                if WinGet.isBusy(prHwnd, 50)
-                                    wasBusy := true
+                        if WinGet.waitUntilResponsive(prHwnd, 2000, activationKey) {
+                            Critical "On"
+                            if (myGen = this.mouseDrag__gen) && !sessionDone && GetKeyState(activationKey, "P") {
+                                SendInput(premtool "{LButton Down}")
+                                this.mouseDrag__lbOwner := myGen
+                                toolChanged := true
+                                downSent    := true
+
+                                ;// independent release: a timer still fires when this thread is buried under a newer hotkey thread
+                                watch := watchKey
+                                SetTimer(watch, 5)
+                            }
+                            Critical "Off"
+
+                            if downSent {
+                                start := A_TickCount
+                                while !released && !KeyWait(activationKey, "T0.03") && (A_TickCount - start) < (timeout * 1000) {
+                                    if WinGet.isBusy(prHwnd, 50)
+                                        wasBusy := true
+                                }
                             }
                         }
                     }
                 } finally {
-                    ;// always release LButton if we pressed it, even if something above throws
+                    Critical "Off"
+                    if watch
+                        SetTimer(watch, 0)
                     if downSent
-                        SendInput("{LButton Up}")
+                        this.__lbRelease(myGen)
+                    sessionDone := true
+                }
+
+                watchKey() {
+                    if myGen != this.mouseDrag__gen { ; a newer activation took over and already released for us
+                        SetTimer(watchKey, 0)
+                        return
+                    }
+                    if !GetKeyState(activationKey, "P") {
+                        released := true
+                        SetTimer(watchKey, 0)
+                        this.__lbRelease(myGen)
+                    }
                 }
 
                 try {

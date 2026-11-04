@@ -1,7 +1,10 @@
 # <> Release 2.20.x - 
 
 ## Functions
-- 📋 `prem.__isUXPInstalled()` will now check that; the `ccx` extension has been installed, and that `docker` is installed
+
+### 📝 `prem {`
+- ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession
+- 📋 `__isUXPInstalled()` will now check that; the `ccx` extension has been installed, and that `docker` is installed
 
 ### 📝 `discord {`
 - 📋 `button()` now makes use of `Toggle()`/`Invoke()` `UIA` functions instead of relying on `ControlClick()`
