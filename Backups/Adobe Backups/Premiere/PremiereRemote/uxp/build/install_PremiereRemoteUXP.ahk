@@ -3,6 +3,7 @@
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\cmd.ahk
 #Include Classes\docker.ahk
+#Include Classes\ptf.ahk
 ; }
 
 if !docker.isInstalled()
@@ -13,5 +14,10 @@ ccxPath := IsSet(arg) ? arg : buildDir "\de.sebinside.premiereremote_premierepro
 if !IsSet(ccxPath) || !FileExist(ccxPath)
     return
 
-cmd.run(true,, true, Format('.\UnifiedPluginInstallerAgent.exe /install "{}"', ccxPath), workDir)
+installEx := cmd.run(true,,, Format('.\UnifiedPluginInstallerAgent.exe /install "{}"', ccxPath), workDir, "Hide")
+if installEx.exitCode != 0 {
+    errorLog(MethodError("Installing PremiereRemote failed. ExitCode: " installEx.exitCode),,, true)
+    return
+}
+try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk")
 ;// installs to; A_ProgramFiles "\Common Files\Adobe\UXP\Plugins\External\de.sebinside.premiereremote_4.x.x"

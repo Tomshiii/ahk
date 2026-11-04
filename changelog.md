@@ -21,6 +21,7 @@
 - ✅ Fixed clicking the GUI to close it not restarting the duration
 
 ## Other Changes
+- 📋 `uninstall_PremiereRemoteUXP.ahk` will now attempt to delete any stale, leftover directories
 
 🔗 `mult-dl.ahk`
 ###### *(v1.3.14 -> v1.4.0)*

@@ -1,8 +1,15 @@
-; { \\ #Includes
-#Include '%A_Appdata%\tomshi\lib'
-#Include Classes\cmd.ahk
-; }
-getExtensionVersion(extName := "PremiereRemote") {
+/**
+ * Attempts to retrieve the currently installed `ccx` extension
+ * @param [extName="PremiereRemote"] name of the extension you wish to search for
+ * @param [returnDir=false] determines whether to return a string of the first installed version of the extension, or an object containing the version, and the dir path of the extension
+ * @returns {String | Object}
+ * ```
+ * `""`                             ;// Not installed
+ * `4.0.0`                          ;// `returnDir` = `false`
+ * `{version: String, dir: String}` ;// `returnDir` = `true`
+ * ```
+ */
+getExtensionVersion(extName := "PremiereRemote", returnDir := false) {
     roots := [
         EnvGet("CommonProgramFiles") "\Adobe\UXP\Plugins\External",  ; per-machine (UPI)
     ]
@@ -19,7 +26,7 @@ getExtensionVersion(extName := "PremiereRemote") {
                 && !RegExMatch(json, '"(?:id|name)"\s*:\s*"' RegExReplace(extName, "[\\.*?+\[\]{}|()^$]", "\$0") '"')
                 continue
             if RegExMatch(json, '"version"\s*:\s*"([^"]+)"', &m)
-                return m[1]
+                return (returnDir = false ? m[1] : {version: m[1], dir: root})
         }
     }
     return ""

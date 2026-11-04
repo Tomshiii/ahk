@@ -60,7 +60,7 @@ if isCCx {
     }
     try uxpProg["prog"].value := 40
     if WinExist(prem.winTitle)
-        prem.__remoteUXP('common/reloadPanel')
+        try prem.__remoteUXP('common/reloadPanel')
     try uxpProg["prog"].value := 50
 }
 
