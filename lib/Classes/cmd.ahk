@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2026/11/03
- * @version 1.3.1
+ * @date 2026/11/05
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -136,7 +136,7 @@ class cmd {
      * @param {String} url the url string to send over com
      * @param {Boolean} [async=false] if `false`, `Send()` blocks until the response arrives; if `true`, `Send()` returns immediately and `WaitForResponse()` then blocks until the response is ready. Either way this function does not return until the request completes.
      * @param {Integer} [retries=3] the total number of attempts to make (not additional retries) when the connection is terminated abnormally
-     * @param {Integer} [timeoutMs=5000] timeout in `ms`, applied separately to each of the DNS resolve, connect, send, and receive stages
+     * @param {Integer} [timeoutMs=5000] per-stage timeout in `ms`, applied separately to each of the DNS resolve, connect, send, and receive stages. Use `0` to wait indefinitely
      * @returns {String | null} the response text, or null if the request failed
      */
     static httpGet(url, async := false, retries := 3, timeoutMs := 5000) {
@@ -149,7 +149,7 @@ class cmd {
                 whr.SetRequestHeader("Connection", "close")
                 whr.Send()
                 if async
-                    whr.WaitForResponse()
+                    whr.WaitForResponse(timeoutMs = 0 ? -1 : timeoutMs / 1000)
                 return whr.ResponseText
             } catch as e {
                 if InStr(e.Message, "The connection with the server was terminated abnormally") {

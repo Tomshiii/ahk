@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/10/15
- * @version 1.1.24
+ * @date 2026/11/05
+ * @version 1.1.25
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -16,6 +16,7 @@ A_IconTip := "HotkeylessAHK"
 #Include Classes\Editors\Premiere.ahk
 #Include Classes\ptf.ahk
 #Include Classes\switchTo.ahk
+#Include Classes\ffmpeg.ahk
 #Include Functions\detect.ahk
 #Include Functions\checkBool.ahk
 #Include Other\UIA\UIA.ahk
@@ -67,7 +68,8 @@ Class CustomFunctions {
     setupMusicTracks(audioType := "Standard")                => OtherFuncs.setupMusicTracks(audioType)
 
     reclone_syncDir(which)                                   => (Run(ptf.rootDir "\Streamdeck AHK\rclone\syncDir.ahk " which))
-    closeExplorer() => (ProcessClose("explorer.exe"))
+    closeExplorer()                                          => (ProcessClose("explorer.exe"))
+    convertFuncs(from, to)                                   => ffmpeg().all_XtoY(, from, to)
 }
 
 ;// === any functions/hotkeys that don't really make much sense anywhere else

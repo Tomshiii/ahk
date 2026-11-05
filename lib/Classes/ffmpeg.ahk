@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain often used functions to quickly and easily access common ffmpeg commands
  * @author tomshi
- * @date 2026/08/06
- * @version 1.3.0
+ * @date 2026/11/05
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -84,7 +84,7 @@ class ffmpeg {
      * @param {String} command the command that will be sent to the command line
      * @param {String} path the path to use as the working directory for the command
      */
-    __runCommand(command, path) => cmd.run(false, true, false, command, path)
+    __runCommand(command, path) => cmd.run(false, true, false, command, path, "Hide")
 
     /**
      * attempts to activate the previously active explorer window
@@ -196,7 +196,10 @@ class ffmpeg {
     }
 
     /**
-     * Attempts to convert all files of the input type, to the desired type. You may notice this function flash a cmd window, that's ffmpeg determining the fps of the file it is operating on
+     * Attempts to convert all files of the input type, to the desired type.
+     *
+     * > #### Warning
+     * > This function uses hardcoded filetypes to determine what action to take.
      * @param {String} [path="A"] the path of the desired files. If no path is provided this parameter defaults to the active windows explorer window
      * @param {String} [from="mkv"] the filetype you wish to convert from
      * @param {String} [to="mp4"] the filetype you wish to convert to
@@ -212,6 +215,15 @@ class ffmpeg {
                 command := Format('for %i in (*.{1}) do ffmpeg -i `"%i`" `"%~ni.{2}`"', from, to)
                 this.__runCommand(command, path.path)
                 this.__activateWindow(path.hwnd)
+                return
+            case "png", "jpg", "jpeg", "webp":
+                chkMagick := cmd.run(,,, "magick -version",, "Hide")
+                if chkMagick.exitCode != 0
+                    return
+                command := Format('for %i in (*.{1}) do magick `"%i`" `"%~ni.{2}`"', from, to)
+                this.__runCommand(command, path.path)
+                this.__activateWindow(path.hwnd)
+                return
             default: ;// assumes video file
                 ;// attempt to determine framerate of all files in directory
                 fileArr := Map()

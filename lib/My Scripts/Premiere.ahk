@@ -383,7 +383,7 @@ $s:: ;// stop "add edit" adding an edit to all tracks when nothing is selected (
 ;		Mouse Scripts
 ;
 ;---------------------------------------------------------------------------------------------------------------------------------------------
-F14::
+F14 & F18::
 $d::
 {
 	premActive := WinActive(prem.winTitle) && !WinExist("ahk_class PLUGPLUG_UI_NATIVE_WINDOW_CLASS_NAME")
@@ -826,15 +826,6 @@ F14 & LButton::
 	delaySI(16, "{LButton Down}", "{Ctrl Down}")
 	KeyWait(kwait)
 	delaySI(16, "{LButton Up}", "{Ctrl Up}")
-}
-F14 & F18::
-{
-	checkRemote := prem.__checkPremRemoteDir('setMarker')
-	initChecks := __f14InitialChecks("F18", &kwait)
-	if !checkRemote || !initChecks
-		return
-	KeyWait(kwait)
-	prem.__remoteFunc('setMarker',, "colour=0")
 }
 
 $!WheelUp::

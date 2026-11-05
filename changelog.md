@@ -2,11 +2,15 @@
 
 ## Functions
 - ✅ Fixed `ae.setViewerZoom()` causing `After Effects` to show an error message when in the `Layer` view
+- 📋 Added `png`/`jpg`/`jpeg`/`webp` output actions to `ffmpeg().all_XtoY()`
 
 ### 📝 `prem {`
 - ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession
 - 📋 `__isUXPInstalled()` will now check that; the `ccx` extension has been installed, and that `docker` is installed
 - 📋 `determineLockedTracks()` can now use `UXP` to return its object on `Premiere` versions greater than `27.1.0`
+
+📍 `__remoteFunc()`/`__remoteUXP()`
+- ✅ Fixed timing out during large operations
 
 ### 📝 `discord {`
 - 📋 `button()` now makes use of `Toggle()`/`Invoke()` `UIA` functions instead of relying on `ControlClick()`
@@ -29,6 +33,7 @@
 - ✏️ Added `getAllTrackLockStates()`, `toggleTrackLocks()`
 
 ## Other Changes
+- ❌ Removed `convert2` `Streamdeck AHK` scripts. Replaced with `HotkeylessAHK` function
 - 📋 `uninstall_PremiereRemoteUXP.ahk` will now attempt to delete any stale, leftover directories
 
 🔗 `mult-dl.ahk`

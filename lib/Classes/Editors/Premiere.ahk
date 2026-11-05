@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/11/04
- * @version 2.5.109
+ * @date 2026/11/05
+ * @version 2.5.110
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -790,8 +790,8 @@ class Prem {
                 }
                 try {
                     if !WinGet.waitUntilResponsive(WinExist(this.exeTitle), 5000) {
-                        notifyExt.showIfNotExist('premNotResponsive',, "Premiere appears to be not responsive.`nThe current function (prem.__checkPremRemoteFunc) will abort.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                         errorLog(MethodError("Premiere appears to be not responsive.", -1))
+                        notifyExt.showIfNotExist('premNotResponsive',, "Premiere appears to be not responsive.`nThe current function (prem.__checkPremRemoteFunc) will abort.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                         return false
                     }
                     getPanel := cmd.httpGet(Format("http://localhost:{1}/isPanelOpen", this.portCEP))
@@ -830,8 +830,8 @@ class Prem {
                 }
                 try {
                     if !WinGet.waitUntilResponsive(WinExist(this.exeTitle), 5000) {
-                        notifyExt.showIfNotExist('premNotResponsive',, "Premiere appears to be not responsive.`nThe current function (prem.__checkPremRemoteFunc) will abort.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                         errorLog(MethodError("Premiere appears to be not responsive.", -1))
+                        notifyExt.showIfNotExist('premNotResponsive',, "Premiere appears to be not responsive.`nThe current function (prem.__checkPremRemoteFunc) will abort.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                         return false
                     }
                     open := cmd.httpGet(Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP))
@@ -1006,6 +1006,11 @@ class Prem {
     static __remoteFunc(whichFunc, runAsync := false, params*) {
         if !WinExist(this.winTitle)
             return null
+        /* if !this.__checkDialogueClass() {
+            errorLog(TargetError("Premiere appears to be busy"))
+            notifyExt.showIfNotExist("premCEPpremBusy",, 'Premiere appears to be busy...`nAttempting to communicate with the CEP panel will be cancelled.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            return null
+        } */
         chkDir := this.__checkPremRemoteDir()
         chkFunc := this.__checkPremRemoteFunc(whichFunc)
         if !chkDir {
@@ -1078,7 +1083,7 @@ class Prem {
 
         paramsString := this.__sanitiseParams(params)
         sendcommand := paramsString != "" ? Format('http://localhost:{3}/{1}?{2}', whichFunc, String(paramsString), this.portCEP) : Format("http://localhost:{2}/{1}", whichFunc, this.portCEP)
-        getResp := cmd.httpGet(sendcommand, runAsync)
+        getResp := cmd.httpGet(sendcommand, runAsync,, 0)
 
         if getResp == null || InStr(getResp, "Failed to connect to localhost") {
             ;// will sometimes still fire after premiere is closed
@@ -1211,6 +1216,10 @@ class Prem {
             errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -2, whichFunc), whichFunc,, true)
             return null
         }
+        /* if !this.__checkDialogueClass() {
+            notifyExt.showIfNotExist("premUXPpremBusy",, 'Premiere appears to be busy...`nAttempting to communicate with the UXP panel will be cancelled.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            return null
+        } */
         chkDir := this.__checkPremRemoteDir(, "uxp")
         chkFunc := this.__checkPremRemoteFunc(whichFunc, "uxp")
         if !chkDir {
@@ -1297,7 +1306,7 @@ class Prem {
         sendcommand := paramsString != ""
             ? Format('http://localhost:{3}/{1}?{2}', info.path, String(paramsString), this.portUXP)
             : Format("http://localhost:{2}/{1}", info.path, this.portUXP)
-        getResp := cmd.httpGet(sendcommand, runAsync)
+        getResp := cmd.httpGet(sendcommand, runAsync,, 0)
 
         if getResp == null || InStr(getResp, "Premiere Pro is not connected") {
             ;// will sometimes still fire after premiere is closed
@@ -3845,7 +3854,7 @@ class Prem {
     }
 
     /**
-     * If the user is using Premiere `v27.1` or greater, this function will use the API to determine all locked tracks (*this is currently in beta, or atleast is coming soon to the beta version*). Else
+     * If the user is using Premiere `v27.1` or greater, this function will use the API to determine all locked tracks (*this is being added in the beta and may not work until fully implemented into the API*). Else
      *
      * Uses UIA to determine any video/audio tracks that are locked. Will encounter issues if some layers are not currently visible as they no longer exist within the UIA tree.
      * > #### [!Caution]
@@ -5120,7 +5129,7 @@ $!WheelDown::
 
         title := WinGet.PremName()
         if title.saveCheck != false
-            attempt := prem.save()
+            attempt := this.save()
         sleep 100
 
         projPath   := WinGet.ProjPath()
@@ -5359,7 +5368,12 @@ $!WheelDown::
             case false:
                 if handlesState = false
                     handlesCheckbox.Toggle()
-                seqFrameRate := Round(this.__remoteFunc('getSeqFrameRate'))
+                frameRate := this.__remoteFunc('getSeqFrameRate')
+                if !IsNumber(frameRate) {
+                    errorLog(TargetError("Failed to retrieve sequence framerate", -1))
+                    return false
+                }
+                seqFrameRate := Round(frameRate)
                 handles := seqFrameRate
 
             case true:
