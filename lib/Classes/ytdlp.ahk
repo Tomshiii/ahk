@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a class to contain any ytdlp wrapper functions to allow for cleaner, more expandable code
  * @author tomshi
- * @date 2026/08/06
- * @version 1.2.9
+ * @date 2026/11/05
+ * @version 1.2.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,6 +16,8 @@
 #Include Classes\switchTo.ahk
 #Include Classes\explorer.ahk
 #Include Classes\notifyExt.ahk
+#Include Classes\null.ahk
+#Include Other\JSON.ahk
 #Include Other\Notify\Notify.ahk
 #Include Functions\getHTMLTitle.ahk
 ; }
@@ -92,6 +94,48 @@ class ytdlp {
         }
         ffmpeg().reencode_h26x(splitFilePath.dir "\" splitFilePath.NameNoExt ext, ytTitle)
         FileDelete(splitFilePath.dir "\" splitFilePath.NameNoExt ext)
+    }
+
+    /**
+     * Pass a youtube url, get just the ID back
+     * @param {String} [url]
+     * @returns {String | null}
+     */
+    __getYouTubeID(url) {
+        if RegExMatch(url, "(?:youtu\.be/|[?&]v=|/embed/|/shorts/|/live/)([\w-]{11})", &m)
+            return m[1]
+        return null
+    }
+
+    /**
+     * Formats a youtube title.
+     * @param {String} [title]
+     * @param {String} [id]
+     * @param {Integer} [charLimit=50]
+     * @returns {String}
+     */
+    __formatTitle(title, id, charLimit := 50) {
+        ; strip characters Windows forbids in filenames
+        title := RegExReplace(title, '[<>:"/\\|?*]', "")
+        short := SubStr(title, 1, charLimit)
+        return filename := short " [" id "]"
+    }
+
+    /**
+     * @param {String} [url]
+     * @param {Boolean} [formatOutput=false]
+     * @returns {String | null}
+     */
+    __getTitle(url, formatOutput := false) {
+        try {
+            cmnd := "https://www.youtube.com/oembed?url=" url "&format=json"
+            r := cmd.httpGet(cmnd)
+            t := JSON.parse(r)
+            if !formatOutput
+                return t["title"]
+            return this.__formatTitle(t["title"], this.__getYouTubeID(url))
+        }
+        return null
     }
 
     /**

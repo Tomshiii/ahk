@@ -37,8 +37,14 @@
 - 📋 `uninstall_PremiereRemoteUXP.ahk` will now attempt to delete any stale, leftover directories
 
 🔗 `mult-dl.ahk`
-###### *(v1.3.14 -> v1.4.0)*
+###### *(v1.3.14 -> v1.5.0)*
+- ❌ Removed `Single` tab
 - ✅ Fixed always prompting for updates even when none were available
-- 📋 Comma delimited list of URLs added to `Multi` will now work if individually encased in `"`
-- 📋 `Multi` tab now shows progress bars
 - 📋 `change` button will now be disabled during downloads
+- 📋 Optimised startup process for a faster launch
+
+`Multi`
+- 📋 Comma delimited list of URLs added list will now work if individually encased in `"`
+- 📋 Now shows progress bars
+- 📋 Videos added to list will now show their video title instead of the url
+    - The user can then manually adjust the title for a custom filename once downloaded

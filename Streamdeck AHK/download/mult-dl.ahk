@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/11/03
+ * @date 2026/11/05
  ***********************************************************************/
-global currentVer := "1.4.0"
+global currentVer := "1.5.0"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -38,30 +38,23 @@ try {
 
 class multiDL extends tomshiBasic {
     __New() {
-        __checkInstalls(&ffmpeg, &ytdlp, &deno) {
-            ffmpeg := cmd.result(Format(this.checkCommand, "ffmpeg"))
-            ytdlp  := cmd.result(Format(this.checkCommand, "yt-dlp --pre"))
-            deno   := cmd.result(Format(this.checkCommand, "deno"))
-        }
-        __checkInstalls(&ffmpeg, &ytdlp, &deno)
-        ffmpeg := (!InStr(ffmpeg, "is not recognized") && ffmpeg != "")  ? true : false
-        ytdlp  := (!InStr(ytdlp, "is not recognized")  && ytdlp != "")   ? true : false
-        if ytdlp = true {
-            checkYTdlpVer := cmd.result("yt-dlp -U")
-            if !(InStr(checkYTdlpVer, "Latest version: nightly")) {
-                promptNightlyUpgrade := MsgBox("yt-dlp is installed but isn't on the nightly track.`nThis is recommended to ensure quick fixes.`n`nWould you like to update to the nightly track?", "Upgrade to Nightly?", "0x4 0x20 0x1000")
-                if promptNightlyUpgrade = "No"
+        ffmpeg := this.__onPath("ffmpeg")
+        ytdlp  := this.__onPath("yt-dlp")
+        deno   := this.__onPath("deno")
+        choco  := this.__onPath("choco")
+        if ytdlp {
+            ;// nightly builds have a 4-part version (2026.11.04.123456), stable has 3. No network needed
+            ver := Trim(cmd.result("yt-dlp --version"), " `t`r`n")
+            if ver != "" && !RegExMatch(ver, "^\d{4}\.\d{2}\.\d{2}\.\d+$") {
+                if MsgBox("yt-dlp is installed but isn't on the nightly track.`nThis is recommended to ensure quick fixes.`n`nWould you like to update to the nightly track?", "Upgrade to Nightly?", "0x4 0x20 0x1000") = "No"
                     ExitApp()
-                nightlyComm := "choco uninstall yt-dlp && choco feature enable -n=useRememberedArgumentsForUpgrades && choco install yt-dlp --pre"
-                cmd.run(true,,, nightlyComm)
+                cmd.run(true,,, "choco uninstall yt-dlp && choco feature enable -n=useRememberedArgumentsForUpgrades && choco install yt-dlp --pre")
             }
         }
-        deno   := (!InStr(deno, "is not recognized")   && deno != "")    ? true : false
 
         if !ffmpeg || !ytdlp || !deno {
-            choco := cmd.result(Format(this.checkCommand, "choco"))
-            choco := (!InStr(choco, "is not recognized") && choco != "") ? true : false
-            if choco = true {
+            choco := this.__onPath("choco")
+            if choco {
                 super.__New(,,, preReqTitle)
                 this.AddText(, "Installing these prerequisites will require admin permissions. `nYou may also need to reboot after installation.")
                 for v in this.arr {
@@ -105,23 +98,8 @@ class multiDL extends tomshiBasic {
         super.__New(,,, A_ScriptName)
 
         startY := 110
-        this.tabs := this.AddTab3("+Theme -Background x9 y" startY, ["Single", "Multi", "Part"])
-
-        ;// single
-        ;// ================================================================
         but_width := 150
-        this.AddText("Section x25 y" startY+35, "URL: ")
-        this.AddEdit("x+82 y+-20 r1 vsingleURL w220 -Wrap", checkClipboard)
-        this.AddText("xs", "Custom Filename: ")
-        this.AddEdit("x+5 y+-20 r1 vcustFileSingle w220 -Wrap")
-        this.AddButton("vDL_single xs w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
-        this.AddCheckbox("x+10 yp-1 vdeprioritise_single", " Avoid reencode`n (may result in lower quality)")
-        this.AddCheckbox("yp+40 vdlPlay_single Checked0", " Download Playlist")
-        this.AddCheckbox("yp+25 vcookies_single Checked" defCookies, " Use cookies (firefox)").OnEvent("Click", (ctrl, *) => (FileDelete(this.requiredFilesDir "\useCookies"), FileAppend(ctrl.value, this.requiredFilesDir "\useCookies")))
-        this["DL_single"].GetPos(&x, &y, &wid, &height)
-        this.AddButton("vAud_single x" x " y" y+37 " w" but_width, "Download Audio").OnEvent("Click", this.__download.Bind(this, "aud"))
-        this.AddButton("vthumb_single x" x " -Wrap y+7 w" but_width, "Download Thumbnail").OnEvent("Click", this.__download.Bind(this, "thumb"))
-        ;// ================================================================
+        this.tabs := this.AddTab3("+Theme -Background x9 y" startY, ["Multi", "Part"])
 
         ;// multi
         ;// ================================================================
@@ -130,9 +108,10 @@ class multiDL extends tomshiBasic {
         this.AddText("Section x25 y" startY+35, "URL: ")
         this.AddEdit("x+12 y+-20 r1 vlistURL w165 -Wrap", checkClipboard)
         this.AddButton("x+10 y+-27", "Add").OnEvent("Click", this.__addListURL.Bind(this))
-        this.AddListView("x25 y+5 r5 vlist w340 Grid -Multi NoSort -ReadOnly -Hdr", ["URL", "Progress"])
+        this.AddListView("x25 y+5 r5 vlist w340 Grid -Multi NoSort -ReadOnly -Hdr", ["Title", "Progress", "URL"])
         this["list"].ModifyCol(1, 215)
         this["list"].ModifyCol(2, 105)
+        this["list"].ModifyCol(3, 0) ; hidden: holds the real URL
         this["list"].OnNotify(-12, this.__customDraw.Bind(this))   ; NM_CUSTOMDRAW
         this["list"].OnEvent("ContextMenu", listContextMenu.Bind(this))
         ContextMenu := Menu()
@@ -215,13 +194,12 @@ class multiDL extends tomshiBasic {
 
         ;// attempt check package updates
         ;// ================================================================
-        choco  := cmd.result(Format(this.checkCommand, "choco"))
         this.chkDevObj := this.__getPosObj("checkDev")
         this.updObj    := this.__getPosObj("updates")
         this.__checkingButton("move")
         this["checkDev"].Opt("Disabled")
 
-        if (!InStr(choco, "is not recognized") && choco != "") {
+        if choco {
             buildStr := this.__buildUpdateCmd()
             if buildStr != "" {
                 if MsgBox("Updates for installed packages are available, would you like to install them now?",, 0x4) = "No" {
@@ -276,6 +254,9 @@ class multiDL extends tomshiBasic {
     __addListURL(*) {
         if this["listURL"].text = ""
             return
+        yt := ytdlp()
+        yt.doAlert := false
+        this["listURL"].Enabled := false
         if InStr(this["listURL"].text, ",") {
             urls := StrSplit(this["listURL"].text, ",", " `t")
             for v in urls {
@@ -283,33 +264,36 @@ class multiDL extends tomshiBasic {
                     v := SubStr(v, 2, StrLen(v)-2)
                 if !isURL(v)
                     continue
-                this["list"].Add("", v)
+                this.__addRow(v, yt)
             }
-            this["listURL"].text := ""
-            this["listURL"].Focus()
-            return
-        }
-        if !isURL(this["listURL"].text) {
+        } else if isURL(this["listURL"].text) {
+            this.__addRow(this["listURL"].text, yt)
+        } else {
+            this["listURL"].Enabled := true
             MsgBox("Value is not a valid URL string",, "4112")
             return
         }
-        this["list"].Add("", this["listURL"].text)
+        this["listURL"].Enabled := true
         this["listURL"].text := ""
         this["listURL"].Focus()
     }
 
+    /** adds a row showing the video title (falls back to the URL), with the real URL stored in the hidden column 3 */
+    __addRow(url, yt) {
+        title := ""
+        try title := Trim(yt.__getTitle(url), " `t`r`n")
+        this["list"].Add("", title != "" ? title : url, "", url)
+    }
+
     __buildUpdateCmd() {
+        outdated := cmd.result("choco outdated -r")
         buildStr := ""
-        newArr := this.arr.Clone()
-        newArr.RemoveAt(1, 1)
-        for v in newArr {
-            cmnd := Format('choco outdated | Select-String "{1}"', v)
-            getres := cmd.result('powershell -c "' cmnd '"')
-            if getres != "" {
-                if v = "yt-dlp"
-                    v := "yt-dlp --pre"
-                buildStr := (buildStr = "") ? Format("choco upgrade chocolatey --yes && choco upgrade {1} --yes ", v) : Format("{1} && choco upgrade {2} --yes ", buildStr, v)
-            }
+        for v in ["ffmpeg", "yt-dlp", "deno"] {
+            if !RegExMatch(outdated, "im)^" v "\|")
+                continue
+            if v = "yt-dlp"
+                v := "yt-dlp --pre"
+            buildStr := (buildStr = "") ? Format("choco upgrade chocolatey --yes && choco upgrade {1} --yes ", v) : Format("{1} && choco upgrade {2} --yes ", buildStr, v)
         }
         return buildStr
     }
@@ -320,46 +304,29 @@ class multiDL extends tomshiBasic {
 
     __download(vidOrAud, *) {
         this["DL"].Enabled := false, this["Aud"].Enabled := false, this["thumb"].Enabled := false
-        this["DL_single"].Enabled := false, this["Aud_single"].Enabled := false, this["thumb_single"].Enabled := false
         this["DL_part"].Enabled := false, this["Aud_part"].Enabled := false
         this["DirChange"].Enabled := false
-        cookiesSingle  := ((this["cookies_single"].value = 1) ? "--cookies-from-browser firefox" : "")
         cookiesMulti   := ((this["cookies_multi"].value = 1)  ? "--cookies-from-browser firefox" : "")
         cookiesPart    := ((this["cookies_part"].value = 1)   ? "--cookies-from-browser firefox" : "")
-        dlPlaySingle   := ((this["dlPlay_single"].value = 1) ? true : false)
         dlPlayMulti    := ((this["dlPlay_multi"].value = 1) ? true : false)
-        custFileSingle := (this["custFileSingle"].value = "") ? "" : this["custFileSingle"].value
         custFilePart   := (this["custFilePart"].value = "")   ? "" : this["custFilePart"].value
         yt := ytdlp()
         showDir := true
         switch this.tabs.value {
-            case 1: ;// single
-                if this["singleURL"].value = "" {
-                    showDir := false
-                    yt.doAlert := false
-                    goto break
-                }
-                this.Hide()
-                switch {
-                        case (vidOrAud = "vid" && this["deprioritise_single"].value = false): yt.download(yt.defaultVideoCommand, this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle, dlPlaySingle)
-                        case (vidOrAud = "vid" && this["deprioritise_single"].value = true):
-                            altCommand := '-N 8 -o "{1}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesSingle
-                            yt.download(altCommand, this.getFile, this["singleURL"].value, custFileSingle, showDir,, "", dlPlaySingle)
-                        case (vidOrAud = "aud"): yt.download(yt.defaultAudioCommand, this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle, dlPlaySingle)
-                        case (vidOrAud = "thumb"): yt.download("--write-thumbnail --skip-download", this.getFile, this["singleURL"].value, custFileSingle, showDir,, cookiesSingle, dlPlaySingle)
-                    }
-            case 2: ;// multi
+            case 1: ;// multi
                 rows := this["list"].GetCount()
                 if rows = 0 {
                     yt.doAlert := false
                     goto break
                 }
                 this.downloading := true
-                urls := []
-                loop rows
-                    urls.Push(this["list"].GetText(A_Index, 1))
+                urls := [], titles := []
+                loop rows {
+                    urls.Push(this["list"].GetText(A_Index, 3))
+                    titles.Push(this["list"].GetText(A_Index, 1))
+                }
                 for url in urls {
-                    this.__multiDownload(A_Index, url, vidOrAud, cookiesMulti, dlPlayMulti, yt)
+                    this.__multiDownload(A_Index, url, titles[A_Index], vidOrAud, cookiesMulti, dlPlayMulti, yt)
                     if A_Index < urls.Length {
                         ;// reduce the risk of youtube thinking you're a bot
                         this["list"].Modify(A_Index + 1, "Col2", "Queued")
@@ -372,7 +339,7 @@ class multiDL extends tomshiBasic {
                         this["list"].Delete(n - A_Index + 1)
                 }
                 this.downloading := false
-            case 3: ;// part
+            case 2: ;// part
                 this.timecodeValue := (Format("{:02}", this["H1"].value) ":" Format("{:02}", this["M1"].value) ":" Format("{:02}", this["S1"].value) "-" Format("{:02}", this["H2"].value) ":" Format("{:02}", this["M2"].value) ":" Format("{:02}", this["S2"].value))
                 if this.timecodeValue == "00:00:00-00:00:00" || this["partURL"].value = "" {
                     showDir := false
@@ -391,7 +358,6 @@ class multiDL extends tomshiBasic {
         }
         break:
         this["DL"].Enabled := true, this["Aud"].Enabled := true, this["thumb"].Enabled := true
-        this["DL_single"].Enabled := true, this["Aud_single"].Enabled := true, this["thumb_single"].Enabled := true
         this["DL_part"].Enabled := true, this["Aud_part"].Enabled := true
         this["DirChange"].Enabled := true
 
@@ -407,8 +373,7 @@ class multiDL extends tomshiBasic {
     }
 
     __checkChoco(*) {
-        chkChoco := cmd.result(Format(this.checkCommand, "choco"))
-        if (InStr(chkChoco, "is not recognized") || chkChoco = "") {
+        if !this.__onPath("choco") {
             MsgBox("Choco is required to install this tool, please install choco first")
             return false
         }
@@ -440,8 +405,8 @@ class multiDL extends tomshiBasic {
     __checkUpdates(*) {
         this.Opt("Disabled")
         this.__checkingButton("move")
-        choco  := cmd.result(Format(this.checkCommand, "choco"))
-        if (InStr(choco, "is not recognized") || choco = "") {
+        choco := this.__onPath("choco")
+        if !choco {
             MsgBox("Checking for updates for ffmpeg or yt-dlp requires the package manager chocolatey to be installed.")
             this.__checkExeUpdate()
             this.__checkingButton("reset")
@@ -520,14 +485,23 @@ class multiDL extends tomshiBasic {
         this.lvice.DoubleClick(LV, lParam)
     }
 
-    __multiDownload(row, url, vidOrAud, cookies, playlist, yt) {
+    __multiDownload(row, url, title, vidOrAud, cookies, playlist, yt) {
         LV := this["list"]
         folder := RTrim(this.getFile, "\")
         if !DirExist(folder)
             DirCreate(folder)
 
+        ;// use the list title as the filename, unless it's just the URL fallback or this is a playlist
+        outName := yt.defaultFilename
+        if !playlist && title != "" && title != url && !isURL(title) {
+            clean := RegExReplace(title, '[<>:"/\\|?*\x00-\x1F]')
+            clean := Trim(SubStr(StrReplace(clean, "%", "%%"), 1, 150), " .")
+            if clean != ""
+                outName := clean ".%(ext)s"
+        }
+
         extra := cookies (playlist ? "" : " --no-playlist")
-        base  := '-N 8 -o "' yt.defaultFilename '" --windows-filenames --no-overwrites --encoding utf-8 --newline --progress '
+        base  := '-N 8 -o "' outName '" --windows-filenames --no-overwrites --encoding utf-8 --newline --progress '
             . '--progress-template "download:PROG|%(info.playlist_index)s|%(info.n_entries)s|%(info.format_id)s|%(progress._percent_str)s" '
             . '--print "after_move:FINAL %(filepath)s" '
         switch {
@@ -570,7 +544,8 @@ class multiDL extends tomshiBasic {
         }
 
         exitCode := this.__runStream(Format('yt-dlp {1} -P "{2}" "{3}"', args, folder, url), onLine)
-        if exitCode != 0 {
+        partial := (exitCode != 0 && finalPaths.Length > 0)
+        if exitCode != 0 && !partial {
             LV.Modify(row, "Col2", "Failed")
             return false
         }
@@ -613,14 +588,13 @@ class multiDL extends tomshiBasic {
         }
 
         enc := (useNVENC() = true) ? yt.defaultGPU : yt.defaultCPU
-        ffCmd := Format('ffmpeg -y -loglevel error -nostats -progress pipe:1 -i "{1}" {2} -c:a aac -b:a 192k "{3}"', path, enc, temp)
+        ffCmd := Format('ffmpeg -y -nostdin -loglevel error -nostats -progress pipe:1 -i "{1}" {2} -c:a aac -b:a 192k "{3}"', path, enc, temp)
         exitCode := this.__runStream(ffCmd, onLine)
 
-        if exitCode = 0 && FileExist(temp) {
-            FileDelete(path)
-            FileMove(temp, path)
-        } else if FileExist(temp)
-            FileDelete(temp)               ; failed: keep the original file untouched
+        if exitCode = 0 && FileExist(temp)
+            FileMove(temp, path, 1)
+        else if FileExist(temp)
+            FileDelete(temp)
     }
 
     /** runs a command hidden and feeds each line of its output to onLine through an in-memory pipe (nothing touches disk). Messages keep pumping, so the GUI stays responsive. Returns the exit code */
@@ -657,16 +631,31 @@ class multiDL extends tomshiBasic {
         DllCall("CloseHandle", "Ptr", hThread)
         this.activeProc := hProc
 
-        buf := Buffer(4096), partial := ""
+        buf := Buffer(4096)
+        acc := Buffer(8192), accLen := 0
         loop {
             DllCall("PeekNamedPipe", "Ptr", hRead, "Ptr", 0, "UInt", 0, "Ptr", 0, "UInt*", &avail, "Ptr", 0)
             if avail {
                 DllCall("ReadFile", "Ptr", hRead, "Ptr", buf, "UInt", Min(avail, buf.Size), "UInt*", &got, "Ptr", 0)
-                partial .= StrGet(buf, got, "UTF-8")
-                lines := StrSplit(partial, "`n", "`r")
-                partial := lines.Pop()
-                for l in lines
-                    onLine(l)
+                if accLen + got > acc.Size
+                    acc.Size := Max(acc.Size * 2, accLen + got)
+                DllCall("RtlMoveMemory", "Ptr", acc.Ptr + accLen, "Ptr", buf, "UPtr", got)
+                accLen += got
+
+                start := 0
+                loop accLen {
+                    i := A_Index - 1
+                    if NumGet(acc, i, "UChar") != 10
+                        continue
+                    if i > start
+                        onLine(RTrim(StrGet(acc.Ptr + start, i - start, "UTF-8"), "`r"))
+                    start := i + 1
+                }
+                if start > 0 {
+                    accLen -= start
+                    if accLen > 0
+                        DllCall("RtlMoveMemory", "Ptr", acc.Ptr, "Ptr", acc.Ptr + start, "UPtr", accLen)
+                }
                 continue
             }
             if DllCall("WaitForSingleObject", "Ptr", hProc, "UInt", 0) = 0 {
@@ -677,8 +666,8 @@ class multiDL extends tomshiBasic {
             }
             Sleep(40)
         }
-        if partial != ""
-            onLine(partial)
+        if accLen > 0
+            onLine(RTrim(StrGet(acc.Ptr, accLen, "UTF-8"), "`r`n"))
         DllCall("GetExitCodeProcess", "Ptr", hProc, "UInt*", &code)
         DllCall("CloseHandle", "Ptr", hProc)
         DllCall("CloseHandle", "Ptr", hRead)
@@ -725,13 +714,30 @@ class multiDL extends tomshiBasic {
         DllCall("user32\FillRect", "Ptr", hdc, "Ptr", rc, "Ptr", fillBrush)
         NumPut("Int", L, "Int", T, "Int", R, "Int", B, rc)
         DllCall("gdi32\SetBkMode", "Ptr", hdc, "Int", 1)
-        DllCall("user32\DrawText", "Str", label, "Int", -1, "Ptr", rc, "UInt", 0x25, "Ptr", hdc)
-        NumPut("Int", L, "Int", T, "Int", R, "Int", B, rc)
-        DllCall("gdi32\SetBkMode", "Ptr", hdc, "Int", 1)
         DllCall("user32\DrawText", "Ptr", hdc, "Str", label, "Int", -1, "Ptr", rc, "UInt", 0x25)
         DllCall("gdi32\DeleteObject", "Ptr", bgBrush)
         DllCall("gdi32\DeleteObject", "Ptr", fillBrush)
         return CDRF_SKIPDEFAULT
+    }
+
+    __onPath(name) {
+        static exts := ["", ".exe", ".cmd", ".bat"]
+        paths := ""
+        try paths .= RegRead("HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment", "Path") ";"
+        try paths .= RegRead("HKCU\Environment", "Path")
+        len := DllCall("ExpandEnvironmentStrings", "Str", paths, "Ptr", 0, "UInt", 0)
+        buf := Buffer(len * 2)
+        DllCall("ExpandEnvironmentStrings", "Str", paths, "Ptr", buf, "UInt", len)
+        for dir in StrSplit(StrGet(buf), ";", " `t`"") {
+            if dir = ""
+                continue
+            for ext in exts {
+                p := dir "\" name ext
+                if (a := FileExist(p)) && !InStr(a, "D")
+                    return true
+            }
+        }
+        return false
     }
 
     __onClose(*) {
