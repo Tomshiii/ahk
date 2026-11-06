@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2026/11/02
- * @version 1.7.10
+ * @date 2026/11/06
+ * @version 1.8.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,6 +18,7 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\winGet.ahk
 #Include Classes\notifyExt.ahk
+#Include Classes\obj.ahk
 #Include Other\UIA\UIA.ahk
 ; }
 
@@ -57,7 +58,11 @@ class discord {
     {
         if !currentTitle := WinGet.Title()
             return
-
+        coord.s()
+        try mousePos := obj.mousePos()
+        try proc := WinGetProcessName(mousePos.win)
+        if !IsSet(proc) || proc != "Discord.exe"
+            return
         blocker := block_ext()
         blocker.On()
 
@@ -72,34 +77,72 @@ class discord {
             blocker.Off()
             return
         }
-        SendInput("{RButton}") ;// this opens the right click context menu on the message you're hovering over
-        try discMenu := this.DiscordEl.WaitElement({Type:50009, AutomationId:"message"}, 800,,,,, this.discCacheRequest)
-        if !IsSet(discMenu) || !IsObject(discMenu) || !discMenu {
-            icon := (FileExist(EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico")) ? EnvGet("USERPROFILE") "\AppData\Local\Discord\app.ico" : ""
-            errorLog(TargetError("Could not determine discord right click menu", -1))
-            notifyExt.showIfNotExist("discordNoRightClick",, 'Could not determine discord right click menu. You may need to reload.`nAborting...', icon, 'Windows Startup',, 'theme=Dark dur=5 bdr=Red show=Fade@250 mon=Mouse hide=Fade@250 maxW=400')
+
+        switch button {
+            case "react":
+                newel := this.__uiaMsgUnderCursor(mousePos)
+                buttonBar := this.__getCurrentBar(newel, "Add Reaction")
+                if buttonBar = null {
+                    blocker.Off()
+                    return
+                }
+                buttonBar.button.Invoke()
+                blocker.Off()
+                return
+            case "delete":
+                newel := this.__uiaMsgUnderCursor(mousePos)
+                buttonBar := this.__getCurrentBar(newel, "Delete")
+                if buttonBar = null
+                    goto continueDefault
+                SendInput("{Shift down}")
+                buttonBar.button.ControlClick()
+                SendInput("{Shift up}")
+                blocker.Off()
+                return
+            case "edit":
+                newel := this.__uiaMsgUnderCursor(mousePos)
+                buttonBar := this.__getCurrentBar(newel, "Edit")
+                if buttonBar = null {
+                    blocker.Off()
+                    return
+                }
+                buttonBar.button.Invoke()
+                blocker.Off()
+                return
+            case "reply":
+                disableAutoReplyPing := CLSID_Objs.loadProp("UserSettings", "disc_disable_autoreply")
+                newel := this.__uiaMsgUnderCursor(mousePos)
+                buttonBar := this.__getCurrentBar(newel, "Reply")
+                if buttonBar = null
+                    goto continueDefault
+                buttonBar.button.Invoke()
+                if disableAutoReplyPing = false || this.__isDM() = true {
+                    blocker.Off()
+                    return
+                }
+                try this.DiscordEl.WaitElement({Type:50000, Name:"Mention ON"}, 800).Toggle()
+                blocker.Off()
+                return
+        }
+        continueDefault:
+        newel := this.__uiaMsgUnderCursor(mousePos)
+        buttonBar := this.__getCurrentBar(newel, "More")
+        if buttonBar = null {
             blocker.Off()
             return
         }
-
+        buttonBar.button.Expand()
+        msgActions := this.discordEl.WaitElement({Type: 50009, AutomationId:"message-actions"}, 1500)
 
         switch button {
             case "reply":
                 disableAutoReplyPing := CLSID_Objs.loadProp("UserSettings", "disc_disable_autoreply")
-                try {
-                    quickSwitch := this.DiscordEl.FindCachedElement({Type:50000, Name:"Open Quick Switcher"}) ;// the top bar of discord (ie. in dm's has the disc icon & "Direct Messages")
-                    dms := quickSwitch.FindCachedElement({Type:50020, Name:"Direct Messages"})
-
-                } catch {
-                    ;// this may change at any time, it's already swapped in the past. discord changes shit all the time
-                    dms := InStr(currentTitle, "|") ? false : true ;// determines if we're in dm's or a server
-                }
-                if dms != false || disableAutoReplyPing != true {
-                    discMenu.FindCachedElement({Type: 50011, AutomationId: "message-reply"}).Invoke()
+                if disableAutoReplyPing = false || this.__isDM() = true {
+                    msgActions.FindElement({Type: 50011, AutomationId: "message-actions-reply"}).Invoke()
                     blocker.Off()
                     return
                 }
-                try findReply := discMenu.FindCachedElement({Type: 50011, AutomationId: "message-reply"})
+                try findReply := msgActions.FindElement({Type: 50011, AutomationId: "message-actions-reply"})
                 if !IsSet(findReply) || !IsObject(findReply) || !findReply {
                     blocker.Off()
                     return
@@ -109,23 +152,31 @@ class discord {
                     blocker.Off()
                     return
                 }
-                try this.DiscordEl.WaitElement({Type:50000, Name:"Mention ON"}, 800).Toggle()
-                ;// get rid of the annoying popup window
-                MouseMove(2, 2, 1, "R")
-                MouseMove(-2, -2, 1, "R")
-            case "edit": try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-edit"}).Invoke()
-            case "react": try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-add-reaction"}).Expand()
-            case "report": try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-report"}).Invoke()
-            case "delete":
-                if GetKeyState("Shift", "P") {
-                    SendInput("{Shift Down}")
-                    try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-delete"}).Invoke()
-                    SendInput("{Shift Up}")
-                } else {
-                    try discMenu.FindCachedElement({Type: 50011, AutomationId: "message-delete"}).Invoke()
-                }
+                try msgActions.WaitElement({Type:50000, Name:"Mention ON"}, 800).Toggle()
+            case "report": try msgActions.FindElement({Type: 50011, AutomationId: "message-actions-report"}).Invoke()
+            case "delete": try msgActions.FindElement({Type: 50011, AutomationId: "message-actions-delete"}).Invoke()
         }
         blocker.Off()
+    }
+
+    static __getCurrentBar(UIAunderCursor, btnName) {
+        try {
+            msgActions := UIAunderCursor.FindElement({Type: 50026, Name: "Message Actions"})
+            btn := msgActions.FindElement({Type: 50000, Name: btnName})
+        } catch {
+            return null
+        }
+        return {msgActions: msgActions, button: btn}
+    }
+
+    static __isDM() {
+        try {
+            groups := this.discordEl.FindCachedElements({Type: 50026, Name: ""})
+            g := groups[4].Children
+            return (g[1].name = "Direct Messages" ? true : false)
+        } catch {
+            return null
+        }
     }
 
     /**
@@ -286,5 +337,27 @@ class discord {
         block.Off()
         SetTimer((*) => (clip.returnClip(store.storedClip), this.surroundActive := false), -25)
         return
+    }
+
+    static __uiaMsgUnderCursor(mousePos) {
+        coord.s()
+        try el := UIA.ElementFromPoint(mousePos.x, mousePos.y,, false)
+        catch
+            return false
+        depth := 0
+        while IsObject(el) && depth++ < 40 {
+            try {
+                if el.Type = 50026
+                && el.LocalizedType = "Message"
+                && el.ClassName ~= "(^|\s)message_"
+                    return el
+            } catch
+                return false
+
+            try el := el.Parent
+            catch
+                return false
+        }
+        return false
     }
 }

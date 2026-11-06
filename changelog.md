@@ -6,6 +6,7 @@
 - 📋 Added `png`/`jpg`/`jpeg`/`webp` output actions to `ffmpeg().all_XtoY()`
 - 📋 `settingsGUI()` will now prompt `Core Functionality.ahk` to regenerate `KSA` when the `Year` version is changed
     - Fixes scripts throwing when reloaded due to `27.0+` pathing changes within the `.kys` files
+- 📋 `slack.button()` now makes use of `Toggle()`/`Invoke()`/`Expand()` `UIA` functions instead of relying on `ControlClick()`
 
 ### 📝 `prem {`
 - ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession
@@ -16,7 +17,7 @@
 - ✅ Fixed timing out during large operations
 
 ### 📝 `discord {`
-- 📋 `button()` now makes use of `Toggle()`/`Invoke()` `UIA` functions instead of relying on `ControlClick()`
+- 📋 `button()`now makes use of `Toggle()`/`Invoke()`/`Expand()` `UIA` functions instead of relying on `ControlClick()`
 
 📍 `Unread()`
 - ✅ Fixed function failing when param `which` = `"servers"`

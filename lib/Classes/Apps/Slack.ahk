@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2026/10/16
- * @version 1.2.2
+ * @date 2026/11/06
+ * @version 1.3.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -69,73 +69,100 @@ class Slack {
         blocker := block_ext()
         blocker.On()
 
-        static slackCacheRequest := UIA.CreateCacheRequest(["Type", "AutomationId", "Name"],, 5)
 
-        try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle, slackCacheRequest)
+        try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle,, false)
         if !IsSet(slackEl) || !IsObject(slackEl) || !slackEl {
             blocker.Off()
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             return
         }
 
-        pressButton(uiaObj, type, button) {
-            if button = "Delete message… delete" || button = "Edit message E" {
-                if !uiaObj.WaitElement({Type:50000, Name: "Add to-do"}, 2000) {
-                    blocker.Off()
-                    errorLog(UnsetError("Failed to find Add to-do element", -1),, true)
-                    return
-                }
-                findLocation := uiaObj.FindCachedElement({Type:50000, Name: "Add to-do"})
-                for el in uiaObj.FindCachedElements({Type:50000, Name: "More actions"}) {
-                    if el.location.y != findLocation.location.y
-                        continue
-                    el.ControlClick()
-                }
-                try uiaObj.WaitElement({Type: type, Name: button}, 2000,,,,, slackCacheRequest).ControlClick()
-                return
-            }
-
-            ;// if a thread is open we need to hone our search to just the thread
-            if button != "Reply in thread" && uiaObj.CachedElementExist({Type:50032, Type:50032, Name: "Thread in channel", matchmode: "Substring"}) {
-                findThread := uiaObj.WaitElement([{Type:50032, Type:50032, Name:"Thread in channel", matchmode:"Substring"}], 2000,,,,, slackCacheRequest)
-                findLocation := findThread.WaitElement([{Type:50026, Name:"Message actions"}], 2000,,,,, slackCacheRequest)
-
-                moreActions := findThread.FindElements([{Type:50026, Name:"Message actions"}],,,, slackCacheRequest)
-                for el in moreActions {
-                    if el.location.y != findLocation.location.y && el.location.x != findLocation.location.x
-                        continue
-                    if button = "Add reaction…" {
-                        el.FindCachedElement({Type: type, Name: button}).ControlClick()
-                        return
-                    }
-                    el.FindCachedElement([{Type:50000, Name: "More actions"}]).ControlClick()
-                }
-                try uiaObj.WaitElement({Type: type, Name: button}, 2000,,,,, slackCacheRequest).ControlClick()
-                return
-            }
-            ;// otherwise we just search for the button
-            if button != "Reply in thread" {
-                ;// limit to just the hover buttons (as the "add reaction" button appears under images and this script may attempt to interact with that)
-                try msgAction := uiaObj.FindCachedElement([{Type:50026, Name:"Message actions"}])
-                try msgAction.FindCachedElement({Type: type, Name: button}).ControlClick()
-                return
-            }
-            try check := uiaObj.FindCachedElement({Type: type, Name: "i)(Reply (in|to) thread|View thread)", matchmode: "Regex"}).ControlClick()
-            if IsSet(check) && replyInThread = true {
-                try {
-                    findThread := uiaObj.WaitElement([{Type:50032, Name:"Thread in (channel|conversation)", matchmode:"Regex"}], 2000,,,,, slackCacheRequest, 100)
-                    findBox    := uiaObj.WaitElement([{Type:50007, Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, slackCacheRequest, 100)
-                    findBox.WaitElement([{Type:50002, AutomationId:"p-thread_footer__broadcast_checkbox", Name: "i)(Also send (as|to))", matchmode:"Regex"}], 2000,,,,, slackCacheRequest).ControlClick()
-                }
-            }
+        msgEl := this.__uiaMsgUnderCursor(origMousePos)
+        A_Clipboard := msgEl.Dump()
+        if !msgEl {
+            errorLog(UnsetError("Failed to set message bar", -1),, true)
+            blocker.Off()
+            return
         }
 
         switch button {
-            case "reaction": pressButton(slackEl, 50000, "Add reaction…")
-            case "reply": pressButton(slackEl, 50000, "Reply in thread")
-            case "delete": pressButton(slackEl, 50011, "Delete message… delete")
-            case "edit": pressButton(slackEl, 50011, "Edit message E")
+            case "reaction":
+                bar := this.__getCurrentBar(msgEl, {Type: 50000, Name:"Add reaction…"})
+                if !bar {
+                    blocker.Off()
+                    return
+                }
+                bar.button.Invoke()
+
+            case "reply":
+                bar := this.__getCurrentBar(msgEl, {Type: 50000, Name: "i)^(Reply (in|to) thread|View thread)", matchmode: "RegEx"})
+                if !bar {
+                    blocker.Off()
+                    return
+                }
+                bar.button.Invoke()
+                if replyInThread != true {
+                    blocker.Off()
+                    return
+                }
+                try {
+                    thread  := slackEl.WaitElement({Type: 50032, Name: "Thread in (channel|conversation)", matchmode: "RegEx"}, 2000,,,,,, 150)
+                    findBox := thread.WaitElement({Type: 50007, Name: "i)(Also send (as|to))", matchmode: "RegEx"}, 2000)
+                    findBox.WaitElement({Type: 50002, AutomationId: "p-thread_footer__broadcast_checkbox", Name: "i)(Also send (as|to))", matchmode: "RegEx"}, 2000).Toggle()
+                }
+
+            case "delete", "edit":
+                ;// these live in the "More actions" menu of the hovered message's bar
+                bar := this.__getCurrentBar(msgEl, {Type: 50000, Name: "More actions"})
+                if !bar {
+                    blocker.Off()
+                    return
+                }
+                bar.button.Expand()
+                item := (button = "delete") ? "Delete message… delete" : "Edit message E"
+                try slackEl.WaitElement({Type: 50011, Name: item}, 2000).Invoke()
         }
         blocker.Off()
+    }
+
+    /**
+     * Finds the hover action bar inside a message element and a button within it
+     * @param {UIA.IUIAutomationElement} msgEl the message element
+     * @param {Object} btnCondition UIA condition for the button inside the bar
+     * @returns {Object | false} `{msgActions, button}` or `false`
+     */
+    static __getCurrentBar(msgEl, btnCondition) {
+        try {
+            msgActions := msgEl.FindElement({ClassName: "c-message-actions--hover-actions", mm: 2}, 4)
+            btn := msgActions.FindElement(btnCondition, 2)
+        } catch
+            return false
+        return {msgActions: msgActions, button: btn}
+    }
+
+    /**
+     * Walks up from the element under the cursor to the first ancestor that contains a `Message actions` bar.
+     * Slack only renders that bar for the hovered message, so this is the message under the cursor.
+     */
+    static __uiaMsgUnderCursor(mousePos) {
+        coord.s()
+        try el := UIA.ElementFromPoint(mousePos.x, mousePos.y,, false)
+        catch
+            return false
+
+        depth := 0
+        while IsObject(el) && depth++ < 40 {
+            try {
+                el.FindElement({ClassName: "c-message-actions--hover-actions", mm: 2}, 4)  ; throws TargetError if absent
+                return el
+            } catch TargetError {
+                ; not in this one, go up
+            } catch
+                return false
+            try el := el.Parent
+            catch
+                return false
+        }
+        return false
     }
 }
