@@ -15,6 +15,12 @@ if !Notify.Exist("reloadAllAlert")
     Notify.Show(, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237', 'Windows Startup',, 'pos=TL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400 tag=closeAllAlert')
     ; notifyExt.showIfNotExist("closeAllAlert",, 'All active ahk scripts are being CLOSED', 'C:\Windows\System32\imageres.dll|icon237', 'Windows Startup',, 'pos=TL dur=5 bc=0x330D0D bdr=Maroon iw=24 maxW=400') ;// don't use func here now that Core Functionality.ahk calls the notify gui otherwise it instantly closes
 resetter := reset(false)
+
+remove := ["syncOnConnect.ahk", "Add game to gameCheck.ahk"]
+for v in remove {
+    if resetter.ignoreScript.has(v)
+        resetter.ignoreScript.Delete(v)
+}
 coreFuncTitle   := "Core Functionality.ahk ahk_class AutoHotkey"
 coreFuncHWND    := winExt.ExistRegex(coreFuncTitle,, resetter.ignoreString,, true)
 activeWindows   := resetter.__getList()

@@ -55,6 +55,7 @@ runApp(path, name, reboot := true) {
 if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TomPC" { ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
     Run(ptf["textreplace"])
     Run(ptf["HotkeylessAHK"])
+    Run(ptf.lib "\Functions\syncFonts.ahk W:\_Assets\fonts")
     syncDirectories()
     Run(ptf.TimerScripts "\syncOnConnect.ahk")
     ;// run kleopatra

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of WM scripts found scattered through the web/ahk docs
  * @author lexikos, tomshi
- * @date 2026/11/02
- * @version 1.3.13
+ * @date 2026/11/06
+ * @version 1.3.14
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -141,6 +141,15 @@ class WM {
             case "autosave_check_mouse":              %res[2]%.checkMouse := res[1]
             case "autosave_always_save":              %res[2]%.alwaysSave := res[1]
             case "autosave_restart_playback":         %res[2]%.restartPlayback := res[1]
+            case "regenKSA":
+                ;// causes `Core Functionality.ahk` to regen `KSA`
+                ;// Fixes scripts throwing when reloaded due to `27.0+` pathing changes within the `.kys` files
+                ;// only really necessary during the transition from versions <27.0 to >27.0
+                Critical("On")
+                try ObjRegisterActive(KSA, "")
+                KSA := KeyShortAdjust()
+                ObjRegisterActive(KSA, CLSID_Objs["KSA"])
+                Critical("Off")
             case "NotifyNotExist":
                 paramSplit := StrSplit(SubStr(backup, StrLen("NotifyNotExist,")+1), "|||")
                 tag      := paramSplit[1]

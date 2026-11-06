@@ -9,7 +9,7 @@
 
 #SingleInstance force
 
-yearVers := CLSID_Objs.loadProp("UserSettings", ["prem_Year", "ae_Year", "ps_Year"])
+yearVers := CLSID_Objs.loadProp("UserSettings", ["prem_Year", "ae_Year", "ps_Year", "premVer", "aeVer", "psVer"])
 
 try warning := A_Args[1]
 if !IsSet(warning) || (warning != false && warning != "false") {
@@ -19,15 +19,18 @@ if !IsSet(warning) || (warning != false && warning != "false") {
 if !generateAdobeShortcut("Adobe Premiere Pro", yearVers["prem_Year"]) {
     if Notify.Exist("origNotifShort")
         Notify.Destroy("origNotifShort")
-    Notify.Show('Error generating shortcut', 'Premiere Pro may not be installed or the proper version has not been selected within settingsGUI()`nCurrent selected version: ' yearVers["premVer"], 'C:\Windows\System32\imageres.dll|icon94', 'soundx',, 'dur=4 bc=0xC72424 show=Fade@250 hide=Fade@250 maxW=500')
+    if !IsSet(warning) || (warning != false && warning != "false")
+        Notify.Show('Error generating shortcut', 'Premiere Pro may not be installed or the proper version has not been selected within settingsGUI()`nCurrent selected version: ' yearVers["premVer"], 'C:\Windows\System32\imageres.dll|icon94', 'soundx',, 'dur=4 bc=0xC72424 show=Fade@250 hide=Fade@250 maxW=500')
 }
 if !generateAdobeShortcut("Adobe After Effects", yearVers["ae_Year"]) {
     if Notify.Exist("origNotifShort")
         Notify.Destroy("origNotifShort")
-    Notify.Show('Error generating shortcut', 'After Effects may not be installed or the proper version has not been selected within settingsGUI()`nCurrent selected version: ' yearVers["aeVer"], 'C:\Windows\System32\imageres.dll|icon94', 'soundx',, 'dur=4 bc=0xC72424 show=Fade@250 hide=Fade@250 maxW=500')
+    if !IsSet(warning) || (warning != false && warning != "false")
+        Notify.Show('Error generating shortcut', 'After Effects may not be installed or the proper version has not been selected within settingsGUI()`nCurrent selected version: ' yearVers["aeVer"], 'C:\Windows\System32\imageres.dll|icon94', 'soundx',, 'dur=4 bc=0xC72424 show=Fade@250 hide=Fade@250 maxW=500')
 }
 if !generateAdobeShortcut("Adobe Photoshop", yearVers["ps_Year"]) {
     if Notify.Exist("origNotifShort")
         Notify.Destroy("origNotifShort")
-    Notify.Show('Error generating shortcut', 'Photoshop may not be installed or the proper version has not been selected within settingsGUI()`nCurrent selected version: ' yearVers["psVer"], 'C:\Windows\System32\imageres.dll|icon94', 'soundx',, 'dur=4 bc=0xC72424 maxW=500 show=Fade@250 hide=Fade@250')
+    if !IsSet(warning) || (warning != false && warning != "false")
+        Notify.Show('Error generating shortcut', 'Photoshop may not be installed or the proper version has not been selected within settingsGUI()`nCurrent selected version: ' yearVers["psVer"], 'C:\Windows\System32\imageres.dll|icon94', 'soundx',, 'dur=4 bc=0xC72424 maxW=500 show=Fade@250 hide=Fade@250')
 }

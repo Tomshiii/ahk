@@ -81,5 +81,6 @@ if WinWait(dockerAhk,, 5)
 ; FileCopy(ptf.lib "\QMK\Work\Prem.ahk", ptf.rootDir "\Backups\Work\QMK\Work\Prem.ahk", 1)
 
 ; deleteDotUnderscore("N:\")
-; syncDirectories()
-; Run(ptf.TimerScripts "\syncOnConnect.ahk")
+Run(ptf.lib "\Functions\syncFonts.ahk W:\_Assets\fonts")
+syncDirectories()
+Run(ptf.TimerScripts "\syncOnConnect.ahk")

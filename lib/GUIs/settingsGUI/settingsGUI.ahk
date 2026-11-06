@@ -1,7 +1,7 @@
 /************************************************************************
  * @author tomshi
- * @date 2026/10/06
- * @version 2.4.21
+ * @date 2026/11/06
+ * @version 2.4.22
  ***********************************************************************/
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
@@ -661,8 +661,9 @@ settingsGUI()
             ignore := browser.vscode.winTitle
             if winExt.ExistRegex(title,, ignore,, true)
                 winExt.WaitCloseRegex(title,,, ignore,, true)
-            Run(ptf.Shortcuts "\createShortcuts.ahk false")
             __editAdobeVer(verIniName, ver) ;// call the func to reassign the settings values
+            Run(ptf.Shortcuts "\createShortcuts.ahk false")
+            WM.Send_WM_COPYDATA("regenKSA", "Core Functionality.ahk")
         }
 
         __generateShortcut() => generateAdobeShortcut(shortcutName, year.text)
