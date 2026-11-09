@@ -186,5 +186,5 @@ settings := Map(
 )
 
 for k, v in settings {
-    try prem.__remoteFunc('setProperty',, "property=" k, "value=" v, "persistent=true")
+    try prem.__remoteCEP('setProperty',, "property=" k, "value=" v, "persistent=true")
 }

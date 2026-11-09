@@ -2,8 +2,8 @@
  * @description move the Premere Pro playhead to the cursor
  * @premVer 26.5.1
  * @author tomshi, taranVH
- * @date 2026/10/29
- * @version 2.5.4
+ * @date 2026/11/09
+ * @version 2.5.5
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -250,7 +250,7 @@ class rbuttonPrem {
 	 */
 	__ensureSeq(checkAmount := 1, timeWait := 1000, *) {
 		static count := 1
-		currentSeq := prem.__remoteFunc("getActiveSequenceID")
+		currentSeq := prem.__remoteUXP("properties/getActiveSequenceID")
 
 		if !this.origSeq || this.origSeq == null || !currentSeq || currentSeq == null {
 			count := 1
@@ -271,7 +271,7 @@ class rbuttonPrem {
 
 		if currentSeq != this.origSeq {
 			errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" this.origSeq))
-			prem.__remoteFunc("focusSequence",, "ID=" this.origSeq)
+			prem.__remoteUXP("custom/focusSequence",, "ID=" this.origSeq)
 			return
 		}
 
@@ -552,13 +552,13 @@ class rbuttonPrem {
 		;// the cursor will still move if the user taps the activation hotkey
 		SendInput(ksa.prem.playheadtoCursor)
 
-		useRemote := this.premObj.remoteActiveCEP
+		useRemote := this.premObj.remoteActiveUXP
 		if useRemote = true {
-			if !prem.__checkPremRemoteFunc(["getActiveSequenceID", "focusSequence"]) {
+			if !prem.__checkPremRemoteFunc(["properties/getActiveSequenceID", "custom/focusSequence"], "uxp") {
 				useRemote := false
 				notifyExt.showIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
 			} else {
-				this.origSeq := prem.__remoteFunc("getActiveSequenceID")
+				this.origSeq := prem.__remoteUXP("properties/getActiveSequenceID")
 				if !this.origSeq || this.origSeq == null {
 					useRemote := false
 					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")

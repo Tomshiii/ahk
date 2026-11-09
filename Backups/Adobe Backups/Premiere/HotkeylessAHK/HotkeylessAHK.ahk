@@ -47,18 +47,18 @@ RunClient(serverPort, functionClassNames)
 Class CustomFunctions {
     changeLabel(label)                                       => (prem.changeLabel(label))
     changeDupe()                                             => (prem.changeDupeFrameMarkers())
-    organiseProj()                                           => (prem.__remoteFunc('organiseProj'))
-    setMarker(colour)                                        => (prem.__remoteFunc('setMarker',, "colour=" colour))
-    removeMarker()                                           => (prem.__remoteFunc('removeMarkerAtPlayhead'))
-    moveToAssetBin(folder)                                   => (prem.__remoteFunc('moveToAssetsBin',, 'folderPath=' folder))
+    organiseProj()                                           => (prem.__remoteUXP('custom/organiseProject'))
+    setMarker(colour)                                        => (prem.__remoteUXP('custom/setMarker',, "colour=" colour))
+    removeMarker()                                           => (prem.__remoteUXP('custom/removeMarkerAtPlayhead'))
+    moveToAssetBin(folder)                                   => (prem.__remoteUXP('custom/moveToAssetsBin',, 'folderPath=' folder))
     toggleLinearColour(enableMaxRenderQual)                  => (prem.toggleLinearColour(enableMaxRenderQual))
     renderPreviews()                                         => (prem.renderPreviewsInOut())
     deleteAllEmptyTracks()                                   => (prem.deleteEmptyTracks())
     renderSelection(outputPath, presetName, import := true)  => (prem.renderProjectSelection(outputPath, presetName, import))
-    setSettings(params := "")                                => (prem.__remoteFunc('setSeqSettings',, "params=" params))
+    setSettings(params := "")                                => (prem.__remoteUXP('custom/setSeqSettings',, "params=" params))
     goToLastProjPanelItem()                                  => (prem.goToLastProjPanelItem())
     setBlendMode(blendModeString)                            => (prem.setBlendMode(blendModeString))
-    setAllEnableDisabled(enabled := "true")                  => (prem.__remoteFunc('setAllEnableDisabled',, "enabled=" enabled))
+    setAllEnableDisabled(enabled := "true")                  => (prem.__remoteUXP('custom/setAllEnabledDisabled',, "enabled=" enabled))
     effectSlot(save := true, slot := 1, saveToFile := false) => (prem.effectSlot(save, slot, saveToFile))
     matchLayers()                                            => (prem.__remoteUXP("custom/matchSelectedClipsToLowestTrack"))
 
@@ -76,7 +76,7 @@ Class CustomFunctions {
 class OtherFuncs {
     /** calls `prem.renderAndReplace()` then calls the `organiseProj` `PremiereRemote` function. Might not make sense for anyone else with a different prem bin structure */
     static rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) {
-        if !prem.__checkPremRemoteFunc('organiseProj') {
+        if !prem.__checkPremRemoteFunc('custom/organiseProject', "uxp") {
             ;// throw
             errorLog(MethodError("PremiereRemote CEP extension is required for this function"))
             return
@@ -84,7 +84,7 @@ class OtherFuncs {
         if !prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?)
             return
         sleep 1000
-        prem.__remoteFunc('organiseProj')
+        prem.__remoteUXP('custom/organiseProject')
     }
 
     /** calls premremote func `addMatchedAdjustmentLayer()`. If it's my transform adjust layer, it also adds the transform effect */

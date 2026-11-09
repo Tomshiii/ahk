@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/11/04
- * @version 1.5.26
+ * @date 2026/11/09
+ * @version 1.6.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -356,7 +356,7 @@ class AE {
      * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead. This function will attempt to rectify the issue itself but again, relying on such could result in issues.
      * @returns {String | Boolean | null}
      */
-    static __remoteFunc(whichFunc, runAsync := false, params*) {
+    static __remoteCEP(whichFunc, runAsync := false, params*) {
         if !this.__checkAERemoteDir(whichFunc) {
             errorLog(TargetError("AERemote is not installed or function does not exist.", -1, whichFunc),,, true)
             return null
@@ -443,7 +443,7 @@ class AE {
         switch {
             case (!parse.has("result") && parse.has("message")):
                 errorLog(ValueError(parse["message"],-1), whichFunc "_" paramsString)
-                MsgBox("ae.__remoteFunc() failed.`n`nMessage: " parse["message"] "`nPassed Params:" paramsString)
+                MsgBox("ae.__remoteCEP() failed.`n`nMessage: " parse["message"] "`nPassed Params:" paramsString)
                 return false
             case parse.has("result") && parse["result"] != "true" && parse["result"] != "false":
                 return parse["result"]
@@ -538,9 +538,9 @@ class AE {
     }
 
     /**
-     * check the parameters passed to a `__remoteFunc` method to ensure the user has passed them correctly
-     * @param {String} [whichFunc] the `whichFunc` parameter passed to either cep ~or uxp~ `__remoteFunc()`
-     * @param {Array} [params] an array of params passed to either cep ~or uxp~ `__remoteFunc()`
+     * check the parameters passed to a `__remoteCEP` method to ensure the user has passed them correctly
+     * @param {String} [whichFunc] the `whichFunc` parameter passed to either cep ~or uxp~ `__remoteCEP()`
+     * @param {Array} [params] an array of params passed to either cep ~or uxp~ `__remoteCEP()`
      * @param {String} [cepOrUXP=cep] determine whether to check CEP functions ~or UXP functions. Must be either `cep` or `uxp`~
      * @returns {Boolean}
      */
@@ -754,7 +754,7 @@ class AE {
 
             blocker.On(false)
             SetTimer(unblock, -1500) ;// failsafe in case AE hangs / the dialog never shows
-            saved := this.__remoteFunc("save", true)
+            saved := this.__remoteCEP("save", true)
         } finally {
             SetTimer(unblock, 0)
             blocker.Off()
@@ -838,7 +838,7 @@ class AE {
         }
 
         if this.__checkAERemoteFunc("setViewerZoom", "cep", false) && !isFit {
-            if this.__remoteFunc("setViewerZoom", false, "zoom=" Number(zoom)) = true
+            if this.__remoteCEP("setViewerZoom", false, "zoom=" Number(zoom)) = true
                 return true
         }
 
@@ -932,12 +932,12 @@ class AE {
             case "multi": which := 'isSelectedMultiple'
         }
         return (!IsSet(which) ? null
-                              : (this.__remoteFunc(which) = false ? false : true))
+                              : (this.__remoteCEP(which) = false ? false : true))
     }
 
     /** A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab. */
     static anchorToPosition() {
-        cepSync := this.__remoteFunc('anchorToPosition')
+        cepSync := this.__remoteCEP('anchorToPosition')
         if cepSync = true
             return
         selected := this.isClipSelected()

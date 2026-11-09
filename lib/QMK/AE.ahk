@@ -22,7 +22,7 @@ l::ae.wiggle("
 			[w[0],w[0]]
 		)"
 	)
-.::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Transform")
+.::ae.__remoteCEP('applyEffectOnAllSelectedClips',, "effectName=Transform")
 ;Down::unassigned()
 
 i::unassigned()
@@ -40,7 +40,7 @@ y::unassigned()
 n::unassigned()
 ;Space::unassigned()
 
-t::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Gaussian Blur")
+t::ae.__remoteCEP('applyEffectOnAllSelectedClips',, "effectName=Gaussian Blur")
 g::unassigned()
 b::unassigned()
 
@@ -54,7 +54,7 @@ d::unassigned()
 c::unassigned()
 ;End::unassigned()
 
-w::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Drop Shadow")
+w::ae.__remoteCEP('applyEffectOnAllSelectedClips',, "effectName=Drop Shadow")
 s::unassigned()
 x::unassigned()
 ;F15::unassigned()

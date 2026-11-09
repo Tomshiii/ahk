@@ -12,8 +12,10 @@
 - ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession
 - 📋 `__isUXPInstalled()` will now check that; the `ccx` extension has been installed, and that `docker` is installed
 - 📋 `determineLockedTracks()` can now use `UXP` to return its object on `Premiere` versions greater than `27.1.0`
+- 📋 Renamed `__remoteFunc()` => `__remoteCEP()`
+- 📋 Replaced most usage of `__remoteCEP()` => `__remoteUXP()`
 
-📍 `__remoteFunc()`/`__remoteUXP()`
+📍 `__remoteCEP()`/`__remoteUXP()`
 - ✅ Fixed timing out during large operations
 
 ### 📝 `discord {`
@@ -34,7 +36,10 @@
 - ✅ Fixed clicking the GUI to close it not restarting the duration
 
 ### 📝 `PremiereRemote`
-- ✏️ Added `getAllTrackLockStates()`, `toggleTrackLocks()`
+
+📍 `UXP`
+- ✏️ Added `getTrackClipMediaType()`, `getAllTrackLockStates()`, `toggleTrackLocks()`
+- 📋 `closeActiveSequence()` now accepts parameter `allExcept`
 
 ## Other Changes
 - ❌ Removed `convert2` `Streamdeck AHK` scripts. Replaced with `HotkeylessAHK` function

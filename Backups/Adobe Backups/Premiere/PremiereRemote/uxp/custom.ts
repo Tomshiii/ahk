@@ -27,23 +27,6 @@ const openSequences = new Set<string>();
 import * as uxp from "uxp";
 
 /**
- * store sequences
- * @returns {void}
- */
-export async function initSequenceTracking(): Promise<void> {
-    const active = await common.getActiveSequence();
-    if (active) openSequences.add(active.guid.toString());
-
-    ppro.EventManager.addEventListener(ppro.SequenceEvent.ACTIVATED, (e: any) => {
-        openSequences.add(e.guid.toString());
-    });
-
-    ppro.EventManager.addEventListener(ppro.SequenceEvent.CLOSED, (e: any) => {
-        openSequences.delete(e.guid.toString());
-    });
-}
-
-/**
  * saves the current project
  * @returns {boolean}
  */
@@ -63,7 +46,6 @@ export async function save(): Promise<Boolean> {
 export async function focusSequence(ID: string): Promise<boolean | string> {
     if (!(await helpers.isPremVerAtLeast("26.3.0")))
         return "null_version_26.3"
-    // if (!openSequences.has(ID)) return false;
 
     const project = await ppro.Project.getActiveProject();
     if (!project) return false;
@@ -131,14 +113,29 @@ export async function openSequence(ID: string): Promise<boolean> {
 }
 
 /**
- * closes the active sequence
- * @returns {void}
+ * Closes sequences in the active project.
+ * @param allExcept - if true, closes every sequence except the active one;
+ *                    if false (default), closes only the active sequence.
+ * @returns {Promise<void>}
  */
-export async function closeActiveSequence(): Promise<void> {
+export async function closeActiveSequence(allExcept: boolean = false): Promise<void> {
     const activeProj = await ppro.Project.getActiveProject();
-    const seq = await common.getActiveSequence();
-    if (!seq) return;
-    return activeProj.closeSequence(seq);
+    const activeSeq = await common.getActiveSequence();
+    if (!activeProj || !activeSeq) return;
+
+    const activeID = activeSeq.guid.toString();
+
+    if (!allExcept) {
+        await activeProj.closeSequence(activeSeq);
+        return;
+    }
+
+    const allSequences = await activeProj.getSequences();
+    for (const seq of allSequences) {
+        if (seq.guid.toString() !== activeID) {
+            await activeProj.closeSequence(seq);
+        }
+    }
 }
 
 /**
@@ -203,7 +200,7 @@ export async function getPlayheadPosTicks(): Promise<string | false> {
     if (!sequence) return false;
 
     const currentPos = await sequence.getPlayerPosition();
-    return currentPos.ticks;
+    return String(currentPos.ticks);
 }
 
 /**
@@ -370,7 +367,7 @@ export async function getAudioTracks(): Promise<string | null> {
 }
 
 /**
- * return the audio track count
+ * return the video track count
  * @returns {String | null}
  */
 export async function getVideoTracks(): Promise<string | null> {
@@ -1258,8 +1255,10 @@ export async function setMarker(colour: string): Promise<void> {
         // check if this project item is actually a sequence (multicam)
         let markerOwner: any = clipProjItem;
 
-        const isMulticam = clipProjItem.isMulticamClip();
-        const isSeq = clipProjItem.isSequence();
+        const [isMulticam, isSeq] = await Promise.all([
+            clipProjItem.isMulticamClip(),
+            clipProjItem.isSequence(),
+        ]);
 
         if (isMulticam || isSeq) {
             const seq = await clipProjItem.getSequence();

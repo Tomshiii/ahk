@@ -275,7 +275,7 @@ F18:: ;// needs to be here or thio's script won't work
 		return
 	}
 	if premUIA_Values.__isPremPanelActive("sourceMonitor") == true {
-		prem.__remoteFunc('sourceMonitorPlay',, "speed=1")
+		prem.__remoteUXP('custom/sourceMonitorPlay',, "speed=1")
 		return
 	}
 	prem.__focusTimeline()

@@ -372,7 +372,7 @@ $s:: ;// stop "add edit" adding an edit to all tracks when nothing is selected (
 		case (prem.timelineFocusStatus() != true || CaretGetPos(&carx, &cary)):
 			SendInput(SubStr(A_ThisHotkey, 2))
 			return
-		case (!prem.__remoteFunc('isSelected')): return
+		case (!prem.__remoteCEP('isSelected')): return
 
 		default: SendInput(SubStr(A_ThisHotkey, 2))
 	}
@@ -399,7 +399,7 @@ $d::
 		errorLog(Error("cursor isn't within the timeline"))
 		return
 	}
-	if !prem.__checkPremRemoteFunc(["deselectAll", "getPlayheadPosTicks"]) || !prem.__checkPremRemoteFunc("custom/movePlayheadFrames", "uxp") {
+	if !prem.__checkPremRemoteFunc(["custom/deselectAll", "custom/getPlayheadPosTicks", "custom/movePlayheadFrames"], "uxp") {
 		errorLog(MethodError("Cannot determine PremiereRemote function", -1))
 		return
 	}
@@ -418,8 +418,8 @@ $d::
 	blocker.On()
 	try origTool := prem.getSelectedTool(, false)
 	try prem.selectTool("selectionTool",, true)
-	prem.__remoteFunc('deselectAll')
-	t := prem.__remoteFunc('getPlayheadPosTicks')
+	prem.__remoteUXP('custom/deselectAll')
+	t := prem.__remoteUXP('custom/getPlayheadPosTicks')
 	name := cursor.MatchCursor(cursor.GetCursorSignature(), cursor.premMap)
 	switch name {
 		; case "arrow":
@@ -462,7 +462,7 @@ $d::
 		prem.selectTool(origTool,, true)
 	MouseMove(origMouse.x, origMouse.y, 0)
 	if IsSet(t)
-		prem.__remoteFunc('setPlayheadPosTicks',, "ticks=" t)
+		prem.__remoteUXP('custom/setPlayheadPosTicks',, "ticks=" t)
 	blocker.Off()
 	prem.__focusTimeline()
 }
@@ -478,7 +478,7 @@ F19::
 	}
 	switch panel, false {
 		case "Timeline": prem.dragSourceMon("audio", "_Assets/01_Other/Bars and Tone - Rec 709", true)
-		case "Project": prem.__remoteFunc('openSelectedProjItemInSourceMonitor')
+		case "Project": prem.__remoteUXP('custom/openSelectedProjItemInSourceMonitor')
 	}
 
 }
@@ -527,11 +527,11 @@ LAlt & MButton::prem.layerSizeAdjust(, true)
 <!+8::
 <!+9::prem.toggleEnabled(, "aud", 1, true, "settings")
 
-<!c::prem.__remoteFunc('closeClipSourceMon')
-<!+c::prem.__remoteFunc('closeAllClipSourceMon')
+<!c::prem.__remoteUXP('custom/closeClipSourceMon')
+<!+c::prem.__remoteUXP('custom/closeAllClipSourceMon')
 
-!e::prem.__remoteFunc('setAllEnableDisabled',, "enabled=true")
-!d::prem.__remoteFunc('setAllEnableDisabled',, "enabled=false")
+!e::prem.__remoteUXP('custom/setAllEnabledDisabled',, "enabled=true")
+!d::prem.__remoteUXP('custom/setAllEnabledDisabled',, "enabled=false")
 
 $^v::
 {
@@ -539,16 +539,16 @@ $^v::
 		SendInput("^v")
 		return
 	}
-	seqName := prem.__remoteFunc('getActiveSequenceName')
+	seqName := prem.__remoteUXP('properties/getActiveSequenceName')
 	if seqName = "BONUS" {
 		SendInput(ksa.prem.Paste)
 		sleep 100
 		prem.__remoteUXP("custom/movePlayhead",, "seconds=1")
 		return
 	}
-	t := prem.__remoteFunc('getPlayheadPosTicks')
+	t := prem.__remoteUXP('custom/getPlayheadPosTicks')
 	SendInput(ksa.prem.Paste)
-	prem.__remoteFunc('setPlayheadPosTicks',, "ticks=" t)
+	prem.__remoteUXP('custom/setPlayheadPosTicks',, "ticks=" t)
 }
 
 ^!+w::
@@ -817,7 +817,7 @@ F14 & MButton::
 		KeyWait(kwait)
 		return
 	}
-	prem.__remoteFunc('toggleEnabled')
+	prem.__remoteUXP('custom/toggleEnabled')
 }
 F14 & LButton::
 {
@@ -857,5 +857,5 @@ WheelDown::
 	clip.__scriptSplit(A_Clipboard)
 }
 
-^!a::prem.__remoteFunc('setAllEnableDisabled',, "enabled=true")
-^!d::prem.__remoteFunc('setAllEnableDisabled',, "enabled=false")
+^!a::prem.__remoteUXP('custom/setAllEnabledDisabled',, "enabled=true")
+^!d::prem.__remoteUXP('custom/setAllEnabledDisabled',, "enabled=false")

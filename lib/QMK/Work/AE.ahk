@@ -21,7 +21,7 @@ SC027::unassigned()
 
 o::unassigned()
 l::unassigned()
-.::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Transform")
+.::ae.__remoteCEP('applyEffectOnAllSelectedClips',, "effectName=Transform")
 ;Down::unassigned()
 
 i::unassigned()
@@ -39,7 +39,7 @@ j::unassigned()
 ; n::unassigned()
 ;Space::unassigned()
 
-t::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Gaussian Blur")
+t::ae.__remoteCEP('applyEffectOnAllSelectedClips',, "effectName=Gaussian Blur")
 g::unassigned()
 ; b:unassigned()
 
@@ -54,12 +54,12 @@ d::unassigned()
 c::unassigned()
 End::unassigned()
 
-w::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Drop Shadow")
-s::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=Tint")
+w::ae.__remoteCEP('applyEffectOnAllSelectedClips',, "effectName=Drop Shadow")
+s::ae.__remoteCEP('applyEffectOnAllSelectedClips',, "effectName=Tint")
 x::unassigned()
 F15::unassigned()
 
-q::ae.__remoteFunc('applyEffectOnAllSelectedClips',, "effectName=S_Shake")
+q::ae.__remoteCEP('applyEffectOnAllSelectedClips',, "effectName=S_Shake")
 a::unassigned()
 ; z::unassigned()
 ;F16::unassigned()

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/11/05
- * @version 2.5.110
+ * @date 2026/11/09
+ * @version 2.6.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -67,7 +67,7 @@ class Prem {
         }
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
 
-        allow := Mip("__remoteFunc", true, "__remoteUXP", true)
+        allow := Mip("__remoteCEP", true, "__remoteUXP", true)
         for name in Prem.OwnProps() {
             ;// skip anything private (convention: starts with `__`), and __New itself
             if (SubStr(name, 1, 2) = "__") && !allow.Has(name)
@@ -642,27 +642,27 @@ class Prem {
                                 case "Abort": ;// darkest
                                     props.text := "7.9999998211860657"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "darkest"
                                 case "Retry": ;// dark
                                     MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
                                     props.text := "7.9999998211860657"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "darkest"
                                     /* props.text := "34.999999403953552"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "dark" */
                                 case "Ignore": ;// light
                                     MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
                                     props.text := "7.9999998211860657"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "darkest"
                                     /* props.text := "80.000001192092896"
                                     loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteFunc('setProperty',, "property=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
+                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
                                     this.theme := "light" */
                             }
                         }
@@ -992,6 +992,14 @@ class Prem {
         return paramsString
     }
 
+    static __busyWindows() {
+        busyWins := ["Render and Replace Progress", "Encoding", "Save Project", "Tracking..."]
+        for v in busyWins {
+            if WinExist(v A_Space this.winTitle)
+                return true
+        }
+        return true
+    }
     /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) function
      * ## Warning
@@ -1003,14 +1011,15 @@ class Prem {
      * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
      * @returns {String | Boolean | null}
      */
-    static __remoteFunc(whichFunc, runAsync := false, params*) {
+    static __remoteCEP(whichFunc, runAsync := false, params*) {
         if !WinExist(this.winTitle)
             return null
-        /* if !this.__checkDialogueClass() {
+        dialogWin := this.__checkDialogueClass(), busyWins := this.__busyWindows()
+        if !dialogWin && busyWins {
             errorLog(TargetError("Premiere appears to be busy"))
             notifyExt.showIfNotExist("premCEPpremBusy",, 'Premiere appears to be busy...`nAttempting to communicate with the CEP panel will be cancelled.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return null
-        } */
+        }
         chkDir := this.__checkPremRemoteDir()
         chkFunc := this.__checkPremRemoteFunc(whichFunc)
         if !chkDir {
@@ -1106,7 +1115,7 @@ class Prem {
         switch {
             case (!parse.has("result") && parse.has("message")):
                 errorLog(ValueError(parse["message"],-1), whichFunc "_" paramsString)
-                MsgBox("prem.__remoteFunc() failed.`n`nMessage: " parse["message"] "`nPassed Params:" paramsString)
+                MsgBox("prem.__remoteCEP() failed.`n`nMessage: " parse["message"] "`nPassed Params:" paramsString)
                 return null
             case parse.has("result") && parse["result"] != "true" && parse["result"] != "false":
                 return parse["result"]
@@ -1118,9 +1127,9 @@ class Prem {
     }
 
     /**
-     * check the parameters passed to a `__remoteFunc` method to ensure the user has passed them correctly
-     * @param {String} [whichFunc] the `whichFunc` parameter passed to either cep or uxp `__remoteFunc()`
-     * @param {Array} [params] an array of params passed to either cep or uxp `__remoteFunc()`
+     * check the parameters passed to a `__remoteCEP` method to ensure the user has passed them correctly
+     * @param {String} [whichFunc] the `whichFunc` parameter passed to either cep or uxp `__remoteCEP()`
+     * @param {Array} [params] an array of params passed to either cep or uxp `__remoteCEP()`
      * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
      * @returns {Boolean}
      */
@@ -1216,10 +1225,11 @@ class Prem {
             errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -2, whichFunc), whichFunc,, true)
             return null
         }
-        /* if !this.__checkDialogueClass() {
+        dialogWin := this.__checkDialogueClass(), busyWins := this.__busyWindows()
+        if !dialogWin && busyWins {
             notifyExt.showIfNotExist("premUXPpremBusy",, 'Premiere appears to be busy...`nAttempting to communicate with the UXP panel will be cancelled.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return null
-        } */
+        }
         chkDir := this.__checkPremRemoteDir(, "uxp")
         chkFunc := this.__checkPremRemoteFunc(whichFunc, "uxp")
         if !chkDir {
@@ -1596,12 +1606,12 @@ class Prem {
                 return "busy"
         }
 
-        if !this.__checkPremRemoteFunc(["saveProj", "getActiveSequenceID", "focusSequence"])
+        if !this.__checkPremRemoteFunc(["custom/save", "properties/getActiveSequenceID", "custom/focusSequence"], "uxp")
             return false
 
         origSeq := ""
         if checkAmount != 0
-            origSeq := this.__remoteFunc("getActiveSequenceID")
+            origSeq := this.__remoteUXP("properties/getActiveSequenceID")
 
         ;// save
         saveTitle := "Save Project " this.exeTitle
@@ -1624,7 +1634,7 @@ class Prem {
 
             blocker.On(false)
             SetTimer(unblock, -1500) ;// failsafe in case Premiere hangs / the dialog never shows
-            saved := this.__remoteFunc("saveProj", true)
+            saved := this.__remoteUXP("custom/save", true)
         } finally {
             SetTimer(unblock, 0)
             blocker.Off()
@@ -1653,10 +1663,10 @@ class Prem {
 
         loop checkAmount {
             sleep checkSeqTime
-            currentSeq := this.__remoteFunc("getActiveSequenceID")
+            currentSeq := this.__remoteUXP("properties/getActiveSequenceID")
             if currentSeq != origSeq {
                 errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" origSeq))
-                this.__remoteFunc("focusSequence",, "ID=" String(origSeq))
+                this.__remoteUXP("custom/focusSequence",, "ID=" String(origSeq))
                 return true
             }
         }
@@ -1862,7 +1872,7 @@ class Prem {
             errorLog(PropertyError("Incorrect Value in Parameter #1", -2, single),,, true)
             return null
         }
-        if !this.__checkPremRemoteFunc(['isSelected', 'isSelectedSingle', 'isSelectedMultiple'])
+        if !this.__checkPremRemoteFunc(['custom/isSelected', 'custom/isSelectedSingle', 'custom/isSelectedMultiple'], "uxp")
             return null
 
         switch single {
@@ -1870,7 +1880,7 @@ class Prem {
             case true:    which := 'isSelectedSingle'
             case "multi": which := 'isSelectedMultiple'
         }
-        return (!IsSet(which) ? null : ((this.__remoteFunc(which, true) = false ? false : true)))
+        return (!IsSet(which) ? null : ((this.__remoteUXP("custom/" which, true) = false ? false : true)))
     }
 
     /**
@@ -1983,7 +1993,7 @@ class Prem {
             errorLog(TypeError("Incorrect Parameter type passed to function", -1),,, true)
             return
         }
-        if !this.__checkPremRemoteFunc('getPlayheadPosTicks') || !this.__checkPremRemoteFunc('custom/resetSelection', "uxp") {
+        if !this.__checkPremRemoteFunc(['custom/resetSelection', 'custom/getPlayheadPosTicks'], "uxp") {
             errorLog(MethodError("Required PremiereRemote functions missing.", -1))
             return
         }
@@ -2012,10 +2022,10 @@ class Prem {
                         this.__focusTimeline(premUIA)
                         sleep 150
                     }
-                    startTick := this.__remoteFunc('getPlayheadPosTicks')
+                    startTick := this.__remoteUXP('custom/getPlayheadPosTicks')
                     SendInput(direction)
                     sleep 25
-                    newTick := this.__remoteFunc('getPlayheadPosTicks')
+                    newTick := this.__remoteUXP('custom/getPlayheadPosTicks')
                     if startTick == newTick {
                         delaySI(30, ksa.prem.stepBackOneFrame, ksa.prem.stepforwardOneFrame)
                         try {
@@ -2399,7 +2409,7 @@ class Prem {
             return null
         }
 
-        if !this.__checkPremRemoteFunc('isSelectedAudio') || !this.__remoteFunc('isSelectedAudio') {
+        if !this.__checkPremRemoteFunc('custom/isSelectedAudio', "uxp") || !this.__remoteUXP('custom/isSelectedAudio') {
             blocker.Off()
             notifyExt.showIfNotExist("premNoClipSelectedGain",, 'No audio clip was selected, gain cannot be adjusted',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return false
@@ -2543,7 +2553,7 @@ class Prem {
                 block.Off()
                 return
             }
-            levels := this.__remoteFunc("changeAudioLevels",, "level=" String(which sendGain))
+            levels := this.__remoteUXP("custom/changeAllAudioLevels",, "levelInDb=" String(which sendGain))
             if levels != true && levels != "true" {
                 errorLog(MethodError("Unexpected response", -1), "sent value: " String(which sendGain) " Response: " levels " - Type: " Type(levels))
                 notifyExt.showIfNotExist("premLevelKeyframe", 'prem.numpadGain()', 'Setting ``level`` keyframe may have encountered an issue.', 'C:\Windows\System32\imageres.dll|icon80', 'Speech Misrecognition', , 'dur=5 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red')
@@ -3328,10 +3338,22 @@ class Prem {
         this().__delprev(sendHotkey, attempt ?? false)
     }
 
-    /** This function handles rendering `Previews` between the current `In`/`Out` point. This function *requires* `PremiereRemote` */
+    /**
+     * This function handles rendering `Previews` between the current `In`/`Out` point. This function uses `MenuSelect` and as such is hard coded in english
+     * @returns {Boolean}
+    */
     static renderPreviewsInOut() {
+        if !WinExist(this.winTitle)
+            return false
         this.save(, 0, 0)
-        this.__remoteFunc('renderPreviews')
+        if !WinActive(this.winTitle)
+            switchTo.Premiere()
+        n := WinGet.PremName()
+        try MenuSelect(n.winTitle,, "Sequence", "Render In to Out")
+        catch {
+            return false
+        }
+        return true
     }
 
     /**
@@ -3511,11 +3533,11 @@ class Prem {
      * A function to simply copy the current anchor point coordinates and transfer them to the position value. This function is designed for use in the `Transform` Effect and not the motion tab.
      */
     static anchorToPosition() {
-        if !this.__checkPremRemoteFunc('anchorToPosition') {
+        if !this.__checkPremRemoteFunc('custom/anchorToPosition', "uxp") {
             errorLog(MethodError("Required PremiereRemote function missing: anchorToPosition", -1))
             return
         }
-        this.__remoteFunc('anchorToPosition')
+        this.__remoteUXP('custom/anchorToPosition')
     }
 
     /**
@@ -3689,7 +3711,7 @@ class Prem {
             return
         }
 
-        if !this.__checkPremRemoteFunc(["getSourceMonitorName", "loadInSourceMonitor"]) {
+        if !this.__checkPremRemoteFunc(["properties/getSourceMonitorName", "custom/loadInSourceMonitor"], "uxp") {
             ;// throw
             blocker.Off()
             errorLog(MethodError("Some PremiereRemote functions are missing. Aborting", -1),,, true)
@@ -3707,7 +3729,7 @@ class Prem {
             return
         }
         if specificFile != false && specificFile != "" {
-            getName := this.__remoteFunc("getSourceMonitorName")
+            getName := this.__remoteUXP("properties/getSourceMonitorName")
             sourceMonFile := SubStr(specificFile, (pos := instr(specificFile, "/",, -1) || pos := instr(specificFile, "\",, -1)) ? pos+1 : 1)
             if getName != specificFile {
                 __exit() {
@@ -3716,9 +3738,9 @@ class Prem {
                     return
                 }
                 if searchForFile = true {
-                    this.__remoteFunc("loadInSourceMonitor",, "itemPath=" specificFile)
+                    this.__remoteUXP("custom/loadInSourceMonitor",, "itemPath=" specificFile)
                     sleep 150
-                    recheck := this.__remoteFunc("getSourceMonitorName")
+                    recheck := this.__remoteUXP("properties/getSourceMonitorName")
                     if recheck != sourceMonFile {
                         __exit()
                         return
@@ -3869,26 +3891,29 @@ class Prem {
      * ```
      */
     static determineLockedTracks(UIAObj?) {
-        if this.__checkPremRemoteFunc(['properties/getPremVer', 'custom/getVideoTracks', 'custom/getAudioTracks'], "uxp", false) {
-            premVer := this.__remoteUXP('properties/getPremVer')
-            if VerCompare(premVer, "27.1.0") >= 0 {
-                audTracks := this.__remoteUXP('custom/getAudioTracks')
-                vidTracks := this.__remoteUXP('custom/getVideoTracks')
-                lockedTracks := JSON.stringify(this.__remoteUXP('shared/trackLocks/getAllTrackLockStates'))
-                video := {total: vidTracks, notVisible: false}
-                audio := {total: audTracks, notVisible: false}
-                videoArr := []
-                audioArr := []
-                for trackType, _ in lockedTracks {
-                    for trackIndex, status in trackType {
-                        if status = "Locked"
-                            %trackType%Arr.Push(trackIndex-1)
-                    }
+        if !this.__checkPremRemoteFunc(['properties/getPremVer', 'custom/getVideoTracks', 'custom/getAudioTracks', 'shared/trackLocks/getAllTrackLockStates'], "uxp") {
+            errorLog(MethodError("Required PremiereRemote functions missing.", -1))
+            return false
+        }
+
+        premVer := this.__remoteUXP('properties/getPremVer')
+        if VerCompare(premVer, "27.1.0") >= 0 {
+            audTracks := this.__remoteUXP('custom/getAudioTracks')
+            vidTracks := this.__remoteUXP('custom/getVideoTracks')
+            lockedTracks := JSON.stringify(this.__remoteUXP('shared/trackLocks/getAllTrackLockStates'))
+            video := {total: vidTracks, notVisible: false}
+            audio := {total: audTracks, notVisible: false}
+            videoArr := []
+            audioArr := []
+            for trackType, _ in lockedTracks {
+                for trackIndex, status in trackType {
+                    if status = "Locked"
+                        %trackType%Arr.Push(trackIndex-1)
                 }
-                video.locked := videoArr
-                audio.locked := audioArr
-                return {video: video, audio: audio}
             }
+            video.locked := videoArr
+            audio.locked := audioArr
+            return {video: video, audio: audio}
         }
 
         premUIA := (IsSet(UIAObj)) ? UIAObj : premUIA_Values.initialise()
@@ -3896,12 +3921,8 @@ class Prem {
             return false
         if !layerIndex := this.__retrieveAudLayerIndex(premUIA)
             return false
-        if !this.__checkPremRemoteFunc(['getVideoTracks', 'getAudioTracks']) {
-            errorLog(MethodError("Required PremiereRemote functions missing.", -1))
-            return false
-        }
-        vidTrackNum := this.__remoteFunc('getVideoTracks')
-        audTrackNum := this.__remoteFunc('getAudioTracks')
+        vidTrackNum := this.__remoteUXP('custom/getVideoTracks')
+        audTrackNum := this.__remoteUXP('custom/getAudioTracks')
 
         vidTracksArr := []
         vidLayersChecked := 0
@@ -4251,7 +4272,7 @@ $!WheelDown::
         selected := this.isClipSelected(true)
         if !selected || selected == null
             return
-        this.__remoteFunc('setScale',, "scale=" String(scaleVal))
+        this.__remoteUXP('shared/effectsUtils/setClipComponentParam',, "componentIndex=1", "paramIndex=1", "value=" String(scaleVal))
     }
 
     /**
@@ -4580,8 +4601,7 @@ $!WheelDown::
             return
         }
 
-        funcs := ['isSelected', 'movePlayheadFrames', 'toggleEnabled', 'getAudioTracks', 'getVideoTracks']
-        if !this.__checkPremRemoteFunc(funcs) || !this.__checkPremRemoteFunc('custom/deselectAll', "uxp") {
+        if !this.__checkPremRemoteFunc(['custom/movePlayheadFrames', 'custom/toggleEnabled', 'custom/getAudioTracks', 'custom/getVideoTracks', 'custom/deselectAll'], "uxp") {
             blocker.Off()
             errorLog(MethodError('This function requires additional PremiereRemote functions for proper functionality', -1))
             return
@@ -4625,7 +4645,7 @@ $!WheelDown::
         }
         movedPlayhead  := false
         if this.__getPixel(origMouseCords.x, origMouseCords.y) = this.playhead {
-            this.__remoteFunc('movePlayheadFrames',, "subtract=true", "frames=3")
+            this.__remoteUXP('custom/movePlayheadFrames',, "frames=-3")
             movedPlayhead := true
         }
         withinTimeline := this.__checkCoords(origMouseCords)
@@ -4644,7 +4664,7 @@ $!WheelDown::
             midDivY := false
             aboveOrBelow := (audOrVid = "vid") ? true : false
         }
-        maxTracks := (aboveOrBelow = true) ? this.__remoteFunc('getVideoTracks') : this.__remoteFunc('getAudioTracks')
+        maxTracks := (aboveOrBelow = true) ? this.__remoteUXP('custom/getVideoTracks') : this.__remoteUXP('custom/getAudioTracks')
         if !IsSet(splitHotkey) && track != "queue" && track = A_ThisHotkey && (StrLen(A_ThisHotkey) > 1) && !IsInteger(A_ThisHotkey) {
             splitHotkey := getHotkeysArr()
             if !IsInteger(GetKeyName(splitHotkey[splitHotkey.Length])) {
@@ -4714,7 +4734,7 @@ $!WheelDown::
             }
             SendInput("{LAlt Up}{LShift Up}")
             sleep 30
-            this.__remoteFunc('toggleEnabled')
+            this.__remoteUXP('custom/toggleEnabled')
             sleep 30
 
             if handles = true && !Notify.Exist("premTransitionHandles") {
@@ -4797,7 +4817,7 @@ $!WheelDown::
                 __doToggle()
         }
         if movedPlayhead = true {
-            this.__remoteFunc('movePlayheadFrames',, "subtract=false", "frames=3")
+            this.__remoteUXP('custom/movePlayheadFrames',, "frames=3")
         }
         MouseMove(origMouseCords.x, origMouseCords.y, 0)
         sleep 25
@@ -4862,8 +4882,8 @@ $!WheelDown::
         if muteOrSolo != "solo" && muteOrSolo != "mute"
             return
 
-        if muteOrSolo = "mute" && (this.__checkPremRemoteDir('unmuteAllMutedTracks') = true) {
-            this.__remoteFunc('unmuteAllMutedTracks')
+        if muteOrSolo = "mute" && (this.__checkPremRemoteDir('custom/unmuteAllTracks', "uxp") = true) {
+            this.__remoteUXP('custom/unmuteAllTracks')
             return
         }
 
@@ -4897,8 +4917,8 @@ $!WheelDown::
     static soloVideo(soloInverseDisable := "solo") {
         coord.s()
 
-        if soloInverseDisable = "disable" && (this.__checkPremRemoteDir('enableAllVideoTracks') = true) {
-            this.__remoteFunc('enableAllVideoTracks')
+        if soloInverseDisable = "disable" && (this.__checkPremRemoteDir('custom/unhideAllVideoTracks', "uxp") = true) {
+            this.__remoteUXP('custom/unhideAllVideoTracks')
             return
         }
 
@@ -5008,7 +5028,7 @@ $!WheelDown::
      * #### This function requires `PremiereRemote`
      */
     static toggleLinearColour(enableMaxRenderQual := true) {
-        if !this.__checkPremRemoteDir('toggleLinearColour')
+        if !this.__checkPremRemoteDir('custom/toggleLinearColour', "uxp")
             return
         if Notify.Exist("premFailLinColour")
             Notify.Destroy("premFailLinColour")
@@ -5017,7 +5037,7 @@ $!WheelDown::
         chkQual := checkBool(enableMaxRenderQual)
         if chkQual != true && chkQual != false
             chkQual := true
-        toggle := this.__remoteFunc('toggleLinearColour',, "enableMaxRenderQual=" chkQual)
+        toggle := this.__remoteUXP('custom/toggleLinearColour',, "enableMaxRenderQual=" chkQual)
         switch toggle {
             case "failure": notifyExt.showIfNotExist("premFailLinColour",, 'Toggling Linear Colour failed.', 'C:\Windows\System32\imageres.dll|icon237', 'Speech Misrecognition',, 'dur=5 bc=Black bdr=Red')
             default:
@@ -5041,12 +5061,12 @@ $!WheelDown::
 
     /** A function to close the currently active sequence within premiere. This function **requires** `PremiereRemote` */
     static closeActiveSequence(allExcept := false) {
-        if !this.__checkPremRemoteDir("closeActiveSequence") {
+        if !this.__checkPremRemoteDir("custom/closeActiveSequence", "uxp") {
             ;// throw
             errorLog(MethodError("closeActiveSequence() requires PremiereRemote to be installed"),,, true)
             return false
         }
-        this.__remoteFunc('closeActiveSequence',, "allExcept=" allExcept)
+        this.__remoteUXP('custom/closeActiveSequence',, "allExcept=" allExcept)
     }
 
     /**
@@ -5113,19 +5133,19 @@ $!WheelDown::
     static renderProjectSelection(outputPath, presetName, addToProj := true) {
         if !WinActive(this.exeTitle)
             return false
-        chkRemote := this.__checkPremRemoteFunc(['importFile', 'renderInPrem', 'selectionIsSequence', 'getSelectionBinPath', 'isMainThreadFree'])
+        chkRemote := this.__checkPremRemoteFunc(['custom/importFile', 'custom/renderInPrem', 'custom/projectSelectionIsSequence', 'custom/getSelectionBinPath'], "uxp")
         if !chkRemote {
             notifyExt.showIfNotExist('premRenderRemoteFuncs',, 'Required PremiereRemote functions are not installed', 'C:\Windows\System32\shell32.dll|icon148', 'Windows Message Nudge',, 'bdr=Red maxW=400 dur=4')
             return false
         }
         presetPath := ptf.Backups "\Adobe Backups\Media Encoder\Presets"
 
-        if !this.__remoteFunc('selectionIsSequence') {
+        if !this.__remoteUXP('custom/projectSelectionIsSequence') {
             notifyExt.showIfNotExist('premSelectionNotSeq',, 'Current selection isn`'t a sequence or clip', 'C:\Windows\System32\imageres.dll|icon80', 'Windows Startup',, 'bdr=Red maxW=400 dur=4')
             return false
         }
 
-        binPath := this.__remoteFunc('getSelectionBinPath')
+        binPath := this.__remoteUXP('custom/getSelectionBinPath')
 
         title := WinGet.PremName()
         if title.saveCheck != false
@@ -5147,23 +5167,11 @@ $!WheelDown::
             return false
         }
         preset := FileExist(presetPath "\" presetName) ? presetPath "\" presetName : presetPath "\" presetName ".epr"
-        file := this.__remoteFunc('renderInPrem',, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
+        file := this.__remoteUXP('custom/renderInPrem',, "outputPath=" StrReplace(renderPath, "\", "/"), "presetPath=" StrReplace(preset, "\", "/"))
         this.save()
         if checkbool(addToProj) && (file != false && file != null) && FileExist(file) {
             notifyExt.showIfNotExist('importRenderedFilePrem',, 'Importing file into Premiere', 'C:\Windows\System32\imageres.dll|icon179',,, 'dur=4 bdr=Purple show=Fade@250 hide=Fade@250 maxW=400')
-            __waitFree() {
-                loop 20 {
-                    sleep 1000
-                    if (this.__remoteFunc('isMainThreadFree') = true)
-                        return true
-                }
-                return false
-            }
-            if !__waitFree() {
-                this.save()
-                return false
-            }
-            if !this.__remoteFunc('importFile',, "filePath=" StrReplace(file, "\", "/"), "importPath=" binPath, "importAsStills=0")
+            if !this.__remoteUXP('custom/importFile',, "filePath=" StrReplace(file, "\", "/"), "importPath=" binPath, "importAsStills=0")
                 return false
         }
         this.save()
@@ -5343,7 +5351,7 @@ $!WheelDown::
      * @returns {Boolean}
      */
     static setRnderRplcCheckBoxes(UIAObj?, &AdobeEl?, handles?, includeEffects := true) {
-        if !this.__checkPremRemoteFunc('getSeqFrameRate') {
+        if !this.__checkPremRemoteFunc('properties/getSeqFrameRate', "uxp") {
             errorLog(MethodError("Required PremiereRemote function missing.", -1))
             return false
         }
@@ -5368,7 +5376,7 @@ $!WheelDown::
             case false:
                 if handlesState = false
                     handlesCheckbox.Toggle()
-                frameRate := this.__remoteFunc('getSeqFrameRate')
+                frameRate := this.__remoteUXP('properties/getSeqFrameRate')
                 if !IsNumber(frameRate) {
                     errorLog(TargetError("Failed to retrieve sequence framerate", -1))
                     return false
@@ -5420,16 +5428,17 @@ $!WheelDown::
     static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout := 3, handles?, includeEffects := true) {
         if !WinActive(this.winTitle)
             return false
-        if !this.__checkPremRemoteFunc('clipType') {
+        if !this.__checkPremRemoteFunc(['custom/getTrackClipType', 'custom/getTrackClipMediaType'], "uxp") {
             errorLog(MethodError("Required PremiereRemote function missing", -1))
             return false
         }
-        clipType := this.__remoteFunc('clipType')
+        clipType := this.__remoteUXP('custom/getTrackClipType')
+        clipMediaType := this.__remoteUXP('custom/getTrackClipMediaType')
         title := WinGet.PremName()
         if title.saveCheck != false
             attempt := this.saveAndFocusTimeline()
         sleep 100
-        if checkBool(changeLabel) && labelHotkey != "" && clipType = "Video"
+        if checkBool(changeLabel) && labelHotkey != "" && clipType != "Clip" && clipMediaType = "Video"
             SendEvent(labelHotkey)
         sleep 50
         SendEvent(ksa.prem.rndrReplce)
@@ -5536,7 +5545,7 @@ $!WheelDown::
         notifs := ['premEffectSlotFailed', 'premEffectSlotNoneSaved', 'premEffectSlotJSONFailed', 'premEffectSlotSaved', 'premEffectSlotPreSend', 'premEffectSlotFailedRead', 'premEffectSlotApplied', 'premEffectERROR']
         for v in notifs
             notifyExt.deleteIfExist(v)
-        if !this.__checkPremRemoteFunc(['saveEffectSlotJSON', 'applyEffectSlotJSON']) {
+        if !this.__checkPremRemoteFunc(['custom/saveEffectSlotJSON', 'custom/applyEffectSlotJSON'], "uxp") {
             errorLog(MethodError("Required PremiereRemote functions missing: saveEffectSlotJSON/applyEffectSlotJSON", -1))
             return
         }
@@ -5566,7 +5575,7 @@ $!WheelDown::
         }
         switch checkBool(save) {
             case true:
-                t := this.__remoteFunc('saveEffectSlotJSON')
+                t := this.__remoteUXP('custom/saveEffectSlotJSON')
                 if __checkErrors(t) == false
                     return
 
@@ -5603,7 +5612,7 @@ $!WheelDown::
                 switch checkBool(saveToFile) {
                     case false:
                         stringg := Base64Encode(slots.%slot%)
-                        try t := this.__remoteFunc('applyEffectSlotJSON',, "data=" stringg)
+                        try t := this.__remoteUXP('custom/applyEffectSlotJSON',, "data=" stringg)
                         catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
                             notifyExt.deleteIfExist('premEffectSlotPreSend')
@@ -5613,7 +5622,7 @@ $!WheelDown::
                     case true:
                         try {
                             stringg := Base64Encode(FileRead(slotFile))
-                            t := this.__remoteFunc('applyEffectSlotJSON',, "data=" stringg)
+                            t := this.__remoteUXP('custom/applyEffectSlotJSON',, "data=" stringg)
                         } catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
                             notifyExt.deleteIfExist('premEffectSlotPreSend')
@@ -5669,11 +5678,11 @@ $!WheelDown::
                     return
                 }
             case true:
-                if !this.__checkPremRemoteFunc('getPlayheadPosTimecode') {
+                if !this.__checkPremRemoteFunc('properties/getPlayheadPosTimecode', "uxp") {
                     errorLog(MethodError("Required PremiereRemote function missing.", -1))
                     return null
                 }
-                return this.__remoteFunc('getPlayheadPosTimecode')
+                return this.__remoteUXP('properties/getPlayheadPosTimecode')
         }
     }
 

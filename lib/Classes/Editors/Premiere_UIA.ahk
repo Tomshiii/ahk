@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/10/20
- * @version 3.1.4
+ * @date 2026/11/09
+ * @version 3.1.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -54,7 +54,7 @@ class premUIA_Values {
     /** callback set by `determineUIA.ahk` so a remote `resetUIA()` can trigger a rebuild inside that process */
     static onRebuild := ""
     static currentVer {
-        get => prem.__remoteFunc('premVer')
+        get => prem.__remoteUXP('properties/getPremVer')
     }
 
     static UIA_PREM_INACTIVE := 1048576
