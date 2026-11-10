@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/10/07
- * @version 1.9.16
+ * @date 2026/11/10
+ * @version 1.9.17
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -36,6 +36,7 @@
 #Include Functions\checkInternet.ahk
 #Include Functions\detect.ahk
 #Include Functions\checkBool.ahk
+#Include Functions\determineAdobeVer.ahk
 #Include Other\SystemThemeAwareToolTip.ahk
 #Include Other\FileGetExtendedProp.ahk
 #Include Other\print.ahk
@@ -447,6 +448,9 @@ class Startup {
 
         premNotFound := false, aeNotFound := false
 
+        try p := determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
+        try a := determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
+
         __determineYear(dir, which, default) {
             if !DirExist(dir)
                 return false
@@ -461,8 +465,8 @@ class Startup {
             return (count = 1) ? SubStr(dirName, -2) : default
         }
         dirFold := "C:\Program Files\Adobe"
-        setPremYear := __determineYear(dirFold, "Adobe Premiere Pro", ptf.PremYearVer)
-        setAEYear   := __determineYear(dirFold, "Adobe After Effects", ptf.aeYearVer)
+        setPremYear := IsSet(p) && p.HasOwnProp('version') ? SubStr(p.version, 1, 2) : __determineYear(dirFold, "Adobe Premiere Pro", ptf.PremYearVer)
+        setAEYear   := IsSet(a) && a.HasOwnProp('version') ? SubStr(a.version, 1, 2) : __determineYear(dirFold, "Adobe After Effects", ptf.aeYearVer)
 
         premFolder := (this.UserSettings.premIsBeta = true || this.UserSettings.premIsBeta = "true") ? "Adobe Premiere Pro (Beta)"  : "Adobe Premiere Pro " SubStr(A_YYYY, 1, 2) setPremYear
         aeFolder   := (this.UserSettings.aeIsBeta = true || this.UserSettings.aeIsBeta = "true")   ? "Adobe After Effects (Beta)" : "Adobe After Effects " SubStr(A_YYYY, 1, 2) setAEYear
