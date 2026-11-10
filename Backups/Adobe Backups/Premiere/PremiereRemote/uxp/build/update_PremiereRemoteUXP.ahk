@@ -4,7 +4,7 @@
 #Include Classes\cmd.ahk
 #Include Classes\zip.ahk
 #Include Classes\errorLog.ahk
-#Include Classes\docker.ahk
+#Include Classes\Apps\docker.ahk
 #Include Functions\getCCXVersion.ahk
 #Include Other\JSON.ahk
 ; }

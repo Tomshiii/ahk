@@ -1,13 +1,14 @@
 /************************************************************************
  * @description a collection of commands to interact with docker
  * @author tomshi
- * @date 2026/10/30
- * @version 1.0.0
+ * @date 2026/11/10
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\cmd.ahk
+#Include Functions\onPath.ahk
 ; }
 
 class docker {
@@ -15,7 +16,7 @@ class docker {
      * Looks for docker.exe on PATH (and standard system locations)
      * @returns {Boolean}
      */
-    static isInstalled() => (DllCall("SearchPathW", "ptr", 0, "str", "docker.exe", "ptr", 0, "uint", 0, "ptr", 0, "ptr", 0, "uint") > 0)
+    static isInstalled() => (onPath("docker.exe"))
 
     /** @returns {Boolean} */
     static isRunning() => (InStr(this.__DockerGet("/_ping"), "200 OK") > 0)

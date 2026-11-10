@@ -1,9 +1,9 @@
 /************************************************************************
- * @description move the Premere Pro playhead to the cursor
- * @premVer 26.5.1
+ * @description move the Premiere Pro playhead to the cursor
+ * @premVer 26.5.2
  * @author tomshi, taranVH
- * @date 2026/11/09
- * @version 2.5.5
+ * @date 2026/11/10
+ * @version 2.5.6
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -71,7 +71,7 @@ __OnExit(ExitReason, ExitCode) {
 class rbuttonPrem {
 	leftClick    := false
 	xbuttonClick := false
-	colourOrNorm := ""
+	colourOrNorm := false
 	colour  := ""
 	colour2 := ""
 
@@ -79,7 +79,7 @@ class rbuttonPrem {
 	checkedHotkey := ""
 
 	premUIA := false
-	origSeq := ""
+	origSeq := false
 	remote  := true
 
 	timelineCol := []
@@ -116,14 +116,14 @@ class rbuttonPrem {
 	 * @returns {Boolean} if colour is not one of the predetermined values, returns `false`. Else returns `true`
 	 */
 	__checkColour(colour) {
-		loop { ;// this loop is checking to see if `colour` is one of the predetermined colours
-			if A_Index > prem.timelineColArr.Length {
-				SendInput(this.sendHotkey) ;this is to make up for the lack of a ~ in front of Rbutton. ... ~Rbutton. It allows the command to pass through, but only if the above conditions were met.
-				return false
-			}
-			if colour = prem.timelineColArr[A_Index] || colour = prem.playhead
+		if colour = prem.playhead
+			return true
+		for c in prem.timelineColArr {
+			if colour = c
 				return true
 		}
+		SendInput(this.sendHotkey)
+		return false
 	}
 
 	/**
@@ -177,7 +177,7 @@ class rbuttonPrem {
 			SendInput("{LButton Down}")
 			MouseMove(coordObj.x, coordObj.y)
 			block.Off()
-			this.colourOrNorm := "colour"
+			this.colourOrNorm := true
 
 			SetTimer(checktap.Bind(currHotkey), -50)
 			checktap(hk) {
@@ -212,7 +212,7 @@ class rbuttonPrem {
 
 	/** Reset class variables */
 	__resetClicks() {
-		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm := "", this.origTool := false, this.colour := "", this.colour2 := "", this.preHeldPlay := false, this.preHeldSpeed := false, this.playHeld := false, this.speedHeld := false, this.title := ""
+		this.leftClick := false, this.xbuttonClick := false, this.colourOrNorm :=false, this.origTool := false, this.colour := "", this.colour2 := "", this.preHeldPlay := false, this.preHeldSpeed := false, this.playHeld := false, this.speedHeld := false, this.title := "", this.origSeq := false
 		this.abort := false, this.wasBusy := false, this.prHwnd := 0
 		try this.premObj.RClickIsActive := false
 		try this.premObj := {}
@@ -232,58 +232,14 @@ class rbuttonPrem {
 		checkedKey := (IsSet(checkedKey) && checkedKey != "") ? checkedKey : (IsSet(A_ThisHotkey) && A_ThisHotkey != "" && this.__chkHotkey(A_ThisHotkey) != false) ? A_ThisHotkey : ""
 		this.__stopHook()
 		block.Off()
-		if this.colourOrNorm = "colour" && (GetKeyState("LButton") && !GetKeyState("LButton", "P"))
+		if this.colourOrNorm = true && (GetKeyState("LButton") && !GetKeyState("LButton", "P"))
 			SendInput("{LButton Up}")
+		prem.__remoteUXP("shared/storeSequence/restoreActiveSequence",, "token=" this.origSeq, "delayMs=1000", "checks=1")
 		this.__resetClicks()
 		checkstuck(["XButton1", "XButton2", "Ctrl", "Shift", checkedKey])
-		try SetTimer(this.__ensureSeq, 0)
 		; try WinEvent.Stop("Exist")
 		try WinEvent.Stop("NotActive")
 		Exit()
-	}
-
-	/**
-	 * This function checks to ensure the active sequence hasn't changed since the beginning of the `movePlayhead()` function.
-	 * ### Warning; making check amount more than 1 can make it hard to traverse premiere. Ie you let go of right click then immediately open a nested sequence, if you check too many times or `timeWait` is too high, you'll just get instantly kicked back to the original sequence, basically achieving the exact opposite of the functions intention
-	 * @param {Integer} [checkAmount=1] the amount of times you'd like the function to check if the sequence has changed
-	 * @param {Integer} [timeWait=1000] the amount in `ms` of time you'd like the function to wait before rechecking to see if the active sequence has changed.
-	 */
-	__ensureSeq(checkAmount := 1, timeWait := 1000, *) {
-		static count := 1
-		currentSeq := prem.__remoteUXP("properties/getActiveSequenceID")
-
-		if !this.origSeq || this.origSeq == null || !currentSeq || currentSeq == null {
-			count := 1
-			this.origSeq := ""
-			SetTimer(, 0)
-			return
-		}
-
-		;// guard against WinGet title bleed or failed curl responses
-		isCurrSeqExe := InStr(currentSeq, "ahk_exe") ? true : (InStr(currentSeq, ".exe") ? true : false)
-		isOrigSeqExe := InStr(this.origSeq, "ahk_exe") ? true : (InStr(this.origSeq, ".exe") ? true : false)
-		if isCurrSeqExe || isOrigSeqExe {
-			count := 1
-			this.origSeq := ""
-			SetTimer(, 0)
-			return
-		}
-
-		if currentSeq != this.origSeq {
-			errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" this.origSeq))
-			prem.__remoteUXP("custom/focusSequence",, "ID=" this.origSeq)
-			return
-		}
-
-		count++
-		if count > checkAmount {
-			count := 1
-			this.origSeq := ""
-			SetTimer(, 0)
-			return
-		}
-		else
-			SetTimer(, -timeWait)
 	}
 
 	__setHooks(allChecks) {
@@ -379,10 +335,6 @@ class rbuttonPrem {
 			this.doPlayback := false
 		}
 		this.playbackKeys := playbackKeys
-		this.origSeq  := ""
-		this.abort    := false
-		this.wasBusy  := false
-		this.prHwnd   := 0
 		this.__resetClicks()
 		;// sometimes ahk can be a bit slow off the mark if the user clicks multiple buttons at the same time
 		;// as their activation hotkey (and those other buttons are setup with other functions)
@@ -419,8 +371,7 @@ class rbuttonPrem {
 		}
 		checkType := (Type(getTitle) != "Object")
 		checkTitle := isObjHasProp(getTitle, "winTitle", false) && isObjHasProp(getTitle, "titleCheck", -1) && isObjHasProp(getTitle, "saveCheck", -1)
-		checkCanSave := isObjHasProp(getTitle, "titleCheck", true)
-		if !getTitle || checkType || !checkTitle || checkCanSave {
+		if !getTitle || checkType || !checkTitle {
 			SendInput(this.sendHotkey)
 			errorLog(TargetError("Failed to determine Premiere's title"))
 			this.__stopHook()
@@ -434,14 +385,15 @@ class rbuttonPrem {
 		this.prHwnd := WinExist(this.title)
 		if WinGet.isBusy(this.prHwnd, 100) {
 			SendInput(this.sendHotkey)
+			errorLog(TargetError("Premiere appears to be busy"))
 			this.__stopHook()
 			return
 		}
 
 		if prem.__OSwindow() && WinActive(prem.winTitle) {
 			if !prem.__closeOSWindow() {
-				this.__stopHook()
 				errorLog(TargetError("An OS popup window appears to exist."))
+				this.__stopHook()
 				return
 			}
 		}
@@ -452,8 +404,8 @@ class rbuttonPrem {
 			if !GetKeyState("LButton", "P")
 				prem.dismissWarning()
 			if !GetKeyState(this.checkedHotkey) {
-				this.__stopHook()
 				errorLog(TargetError("An OS popup window appears to exist."))
+				this.__stopHook()
 				return
 			}
 		}
@@ -467,8 +419,8 @@ class rbuttonPrem {
 		InstallMouseHook(1)
 		try this.premObj := CLSID_Objs.load("prem")
 		catch {
-			this.__stopHook()
 			errorLog(TargetError("Failed to load Premiere UIA object"))
+			this.__stopHook()
 			return
 		}
 		this.premObj.RClickIsActive := true
@@ -481,8 +433,8 @@ class rbuttonPrem {
 		;// set coord mode and grab the cursor position
 		coord.s()
 		if !origMouse := obj.MousePos() {
-			this.__stopHook()
 			errorLog(TargetError("Failed to determine the cursor position"))
+			this.__stopHook()
 			return
 		}
 
@@ -554,11 +506,11 @@ class rbuttonPrem {
 
 		useRemote := this.premObj.remoteActiveUXP
 		if useRemote = true {
-			if !prem.__checkPremRemoteFunc(["properties/getActiveSequenceID", "custom/focusSequence"], "uxp") {
+			if !prem.__checkPremRemoteFunc(["shared/storeSequence/snapshotActiveSequence", "shared/storeSequence/restoreActiveSequence"], "uxp") {
 				useRemote := false
 				notifyExt.showIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
 			} else {
-				this.origSeq := prem.__remoteUXP("properties/getActiveSequenceID")
+				this.origSeq := prem.__remoteUXP("shared/storeSequence/snapshotActiveSequence")
 				if !this.origSeq || this.origSeq == null {
 					useRemote := false
 					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
@@ -588,7 +540,7 @@ class rbuttonPrem {
 				}
 			}
 
-			if this.colourOrNorm != "colour" {
+			if !this.colourOrNorm {
 				;// only queue input if premiere can actually take it. otherwise we flood its queue
 				;// and it replays a pile of key down/ups once it unfreezes, leaving the
 				;// move-to-cursor state stuck on
@@ -606,7 +558,7 @@ class rbuttonPrem {
 
 		;// the NotActive callback fired - release anything we're holding and clean up
 		if this.abort {
-			if this.colourOrNorm = "colour"
+			if this.colourOrNorm
 				SendInput("{LButton Up}")
 			this.__exit(this.checkedHotkey)
 		}
@@ -617,7 +569,7 @@ class rbuttonPrem {
 		if this.wasBusy {
 			if WinGet.waitUntilResponsive(this.prHwnd, 15000) {
 				Sleep 50
-				if this.colourOrNorm != "colour"
+				if !this.colourOrNorm
 					SendInput(KSA.prem.playheadtoCursor)
 			}
 		}
@@ -638,19 +590,18 @@ class rbuttonPrem {
 		}
 
 		;// releases the LButton if it was used to grab the playhead
-		if this.colourOrNorm = "colour" {
+		if this.colourOrNorm {
 			SendInput("{LButton Up}")
 			if this.origTool != false && this.origTool !== null
 				prem.selectTool(this.origTool, "hotkey")
 		}
 
 		;// checks original sequence is still active
-		if useRemote = true {
-			SetTimer(this.__ensureSeq.Bind(this, 1), -1)
-		}
+		prem.__remoteUXP("shared/storeSequence/restoreActiveSequence",, "token=" this.origSeq, "delayMs=250", "checks=1")
 		switch {
-			case (allChecks && !this.leftClick && !this.xbuttonClick): this.__exit(this.checkedHotkey)
-			return
+			case (allChecks && !this.leftClick && !this.xbuttonClick):
+				this.__exit(this.checkedHotkey)
+				return
 			case (allChecks && this.doPlayback && this.leftClick && !this.xbuttonClick): prem.startPlayback()
 				;// unfortunately need to do it this way bc there's no way to set playback speed while multicam is active...
 				;// prem only lets you set playback speed when you call `qe.project.getActiveSequence().player.play(speed)`

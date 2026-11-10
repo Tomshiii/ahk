@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2026/11/06
- * @version 1.8.0
+ * @date 2026/11/10
+ * @version 1.8.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -19,6 +19,7 @@
 #Include Classes\winGet.ahk
 #Include Classes\notifyExt.ahk
 #Include Classes\obj.ahk
+#Include Classes\null.ahk
 #Include Other\UIA\UIA.ahk
 ; }
 
@@ -43,6 +44,7 @@ class discord {
     static winTitle := this.exeTitle
     static class    := "ahk_class Chrome_WidgetWin_1"
     static path     := ptf.LocalAppData "\Discord\Update.exe --processStart Discord.exe"
+    static ico      := ptf.LocalAppData "\Discord\app.ico"
 
     static surroundActive := false
     static checkingUnread := false
@@ -68,6 +70,7 @@ class discord {
 
         if !this.discordEl {
             try {
+                notifyExt.showIfNotExist('discordGenCache',, "Generating Discord cache...`nThis may take a moment", this.ico,,, "DUR=3 POS=BL bdr=0x5764F0 show=Fade@250 hide=Fade@250 maxW=400")
                 this.discCacheRequest := UIA.CreateCacheRequest(["Type", "LocalizedType", "AutomationId", "Name"],, 5)
                 this.DiscordEl := UIA.ElementFromHandle(this.exeTitle, this.discCacheRequest, false)
             }
@@ -75,6 +78,7 @@ class discord {
         if !this.DiscordEl || !IsObject(this.DiscordEl) {
             errorLog(UnsetError("Failed to set UIA element", -1),, true)
             blocker.Off()
+            notifyExt.deleteIfExist('discordGenCache')
             return
         }
 
@@ -84,6 +88,7 @@ class discord {
                 buttonBar := this.__getCurrentBar(newel, "Add Reaction")
                 if buttonBar = null {
                     blocker.Off()
+                    notifyExt.deleteIfExist('discordGenCache')
                     return
                 }
                 buttonBar.button.Invoke()
@@ -104,6 +109,7 @@ class discord {
                 buttonBar := this.__getCurrentBar(newel, "Edit")
                 if buttonBar = null {
                     blocker.Off()
+                    notifyExt.deleteIfExist('discordGenCache')
                     return
                 }
                 buttonBar.button.Invoke()
@@ -129,6 +135,7 @@ class discord {
         buttonBar := this.__getCurrentBar(newel, "More")
         if buttonBar = null {
             blocker.Off()
+            notifyExt.deleteIfExist('discordGenCache')
             return
         }
         buttonBar.button.Expand()
@@ -171,11 +178,18 @@ class discord {
 
     static __isDM() {
         try {
-            groups := this.discordEl.FindCachedElements({Type: 50026, Name: ""})
-            g := groups[4].Children
-            return (g[1].name = "Direct Messages" ? true : false)
+            root := this.discordEl.FindCachedElement({Type: 50030, AutomationId:"RootWebArea"})
+            if SubStr(root.name, 1, 1) = "@" ;// channels start with `#`
+                return true
+            return false
         } catch {
-            return null
+            try {
+                groups := this.discordEl.FindCachedElements({Type: 50026, Name: ""})
+                g := groups[4].Children
+                return (g[1].name = "Direct Messages" ? true : false)
+            } catch {
+                return null
+            }
         }
     }
 

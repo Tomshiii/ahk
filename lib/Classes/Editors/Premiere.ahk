@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 26.5.2
  * @author tomshi
- * @date 2026/11/09
- * @version 2.6.0
+ * @date 2026/11/10
+ * @version 2.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -34,7 +34,7 @@
 #Include Classes\null.ahk
 #Include Classes\statusIcon.ahk
 #Include Classes\cursor.ahk
-#Include Classes\docker.ahk
+#Include Classes\Apps\docker.ahk
 #Include GUIs\tomshiBasic.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\WinEvent.ahk
@@ -992,13 +992,17 @@ class Prem {
         return paramsString
     }
 
+    /**
+     * Determines if a window exists that may indicate Premiere is busy. ie; "Render and Replace Progress", "Encoding", "Save Project", "Tracking...", etc
+     * @returns {Boolean}
+     */
     static __busyWindows() {
         busyWins := ["Render and Replace Progress", "Encoding", "Save Project", "Tracking..."]
         for v in busyWins {
             if WinExist(v A_Space this.winTitle)
                 return true
         }
-        return true
+        return false
     }
     /**
      * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main) function
@@ -1559,10 +1563,13 @@ class Prem {
 
     /**
      * Calls a `PremiereRemote` function to directly save the current project, then verifies the active sequence didn't change.
-     * @param {Boolean} [andWait=true] wait for the `Save Project` window to open/close (the thread still halts until the `PremiereRemote` save function completes)
+     * @param {Boolean} [andWait=true] wait for the `Save Project` window to open/close
      * @param {Integer} [checkSeqTime=1000] `ms` to sleep before each active-sequence check
      * @param {Integer} [checkAmount=1] number of sequence checks (`0` disables). Values above `1` may switch the sequence back if the user changes it manually after a save
      * @param {Boolean} [continueOnBusy=false] attempt the save even if Premiere's state looks busy
+     * @param {Object} [timeout={appear: 2, close: 30}] how long to wait for the `Save Project` window, only used when `andWait` is `true`. Missing or invalid properties fall back to their defaults
+     * - `appear` {Integer} : seconds to wait for the window to appear
+     * - `close`  {Integer} : seconds to wait for the window to close once it has appeared
      * @returns {Boolean/String}
      * - `true`              : successful
      * - `false`             : `PremiereRemote` not installed / save attempt failed / Premiere not found
@@ -1570,10 +1577,16 @@ class Prem {
      * - `"timeout_nosave"`  : the save project window never opened
      * - `"busy"`            : another window may be open in Premiere that could cause saving to fail
      */
-    static save(andWait := true, checkSeqTime := 1000, checkAmount := 1, continueOnBusy := false) {
+    static save(andWait := true, checkSeqTime := 1000, checkAmount := 1, continueOnBusy := false, timeout := {appear: 2, close: 30}) {
         if !IsInteger(checkAmount) || !IsInteger(checkSeqTime) || !isBool(andWait) || !isBool(continueOnBusy) {
             errorLog(TypeError("Incorrect Parameter Type"),,, true)
             return false
+        }
+        if !IsObject(timeout) || (timeout.HasOwnProp("appear") && !IsInteger(timeout.appear)) || (timeout.HasOwnProp("close") && !IsInteger(timeout.close))
+            timeout := {appear: 2, close: 30}
+        else if !timeout.HasOwnProp("appear") || !timeout.HasOwnProp("close") {
+            timeout.appear := (timeout.HasOwnProp("appear")) ? timeout.appear : 2
+            timeout.close := (timeout.HasOwnProp("close")) ? timeout.close : 30
         }
         ;// the below windows will halt or delay the save process if they exist
         waitSave := "(?:Clip Fx Editor - RX 11) " this.winTitle
@@ -1606,12 +1619,10 @@ class Prem {
                 return "busy"
         }
 
-        if !this.__checkPremRemoteFunc(["custom/save", "properties/getActiveSequenceID", "custom/focusSequence"], "uxp")
+        if !this.__checkPremRemoteFunc(["custom/save", "shared/storeSequence/snapshotActiveSequence", "shared/storeSequence/restoreActiveSequence"], "uxp")
             return false
 
-        origSeq := ""
-        if checkAmount != 0
-            origSeq := this.__remoteUXP("properties/getActiveSequenceID")
+        origSeq := (checkAmount != 0) ? this.__remoteUXP("shared/storeSequence/snapshotActiveSequence") : false
 
         ;// save
         saveTitle := "Save Project " this.exeTitle
@@ -1625,52 +1636,48 @@ class Prem {
             state.hasAppeared := true
             SetTimer(unblock, -500) ;// dialog is up, release inputs shortly after
         }
-        onClose(*) => state.hasClosed := true
+        onClose(*) {
+            state.hasAppeared := true
+            state.hasClosed := true
+        }
 
-        saved := false
         try {
-            try WinEvent.Exist(onAppear, saveTitle)
-            try WinEvent.Close(onClose, saveTitle)
+            WinEvent.Exist(onAppear, saveTitle)
+            WinEvent.Close(onClose, saveTitle)
 
             blocker.On(false)
-            SetTimer(unblock, -1500) ;// failsafe in case Premiere hangs / the dialog never shows
-            saved := this.__remoteUXP("custom/save", true)
+            SetTimer(unblock, -1500) ;// failsafe in case the dialog never shows
+
+            if !this.__remoteUXP("custom/save")
+                return false
+            if !andWait
+                return true
+
+            ;// Sleep pumps messages so the WinEvent callbacks can flip the flags
+            deadline := A_TickCount + timeout.appear * 1000
+            while !state.hasAppeared && A_TickCount < deadline
+                Sleep(10)
+            if !state.hasAppeared
+                return "timeout_nosave"
+
+            deadline := A_TickCount + timeout.close * 1000
+            while !state.hasClosed && A_TickCount < deadline
+                Sleep(10)
+            if !state.hasClosed
+                return "timeout"
         } finally {
+            ;// runs on every return above, so only after the waits are finished
             SetTimer(unblock, 0)
             blocker.Off()
             try WinEvent.Stop("Exist", saveTitle)
             try WinEvent.Stop("Close", saveTitle)
         }
 
-        if !saved || saved == null
-            return false
-        if !andWait
-            return true
-
-        ;// verify if dialog opened/closed
-        if !state.hasAppeared
-            return "timeout_nosave"
-        if !state.hasClosed
-            return "timeout"
-
         ;// verify active sequence didn't change
-        if checkAmount = 0
+        if !checkAmount && !origSeq
             return true
-        if origSeq = "" {
-            errorLog(Error("Premiere failed to retrieve the originally active sequence before saving. Aborting"))
-            return true
-        }
-
-        loop checkAmount {
-            sleep checkSeqTime
-            currentSeq := this.__remoteUXP("properties/getActiveSequenceID")
-            if currentSeq != origSeq {
-                errorLog(Error("Current Sequence=" currentSeq " || Orig Sequence=" origSeq))
-                this.__remoteUXP("custom/focusSequence",, "ID=" String(origSeq))
-                return true
-            }
-        }
-
+        if this.__remoteUXP("shared/storeSequence/restoreActiveSequence",, "token=" origSeq, "delayMs=" checkSeqTime, "checks=" checkAmount) = "restored"
+            errorLog(Error("Active sequence changed during save and was restored"))
         return true
     }
 
@@ -2540,7 +2547,7 @@ class Prem {
         block.On()
         if needsTimelineFocus = true
             this.__focusTimeline()
-        chkRemote := this.__checkPremRemoteDir("changeAudioLevels")
+        chkRemote := this.__checkPremRemoteDir("custom/changeAllAudioLevels", "uxp")
         if !sendAsLevel || !chkRemote {
             this.gain(which sendGain)
             block.Off()
@@ -4264,7 +4271,7 @@ $!WheelDown::
      * @param {Float} [scaleVal] the value you wish to set the scale property to
      */
     static setScale(scaleVal) {
-        if !this.__checkPremRemoteDir('setScale') {
+        if !this.__checkPremRemoteDir('shared/effectsUtils/setClipComponentParam', "uxp") {
             ;// throw
             errorLog(MethodError('Required PremiereRemote functions missing', -1),,, true)
             return
@@ -5066,7 +5073,8 @@ $!WheelDown::
             errorLog(MethodError("closeActiveSequence() requires PremiereRemote to be installed"),,, true)
             return false
         }
-        this.__remoteUXP('custom/closeActiveSequence',, "allExcept=" allExcept)
+        exceptStr := (allExcept != "false" && allExcept != "true" && allExcept = false) ? "false" : "true"
+        this.__remoteUXP('custom/closeActiveSequence',, "allExcept=" exceptStr)
     }
 
     /**

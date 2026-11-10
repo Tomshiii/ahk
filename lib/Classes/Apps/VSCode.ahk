@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2026/09/28
- * @version 1.3.3
+ * @date 2026/11/10
+ * @version 1.3.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -14,9 +14,11 @@
 #Include Classes\tool.ahk
 #Include Classes\keys.ahk
 #Include Classes\errorLog.ahk
+#Include Classes\cmd.ahk
 #Include Other\Notify\Notify.ahk
 #Include Functions\getHotkeys.ahk
 #Include Functions\delaySI.ahk
+#Include Functions\onPath.ahk
 ; }
 
 class VSCode {
@@ -25,6 +27,16 @@ class VSCode {
     static winTitle := "Visual Studio Code " this.exeTitle
     static class := browser.vscode.class
     static path := ptf.ProgFi "\Microsoft VS Code\Code.exe"
+
+    /**
+     * Determines whether vscode is installed
+     * @returns {Boolean}
+     */
+    static __isInstalled() {
+        p := onPath("code")
+        c := cmd.run(,,, "where code",, "Hide")
+        return (p && c.exitCode != 0)
+    }
 
     /**
      * A function to cut repeat code amongst functions below

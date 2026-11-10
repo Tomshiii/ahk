@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/11/09
- * @version 3.1.5
+ * @date 2026/11/10
+ * @version 3.2.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -26,7 +26,7 @@ class premUIA_Values {
     /**
      * Panels tracked by this class.
      * Map key = UIA element name to search for.
-     * `key`       - the name used in `UIA_Path` / `UIA_Hwnd`
+     * `key`       - the name used in `UIA_Hwnd`
      * `type`      - UIA control type to match (default 50033 / pane)
      * `matchmode` - optional, eg "Substring" when the full name isn't static
      * `useParent` - optional, take the hwnd from the element's parent
@@ -45,7 +45,6 @@ class premUIA_Values {
     static isRunning := false
     static beenSet   := false
 
-    static UIA_Path := Map()
     static UIA_Hwnd := Map()
     static allPanes := Map()
     static AdobeEl  := false
@@ -80,6 +79,10 @@ class premUIA_Values {
         get => CLSID_Objs.load("UserSettings")
     }
 
+    /** ms to wait after a failed search before looking for a closed panel again. Focus-driven matches ignore it */
+    static resolveCooldown := 5000
+    static __lastResolveTry := Map()
+
     ;// Tools
     static tools := Map(
         "selectionTool", "Selection Tool",
@@ -98,18 +101,104 @@ class premUIA_Values {
     )
 
     /**
-     * Determine the UIA path of the active element
-     * @param {Boolean} [returnObj=false] determines whether the function returns an object containing multiple useful elements or just the UIA path as a string
-     * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
-     * @returns {String|Object|null} if UIA element is unable to be set, will return `null`. Else, depending on bool state of `returnObj` will either return a string containing just the UIA path string, or an object containing;
+     * reverse lookup of `panels` by its `key` field.
+     * @param {String} key the panel key, eg "projectsWindow"
+     * @returns {Object | false} `{name, opts}`
+     */
+    static __panelInfo(key) {
+        for name, opts in this.panels {
+            if opts.key = key
+                return {name: name, opts: opts}
+        }
+        return false
+    }
+
+    /**
+     * Resolves a panel that wasn't present during generation (or whose hwnd went stale) by searching the live Premiere window, then stores its hwnd in the shared object.
+     * @param {String} key the panel key, eg "projectsWindow"
+     * @param {ComObj} [UIAobj=unset] an already set prem UIA object. If not set `initialise()` will be called
+     * @param {Boolean} [force=false] skip the "already stored" shortcut (use when a stored hwnd is stale)
+     * @param {Boolean} [ignoreCooldown=false] skip the failed-search cooldown (use when something already proved the panel exists)
+     * @returns {Boolean} true if the panel is now stored on the shared object
+     */
+    static resolvePanel(key, UIAobj?, force := false, ignoreCooldown := false) {
+        uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
+        if !uiaEl
+            return false
+        if !force && uiaEl.UIA_Hwnd.Has(key)
+            return true
+        if !info := this.__panelInfo(key)
+            return false
+        ;// a closed panel fails every time and the search is slow, so back off after a failure
+        if !ignoreCooldown && this.__lastResolveTry.Has(key) && (A_TickCount - this.__lastResolveTry[key]) < this.resolveCooldown
+            return false
+
+        opts := info.opts
+        try {
+            try n := WinGet.PremName()
+            title := (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") ? n.wintitle A_Space prem.winTitle : prem.winTitle
+            win  := UIA.ElementFromHandle(title,, false)
+            cond := {Type: opts.type, Name: info.name}
+            if opts.HasOwnProp("matchmode")
+                cond.matchmode := opts.matchmode
+            el   := win.FindElement(cond)
+            hwnd := (opts.HasOwnProp("useParent") && opts.useParent) ? el.Parent.NativeWindowHandle : el.NativeWindowHandle
+        } catch {
+            this.__lastResolveTry[key] := A_TickCount
+            return false
+        }
+        try
+            uiaEl.UIA_Hwnd[key] := hwnd
+        catch {
+            this.__lastResolveTry[key] := A_TickCount
+            return false
+        }
+        if this.__lastResolveTry.Has(key)
+            this.__lastResolveTry.Delete(key)
+        return true
+    }
+
+    /**
+     * Fallback for `getActivePanelName()` when no ancestor's hwnd matched a stored panel. That happens when a panel wasn't open during generation, or was closed and reopened with a new hwnd. Matches the ancestors by type + name, then re-resolves the panel.
+     * @param {ComObj} uiaEl an already set prem UIA object
+     * @param {Array} chain the focused element and its ancestors, focused element first
+     * @returns {String} the panel key, or "" if none matched
+     */
+    static __matchPanelByName(uiaEl, chain) {
+        for el in chain {
+            try elType := el.Type
+            catch
+                continue
+            elName := ""
+            gotName := false
+            for pName, opts in this.panels {
+                if opts.type != elType
+                    continue
+                if !gotName {
+                    try elName := el.Name
+                    catch
+                        break
+                    gotName := true
+                }
+                isMatch := (opts.HasOwnProp("matchmode") && opts.matchmode = "Substring") ? InStr(elName, pName) : (elName = pName)
+                if isMatch && this.resolvePanel(opts.key, uiaEl, true, true)
+                    return opts.key
+            }
+        }
+        return ""
+    }
+
+    /**
+     * Determine which tracked panel currently has focus
+     * @param {ComObj} [UIAobj=unset] an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {Object|null} `null` if Premiere isn't active or the UIA object can't be set. Else an object containing;
      * ```
-     * obj := premUIA_Values(true)
      * obj.uiaEl     ; the uia object returned by `initialise()`
-     * obj.Path      ; the UIA path of the active element
-     * obj.focusedEl ; the UIA element object itself
+     * obj.panel     ; the panel key (eg "effectControls") or "" if none matched
+     * obj.focusedEl ; the focused UIA element, or "" if it couldn't be read
      * ```
      */
-    static __activeElementPath(returnObj := false, UIAobj?) {
+    static __activeElement(UIAobj?) {
         try n := WinGet.PremName()
         if !WinActive(prem.winTitle) && !WinActive(prem.class) && (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") {
             return null
@@ -118,10 +207,8 @@ class premUIA_Values {
         if !uiaEl
             return null
         try focusedEl := UIA.GetFocusedElement()
-        panelName   := IsSet(focusedEl) ? this.getActivePanelName(uiaEl, focusedEl) : ""
-        focusedPath := (panelName != "" && uiaEl.UIA_Path.Has(panelName)) ? uiaEl.UIA_Path[panelName] : ""
-
-        return ((returnObj = false) ? focusedPath : {uiaEl: uiaEl, Path: focusedPath, focusedEl: focusedEl})
+        panelName := IsSet(focusedEl) ? this.getActivePanelName(uiaEl, focusedEl) : ""
+        return {uiaEl: uiaEl, panel: panelName, focusedEl: focusedEl ?? ""}
     }
 
     /**
@@ -142,7 +229,9 @@ class premUIA_Values {
                 return ""
         }
         el := focusedEl
+        chain := []
         Loop 20 {
+            chain.Push(el)
             try hwnd := el.NativeWindowHandle
             catch
                 hwnd := 0
@@ -153,7 +242,6 @@ class premUIA_Values {
                         return panelName
                 }
             }
-
             try parent := el.Parent
             catch
                 break
@@ -161,34 +249,31 @@ class premUIA_Values {
                 break
             el := parent
         }
-        return ""
+        return this.__matchPanelByName(uiaEl, chain)
     }
 
     /**
-     * Determines if a given UIA element path is the current active UIA element
-     * @param {String} [elementPath] the UIA element path you wish to check. May also be a panel name that is tracked within this class.
+     * Determines if a tracked panel is the one currently holding focus
+     * @param {String} panelKey the panel key you wish to check, eg "projectsWindow". Must be one of the keys in `panels`
      * @param {ComObj} [UIAobj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
-     * @returns {Boolean | null} returns `null` if UIA object is unable to be set, else returns bool
+     * @returns {Boolean | null} `null` if the UIA object can't be set or the key isn't tracked, else bool
      */
-    static __isUiaElementActive(elementPath, UIAobj?) {
+        static __isUiaElementActive(panelKey, UIAobj?) {
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
         if !uiaEl
             return null
-        if uiaEl.UIA_Hwnd.Has(elementPath) {
-            try panel := this.__isPremPanelActive(elementPath, uiaEl)
-            if IsSet(panel) && (panel = true || panel == null)
-                return (panel = true ? true : null)
+        if !uiaEl.UIA_Hwnd.Has(panelKey) {
+            if !this.__panelInfo(panelKey) {
+                errorLog(MethodError("premUIA doesn't track the following panel: " panelKey, -2, panelKey))
+                return null
+            }
+            if !this.resolvePanel(panelKey, uiaEl)
+                return false ;// a tracked panel that can't be found isn't open, so it can't be active
         }
-        if !uiaEl.UIA_Path.Has(elementPath) {
-            errorLog(MethodError("premUIA doesn't currently store a UIA path for: " elementPath, -2, elementPath))
-            return null
-        }
-        focusedPath := this.__activeElementPath(true, uiaEl)
-        if !isObjHasProp(focusedPath, 'Path', null) || focusedPath.Path = null {
-            errorLog(TypeError("focusPath isn't an object or returned null", -1))
-            return null
-        }
-        return (InStr(focusedPath.Path, uiaEl.UIA_Path[elementPath]) = 1)
+        try panel := this.__isPremPanelActive(panelKey, uiaEl)
+        if IsSet(panel) && (panel = true || panel == null)
+            return (panel = true ? true : null)
+        return (this.getActivePanelName(uiaEl) = panelKey)
     }
 
     /**
@@ -212,18 +297,24 @@ class premUIA_Values {
      */
     static getLivePanel(panel, UIAobj?, &uiaEl?) {
         uiaEl := IsSet(UIAobj) ? UIAobj : this.initialise()
-        if !uiaEl || !uiaEl.UIA_Hwnd.Has(panel) {
-            if !uiaEl
-                errorLog(MethodError("uiaObject hadn't been initialised yet", -2))
-            else
+        if !uiaEl {
+            errorLog(MethodError("uiaObject hadn't been initialised yet", -2))
+            return false
+        }
+        tracked := this.__panelInfo(panel)
+        if !uiaEl.UIA_Hwnd.Has(panel) && !this.resolvePanel(panel, uiaEl) {
+            if !tracked
                 errorLog(MethodError("premUIA doesn't currently store the following panel: " panel, -2, panel))
             return false
         }
         try return UIA.ElementFromHandle(uiaEl.UIA_Hwnd[panel],, false)
-        catch {
-            errorLog(MethodError("failed to generate live UIA panel for the following panel: " panel, -2, panel))
-            return false
+        ;// stored hwnd is stale, try once more from scratch (respects the cooldown)
+        if this.resolvePanel(panel, uiaEl, true) {
+            try return UIA.ElementFromHandle(uiaEl.UIA_Hwnd[panel],, false)
         }
+        if !tracked
+            errorLog(MethodError("failed to generate live UIA panel for the following panel: " panel, -2, panel))
+        return false
     }
 
     /** sets a class param with a map containing all open `pane` windows with their coords */
@@ -244,7 +335,6 @@ class premUIA_Values {
                     cond.matchmode := opts.matchmode
 
                 el := this.AdobeEl.FindCachedElement(cond)
-                this.UIA_Path[opts.key] := this.AdobeEl.GetUIAPath(el, true)
                 this.UIA_Hwnd[opts.key] := (opts.HasOwnProp("useParent") && opts.useParent)
                     ? el.Parent.NativeWindowHandle
                     : el.NativeWindowHandle
@@ -270,19 +360,12 @@ class premUIA_Values {
         if !uiaEl
             return false
 
-        if uiaEl.UIA_Hwnd.Has("toolsWindow") {
+        if !uiaEl.UIA_Hwnd.Has("toolsWindow") && !this.resolvePanel("toolsWindow", uiaEl)
+            return (errorLog(MethodError("Failed to find the Tools panel. It may not be visible.", -2)), false)
+        try return UIA.ElementFromHandle(uiaEl.UIA_Hwnd["toolsWindow"],, false)
+        if this.resolvePanel("toolsWindow", uiaEl, true) {
             try return UIA.ElementFromHandle(uiaEl.UIA_Hwnd["toolsWindow"],, false)
         }
-
-        try {
-            try n := WinGet.PremName()
-            title := (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") ? n.wintitle A_Space prem.winTitle : prem.winTitle
-            win   := UIA.ElementFromHandle(title,, false)
-            panel := win.FindElement({Type:50033, Name:"Tools"})
-            try uiaEl.UIA_Hwnd["toolsWindow"] := panel.NativeWindowHandle
-            return panel
-        }
-        errorLog(MethodError("Failed to find the Tools panel. It may not be visible.", -2))
         return false
     }
 
@@ -373,10 +456,9 @@ class premUIA_Values {
         "Generative Extend Tool", {uia: "genAITool", ksa:"genExtendTool"}
     )
 
-    /** clears the stored UIA elements/paths/handles. Flags live on the shared object, see `__setShared()` */
+    /** clears the stored UIA elements/handles. Flags live on the shared object, see `__setShared()` */
     static wipe() {
         this.AdobeEl   := false
-        this.UIA_Path  := Map()
         this.UIA_Hwnd  := Map()
         this.allPanes  := Map()
     }
@@ -488,7 +570,7 @@ class premUIA_Values {
                 __DelNotify()
                 throw UnsetError("throw code:719")
             }
-            premCacheRequest := UIA.CreateCacheRequest(["Type", "Name", "Value", "ClassName", "AutomationId", "BoundingRectangle"],, "Descendants") ;// all necessary for `GetUIAPath()`
+            premCacheRequest := UIA.CreateCacheRequest(["Type", "Name", "BoundingRectangle"],, "Descendants")
             try {
                 try n := winget.PremName()
                 title := (IsSet(n) && isObjHasProp(n, 'wintitle', false) && n.wintitle != "") ? n.wintitle A_Space prem.winTitle : prem.winTitle

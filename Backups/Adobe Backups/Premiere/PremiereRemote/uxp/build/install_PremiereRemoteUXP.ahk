@@ -2,7 +2,7 @@
 #Include shared.ahk
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\cmd.ahk
-#Include Classes\docker.ahk
+#Include Classes\Apps\docker.ahk
 #Include Classes\ptf.ahk
 ; }
 

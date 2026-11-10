@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/11/05
+ * @date 2026/11/10
  ***********************************************************************/
-global currentVer := "1.5.0"
+global currentVer := "1.5.1"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -22,6 +22,7 @@ preReqTitle := "Prerequisites Required"
 #Include Functions\useNVENC.ahk
 #Include Functions\getLocalVer.ahk
 #Include Functions\isURL.ahk
+#Include Functions\onPath.ahk
 #Include Other\LVICE_XXS.ahk
 ; }
 
@@ -38,10 +39,10 @@ try {
 
 class multiDL extends tomshiBasic {
     __New() {
-        ffmpeg := this.__onPath("ffmpeg")
-        ytdlp  := this.__onPath("yt-dlp")
-        deno   := this.__onPath("deno")
-        choco  := this.__onPath("choco")
+        ffmpeg := onPath("ffmpeg")
+        ytdlp  := onPath("yt-dlp")
+        deno   := onPath("deno")
+        choco  := onPath("choco")
         if ytdlp {
             ;// nightly builds have a 4-part version (2026.11.04.123456), stable has 3. No network needed
             ver := Trim(cmd.result("yt-dlp --version"), " `t`r`n")
@@ -53,7 +54,7 @@ class multiDL extends tomshiBasic {
         }
 
         if !ffmpeg || !ytdlp || !deno {
-            choco := this.__onPath("choco")
+            choco := onPath("choco")
             if choco {
                 super.__New(,,, preReqTitle)
                 this.AddText(, "Installing these prerequisites will require admin permissions. `nYou may also need to reboot after installation.")
@@ -312,6 +313,7 @@ class multiDL extends tomshiBasic {
         custFilePart   := (this["custFilePart"].value = "")   ? "" : this["custFilePart"].value
         yt := ytdlp()
         showDir := true
+        hidden := false
         switch this.tabs.value {
             case 1: ;// multi
                 rows := this["list"].GetCount()
@@ -347,6 +349,7 @@ class multiDL extends tomshiBasic {
                     goto break
                 }
                 this.Hide()
+                hidden := true
                 partCommand := Format('-N 8 -o "{1}" --sleep-interval 3 --max-sleep-interval 13 --download-sections "*{2}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 ' cookiesPart, "{}", this.timecodeValue)
                 switch {
                         case (vidOrAud = "vid" && this["deprioritise_part"].value = false): yt.download(partCommand, this.getFile, this["partURL"].value, custFilePart, showDir)
@@ -361,7 +364,8 @@ class multiDL extends tomshiBasic {
         this["DL_part"].Enabled := true, this["Aud_part"].Enabled := true
         this["DirChange"].Enabled := true
 
-        this.show(, {DarkColour: "F0F0F0"})
+        if hidden
+            this.show(, {DarkColour: "F0F0F0"})
         yt := ""
     }
 
@@ -373,7 +377,7 @@ class multiDL extends tomshiBasic {
     }
 
     __checkChoco(*) {
-        if !this.__onPath("choco") {
+        if !onPath("choco") {
             MsgBox("Choco is required to install this tool, please install choco first")
             return false
         }
@@ -405,7 +409,7 @@ class multiDL extends tomshiBasic {
     __checkUpdates(*) {
         this.Opt("Disabled")
         this.__checkingButton("move")
-        choco := this.__onPath("choco")
+        choco := onPath("choco")
         if !choco {
             MsgBox("Checking for updates for ffmpeg or yt-dlp requires the package manager chocolatey to be installed.")
             this.__checkExeUpdate()

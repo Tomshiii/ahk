@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2026/11/06
- * @version 1.3.0
+ * @date 2026/11/10
+ * @version 1.3.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -12,6 +12,7 @@
 #Include Classes\obj.ahk
 #Include Classes\block.ahk
 #Include Classes\winget.ahk
+#Include Classes\errorLog.ahk
 #Include Functions\delaySI.ahk
 #Include Other\UIA\UIA.ahk
 ; }
@@ -78,7 +79,6 @@ class Slack {
         }
 
         msgEl := this.__uiaMsgUnderCursor(origMousePos)
-        A_Clipboard := msgEl.Dump()
         if !msgEl {
             errorLog(UnsetError("Failed to set message bar", -1),, true)
             blocker.Off()
@@ -106,9 +106,13 @@ class Slack {
                     return
                 }
                 try {
-                    thread  := slackEl.WaitElement({Type: 50032, Name: "Thread in (channel|conversation)", matchmode: "RegEx"}, 2000,,,,,, 150)
+                    thread  := slackEl.WaitElement({Name: "Thread in (channel|conversation)", matchmode: "RegEx", or:[{Type: 50032}, {Type: 50026}]}, 2000,,,,,, 150)
                     findBox := thread.WaitElement({Type: 50007, Name: "i)(Also send (as|to))", matchmode: "RegEx"}, 2000)
                     findBox.WaitElement({Type: 50002, AutomationId: "p-thread_footer__broadcast_checkbox", Name: "i)(Also send (as|to))", matchmode: "RegEx"}, 2000).Toggle()
+                } catch as e {
+                    errorLog(e)
+                    blocker.Off()
+                    return
                 }
 
             case "delete", "edit":

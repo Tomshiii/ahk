@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/10/22
- * @version 2.3.3
+ * @date 2026/11/10
+ * @version 2.3.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -99,6 +99,7 @@ class adobeAutoSave extends count {
 
     premExist     := false,  aeExist := false
     premWindow    := unset
+    premOrigSeq   := false
     aeWindow      := unset
 
     userPlayback  := false
@@ -156,6 +157,9 @@ class adobeAutoSave extends count {
             ;// finish up
             if this.aeExist = true
                 this.__resetAETrans()
+
+            if this.premOrigSeq != false
+                prem.__remoteUXP("shared/storeSequence/restoreActiveSequence",, "token=" this.premOrigSeq, "delayMs=250", "checks=1")
             this.__reset()
             block.Off()
         } finally {
@@ -604,7 +608,6 @@ class adobeAutoSave extends count {
 
     /** saves premiere */
     __savePrem() {
-
         ;// backing up project files
         this.__backupFiles()
 
@@ -612,7 +615,7 @@ class adobeAutoSave extends count {
             return
 
         ;// checking for save dialogue box
-        if !this.__checkDialogueClass() {
+        if !this.__checkDialogueClass() || prem.__busyWindows() {
             notifyExt.showIfNotExist("autosavePremBusy",, 'Premiere appears to be busy, cancelling save attempt...', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
@@ -648,6 +651,9 @@ class adobeAutoSave extends count {
             notifyExt.showIfNotExist("autosavepremBusier",, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
+        if !prem.__checkPremRemoteFunc(["shared/storeSequence/snapshotActiveSequence", "shared/storeSequence/restoreActiveSequence"], "uxp")
+            return
+        this.premOrigSeq := prem.__remoteUXP("shared/storeSequence/snapshotActiveSequence")
 
         ;// the idle check only matters if Premiere is the active window.
         ;// if it isn't, we save in the background straight away
@@ -678,11 +684,11 @@ class adobeAutoSave extends count {
 
         ;// attempts to save using `PremiereRemote`
         this.selfInitiatedSave := true
-        saveAttempt := prem.save()
+        saveAttempt := prem.save(,, false)
         if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy") {
             sleep 500
             this.selfInitiatedSave := false
-            SetTimer((*) => notifyExt.deleteIfExist("autosavepremSaveAttempt"), -500)
+            SetTimer((*) => (notifyExt.deleteIfExist("autosavepremSaveAttempt")), -500)
             return
         }
         notifyExt.showIfNotExist("autosavepremFailed",, 'PremiereRemote failed to save, falling back`nto a manual save attempt.', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark dur=5 bdr=0xE96969 show=Fade@250 hide=Fade@250')
@@ -711,22 +717,20 @@ class adobeAutoSave extends count {
             ControlSend("{Ctrl Down}{s}",, this.premWindow.wintitle)
             sleep 50
             ControlSend("{Ctrl Up}",, this.premWindow.wintitle)
-        } catch {
+
+            ;// waiting for save dialogue to open & close
+            if !WinWait("Save Project",, 3)
+                return
+
             block.Off()
             this.__stopSaveAsWatch(saveAsTitle)
-            return
+            if !WinWaitClose("Save Project",, 3)
+                return
+        } finally {
+            block.Off()
+            this.__stopSaveAsWatch(saveAsTitle)
         }
 
-        ;// waiting for save dialogue to open & close
-        if !WinWait("Save Project",, 3) {
-            block.Off()
-            this.__stopSaveAsWatch(saveAsTitle)
-            return
-        }
-        block.Off()
-        this.__stopSaveAsWatch(saveAsTitle)
-        if !WinWaitClose("Save Project",, 3)
-            return
     }
 
     /** saves after effects */
@@ -857,7 +861,7 @@ class adobeAutoSave extends count {
     /** stop the timer that cancels the "Save As" window */
     __stopSaveAsWatch(saveAsTitle := "") {
         if this.saveAsWatchFn {
-            SetTimer(this.saveAsWatchFn, 0)
+            try SetTimer(this.saveAsWatchFn, 0)
             this.saveAsWatchFn := ""
         }
         this.selfInitiatedSave := false
@@ -900,6 +904,7 @@ class adobeAutoSave extends count {
         this.userPlayback  := false, this.filesBackedUp := false
 
         this.premWindow    := unset
+        this.premOrigSeq   := false
         this.aeWindow      := unset
         this.idleAttempt   := false
 

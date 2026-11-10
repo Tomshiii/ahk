@@ -144,21 +144,21 @@ Enter::
 			if currTimelineStatus == null
 				return
 			try {
-				activePath := premUIA_Values.__activeElementPath(, premUIA)
 				textStatus := prem.isToolSelected("textTool", premUIA)
+				progActive := premUIA_Values.__isUiaElementActive("programMonitor", premUIA)
 			} catch {
 				SendInput("{" A_ThisHotkey "}")
 				return
 			}
-			if activePath = null || textStatus = null {
+			if progActive = null || textStatus = null {
 				SendInput("{" A_ThisHotkey "}")
 				return
 			}
 			switch {
-				case (InStr(activePath, premUIA.UIA_Path["programMonitor"]) != 1):
+				case (!progActive):
 					SendInput("{" A_ThisHotkey "}")
 					return
-				case (currTimelineStatus != true && (InStr(activePath, premUIA.UIA_Path["programMonitor"]) = 1) && textStatus = true):
+				case (currTimelineStatus != true && progActive && textStatus = true):
 					if !GetKeyState("Shift") && !GetKeyState("Shift", "P") { ;// this check shouldn't be necessary but.. just incase
 						SendInput("{Escape}")
 						prem.selectTool("selectionTool")
@@ -809,7 +809,7 @@ F14 & MButton::
 {
 	if !__f14InitialChecks("MButton", &kwait)
 		return
-	if !prem.__checkPremRemoteDir(['isSelected', 'toggleEnabled'])
+	if !prem.__checkPremRemoteDir(, "uxp")
 		return
 	selected := prem.isClipSelected()
 	if !selected || selected == null {

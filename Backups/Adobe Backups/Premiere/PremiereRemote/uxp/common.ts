@@ -167,3 +167,5 @@ export async function reloadPanel(delayMs = 200): Promise<string> {
     setTimeout(() => location.reload(), delayMs);
     return "reloading";
 }
+
+export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
