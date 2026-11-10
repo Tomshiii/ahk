@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
- * @date 2026/10/22
- * @version 2.2.5
+ * @date 2026/11/11
+ * @version 2.2.6
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -185,7 +185,7 @@ class KeyShortAdjust {
                     premVer := backupVer
                 }
                 betaString := (isBeta=true) ? " (Beta)" : ""
-                premPrefsDir := A_MyDocuments "\Adobe\Premiere Pro" betaString "\" SubStr(appVers.version, 1, 2) ".0\Profile-" A_UserName
+                premPrefsDir := A_MyDocuments "\Adobe\Premiere Pro" betaString "\" SubStr(premVer, 2, 2) ".0\Profile-" A_UserName
                 premPrefs := premPrefsDir "\Adobe Premiere Pro" betaString " Prefs"
                 if FileExist(premPrefs) {
                     try {
@@ -227,9 +227,14 @@ class KeyShortAdjust {
                     ns.%k% := currentHotkey
                 }
             case "ae":
-                dot := InStr(appVers.version, ".",,, 2)
-                yearVer := SubStr(appVers.version, 1, ((dot != 0 && dot != "") ? dot-1 : StrLen(appVers.version)))
                 isBeta := this.__isBeta("ae")
+                backupVer := IniRead(this.settingsINI, "Adjust", "aeVer", "v" ae.minVer)
+                try aeVer := (IsSet(UserSettings)) ? UserSettings.premVer : backupVer
+                catch {
+                    aeVer := backupVer
+                }
+                dot := InStr(aeVer, ".",,, 2)
+                yearVer := SubStr(aeVer, 2, ((dot != 0 && dot != "") ? dot-2 : StrLen(aeVer)-1))
                 betaString := ((isBeta=true) ? " (Beta)" : "")
                 aePrefsDir := A_AppData "\Adobe\After Effects" betaString "\" yearVer
                 aePrefs := aePrefsDir "\Adobe After Effects " yearVer " Prefs.txt"

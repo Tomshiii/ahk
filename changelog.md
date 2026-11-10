@@ -4,6 +4,7 @@
 - ✏️ Added `onPath()`
 - ✅ Fixed `ae.setViewerZoom()` causing `After Effects` to show an error message when in the `Layer` view
 - ✅ Fixed `createShortcuts.ahk` throwing
+- ✅ Fixed `KSA` not generating hotkeys for the version selected in `settingsGUI()` if multiple versions are installed
 - 📋 Added `png`/`jpg`/`jpeg`/`webp` output actions to `ffmpeg().all_XtoY()`
 - 📋 `settingsGUI()` will now prompt `Core Functionality.ahk` to regenerate `KSA` when the `Year` version is changed
     - Fixes scripts throwing when reloaded due to `27.0+` pathing changes within the `.kys` files
