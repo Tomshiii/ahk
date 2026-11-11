@@ -3,7 +3,7 @@
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
  * @date 2026/11/11
- * @version 1.1.26
+ * @version 1.1.27
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -85,7 +85,7 @@ class OtherFuncs {
 
     /** calls `prem.renderAndReplace()` then calls the `organiseProj` `PremiereRemote` function. Might not make sense for anyone else with a different prem bin structure */
     static rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) {
-        if !prem.__checkPremRemoteFunc('custom/organiseProject', "uxp") {
+        if !prem.__checkPremRemoteFunc('custom/organiseProject') {
             ;// throw
             errorLog(MethodError("PremiereRemote UXP extension is required for this function"))
             return
@@ -99,7 +99,7 @@ class OtherFuncs {
 
     /** calls premremote func `addMatchedAdjustmentLayer()`. If it's my transform adjust layer, it also adds the transform effect */
     static addAdjustLayer(adjustmentLayerPath, makeSelection) {
-        if !prem.__checkPremRemoteFunc(['custom/addMatchedAdjustmentLayer', 'custom/applyEffectOnAllSelectedClips', 'custom/resetSelection'], "UXP") {
+        if !prem.__checkPremRemoteFunc(['custom/addMatchedAdjustmentLayer', 'custom/applyEffectOnAllSelectedClips', 'custom/resetSelection']) {
             ;// throw
             errorLog(MethodError("PremiereRemote UXP extension is required for this function"))
             return
@@ -133,7 +133,7 @@ class OtherFuncs {
 
     /** sets up a project using my template project file and desired bin structure */
     static setupProject() {
-        if !prem.__checkPremRemoteFunc('custom/setupProjBin', "UXP") {
+        if !prem.__checkPremRemoteFunc('custom/setupProjBin') {
             ;// throw
             errorLog(MethodError("PremiereRemote UXP extension is required for this function"))
             return
@@ -148,7 +148,7 @@ class OtherFuncs {
      * @param {String} [audioType="Standard"] which type of audio channel to add. Can be `Standard`/`5.1`/`mono`/`adaptive`
      */
     static setupMusicTracks(audioType := "Standard") {
-        if !prem.__checkPremRemoteFunc("custom/getAudioTracks", "UXP") {
+        if !prem.__checkPremRemoteFunc("custom/getAudioTracks") {
             ;// throw
             errorLog(MethodError("PremiereRemote UXP extension is required for this function"))
             return

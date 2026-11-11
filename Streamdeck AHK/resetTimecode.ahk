@@ -12,7 +12,7 @@
 if !WinActive(prem.winTitle)
     return
 
-if prem.__checkPremRemoteDir("custom/setZeroPoint", "uxp") {
+if prem.__checkPremRemoteDir("custom/setZeroPoint") {
     prem.__remoteUXP("custom/setZeroPoint",, "tick=0")
     return
 }

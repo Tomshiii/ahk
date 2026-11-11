@@ -10,8 +10,6 @@ if MsgBox("Would you also like to uninstall PremiereRemote/AERemote?",, "4 4096"
         MsgBox("Adobe apps currently open. Aborting...")
         return
     }
-    if DirExist(A_Appdata "\Adobe\CEP\extensions\PremiereRemote")
-        try DirDelete(A_Appdata "\Adobe\CEP\extensions\PremiereRemote", true)
     if DirExist(A_Appdata "\Adobe\CEP\extensions\AERemote")
         try DirDelete(A_Appdata "\Adobe\CEP\extensions\AERemote", true)
     if DirExist(A_Appdata "\Adobe\UXP\Plugins\External\PremiereRemote-uxp")

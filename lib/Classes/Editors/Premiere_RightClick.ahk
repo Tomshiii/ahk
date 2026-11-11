@@ -3,7 +3,7 @@
  * @premVer 26.5.2
  * @author tomshi, taranVH
  * @date 2026/11/11
- * @version 2.5.7
+ * @version 2.5.8
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -507,7 +507,7 @@ class rbuttonPrem {
 
 		useRemote := this.premObj.remoteActiveUXP
 		if useRemote = true {
-			if !prem.__checkPremRemoteFunc(["shared/storeSequence/armSequenceGuard", "shared/storeSequence/disarmSequenceGuard"], "uxp") {
+			if !prem.__checkPremRemoteFunc(["shared/storeSequence/armSequenceGuard", "shared/storeSequence/disarmSequenceGuard"]) {
 				useRemote := false
 				notifyExt.showIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
 			} else {

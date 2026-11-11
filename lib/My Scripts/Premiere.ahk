@@ -399,7 +399,7 @@ $d::
 		errorLog(Error("cursor isn't within the timeline"))
 		return
 	}
-	if !prem.__checkPremRemoteFunc(["custom/deselectAll", "custom/getPlayheadPosTicks", "custom/movePlayheadFrames"], "uxp") {
+	if !prem.__checkPremRemoteFunc(["custom/deselectAll", "custom/getPlayheadPosTicks", "custom/movePlayheadFrames"]) {
 		errorLog(MethodError("Cannot determine PremiereRemote function", -1))
 		return
 	}
@@ -809,7 +809,7 @@ F14 & MButton::
 {
 	if !__f14InitialChecks("MButton", &kwait)
 		return
-	if !prem.__checkPremRemoteDir(, "uxp")
+	if !prem.__checkPremRemoteDir()
 		return
 	selected := prem.isClipSelected()
 	if !selected || selected == null {

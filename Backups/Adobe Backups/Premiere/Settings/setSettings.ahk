@@ -5,6 +5,10 @@
 ;// it should be noted this may not work perfectly, and in the future some things may break if adobe changes anything
 ;// this script is mostly just to set /most/ things to what I prefer
 
+;// requires CEP
+;// functionality not currently possible with UXP
+return
+
 settings := Map(
     "BE.Prefs.LabelNames.0",                      "Violet",
     "BE.Prefs.LabelNames.1",                      "Iris",
@@ -186,5 +190,5 @@ settings := Map(
 )
 
 for k, v in settings {
-    try prem.__remoteCEP('setProperty',, "property=" k, "value=" v, "persistent=true")
+    ; try prem.__remoteCEP('setProperty',, "property=" k, "value=" v, "persistent=true")
 }

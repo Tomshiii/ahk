@@ -56,13 +56,22 @@ check()
                 tool.Cust("Closing multiple instance of : " script.Name, 3000)
                 try {
                     Critical()
-                    ProcessClose(window)
-                    window := winExt.ExistRegex(script.Name,,,, true)
-                    if window {
-                        try winExt.CloseRegex(window,,,, true)
-                        ; try WinClose(hwnd)
+                    if InStr(script.name, "determineUIA.ahk") {
+                        try {
+                            d := CLSID_Objs.load("determineUIA")
+                            d.closeUIA()
+                            Critical("Off")
+
+                        }
+                    } else {
+                        ProcessClose(window)
+                        window := winExt.ExistRegex(script.Name,,,, true)
+                        if window {
+                            try winExt.CloseRegex(window,,,, true)
+                            ; try WinClose(hwnd)
+                        }
+                        Critical("Off")
                     }
-                    Critical("Off")
                 }
             }
         windows .= script.Name "`n"

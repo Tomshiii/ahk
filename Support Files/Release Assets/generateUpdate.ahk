@@ -22,6 +22,17 @@
 ; // Then goes through the annoying process of generating the release
 ; // This script will not work, and is not designed to work for anyone else - it's simply placed in this folder so I can keep it tracked (and to keep its code open so you can make sure the install exe isn't too scary)
 
+;// move default next ver code above generating the gui so you can include an edit box in the same gui
+;// really want to minimise the amount of prompts
+changeInstallVer     := true
+rebuildCEP           := true
+rebuildUXP           := true
+rebuildCCX           := true
+incrementUXPManifest := true
+backupPremiereFiles  := true
+backupAHK            := true
+backupWiki           := true
+
 ;// setting our working dir to the release folder
 SetWorkingDir(ptf.rootDir "\releases") ;this folder isn't included in the public version of my repo as it simply acts as a backup place for all the releases
 
@@ -36,8 +47,10 @@ if DirExist(ptf.rootDir "\releases\release")
 UserSettings := CLSID_Objs.load("UserSettings")
 
 ;//* PremiereRemote
-RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\After Effects\AERemote\cep\backupPremRemote.ahk"))
+RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\After Effects\AERemote\cep\backupAERemote.ahk"))
 RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\backupPremRemote.ahk"))
+RunWait(ptf.Backups "\Adobe Backups\After Effects\AERemote\cep\replaceAndReset.ahk")
+RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk")
 
 ;//* KotET
 try DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
@@ -405,8 +418,6 @@ else if WinExist(A_WorkingDir "\release")
 else
     Run("explore " A_WorkingDir "\release")
 
-if WinExist("Ahk2Exe for AutoHotkey")
-    WinClose()
 if WinExist(verNum ".x")
     WinActivate(verNum ".x")
 

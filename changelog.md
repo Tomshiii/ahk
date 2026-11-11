@@ -1,4 +1,4 @@
-# <> Release 2.20.x - 
+# <> Release 2.21.0 - Remove CEP
 From this release I will no longer be developing `CEP` versions of `Premiere` functions, or maintaining parity between my `UXP` & `CEP` functions. The repo will move completely over to `UXP` as no `CEP` functionality is required anymore.
 
 ## Functions
@@ -15,19 +15,20 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 - 📋 `syncDirectories()` now accepts parameter `excludeDirs`
 
 ### 📝 `prem {`
+- ❗ All `Premiere` functions now work with any `theme`
 - ✏️ Added `getPrefPath()`
+- ❌ Removed `movePreview()`, `__remoteFunc()`
 - ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession
 - 📋 `__isUXPInstalled()` will now check that; the `ccx` extension has been installed, and that `docker` is installed
-- 📋 `determineLockedTracks()` can now use `UXP` to return its object on `Premiere` versions greater than `27.1.0`
-- 📋 Renamed `__remoteFunc()` => `__remoteCEP()`
-- 📋 Replaced all usage of `__remoteCEP()` => `__remoteUXP()`
-- 📋 `__checkPremRemoteDir()` `cepOrUXP` now defaults to `"uxp"`
+- 📋 `determineLockedTracks()` can now use `UXP` to return its object in `Premiere` versions greater than `27.1.0`
+- 📋 Replaced all usage of `__remoteFunc()` => `__remoteUXP()`
+- 📋 `__checkPremRemoteDir()` removed param `cepOrUXP`
 
 📍 `save()`
 - 📋 Now accepts parameter `timeout`
 - 📋 Can now restore the previous sequence order (instead of just the individual sequence) if the active sequence changes during the save
 
-📍 `__remoteCEP()`/`__remoteUXP()`
+📍 `__remoteUXP()`
 - ✅ Fixed timing out during large operations
 - 📋 Will now return early if certain windows are open indicating that Premiere may be busy
 
@@ -49,8 +50,6 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 - ✅ Fixed clicking the GUI to close it not restarting the duration
 
 ### 📝 `PremiereRemote`
-
-📍 `UXP`
 - ✏️ Added;  
   - `custom/`
     - `getTrackClipMediaType()`, `getAllTrackLockStates()`, `toggleTrackLocks()`
