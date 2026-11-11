@@ -21,6 +21,7 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 - 📋 `determineLockedTracks()` can now use `UXP` to return its object on `Premiere` versions greater than `27.1.0`
 - 📋 Renamed `__remoteFunc()` => `__remoteCEP()`
 - 📋 Replaced all usage of `__remoteCEP()` => `__remoteUXP()`
+- 📋 `__checkPremRemoteDir()` `cepOrUXP` now defaults to `"uxp"`
 
 📍 `save()`
 - 📋 Now accepts parameter `timeout`

@@ -5,7 +5,7 @@
  * @premVer 27.0
  * @author tomshi
  * @date 2026/11/11
- * @version 2.6.3
+ * @version 2.6.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -678,11 +678,11 @@ class Prem {
     /**
      * This function checks for the existence of [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/main). Can also check for the existence of a specific function within the `index.tsx` file, or desired UXP `ts` file
      * @param {String} [checkFunc=""] if `cepOrUXP` is set to `cep`; the name of the function you wish to check for, else; the `filename/functionname` ie, `custom/addMatchedAdjustmentLayers`
-     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
+     * @param {String} [cepOrUXP=uxp] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`. Defaults to `uxp`
      * @param {Boolean} [alerts=true] determines whether `Notify` alerts will appear for certain failures
      * @returns {Boolean}
      */
-    static __checkPremRemoteDir(checkFunc := "", cepOrUXP := "cep", alerts := true) {
+    static __checkPremRemoteDir(checkFunc := "", cepOrUXP := "uxp", alerts := true) {
         switch cepOrUXP, 0 {
             case "cep":
                 this.__isRemoteInstalled()
@@ -976,7 +976,7 @@ class Prem {
             notifyExt.showIfNotExist("premCEPpremBusy",, 'Premiere appears to be busy...`nAttempting to communicate with the CEP panel will be cancelled.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return null
         }
-        chkDir := this.__checkPremRemoteDir()
+        chkDir := this.__checkPremRemoteDir(, "cep")
         chkFunc := this.__checkPremRemoteFunc(whichFunc)
         if !chkDir {
             errorLog(TargetError("PremiereRemote CEP is not installed.", -2, whichFunc),,, true)
