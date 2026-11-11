@@ -6,15 +6,11 @@
 ; }
 
 /**
- * Mirrors one directory to another using Robocopy (`/MIR /R:1`), but only after verifying that both drives
- * are mounted and match the expected label and serial number, so the wrong drive is never mirrored over.
+ * Mirrors one directory to another using Robocopy (`/MIR /R:1`), but only after verifying that both drives are mounted and match the expected label and serial number, so the wrong drive is never mirrored over.
  *
- * Progress is shown in a `Notify` window. Clicking the window cancels the sync: the file currently being
- * copied is allowed to finish (so no partial files are left behind), then the remaining files are skipped
- * and the removal of extra files in `dest` is skipped too.
+ * Progress is shown in a `Notify` window. Clicking the window cancels the sync: the file currently being copied is allowed to finish (so no partial files are left behind), then the remaining files are skipped and the removal of extra files in `dest` is skipped too.
  *
- * Files are copied one Robocopy call at a time, so a cancel never interrupts a write. A dry run (`/L`)
- * first collects the list of files to copy; extras in `dest` are then removed in a final pass.
+ * Files are copied one Robocopy call at a time, so a cancel never interrupts a write. A dry run (`/L`) first collects the list of files to copy; extras in `dest` are then removed in a final pass.
  *
  * Because `/MIR` is used, anything in `dest` that no longer exists in `src` is deleted.
  *
@@ -30,11 +26,7 @@ Map(
  * @param {Integer} [serial] The serial number of the drive. Generally retrieved using `DriveGetSerial()`
  * @param {String} [dirPath] The directory you wish to sync from/too
  * @param {Array} [excludeDirs=unset] Folders to exclude in the mirror. Names without a path match at any depth. Full paths match only that specific folder.
- * @returns {Boolean} `true` if the sync completed successfully (or there was nothing to do). `false` if either
- * directory doesn't exist, either drive isn't mounted or fails the label/serial check, the user cancelled,
- * or Robocopy reported an error (exit code 8 or higher, or the process failed to launch).
- *
- * @returns {Boolean}
+ * @returns {Boolean} `true` if the sync completed successfully (or there was nothing to do). `false` if either directory doesn't exist, either drive isn't mounted or fails the label/serial check, the user cancelled, or Robocopy reported an error (exit code 8 or higher, or the process failed to launch).
  */
 syncDirectories(dirsMap?, excludeDirs := []) {
 	myDirsMap := (!IsSet(dirsMap) || !IsObject(dirsMap) || !dirsMap.has("src") || !dirsMap.has("dest") || !dirsMap["dest"].HasOwnProp('label') || !dirsMap["dest"].HasOwnProp('serial') || !dirsMap["dest"].HasOwnProp('dirPath')) || !dirsMap["src"].HasOwnProp('label') || !dirsMap["src"].HasOwnProp('serial') || !dirsMap["src"].HasOwnProp('dirPath')

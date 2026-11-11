@@ -40,6 +40,8 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 - 📋 Now makes use of `Invoke()` `UIA` function instead of relying on `ControlClick()`
 
 ### 📝 `cmd {`
+- ✅ Fixed `exploreAndHighlight()` `doubleCheck=true` not doing anything
+
 📍 `httpGet()`
 - 📋 Now accepts parameters `retries`/`timeoutMs`
     - Now reattempts retrieving the data by default under certain circumstances

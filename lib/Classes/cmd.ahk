@@ -2,8 +2,8 @@
  * @description a class to contain often used cmd functions
  * @file cmd.ahk
  * @author tomshi
- * @date 2026/11/05
- * @version 1.3.2
+ * @date 2026/11/11
+ * @version 1.3.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -170,7 +170,7 @@ class cmd {
 
     /**
      * This function will unmap the desired mapped drive location, then remap your desired drive letter to the desired ip address.
-     * @param {String} driveLocation the drive letter you wish to remap. Do **not** include `:`
+     * @param {Integer} driveLocation The numeric position of the drive letter in the alphabet (`1` = `A`, `14` = `N`, etc). Do **not** include `:`
      * @param {String} networkLocation the ip location of your network drive
      * @param {Boolean} [persistent=true] whether you wish for the drive mapping to remain after system events like `shutdown/restart`
      */
@@ -217,7 +217,7 @@ class cmd {
         }
         (wait = false) ? Run(A_ComSpec ' /c explorer.exe /select, "' fullpath '"',, "Hide") : RunWait(A_ComSpec ' /c explorer.exe /select, "' fullpath '"',, "Hide")
         if doubleCheck = true {
-            SetTimer((*) => explorer.selectFileInOpenWindow.Bind(fullpath, false), -1500)
+            SetTimer((*) => explorer.selectFileInOpenWindow(fullpath, false), -1500)
         }
     }
 }

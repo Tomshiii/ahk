@@ -5,16 +5,16 @@
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\Settings.ahk
 #Include Classes\ptf.ahk
-#Include Classes\tool.ahk
 #Include Classes\CLSID_Objs.ahk
+#Include Classes\winGet.ahk
+#Include Classes\cmd.ahk
+#Include Classes\notifyExt.ahk
 #Include Functions\getLocalVer.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\getLocalVer.ahk
 #Include Functions\formatPreReleaseTag.ahk
 #Include Other\7zip\SevenZip.ahk
-#Include Classes\winGet.ahk
-#Include Classes\cmd.ahk
-#Include Classes\CLSID_Objs.ahk
+#Include GUIs\tomshiBasic.ahk
 
 ; }
 
@@ -22,16 +22,107 @@
 ; // Then goes through the annoying process of generating the release
 ; // This script will not work, and is not designed to work for anyone else - it's simply placed in this folder so I can keep it tracked (and to keep its code open so you can make sure the install exe isn't too scary)
 
-;// move default next ver code above generating the gui so you can include an edit box in the same gui
-;// really want to minimise the amount of prompts
-changeInstallVer     := true
-rebuildCEP           := true
-rebuildUXP           := true
-rebuildCCX           := true
-incrementUXPManifest := true
-backupPremiereFiles  := true
-backupAHK            := true
-backupWiki           := true
+;=====================================================================
+;// build options gui
+;// load these early, the GUI needs the current version and the backup section needs UserSettings
+UserSettings := CLSID_Objs.load("UserSettings")
+currentVer   := Trim(FileRead(A_AppData "\tomshi\version"), " `t`r`n")
+initialValue := InStr(currentVer, ".",,, 2) ? SubStr(currentVer, 1, InStr(currentVer, ".",,, -1)) "x" : currentVer ".x"
+
+opts := promptBuildOptions(initialValue)
+if !opts
+    ExitApp()
+
+changeInstallVer     := opts["changeInstallVer"]
+rebuildCEP           := opts["rebuildCEP"]
+rebuildUXP           := opts["rebuildUXP"]
+rebuildCCX           := opts["rebuildCCX"]
+incrementUXPManifest := opts["incrementUXPManifest"] && rebuildCCX
+backupPremiereFiles  := opts["backupPremiereFiles"]
+backupAHK            := opts["backupAHK"]
+backupWiki           := opts["backupWiki"]
+
+;// keeps the `yes.value` usage working throughout the rest of the script
+;// if we're not bumping the version, the release just reuses the current one
+yes := {Value: changeInstallVer ? opts["version"] : currentVer}
+
+/**
+ * Shows the build options GUI.
+ * @param {String} defaultVer the default text for the version edit box
+ * @returns {Map|String} a map of option names -> true/false (plus `version`), or "" if cancelled
+ */
+promptBuildOptions(defaultVer) {
+    steps := [
+        ["changeInstallVer",     "Change install version (AppData)"],
+        ["rebuildCEP",           "Rebuild CEP (AERemote)"],
+        ["rebuildUXP",           "Rebuild UXP (PremiereRemote-uxp)"],
+        ["rebuildCCX",           "Rebuild UXP .ccx file"],
+        ["incrementUXPManifest", "Increment UXP manifest version"],
+        ["backupPremiereFiles",  "Backup Adobe files (Prem / AE / Media Encoder)"],
+        ["backupAHK",            "Backup ahk folder"],
+        ["backupWiki",           "Backup wiki folder"]
+    ]
+    state := Map("done", false, "ok", false)
+    boxes := Map()
+
+    g := tomshiBasic(,, "+AlwaysOnTop", "Release build")
+    g.SetFont("s10")
+    g.AddText("w300", "Select which steps to run:")
+    for step in steps
+        boxes[step[1]] := g.AddCheckbox("Checked", step[2])
+
+    g.AddText("xm y+15", "Version:")
+    verEdit := g.AddEdit("x+10 yp-3 w150", defaultVer)
+
+    btnAll  := g.AddButton("xm y+15 w100", "Check all")
+    btnNone := g.AddButton("x+10 w100", "Uncheck all")
+    btnGo   := g.AddButton("xm y+15 w100", "Build")
+    btnX    := g.AddButton("x+10 w100 Default", "Cancel")
+
+    ;// dependent controls: the manifest bump needs the ccx build, the version box needs the version step
+    syncDeps(*) {
+        boxes["incrementUXPManifest"].Enabled := boxes["rebuildCCX"].Value
+        verEdit.Enabled := boxes["changeInstallVer"].Value
+    }
+    setAll(val, *) {
+        for k, cb in boxes
+            cb.Value := val
+        syncDeps()
+    }
+    submit(*) {
+        state["ok"] := true
+        state["done"] := true
+    }
+    cancel(*) {
+        state["done"] := true
+    }
+
+    boxes["rebuildCCX"].OnEvent("Click", syncDeps)
+    boxes["changeInstallVer"].OnEvent("Click", syncDeps)
+    btnAll.OnEvent("Click", setAll.Bind(true))
+    btnNone.OnEvent("Click", setAll.Bind(false))
+    btnGo.OnEvent("Click", submit)
+    btnX.OnEvent("Click", cancel)
+    g.OnEvent("Close", cancel)
+    g.OnEvent("Escape", cancel)
+
+    g.Show()
+    while !state["done"]
+        Sleep(50)
+
+    if !state["ok"] {
+        g.Destroy()
+        return ""
+    }
+
+    result := Map()
+    for k, cb in boxes
+        result[k] := cb.Enabled && cb.Value ;// a disabled dependent counts as off
+    result["version"] := Trim(verEdit.Value)
+    g.Destroy()
+    return result
+}
+;=====================================================================
 
 ;// setting our working dir to the release folder
 SetWorkingDir(ptf.rootDir "\releases") ;this folder isn't included in the public version of my repo as it simply acts as a backup place for all the releases
@@ -44,20 +135,6 @@ if DirExist(ptf.rootDir "\releases\release")
 ;// backup adobe stuff
 ;//! premiere
 
-UserSettings := CLSID_Objs.load("UserSettings")
-
-;//* PremiereRemote
-RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\After Effects\AERemote\cep\backupAERemote.ahk"))
-RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\backupPremRemote.ahk"))
-RunWait(ptf.Backups "\Adobe Backups\After Effects\AERemote\cep\replaceAndReset.ahk")
-RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk")
-
-;//* KotET
-try DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
-if FileExist("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
-    FileDelete("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
-try DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
-
 __backupPremFolders(ahkDir, pcDir, title) {
     files := FileSelect("M3", pcDir, title)
     if !files
@@ -66,54 +143,69 @@ __backupPremFolders(ahkDir, pcDir, title) {
         FileCopy(v, ahkDir "*.*", 1)
     }
 }
-;//* Layouts
-layoutsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Layouts\"
-layoutsBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\Layouts" : A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Layouts"
-__backupPremFolders(layoutsBackup, layoutsBeginningDir, "Select Premiere Layouts to Backup")
 
-;//* Settings
-settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\v" ptf.PremYearVer "\"
-settingsBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\" : A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\"
-isBetaPrefs := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? "Adobe Premiere Pro (Beta) Prefs" : "Adobe Premiere Pro Prefs"
-/* hasPro := FileExist(settingsBeginningDir "\" isBetaPrefs) ? isBetaPrefs : (FileExist(settingsBeginningDir "\" StrReplace(isBetaPrefs, "Pro ", "")) ? StrReplace(isBetaPrefs, "Pro ", "") : false)
-if !hasPro
-    throw
-*/
-if !DirExist(settingsBackup "\" isBetaPrefs)
-    DirCreate(settingsBackup "\" isBetaPrefs)
-FileCopy(settingsBeginningDir "\" isBetaPrefs, settingsBackup "\" isBetaPrefs, 1)
-FileCopy(settingsBeginningDir "\Effect Presets and Custom Items.prfpset", settingsBackup "\Effect Presets and Custom Items.prfpset", 1)
-FileCopy(settingsBeginningDir "\LayoutsWorkspaceConfig.xml", settingsBackup "\LayoutsWorkspaceConfig.xml", 1)
+;//* PremiereRemote / AERemote
+if rebuildCEP
+    RunWait(ptf.Backups "\Adobe Backups\After Effects\AERemote\cep\replaceAndReset.ahk")
+if rebuildUXP
+    RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk")
 
-;//* Win
-winBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Win\v" ptf.PremYearVer
-winBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\Win" :  A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Win"
-FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*", 1)
-; __backupPremFolders(winBackup, winBeginningDir)
+if backupPremiereFiles {
+    ;//* KotET
+    try DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
+    if FileExist("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
+        FileDelete("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
+    try DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
 
-;//! ae
+    ;//* Layouts
+    layoutsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Layouts\"
+    layoutsBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\Layouts" : A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Layouts"
+    __backupPremFolders(layoutsBackup, layoutsBeginningDir, "Select Premiere Layouts to Backup")
 
-aeVerNum := StrReplace(ptf.aeSETver, "v", "")
-aeVerNumTrim := InStr(aeVerNum, ".",,, 2) ? SubStr(aeVerNum, 1, InStr(aeVerNum, ".",,, 2)-1) : aeVerNum
-aeDir := (UserSettings.aeIsBeta = true || UserSettings.aeIsBeta = "true") ? A_AppData "\Adobe\After Effects (Beta)\" aeVerNumTrim : A_AppData "\Adobe\After Effects\" aeVerNumTrim
-ahkAEDir := "E:\Github\ahk\Backups\Adobe Backups\After Effects"
-;//* aeks
-ahkAEKBD := ahkAEDir "\aeks\Custom.txt"
-pcAEKBD := aeDir "\aeks\Custom.txt"
-if UserSettings.aeIsBeta != true && UserSettings.aeIsBeta != "true"
-    FileCopy(pcAEKBD, ahkAEKBD, 1)
+    ;//* Settings
+    settingsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Settings\v" ptf.PremYearVer "\"
+    settingsBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\" : A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\"
+    isBetaPrefs := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? "Adobe Premiere Pro (Beta) Prefs" : "Adobe Premiere Pro Prefs"
+    /* hasPro := FileExist(settingsBeginningDir "\" isBetaPrefs) ? isBetaPrefs : (FileExist(settingsBeginningDir "\" StrReplace(isBetaPrefs, "Pro ", "")) ? StrReplace(isBetaPrefs, "Pro ", "") : false)
+    if !hasPro
+        throw
+    */
+    if !DirExist(settingsBackup "\" isBetaPrefs)
+        DirCreate(settingsBackup "\" isBetaPrefs)
+    FileCopy(settingsBeginningDir "\" isBetaPrefs, settingsBackup "\" isBetaPrefs, 1)
+    FileCopy(settingsBeginningDir "\Effect Presets and Custom Items.prfpset", settingsBackup "\Effect Presets and Custom Items.prfpset", 1)
+    FileCopy(settingsBeginningDir "\LayoutsWorkspaceConfig.xml", settingsBackup "\LayoutsWorkspaceConfig.xml", 1)
 
-;//* workspace
-workspaceBackup := ahkAEDir "\ModifiedWorkspaces\"
-workspaceBeginningDir := aeDir "\ModifiedWorkspaces"
-__backupPremFolders(workspaceBackup, workspaceBeginningDir, "Select After Effects Workspaces to Backup")
+    ;//* Win
+    winBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Win\v" ptf.PremYearVer
+    winBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\Win" :  A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Win"
+    FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*", 1)
+    ; __backupPremFolders(winBackup, winBeginningDir)
 
-;//! media encoder
+    ;//! ae
 
-;//* presets
-presetsBackup := "E:\Github\ahk\Backups\Adobe Backups\Media Encoder\Presets\"
-presetsBeginningDir := A_MyDocuments "\Adobe\Adobe Media Encoder\" ptf.PremYearVer ".0\Presets"
-__backupPremFolders(presetsBackup, presetsBeginningDir, "Select Preset files (and tree xml file) to Backup")
+    aeVerNum := StrReplace(ptf.aeSETver, "v", "")
+    aeVerNumTrim := InStr(aeVerNum, ".",,, 2) ? SubStr(aeVerNum, 1, InStr(aeVerNum, ".",,, 2)-1) : aeVerNum
+    aeDir := (UserSettings.aeIsBeta = true || UserSettings.aeIsBeta = "true") ? A_AppData "\Adobe\After Effects (Beta)\" aeVerNumTrim : A_AppData "\Adobe\After Effects\" aeVerNumTrim
+    ahkAEDir := "E:\Github\ahk\Backups\Adobe Backups\After Effects"
+    ;//* aeks
+    ahkAEKBD := ahkAEDir "\aeks\Custom.txt"
+    pcAEKBD := aeDir "\aeks\Custom.txt"
+    if UserSettings.aeIsBeta != true && UserSettings.aeIsBeta != "true"
+        FileCopy(pcAEKBD, ahkAEKBD, 1)
+
+    ;//* workspace
+    workspaceBackup := ahkAEDir "\ModifiedWorkspaces\"
+    workspaceBeginningDir := aeDir "\ModifiedWorkspaces"
+    __backupPremFolders(workspaceBackup, workspaceBeginningDir, "Select After Effects Workspaces to Backup")
+
+    ;//! media encoder
+
+    ;//* presets
+    presetsBackup := "E:\Github\ahk\Backups\Adobe Backups\Media Encoder\Presets\"
+    presetsBeginningDir := A_MyDocuments "\Adobe\Adobe Media Encoder\" ptf.PremYearVer ".0\Presets"
+    __backupPremFolders(presetsBackup, presetsBeginningDir, "Select Preset files (and tree xml file) to Backup")
+}
 ;=====================================================================
 
 
@@ -121,18 +213,15 @@ __backupPremFolders(presetsBackup, presetsBeginningDir, "Select Preset files (an
 loop files ptf.rootDir "\Logs\*.txt", "R"
     FileDelete(A_LoopFileFullPath)
 
-;// ask what version we're bumping to
-currentVer := FileRead(A_AppData "\tomshi\version")
-initialValue := InStr(currentVer, ".",,, 2) ? SubStr(currentVer, 1, InStr(currentVer, ".",,, -1)) "x" : currentVer ".x"
-yes := InputBox("", "version", "W100 H80", initialValue)
-if yes.Result = "Cancel"
-    return
 if !DirExist(A_WorkingDir "\release\" yes.Value)
     DirCreate(A_WorkingDir "\release\" yes.Value)
-if FileExist(A_AppData "\tomshi\version")
-    FileDelete(A_AppData "\tomshi\version")
-FileAppend(formatPreReleaseTag(yes.value), A_AppData "\tomshi\version")
-UserSettings.version := formatPreReleaseTag(yes.value)
+
+if changeInstallVer {
+    if FileExist(A_AppData "\tomshi\version")
+        FileDelete(A_AppData "\tomshi\version")
+    FileAppend(formatPreReleaseTag(yes.value), A_AppData "\tomshi\version")
+    UserSettings.version := formatPreReleaseTag(yes.value)
+}
 
 ;// check for pre release tags
 pre   := InStr(yes.value, "pre",, 1, 1), beta  := InStr(yes.value, "beta",, 1, 1), alpha := InStr(yes.value, "alpha",, 1, 1)
@@ -257,10 +346,10 @@ ccxLoc        := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\uxp
 ccxName       := "de.sebinside.premiereremote_premierepro.ccx"
 sevenZipExe := "C:\Program Files\7-Zip\7z.exe"
 ccxCMD := '"' . '"' sevenZipExe '" a -tzip "' ccxLoc ccxName '" manifest.json build icons' . '"'
-if MsgBox("rebuild UXP .ccx file?",, "4") = "yes" {
+if rebuildCCX {
     if !DirExist(uxpInstallLoc)
         throw TargetError("Couldn't find the local UXP PremiereRemote client folder`n" uxpInstallLoc)
-    if MsgBox("update manifest version?",, "4") = "yes" {
+    if incrementUXPManifest {
         mani := JSON.parse(FileRead(uxpInstallLoc "\manifest.json"))
         version := mani["version"]
         split := StrSplit(version, ".")
@@ -431,15 +520,14 @@ ahkWikiBackup := "N:\Backup\Github\ahk_wiki"
 
 ;// backup ahk folder
 backupFolder(src, dst, label) {
-    if MsgBox("Backup " label " folder?",, 0x3) != "Yes"
-        return
     if DirExist(dst)
         DirDelete(dst, 1)
-    ToolTip("Backing up " label)
+    notifyExt.showIfNotExist('generateBackup' label,, "Backing up " label,,,, "dur=0")
     Sleep(1000)
     DirCopy(src, dst, 2)
-    ToolTip("")
-    tool.Cust(label " backup complete")
+    notifyExt.deleteIfExist('generateBackup' label)
 }
-backupFolder(ptf.rootDir, ahkBackup, "ahk")
-backupFolder(ahkWiki, ahkWikiBackup, "wiki")
+if backupAHK
+    backupFolder(ptf.rootDir, ahkBackup, "ahk")
+if backupWiki
+    backupFolder(ahkWiki, ahkWikiBackup, "wiki")
