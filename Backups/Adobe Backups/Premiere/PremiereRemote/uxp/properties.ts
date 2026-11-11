@@ -12,8 +12,9 @@ import type {
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ppro = require("premierepro") as premierepro;
+const { host } = require("uxp");
 const { Constants } = ppro;
-
+const os = require("os");
 
 /**
  * Returns the guid of the active sequence
@@ -64,7 +65,6 @@ export async function getProjName(): Promise<string | null> {
  * @returns {string} premiere version
  */
 export async function getPremVer(): Promise<string> {
-    const { host } = require("uxp");
     return host.version;
 }
 
@@ -74,7 +74,7 @@ export async function getPremVer(): Promise<string> {
  */
 export async function getSourceMonitorName(): Promise<string | boolean> {
     const item = await ppro.SourceMonitor.getProjectItem();
-    if (item==null) return false;
+    if (item == null) return false;
     return item.name;
 }
 
@@ -212,6 +212,17 @@ export async function getPlayheadPosTimecode(): Promise<string | false> {
 export async function getBackgroundColour(): Promise<string> {
     if (!(await helpers.isPremVerAtLeast("26.5.0")))
         return "null_version_26.5"
-    const uxp = require("uxp");
-    return await uxp.host.getBackgroundColor();
+    return await host.getBackgroundColor();
+}
+
+/**
+ * returns preferences path
+ * @returns {string}
+ */
+export async function getPrefPath(): Promise<string> {
+    const major = host.version.split(".")[0];
+    const ver = `${major}.0`;
+    const home = os.homedir();
+    const user = path.basename(home);     // "jane"
+    return path.join(home, "Documents", "Adobe", "Premiere Pro", ver, `Profile-${user}`, "Adobe Premiere Pro Prefs");
 }

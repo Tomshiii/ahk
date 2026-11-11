@@ -4,7 +4,6 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 ## Functions
 - ✏️ Added `onPath()`
 - ✅ Fixed `ae.setViewerZoom()` causing `After Effects` to show an error message when in the `Layer` view
-- ✅ Fixed `createShortcuts.ahk` throwing
 - ✅ Fixed `KSA` not generating hotkeys for the version selected in `settingsGUI()` if multiple versions are installed
 - 📋 Added `png`/`jpg`/`jpeg`/`webp` output actions to `ffmpeg().all_XtoY()`
 - 📋 `settingsGUI()` will now prompt `Core Functionality.ahk` to regenerate `KSA` when the `Year` version is changed
@@ -16,6 +15,7 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 - 📋 `syncDirectories()` now accepts parameter `excludeDirs`
 
 ### 📝 `prem {`
+- ✏️ Added `getPrefPath()`
 - ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession
 - 📋 `__isUXPInstalled()` will now check that; the `ccx` extension has been installed, and that `docker` is installed
 - 📋 `determineLockedTracks()` can now use `UXP` to return its object on `Premiere` versions greater than `27.1.0`
@@ -53,6 +53,8 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 - ✏️ Added;  
   - `custom/`
     - `getTrackClipMediaType()`, `getAllTrackLockStates()`, `toggleTrackLocks()`
+  - `properties/`
+    - `getPrefPath()`
   - `shared/storeSequence/`  
     - `armSequenceGuard()`. `disarmSequenceGuard()`
 - 📋 `closeActiveSequence()` now accepts parameter `allExcept`
@@ -61,6 +63,7 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 ## Other Changes
 - ❌ Removed `convert2` `Streamdeck AHK` scripts. Replaced with `HotkeylessAHK` function
 - ✅ Fixed `uninstall.ahk` not uninstalling `AERemote`
+- ✅ Fixed `createShortcuts.ahk` throwing
 - 📋 `uninstall_PremiereRemoteUXP.ahk` will now attempt to delete any stale, leftover directories
 - 📋 `autosave.ahk` can now restore the previous `Premiere` sequence order (instead of just the individual sequence) if the active sequence changes during the save
 

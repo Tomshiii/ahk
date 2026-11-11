@@ -5,7 +5,7 @@
  * @premVer 27.0
  * @author tomshi
  * @date 2026/11/11
- * @version 2.6.2
+ * @version 2.6.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -382,6 +382,18 @@ class Prem {
     }
 
     /**
+     * Attempts to use UXP to determine the current Preference file path, before falling back to using `ptf` values
+     * @returns {String | false}
+     */
+    static getPrefPath() {
+        if WinExist(this.winTitle)
+            try p := prem.__remoteUXP('properties/getPrefPath')
+        if IsSet(p) && p != false && p != null
+            return StrReplace(p, "\\", "\")
+        return (FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs")) ? ptf['PremProfile'] "Adobe Premiere Pro Prefs" : ((FileExist(ptf['PremProfile'] "Adobe Premiere Prefs")) ? ptf['PremProfile'] "Adobe Premiere Prefs" : false)
+    }
+
+    /**
      * handles setting the `cep` or `uxp` status icon within the timeline
      * @param {String} [which] Either; `uxp`, `uia`, or `reset`. Passing `reset` will destroy both icons if they exist
      * @param {Integer} [state] the current state of the plugin
@@ -583,37 +595,37 @@ class Prem {
             return true
         }
         __byFile() {
-            filecheck := (FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs")) ? ptf['PremProfile'] "Adobe Premiere Pro Prefs" : ((FileExist(ptf['PremProfile'] "Adobe Premiere Prefs")) ? ptf['PremProfile'] "Adobe Premiere Prefs" : false)
-                if !filecheck {
-                    this.theme := this.defaultTheme
-                    this.__setTimelineCol("Spectrum", this.theme)
-                    return
+            filecheck := this.getPrefPath()
+            if !filecheck {
+                this.theme := this.defaultTheme
+                this.__setTimelineCol("Spectrum", this.theme)
+                return
+            }
+            loadSettings := loadXML(FileRead(filecheck))
+            if !loadSettings {
+                if !Notify.Exist('notDetermined') {
+                    Notify.Show('Premiere theme could not be determined. Settings file was busy', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
+                    errorLog(Error("Premiere theme could not be determined. File was busy", -1))
                 }
-                loadSettings := loadXML(FileRead(filecheck))
-                if !loadSettings {
-                    if !Notify.Exist('notDetermined') {
-                        Notify.Show('Premiere theme could not be determined. Settings file was busy', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
-                        errorLog(Error("Premiere theme could not be determined. File was busy", -1))
-                    }
-                    this.__setTimelineCol("Spectrum", this.defaultTheme)
-                    return
-                }
+                this.__setTimelineCol("Spectrum", this.defaultTheme)
+                return
+            }
 
-                props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
-                switch props.text {
-                    case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
-                    case "34.999999403953552": this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
-                    case "80.000001192092896": this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
-                    case "0": this.__setTimelineCol("Spectrum", this.theme)
-                    default:
-                        if !Notify.Exist('notDetermined') {
-                            Notify.Show('Premiere theme could not be determined.', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
-                            errorLog(Error("Premiere theme could not be determined.", -1))
-                        }
-                        this.theme := this.defaultTheme
-                        this.__setTimelineCol("Spectrum", this.defaultTheme)
-                        return true
-                }
+            props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
+            switch props.text {
+                case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
+                case "34.999999403953552": this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
+                case "80.000001192092896": this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
+                case "0": this.__setTimelineCol("Spectrum", this.theme)
+                default:
+                    if !Notify.Exist('notDetermined') {
+                        Notify.Show('Premiere theme could not be determined.', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
+                        errorLog(Error("Premiere theme could not be determined.", -1))
+                    }
+                    this.theme := this.defaultTheme
+                    this.__setTimelineCol("Spectrum", this.defaultTheme)
+                    return true
+            }
         }
     }
 
@@ -5759,7 +5771,7 @@ $!WheelDown::
     static __getColourLabelIgnore(ignore := "Red,--Narrator(Blue)") {
         __getColourLabelMap() {
             labels := Mip()
-            filecheck := (FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs")) ? ptf['PremProfile'] "Adobe Premiere Pro Prefs" : ((FileExist(ptf['PremProfile'] "Adobe Premiere Prefs")) ? ptf['PremProfile'] "Adobe Premiere Prefs" : false)
+            filecheck := this.getPrefPath()
             if !filecheck {
                 return labels
             }
