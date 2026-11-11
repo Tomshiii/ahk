@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/11/10
- * @version 2.3.4
+ * @date 2026/11/11
+ * @version 2.3.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -158,8 +158,8 @@ class adobeAutoSave extends count {
             if this.aeExist = true
                 this.__resetAETrans()
 
-            if this.premOrigSeq != false
-                prem.__remoteUXP("shared/storeSequence/restoreActiveSequence",, "token=" this.premOrigSeq, "delayMs=250", "checks=1")
+            if this.premOrigSeq != false && this.premOrigSeq != null
+                try prem.__remoteUXP("shared/storeSequence/disarmSequenceGuard",, "token=" this.premOrigSeq)
             this.__reset()
             block.Off()
         } finally {
@@ -651,9 +651,9 @@ class adobeAutoSave extends count {
             notifyExt.showIfNotExist("autosavepremBusier",, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
-        if !prem.__checkPremRemoteFunc(["shared/storeSequence/snapshotActiveSequence", "shared/storeSequence/restoreActiveSequence"], "uxp")
+        if !prem.__checkPremRemoteFunc(["shared/storeSequence/armSequenceGuard", "shared/storeSequence/disarmSequenceGuard"], "uxp")
             return
-        this.premOrigSeq := prem.__remoteUXP("shared/storeSequence/snapshotActiveSequence")
+        try this.premOrigSeq := prem.__remoteUXP("shared/storeSequence/armSequenceGuard")
 
         ;// the idle check only matters if Premiere is the active window.
         ;// if it isn't, we save in the background straight away

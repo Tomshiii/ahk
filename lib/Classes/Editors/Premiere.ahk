@@ -2,10 +2,10 @@
  * @description A library of useful Premiere functions to speed up common tasks. Most functions within this class use `KSA` values - if these values aren't set correctly you may run into confusing behaviour from Premiere
  * Code is maintained for the version of Premiere listed below
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
- * @premVer 26.5.2
+ * @premVer 27.0
  * @author tomshi
- * @date 2026/11/10
- * @version 2.6.1
+ * @date 2026/11/11
+ * @version 2.6.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -66,6 +66,7 @@ class Prem {
             this.UserSettings := UserPref(true)
         }
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
+        this.theme := this.UserSettings.premDefaultTheme
 
         allow := Mip("__remoteCEP", true, "__remoteUXP", true)
         for name in Prem.OwnProps() {
@@ -107,8 +108,8 @@ class Prem {
             ;// check for premremote and NPM before setting timers
             getNPM := cmd.result('powershell -c "Get-Command -Name npm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"')
             if (getNPM != false && getNPM != "") {
-                if this.__isRemoteInstalled() != false
-                    SetTimer(this.__checkRemote.Bind(this), 2000)
+                /* if this.__isRemoteInstalled() != false
+                    SetTimer(this.__checkRemote.Bind(this), 2000) */
                 if this.__isUXPInstalled() != false
                     SetTimer(this.__checkRemoteUXP.Bind(this), 2000)
             }
@@ -145,8 +146,8 @@ class Prem {
             return
         this.__checkedInstall := true
 
-        if (!this.__isNodeInstalled() || !this.__isRemoteInstalled()) && !this.__ignoreWinExist() {
-            throwStr := (!this.__isNodeInstalled() && !this.__isRemoteInstalled()) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!this.__isNodeInstalled() && this.__isRemoteInstalled()) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")
+        if (!this.__isNodeInstalled() || !this.__isUXPInstalled()) && !this.__ignoreWinExist() {
+            throwStr := (!this.__isNodeInstalled() && !this.__isUXPInstalled()) ? "Node.js & PremiereRemote are not Installed. Both are  required.`nPlease reinstall for proper functionality." : ((!this.__isNodeInstalled() && this.__isUXPInstalled()) ? "Node.js is not currently installed. It is required for proper functionality.`nPlease install Node.js and try again." : "PremiereRemote is not currently installed. It is required for proper functionality.`nPlease install PremiereRemote and try again.")
             if A_ScriptName != "Core Functionality.ahk" && !this.__ignoreWinExist()
                 throw TargetError(throwStr, -1)
             else
@@ -200,14 +201,7 @@ class Prem {
     static timelineCols := Mip()
     static timelineColArr := []
     static theme := "darkest"
-    static defaultTheme {
-        get {
-            try return this.UserSettings.premDefaultTheme
-            catch {
-                return this.theme
-            }
-        }
-    }
+    static defaultTheme := "darkest"
     static UI := "Spectrum"
     static defaultUI := "Spectrum"
     static remoteActiveCEP := "loading"
@@ -389,13 +383,12 @@ class Prem {
 
     /**
      * handles setting the `cep` or `uxp` status icon within the timeline
-     * @param {String} [which] Either; `uxp`, `cep`, `uia`, or `reset`. Passing `reset` will destroy both icons if they exist
+     * @param {String} [which] Either; `uxp`, `uia`, or `reset`. Passing `reset` will destroy both icons if they exist
      * @param {Integer} [state] the current state of the plugin
      * @param {ComObject} [UIAObj?] the premUIA object to pass in to avoid recreating it. If `which` is set to `reset` this param can be omitted, otherwise is required
      */
     static __setRemoteIcon(which, state, uiaObj?) {
         if which = "reset" {
-            __stateReset("cep")
             __stateReset("uxp")
             __stateReset("uia")
             return
@@ -435,9 +428,6 @@ class Prem {
         }
         checkPanelCommand := (which = "cep") ? Format("http://localhost:{2}/{1}", "isPanelOpen", this.portCEP) : Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP)
         switch which {
-            case "cep":
-                this.__%which%Open := (cmd.httpGet(checkPanelCommand, true) == '{"message":"ok.","result":"true"}') ? true : false
-                CLSID_Objs.writeProp("prem", "__" which "Open", this.__%which%Open)
             case "uxp":
                 resp := cmd.httpGet(checkPanelCommand, true)
                 this.__%which%Open := (resp == '"uxp visible=true"') ? true : false
@@ -453,7 +443,6 @@ class Prem {
                 if panes == null
                     return
                 newState := panes
-            case "cep": newState := (state=1 && this.__%which%Open = true)
             case "uxp":
                 dockerInstalled := docker.isInstalled(), premRemoteRunning := docker.isContainerRunning("premiereremote-uxp", "premiere-remote")
                 newState := (state=1 && this.__%which%Open = true && dockerInstalled && premRemoteRunning)
@@ -482,7 +471,7 @@ class Prem {
 
         ;// compute the offsets once, then reuse them
         if !this.HasOwnProp(which "Offset") || !this.%which%Offset {
-            buttonIndex := (which = "cep" || which = "uxp") ? (which = "cep" ? 2 : 1) : 4
+            buttonIndex := (which = "uxp") ? 1 : 2
             timecode := timelineObj.Children[1].Children[1]
             button := timelineObj.FindElement({Type:50000},, buttonIndex)
             if !button
@@ -513,13 +502,6 @@ class Prem {
             try this.stopPlayback()
             switch which {
                 case "uia": try premUIA_Values.forceReset()
-                case "cep":
-                    if !this.__%which%Open {
-                        n := WinGet.PremName()
-                        try MenuSelect(n.winTitle,, "Window", "Extensions", "PremiereRemote")
-                        return
-                    }
-                    try Run(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\cep\replaceAndReset.ahk")
                 case "uxp":
                     if !docker.isInstalled() {
                         errorLog(MethodError("Docker is not currently installed.", -1))
@@ -588,15 +570,15 @@ class Prem {
 
         ;// =============================
         __byUI() {
-            if !WinExist(this.wintitle) || !premUIA_Values.determineUIA_Exist()
+            if !WinExist(this.wintitle)
                 return false
             UI_HEX := this.__retrieveUIColour()
             if UI_HEX = null
                 return false
             switch this.__uiByHex(UI_HEX) {
                 case "darkest": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
-                case "dark": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme))
-                case "light": (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme))
+                case "dark": this.theme := "dark",       this.__setTimelineCol("Spectrum", this.theme)
+                case "light": this.theme := "light",     this.__setTimelineCol("Spectrum", this.theme)
             }
             return true
         }
@@ -604,7 +586,7 @@ class Prem {
             filecheck := (FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs")) ? ptf['PremProfile'] "Adobe Premiere Pro Prefs" : ((FileExist(ptf['PremProfile'] "Adobe Premiere Prefs")) ? ptf['PremProfile'] "Adobe Premiere Prefs" : false)
                 if !filecheck {
                     this.theme := this.defaultTheme
-                    this.__setTimelineCol("Spectrum", this.theme) ;// defaults to this.defaultTheme
+                    this.__setTimelineCol("Spectrum", this.theme)
                     return
                 }
                 loadSettings := loadXML(FileRead(filecheck))
@@ -619,60 +601,16 @@ class Prem {
 
                 props := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/fe.color.brightnesscc8.1")
                 switch props.text {
-                    case "7.9999998211860657":
-                        this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
-                        return true
-                    case "34.999999403953552":
-                        (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
-                        return true
-                    case "80.000001192092896":
-                        (MsgBox("The current theme is currently unsupported. Reverting to: " this.defaultTheme), this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)) ;this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
-                        return true
-                    case "0":
-                        if !Notify.Exist('notDeterminedIntZero') {
-                            Notify.Show('Premiere theme could not be determined.', 'Sometimes the Premiere settings file has the parameter set to ``0``.`nFlipping your setting back and forth generally fixes the issue.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDeterminedIntZero')
-                            errorLog(Error("Premiere theme could not be determined. Settings File int: " props.text, -1))
-                            setWithRemote := (this.__checkPremRemoteDir('setProperty') && WinExist(this.winTitle) != 0)
-
-                            title := "Fix settings file"
-                            SetTimer(change_msgButton.Bind(title, "darkest", "dark", "light"), 16)
-                            setTheme := MsgBox("Set your theme. Which theme are you using?", title, "0x2 0x1000")
-                            WinWaitClose(title)
-                            switch setTheme {
-                                case "Abort": ;// darkest
-                                    props.text := "7.9999998211860657"
-                                    loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
-                                    this.theme := "darkest"
-                                case "Retry": ;// dark
-                                    MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
-                                    props.text := "7.9999998211860657"
-                                    loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
-                                    this.theme := "darkest"
-                                    /* props.text := "34.999999403953552"
-                                    loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=34.999999403953552", "persistent=true", "createIfNotExist=false") : ""
-                                    this.theme := "dark" */
-                                case "Ignore": ;// light
-                                    MsgBox("This theme is currently unsupported. Reverting to: " this.defaultTheme)
-                                    props.text := "7.9999998211860657"
-                                    loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=7.9999998211860657", "persistent=true", "createIfNotExist=false") : ""
-                                    this.theme := "darkest"
-                                    /* props.text := "80.000001192092896"
-                                    loadSettings.save(filecheck)
-                                    (setWithRemote) ? this.__remoteCEP('setProperty',, "property=fe.color.brightnesscc8.1", "value=80.000001192092896", "persistent=true", "createIfNotExist=false") : ""
-                                    this.theme := "light" */
-                            }
-                        }
-                        this.__setTimelineCol("Spectrum", this.defaultTheme)
-                        return true
+                    case "7.9999998211860657": this.theme := "darkest", this.__setTimelineCol("Spectrum", this.theme)
+                    case "34.999999403953552": this.theme := "dark",    this.__setTimelineCol("Spectrum", this.theme)
+                    case "80.000001192092896": this.theme := "light",   this.__setTimelineCol("Spectrum", this.theme)
+                    case "0": this.__setTimelineCol("Spectrum", this.theme)
                     default:
                         if !Notify.Exist('notDetermined') {
                             Notify.Show('Premiere theme could not be determined.', 'Defaulting to "' this.defaultTheme '". Fallback default can be set in ``settingsGUI()``', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400 tag=notDetermined')
                             errorLog(Error("Premiere theme could not be determined.", -1))
                         }
+                        this.theme := this.defaultTheme
                         this.__setTimelineCol("Spectrum", this.defaultTheme)
                         return true
                 }
@@ -701,6 +639,8 @@ class Prem {
         coord.s()
         cursorObj := !IsSet(cursorObj) ? obj.MousePos() : cursorObj
         if !this.__checkCoords(cursorObj)
+            return null
+        if this.timelineColArr.Length = 0
             return null
 
         colour1 := this.__getPixel(cursorObj.x, cursorObj.y)
@@ -1385,18 +1325,40 @@ class Prem {
         }
 
         ;// if premver greater than 26.5 we can use UXP to determine the colour
-        if VerCompare(this.currentSetVer, "v26.5") >= 0 && this.__checkPremRemoteFunc('properties/getBackgroundColour', "uxp") {
-            remoteBG := this.__remoteUXP('properties/getBackgroundColour')
-            if remoteBG != false && remoteBG !== null {
-                if remoteBG["value"]["red"] == remoteBG["value"]["green"] && remoteBG["value"]["green"] == remoteBG["value"]["blue"] {
-                    switch remoteBG["value"]["red"] {
-                        case "0": return Format("0x{:x}", 0x1d1d1d)
-                        case "0.11372549086809158": return Format("0x{:x}", 0x323232)
-                        case "0.8352941274642944": return Format("0x{:x}", 0xf8f8f8)
+        try remote := CLSID_Objs.load("prem").remoteActiveUXP
+        remote := (IsSet(remote) && (remote = true || remote = false)) ? remote : false
+        tryUXP := (VerCompare(this.currentSetVer, "v26.5") >= 0 && remote) ? __useUXP() : false
+        __useUXP() {
+            try {
+                open := cmd.httpGet(Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP))
+                if open = '"uxp visible=true"' || open = true {
+                    try remoteBG := cmd.httpGet(Format("http://localhost:{2}/{1}", "properties/getBackgroundColour", this.portUXP))
+                    catch {
+                        return false
+                    }
+                    if !(remoteBG is string) || remoteBG = null
+                        return false
+                    try remoteBG := JSON.parse(StrReplace(SubStr(remoteBG, 2, StrLen(remoteBG)-2), "\", ""))
+                    catch {
+                        return false
+                    }
+                    if remoteBG != false && remoteBG !== null {
+                        if remoteBG["value"]["red"] == remoteBG["value"]["green"] && remoteBG["value"]["green"] == remoteBG["value"]["blue"] {
+                            switch SubStr(remoteBG["value"]["red"], 1, 6) {
+                                case "0":      return Format("0x{:x}", 0x1d1d1d)
+                                case "0.1137": return Format("0x{:x}", 0x323232)
+                                case "0.8352": return Format("0x{:x}", 0xf8f8f8)
+                            }
+                        }
                     }
                 }
             }
+            return false
         }
+        if tryUXP != false
+            return tryUXP
+
+        ;// try using Shin's
         name := WinGet.PremName()
         if !name || !isObjHasProp(name, "winTitle", false) {
             errorLog(UnsetError("Could not determine Premiere window title", -1))
@@ -1444,6 +1406,7 @@ class Prem {
 
         if !this.setShinsIMG(title)
             return null
+            ; MsgBox(Format("0x{:x}", this.editTabCol))
         return this._scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
     }
 
@@ -1619,10 +1582,12 @@ class Prem {
                 return "busy"
         }
 
-        if !this.__checkPremRemoteFunc(["custom/save", "shared/storeSequence/snapshotActiveSequence", "shared/storeSequence/restoreActiveSequence"], "uxp")
+        if !this.__checkPremRemoteFunc(["custom/save", "shared/storeSequence/armSequenceGuard", "shared/storeSequence/disarmSequenceGuard"], "uxp")
             return false
 
-        origSeq := (checkAmount != 0) ? this.__remoteUXP("shared/storeSequence/snapshotActiveSequence") : false
+        origSeq := (checkAmount != 0) ? this.__remoteUXP("shared/storeSequence/armSequenceGuard") : false
+        if origSeq = null
+            origSeq := false
 
         ;// save
         saveTitle := "Save Project " this.exeTitle
@@ -1676,8 +1641,7 @@ class Prem {
         ;// verify active sequence didn't change
         if !checkAmount && !origSeq
             return true
-        if this.__remoteUXP("shared/storeSequence/restoreActiveSequence",, "token=" origSeq, "delayMs=" checkSeqTime, "checks=" checkAmount) = "restored"
-            errorLog(Error("Active sequence changed during save and was restored"))
+        this.__remoteUXP("shared/storeSequence/disarmSequenceGuard",, "token=" origSeq)
         return true
     }
 
@@ -4842,29 +4806,10 @@ $!WheelDown::
      * @param {String} theme which theme the user wishes to use. Currently accepts `darkest`
 	 */
 	static __setTimelineCol(UI, theme) {
-        timelineCol := Mip()
-        timelineColArr := []
-        if !timelineColours.%UI%.HasProp(theme) {
-            sleep 50
-            notifyExt.showIfNotExist("timelineThemeNotSet",, '``timelineColours {`` does not have values set for the requested theme: ' theme '. Reverting to "' this.defaultTheme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
-            theme := (timelineColours.%UI%.has(this.defaultTheme)) ? this.defaultTheme : "darkest"
-            this.theme := theme
-        }
-		for k, v in timelineColours.%UI%.%theme% {
-			if Mod(A_Index, 2) != 0
-				continue
-			varName := timelineColours.%UI%.%theme%[k-1]
-            timelineColArr.Push(Format("0x{:x}", v))
-            timelineCol.Set(Format("0x{:x}", v), true)
-		}
-        this.timelineCols   := timelineCol
-        this.timelineColArr := timelineColArr
-
         switch this.UI {
             case "Spectrum":
                 switch this.theme {
                     ;// these colours may change in future versions
-                    ;// but should work between 25.0->25.5 at a minimum
                     case "darkest":
                         this.eyeDisabled := 0x4B4B4B, this.iconHighlight := 0x6A6A6A, this.layerDivider := 0x303030, this.editTabCol := 0xD0D0D0
                         this.transitionHandleInsideSquare := 0xB0B0B0
@@ -4879,6 +4824,22 @@ $!WheelDown::
                         this.transitionHandleHalfSquare := 0x000000
                 }
         }
+        timelineCol := Mip()
+        timelineColArr := []
+        if !timelineColours.%UI%.HasProp(this.theme) {
+            sleep 50
+            notifyExt.showIfNotExist("timelineThemeNotSet",, '``timelineColours {`` does not have values set for the requested theme: ' this.theme '. Reverting to "' this.defaultTheme '" theme which can be set in ``settingsGUI()``.', 'C:\Windows\System32\imageres.dll|icon94',,, 'theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            return
+        }
+		for k, v in timelineColours.%UI%.%this.theme% {
+			if Mod(A_Index, 2) != 0
+				continue
+			; varName := timelineColours.%UI%.%this.theme%[k-1]
+            timelineColArr.Push(Format("0x{:x}", v))
+            timelineCol.Set(Format("0x{:x}", v), true)
+		}
+        this.timelineCols   := timelineCol
+        this.timelineColArr := timelineColArr
 	}
 
     /**
@@ -5788,6 +5749,42 @@ $!WheelDown::
             }
             return false
         }
+    }
+
+    /**
+     * returns a comma delimited string of colour label index's assigned to the given names
+     * @param {String} [ignore="Red,--Narrator(Blue)"] a comma delimitted string of names you wish to return the indexes for. Must be the user's custom names if they have changed them. These can be found in the label settings within Premiere preferences.
+     * @returns {Map}
+     */
+    static __getColourLabelIgnore(ignore := "Red,--Narrator(Blue)") {
+        __getColourLabelMap() {
+            labels := Mip()
+            filecheck := (FileExist(ptf['PremProfile'] "Adobe Premiere Pro Prefs")) ? ptf['PremProfile'] "Adobe Premiere Pro Prefs" : ((FileExist(ptf['PremProfile'] "Adobe Premiere Prefs")) ? ptf['PremProfile'] "Adobe Premiere Prefs" : false)
+            if !filecheck {
+                return labels
+            }
+            loadSettings := loadXML(FileRead(filecheck))
+            if !loadSettings {
+                return labels
+            }
+
+            loop 16 {
+                t := String(A_Index-1)
+                prop := loadSettings.selectSingleNode("/PremiereData/Preferences/Properties/BE.Prefs.LabelNames." t)
+                labels.Set(prop.text, A_Index)
+            }
+            return labels
+        }
+
+        labels := __getColourLabelMap()
+        str := ""
+        splitStr := StrSplit(ignore, ",", A_Space)
+        for v in splitStr {
+            if !labels.has(v)
+                continue
+            str .= (str = "") ? labels[v] : "," labels[v]
+        }
+        return str
     }
 
     __Delete() {

@@ -2,6 +2,7 @@
 #Include '%A_Appdata%\tomshi\lib'
 #Include Classes\errorLog.ahk
 #Include Classes\cmd.ahk
+#Include Classes\Apps\docker.ahk
 ; }
 
 if !FileExist(A_Appdata "\tomshi\installDir") {
@@ -69,13 +70,15 @@ installCEP(name) {
     RunWait(installDir "\Streamdeck AHK\PremiereRemote\resetNPM.ahk 0 1 " name)
     return true
 }
-premOK  := installCEP("PremiereRemote")
+; premOK  := installCEP("PremiereRemote")
 premUXP := true
 aeOK    := installCEP("AERemote")
 
 ;//* UXP - PremiereRemote-uxp
 ;// extracts the plugin folder. The `client` folder is removed after the .ccx gets installed by `update_PremiereRemoteUXP.ahk`
 try {
+    if !docker.isInstalled()
+        throw TargetError("Docker needs to be installed", -2)
     uxpDst := uxpPluginsPath "\PremiereRemote-uxp"
     DirCreate(uxpPluginsPath)
 
@@ -101,13 +104,11 @@ try {
 }
 
 ;// only remove the packaged files for extensions that installed, a failed one is kept so it can be retried
-if premOK
-    try DirDelete(cepStaging "\PremiereRemote", 1)
 if aeOK
     try DirDelete(cepStaging "\AERemote", 1)
 if premUXP
     try DirDelete(uxpStaging, true)
-if premOK && aeOK && premUXP
+if aeOK && premUXP
     try DirDelete(stagingDir, 1)
 
 ExitApp()

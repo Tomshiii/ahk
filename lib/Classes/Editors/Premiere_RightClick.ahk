@@ -2,8 +2,8 @@
  * @description move the Premiere Pro playhead to the cursor
  * @premVer 26.5.2
  * @author tomshi, taranVH
- * @date 2026/11/10
- * @version 2.5.6
+ * @date 2026/11/11
+ * @version 2.5.7
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -234,7 +234,8 @@ class rbuttonPrem {
 		block.Off()
 		if this.colourOrNorm = true && (GetKeyState("LButton") && !GetKeyState("LButton", "P"))
 			SendInput("{LButton Up}")
-		prem.__remoteUXP("shared/storeSequence/restoreActiveSequence",, "token=" this.origSeq, "delayMs=1000", "checks=1")
+		if this.origSeq != false
+			prem.__remoteUXP("shared/storeSequence/disarmSequenceGuard",, "token=" this.origSeq)
 		this.__resetClicks()
 		checkstuck(["XButton1", "XButton2", "Ctrl", "Shift", checkedKey])
 		; try WinEvent.Stop("Exist")
@@ -506,13 +507,14 @@ class rbuttonPrem {
 
 		useRemote := this.premObj.remoteActiveUXP
 		if useRemote = true {
-			if !prem.__checkPremRemoteFunc(["shared/storeSequence/snapshotActiveSequence", "shared/storeSequence/restoreActiveSequence"], "uxp") {
+			if !prem.__checkPremRemoteFunc(["shared/storeSequence/armSequenceGuard", "shared/storeSequence/disarmSequenceGuard"], "uxp") {
 				useRemote := false
 				notifyExt.showIfNotExist("RClickpremRemoteFailed", 'Error', 'PremiereRemote has either; not been installed, is missing functions, or the panel within Premiere needs to be reloaded.', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 maxw=400')
 			} else {
-				this.origSeq := prem.__remoteUXP("shared/storeSequence/snapshotActiveSequence")
+				this.origSeq := prem.__remoteUXP("shared/storeSequence/armSequenceGuard")
 				if !this.origSeq || this.origSeq == null {
 					useRemote := false
+					this.origSeq := false
 					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
 					notifyExt.showIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
 					this.__exit(this.checkedHotkey) */
@@ -597,7 +599,8 @@ class rbuttonPrem {
 		}
 
 		;// checks original sequence is still active
-		prem.__remoteUXP("shared/storeSequence/restoreActiveSequence",, "token=" this.origSeq, "delayMs=250", "checks=1")
+		if this.origSeq != false && this.origSeq != null
+			try prem.__remoteUXP("shared/storeSequence/disarmSequenceGuard")
 		switch {
 			case (allChecks && !this.leftClick && !this.xbuttonClick):
 				this.__exit(this.checkedHotkey)

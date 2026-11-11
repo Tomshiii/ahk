@@ -1,4 +1,5 @@
 # <> Release 2.20.x - 
+From this release I will no longer be developing `CEP` versions of `Premiere` functions, or maintaining parity between my `UXP` & `CEP` functions. The repo will move completely over to `UXP` as no `CEP` functionality is required anymore.
 
 ## Functions
 - ✏️ Added `onPath()`
@@ -12,13 +13,14 @@
 - 📋 `rbuttonPrem.movePlayhead()` can now restore the previous `Premiere` sequence order (instead of just the individual sequence) if the active sequence changes during the save
 - 📋 Moved `docker {` `Classes\docker.ahk` => `Classes\Apps\docker.ahk`
 - 📋 `premUIA_Values {` functions will now automatically attempt to regenerate panel info when necessary (*ie. a panel wasn't visible during initial generation*)
+- 📋 `syncDirectories()` now accepts parameter `excludeDirs`
 
 ### 📝 `prem {`
 - ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession
 - 📋 `__isUXPInstalled()` will now check that; the `ccx` extension has been installed, and that `docker` is installed
 - 📋 `determineLockedTracks()` can now use `UXP` to return its object on `Premiere` versions greater than `27.1.0`
 - 📋 Renamed `__remoteFunc()` => `__remoteCEP()`
-- 📋 Replaced most usage of `__remoteCEP()` => `__remoteUXP()`
+- 📋 Replaced all usage of `__remoteCEP()` => `__remoteUXP()`
 
 📍 `save()`
 - 📋 Now accepts parameter `timeout`
@@ -52,11 +54,13 @@
   - `custom/`
     - `getTrackClipMediaType()`, `getAllTrackLockStates()`, `toggleTrackLocks()`
   - `shared/storeSequence/`  
-    - `snapshotActiveSequence()`. `restoreActiveSequence()`
+    - `armSequenceGuard()`. `disarmSequenceGuard()`
 - 📋 `closeActiveSequence()` now accepts parameter `allExcept`
+- 📋 `organiseProject()` now accepts parameter `ignoreLabelIndices`
 
 ## Other Changes
 - ❌ Removed `convert2` `Streamdeck AHK` scripts. Replaced with `HotkeylessAHK` function
+- ✅ Fixed `uninstall.ahk` not uninstalling `AERemote`
 - 📋 `uninstall_PremiereRemoteUXP.ahk` will now attempt to delete any stale, leftover directories
 - 📋 `autosave.ahk` can now restore the previous `Premiere` sequence order (instead of just the individual sequence) if the active sequence changes during the save
 

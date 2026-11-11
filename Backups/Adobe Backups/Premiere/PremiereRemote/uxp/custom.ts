@@ -594,7 +594,7 @@ export async function setAllEnabledDisabled(enabled: boolean): Promise<void> {
  * @returns {void}
  */
 export async function setupProjBin(
-    templateProjectPath: string,
+    templateProjectPath?: string,
     includeOptionalAssets: boolean = true
 ): Promise<void> {
     const project = await ppro.Project.getActiveProject();
@@ -982,12 +982,22 @@ export async function moveToAssetsBin(folderPath: string): Promise<boolean> {
 
 /**
  * organise project. expects my folder layout
+ * @param {string} ignoreLabelIndices comma-delimited color label indices to ignore, e.g. "0, 7, 12"
  * @returns {void}
  */
-export async function organiseProject(): Promise<void> {
+export async function organiseProject(ignoreLabelIndices: string = ""): Promise<void> {
     await setupProjBin();
     const project = await ppro.Project.getActiveProject();
     if (!project) return;
+
+    const ignored = new Set<number>(
+        ignoreLabelIndices
+            .split(",")
+            .map(s => s.trim())
+            .filter(s => s !== "")
+            .map(Number)
+            .filter(n => Number.isInteger(n) && n >= 0)
+    );
 
     const rootItem = await project.getRootItem();
     if (!rootItem) return;
@@ -1055,6 +1065,9 @@ export async function organiseProject(): Promise<void> {
     const freshRootChildren = await root.getItems();
     for (let i = 0; i < freshRootChildren.length; i++) {
         const item = freshRootChildren[i];
+        // skip items with an ignored color label
+        if (ignored.size > 0 && ignored.has(await item.getColorLabelIndex())) continue;
+
         const name: string = item.name;
         const ext = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
 

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A script to facilitate retrieving and setting UIA values within `Core Functionality.ahk`
  * @author tomshi
- * @date 2026/10/16
- * @version 1.1.1
+ * @date 2026/11/11
+ * @version 1.1.2
  ***********************************************************************/
 #SingleInstance Ignore
 #Include "%A_Appdata%\tomshi\lib"
@@ -147,9 +147,8 @@ if remoteIconSet != false && remoteIconSet != "false" {
     SetTimer(__pollRemoteIcons.bind(premUIAobj), 1500)
     __pollRemoteIcons(premUIAobj, *) {
         try {
-            p := CLSID_Objs.loadProp("prem", ["remoteActiveCEP", "remoteActiveUXP"])
+            p := CLSID_Objs.loadProp("prem", ["remoteActiveUXP"])
             prem.__setRemoteIcon("uia", true, premUIAobj)
-            prem.__setRemoteIcon("cep", p["remoteActiveCEP"] = true, premUIAobj)
             if remoteIgnoreUXP != true && remoteIgnoreUXP != "true"
                 prem.__setRemoteIcon("uxp", p["remoteActiveUXP"] = true, premUIAobj)
         } catch as e {
@@ -244,7 +243,7 @@ __deleteUIA() {
 
 __doExit(premUIAobj?) {
     try SetTimer(__pollRemoteIcons, 0)
-    try CLSID_Objs.writeProp("prem", Map("__cepOpen", false, "__uxpOpen", false))
+    try CLSID_Objs.writeProp("prem", Map("__uxpOpen", false))
     __deleteUIA()
     __resetIsActive()
     __resetObj(premUIAobj?)

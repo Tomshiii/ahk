@@ -29,14 +29,14 @@ Map(
  * @param {String} [label] The name of the drive. Generally retrieved using `DriveGetLabel()`
  * @param {Integer} [serial] The serial number of the drive. Generally retrieved using `DriveGetSerial()`
  * @param {String} [dirPath] The directory you wish to sync from/too
- *
+ * @param {Array} [excludeDirs=unset] Folders to exclude in the mirror. Names without a path match at any depth. Full paths match only that specific folder.
  * @returns {Boolean} `true` if the sync completed successfully (or there was nothing to do). `false` if either
  * directory doesn't exist, either drive isn't mounted or fails the label/serial check, the user cancelled,
  * or Robocopy reported an error (exit code 8 or higher, or the process failed to launch).
  *
  * @returns {Boolean}
  */
-syncDirectories(dirsMap?) {
+syncDirectories(dirsMap?, excludeDirs := []) {
 	myDirsMap := (!IsSet(dirsMap) || !IsObject(dirsMap) || !dirsMap.has("src") || !dirsMap.has("dest") || !dirsMap["dest"].HasOwnProp('label') || !dirsMap["dest"].HasOwnProp('serial') || !dirsMap["dest"].HasOwnProp('dirPath')) || !dirsMap["src"].HasOwnProp('label') || !dirsMap["src"].HasOwnProp('serial') || !dirsMap["src"].HasOwnProp('dirPath')
 		? Map("src", {label: "Tom Work", serial: 3829588704, dirPath: "W:\_Assets"}, "dest", {label: "storage", serial: 489231902, dirPath: "N:\_Backups\Folder Backups\Tom Assets"})
 		: dirsMap
@@ -52,8 +52,8 @@ syncDirectories(dirsMap?) {
 		serialW := DriveGetSerial(path.Drive "\"), serialS := DriveGetSerial(dest.Drive "\")
 		; MsgBox(labelW "-" myDirsMap["src"].label "`n" labelS "-" myDirsMap["dest"].label "`n" serialW "-" myDirsMap["src"].serial "`n" serialS "-" myDirsMap["dest"].serial)
 		if labelW = myDirsMap["src"].label && labelS = myDirsMap["dest"].label && serialW = myDirsMap["src"].serial && serialS = myDirsMap["dest"].serial {
-			result := robocopyMirror(path.path, dest.path)
-			return result
+			result := robocopyMirror(path.path, dest.path, excludeDirs)
+            return result
 		}
 	}
 	return false
@@ -148,10 +148,16 @@ runPiped(cmdLine, onLine := "", shouldCancel := "", onTick := "") {
  * Mirrors src to dest with Robocopy, showing a Notify progress window.
  * @returns {Boolean} true if Robocopy exit code < 8
  */
-robocopyMirror(src, dest) {
+robocopyMirror(src, dest, excludeDirs := []) {
     src  := RTrim(src, "\")
     dest := RTrim(dest, "\")
-    base  := Format('Robocopy "{1}" "{2}" /MIR /R:1 /NJH /NJS /NP /NDL /FP', src, dest)
+
+    xd := ""
+    for d in excludeDirs
+        xd .= ' "' d '"'
+    base := Format('Robocopy "{1}" "{2}" /MIR /R:1 /NJH /NJS /NP /NDL /FP', src, dest)
+    if xd != ""
+        base .= ' /XD' xd
     state := {cancel: false}
     n := ""
     onClick(*) {

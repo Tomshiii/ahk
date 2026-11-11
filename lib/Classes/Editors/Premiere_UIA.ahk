@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/11/10
- * @version 3.2.0
+ * @date 2026/11/11
+ * @version 3.2.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -39,7 +39,7 @@ class premUIA_Values {
         "Source Monitor",           {key: "sourceMonitor",  type: 50033},
         "Tools",                    {key: "toolsWindow",    type: 50033},
         "Project:",                 {key: "projectsWindow", type: 50033, matchmode: "Substring"},
-        "PremiereRemote",           {key: "premRemote",     type: 50019},
+        ; "PremiereRemote",           {key: "premRemote",     type: 50019},
         "PremiereUnifiedHeaderTab", {key: "homeTab",        type: 50033}
     )
     static isRunning := false
@@ -535,13 +535,13 @@ class premUIA_Values {
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
             throw Error("Failed to retrieve Premiere title.")
         }
-        remoteCEPState := CLSID_Objs.loadProp("prem", "remoteActiveCEP")
-        if remoteCEPState = "loading" {
+        remoteUXPState := CLSID_Objs.loadProp("prem", "remoteActiveUXP")
+        if remoteUXPState = "loading" {
             notifyExt.deleteIfExist("premUIAGenTree")
             notifyExt.deleteIfExist("premUIAGenTreeWarning")
             throw Error("Socket")
         }
-        if !remoteCEPState {
+        if !remoteUXPState {
             __DelNotify()
             errorLog(Error("A socket connection could not be established", -1),, true)
             throw Error("Socket")

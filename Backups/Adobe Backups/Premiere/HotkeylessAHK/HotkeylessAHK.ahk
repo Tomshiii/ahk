@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/11/05
- * @version 1.1.25
+ * @date 2026/11/11
+ * @version 1.1.26
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -47,7 +47,6 @@ RunClient(serverPort, functionClassNames)
 Class CustomFunctions {
     changeLabel(label)                                       => (prem.changeLabel(label))
     changeDupe()                                             => (prem.changeDupeFrameMarkers())
-    organiseProj()                                           => (prem.__remoteUXP('custom/organiseProject'))
     setMarker(colour)                                        => (prem.__remoteUXP('custom/setMarker',, "colour=" colour))
     removeMarker()                                           => (prem.__remoteUXP('custom/removeMarkerAtPlayhead'))
     moveToAssetBin(folder)                                   => (prem.__remoteUXP('custom/moveToAssetsBin',, 'folderPath=' folder))
@@ -64,6 +63,7 @@ Class CustomFunctions {
 
     addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer", makeSelection := true)     => (OtherFuncs.addAdjustLayer(adjustmentLayerPath, makeSelection))
     renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?))
+    organiseProj(ignore := "")                               => (OtherFuncs.orgProj(ignore))
     setupProject()                                           => OtherFuncs.setupProject()
     setupMusicTracks(audioType := "Standard")                => OtherFuncs.setupMusicTracks(audioType)
 
@@ -74,17 +74,27 @@ Class CustomFunctions {
 
 ;// === any functions/hotkeys that don't really make much sense anywhere else
 class OtherFuncs {
+    /**
+     * calls `UXP` function `custom/organiseProject`
+     * @param {String} [ignore=""] a comma delimited list of colour labels to IGNORE. Must be the string name of your own individual colour labels (so if you've renamed them in preferences, your new names)
+     */
+    static orgProj(ignore := "") {
+        getIgnore := prem.__getColourLabelIgnore(ignore)
+        prem.__remoteUXP('custom/organiseProject',, "ignoreLabelIndices=" getIgnore)
+    }
+
     /** calls `prem.renderAndReplace()` then calls the `organiseProj` `PremiereRemote` function. Might not make sense for anyone else with a different prem bin structure */
     static rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) {
         if !prem.__checkPremRemoteFunc('custom/organiseProject', "uxp") {
             ;// throw
-            errorLog(MethodError("PremiereRemote CEP extension is required for this function"))
+            errorLog(MethodError("PremiereRemote UXP extension is required for this function"))
             return
         }
         if !prem.renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?)
             return
         sleep 1000
-        prem.__remoteUXP('custom/organiseProject')
+        getIgnore := prem.__getColourLabelIgnore()
+        prem.__remoteUXP('custom/organiseProject',, "ignoreLabelIndices=" getIgnore)
     }
 
     /** calls premremote func `addMatchedAdjustmentLayer()`. If it's my transform adjust layer, it also adds the transform effect */

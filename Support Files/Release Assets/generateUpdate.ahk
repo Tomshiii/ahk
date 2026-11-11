@@ -36,7 +36,7 @@ if DirExist(ptf.rootDir "\releases\release")
 UserSettings := CLSID_Objs.load("UserSettings")
 
 ;//* PremiereRemote
-RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\cep\backupPremRemote.ahk"))
+RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\After Effects\AERemote\cep\backupPremRemote.ahk"))
 RunWait(WinGet.pathU(A_WorkingDir "\..\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\backupPremRemote.ahk"))
 
 ;//* KotET
@@ -310,7 +310,7 @@ FileCopy(A_WorkingDir "\release\" yes.Value "\Support Files\Release Assets\Insta
 ;// this happens before the `-patch` copy so the patch installer includes them as well
 ;// `node_modules` is skipped for CEP - `installPremRemote.ahk` runs `npm i` on the user's machine
 premRemoteStage := A_WorkingDir "\release\" yes.Value "\premiereRemote"
-copyFolder(A_AppData "\Adobe\CEP\extensions\PremiereRemote", premRemoteStage "\cep\PremiereRemote",     ["node_modules", ".git"])
+; copyFolder(A_AppData "\Adobe\CEP\extensions\PremiereRemote", premRemoteStage "\cep\PremiereRemote",     ["node_modules", ".git"])
 copyFolder(A_AppData "\Adobe\CEP\extensions\AERemote",       premRemoteStage "\cep\AERemote",           ["node_modules", ".git"])
 copyFolder(uxpPluginLoc,                                     premRemoteStage "\uxp\PremiereRemote-uxp", ["node_modules"])
 

@@ -13,7 +13,7 @@ if MsgBox("Would you also like to uninstall PremiereRemote/AERemote?",, "4 4096"
     if DirExist(A_Appdata "\Adobe\CEP\extensions\PremiereRemote")
         try DirDelete(A_Appdata "\Adobe\CEP\extensions\PremiereRemote", true)
     if DirExist(A_Appdata "\Adobe\CEP\extensions\AERemote")
-        try DirDelete(A_Appdata "\Adobe\CEP\extensions\PremiereRemote", true)
+        try DirDelete(A_Appdata "\Adobe\CEP\extensions\AERemote", true)
     if DirExist(A_Appdata "\Adobe\UXP\Plugins\External\PremiereRemote-uxp")
         try DirDelete(A_Appdata "\Adobe\UXP\Plugins\External\PremiereRemote-uxp", true)
     try RunWait(currentDir "\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\build\uninstall_PremiereRemoteUXP.ahk")

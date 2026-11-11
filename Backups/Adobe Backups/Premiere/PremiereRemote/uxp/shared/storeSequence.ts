@@ -1,17 +1,19 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ppro = require("premierepro");
 
-import * as common from "../common";
-
 const LIMIT = 10;
-let seqIds = [];            // [0] = current; swap rotates through the rest
-let ignoreId = null;        // sequence we just activated programmatically
+const DEFAULT_GUARD_MS = 0;
+
+let seqIds: string[] = [];                              // [0] = current; swap rotates through the rest
+let ignore: { id: string; until: number } | null = null; // activation we caused ourselves
+const guards = new Map<number, { id: string; seqIds: string[]; until: number }>();
+let guardCounter = 0;
 
 async function init() {
     ppro.EventManager.addGlobalEventListener(ppro.Constants.SequenceEvent.ACTIVATED, onActivated, false);
     ppro.EventManager.addGlobalEventListener(ppro.Constants.SequenceEvent.CLOSED, onClosed, true);
     ppro.EventManager.addGlobalEventListener(ppro.Constants.ProjectEvent.ACTIVATED, onProjectChange, false);
-    ppro.EventManager.addGlobalEventListener(ppro.Constants.ProjectEvent.CLOSED, () => { seqIds = []; }, false);
+    ppro.EventManager.addGlobalEventListener(ppro.Constants.ProjectEvent.CLOSED, reset, false);
 
     const { seq } = await getActive();
     touch(seq?.guid?.toString());
@@ -24,132 +26,120 @@ async function getActive() {
     return { project, seq };
 }
 
-function touch(id) {
-    if (!id) return;
-    seqIds = seqIds.filter(x => x !== id);
-    seqIds.unshift(id);
-    if (seqIds.length > LIMIT) seqIds.length = LIMIT;
+function touch(id: string) {
+    seqIds = [id, ...seqIds.filter(x => x !== id)].slice(0, LIMIT);
 }
 
-function forget(id) {
-    if (id) seqIds = seqIds.filter(x => x !== id);
+function reset() {
+    guards.clear();
+    ignore = null;
+    seqIds = [];
 }
 
-function idFromEvent(e) {
-    return e?.id ?? null;
-}
-
-async function onActivated(e) {
-    let id = idFromEvent(e);
-    if (!id) {
-        const { seq } = await getActive();
-        id = seq?.guid?.toString();
+/** Newest live guard. Also drops expired ones, so no timers are needed. */
+function newestGuard() {
+    const now = Date.now();
+    let newest = null;
+    for (const [token, g] of guards) {
+        if (g.until <= now) guards.delete(token);
+        else newest = g;
     }
-    if (id && id === ignoreId) {   // caused by our own swap; list is already rotated
-        ignoreId = null;
+    return newest;
+}
+
+/** Activates a sequence by id and marks the resulting event as ours. */
+async function activateById(id: string) {
+    try {
+        const { project } = await getActive();
+        const seq = await project?.getSequence(ppro.Guid.fromString(id));
+        if (!seq) return false;
+        ignore = { id, until: Date.now() + 1000 };   // expires, so a no-event switch can't swallow a later one
+        await project.setActiveSequence(seq);
+        return true;
+    } catch {
+        ignore = null;
+        return false;
+    }
+}
+
+async function onActivated(e: any) {
+    const id = e?.id ?? (await getActive()).seq?.guid?.toString();
+    if (!id) return;
+
+    if (ignore && ignore.id === id && Date.now() < ignore.until) {   // our own switch
+        ignore = null;
         return;
     }
+
+    // Unexpected switch while a guard is live -> revert, and keep it out of the history
+    const g = newestGuard();
+    if (g && id !== g.id && await activateById(g.id)) {
+        seqIds = [...g.seqIds];
+        return;
+    }
+
     touch(id);
 }
 
-async function onClosed(e) {
-    forget(idFromEvent(e));
+function onClosed(e: any) {
+    const id = e?.id;
+    seqIds = seqIds.filter(x => x !== id);
+    for (const [token, g] of guards) if (g.id === id) guards.delete(token);
 }
 
 function onProjectChange() {
-    seqIds = [];
-    getActive().then(({ seq }) => touch(seq?.guid?.toString()));
+    reset();
+    getActive().then(({ seq }) => { const id = seq?.guid?.toString(); if (id) touch(id); });
 }
 
-const snapshots = new Map<string, { id: string; seqIds: string[] }>();
-let snapshotCounter = 0;
-let lastToken: string | null = null;
-const MAX_SNAPSHOTS = 20;
-
 /**
- * Remembers the currently active sequence (and the swap history) so it can be restored later.
- * @returns {string|false} a token to pass to `restoreActiveSequence`, or false if there is no active sequence
+ * Remembers the active sequence. While any guard is live, activating a different sequence
+ * is reverted immediately. Each caller gets its own token, so scripts can't disarm each other.
+ * @param {number} [windowMs=1500] how long the guard lasts. 0 = indefinite (until disarmed,
+ *   its sequence closes, or the project changes)
+ * @returns {number|false} token for `disarmSequenceGuard`, or false if there is no active sequence
  */
-export async function snapshotActiveSequence() {
+export async function armSequenceGuard(windowMs?: number | string) {
     const { seq } = await getActive();
     const id = seq?.guid?.toString();
     if (!id) return false;
 
-    const token = String(++snapshotCounter);
-    snapshots.set(token, { id, seqIds: [...seqIds] });
-    lastToken = token;
+    let ms = Number(windowMs ?? DEFAULT_GUARD_MS);
+    if (windowMs === "" || Number.isNaN(ms)) ms = DEFAULT_GUARD_MS;
 
-    // drop the oldest if restore was never called (e.g. early returns on the AHK side)
-    if (snapshots.size > MAX_SNAPSHOTS)
-        snapshots.delete(snapshots.keys().next().value!);
+    newestGuard();   // prune expired guards
+    const token = ++guardCounter;
+    guards.set(token, { id, seqIds: [...seqIds], until: ms > 0 ? Date.now() + ms : Infinity });
     return token;
 }
 
-/**
- * Checks whether the active sequence still matches a snapshot, and switches back if not.
- * @param {number} [delayMs=1000] ms to wait before each check
- * @param {number} [checks=1] number of checks. Stops at the first revert
- * @param {string|number} [token] token from `snapshotActiveSequence`. Defaults to the most recent snapshot
- * @returns {"unchanged"|"restored"|false} false = unknown token / nothing to restore
- */
-export async function restoreActiveSequence(token?: string | number, delayMs?: number, checks?: number) {
-    const key = (token === undefined || token === null || token === "") ? lastToken : String(token);
-    const target = key !== null ? snapshots.get(key) : undefined;
-    if (key !== null) snapshots.delete(key);
-    if (key === lastToken) lastToken = null;
-    if (!target) return false;
-
-    const ms = Number.isFinite(Number(delayMs)) ? Number(delayMs) : 1000;
-    const n = Number.isFinite(Number(checks)) ? Math.max(1, Math.floor(Number(checks))) : 1;
-
-    for (let i = 0; i < n; i++) {
-        await common.sleep(ms);
-        const { project, seq } = await getActive();
-        if (!project) return false;
-        if (seq?.guid?.toString() === target.id) continue;
-
-        try {
-            const found = await project.getSequence(ppro.Guid.fromString(target.id));
-            if (!found) return false;
-            ignoreId = target.id;
-            await project.setActiveSequence(found);
-            seqIds = [...target.seqIds];
-            return "restored";
-        } catch {
-            ignoreId = null;
-            return false;
-        }
-    }
-    return "unchanged";
+/** Ends only this token's guard. Unknown or expired tokens are ignored. */
+export function disarmSequenceGuard(token?: string | number) {
+    return guards.delete(Number(token));
 }
 
 /**
  * Swap between previously active sequences. Closing sequences will remove them from the list.
+ * Live guards are retargeted to the new sequence.
  * @param {number} [count=unset] The amount of sequences you wish to toggle between. If left unset, will toggle between the previous 10
  */
 export async function swapPreviousSequence(count?: number) {
     const parsed = Number(count);
     const n = Number.isFinite(parsed) ? Math.max(2, Math.floor(parsed)) : LIMIT;
-    const { project } = await getActive();
-    if (!project) return false;
+    if (!(await getActive()).project) return false;
 
     while (seqIds.length > 1) {
         const size = Math.min(n, seqIds.length);
         const head = seqIds.slice(0, size);
-        head.push(head.shift());
+        head.push(head.shift()!);
         seqIds = [...head, ...seqIds.slice(size)];
 
         const targetId = seqIds[0];
-        try {
-            const target = await project.getSequence(ppro.Guid.fromString(targetId));
-            if (!target) throw new Error("gone");
-            ignoreId = targetId;
-            await project.setActiveSequence(target);
+        if (await activateById(targetId)) {
+            for (const g of guards.values()) { g.id = targetId; g.seqIds = [...seqIds]; }
             return true;
-        } catch {
-            ignoreId = null;
-            forget(targetId);
         }
+        seqIds = seqIds.filter(x => x !== targetId);   // gone; try the next one
     }
     return false;
 }

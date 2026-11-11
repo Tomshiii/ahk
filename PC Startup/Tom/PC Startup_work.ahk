@@ -82,5 +82,5 @@ if WinWait(dockerAhk,, 5)
 
 ; deleteDotUnderscore("N:\")
 Run(ptf.lib "\Functions\syncFonts.ahk W:\_Assets\fonts")
-syncDirectories()
+syncDirectories(, ["W:\_Assets\cracks", "W:\_Assets\exe", "W:\_Assets\kleopatra"])
 Run(ptf.TimerScripts "\syncOnConnect.ahk")

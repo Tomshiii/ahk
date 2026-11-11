@@ -3,7 +3,7 @@
  * @file Startup.ahk
  * @author tomshi
  * @date 2026/11/11
- * @version 1.9.18
+ * @version 1.9.19
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -610,16 +610,9 @@ class Startup {
         submenuRemote := Menu()
         submenuPrem := Menu()
 
-        submenuPremUXP := Menu()
-        submenuPremUXP.Add("Load Extension", (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\openDockerUXP.ahk"))
-        submenuPremUXP.Add("Open Extension Dir", (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\openRemoteDir.ahk"))
-        submenuPremUXP.Add("Replace && Reset", (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk"))
-        submenuPrem.Add("UXP", submenuPremUXP)
-
-        submenuPremCEP := Menu()
-        submenuPremCEP.Add("Replace && Reset", (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\cep\replaceAndReset.ahk"))
-        submenuPremCEP.Add("Open PremiereRemote", (*) => RunWait(ptf.rootDir "\Streamdeck AHK\PremiereRemote\openPremRemote.ahk.ahk"))
-        submenuPrem.Add("CEP", submenuPremCEP)
+        submenuPrem.Add("Load Extension",     (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\openDockerUXP.ahk"))
+        submenuPrem.Add("Open Extension Dir", (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\openRemoteDir.ahk"))
+        submenuPrem.Add("Replace && Reset",   (*) => RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk"))
 
         submenuRemote.Add("PremiereRemote", submenuPrem)
 
