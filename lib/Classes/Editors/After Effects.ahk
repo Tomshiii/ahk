@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/11/09
- * @version 1.6.0
+ * @date 2026/11/12
+ * @version 1.6.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -85,6 +85,7 @@ class AE {
     }
 
     static __checkedInstall := false
+    static __localeWarn     := false
     static ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk"]
 
     ;// whole timeline coords
@@ -275,6 +276,30 @@ class AE {
                     (A_ScriptName != "Core Functionality.ahk" && !this.__ignoreWinExist()) ? errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer, -1, regInstalledVer.version),,, true) : errorLog(TargetError("Installed version of After Effects is not supported.`nMin version: " this.minVer, -1, regInstalledVer.version))
                 }
         }
+
+        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) && !this.__ignoreWinExist() {
+            try this.__localeWarn := CLSID_Objs.loadProp("ae", "__localeWarn")
+        }
+        if !this.__localeWarn {
+            locale := this.__getAELocale()
+            if locale != "en_US" || !InStr(locale, "en_US") {
+                this.__localeWarn := true
+                notifyExt.showIfNotExist('localeNotUS', '⚠️ Locale Mismatch ⚠️', 'This repo uses hard coded UIA values that are generally expected to be in US English. If your system is in another Locale, these UIA values may be different and you may encounter issues.',,,, 'pos=CT dur=10 tali=Center mali=Center bc=0x6A0000 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            }
+        }
+    }
+
+    /**
+     * returns the locale of the currently installed version of premiere
+     * @returns {String}
+     */
+    static __getAELocale() {
+        try {
+            p := loadXML(FileRead(EnvGet("ProgramFiles") "\Adobe\Adobe After Effects " SubStr(A_YYYY, 1, 2) SubStr(this.currentSetVer, 1, 2) "\Support Files\AMT\application.xml"))
+            node := p.selectSingleNode('/Configuration/Payload/Data[@key="installedLanguages"]')
+            return node.text
+        }
+        return ""
     }
 
     static __checkRemote(port := 42500, cepOrUXP := "cep") {

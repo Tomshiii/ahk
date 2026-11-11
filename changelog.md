@@ -3,7 +3,6 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 
 ## Functions
 - ✏️ Added `onPath()`
-- ✅ Fixed `ae.setViewerZoom()` causing `After Effects` to show an error message when in the `Layer` view
 - ✅ Fixed `KSA` not generating hotkeys for the version selected in `settingsGUI()` if multiple versions are installed
 - 📋 Added `png`/`jpg`/`jpeg`/`webp` output actions to `ffmpeg().all_XtoY()`
 - 📋 `settingsGUI()` will now prompt `Core Functionality.ahk` to regenerate `KSA` when the `Year` version is changed
@@ -23,6 +22,7 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 - 📋 `determineLockedTracks()` can now use `UXP` to return its object in `Premiere` versions greater than `27.1.0`
 - 📋 Replaced all usage of `__remoteFunc()` => `__remoteUXP()`
 - 📋 `__checkPremRemoteDir()` removed param `cepOrUXP`
+- 📋 Will now check the installed version of `Premiere` and present a warning if the installed `Locale` isn't `en_US`
 
 📍 `save()`
 - 📋 Now accepts parameter `timeout`
@@ -31,6 +31,10 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 📍 `__remoteUXP()`
 - ✅ Fixed timing out during large operations
 - 📋 Will now return early if certain windows are open indicating that Premiere may be busy
+
+### 📝 `ae {`
+- ✅ Fixed `setViewerZoom()` causing `After Effects` to show an error message when in the `Layer` view
+- 📋 Will now check the installed version of `After Effects` and present a warning if the installed `Locale` isn't `en_US`
 
 ### 📝 `discord {`
 - 📋 `button()`now makes use of `Toggle()`/`Invoke()`/`Expand()` `UIA` functions instead of relying on `ControlClick()`
