@@ -114,7 +114,7 @@ for k in dirsMap {
     SplitPath(k, &dirName)
     try DirCopy(k, SelectedFolder "\_proj\videos\" dirName)
 }
-notifyExt.deleteIfExist("zipPremCopyingDir")
+notifyExt.deleteIfExist("zipPremCopyingDir",, 0)
 notifyExt.showIfNotExist("zipPremCopyingFiles",, 'Copying files in your videos folder + any selected large files', 'C:\Windows\System32\imageres.dll|icon249', 'Windows Battery Critical',, 'dur=5 bc=Black show=Fade@250 hide=Fade@250 bdr=Yellow maxW=400')
 loop files SelectedFolder "\videos\*.*", 'F' {
     if A_LoopFileExt = "mkv"
@@ -125,7 +125,7 @@ loop files SelectedFolder "\videos\*.*", 'F' {
     }
     try FileCopy(A_LoopFileFullPath, SelectedFolder "\_proj\videos\*.*")
 }
-notifyExt.deleteIfExist("zipPremCopyingFiles")
+notifyExt.deleteIfExist("zipPremCopyingFiles",, 2500)
 zip := SevenZip().AutoZip(SelectedFolder "\_proj")
 
 DirDelete(SelectedFolder "\_proj", 1)

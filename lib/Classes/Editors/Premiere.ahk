@@ -5,7 +5,7 @@
  * @premVer 27.0
  * @author tomshi
  * @date 2026/11/12
- * @version 2.6.6
+ * @version 2.6.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -5220,7 +5220,7 @@ $!WheelDown::
         ; validateTypes(["Integer", "Integer"], save, slot) ;breaks hotkeylessahk
         notifs := ['premEffectSlotFailed', 'premEffectSlotNoneSaved', 'premEffectSlotJSONFailed', 'premEffectSlotSaved', 'premEffectSlotPreSend', 'premEffectSlotFailedRead', 'premEffectSlotApplied', 'premEffectERROR']
         for v in notifs
-            notifyExt.deleteIfExist(v)
+            notifyExt.deleteIfExist(v,, 0)
         if !this.__checkPremRemoteFunc(['custom/saveEffectSlotJSON', 'custom/applyEffectSlotJSON']) {
             errorLog(MethodError("Required PremiereRemote functions missing: saveEffectSlotJSON/applyEffectSlotJSON", -1))
             return
@@ -5291,7 +5291,7 @@ $!WheelDown::
                         try t := this.__remoteUXP('custom/applyEffectSlotJSON',, "data=" stringg)
                         catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
-                            notifyExt.deleteIfExist('premEffectSlotPreSend')
+                            notifyExt.deleteIfExist('premEffectSlotPreSend',, 0)
                             notifyExt.showIfNotExist('premEffectSlotFailedRead',, "Failed to read effects slot file: " slot,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                             return
                         }
@@ -5301,12 +5301,12 @@ $!WheelDown::
                             t := this.__remoteUXP('custom/applyEffectSlotJSON',, "data=" stringg)
                         } catch {
                             errorLog(MethodError('Failed to read effects slot file', -1, slot))
-                            notifyExt.deleteIfExist('premEffectSlotPreSend')
+                            notifyExt.deleteIfExist('premEffectSlotPreSend',, 0)
                             notifyExt.showIfNotExist('premEffectSlotFailedRead',, "Failed to read effects slot file: " slot "`n" slotFile,,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
                             return
                         }
                 }
-                notifyExt.deleteIfExist('premEffectSlotPreSend')
+                notifyExt.deleteIfExist('premEffectSlotPreSend',, 0)
                 if __checkErrors(t) != false
                     notifyExt.showIfNotExist('premEffectSlotApplied',, 'Effects applied from slot: ' slot, 'C:\Windows\System32\imageres.dll|icon240',,, 'dur=4 bdr=Teal iw=26 show=Fade@250 hide=Fade@250 maxW=400', true)
                 return

@@ -51,9 +51,13 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
     - Now reattempts retrieving the data by default under certain circumstances
 
 ### 📝 `notifyExt {`
+- 📋 `deleteIfExist` now accepts params `force`, `minTime`
+- 📋 `destroyDupes` now accepts param `force`
+
 📍 `showIfNotExist()`
 - ✅ Fixed always using a duration of `8` if passed in caps; ie. `DUR=`
 - ✅ Fixed clicking the GUI to close it not restarting the duration
+- 📋 Now passes `dga=1` to all `Notify` GUIs by default
 
 ### 📝 `PremiereRemote`
 - ✏️ Added;  

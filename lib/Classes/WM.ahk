@@ -150,6 +150,17 @@ class WM {
                 KSA := KeyShortAdjust()
                 ObjRegisterActive(KSA, CLSID_Objs["KSA"])
                 Critical("Off")
+            case "NotifyDeleteIfExist":
+                ;// facilitates the `minTime` logic
+                tag := res[1], force := res[2] = 1, minTime := res[3]
+                remaining := minTime - (A_TickCount - (this.storeNotify.Has(tag) ? this.storeNotify[tag] : 0))
+                SetTimer(__destroy.Bind(tag, force), -Max(remaining, 1))
+                return
+
+                __destroy(tag, force) {
+                    try notifyExt.destroyDupes(tag, force)
+                    try Notify.Destroy(tag, force)
+                }
             case "NotifyNotExist":
                 paramSplit := StrSplit(SubStr(backup, StrLen("NotifyNotExist,")+1), "|||")
                 tag      := paramSplit[1]
@@ -163,7 +174,7 @@ class WM {
                 duration := (duration = 0) ? "1" : duration
 
                 if !Notify.Exist(tag) && !this.storeNotify.Has(tag) {
-                    this.storeNotify.Set(tag, 0) ; value doubles as the tick counter
+                    this.storeNotify.Set(tag, A_TickCount) ; value is now the time it was shown
                     checkObj := __checkFinished.Bind(tag)
                     callback := __callback.Bind(tag, checkObj)
                     showObj  := () => Notify.Show(title, msgg, image, sound, callback, options " tag=" tag)
@@ -180,13 +191,11 @@ class WM {
                     }
                     __checkFinished(tag, *) {
                         notifyExt.destroyDupes(tag)
-                        count := this.storeNotify.Has(tag) ? this.storeNotify[tag] : 0
                         if !Notify.Exist(tag) {
                             this.storeNotify.Delete(tag)
                             SetTimer(, 0)
                             return
                         }
-                        this.storeNotify[tag] := count + 1
                         SetTimer(, -16)
                     }
                 }

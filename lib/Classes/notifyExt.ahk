@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/04/20
- * @version 1.0.1
+ * @date 2026/11/12
+ * @version 1.1.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,8 +16,9 @@
 class notifyExt {
 
     /**
-     * syntatic sugar for only using `Notify.Show()` if the tag doesn't already exist. Do NOT respecify the `tag` in `options`. Notify's will be logged using `Log()`.
-     * If no `show`/`hide` option is present in `options` `show=Fade@250 hide=Fade@250` will be added
+     * Syntatic sugar for only using `Notify.Show()` if the tag doesn't already exist. Do NOT respecify the `tag` in `options`. A command is sent to `Core Functionality.ahk` to process all `Notify` GUIs there so scripts that exit early do not leave a crashed GUI behind.
+     * @param [options] Defaults if not passed; `show=Fade@250 hide=Fade@250 dga=1`
+     * @returns {void}
     */
     static showIfNotExist(tag, title := '', msg := '', image := '', sound := '', callback := '', options := '', doWinWait := false) {
         if InStr(options, "tag=") {
@@ -25,24 +26,34 @@ class notifyExt {
             errorLog(PropertyError("The user has redefined ``tag`` in ``options``", -1),,, true)
             return
         }
-        options := (!InStr(options, " show=")) ? options A_Space "show=Fade@250" : options
-        options := (!InStr(options, " hide=")) ? options A_Space "hide=Fade@250" : options
+        options := "show=Fade@250 hide=Fade@250 dga=1 " options
         proccessed := WM.Send_WM_COPYDATA("NotifyNotExist," tag "|||" title "|||" msg "|||" image "|||" sound "|||" callback "|||" options, "Core Functionality.ahk")
         if doWinWait = true && proccessed
             WinWait("_" tag,, 1)
         return
     }
 
-    static destroyDupes(tag) {
+    /**
+     * Destroys duplicate `Notify` GUIs if they exist. Command is executed instantly and locally.
+     * @param {String} [tag] to `Notify` GUI tag to check
+     * @param {Boolean} [force=false] passes `force` to `Notify.Destroy()`
+     * @returns {void}
+     */
+    static destroyDupes(tag, force := false) {
         if !chck := this.checkMultiple(tag)
             return
         for _, v in chck {
             if A_Index = chck.Length
                 break
-            try Notify.Destroy(v)
+            try Notify.Destroy(v, force)
         }
     }
 
+    /**
+     * Determines if multiple `Notify` GUIs exist.
+     * @param {String} [tag] to `Notify` GUI tag to check
+     * @returns {void}
+     */
     static checkMultiple(tag) {
         Critical('On')
         orig := detect(0, 'RegEx')
@@ -57,8 +68,12 @@ class notifyExt {
         return (hwndArr.Length > 0 ? hwndArr : false)
     }
 
-    static deleteIfExist(tag, force := false) {
-        if Notify.Exist(tag)
-            try Notify.Destroy(tag, force)
-    }
+    /**
+     * Deletes the requested `Notify` GUI if it exists. A command is sent to `Core Functionality.ahk` to process deletion of all `Notify` GUIs for the specified tag.
+     * @param {String} [tag] to `Notify` GUI tag to check
+     * @param {Boolean} [force=false] passes `force` to `Notify.Destroy()`
+     * @returns {void}
+     */
+    static deleteIfExist(tag, force := false, minTime := 1500) => (WM.Send_WM_COPYDATA("NotifyDeleteIfExist," tag "," force "," minTime, "Core Functionality.ahk"))
+
 }

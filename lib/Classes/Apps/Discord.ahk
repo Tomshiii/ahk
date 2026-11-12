@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with discord. Use this class at your own risk! Automating discord is technically against TOS!!
  * @author tomshi
- * @date 2026/11/10
- * @version 1.8.1
+ * @date 2026/11/12
+ * @version 1.8.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -70,7 +70,7 @@ class discord {
 
         if !this.discordEl {
             try {
-                notifyExt.showIfNotExist('discordGenCache',, "Generating Discord cache...`nThis may take a moment", this.ico,,, "DUR=3 POS=BL bdr=0x5764F0 show=Fade@250 hide=Fade@250 maxW=400")
+                notifyExt.showIfNotExist('discordGenCache',, "Generating Discord cache...`nThis may take a moment", this.ico,,, "DUR=4 POS=BL bdr=0x5764F0 show=Fade@250 hide=Fade@250 maxW=400")
                 this.discCacheRequest := UIA.CreateCacheRequest(["Type", "LocalizedType", "AutomationId", "Name"],, 5)
                 this.DiscordEl := UIA.ElementFromHandle(this.exeTitle, this.discCacheRequest, false)
             }
@@ -87,12 +87,11 @@ class discord {
                 newel := this.__uiaMsgUnderCursor(mousePos)
                 buttonBar := this.__getCurrentBar(newel, "Add Reaction")
                 if buttonBar = null {
-                    blocker.Off()
-                    notifyExt.deleteIfExist('discordGenCache')
+                    blocker.Off(), notifyExt.deleteIfExist('discordGenCache')
                     return
                 }
                 buttonBar.button.Invoke()
-                blocker.Off()
+                blocker.Off(), notifyExt.deleteIfExist('discordGenCache')
                 return
             case "delete":
                 newel := this.__uiaMsgUnderCursor(mousePos)
@@ -102,18 +101,17 @@ class discord {
                 SendInput("{Shift down}")
                 buttonBar.button.ControlClick()
                 SendInput("{Shift up}")
-                blocker.Off()
+                blocker.Off(), notifyExt.deleteIfExist('discordGenCache')
                 return
             case "edit":
                 newel := this.__uiaMsgUnderCursor(mousePos)
                 buttonBar := this.__getCurrentBar(newel, "Edit")
                 if buttonBar = null {
-                    blocker.Off()
-                    notifyExt.deleteIfExist('discordGenCache')
+                    blocker.Off(), notifyExt.deleteIfExist('discordGenCache')
                     return
                 }
                 buttonBar.button.Invoke()
-                blocker.Off()
+                blocker.Off(), notifyExt.deleteIfExist('discordGenCache')
                 return
             case "reply":
                 disableAutoReplyPing := CLSID_Objs.loadProp("UserSettings", "disc_disable_autoreply")
@@ -123,23 +121,23 @@ class discord {
                     goto continueDefault
                 buttonBar.button.Invoke()
                 if disableAutoReplyPing = false || this.__isDM() = true {
-                    blocker.Off()
+                    blocker.Off(), notifyExt.deleteIfExist('discordGenCache')
                     return
                 }
                 try this.DiscordEl.WaitElement({Type:50000, Name:"Mention ON"}, 800).Toggle()
-                blocker.Off()
+                blocker.Off(), notifyExt.deleteIfExist('discordGenCache')
                 return
         }
         continueDefault:
         newel := this.__uiaMsgUnderCursor(mousePos)
         buttonBar := this.__getCurrentBar(newel, "More")
         if buttonBar = null {
-            blocker.Off()
-            notifyExt.deleteIfExist('discordGenCache')
+            blocker.Off(), notifyExt.deleteIfExist('discordGenCache')
             return
         }
         buttonBar.button.Expand()
         msgActions := this.discordEl.WaitElement({Type: 50009, AutomationId:"message-actions"}, 1500)
+        notifyExt.deleteIfExist('discordGenCache')
 
         switch button {
             case "reply":

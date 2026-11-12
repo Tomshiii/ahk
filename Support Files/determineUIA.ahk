@@ -236,9 +236,9 @@ __resetTimelineVals() {
 }
 
 __deleteUIA() {
-    notifyExt.deleteIfExist("premUIAGenTree")
-    notifyExt.deleteIfExist("premUIAGenTreeWarning")
-    notifyExt.deleteIfExist("determiningUIA")
+    notifyExt.deleteIfExist("premUIAGenTree",, 0)
+    notifyExt.deleteIfExist("premUIAGenTreeWarning",, 0)
+    notifyExt.deleteIfExist("determiningUIA",, 0)
 }
 
 __doExit(premUIAobj?) {

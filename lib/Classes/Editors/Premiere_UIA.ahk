@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/11/11
- * @version 3.2.1
+ * @date 2026/11/12
+ * @version 3.2.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -521,24 +521,22 @@ class premUIA_Values {
     /** sets UIA objects */
     static setObjs() {
         Critical('On')
-        notifyExt.deleteIfExist("premUIAGenTree")
-        notifyExt.deleteIfExist("premUIAGenTreeWarning")
-        notifyExt.deleteIfExist("UIAretrieveComplete")
-        notifyExt.deleteIfExist("UIApanelsFailed")
+        notifyExt.deleteIfExist("premUIAGenTree",, 0)
+        notifyExt.deleteIfExist("premUIAGenTreeWarning",, 0)
+        notifyExt.deleteIfExist("UIAretrieveComplete",, 0)
+        notifyExt.deleteIfExist("UIApanelsFailed",, 0)
         if !Notify.Exist("premUIAGenTree") {
             Notify.Show(, 'Generating Premiere UIA tree... This may take a while.`nPremiere may appear unresponsive until this process has completed.', this.premIcon,,, 'dur=0 bdr=Maroon show=Fade@150 hide=Fade@250 maxW=400 tag=premUIAGenTree')
         }
-        __DelNotify() => (notifyExt.deleteIfExist("premUIAGenTree"), notifyExt.deleteIfExist("premUIAGenTreeWarning"))
+        __DelNotify() => (notifyExt.deleteIfExist("premUIAGenTree",, 0), notifyExt.deleteIfExist("premUIAGenTreeWarning",, 0))
         try premName := WinGet.PremName()
         if (!isObjHasProp(premName, 'titleCheck', false) && isObjHasProp(premName, 'titleCheck', null)) || premName.titleCheck != true {
-            notifyExt.deleteIfExist("premUIAGenTree")
-            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            __DelNotify()
             throw Error("Failed to retrieve Premiere title.")
         }
         remoteUXPState := CLSID_Objs.loadProp("prem", "remoteActiveUXP")
         if remoteUXPState = "loading" {
-            notifyExt.deleteIfExist("premUIAGenTree")
-            notifyExt.deleteIfExist("premUIAGenTreeWarning")
+            __DelNotify()
             throw Error("Socket")
         }
         if !remoteUXPState {
@@ -590,7 +588,7 @@ class premUIA_Values {
         }
 
         __DelNotify()
-        notifyExt.deleteIfExist("determiningUIA")
+        notifyExt.deleteIfExist("determiningUIA",, 0)
         notifyExt.showIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", this.premIcon,,, 'dur=3 bdr=0x5B009F show=Fade@225 hide=Fade@250 maxW=400')
         return true
     }

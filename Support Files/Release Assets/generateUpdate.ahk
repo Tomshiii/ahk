@@ -525,7 +525,7 @@ backupFolder(src, dst, label) {
     notifyExt.showIfNotExist('generateBackup' label,, "Backing up " label,,,, "dur=0")
     Sleep(1000)
     DirCopy(src, dst, 2)
-    notifyExt.deleteIfExist('generateBackup' label)
+    notifyExt.deleteIfExist('generateBackup' label,, 0)
 }
 if backupAHK
     backupFolder(ptf.rootDir, ahkBackup, "ahk")

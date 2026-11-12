@@ -688,7 +688,7 @@ class adobeAutoSave extends count {
         if (saveAttempt = true || saveAttempt = "timeout" || saveAttempt = "busy") {
             sleep 500
             this.selfInitiatedSave := false
-            SetTimer((*) => (notifyExt.deleteIfExist("autosavepremSaveAttempt")), -500)
+            SetTimer((*) => (notifyExt.deleteIfExist("autosavepremSaveAttempt",, 0)), -500)
             return
         }
         notifyExt.showIfNotExist("autosavepremFailed",, 'PremiereRemote failed to save, falling back`nto a manual save attempt.', 'C:\Windows\System32\imageres.dll|icon80',,, 'theme=Dark dur=5 bdr=0xE96969 show=Fade@250 hide=Fade@250')
