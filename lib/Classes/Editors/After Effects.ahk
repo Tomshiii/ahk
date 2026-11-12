@@ -4,7 +4,7 @@
  * @aeVer 26.5
  * @author tomshi
  * @date 2026/11/12
- * @version 1.6.1
+ * @version 1.6.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -277,13 +277,16 @@ class AE {
                 }
         }
 
-        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) && !this.__ignoreWinExist() {
+        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try this.__localeWarn := CLSID_Objs.loadProp("ae", "__localeWarn")
         }
-        if !this.__localeWarn {
+        if regInstalledVer != false && !this.__localeWarn {
             locale := this.__getAELocale()
             if locale != "en_US" || !InStr(locale, "en_US") {
-                this.__localeWarn := true
+                if A_ScriptName != "Core Functionality.ahk"
+                    CLSID_Objs.writeProp("ae", "__localeWarn", true)
+                else
+                    this.__localeWarn := true
                 notifyExt.showIfNotExist('localeNotUS', '⚠️ Locale Mismatch ⚠️', 'This repo uses hard coded UIA values that are generally expected to be in US English. If your system is in another Locale, these UIA values may be different and you may encounter issues.',,,, 'pos=CT dur=10 tali=Center mali=Center bc=0x6A0000 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             }
         }

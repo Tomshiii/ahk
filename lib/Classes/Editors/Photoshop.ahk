@@ -3,8 +3,8 @@
  * Last tested in the version of Photoshop listed below
  * @psVer 27.1
  * @author tomshi
- * @date 2026/09/25
- * @version 1.3.7
+ * @date 2026/11/12
+ * @version 1.3.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,10 +23,46 @@
 
 class PS {
 
+    __New() {
+        regInst := this.__isRegInstalledVer()
+        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
+            try this.__localeWarn := CLSID_Objs.loadProp("ps", "__localeWarn")
+        }
+        if regInst != false && !this.__localeWarn {
+            locale := this.__getPsLocale()
+            if locale != "en_US" || !InStr(locale, "en_US") {
+                if A_ScriptName != "Core Functionality.ahk"
+                    CLSID_Objs.writeProp("ps", "__localeWarn", true)
+                else
+                    this.__localeWarn := true
+                notifyExt.showIfNotExist('localeNotUS', '⚠️ Locale Mismatch ⚠️', 'This repo uses hard coded UIA values that are generally expected to be in US English. If your system is in another Locale, these UIA values may be different and you may encounter issues.',,,, 'pos=CT dur=10 tali=Center mali=Center bc=0x6A0000 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
+            }
+        }
+    }
+
     static exeTitle := Editors.Photoshop.winTitle
     static winTitle := this.exeTitle
     static class := Editors.Photoshop.class
     static path := ptf["Photoshop"]
+    static __localeWarn := false
+
+
+    static __isRegInstalledVer() => determineAdobeVer({baseName: "Photoshop.exe", beta: "Photoshop.exe"})
+
+    /**
+     * returns the locale of the currently installed version of premiere
+     * @returns {String}
+     */
+    static __getPsLocale() {
+        try {
+            appVers := determineAdobeVer({baseName: "Photoshop.exe", beta: "Photoshop.exe"})
+            SplitPath(appVers.path,, &yearDir)
+            p := loadXML(FileRead(EnvGet("ProgramFiles") "\Adobe\Adobe Photoshop " SubStr(yearDir, -4) "\AMT\application.xml"))
+            node := p.selectSingleNode('/Configuration/Payload/Data[@key="installedLanguages"]')
+            return node.text
+        }
+        return ""
+    }
 
     /**
      * A function to warp to one of a photos values within Photoshop (scale , x/y, rotation) click and hold it so the user can drag to increase/decrease.

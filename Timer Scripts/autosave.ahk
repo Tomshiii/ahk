@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/11/11
- * @version 2.3.6
+ * @date 2026/11/12
+ * @version 2.3.7
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -78,6 +78,8 @@ class adobeAutoSave extends count {
             this.alwaysSave      := userPros["autosave_always_save"]
             this.restartPlayback := userPros["autosave_restart_playback"]
         }
+        ;// might throw if unset
+        try this.movePlayhead := InStr(ksa.prem.playheadtoCursor, "{") && InStr(ksa.prem.playheadtoCursor, "}") ? LTrim(RTrim(ksa.prem.playheadtoCursor, "}"), "{") : ksa.prem.playheadtoCursor
 
         ;// set variables for some user hotkeys
         this.rClickPrem := rClickPrem, this.rClickMove := rClickMove
@@ -117,8 +119,7 @@ class adobeAutoSave extends count {
 
     rClickPrem    := ""
     rClickMove    := ""
-    movePlayhead  := InStr(ksa.prem.playheadtoCursor, "{") && InStr(ksa.prem.playheadtoCursor, "}") ? LTrim(RTrim(ksa.prem.playheadtoCursor, "}"), "{")
-                                                                                          : ksa.prem.playheadtoCursor
+    movePlayhead  := false
     saveAttemptNotify := false
 
     programMonX1  := false,  programMonX2 := false
@@ -370,12 +371,12 @@ class adobeAutoSave extends count {
     }
 
     /** is the user currently interacting with the keyboard/mouse? */
-    __userIsBusy() {
+    __userIsBusy(checkMouse := this.checkMouse) {
         ;// if the user has interacted with the keyboard recently
         ;// or the last pressed key is LButton, RButton or \ & they have interacted with the mouse recently
         ;// the save attempt will be paused and retried
         return (A_TimeIdleKeyboard <= this.idleThreshold)
-            || (this.checkMouse = true && ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || A_PriorKey = this.movePlayhead) && A_TimeIdleMouse <= 500))
+            || (checkMouse = true && ((A_PriorKey = "LButton" || A_PriorKey = "RButton" || (this.movePlayhead != false && A_PriorKey = this.movePlayhead)) && A_TimeIdleMouse <= 500))
             || this.__checkRClick()
     }
 
@@ -579,22 +580,37 @@ class adobeAutoSave extends count {
                         sleep 150
                     }
                     ;// if the user was originally playing back on the timeline
-                    ;// we resume that playback here
+                    ;// attempt to resume playback, provided the user hasn't taken control
 
-                    prem.__focusTimeline()
-                    sleep 100
-                    SendInput(KSA.prem.playStop)
-                    sleep 1000
-                    loop 3 {
-                        checkPlaying := prem.isPlaying()
-                        if checkPlaying != true {
-                            prem.__focusTimeline()
-                            sleep 100
-                            prem.startPlayback()
-                            sleep 100
-                            continue
+                    if this.userPlayback {
+                        prem.__focusTimeline()
+                        sleep 100
+                        if prem.isPlaying() = true
+                            return
+                        ;// don't interfere if the user has recently interacted
+                        if this.__userIsBusy(false)
+                            return
+
+                        blocker := block_ext()
+                        blocker.On(false)
+                        prem.startPlayback()
+                        sleep 150
+
+                        ;// check whether playback successfully started
+                        if prem.isPlaying() = true {
+                            blocker.Off()
+                            return
                         }
-                        break
+                        ;// the user may have intervened while we were attempting playback
+                        if this.__userIsBusy(false) {
+                            blocker.Off()
+                            return
+                        }
+                        ;// one final attempt, but don't keep fighting the user
+                        prem.__focusTimeline()
+                        if prem.isPlaying() != true && !this.__userIsBusy(false)
+                            prem.startPlayback()
+                        blocker.Off()
                     }
                 default:
                     if this.premRemoteSave = false
@@ -696,12 +712,13 @@ class adobeAutoSave extends count {
         this.premRemoteSave := false
         saveAsTitle := "Save As " editors.Premiere.winTitle
         try {
-            block.On()
+            blocker := block_ext()
+            blocker.On(false)
             checkStuck()
 
             ;// this script will attempt to NOT fire if Premiere_RightClick.ahk is active
             if this.__checkRClick() = true {
-                throw
+                return
             }
 
             this.__startSaveAsWatch(saveAsTitle)
@@ -711,7 +728,10 @@ class adobeAutoSave extends count {
                 SendInput("{Shift Up}")
             if !WinActive(prem.winTitle)
                 switchTo.Premiere()
-            sleep 25
+            sleep 150
+            if !WinActive(prem.winTitle) {
+                return
+            }
             ;// if the user manually saves inbetween grabbing the title and this timer attempting to save
             ;// this part will throw if it's not inside a try block
             ControlSend("{Ctrl Down}{s}",, this.premWindow.wintitle)
@@ -722,12 +742,12 @@ class adobeAutoSave extends count {
             if !WinWait("Save Project",, 3)
                 return
 
-            block.Off()
+            blocker.Off()
             this.__stopSaveAsWatch(saveAsTitle)
             if !WinWaitClose("Save Project",, 3)
                 return
         } finally {
-            block.Off()
+            blocker.Off()
             this.__stopSaveAsWatch(saveAsTitle)
         }
 
@@ -886,7 +906,7 @@ class adobeAutoSave extends count {
         isCoreFunc := winExt.ExistRegex("Core Functionality.ahk")
         if isCoreFunc {
             rClick := CLSID_Objs.loadProp("prem", "RClickIsActive")
-            if rClick = true || GetKeyState(this.rClickPrem, "P") = true || GetKeyState(this.movePlayhead) = true || GetKeyState(this.rClickMove, "P") = true {
+            if rClick = true || GetKeyState(this.rClickPrem, "P") = true || (this.movePlayhead != false && GetKeyState(this.movePlayhead) = true) || GetKeyState(this.rClickMove, "P") = true {
                 InstallMouseHook(false)
                 premObj := ""
                 return true

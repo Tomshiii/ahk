@@ -2,8 +2,8 @@
  * @description move the Premiere Pro playhead to the cursor
  * @premVer 26.5.2
  * @author tomshi, taranVH
- * @date 2026/11/11
- * @version 2.5.8
+ * @date 2026/11/12
+ * @version 2.5.9
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -41,7 +41,7 @@ startupTray()
 ;//! For a version of this script that **doesn't** use UIA. Take a look at the script [here](https://github.com/Tomshiii/ahk/blob/v2.11.3/lib/Classes/Editors/Premiere_RightClick.ahk). Just be aware that this version is an older version and as such may be missing future bug fixes/features.
 
 ;// Please note the original versions of this script were originally written by TaranVH in ahk v1.1
-;// This script has since been adapted for ahk v2.0+ and converted to a class for easier handling of variables and methods. Feel free to check out TaranVH on githhub to see his version of this script for ahk v1.1 -Tomshi
+;// This script has since been adapted for ahk v2.0+, and converted to a class for easier handling of variables and methods, and has more or less been completely rewritten since then. Feel free to check out TaranVH on githhub to see his version of this script for ahk v1.1 -Tomshi
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /*
@@ -154,7 +154,7 @@ class rbuttonPrem {
 	 */
 	__checkForPlayhead(coordObj, currHotkey, search := true) {
 		;// checking to see if the playhead is on the screen
-		if !prem.searchPlayhead({x1: prem.timelineXValue, y1: coordObj.y, x2: prem.timelineXControl, y2: coordObj.y}) {
+		if !prem.searchPlayhead() {
 			SendInput(KSA.prem.playheadtoCursor)
 			return
 		}

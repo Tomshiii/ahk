@@ -47,11 +47,13 @@ class adobeTimer extends count {
             this.fire := (fire_frequency * 1000)
             this.premName := "Premiere" Editors.__determinePremName(false)
         }
+        ;// might throw if unset
+        try this.playToCurs := (InStr(ksa.prem.playheadtoCursor, "{") && InStr(ksa.prem.playheadtoCursor, "}")) ? LTrim(RTrim(ksa.prem.playheadtoCursor, "}"), "{") : ksa.prem.playheadtoCursor
 
         super.__New(this.fire)
         super.start()
     }
-    playToCurs := (InStr(ksa.prem.playheadtoCursor, "{") && InStr(ksa.prem.playheadtoCursor, "}")) ? LTrim(RTrim(ksa.prem.playheadtoCursor, "}"), "{") : ksa.prem.playheadtoCursor
+    playToCurs := false
     premName := ""
 
     ;// default timer (attempts to be overridden by the user's settings value)
@@ -97,7 +99,7 @@ class adobeTimer extends count {
             }
             sleep 50
             rClick := CLSID_Objs.loadProp("prem", "RClickIsActive")
-            if rClick = false && (GetKeyState("RButton", "P") = false) && (GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false) && WinExist(nameObj.winTitle)
+            if rClick = false && (GetKeyState("RButton", "P") = false) && (this.playToCurs != false && GetKeyState(this.playToCurs) = false) && (GetKeyState("XButton1", "P") = false) && (GetKeyState("XButton2", "P") = false) && WinExist(nameObj.winTitle)
                 WinMaximize(nameObj.winTitle)
             return
         }

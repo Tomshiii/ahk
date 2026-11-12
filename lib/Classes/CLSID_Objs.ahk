@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/10/22
- * @version 1.1.23
+ * @date 2026/11/12
+ * @version 1.1.24
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -50,6 +50,7 @@ class CLSID_Objs {
     static __Item := Mip(
         "prem",            "{0A2B6915-DEEE-4BF4-ACF4-F1AF9CDC5468}",
         "ae",              "{1D5AA6FA-E1A5-45A2-B6FA-5D285FEF6700}",
+        "ps",              "{FAD7D49E-6532-46D8-94E3-F1707DC9B34A}",
         "UserSettings",    "{AC89B835-1CD6-4CC3-AFCC-56360FD5116F}",
         "determineUIA",    "{6A7B49B5-8947-488D-ABDD-4BC7FFA60B12}",
         "KSA",             "{A6A98BC1-C523-4F2E-8CB9-839106A6C8E1}",

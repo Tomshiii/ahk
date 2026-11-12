@@ -5,7 +5,7 @@
  * @premVer 27.0
  * @author tomshi
  * @date 2026/11/12
- * @version 2.6.7
+ * @version 2.6.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -165,13 +165,16 @@ class Prem {
                 }
         }
 
-        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) && !this.__ignoreWinExist() {
+        if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk",,,, true) {
             try this.__localeWarn := CLSID_Objs.loadProp("prem", "__localeWarn")
         }
-        if !this.__localeWarn {
+        if regInst != false && !this.__localeWarn {
             locale := this.__getPremLocale()
             if locale != "en_US" || !InStr(locale, "en_US") {
-                this.__localeWarn := true
+                if A_ScriptName != "Core Functionality.ahk"
+                    CLSID_Objs.writeProp("prem", "__localeWarn", true)
+                else
+                    this.__localeWarn := true
                 notifyExt.showIfNotExist('localeNotUS', '⚠️ Locale Mismatch ⚠️', 'This repo uses hard coded UIA values that are generally expected to be in US English. If your system is in another Locale, these UIA values may be different and you may encounter issues.',,,, 'pos=CT dur=10 tali=Center mali=Center bc=0x6A0000 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             }
         }
@@ -231,6 +234,10 @@ class Prem {
     ;// transition handles
     static transitionHandleInsideSquare := 0xB0B0B0
     static transitionHandleHalfSquare := 0x6A6A6A
+
+    ;// track keyframes
+    static keyframeGrey := 0xb0b0b0
+    static keyframeBlue := 0x4096f3
 
     ;// variable for prem.thumbScroll()
     static scrollSpeed := 5
@@ -825,6 +832,7 @@ class Prem {
                 return key
             }
         }
+        errorLog(TargetError("UXP function does not exist in the plugin registry.", -1, whichFunc),,, true)
         return ""
     }
 
@@ -3029,8 +3037,8 @@ class Prem {
 
     /**
      * Checks to see if the playhead is within the defined coordinates
-     * @param {Integer} coordObj an object containing the cursor coordinates you want `__getPixelRegion()` to check. This object should contain: `{x1: , y1: , x2: , y2: }`. The default to search the timeline (assuming values have been set) can be found in the example`
-     * @param {Hexadecimal} playheadCol the colour you wish `__getPixelRegion()` to look for
+     * @param {Integer} [coordObj=unset] an object containing the cursor coordinates you want `__getPixelRegion()` to check. This object should contain: `{x1: , y1: , x2: , y2: }`. The default to search the timeline (assuming values have been set) can be found in the example`. If no object is passed, defaults to `{x1: prem.timelineXValue, y1: prem.timelineYControl-3, x2: prem.timelineXControl, y2: prem.timelineYControl-3}`
+     * @param {Hexadecimal} [playheadCol=prem.playhead] the colour you wish `__getPixelRegion()` to look for. Defaults to a colour within the class
      * @returns {Obj/Boolean false} if successful and the playhead is found, returns object `{x: , y: }`. Else returns `false`
      * ```
      * if !origMouse := obj.MousePos()
@@ -3038,7 +3046,8 @@ class Prem {
      * searchPlayhead({x1: prem.timelineXValue, y1: origMouse.y, x2: prem.timelineXControl, y2: origMouse.y})
      * ```
      */
-    static searchPlayhead(coordObj, playheadCol := this.playhead) {
+    static searchPlayhead(coordObj?, playheadCol := this.playhead) {
+        coordObj := (IsSet(coordObj) && coordObj.HasOwnProp("x1") && coordObj.HasOwnProp("x2") && coordObj.HasOwnProp("y1") && coordObj.HasOwnProp("y2")) ? coordObj : {x1: this.timelineXValue, y1: this.timelineYControl-3, x2: this.timelineXControl, y2: this.timelineYControl-3}
         search := this.__getPixelRegion(playheadCol, coordObj.x1, coordObj.y1, coordObj.x2, coordObj.y2,,, &pixX, &pixY)
         if search.found = true
 			return {x: pixX, y: pixY}
@@ -4928,6 +4937,7 @@ $!WheelDown::
         } else {
             AdobeEl := UIAObj
         }
+        try store := AdobeEl.DumpAll()
         _setComboBox(index, item) {
             try {
                 box := AdobeEl.WaitElement({Type:50003}, timeout,, index)
@@ -4936,7 +4946,7 @@ $!WheelDown::
                     item.select()
                 }
             } catch {
-                errorLog(TargetError("Could not find: " item, -1))
+                errorLog(TargetError("Could not find: " item, -1), store ?? "failed to store")
                 return false
             }
             sleep 25
@@ -5104,31 +5114,32 @@ $!WheelDown::
     static renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout := 3, handles?, includeEffects := true) {
         if !WinActive(this.winTitle)
             return false
-        if !this.__checkPremRemoteFunc(['custom/getTrackClipType', 'custom/getTrackClipMediaType']) {
+        if !this.__checkPremRemoteFunc(['properties/getTrackClipType', 'properties/getTrackClipMediaType']) {
             errorLog(MethodError("Required PremiereRemote function missing", -1))
             return false
         }
-        clipType := this.__remoteUXP('custom/getTrackClipType')
-        clipMediaType := this.__remoteUXP('custom/getTrackClipMediaType')
+        clipType      := this.__remoteUXP('properties/getTrackClipType')
+        clipMediaType := this.__remoteUXP('properties/getTrackClipMediaType')
         title := WinGet.PremName()
         if title.saveCheck != false
             attempt := this.saveAndFocusTimeline()
         sleep 100
-        if checkBool(changeLabel) && labelHotkey != "" && clipType != "Clip" && clipMediaType = "Video"
+        if checkBool(changeLabel) && labelHotkey != "" && clipType = "Clip" && clipMediaType = "Video"
             SendEvent(labelHotkey)
         sleep 50
         SendEvent(ksa.prem.rndrReplce)
         sleep 100
-        if !WinWait("Render and Replace " this.exeTitle,, 2) {
+        if !WinWait("Render and Replace " this.exeTitle,, 3) {
             if (attempt ?? false) = "active" {
                 SendInput(ksa.prem.rndrReplce)
-                if !WinWait("Render and Replace " this.exeTitle,, 2) {
+                if !WinWait("Render and Replace " this.exeTitle,, 3) {
                     tool.Cust("Waiting for rendering window timed out.`nLag may have caused the hotkey to be sent before Premiere was ready.")
+                    errorLog(TargetError("Waiting for the Render and Replace window timed out.", -1))
                     return false
                 }
             }
         }
-        if clipType != "Video"
+        if clipMediaType != "Video"
             return false
         if !this.setRnderRplcPreset(dropPreset, dropSource, dropFormat, timeout,, &AdobeEl) {
             errorLog(MethodError("preset failed", -1))

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
- * @date 2026/11/11
- * @version 2.2.6
+ * @date 2026/11/12
+ * @version 2.2.7
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -10,10 +10,13 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\adobeXML.ahk
 #Include Classes\Editors\Premiere.ahk
+#Include Classes\Editors\After Effects.ahk
+#Include Classes\Editors\Photoshop.ahk
 #Include Classes\winExt.ahk
 #Include Functions\determineAdobeVer.ahk
 #Include Functions\loadXML.ahk
 #Include Functions\checkBool.ahk
+#Include Functions\getSystemLocale.ahk
 #Include Other\JSON.ahk
 #Include Other\Array.ahk
 ; #Include Other\print.ahk
@@ -267,12 +270,13 @@ class KeyShortAdjust {
                 SplitPath(appVers.path,, &yearDir)
                 isBeta := this.__isBeta("ps")
                 year := isBeta=true ? "(Beta)" : SubStr(yearDir, -4)
-                locale := this.__getLocale()
+                if !locale := ps.__getPsLocale()
+                    locale := getSystemLocale()
                 psPrefsDir := A_AppData "\Adobe\Adobe Photoshop " year "\Adobe Photoshop " year " Settings"
                 psDefaultShort := A_ProgramFiles "\Adobe\Adobe Photoshop " year "\Locales\" locale "\Support Files\Shortcuts\Win\Default Keyboard Shortcuts.kys"
                 userShortcutFile := FileExist(psPrefsDir "\Keyboard Shortcuts Primary.psp") ? psPrefsDir "\Keyboard Shortcuts Primary.psp" : psDefaultShort
                 if !FileExist(userShortcutFile) {
-                    errorLog(ValueError("Could not determine Photoshop hotkeys for KSA", -1))
+                    errorLog(ValueError("Could not determine Photoshop hotkeys for KSA", -1), userShortcutFile)
                     this.doUnset(appJSON, "Photoshop", ns)
                     return
                 }
@@ -321,12 +325,6 @@ class KeyShortAdjust {
             buildHotkey := overrideVal != false ? overrideVal : xmlHotkey
             ns.%k% := buildHotkey
         }
-    }
-
-    __getLocale() {
-        buf := Buffer(85 * 2)
-        DllCall("GetSystemDefaultLocaleName", "Ptr", buf, "Int", 85)
-        return StrReplace(StrGet(buf, "UTF-16"), "-", "_",,, 1)
     }
 
     /**

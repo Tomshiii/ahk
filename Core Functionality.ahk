@@ -1,8 +1,8 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/10/22
- * @version 1.0.25
+ * @date 2026/11/12
+ * @version 1.0.26
  ***********************************************************************/
 
 #SingleInstance Force
@@ -29,6 +29,8 @@ TraySetIcon(installDir "\Support Files\Icons\core func.ico")
 #Include *i Other\ObjRegisterActive.ahk
 #Include *i Other\WinEvent.ahk
 #Include *i Classes\Editors\Premiere.ahk
+#Include *i Classes\Editors\After Effects.ahk
+#Include *i Classes\Editors\Photoshop.ahk
 #Include *i Classes\Editors\Premiere_UIA.ahk
 #Include *i Functions\isReload.ahk
 #Include *i GUIs\settingsGUI\settingsGUI.ahk
@@ -42,12 +44,13 @@ ObjRegisterActive(UserSettings, CLSID_Objs["UserSettings"])
 KSA             := KeyShortAdjust()
 premiere        := prem
 aftereffects    := AE
+photoshop       := Ps
 Loading         := {isLoading: true}
 determineActive := {isRunning: false}
 premSlots       := {}
 
 
-allRegister := [{obj:premiere, name: "prem"}, {obj:aftereffects, name: "ae"}, {obj:KSA, name: "KSA"}, {obj: Loading, name: "Loading"}, {obj: determineActive, name: "determineActive"}, {obj: premSlots, name: "premSlots"}]
+allRegister := [{obj:premiere, name: "prem"}, {obj:aftereffects, name: "ae"}, {obj:photoshop, name: "ps"}, {obj:KSA, name: "KSA"}, {obj: Loading, name: "Loading"}, {obj: determineActive, name: "determineActive"}, {obj: premSlots, name: "premSlots"}]
 for v in allRegister {
     ObjRegisterActive(v.obj, CLSID_Objs[v.name])
 }

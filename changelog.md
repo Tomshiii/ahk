@@ -1,8 +1,8 @@
-# <> Release 2.21.0 - Remove CEP
-From this release I will no longer be developing `CEP` versions of `Premiere` functions, or maintaining parity between my `UXP` & `CEP` functions. The repo will move completely over to `UXP` as no `CEP` functionality is required anymore.
+# <> Release 2.21.0 - Premiere CEP Depreciation
+With this release, `Premiere` `CEP` functionality is officially depreciated in favour of `UXP`. `After Effects` will continue to use `CEP` until its `UXP` implementation has hit a similar level of implementation as `Premiere`.
 
 ## Functions
-- ✏️ Added `onPath()`
+- ✏️ Added `onPath()`, `getSystemLocale()`
 - ✅ Fixed `KSA` not generating hotkeys for the version selected in `settingsGUI()` if multiple versions are installed
 - 📋 Added `png`/`jpg`/`jpeg`/`webp` output actions to `ffmpeg().all_XtoY()`
 - 📋 `settingsGUI()` will now prompt `Core Functionality.ahk` to regenerate `KSA` when the `Year` version is changed
@@ -15,6 +15,7 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 
 ### 📝 `prem {`
 - ❗ All `Premiere` functions now work with any `theme`
+- ❗ `CEP` functionality is now depreciated in favour of `UXP`
 - ✏️ Added `getPrefPath()`
 - ❌ Removed `movePreview()`, `__remoteFunc()`
 - ✅ Fixed `mouseDrag()` sometimes holding onto <kbd>LButton</kbd> if activated in rapid succession
@@ -35,6 +36,10 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 ### 📝 `ae {`
 - ✅ Fixed `setViewerZoom()` causing `After Effects` to show an error message when in the `Layer` view
 - 📋 Will now check the installed version of `After Effects` and present a warning if the installed `Locale` isn't `en_US`
+
+### 📝 `ps {`
+- 📋 Object is now shared through `Core Functionality.ahk`
+- 📋 Will now check the installed version of `Photoshop` and present a warning if the installed `Locale` isn't `en_US`
 
 ### 📝 `discord {`
 - 📋 `button()`now makes use of `Toggle()`/`Invoke()`/`Expand()` `UIA` functions instead of relying on `ControlClick()`
@@ -74,8 +79,13 @@ From this release I will no longer be developing `CEP` versions of `Premiere` fu
 - ❌ Removed `convert2` `Streamdeck AHK` scripts. Replaced with `HotkeylessAHK` function
 - ✅ Fixed `uninstall.ahk` not uninstalling `AERemote`
 - ✅ Fixed `createShortcuts.ahk` throwing
+- ✅ Fixed `adobe fullscreen check.ahk` instantly throwing if `ksa.prem.playheadtoCursor` is unset
+- ✅ Fixed `Multi-Instance Close.ahk` sometimes failing to close duplicate `determineUIA.ahk` windows
 - 📋 `uninstall_PremiereRemoteUXP.ahk` will now attempt to delete any stale, leftover directories
-- 📋 `autosave.ahk` can now restore the previous `Premiere` sequence order (instead of just the individual sequence) if the active sequence changes during the save
+
+🔗 `autosave.ahk`
+- ✅ Fixed script instantly throwing if `ksa.prem.playheadtoCursor` is unset
+- 📋 Can now restore the previous `Premiere` sequence order (instead of just the individual sequence) if the active sequence changes during the save
 
 🔗 `mult-dl.ahk`
 ###### *(v1.3.14 -> v1.5.1)*
