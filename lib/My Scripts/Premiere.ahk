@@ -62,11 +62,14 @@ $Tab::
 	prem.swapPreviousSequence(2)
 }
 
-Space:: ;// make space more useful by closing certain windows
+$Space:: ;// make space more useful by closing certain windows
 {
-	if prem.__isSaving() || prem.__autoSaveActive()
+	if prem.__isSaving()
 		return
 	switch {
+		case ((isIn("Save Project") || isIn("Save As")) && !prem.__autoSaveActive()):
+			SendInput("{Space}")
+			return
 		case isIn("Modify Clip"), isIn("Audio Gain"), isIn("Delete Tracks"):
 			SendInput("{Enter}")
 			return
@@ -94,6 +97,7 @@ Space:: ;// make space more useful by closing certain windows
 	timelineStatus := prem.timelineFocusStatus()
 	if timelineStatus == null {
 		errorLog(ValueError("Couldn't determine timeline focus", -1))
+		SendInput("{Space}")
 		return
 	}
 	if !timelineStatus || CaretGetPos(&x, &y) {
@@ -296,7 +300,19 @@ SC03A & 6::
 >!2::prem.soloVideo("disable")
 
 q::
-w::prem.delayTick()
+w::
+{
+	if (WinExist("Save Project" A_Space prem.winTitle) || WinExist("Save As" A_Space prem.winTitle)) && (IsSet(A_ThisHotkey) && (A_ThisHotkey = "w" || A_ThisHotkey = "q")) {
+		if prem.__isSaving()
+			return
+		SendInput(A_ThisHotkey)
+		return
+	}
+	if !prem.delayTick() {
+		SendInput(A_ThisHotkey)
+		return
+	}
+}
 
 F12::prem.thumbScroll()
 

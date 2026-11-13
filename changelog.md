@@ -2,7 +2,10 @@
 With this release, `Premiere` `CEP` functionality is officially depreciated in favour of `UXP`. `After Effects` will continue to use `CEP` until its `UXP` implementation has hit a similar level of implementation as `Premiere`.
 
 ## Functions
-- ✏️ Added `onPath()`, `getSystemLocale()`
+- ❗ Removed `alwaysOnTop()`, `drawBorder()`
+  - Moved functionality into `topBorder {`
+  - `topBorder.toggle()` *(replaces `alwaysOnTop()`)* will now ensure the border remains persistent on the selected window, even if the currently focused window changes
+- ✏️ Added `onPath()`, `getSystemLocale()`, `topBorder {`
 - ✅ Fixed `KSA` not generating hotkeys for the version selected in `settingsGUI()` if multiple versions are installed
 - 📋 Added `png`/`jpg`/`jpeg`/`webp` output actions to `ffmpeg().all_XtoY()`
 - 📋 `settingsGUI()` will now prompt `Core Functionality.ahk` to regenerate `KSA` when the `Year` version is changed

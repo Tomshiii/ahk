@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.16
+;\\v2.35.17
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -43,7 +43,6 @@
 #Include Functions\jumpChar.ahk
 #Include Functions\refreshWin.ahk
 #Include Functions\getHotkeys.ahk
-#Include Functions\alwaysOnTop.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\isDoubleClick.ahk
 #Include Functions\multiKeyPress.ahk

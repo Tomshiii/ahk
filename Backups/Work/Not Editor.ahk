@@ -4,9 +4,9 @@
 #Include Classes\clip.ahk
 #Include Classes\Move.ahk
 #Include Classes\clipStorage.ahk
+#Include Classes\topBorder.ahk
 #Include Functions\fastWheel.ahk
 #Include Functions\youMouse.ahk
-#Include Functions\alwaysOnTop.ahk
 ; }
 
 ;winleftHotkey;
@@ -28,7 +28,7 @@ x & Right::move.adjust()
 x::x */
 
 ;alwaysontopHotkey;
-^SPACE::alwaysOnTop()
+^SPACE::topBorder.Toggle()
 
 ;searchgoogleHotkey;
 ^+c::clip.search(, "firefox.exe") ;runs a google search of highlighted text
