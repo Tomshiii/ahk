@@ -27,22 +27,22 @@
 <prop.pair>
 <key>BuiltIns</key>
 <array>
-<array.type><ustring/></array.type>
+<array.type><string/></array.type>
 </array>
 </prop.pair>
 <prop.pair>
 <key>FilePaths</key>
 <array>
 <array.type><ustring/></array.type>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\ArchivedLayouts\UserWorkspace_1.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\ArchivedLayouts\UserWorkspace_3.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_3.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_4.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
-<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\26.0\Profile-Tom\Layouts\UserWorkspace_5.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\27.0\Profile-Tom\ArchivedLayouts\UserWorkspace_1.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\27.0\Profile-Tom\ArchivedLayouts\UserWorkspace_3.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\27.0\Profile-Tom\ArchivedLayouts\UserWorkspace_5.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\27.0\Profile-Tom\Layouts\UserWorkspace_1.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\27.0\Profile-Tom\Layouts\UserWorkspace_3.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\27.0\Profile-Tom\Layouts\UserWorkspace_2.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\27.0\Profile-Tom\Layouts\UserWorkspace_4.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\27.0\Profile-Tom\Layouts\UserWorkspace.xml</ustring>
+<ustring>C:\Users\Tom\Documents\Adobe\Premiere Pro\27.0\Profile-Tom\Layouts\UserWorkspace_5.xml</ustring>
 </array>
 </prop.pair>
 <prop.pair>
@@ -68,10 +68,10 @@
 <key>NormalPos</key>
 <array>
 <array.type><int type='signed' size='32'/></array.type>
-<int type='signed' size='32'>612</int>
-<int type='signed' size='32'>214</int>
-<int type='signed' size='32'>2159</int>
-<int type='signed' size='32'>1073</int>
+<int type='signed' size='32'>77</int>
+<int type='signed' size='32'>10</int>
+<int type='signed' size='32'>3430</int>
+<int type='signed' size='32'>1430</int>
 </array>
 </prop.pair>
 <prop.pair>
@@ -87,7 +87,7 @@
 <string>20261009T013202.543757</string>
 <string>20250725T031359.840093</string>
 <string>20250724T233533.585158</string>
-<string>20261029T221811.749255</string>
+<string>20261110T072208.333368</string>
 <string>20260622T032732.758915</string>
 <string>20260317T050634.322451</string>
 <string>20250724T233504.530425</string>

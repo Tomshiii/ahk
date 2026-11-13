@@ -394,7 +394,7 @@
 <prop.list>
 <prop.pair>
 <key>CurrTab</key>
-<int type='unsigned' size='32'>0</int>
+<int type='unsigned' size='32'>1</int>
 </prop.pair>
 <prop.pair>
 <key>HidTabState-0</key>
