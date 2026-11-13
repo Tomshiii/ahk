@@ -3,7 +3,7 @@
  * @author tomshi
  * @date 2026/11/13
  ***********************************************************************/
-global currentVer := "1.5.2"
+global currentVer := "1.5.3"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -117,24 +117,27 @@ class multiDL extends tomshiBasic {
         this["list"].OnEvent("ContextMenu", listContextMenu.Bind(this))
         ContextMenu := Menu()
         pauseName := "Pause"
+        clickedRow := 0
         for n in ["Remove", "Pause", "Stop", "Stop All"]
             ContextMenu.Add(n, menuAction)
 
         listContextMenu(self, LV, Item, IsRightClick, X, Y) {
             if item = 0
                 return
+            clickedRow := Item
             want := this.paused ? "Resume" : "Pause"
             if want != pauseName
                 ContextMenu.Rename(pauseName, want), pauseName := want
             for n in [pauseName, "Stop", "Stop All"]
                 ContextMenu.%(this.downloading ? "Enable" : "Disable")%(n)
+            ContextMenu.%(!this.downloading || Item > this.curRow ? "Enable" : "Disable")%("Remove")
             ContextMenu.Show(X, Y)
         }
 
         menuAction(name, *) {
             if name = "Remove" {
-                if !this.downloading
-                    this["list"].Delete(this["list"].GetNext(, "F"))
+                if clickedRow && (!this.downloading || clickedRow > this.curRow)
+                    this["list"].Delete(clickedRow)
                 return
             }
             if !this.downloading
@@ -259,6 +262,7 @@ class multiDL extends tomshiBasic {
     paused  := false
     stopped := false
     stopAll := false
+    curRow := 0
     lvice := unset
     job := 0
 
@@ -308,7 +312,7 @@ class multiDL extends tomshiBasic {
     __addRow(url, yt) {
         title := ""
         try title := Trim(yt.__getTitle(url), " `t`r`n")
-        this["list"].Add("", title != "" ? title : url, "", url)
+        this["list"].Add("", title != "" ? title : url, this.downloading ? "queued" : "", url)
     }
 
     __buildUpdateCmd() {
@@ -349,27 +353,28 @@ class multiDL extends tomshiBasic {
                 this.downloading := true
                 this.stopAll := false
                 this.__tb(2)
-                urls := [], titles := []
-                loop rows {
-                    urls.Push(this["list"].GetText(A_Index, 3))
-                    titles.Push(this["list"].GetText(A_Index, 1))
-                }
-                for url in urls {
+                loop this["list"].GetCount()
+                    this["list"].Modify(A_Index, "Col2", "queued")
+                this.curRow := 1
+                while this.curRow <= this["list"].GetCount() {
+                    row := this.curRow
                     if this.stopAll {
-                        this["list"].Modify(A_Index, "Col2", "Stopped")
+                        this["list"].Modify(row, "Col2", "stopped")
+                        this.curRow++
                         continue
                     }
-                    this.__multiDownload(A_Index, url, titles[A_Index], vidOrAud, cookiesMulti, dlPlayMulti, yt)
-                    if A_Index < urls.Length && !this.stopAll {
+                    this.__multiDownload(row, this["list"].GetText(row, 3), this["list"].GetText(row, 1), vidOrAud, cookiesMulti, dlPlayMulti, yt)
+                    if row < this["list"].GetCount() && !this.stopAll {
                         ;// reduce the risk of youtube thinking you're a bot
-                        this["list"].Modify(A_Index + 1, "Col2", "Queued")
                         loop Random(18, 26) * 5 {
                             if this.stopAll
                                 break
                             Sleep(200)
                         }
                     }
+                    this.curRow++
                 }
+                this.curRow := 0
                 ;// remove finished rows, leave failed ones visible
                 loop (n := this["list"].GetCount()) {
                     if this["list"].GetText(n - A_Index + 1, 2) = "100"
@@ -408,17 +413,11 @@ class multiDL extends tomshiBasic {
         yt := ""
     }
 
-    __checkChoco(*) {
+    __install_tool(val, *) {
         if !onPath("choco") {
             MsgBox("Choco is required to install this tool, please install choco first")
-            return false
-        }
-        return true
-    }
-
-    __install_tool(val, *) {
-        if !this.__checkChoco()
             return
+        }
         dlVal := (val = "ytdlp") ? "yt-dlp --pre" : val
         cmd.run(true,,, "choco feature enable -n=useRememberedArgumentsForUpgrades && choco install " dlVal " --yes")
         this[val].text := "done"
@@ -538,7 +537,7 @@ class multiDL extends tomshiBasic {
 
         extra := cookies (playlist ? "" : " --no-playlist")
         base  := '-N 8 -o "' outName '" --windows-filenames --no-overwrites --encoding utf-8 --newline --progress '
-            . '--progress-template "download:PROG|%(info.playlist_index)s|%(info.n_entries)s|%(info.format_id)s|%(progress._percent_str)s" '
+            . '--progress-template "download:PROG|%(info.playlist_index)s|%(info.n_entries)s|%(info.format_id)s|%(progress._percent_str)s|%(progress.speed)s" '
             . '--print "after_move:FINAL %(filepath)s" '
         switch {
             case vidOrAud = "vid" && !this["deprioritise"].value:
@@ -555,13 +554,14 @@ class multiDL extends tomshiBasic {
                 expected := 1
         }
 
-        finalPaths := [], item := 1, total := 1, fmt := "", stream := 1, shown := -1
-        LV.Modify(row, "Col2", 0)
+        finalPaths := [], item := 1, total := 1, fmt := "", stream := 1, shown := -1, shownSpd := ""
+        LV.Modify(row, "Col2", "preparing...")
+        this.__tb(1)
         this.stopped := false
         started := A_Now
 
         onLine(line) {
-            if RegExMatch(line, "PROG\|([^|]*)\|([^|]*)\|([^|]*)\|\s*([\d.]+)%", &m) {
+            if RegExMatch(line, "PROG\|([^|]*)\|([^|]*)\|([^|]*)\|\s*([\d.]+)%\|(\S*)", &m) {
                 idx   := IsInteger(m[1]) ? Integer(m[1]) : 1      ; "NA" when it isn't a playlist
                 total := IsInteger(m[2]) ? Integer(m[2]) : 1
                 if idx != item {
@@ -573,10 +573,11 @@ class multiDL extends tomshiBasic {
                 }
                 within  := Min(1, ((stream - 1) + Float(m[4]) / 100) / expected)
                 overall := Min(99, Floor(((item - 1) + within) / total * 100))
-                if overall != shown {
-                    shown := overall
-                    LV.Modify(row, "Col2", overall)
-                    this.__tb(2, overall, row)
+                spd := IsNumber(m[5]) ? Format("{:.1f}", Float(m[5]) / 1000000) : ""   ; bytes/s -> MBps
+                if overall != shown || spd != shownSpd {
+                    shown := overall, shownSpd := spd
+                    LV.Modify(row, "Col2", "D" overall "|" spd)
+                    this.__tb(2, overall)
                 }
             } else if RegExMatch(line, "^FINAL\s+(.+)$", &m)
                 finalPaths.Push(Trim(m[1]))
@@ -603,7 +604,7 @@ class multiDL extends tomshiBasic {
                     }
                 }
             }
-            LV.Modify(row, "Col2", this.stopped ? "Stopped" : "Failed")
+            LV.Modify(row, "Col2", this.stopped ? "stopped" : "failed")
             return false
         }
 
@@ -621,10 +622,10 @@ class multiDL extends tomshiBasic {
             }
         }
         if this.stopped {
-            LV.Modify(row, "Col2", "Stopped")
+            LV.Modify(row, "Col2", "stopped")
             return false
         }
-        this.__tb(2, 100, row)
+        this.__tb(2, 100)
         LV.Modify(row, "Col2", 100)
         return true
     }
@@ -634,13 +635,13 @@ class multiDL extends tomshiBasic {
         LV := this["list"]
         SplitPath(path, &name, &dir)
         temp := dir "\temp_" name
-        label := "Reencode" (count > 1 ? " " idx "/" count : "")
+        label := "reencode" (count > 1 ? " " idx "/" count : "")
 
         durTxt := Trim(cmd.result(Format('ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "{1}"', path)), " `t`r`n")
         duration := IsNumber(durTxt) ? Float(durTxt) : 0
 
         LV.Modify(row, "Col2", "E0|" label)
-        this.__tb(8, 0, row)
+        this.__tb(8, 0)
         shown := -1
         onLine(line) {
             if duration > 0 && RegExMatch(line, "^out_time_us=(\d+)", &m) {
@@ -648,7 +649,7 @@ class multiDL extends tomshiBasic {
                 if pct != shown {
                     shown := pct
                     LV.Modify(row, "Col2", "E" pct "|" label)
-                    this.__tb(8, pct, row)
+                    this.__tb(8, pct)
                 }
             }
         }
@@ -770,6 +771,9 @@ class multiDL extends tomshiBasic {
         txt := LV.GetText(row, 2)
         if IsInteger(txt) {
             pct := Integer(txt), fillCol := 0x50C850, label := pct "%"            ; green (BGR)
+        } else if RegExMatch(txt, "^D(\d+)\|(.*)$", &m) {
+            pct := Integer(m[1]), fillCol := 0x50C850
+            label := pct "%" (m[2] != "" ? "  " m[2] " MB/s" : "")               ; green, with speed
         } else if RegExMatch(txt, "^E(\d+)\|(.*)$", &m) {
             pct := Integer(m[1]), fillCol := 0xE68232, label := m[2] " " pct "%"  ; blue (BGR)
         } else
@@ -807,8 +811,8 @@ class multiDL extends tomshiBasic {
         ExitApp()
     }
 
-    /** taskbar progress. state: 0 none, 1 marquee, 2 green, 4 red, 8 yellow. Pass row to scale pct across the whole batch */
-    __tb(state, pct := 0, row := 0) {
+    /** taskbar progress. state: 0 none, 1 marquee, 2 green, 4 red, 8 yellow. pct "" keeps the current value */
+    __tb(state, pct := 0) {
         static tbl := 0, tried := false
         if !tried {
             tried := true
@@ -820,8 +824,6 @@ class multiDL extends tomshiBasic {
         }
         if !tbl
             return
-        if row
-            pct := Floor(((row - 1) + pct / 100) / this["list"].GetCount() * 100)
         ComCall(10, tbl, "Ptr", this.Hwnd, "UInt", state)                    ; SetProgressState
         if state && pct != ""
             ComCall(9, tbl, "Ptr", this.Hwnd, "UInt64", pct, "UInt64", 100)  ; SetProgressValue

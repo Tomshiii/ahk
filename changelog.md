@@ -96,8 +96,9 @@ With this release, `Premiere` `CEP` functionality is officially depreciated in f
 
 `Multi`
 - 📋 Comma delimited list of URLs added list will now work if individually encased in `"`
-- 📋 Now shows progress bars
+- 📋 Now shows progress bars & download speed
   - Taskbar icon will show a mirrored progress bar
 - 📋 Videos added to list will now show their video title instead of the url
     - The user can then manually adjust the title for a custom filename once downloaded
 - 📋 Can now `pause`/`resume`/`stop`/`stop all` download(s)/reencode(s)
+- 📋 Upcoming downloads can now be removed before starting
