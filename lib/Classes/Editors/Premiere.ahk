@@ -3037,8 +3037,8 @@ class Prem {
 
     /**
      * Checks to see if the playhead is within the defined coordinates
-     * @param {Integer} [coordObj=unset] an object containing the cursor coordinates you want `__getPixelRegion()` to check. This object should contain: `{x1: , y1: , x2: , y2: }`. The default to search the timeline (assuming values have been set) can be found in the example`. If no object is passed, defaults to `{x1: prem.timelineXValue, y1: prem.timelineYControl-3, x2: prem.timelineXControl, y2: prem.timelineYControl-3}`
-     * @param {Hexadecimal} [playheadCol=prem.playhead] the colour you wish `__getPixelRegion()` to look for. Defaults to a colour within the class
+     * @param {Integer} [coordObj=unset] an object containing the cursor coordinates you want `__getPixelRegion()` to check. This object should contain: `{x1: , y1: , x2: , y2: }`. The default to search the timeline (assuming values have been set) can be found in the example. If no object is passed, defaults to `{x1: prem.timelineXValue, y1: prem.timelineYControl-3, x2: prem.timelineXControl, y2: prem.timelineYControl-3}`
+     * @param {Hexadecimal} [playheadCol=prem.playhead] the colour you wish `__getPixelRegion()` to look for. Defaults to the playhead colour of the current Premiere theme.
      * @returns {Obj/Boolean false} if successful and the playhead is found, returns object `{x: , y: }`. Else returns `false`
      * ```
      * if !origMouse := obj.MousePos()

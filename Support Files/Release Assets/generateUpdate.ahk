@@ -15,7 +15,6 @@
 #Include Functions\formatPreReleaseTag.ahk
 #Include Other\7zip\SevenZip.ahk
 #Include GUIs\tomshiBasic.ahk
-
 ; }
 
 ; // This script is the script I use to generate new releases of this repo, it's mostly just an automation script that cleans up my working repo and prepares it for a public release
@@ -37,14 +36,14 @@ changeInstallVer     := opts["changeInstallVer"]
 rebuildCEP           := opts["rebuildCEP"]
 rebuildUXP           := opts["rebuildUXP"]
 rebuildCCX           := opts["rebuildCCX"]
-incrementUXPManifest := opts["incrementUXPManifest"] && rebuildCCX
+incrementUXPManifest := opts["incrementUXPManifest"]
 backupPremiereFiles  := opts["backupPremiereFiles"]
 backupAHK            := opts["backupAHK"]
 backupWiki           := opts["backupWiki"]
 
 ;// keeps the `yes.value` usage working throughout the rest of the script
 ;// if we're not bumping the version, the release just reuses the current one
-yes := {Value: changeInstallVer ? opts["version"] : currentVer}
+yes := {Value: opts["version"]}
 
 /**
  * Shows the build options GUI.
@@ -53,12 +52,12 @@ yes := {Value: changeInstallVer ? opts["version"] : currentVer}
  */
 promptBuildOptions(defaultVer) {
     steps := [
+        ["backupPremiereFiles",  "Backup Adobe files (Prem / AE / Media Encoder)"],
         ["changeInstallVer",     "Change install version (AppData)"],
         ["rebuildCEP",           "Rebuild CEP (AERemote)"],
         ["rebuildUXP",           "Rebuild UXP (PremiereRemote-uxp)"],
         ["rebuildCCX",           "Rebuild UXP .ccx file"],
         ["incrementUXPManifest", "Increment UXP manifest version"],
-        ["backupPremiereFiles",  "Backup Adobe files (Prem / AE / Media Encoder)"],
         ["backupAHK",            "Backup ahk folder"],
         ["backupWiki",           "Backup wiki folder"]
     ]
@@ -79,15 +78,9 @@ promptBuildOptions(defaultVer) {
     btnGo   := g.AddButton("xm y+15 w100", "Build")
     btnX    := g.AddButton("x+10 w100 Default", "Cancel")
 
-    ;// dependent controls: the manifest bump needs the ccx build, the version box needs the version step
-    syncDeps(*) {
-        boxes["incrementUXPManifest"].Enabled := boxes["rebuildCCX"].Value
-        verEdit.Enabled := boxes["changeInstallVer"].Value
-    }
     setAll(val, *) {
         for k, cb in boxes
             cb.Value := val
-        syncDeps()
     }
     submit(*) {
         state["ok"] := true
@@ -97,8 +90,6 @@ promptBuildOptions(defaultVer) {
         state["done"] := true
     }
 
-    boxes["rebuildCCX"].OnEvent("Click", syncDeps)
-    boxes["changeInstallVer"].OnEvent("Click", syncDeps)
     btnAll.OnEvent("Click", setAll.Bind(true))
     btnNone.OnEvent("Click", setAll.Bind(false))
     btnGo.OnEvent("Click", submit)
@@ -117,7 +108,7 @@ promptBuildOptions(defaultVer) {
 
     result := Map()
     for k, cb in boxes
-        result[k] := cb.Enabled && cb.Value ;// a disabled dependent counts as off
+        result[k] := cb.Enabled && cb.Value
     result["version"] := Trim(verEdit.Value)
     g.Destroy()
     return result
@@ -153,9 +144,11 @@ if rebuildUXP
 if backupPremiereFiles {
     ;//* KotET
     try DirCopy(A_AppData "\Knights of the Editing Table\excalibur", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur", 1)
-    if FileExist("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
-        FileDelete("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\license.json")
-    try DirCopy(A_AppData "\Knights of the Editing Table\Portal", "E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\Portal", 1)
+    files := ["license.json", "update_check.json", ".set.json", ".beta.json", ".exportpresets.json"]
+    for f in files {
+        if FileExist("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\" f)
+            FileDelete("E:\Github\ahk\Backups\Adobe Backups\Premiere\Knights of the Editing Table\excalibur\" f)
+    }
 
     ;//* Layouts
     layoutsBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Layouts\"
@@ -179,6 +172,7 @@ if backupPremiereFiles {
     ;//* Win
     winBackup := "E:\Github\ahk\Backups\Adobe Backups\Premiere\Win\v" ptf.PremYearVer
     winBeginningDir := (UserSettings.premIsBeta = true || UserSettings.premIsBeta = "true") ? A_MyDocuments "\Adobe\Premiere Pro (Beta)\" ptf.PremYearVer ".0\Profile-Tom\Win" :  A_MyDocuments "\Adobe\Premiere Pro\" ptf.PremYearVer ".0\Profile-Tom\Win"
+    try DirCreate(winBackup)
     FileCopy(winBeginningDir "\Mine.kys", winBackup "\*.*", 1)
     ; __backupPremFolders(winBackup, winBeginningDir)
 
@@ -346,20 +340,20 @@ ccxLoc        := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\uxp
 ccxName       := "de.sebinside.premiereremote_premierepro.ccx"
 sevenZipExe := "C:\Program Files\7-Zip\7z.exe"
 ccxCMD := '"' . '"' sevenZipExe '" a -tzip "' ccxLoc ccxName '" manifest.json build icons' . '"'
-if rebuildCCX {
-    if !DirExist(uxpInstallLoc)
-        throw TargetError("Couldn't find the local UXP PremiereRemote client folder`n" uxpInstallLoc)
-    if incrementUXPManifest {
-        mani := JSON.parse(FileRead(uxpInstallLoc "\manifest.json"))
-        version := mani["version"]
-        split := StrSplit(version, ".")
-        mani["version"] := split[1] "." split[2] "." (split[3] += 1)
-        try FileDelete(uxpInstallLoc "\manifest.json")
-        catch as e {
-            throw e
-        }
-        FileAppend(json.stringify(mani), uxpInstallLoc "\manifest.json")
+if !DirExist(uxpInstallLoc)
+    throw TargetError("Couldn't find the local UXP PremiereRemote client folder`n" uxpInstallLoc)
+if incrementUXPManifest {
+    mani := JSON.parse(FileRead(uxpInstallLoc "\manifest.json"))
+    version := mani["version"]
+    split := StrSplit(version, ".")
+    mani["version"] := split[1] "." split[2] "." (split[3] += 1)
+    try FileDelete(uxpInstallLoc "\manifest.json")
+    catch as e {
+        throw e
     }
+    FileAppend(json.stringify(mani), uxpInstallLoc "\manifest.json")
+}
+if rebuildCCX {
     if !FileExist(sevenZipExe)
         throw TargetError("7-Zip not found at:`n" sevenZipExe)
     if FileExist(ccxLoc ccxName)

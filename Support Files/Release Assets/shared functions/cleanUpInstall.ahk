@@ -28,6 +28,8 @@ cleanUpInstall(rootDir) {
     checkDirDelete(rootDir "\Backups\Old Code\Stream\TomSongQueueue")
     ;// deleting vscode config folder
     checkDirDelete(rootDir "\.vscode")
+    ;// deleting prem CEP folder
+    checkDirDelete(rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\cep")
 }
 
 checkDirDelete(dir) {

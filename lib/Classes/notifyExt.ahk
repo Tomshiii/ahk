@@ -17,7 +17,8 @@ class notifyExt {
 
     /**
      * Syntatic sugar for only using `Notify.Show()` if the tag doesn't already exist. Do NOT respecify the `tag` in `options`. A command is sent to `Core Functionality.ahk` to process all `Notify` GUIs there so scripts that exit early do not leave a crashed GUI behind.
-     * @param [options] Defaults if not passed; `show=Fade@250 hide=Fade@250 dga=1`
+     * @param {String} [options] Defaults if not passed; `show=Fade@250 hide=Fade@250 dga=1`
+     * @param {Boolean} [doWinWait=false] Defines whether to wait for the tagged GUI to appear before continuing. Times out after `1s`. Defaults to `false`
      * @returns {void}
     */
     static showIfNotExist(tag, title := '', msg := '', image := '', sound := '', callback := '', options := '', doWinWait := false) {
@@ -52,7 +53,7 @@ class notifyExt {
     /**
      * Determines if multiple `Notify` GUIs exist.
      * @param {String} [tag] to `Notify` GUI tag to check
-     * @returns {void}
+     * @returns {Array | false} if there are multiple GUIs; returns an array of all `hwnd`. Else; `false`
      */
     static checkMultiple(tag) {
         Critical('On')
@@ -72,6 +73,7 @@ class notifyExt {
      * Deletes the requested `Notify` GUI if it exists. A command is sent to `Core Functionality.ahk` to process deletion of all `Notify` GUIs for the specified tag.
      * @param {String} [tag] to `Notify` GUI tag to check
      * @param {Boolean} [force=false] passes `force` to `Notify.Destroy()`
+     * @param {Integer} [minTime=1500] The minimum amount of time (in `ms`) that the GUI should have shown for in total before being deleted. Useful to ensure GUIs are deleted too quickly in situations where runtime may vary. Defaults to `1500`
      * @returns {void}
      */
     static deleteIfExist(tag, force := false, minTime := 1500) => (WM.Send_WM_COPYDATA("NotifyDeleteIfExist," tag "," force "," minTime, "Core Functionality.ahk"))

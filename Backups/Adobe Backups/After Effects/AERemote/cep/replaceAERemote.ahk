@@ -1,0 +1,24 @@
+try override := A_Args[1]
+installedPath := A_AppData "\Adobe\CEP\extensions\AERemote"
+SplitPath(A_LineFile,, &backupPath)
+
+if !DirExist(installedPath) {
+    MsgBox("AERemote does not appear to be installed, the operation will abort.")
+    return
+}
+
+if !IsSet(override) || (override != false && override != "false") {
+    if warning := MsgBox("This operation will override the currently installed files. Do you wish to continue?", "Are you sure?", "4 Icon! 0x1000") = "No"
+        return
+}
+
+if !DirExist(installedPath "\host\src")
+    DirCreate(installedPath "\host\src")
+loop files backupPath "\*.tsx", "F" {
+    FileCopy(A_LoopFileFullPath, installedPath "\host\src\*.*", true)
+}
+if !DirExist(installedPath "\typings")
+    DirCreate(installedPath "\typings")
+loop files backupPath "\typings\*.ts", "F" {
+    FileCopy(A_LoopFileFullPath, installedPath "\typings\*.*", true)
+}
