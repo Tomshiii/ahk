@@ -1,9 +1,9 @@
 /************************************************************************
  * @description a small gui to quickly download videos in multiple different ways
  * @author tomshi
- * @date 2026/11/10
+ * @date 2026/11/13
  ***********************************************************************/
-global currentVer := "1.5.1"
+global currentVer := "1.5.2"
 A_ScriptName := "Multi Download"
 preReqTitle := "Prerequisites Required"
 ;@Ahk2Exe-SetMainIcon E:\Github\ahk\Support Files\Icons\myscript.ico
@@ -116,16 +116,41 @@ class multiDL extends tomshiBasic {
         this["list"].OnNotify(-12, this.__customDraw.Bind(this))   ; NM_CUSTOMDRAW
         this["list"].OnEvent("ContextMenu", listContextMenu.Bind(this))
         ContextMenu := Menu()
-        ContextMenu.Add("Remove", listRemove)
+        pauseName := "Pause"
+        for n in ["Remove", "Pause", "Stop", "Stop All"]
+            ContextMenu.Add(n, menuAction)
+
         listContextMenu(self, LV, Item, IsRightClick, X, Y) {
             if item = 0
                 return
+            want := this.paused ? "Resume" : "Pause"
+            if want != pauseName
+                ContextMenu.Rename(pauseName, want), pauseName := want
+            for n in [pauseName, "Stop", "Stop All"]
+                ContextMenu.%(this.downloading ? "Enable" : "Disable")%(n)
             ContextMenu.Show(X, Y)
         }
-        listRemove(*) {
-            if this.downloading
+
+        menuAction(name, *) {
+            if name = "Remove" {
+                if !this.downloading
+                    this["list"].Delete(this["list"].GetNext(, "F"))
                 return
-            this["list"].Delete(this["list"].GetNext(, "F"))
+            }
+            if !this.downloading
+                return
+            if name = "Pause" || name = "Resume" {
+                this.paused := !this.paused
+                this.__ctl(this.paused ? "pause" : "resume")
+                this["list"].Redraw()
+                this.__tb(this.paused ? 8 : 2, "")
+                return
+            }
+            if name = "Stop All"
+                this.stopAll := true
+            this.stopped := true
+            this.paused := false
+            this.__ctl("stop")
         }
         this.AddButton("vDL w" but_width, "Download Video").OnEvent("Click", this.__download.Bind(this, "vid"))
         this.AddCheckbox("x+10 yp-1 vdeprioritise", " Avoid reencode`n (may result in lower quality)")
@@ -229,11 +254,11 @@ class multiDL extends tomshiBasic {
     updObj := unset
     tabs := unset
     timecodeValue := ""
-    defaultListText := "Paste all desired URLs here separated by commas and they will be downloaded one by one.`nThis process may additionally need to reencode most files."
-    checkCommand := 'powershell -c "$env:Path = [System.Environment]::GetEnvironmentVariable(`'Path`',`'Machine`') + `';`' + [System.Environment]::GetEnvironmentVariable(`'Path`',`'User`'); Get-Command -Name {1} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1"'
 
     downloading := false
-    activeProc  := 0
+    paused  := false
+    stopped := false
+    stopAll := false
     lvice := unset
     job := 0
 
@@ -322,17 +347,27 @@ class multiDL extends tomshiBasic {
                     goto break
                 }
                 this.downloading := true
+                this.stopAll := false
+                this.__tb(2)
                 urls := [], titles := []
                 loop rows {
                     urls.Push(this["list"].GetText(A_Index, 3))
                     titles.Push(this["list"].GetText(A_Index, 1))
                 }
                 for url in urls {
+                    if this.stopAll {
+                        this["list"].Modify(A_Index, "Col2", "Stopped")
+                        continue
+                    }
                     this.__multiDownload(A_Index, url, titles[A_Index], vidOrAud, cookiesMulti, dlPlayMulti, yt)
-                    if A_Index < urls.Length {
+                    if A_Index < urls.Length && !this.stopAll {
                         ;// reduce the risk of youtube thinking you're a bot
                         this["list"].Modify(A_Index + 1, "Col2", "Queued")
-                        Sleep(Random(18, 26) * 1000)
+                        loop Random(18, 26) * 5 {
+                            if this.stopAll
+                                break
+                            Sleep(200)
+                        }
                     }
                 }
                 ;// remove finished rows, leave failed ones visible
@@ -340,6 +375,8 @@ class multiDL extends tomshiBasic {
                     if this["list"].GetText(n - A_Index + 1, 2) = "100"
                         this["list"].Delete(n - A_Index + 1)
                 }
+                this.__tb(this["list"].GetCount() > 0 ? 4 : 0, 100)   ; red if any failed, else clear
+                this.paused := false
                 this.downloading := false
             case 2: ;// part
                 this.timecodeValue := (Format("{:02}", this["H1"].value) ":" Format("{:02}", this["M1"].value) ":" Format("{:02}", this["S1"].value) "-" Format("{:02}", this["H2"].value) ":" Format("{:02}", this["M2"].value) ":" Format("{:02}", this["S2"].value))
@@ -351,13 +388,15 @@ class multiDL extends tomshiBasic {
                 this.Hide()
                 hidden := true
                 partCommand := Format('-N 8 -o "{1}" --sleep-interval 3 --max-sleep-interval 13 --download-sections "*{2}" -f "bestvideo+bestaudio/best" --verbose --windows-filenames --merge-output-format mp4 --recode-video mp4 ' cookiesPart, "{}", this.timecodeValue)
+                this.__tb(1)
                 switch {
-                        case (vidOrAud = "vid" && this["deprioritise_part"].value = false): yt.download(partCommand, this.getFile, this["partURL"].value, custFilePart, showDir)
-                        case (vidOrAud = "vid" && this["deprioritise_part"].value = true):
-                            altCommand := Format('-N 8 -o "{1}" --sleep-interval 3 --max-sleep-interval 13 --download-sections "*{2}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesPart, "{}", this.timecodeValue)
-                            yt.download(altCommand, this.getFile, this["partURL"].value, custFilePart, showDir)
-                        case (vidOrAud = "aud"): yt.download(Format('-N 8 -o "{1}" --sleep-interval 3 --max-sleep-interval 13 --download-sections "*{2}" --verbose --windows-filenames --extract-audio --audio-format wav ' cookiesPart, "{}", this.timecodeValue), this.getFile, this["partURL"].value, custFilePart, showDir)
-                    }
+                    case (vidOrAud = "vid" && this["deprioritise_part"].value = false): yt.download(partCommand, this.getFile, this["partURL"].value, custFilePart, showDir)
+                    case (vidOrAud = "vid" && this["deprioritise_part"].value = true):
+                        altCommand := Format('-N 8 -o "{1}" --sleep-interval 3 --max-sleep-interval 13 --download-sections "*{2}" -f "bv*[vcodec*=hevc]+ba/bv*[vcodec*=avc1]+ba" --verbose --windows-filenames --merge-output-format mp4 ' cookiesPart, "{}", this.timecodeValue)
+                        yt.download(altCommand, this.getFile, this["partURL"].value, custFilePart, showDir)
+                    case (vidOrAud = "aud"): yt.download(Format('-N 8 -o "{1}" --sleep-interval 3 --max-sleep-interval 13 --download-sections "*{2}" --verbose --windows-filenames --extract-audio --audio-format wav ' cookiesPart, "{}", this.timecodeValue), this.getFile, this["partURL"].value, custFilePart, showDir)
+                }
+                this.__tb(0)
         }
         break:
         this["DL"].Enabled := true, this["Aud"].Enabled := true, this["thumb"].Enabled := true
@@ -367,13 +406,6 @@ class multiDL extends tomshiBasic {
         if hidden
             this.show(, {DarkColour: "F0F0F0"})
         yt := ""
-    }
-
-    __install_choco(*) {
-        command := 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString(`'https://community.chocolatey.org/install.ps1`'))'
-        cmd.run(true,,, "powershell -c " command)
-        this["choco"].text := "done"
-        this["choco"].Opt("Disabled")
     }
 
     __checkChoco(*) {
@@ -466,7 +498,7 @@ class multiDL extends tomshiBasic {
         }
     }
 
-    /** ==== The below functions are AI written/assisted for the progress bar functionality ==== */
+    /** ==== The below functions are AI written/assisted for the progress bar functionality and other little tidbits ==== */
     __getJob() {
         if this.job
             return this.job
@@ -525,6 +557,8 @@ class multiDL extends tomshiBasic {
 
         finalPaths := [], item := 1, total := 1, fmt := "", stream := 1, shown := -1
         LV.Modify(row, "Col2", 0)
+        this.stopped := false
+        started := A_Now
 
         onLine(line) {
             if RegExMatch(line, "PROG\|([^|]*)\|([^|]*)\|([^|]*)\|\s*([\d.]+)%", &m) {
@@ -542,6 +576,7 @@ class multiDL extends tomshiBasic {
                 if overall != shown {
                     shown := overall
                     LV.Modify(row, "Col2", overall)
+                    this.__tb(2, overall, row)
                 }
             } else if RegExMatch(line, "^FINAL\s+(.+)$", &m)
                 finalPaths.Push(Trim(m[1]))
@@ -550,13 +585,33 @@ class multiDL extends tomshiBasic {
         exitCode := this.__runStream(Format('yt-dlp {1} -P "{2}" "{3}"', args, folder, url), onLine)
         partial := (exitCode != 0 && finalPaths.Length > 0)
         if exitCode != 0 && !partial {
-            LV.Modify(row, "Col2", "Failed")
+            this.__tb(4, 100)
+            if this.stopped {
+                ;// remove leftovers from the killed download (only files created since this item started)
+                loop files folder "\*" {
+                    if A_LoopFileTimeCreated < started
+                        continue
+                    if !RegExMatch(A_LoopFileName, "i)\.(part|ytdl)$|\.part-Frag\d+|\.temp\.\w+$|\.f(?:\d|hls|dash|http)[\w-]*\.\w+$")
+                        continue
+                    loop 20 {
+                        try {
+                            FileDelete(A_LoopFileFullPath)
+                            break
+                        }
+                        catch
+                            Sleep(100)
+                    }
+                }
+            }
+            LV.Modify(row, "Col2", this.stopped ? "Stopped" : "Failed")
             return false
         }
 
         ;// reencode to h264 if needed
         if vidOrAud = "vid" {
             for finalPath in finalPaths {
+                if this.stopped
+                    break
                 if !FileExist(finalPath)
                     continue
                 LV.Modify(row, "Col2", "Checking codec...")
@@ -565,6 +620,11 @@ class multiDL extends tomshiBasic {
                     this.__reencode(finalPath, row, A_Index, finalPaths.Length, yt)
             }
         }
+        if this.stopped {
+            LV.Modify(row, "Col2", "Stopped")
+            return false
+        }
+        this.__tb(2, 100, row)
         LV.Modify(row, "Col2", 100)
         return true
     }
@@ -580,6 +640,7 @@ class multiDL extends tomshiBasic {
         duration := IsNumber(durTxt) ? Float(durTxt) : 0
 
         LV.Modify(row, "Col2", "E0|" label)
+        this.__tb(8, 0, row)
         shown := -1
         onLine(line) {
             if duration > 0 && RegExMatch(line, "^out_time_us=(\d+)", &m) {
@@ -587,6 +648,7 @@ class multiDL extends tomshiBasic {
                 if pct != shown {
                     shown := pct
                     LV.Modify(row, "Col2", "E" pct "|" label)
+                    this.__tb(8, pct, row)
                 }
             }
         }
@@ -597,12 +659,22 @@ class multiDL extends tomshiBasic {
 
         if exitCode = 0 && FileExist(temp)
             FileMove(temp, path, 1)
-        else if FileExist(temp)
-            FileDelete(temp)
+        else if FileExist(temp) {
+            loop 20 {
+                try {
+                    FileDelete(temp)
+                    break
+                }
+                catch
+                    Sleep(100)
+            }
+        }
     }
 
     /** runs a command hidden and feeds each line of its output to onLine through an in-memory pipe (nothing touches disk). Messages keep pumping, so the GUI stays responsive. Returns the exit code */
     __runStream(cmdLine, onLine) {
+        if this.stopped
+            return -1
         hRead := 0, hWrite := 0, code := 0, avail := 0, got := 0
         sa := Buffer(A_PtrSize * 3, 0)
         NumPut("UInt", sa.Size, sa, 0)
@@ -633,7 +705,8 @@ class multiDL extends tomshiBasic {
         DllCall("AssignProcessToJobObject", "Ptr", this.__getJob(), "Ptr", hProc)
         DllCall("ResumeThread", "Ptr", hThread)
         DllCall("CloseHandle", "Ptr", hThread)
-        this.activeProc := hProc
+        if this.paused
+            this.__ctl("pause")
 
         buf := Buffer(4096)
         acc := Buffer(8192), accLen := 0
@@ -675,7 +748,6 @@ class multiDL extends tomshiBasic {
         DllCall("GetExitCodeProcess", "Ptr", hProc, "UInt*", &code)
         DllCall("CloseHandle", "Ptr", hProc)
         DllCall("CloseHandle", "Ptr", hRead)
-        this.activeProc := 0
         return code
     }
 
@@ -702,6 +774,8 @@ class multiDL extends tomshiBasic {
             pct := Integer(m[1]), fillCol := 0xE68232, label := m[2] " " pct "%"  ; blue (BGR)
         } else
             return 0
+        if this.paused && pct < 100
+            fillCol := 0x00C8FF, label := "Paused " pct "%"                       ; yellow (BGR)
         hdc := NumGet(lParam, A_PtrSize * 4, "Ptr")
 
         L := NumGet(lParam, rcOff,      "Int") + 2
@@ -724,26 +798,6 @@ class multiDL extends tomshiBasic {
         return CDRF_SKIPDEFAULT
     }
 
-    __onPath(name) {
-        static exts := ["", ".exe", ".cmd", ".bat"]
-        paths := ""
-        try paths .= RegRead("HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment", "Path") ";"
-        try paths .= RegRead("HKCU\Environment", "Path")
-        len := DllCall("ExpandEnvironmentStrings", "Str", paths, "Ptr", 0, "UInt", 0)
-        buf := Buffer(len * 2)
-        DllCall("ExpandEnvironmentStrings", "Str", paths, "Ptr", buf, "UInt", len)
-        for dir in StrSplit(StrGet(buf), ";", " `t`"") {
-            if dir = ""
-                continue
-            for ext in exts {
-                p := dir "\" name ext
-                if (a := FileExist(p)) && !InStr(a, "D")
-                    return true
-            }
-        }
-        return false
-    }
-
     __onClose(*) {
         if !this.downloading
             ExitApp()
@@ -751,6 +805,46 @@ class multiDL extends tomshiBasic {
             return true ; non-empty return blocks the library's handler and the close
         this.__killDownloads()
         ExitApp()
+    }
+
+    /** taskbar progress. state: 0 none, 1 marquee, 2 green, 4 red, 8 yellow. Pass row to scale pct across the whole batch */
+    __tb(state, pct := 0, row := 0) {
+        static tbl := 0, tried := false
+        if !tried {
+            tried := true
+            try {
+                tbl := ComObject("{56FDF344-FD6D-11d0-958A-006097C9A090}", "{EA1AFB91-9E28-4B86-90E9-9E9F8A5EEFAF}")
+                ComCall(3, tbl)   ; HrInit
+            } catch
+                tbl := 0
+        }
+        if !tbl
+            return
+        if row
+            pct := Floor(((row - 1) + pct / 100) / this["list"].GetCount() * 100)
+        ComCall(10, tbl, "Ptr", this.Hwnd, "UInt", state)                    ; SetProgressState
+        if state && pct != ""
+            ComCall(9, tbl, "Ptr", this.Hwnd, "UInt64", pct, "UInt64", 100)  ; SetProgressValue
+    }
+
+    /** acts on every process in the download job. action: "pause", "resume" or "stop" */
+    __ctl(action) {
+        if !this.job
+            return
+        buf := Buffer(8 + A_PtrSize * 64, 0)   ; JOBOBJECT_BASIC_PROCESS_ID_LIST
+        if !DllCall("QueryInformationJobObject", "Ptr", this.job, "Int", 3, "Ptr", buf, "UInt", buf.Size, "Ptr", 0)
+            return
+        loop NumGet(buf, 4, "UInt") {
+            pid := NumGet(buf, 8 + (A_Index - 1) * A_PtrSize, "UPtr")
+            if !h := DllCall("OpenProcess", "UInt", 0x801, "Int", 0, "UInt", pid, "Ptr")   ; SUSPEND_RESUME | TERMINATE
+                continue
+            switch action {
+                case "pause":  DllCall("ntdll\NtSuspendProcess", "Ptr", h)
+                case "resume": DllCall("ntdll\NtResumeProcess", "Ptr", h)
+                case "stop":   DllCall("TerminateProcess", "Ptr", h, "UInt", 1)
+            }
+            DllCall("CloseHandle", "Ptr", h)
+        }
     }
 }
 

@@ -88,7 +88,7 @@ With this release, `Premiere` `CEP` functionality is officially depreciated in f
 - 📋 Can now restore the previous `Premiere` sequence order (instead of just the individual sequence) if the active sequence changes during the save
 
 🔗 `mult-dl.ahk`
-###### *(v1.3.14 -> v1.5.1)*
+###### *(v1.3.14 -> v1.5.2)*
 - ❌ Removed `Single` tab
 - ✅ Fixed always prompting for updates even when none were available
 - 📋 `change` button will now be disabled during downloads
@@ -97,5 +97,7 @@ With this release, `Premiere` `CEP` functionality is officially depreciated in f
 `Multi`
 - 📋 Comma delimited list of URLs added list will now work if individually encased in `"`
 - 📋 Now shows progress bars
+  - Taskbar icon will show a mirrored progress bar
 - 📋 Videos added to list will now show their video title instead of the url
     - The user can then manually adjust the title for a custom filename once downloaded
+- 📋 Can now `pause`/`resume`/`stop`/`stop all` download(s)/reencode(s)
