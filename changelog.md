@@ -15,6 +15,7 @@ With this release, `Premiere` `CEP` functionality is officially depreciated in f
 - 📋 Moved `docker {` `Classes\docker.ahk` => `Classes\Apps\docker.ahk`
 - 📋 `premUIA_Values {` functions will now automatically attempt to regenerate panel info when necessary (*ie. a panel wasn't visible during initial generation*)
 - 📋 `syncDirectories()` now accepts parameter `excludeDirs`
+- 📋 `startup()`.`libUpdateCheck()`/`updateAHK()` are no longer influenced by the `update_check` setting and entirely rely on their own settings
 
 ### 📝 `prem {`
 - ❗ All `Premiere` functions now work with any `theme`
@@ -91,7 +92,7 @@ With this release, `Premiere` `CEP` functionality is officially depreciated in f
 - 📋 Can now restore the previous `Premiere` sequence order (instead of just the individual sequence) if the active sequence changes during the save
 
 🔗 `mult-dl.ahk`
-###### *(v1.3.14 -> v1.5.2)*
+###### *(v1.3.14 -> v1.5.3)*
 - ❌ Removed `Single` tab
 - ✅ Fixed always prompting for updates even when none were available
 - 📋 `change` button will now be disabled during downloads

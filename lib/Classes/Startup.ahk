@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/11/11
- * @version 1.9.19
+ * @date 2026/11/13
+ * @version 1.9.20
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -799,9 +799,6 @@ class Startup {
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
         if !checkInternet()
             return
-        check := this.UserSettings.update_check
-        if check = "stop"
-            return
         allLibs := Startup.libs()
 
         /**
@@ -882,9 +879,6 @@ class Startup {
         if this.isReload != false || this.UserSettings.ahk_update_check = false
             return
         this.activeFunc := StrReplace(A_ThisFunc, "Startup.Prototype.", "Startup.") "()"
-        settingsCheck := this.UserSettings.update_check
-        if settingsCheck = "stop"
-            return
         /**
          * A wrapper function to retrieve the latest release of ahk
          * This was put in place instead of reading the .txt file of the ahk website because it started using ddos protection
@@ -900,10 +894,6 @@ class Startup {
             return
         if VerCompare(latestVer, A_AhkVersion) <= 0 {
             tool.Cust("AHK up to date",,,, this.startupTtpNum)
-            return
-        }
-        if settingsCheck = false {
-            tool.Cust("A new version of AHK is available",,,, this.startupTtpNum)
             return
         }
 
