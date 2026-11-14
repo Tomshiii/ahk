@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 26.5
  * @author tomshi
- * @date 2026/11/12
- * @version 1.6.2
+ * @date 2026/11/14
+ * @version 1.6.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -38,6 +38,8 @@
 class AE {
 
     static __New() {
+        if A_ScriptName = "Multi Download"
+            return
         try this.UserSettings := CLSID_Objs.load("UserSettings")
         catch {
             this.UserSettings := UserPref(true)

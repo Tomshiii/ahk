@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 27.0
  * @author tomshi
- * @date 2026/11/12
- * @version 2.6.8
+ * @date 2026/11/14
+ * @version 2.6.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -61,6 +61,8 @@
 class Prem {
 
     static __New() {
+        if A_ScriptName = "Multi Download"
+            return
         try this.UserSettings := CLSID_Objs.load("UserSettings")
         catch {
             this.UserSettings := UserPref(true)
