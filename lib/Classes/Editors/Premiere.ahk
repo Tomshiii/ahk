@@ -5,7 +5,7 @@
  * @premVer 27.0
  * @author tomshi
  * @date 2026/11/14
- * @version 2.6.9
+ * @version 2.6.10
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -253,9 +253,6 @@ class Prem {
     static timelineXControl := 0
     static timelineYControl := 0
     static focusColour      := 0x4096F3
-    static editTabX         := 154
-    static editTabY         := 35
-    static editTabCol       := 0xD0D0D0
 
     ;// rbuttonPrem
     static RClickIsActive      := false
@@ -430,7 +427,7 @@ class Prem {
             __stateReset(which)
             return
         }
-        tab := this.isEditTabActive(premTitle.winTitle)
+        tab := this.isEditTabActive(uiaObj)
         if tab == null || !tab {
             __stateReset(which)
             return
@@ -562,7 +559,6 @@ class Prem {
         switch this.UI {
             case "Spectrum":
                 ;// edit tab
-                this.editTabX := 154, this.editTabY := 35
                 this.__spectrum()
         }
     }
@@ -1195,28 +1191,22 @@ class Prem {
     }
 
     /**
-     * Uses `ShinsImageClass` to check the active Premiere window to see whether the `Edit` tab is currently active.
-     * @returns {Boolean | null} returns `null` if; Premiere does not exist, Premiere's name could not be determined, or `ShinsImageClass` could not be set. Else returns `true`/`false`
+     * Uses `UIA` to check the active Premiere window to see whether the `Edit` tab is currently active.
+     * @param {ComObj} [uiaObj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
+     * @returns {Boolean | null} returns `null` if; Premiere does not exist, or attempting to find the `homeTab`/`Edit` element fails. Else returns `true`/`false`
      */
-    static isEditTabActive(title?) {
+    static isEditTabActive(uiaObj?) {
         if !WinExist(this.exeTitle) {
-            ;// throw
             errorLog(TargetError("Premiere is currently not open."),,, true)
             return null
         }
-        if !IsSet(title) {
-            name := WinGet.PremName()
-            if !name || !isObjHasProp(name, "winTitle", false) {
-                errorLog(UnsetError("Could not determine Premiere window title", -1))
-                return null
-            }
-            title := name.wintitle
-        }
-
-        if !this.setShinsIMG(title)
+        if !tab := premUIA_Values.getLivePanel("homeTab", uiaObj?)
             return null
-            ; MsgBox(Format("0x{:x}", this.editTabCol))
-        return this._scan.PixelPosition(this.editTabCol, this.editTabX, this.editTabY, 3)
+        try {
+            e := tab.FindElement({Type: 50020, Name: "Edit"})
+            return e.WalkTree("+1").Type = 50006
+        }
+        return null
     }
 
     /**
@@ -1302,7 +1292,6 @@ class Prem {
                 errorLog(UnsetError("ShinsImageScanClass failed to be set.", -1), "title: " title)
                 return false
             }
-            this._scan.WindowScale := getWindowScale(this._scan.hwnd)
             this._scan.autoUpdate := 0
             try this._scan.Update()
             catch {
@@ -1317,7 +1306,6 @@ class Prem {
             this._scan.hwnd := WinExist(this._scanTitle)
             if !this._scan.hwnd || !this._scanTitle
                 return false
-            this._scan.WindowScale := getWindowScale(this._scan.hwnd)
             try this._scan.Update()
             catch {
                 errorLog(MethodError("ShinsImageScanClass failed to update. Was set but different values were present.", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
@@ -1325,7 +1313,7 @@ class Prem {
             }
             return true
         }
-        try this._scan.Update(), this._scan.WindowScale := getWindowScale(this._scan.hwnd)
+        try this._scan.Update()
         catch {
             errorLog(MethodError("ShinsImageScanClass failed to update. Was already set", -1), Format("title: {} || hwnd: {}", title, this._scan.hwnd))
             return false
@@ -2571,9 +2559,11 @@ class Prem {
                 yVal := allLayers["vid"][1][_].y
             }
             if !this.setShinsIMG()
-                return
-            this.__getPixelRegion(this.layerDivider, Max(xVals*), yVal, this.timelineXValue, yVal,,, &retX, &retY)
-            return (retX+1)
+                return null
+            r := this.__getPixelRegion(this.layerDivider, Max(xVals*), yVal, this.timelineXValue, yVal,,, &retX, &retY)
+            if !r.found
+                return null
+            return retX + 1
         }
 
         if A_ScriptName != "Core Functionality.ahk" {
@@ -2584,7 +2574,10 @@ class Prem {
                 activeObj.timelineRawX     := this.timelineRawX     := timelineNN.location.x
                 activeObj.timelineRawY     := this.timelineRawY     := timelineNN.location.y
                 activeObj.timelineXValue   := this.timelineXValue   := r_scrollBarPosX                      ;accounting for the scroll bars on the right side of the timeline
-                activeObj.timelineXControl := this.timelineXControl := __determineLeftColumn(middleIndex)   ;accounting for the column to the left of the timeline
+                lColumn := __determineLeftColumn(middleIndex)
+                if lColumn = null
+                    throw
+                activeObj.timelineXControl := this.timelineXControl := lColumn                              ;accounting for the column to the left of the timeline
                 activeObj.timelineYValue   := this.timelineYValue   := r_scrollBarPosY                      ;accounting for the area at the top of the timeline that you can drag to move the playhead
                 activeObj.timelineYControl := this.timelineYControl := b_scrollBarPos                       ;accounting for the scroll bars at the bottom of the timeline
                 activeObj.timelineVals     := this.timelineVals     := true
@@ -2790,7 +2783,7 @@ class Prem {
      * @returns {Boolean}
      */
     static __checkTimelineValues() {
-        timelineValsArr := ["timelineVals", "timelineRawX", "timelineRawY", "timelineXValue", "timelineYValue", "timelineXControl", "timelineYControl", "focusColour", "editTabX", "editTabY", "editTabCol"]
+        timelineValsArr := ["timelineVals", "timelineRawX", "timelineRawY", "timelineXValue", "timelineYValue", "timelineXControl", "timelineYControl", "focusColour"]
         try premObj_timelineVals := CLSID_Objs.loadProp("prem", timelineValsArr)
         catch {
             errorLog(MethodError("Checking timeline values failed to connect to Premiere comobj"))
@@ -4523,17 +4516,17 @@ $!WheelDown::
                 switch this.theme, false {
                     ;// these colours may change in future versions
                     case "darkest":
-                        this.layerDivider := 0x303030, this.editTabCol := 0xD0D0D0
+                        this.layerDivider := 0x30303
                         this.transitionHandleInsideSquare := 0xB0B0B0
                         this.transitionHandleHalfSquare := 0x6A6A6A
                         this.playhead := 0x4096F3, this.focusColour := 0x4096F3
                     case "dark":
-                        this.layerDivider := 0x3F3F3F, this.editTabCol := 0xD1D1D1
+                        this.layerDivider := 0x3F3F3F
                         this.transitionHandleInsideSquare := 0xB2B2B2
                         this.transitionHandleHalfSquare := 0x707070
                         this.playhead := 0x54A3F6, this.focusColour := 0x54A3F6
                     case "light":
-                        this.layerDivider := 0xE6E6E6, this.editTabCol := 0x464646
+                        this.layerDivider := 0xE6E6E6
                         this.transitionHandleInsideSquare := 0x6D6D6D
                         this.transitionHandleHalfSquare := 0x000000
                         this.playhead := 0x147AF3, this.focusColour := 0x147AF3

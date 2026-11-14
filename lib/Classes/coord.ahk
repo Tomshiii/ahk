@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used coordmode settings for easier coding.
  * @author tomshi
- * @date 2026/09/15
- * @version 1.3.1
+ * @date 2026/11/14
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -158,14 +158,12 @@ class coord {
      * @param {Integer} [x] the x coordinate you wish to convert
      * @param {Integer} [y] the y coordinate you wish to convert
      * @param {Integer} [hwnd] the hwnd of the window to use for scaling reference
-     * @param {Number} [scale=""] a custom scale paramater. If left unset, will use the current windows scaling setting
+     * @param {Number} [scale=1] a custom scale paramater. If left unset, will use the current windows scaling setting
      * @param {VarRef} [localX] converted x value
      * @param {VarRef} [localY] converted y value
      * @returns {Object} {x: localX, y: localY}
      */
-    static screenToClient(x, y, hwnd, scale := "", &localX?, &localY?) {
-        if (scale = "")
-            scale := getWindowScale(hwnd)
+    static screenToClient(x, y, hwnd, scale := 1, &localX?, &localY?) {
         pt := Buffer(8)
         NumPut("int", x, pt, 0)
         NumPut("int", y, pt, 4)
@@ -180,14 +178,12 @@ class coord {
      * @param {Integer} [x] the x coordinate you wish to convert
      * @param {Integer} [y] the y coordinate you wish to convert
      * @param {Integer} [hwnd] the hwnd of the window to use for scaling reference
-     * @param {Number} [scale=""] a custom scale paramater. If left unset, will use the current windows scaling setting
+     * @param {Number} [scale=1] a custom scale paramater. If left unset, will use the current windows scaling setting
      * @param {VarRef} [localX] converted x value
      * @param {VarRef} [localY] converted y value
      * @returns {Object} {x: localX, y: localY}
      */
-    static clientToScreen(x, y, hwnd, scale := "", &localX?, &localY?) {
-        if (scale = "")
-            scale := getWindowScale(hwnd)
+    static clientToScreen(x, y, hwnd, scale := 1, &localX?, &localY?) {
         pt := Buffer(8)
         NumPut("int", Round(x * scale), pt, 0)
         NumPut("int", Round(y * scale), pt, 4)
