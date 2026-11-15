@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a collection of commands to interact with docker
  * @author tomshi
- * @date 2026/11/10
- * @version 1.0.1
+ * @date 2026/11/14
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -16,7 +16,15 @@ class docker {
      * Looks for docker.exe on PATH (and standard system locations)
      * @returns {Boolean}
      */
-    static isInstalled() => (onPath("docker.exe"))
+    static isInstalled() {
+        if onPath("docker.exe")
+            return true
+        for p in [A_ProgramFiles "\Docker\Docker\resources\bin\docker.exe"
+                , A_ProgramFiles "\Docker\Docker\Docker Desktop.exe"]
+            if FileExist(p)
+                return true
+        return false
+    }
 
     /** @returns {Boolean} */
     static isRunning() => (InStr(this.__DockerGet("/_ping"), "200 OK") > 0)

@@ -36,7 +36,6 @@ changeInstallVer     := opts["changeInstallVer"]
 rebuildCEP           := opts["rebuildCEP"]
 rebuildUXP           := opts["rebuildUXP"]
 rebuildCCX           := opts["rebuildCCX"]
-incrementUXPManifest := opts["incrementUXPManifest"]
 backupPremiereFiles  := opts["backupPremiereFiles"]
 backupAHK            := opts["backupAHK"]
 backupWiki           := opts["backupWiki"]
@@ -57,7 +56,6 @@ promptBuildOptions(defaultVer) {
         ["rebuildCEP",           "Rebuild CEP (AERemote)"],
         ["rebuildUXP",           "Rebuild UXP (PremiereRemote-uxp)"],
         ["rebuildCCX",           "Rebuild UXP .ccx file"],
-        ["incrementUXPManifest", "Increment UXP manifest version"],
         ["backupAHK",            "Backup ahk folder"],
         ["backupWiki",           "Backup wiki folder"]
     ]
@@ -138,7 +136,7 @@ __backupPremFolders(ahkDir, pcDir, title) {
 ;//* PremiereRemote / AERemote
 if rebuildCEP
     RunWait(ptf.Backups "\Adobe Backups\After Effects\AERemote\cep\replaceAndReset.ahk")
-if rebuildUXP
+if rebuildUXP && !rebuildCCX
     RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk")
 
 if backupPremiereFiles {
@@ -342,23 +340,27 @@ sevenZipExe := "C:\Program Files\7-Zip\7z.exe"
 ccxCMD := '"' . '"' sevenZipExe '" a -tzip "' ccxLoc ccxName '" manifest.json build icons' . '"'
 if !DirExist(uxpInstallLoc)
     throw TargetError("Couldn't find the local UXP PremiereRemote client folder`n" uxpInstallLoc)
-if incrementUXPManifest {
+metaFile := ccxLoc "ccx.version"   ;// last version I actually shipped
+if rebuildCCX {
     mani := JSON.parse(FileRead(uxpInstallLoc "\manifest.json"))
-    version := mani["version"]
-    split := StrSplit(version, ".")
-    mani["version"] := split[1] "." split[2] "." (split[3] += 1)
+    last := FileExist(metaFile) ? Trim(FileRead(metaFile), " `t`r`n") : "0.0.0"
+    base := (VerCompare(mani["version"], last) >= 0) ? mani["version"] : last
+    split := StrSplit(base, ".")
+    mani["version"] := split[1] "." split[2] "." (split[3] + 1)
     try FileDelete(uxpInstallLoc "\manifest.json")
     catch as e {
         throw e
     }
     FileAppend(json.stringify(mani), uxpInstallLoc "\manifest.json")
-}
-if rebuildCCX {
+    try FileDelete(metaFile)
+    FileAppend(mani["version"], metaFile)
     if !FileExist(sevenZipExe)
         throw TargetError("7-Zip not found at:`n" sevenZipExe)
     if FileExist(ccxLoc ccxName)
         FileDelete(ccxLoc ccxName)
 
+    if rebuildUXP
+        RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk")
     exitObj := cmd.run(, true,, ccxCMD, uxpInstallLoc, "Hide")
     if exitObj.exitCode != 0
         throw MethodError("7z failed, exitcode: " exitObj.exitCode)

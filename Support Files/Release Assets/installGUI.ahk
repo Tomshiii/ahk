@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/10/23
- * @version 1.1.28
+ * @date 2026/11/14
+ * @version 1.1.29
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -55,10 +55,12 @@ class installGUI extends Gui {
         if !opt && this.isPatcher = true {
             throw TargetError("Previous install not detected. Please try the full installer.")
         }
+        if opt   ;// existing install detected: lock to it
+            this.InstallDir := RTrim(tryRead, "\") "\"
         this.AddEdit("-Wrap ReadOnly r1 vInstallDir w300 " opt, (!opt) ? this.InstallDir : tryRead)
         this.AddButton("x+10 yp-2 vChangeDir " opt, "Change Dir").OnEvent("Click", (*) => this.__changeDir())
         this.AddButton("y+5 xp+21 w65 vInstallButton", "Install").OnEvent("Click", (*) => this.__Install())
-        SendMessage(0x160C,, true, this["InstallButton"].hwnd, this) ; BCM_SETSHIELD := 0x160C
+        ; SendMessage(0x160C,, true, this["InstallButton"].hwnd, this) ; BCM_SETSHIELD := 0x160C
         this.AddProgress("Smooth xs yp+3 w300 vProgress Section")
 
         ;// moving temp buttons over current buttons for use later
@@ -275,6 +277,7 @@ class installGUI extends Gui {
             ;//! finished
             this.__setProgress(100)
             this["Progress"].opt("CLime")
+            try FileDelete(A_AppData "\tomshi\installing")
             this.Destroy()
             return
         }
@@ -295,17 +298,30 @@ class installGUI extends Gui {
                 case "": __delIfExist(A_Appdata "\tomshi\installDir")
                 default:
                     __delIfExist(A_Appdata "\tomshi\installDir")
-                    FileAppend(this.prevVer, A_Appdata "\tomshi\installDir")
+                    FileAppend(this.prevInstallLoc, A_Appdata "\tomshi\installDir")
             }
             if DirExist(A_Appdata "\tomshi\lib_old") {
                 if DirExist(A_Appdata "\tomshi\lib")
                     DirDelete(A_Appdata "\tomshi\lib", true)
                 DirMove(A_Appdata "\tomshi\lib_old", A_Appdata "\tomshi\lib", 2)
             }
+            try FileDelete(A_AppData "\tomshi\installing")
         }
 
         /** this function handles the entire install sequence of the installer */
         __Install(*) {
+            if !this.dockerInstalled() {
+                MsgBox("Docker Desktop wasn't found. The PremiereRemote UXP plugin can't be installed without it.`n`nPlease install docker and try again.", "Docker required", "0 16 262144")
+                return
+            }
+            loop {
+                if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe Adobe Premiere Pro (Beta).exe")
+                    break
+                userResponse := MsgBox("Installation of UXP plugin cannot continue while Premiere is open.`nPlease close Premiere to continue.", "Premiere is Open", "262161")
+                if userResponse = "Cancel"
+                    return
+                continue
+            }
             if DirExist(A_Temp "\tomshi")
                 DirDelete(A_Temp "\tomshi", true)
             if !DirExist(A_AppData "\tomshi")
@@ -323,10 +339,12 @@ class installGUI extends Gui {
                     case (compareVers > 0): ;// installed version is newer
                         throw PropertyError("Installed version is already newer.")
                     case (compareVers = 0):
-                        throw PropertyError("This version is already installed.")
+                        if !FileExist(A_AppData "\tomshi\installing")
+                            throw PropertyError("This version is already installed.")
                 }
                 FileDelete(A_Appdata "\tomshi\version")
             }
+            FileAppend("", A_AppData "\tomshi\installing")
             FileAppend("yes.value", A_Appdata "\tomshi\version")
             try this.prevInstallLoc := FileRead(this.prevInstall)
             catch {
@@ -407,6 +425,7 @@ class installGUI extends Gui {
             ;//! finished
             this.__setProgress(100)
             this["Progress"].opt("CLime")
+            try FileDelete(A_AppData "\tomshi\installing")
             this.Destroy()
         }
 
@@ -423,8 +442,8 @@ class installGUI extends Gui {
         }
 
         __adjustVersion() {
-            if FileExist(A_MyDocuments "\toshi\settings.ini")
-                IniWrite("yes.value", A_MyDocuments "\toshi\settings.ini", "Track", "version")
+            if FileExist(A_MyDocuments "\tomshi\settings.ini")
+                IniWrite("yes.value", A_MyDocuments "\tomshi\settings.ini", "Track", "version")
         }
 
         __installPremRemote() {
@@ -475,6 +494,17 @@ class installGUI extends Gui {
                     return path
                 }
             }
+            return false
+        }
+
+        dockerInstalled() {
+            for p in [A_ProgramFiles "\Docker\Docker\resources\bin\docker.exe"
+                    , A_ProgramFiles "\Docker\Docker\Docker Desktop.exe"]
+                if FileExist(p)
+                    return true
+            for dir in StrSplit(EnvGet("PATH"), ";", " `t`"")
+                if dir != "" && FileExist(dir "\docker.exe")
+                    return true
             return false
         }
 

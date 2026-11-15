@@ -5,6 +5,9 @@
 #Include Classes\Apps\docker.ahk
 ; }
 
+;// registry key required to run unsigned extensions within Premiere Pro
+RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode")
+
 if !FileExist(A_Appdata "\tomshi\installDir") {
     ;// throw
     errorLog(TargetError("Installation did not complete correctly. Please uninstall and try again.", -1),,, 1)
@@ -42,8 +45,6 @@ if !DirExist(cepStaging) || !DirExist(uxpStaging) {
     return
 }
 
-;// registry key required to run unsigned extensions within Premiere Pro
-RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode")
 
 ;//* CEP - PremiereRemote & AERemote
 ;// `node_modules` isn't packaged so it gets built here
@@ -51,7 +52,7 @@ installCEP(name) {
     src := cepStaging "\" name
     dst := extensionsPath "\" name
     if !DirExist(src)
-        throw TargetError("Error During " name " Installation. Files are missing.")
+        return
     DirCreate(extensionsPath)
 
     ;// /MIR copies new/changed files AND deletes anything in dst that isn't in src. `node_modules` is excluded so it's left alone
@@ -73,6 +74,8 @@ installCEP(name) {
 ; premOK  := installCEP("PremiereRemote")
 premUXP := true
 aeOK    := installCEP("AERemote")
+if aeOK
+    try DirDelete(cepStaging "\AERemote", 1)
 
 ;//* UXP - PremiereRemote-uxp
 ;// extracts the plugin folder. The `client` folder is removed after the .ccx gets installed by `update_PremiereRemoteUXP.ahk`
@@ -98,14 +101,25 @@ try {
         cmd.run(,,, 'npx pnpm run bundle', uxpDst "\client", "Hide")
         cmd.run(,,, 'docker compose down && docker compose up --build -d', uxpDst, "Hide")
     }
-} catch {
+    ;// confirm Premiere will actually load the version we just staged
+    if RegExMatch(FileRead(uxpDst "\client\manifest.json"), '"version"\s*:\s*"([^"]+)"', &m) {
+        found := false
+        loop files EnvGet("CommonProgramFiles") "\Adobe\UXP\Plugins\External\de.sebinside.premiereremote_*", "D" {
+            if A_LoopFileName = "de.sebinside.premiereremote_" m[1] {
+                found := true
+                break
+            }
+        }
+        if !found
+            throw TargetError("UXP plugin " m[1] " isn't installed. Premiere is still running the old plugin.", -1)
+    }
+} catch as e {
     premUXP := false
-    errorLog(TargetError("Couldn't update PremiereRemote UXP. Please close Premiere Pro then run`n" installDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk", -1),,, 1)
+    errorLog(e,,, 1)
+    throw e
 }
 
 ;// only remove the packaged files for extensions that installed, a failed one is kept so it can be retried
-if aeOK
-    try DirDelete(cepStaging "\AERemote", 1)
 if premUXP
     try DirDelete(uxpStaging, true)
 if aeOK && premUXP

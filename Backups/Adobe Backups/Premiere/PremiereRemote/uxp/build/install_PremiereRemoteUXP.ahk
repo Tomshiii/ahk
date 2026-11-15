@@ -14,6 +14,14 @@ ccxPath := IsSet(arg) ? arg : buildDir "\de.sebinside.premiereremote_premierepro
 if !IsSet(ccxPath) || !FileExist(ccxPath)
     return
 
+loop {
+    if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe Adobe Premiere Pro (Beta).exe")
+        break
+    userResponse := MsgBox("Installation of UXP plugin cannot continue while Premiere is open.`nPlease close Premiere to continue.", "Premiere is Open", "262161")
+    if userResponse = "Cancel"
+        return
+    continue
+}
 installEx := cmd.run(true,,, Format('.\UnifiedPluginInstallerAgent.exe /install "{}"', ccxPath), workDir, "Hide")
 if installEx.exitCode != 0 {
     errorLog(MethodError("Installing PremiereRemote failed. ExitCode: " installEx.exitCode),,, true)
