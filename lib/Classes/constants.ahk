@@ -1,0 +1,24 @@
+/************************************************************************
+ * @description A collection of constant variables. Mostly ExitCodes
+ * @author tomshi
+ * @date 2026/11/16
+ * @version 1.0.0
+ ***********************************************************************/
+
+class CONST {
+    static ErrorCode := {
+        GENERIC_FAIL: -1, GENERIC_END: 0, GENERIC_PASS: 1,
+
+        DOCKER_NOT_INSTALLED: 11,
+
+        REPO_INSTALL_FAIL: 21,
+
+        NODEJS_INSTALL_FAIL:31,
+
+        ADOBE_NOT_INSTALLED: 51, PREMIEREREMOTE_INSTALL_FAIL: 52, PREMIEREREMOTE_REPLACERESET_FAIL: 53,
+        PREMIEREREMOTE_UNINSTALL_FAIL:54, PREMIEREREMOTE_DELETE_STALE_DIRS_FAIL:55, PREMIEREREMOTE_CCX_NOT_FOUND:56,
+        PREMIEREREMOTE_VER_LOWER:57, PREMIEREREMOTE_INSTALL_CANCEL:58, PREMIEREREMOTE_INSTALL_PASS:59, PREMIEREREMOTE_NOT_INSTALLED:60, PREMIEREREMOTE_RESET_BUILD_FAIL:61,
+        PREMIEREREMOTE_STAGING_NOT_FOUND:62, ADOBE_PROGRAM_OPEN: 63,
+        PREMIEREREMOTE_ROBOCOPY_FAIL:64, PREMIEREREMOTE_UPDATE_PASS:65,
+    }
+}

@@ -4,6 +4,7 @@
 #Include Classes\cmd.ahk
 #Include Classes\winext.ahk
 #Include Classes\ptf.ahk
+#Include Classes\constants.ahk
 #Include Other\UIA\UIA.ahk
 #Include Functions\getCCXVersion.ahk
 ; }
@@ -28,7 +29,7 @@ uxpProg["msg"].text := "Generating ``generate-api.js``..."
 genAPI := __runStep('node scripts/generate-api.js', InstalledDir "\client")
 if genAPI.failed {
     __fail("Generating ``generate-api.js``", genAPI)
-    return
+    ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
 }
 try uxpProg["prog"].value := 10
 
@@ -36,7 +37,7 @@ uxpProg["msg"].text := "Copying ``static\``..."
 staticCopy := __runStep('xcopy /s /e /y static\. build\', InstalledDir "\client")
 if staticCopy.failed {
     __fail("Copying PremiereRemote ``static\``", staticCopy)
-    return
+    ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
 }
 try uxpProg["prog"].value := 20
 
@@ -44,7 +45,7 @@ uxpProg["msg"].text := "Running ``pnpm run bundle``..."
 bundle := __runStep('pnpm run bundle', InstalledDir "\client")
 if bundle.failed {
     __fail("Bundle", bundle)
-    return
+    ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
 }
 try uxpProg["prog"].value := 30
 
@@ -62,7 +63,7 @@ if isCCx {
     buildCopy := __runStep(c,, true, 1)
     if buildCopy.failed {
         __fail("Copying PremiereRemote ``build\``", buildCopy)
-        return
+        ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
     }
     try uxpProg["prog"].value := 40
     if WinExist(prem.winTitle)
@@ -74,12 +75,12 @@ uxpProg["msg"].text := "Rebuilding docker compose..."
 dockerBuild := __runStep('docker compose down && docker compose up --build -d', InstalledDir)
 if dockerBuild.failed {
     __fail("Rebuilding docker compose", dockerBuild)
-    return
+    ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
 }
 try uxpProg["prog"].value := 100
 sleep 1000
 __clearNotif()
-
+ExitApp(CONST.ErrorCode.GENERIC_PASS)
 
 
 

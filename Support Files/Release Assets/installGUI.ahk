@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/11/14
- * @version 1.1.29
+ * @date 2026/11/16
+ * @version 1.2.0
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -265,8 +265,7 @@ class installGUI extends Gui {
             this.__setProgress(70)
             this.__runCoreFunc()
             this.__setProgress(80)
-            if !this.__installPremRemote()
-                this.__addLogEntry("Failed to install PremiereRemote")
+            this.__installPremRemote()
             this.__setProgress(90)
             this.__adjustVersion()
 
@@ -408,8 +407,7 @@ class installGUI extends Gui {
             this.__deleteInstallFiles()
             this.__runCoreFunc()
             this.__setProgress(80)
-            if !this.__installPremRemote()
-                this.__addLogEntry("Failed to install PremiereRemote")
+            this.__installPremRemote()
             this.__setProgress(85)
 
             ;// set current adobe versions in settings.ini
@@ -449,6 +447,8 @@ class installGUI extends Gui {
         __installPremRemote() {
             if !FileExist(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk") {
                 this.__exit()
+                this.__addLogEntry("Couldn't find installPremRemote.ahk")
+                this.__addLogEntry("Failed to install PremiereRemote")
                 throw TargetError("Couldn't find installPremRemote.ahk")
             }
             this.__addLogEntry("installing PremiereRemote")
@@ -456,20 +456,61 @@ class installGUI extends Gui {
             if !DirExist(extensionsPath) {
                 try DirCreate(extensionsPath)
                 catch {
-                    return false
+                    this.__addLogEntry("Failed to install PremiereRemote")
+                    return
                 }
             }
-            try RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk")
+            try instRemote := RunWait(this.InstallDir "\Support Files\Release Assets\Install Packages\installPremRemote.ahk 1")
             catch {
-                return false
+                this.__addLogEntry("Failed to wait for installPremRemote.ahk")
+                this.__addLogEntry("Failed to install PremiereRemote")
+                return
             }
-            sleep 1500
-            return true
+            switch instRemote {
+                ;// const class
+                ;// CONST.ErrorCode.GENERIC_PASS || CONST.ErrorCode.PREMIEREREMOTE_INSTALL_PASS || CONST.ErrorCode.PREMIEREREMOTE_UPDATE_PASS
+                case 1, 59, 65:
+                    this.__addLogEntry("Installing PremiereRemote complete")
+
+                ;// CONST.ErrorCode.DOCKER_NOT_INSTALLED
+                case 11: this.__addLogEntry("Docker is NOT installed. Installing PremiereRemote was aborted.")
+
+                ;// CONST.ErrorCode.REPO_INSTALL_FAIL
+                case 21: this.__addLogEntry("Tomshi Repo installation did not complete correctly. Please uninstall and try again.")
+
+                ;// CONST.ErrorCode.NODEJS_INSTALL_FAIL
+                case 31: this.__addLogEntry("NodeJS is NOT installed. Installing PremiereRemote was aborted.")
+
+                ;// CONST.ErrorCode.ADOBE_NOT_INSTALLED
+                case 52: this.__addLogEntry("Installing PremiereRemote FAILED. Adobe programs not found")
+
+                ;// CONST.ErrorCode.PREMIEREREMOTE_CCX_NOT_FOUND
+                case 56: this.__addLogEntry("PremiereRemote .ccx file could not be found. Installation aborted.")
+
+                ;// CONST.ErrorCode.PREMIEREREMOTE_VER_LOWER
+                case 57: this.__addLogEntry("Current PremiereRemote version already installed.")
+
+                ;// CONST.ErrorCode.PREMIEREREMOTE_INSTALL_CANCEL
+                case 58: this.__addLogEntry("Installing PremiereRemote FAILED. User Aborted Installation.")
+
+                ;// CONST.ErrorCode.PREMIEREREMOTE_STAGING_NOT_FOUND
+                case 62: this.__addLogEntry("Installing PremiereRemote FAILED. Plugin files not found with installation.")
+
+                ;// CONST.ErrorCode.ADOBE_PROGRAM_OPEN
+                case 63: this.__addLogEntry("Installing PremiereRemote FAILED. Adobe program was open. Close and try again.")
+
+                ;// CONST.ErrorCode.PREMIEREREMOTE_ROBOCOPY_FAIL
+                case 64: this.__addLogEntry("Installing PremiereRemote FAILED. Failed to copy AERemote files.")
+
+                default: this.__addLogEntry("Installing PremiereRemote FAILED. Error code: " instRemote)
+            }
+            sleep 500
+            return
         }
 
         __installNode(path) {
             this.__addLogEntry("installing nodejs")
-                RunWait('*RunAs msiexec.exe /i "' . path . '" /qn /norestart',, "Hide")
+            RunWait('*RunAs msiexec.exe /i "' . path . '" /qn /norestart',, "Hide")
             sleep 100
         }
 

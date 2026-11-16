@@ -1,19 +1,26 @@
 ; { \\ #Includes
 #Include funcs.ahk
 #Include '%A_Appdata%\tomshi\lib'
+#Include Classes\constants.ahk
 #Include Functions\getCCXVersion.ahk
 #Include Functions\determineAdobeVer.ahk
 #Include Other\JSON.ahk
 ; }
 
+try isCCx := A_Args[1]
+if !IsSet(isCCx) || isCCx = "unset"
+    isCCx := getExtensionVersion()
+try ec := A_Args[2]
+ec := IsSet(ec) && ec != 0 && ec != "0" ? ec : false
+
 if RegRead("HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode", "0") != "1"
     RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode")
 
-if !docker.isInstalled()
-    throw TargetError("Docker needs to be installed", -2)
-try isCCx := A_Args[1]
-if !IsSet(isCCx)
-    isCCx := getExtensionVersion()
+if !docker.isInstalled() {
+    if !ec
+        throw TargetError("Docker needs to be installed", -2)
+    ExitApp(CONST.ErrorCode.DOCKER_NOT_INSTALLED)
+}
 SetWorkingDir(A_ScriptDir)
 
 ;// ======= manifest =======
@@ -38,5 +45,8 @@ dockerAhk := "ahk_exe Docker Desktop.exe"
 dockerFile := "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 __runAndWait(dockerAhk, dockerFile, true,, 0)
 
-RunWait("replacePremRemote.ahk false")
-RunWait("resetBuild.ahk " isCCx)
+prReplace := RunWait("replacePremRemote.ahk false " ec)
+if prReplace != CONST.ErrorCode.GENERIC_PASS
+    ExitApp(prReplace)
+resetBuild := RunWait("resetBuild.ahk " isCCx)
+ExitApp(resetBuild)

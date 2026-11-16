@@ -1,5 +1,6 @@
 ; { \\ #Includes
 #Include '%A_Appdata%\tomshi\lib'
+#Include Classes\constants.ahk
 #Include Functions\getCCXVersion.ahk
 ; }
 
@@ -19,7 +20,8 @@ if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
 loop {
     currentVer := getExtensionVersion(, true)
     try DirDelete(currentVer.dir "\de.sebinside.premiereremote_" currentVer.version, true)
-    catch as e {
-        throw e
+    catch {
+        ExitApp(CONST.ErrorCode.PREMIEREREMOTE_DELETE_STALE_DIRS_FAIL)
     }
 } until (getExtensionVersion() = "")
+ExitApp(CONST.ErrorCode.GENERIC_PASS)

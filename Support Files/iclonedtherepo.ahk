@@ -1,4 +1,3 @@
-;// symlink libs
 ;// base settings file
 ;// version/installDir files
 ;// install node.js
@@ -18,11 +17,12 @@ if !baseDir || !libDir || !verFile || !installFile {
     (!installFile) ? FileAppend(rootPath, basePath "\installDir") : ""
     (!verFile) ?  FileAppend("v2.18.0", basePath "\version") : ""
     Run(rootPath "\Core Functionality.ahk")
-    sleep 5500
+    RunWait(suppFilesDir "\Release Assets\Install Packages\waitCoreFunc.ahk")
     (!verFile) ? RunWait(suppFilesDir "\Release Assets\shared functions\setVerFile.ahk") : ""
     RunWait(suppFilesDir "\Release Assets\Install Packages\baseLineSettings.ahk")
     RunWait(suppFilesDir "\Release Assets\Install Packages\installNode.ahk")
-    Run(suppFilesDir "\Release Assets\Install Packages\installPremRemote.ahk")
+    ;// this won't work anymore as no staging dir's will exist -- needs update eventually
+    ; Run(suppFilesDir "\Release Assets\Install Packages\installPremRemote.ahk")
     try RunWait(A_ComSpec "/k git submodule update --init --recursive", rootPath)
 }
 
