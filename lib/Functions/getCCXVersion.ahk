@@ -25,8 +25,13 @@ getExtensionVersion(extName := "PremiereRemote", returnDir := false) {
             if !InStr(A_LoopFileName, extName)
                 && !RegExMatch(json, '"(?:id|name)"\s*:\s*"' RegExReplace(extName, "[\\.*?+\[\]{}|()^$]", "\$0") '"')
                 continue
-            if RegExMatch(json, '"version"\s*:\s*"([^"]+)"', &m)
-                return (returnDir = false ? m[1] : {version: m[1], dir: root})
+            if RegExMatch(A_LoopFileName, "_([^_]+)$", &v)
+                ver := v[1]
+            else if RegExMatch(json, '"version"\s*:\s*"([^"]+)"', &m)
+                ver := m[1]
+            else
+                continue
+            return (returnDir = false ? ver : {version: ver, dir: root})
         }
     }
     return ""

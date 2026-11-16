@@ -49,11 +49,17 @@ if bundle.failed {
 try uxpProg["prog"].value := 30
 
 if isCCx {
-    dest := "C:\Program Files\Common Files\Adobe\UXP\Plugins\External\de.sebinside.premiereremote_" Trim(isCCx) "\build"
-    src  := InstalledDir "\client\build"
-    c := Format('xcopy "{}\*" "{}\" /s /e /y /i /r /h /k', src, dest)
-    uxpProg["msg"].text := "Copying ``build\``..."
-    buildCopy := __runStep(c,, true, 1) ;// elevated, so always cmd.run. xcopy exit 1 (no files) is OK
+    pluginDir    := "C:\Program Files\Common Files\Adobe\UXP\Plugins\External\de.sebinside.premiereremote_" Trim(isCCx)
+    dest         := pluginDir "\build"
+    src          := InstalledDir "\client\build"
+    manifestSrc  := InstalledDir "\client\manifest.json"
+
+    c := Format(
+        'copy /y "{1}" "{2}\manifest.json" & xcopy "{3}\*" "{4}\" /s /e /y /i /r /h /k',
+        manifestSrc, pluginDir, src, dest
+    )
+    uxpProg["msg"].text := "Copying ``build\`` and ``manifest.json``..."
+    buildCopy := __runStep(c,, true, 1)
     if buildCopy.failed {
         __fail("Copying PremiereRemote ``build\``", buildCopy)
         return

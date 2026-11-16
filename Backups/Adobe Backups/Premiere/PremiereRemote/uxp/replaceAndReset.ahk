@@ -1,12 +1,16 @@
 ; { \\ #Includes
 #Include funcs.ahk
 #Include '%A_Appdata%\tomshi\lib'
-#Include Classes\CLSID_Objs.ahk
 #Include Functions\getCCXVersion.ahk
+#Include Functions\determineAdobeVer.ahk
 #Include Other\JSON.ahk
 ; }
 
-;// this script is designed for me -- if you installed my repo this script will not work correctly as your `\client` folder will be installed in a different location
+if RegRead("HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode", "0") != "1"
+    RegWrite("1", "REG_SZ", "HKEY_CURRENT_USER\Software\Adobe\CSXS.12", "PlayerDebugMode")
+
+if !docker.isInstalled()
+    throw TargetError("Docker needs to be installed", -2)
 try isCCx := A_Args[1]
 if !IsSet(isCCx)
     isCCx := getExtensionVersion()
@@ -34,13 +38,5 @@ dockerAhk := "ahk_exe Docker Desktop.exe"
 dockerFile := "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 __runAndWait(dockerAhk, dockerFile, true,, 0)
 
-;// ======= uxp =======
-uxpAHK := "ahk_exe Adobe UXP Developer Tools.exe"
-uxpFile := "C:\Program Files\Adobe\Adobe UXP Developer Tools\Adobe UXP Developer Tools.exe"
-if !isCCx
-    __runAndWait(uxpAHK, uxpFile)
-
 RunWait("replacePremRemote.ahk false")
 RunWait("resetBuild.ahk " isCCx)
-if !isCCx
-    RunWait("reloadDebugExt.ahk")

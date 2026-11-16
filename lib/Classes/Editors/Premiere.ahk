@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 27.0
  * @author tomshi
- * @date 2026/11/14
- * @version 2.6.10
+ * @date 2026/11/16
+ * @version 2.6.11
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -2558,11 +2558,15 @@ class Prem {
                 xVals.Push(allLayers["vid"][1][_].x)
                 yVal := allLayers["vid"][1][_].y
             }
-            if !this.setShinsIMG()
+            if !this.setShinsIMG() {
+                errorLog(ValueError("ShinsImgClass could not be set", -1))
                 return null
+            }
             r := this.__getPixelRegion(this.layerDivider, Max(xVals*), yVal, this.timelineXValue, yVal,,, &retX, &retY)
-            if !r.found
+            if !r.found {
+                errorLog(TargetError("Could not determine pixel region", -1))
                 return null
+            }
             return retX + 1
         }
 
@@ -4516,7 +4520,7 @@ $!WheelDown::
                 switch this.theme, false {
                     ;// these colours may change in future versions
                     case "darkest":
-                        this.layerDivider := 0x30303
+                        this.layerDivider := 0x303030
                         this.transitionHandleInsideSquare := 0xB0B0B0
                         this.transitionHandleHalfSquare := 0x6A6A6A
                         this.playhead := 0x4096F3, this.focusColour := 0x4096F3

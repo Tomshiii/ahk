@@ -343,15 +343,20 @@ if !DirExist(uxpInstallLoc)
 metaFile := ccxLoc "ccx.version"   ;// last version I actually shipped
 if rebuildCCX {
     mani := JSON.parse(FileRead(uxpInstallLoc "\manifest.json"))
-    last := FileExist(metaFile) ? Trim(FileRead(metaFile), " `t`r`n") : "0.0.0"
+    last := FileExist(metaFile) ? Trim(FileRead(metaFile), " `t`r`n") : "4.0.0"
     base := (VerCompare(mani["version"], last) >= 0) ? mani["version"] : last
     split := StrSplit(base, ".")
     mani["version"] := split[1] "." split[2] "." (split[3] + 1)
-    try FileDelete(uxpInstallLoc "\manifest.json")
+    localPath := WinGet.pathU(ptf.rootDir "\..\PremiereRemote\client")
+    try {
+        FileDelete(uxpInstallLoc "\manifest.json")
+        FileDelete(localPath "\manifest.json")
+    }
     catch as e {
         throw e
     }
     FileAppend(json.stringify(mani), uxpInstallLoc "\manifest.json")
+    FileAppend(json.stringify(mani), localPath "\manifest.json")
     try FileDelete(metaFile)
     FileAppend(mani["version"], metaFile)
     if !FileExist(sevenZipExe)
