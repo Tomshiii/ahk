@@ -31,3 +31,4 @@ if MsgBox("You will now be prompted for elevation a few times to uninstall/reins
     return
 RunWait(Format('"{1}\uninstall_PremiereRemoteUXP.ahk"', buildDir))
 RunWait(Format('"{1}\install_PremiereRemoteUXP.ahk" "{1}\de.sebinside.premiereremote_premierepro.ccx"', buildDir))
+return

@@ -34,12 +34,13 @@ if !DirExist(A_AppData "\Adobe") {
 ;// folders into `<installDir>\premiereRemote` and this script installs them from there
 extensionsPath := A_AppData "\Adobe\CEP\extensions"
 uxpPluginsPath := A_AppData "\Adobe\UXP\Plugins\External"
+uxpCCXDir      := "C:\Program Files\Common Files\Adobe\UXP\Plugins\External"
 stagingDir     := installDir "\premiereRemote"
 cepStaging     := stagingDir "\cep"
 uxpStaging     := stagingDir "\uxp\PremiereRemote-uxp"
 updateUXP      := installDir "\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\build\update_PremiereRemoteUXP.ahk"
 
-if !DirExist(cepStaging) || !DirExist(uxpStaging) {
+if !DirExist(cepStaging) && !DirExist(uxpStaging) {
     ;// throw
     errorLog(TargetError("PremiereRemote files could not be found. Please try the installation again.", -1),,, 1)
     return
@@ -93,6 +94,8 @@ try {
     ;// has its own version check, so it's not gated
     if FileExist(updateUXP)
         RunWait(updateUXP)
+    if !DirExist(uxpCCXDir)
+        throw MethodError("Failed to install Premiere UXP plugin.", -1)
 
     ;// rebuild if files were copied (bit 1), stale files were removed (bit 2), or this is a fresh install
     if (code & 3) || !DirExist(uxpDst "\client\node_modules") {
