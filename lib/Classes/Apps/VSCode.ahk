@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with VSCode
  * @author tomshi
- * @date 2026/11/10
- * @version 1.3.4
+ * @date 2026/11/16
+ * @version 1.3.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -35,7 +35,7 @@ class VSCode {
     static __isInstalled() {
         p := onPath("code")
         c := cmd.run(,,, "where code",, "Hide")
-        return (p && c.exitCode != 0)
+        return (p && c.exitCode == 0)
     }
 
     /**
