@@ -17,11 +17,15 @@ if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
     ExitApp()
 }
 
-loop {
-    currentVer := getExtensionVersion(, true)
-    try DirDelete(currentVer.dir "\de.sebinside.premiereremote_" currentVer.version, true)
-    catch {
-        ExitApp(CONST.ErrorCode.PREMIEREREMOTE_DELETE_STALE_DIRS_FAIL)
+extensions := [
+    ["PremiereRemote", "de.sebinside.premiereremote_"],
+    ["AERemote",       "de.sebinside.aeremote_"]
+]
+for ext in extensions {
+    while installed := getExtensionVersion(ext[1], true) {
+        try DirDelete(installed.dir "\" ext[2] installed.version, true)
+        catch
+            ExitApp(CONST.ErrorCode.PREMIEREREMOTE_DELETE_STALE_DIRS_FAIL)
     }
-} until (getExtensionVersion() = "")
+}
 ExitApp(CONST.ErrorCode.GENERIC_PASS)

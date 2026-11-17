@@ -336,11 +336,32 @@ uxpPluginLoc  := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
 uxpInstallLoc := uxpPluginLoc "\client"
 ccxLoc        := ptf.rootDir "\Backups\Adobe Backups\Premiere\PremiereRemote\uxp\build\"
 ccxName       := "de.sebinside.premiereremote_premierepro.ccx"
-sevenZipExe := "C:\Program Files\7-Zip\7z.exe"
-ccxCMD := '"' . '"' sevenZipExe '" a -tzip "' ccxLoc ccxName '" manifest.json build icons' . '"'
+aeCcxLoc      := ptf.rootDir "\Backups\Adobe Backups\After Effects\AERemote\UXP\build\"
+aeCcxName     := "de.sebinside.aeremote_ae.ccx"
+sevenZipExe   := "C:\Program Files\7-Zip\7z.exe"
 if !DirExist(uxpInstallLoc)
     throw TargetError("Couldn't find the local UXP PremiereRemote client folder`n" uxpInstallLoc)
 metaFile := ccxLoc "ccx.version"   ;// last version I actually shipped
+
+/**
+ * Zips the current manifest.json, build and icons from the UXP client folder into a .ccx
+ * @param {String} outDir the folder the .ccx gets written to (created if needed)
+ * @param {String} outName the .ccx file name
+ */
+zipCCX(outDir, outName) {
+    global sevenZipExe, uxpInstallLoc
+    if !DirExist(outDir)
+        DirCreate(outDir)
+    if FileExist(outDir outName)
+        FileDelete(outDir outName)
+    c := '"' . '"' sevenZipExe '" a -tzip "' outDir outName '" manifest.json build icons' . '"'
+    exitObj := cmd.run(, true,, c, uxpInstallLoc, "Hide")
+    if exitObj.exitCode != 0
+        throw MethodError("7z failed building " outName ", exitcode: " exitObj.exitCode)
+    if !FileExist(outDir outName)
+        throw TargetError("Failed to build " outName)
+}
+
 if rebuildCCX {
     cmd.run(,,, "pnpm run host:premiere", uxpInstallLoc)
     mani := JSON.parse(FileRead(uxpInstallLoc "\manifest.json"))
@@ -356,23 +377,53 @@ if rebuildCCX {
     catch as e {
         throw e
     }
-    FileAppend(json.stringify(mani), uxpInstallLoc "\manifest.json")
-    FileAppend(json.stringify(mani), localPath "\manifest.json")
+    premManifest := json.stringify(mani)
+    FileAppend(premManifest, uxpInstallLoc "\manifest.json")
+    FileAppend(premManifest, localPath "\manifest.json")
     try FileDelete(metaFile)
     FileAppend(mani["version"], metaFile)
     if !FileExist(sevenZipExe)
         throw TargetError("7-Zip not found at:`n" sevenZipExe)
-    if FileExist(ccxLoc ccxName)
-        FileDelete(ccxLoc ccxName)
 
     if rebuildUXP
         RunWait(ptf.Backups "\Adobe Backups\Premiere\PremiereRemote\uxp\replaceAndReset.ahk")
-    exitObj := cmd.run(, true,, ccxCMD, uxpInstallLoc, "Hide")
-    if exitObj.exitCode != 0
-        throw MethodError("7z failed, exitcode: " exitObj.exitCode)
-    if !FileExist(ccxLoc ccxName)
-        throw TargetError("Failed to build " ccxName)
+
+    ;// premiere ccx
+    zipCCX(ccxLoc, ccxName)
+
+    ;// AERemote ccx - same client, different manifest, so this has to come after Premiere is built
+    ;// remember the original values so they can be put back afterwards
+    orig := Map(
+        "id",         mani["id"],
+        "name",       mani["name"],
+        "minVersion", mani["host"]["minVersion"],
+        "app",        mani["host"]["app"]
+    )
+    manifestPath := uxpInstallLoc "\manifest.json"
+
+    setManifest(m) {
+        try FileDelete(manifestPath)
+        FileAppend(json.stringify(m), manifestPath)
+    }
+
+    try {
+        mani["id"]                := "de.sebinside.aeremote"
+        mani["name"]              := "AERemote"
+        mani["host"]["minVersion"] := "27.0"
+        mani["host"]["app"]       := "aftereffects"
+        setManifest(mani)
+        zipCCX(aeCcxLoc, aeCcxName)
+    }
+    finally {
+        ;// always restore, even if the zip failed
+        mani["id"]                 := orig["id"]
+        mani["name"]               := orig["name"]
+        mani["host"]["minVersion"] := orig["minVersion"]
+        mani["host"]["app"]        := orig["app"]
+        setManifest(mani)
+    }
 }
+
 
 /**
  * Copies a folder with `robocopy` so directories (like `node_modules`) can be excluded.

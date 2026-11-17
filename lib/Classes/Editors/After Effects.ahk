@@ -4,7 +4,7 @@
  * @aeVer 27.0
  * @author tomshi
  * @date 2026/11/17
- * @version 1.7.0
+ * @version 1.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -134,6 +134,7 @@ class AE extends AdobeRemoteUXP {
     ;// ====== `AdobeRemoteUXP` hooks ======
     static __getWinObj() => WinGet.AEName()
     static __checkUXPFunc(checkFunc) => this.__checkAERemoteFunc(checkFunc, "uxp")
+    ; static __uxpExtraCheck() => !!getExtensionVersion("AERemote")
 
     /**
      * Checks class values to determine if timeline values need to be set. Will also check the `ae` object shared by `Core Functionality.ahk`

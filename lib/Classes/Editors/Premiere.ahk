@@ -5,7 +5,7 @@
  * @premVer 27.0
  * @author tomshi
  * @date 2026/11/17
- * @version 2.7.0
+ * @version 2.7.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -126,9 +126,12 @@ class Prem extends AdobeRemoteUXP {
 
     static __checkedInstall := false
     static __localeWarn     := false
-    static ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk", "installNode.ahk", "installPremRemote.ahk"]
+    static ignoreWins := ["- Tomshi Installer", "Install Tomshi AHK", "uninstall.ahk", "closeAll.ahk", "reloadAll.ahk", "installNode.ahk"]
+    static ignoreScripts := Map("installPremRemote.ahk", true, "install_PremiereRemoteUXP.ahk", true, "update_PremiereRemoteUXP.ahk", true)
     static __ignoreWinExist(ignoreWins := this.ignoreWins) {
         Critical()
+        if this.ignoreScripts.Has(A_ScriptName)
+            return true
         dct := detect()
         for v in ignoreWins {
             if WinExist(v) {
@@ -291,10 +294,8 @@ class Prem extends AdobeRemoteUXP {
     static scGuest2  := "1"
 
     ;// PremiereRemote variables
-    static remoteDirCEP := A_AppData "\Adobe\CEP\extensions\PremiereRemote"
     static remoteDirUXP := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\client"
     static ccxDirUXP    := EnvGet("CommonProgramFiles") "\Adobe\UXP\Plugins\External"
-    static indexFileCEP := this.remoteDirCEP "\host\src\index.tsx"
     static indexFileUXP := this.remoteDirUXP "\src\generated\registry.ts"
     static funcDirUXP   := this.remoteDirUXP "\src\actions"
 

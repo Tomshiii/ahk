@@ -1,4 +1,9 @@
 # <> Release 2.21.0.1 - Hotfix
+This release is a hotfix for release `2.21.0`<sup>[[changelog]](<https://github.com/Tomshiii/ahk/releases/tag/v2.21.0>)</sup> which was a rather large update and includes the depreciation of the Premiere CEP functions to be replaced with UXP. If you encounter any issues with this update, please be sure to create a [github issue](<https://github.com/Tomshiii/ahk/issues>) to let me know.
+
+> [!Caution]
+> `docker` is now *required* for the UXP plugin. The installation of my repo will fail if the user does not first install it.
+***
 
 ## Functions
 - ✏️ Added `CONST {`, `AdobeRemoteUXP {`
@@ -11,6 +16,7 @@
 
 ### 📝 `ae {`
 - ✏️ Added `__remoteUXP()` which runs through `AdobeRemoteUXP.__remoteUXPCore()`
+    - *UXP functionality is only currently available in the `After Effects` 27.1 Beta*
 - 📋 Laid groundwork for `UXP` support to transition once publicly available
     - *Full installation processes have not currently been fleshed out*
 
@@ -26,8 +32,8 @@
 - 📋 Installer will now show more information without throwing if installing `PremiereRemote`/`AERemote` fails
 
 🔗 `install_PremiereRemoteUXP.ahk`
-    - Will now prompt the user to close `Premiere` if it is open
-    - Will now set required registry values
+- 📋 Will now prompt the user to close `Premiere` if it is open
+- 📋 Will now set required registry values
 
 🔗 `mult-dl.ahk`
 ###### *(v1.5.3 -> v1.5.4)*
