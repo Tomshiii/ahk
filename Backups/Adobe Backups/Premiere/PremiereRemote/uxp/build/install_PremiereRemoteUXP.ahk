@@ -25,15 +25,15 @@ if !IsSet(ccxPath) || !FileExist(ccxPath)
     ExitApp(CONST.ErrorCode.PREMIEREREMOTE_CCX_NOT_FOUND)
 
 loop {
-    if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe Adobe Premiere Pro (Beta).exe")
+    if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe Adobe Premiere Pro (Beta).exe") && !WinExist("ahk_exe AfterFX.exe") && !WinExist("ahk_exe AfterFX (Beta).exe")
         break
-    userResponse := MsgBox("Installation of UXP plugin cannot continue while Premiere is open.`nPlease close Premiere to continue.", "Premiere is Open", "262161")
+    userResponse := MsgBox("Installation of UXP plugin cannot continue while Premiere/After Effects is open.`nPlease close Premiere to continue.", "Premiere is Open", "262161")
     if userResponse = "Cancel"
         ExitApp(CONST.ErrorCode.PREMIEREREMOTE_INSTALL_CANCEL)
     continue
 }
 uxpDir := commonFiles "\Adobe\UXP\Plugins\External"
-c := Format('cmd /c "if not exist "{1}" mkdir "{1}" & .\UnifiedPluginInstallerAgent.exe /install "{2}""', uxpDir, ccxPath)
+c := Format('mkdir "{1}" 2>nul & .\UnifiedPluginInstallerAgent.exe /install "{2}"', uxpDir, ccxPath)
 installEx := cmd.run(true,,, c, workDir, "Hide")
 if installEx.exitCode != 0 {
     ; errorLog(MethodError("Installing PremiereRemote failed. ExitCode: " installEx.exitCode),,, true)

@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 27.0
  * @author tomshi
- * @date 2026/11/16
- * @version 2.6.11
+ * @date 2026/11/17
+ * @version 2.7.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -29,6 +29,7 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\Editors\Premiere_UIA.ahk
 #Include Classes\Editors\Premiere_TimelineColours.ahk
+#Include Classes\Editors\AdobeRemoteUXP.ahk
 #Include Classes\winExt.ahk
 #Include Classes\notifyExt.ahk
 #Include Classes\null.ahk
@@ -56,9 +57,10 @@
 #Include Other\ShinsImageScanClass.ahk
 #Include Other\Array.ahk
 #Include Other\_socket.ahk
+#Include Other\JSON.ahk
 ; }
 
-class Prem {
+class Prem extends AdobeRemoteUXP {
 
     static __New() {
         if A_ScriptName = "Multi Download"
@@ -195,19 +197,31 @@ class Prem {
         return ""
     }
     static __isNodeInstalled() => RegRead("HKLM\SOFTWARE\Node.js", "Version", 0)
-    static __isUXPInstalled() {
-        if this.__uxpInstalled = false || this.__uxpInstalled = true
-            return this.__uxpInstalled
-        ver := getExtensionVersion()
-        dockerInstalled := docker.isInstalled()
-        if ver && dockerInstalled && (DirExist(this.remoteDirUXP) && FileExist(this.indexFileUXP)) {
-            this.__uxpInstalled := true
-            return true
-        }
-        this.__uxpInstalled := false
-        return false
-    }
     static __isRegInstalledVer() => determineAdobeVer({baseName: "Adobe Premiere Pro.exe", beta:"Adobe Premiere Pro (Beta).exe"})
+
+    ;// ====== `AdobeRemoteUXP` configuration ======
+    static __app        := "prem"
+    static __appName    := "Premiere"
+    static __remoteName := "PremiereRemote"
+    static __uxpPrefix  := ""
+    static __notConnStr := "Premiere Pro is not connected"
+
+    ;// ====== `AdobeRemoteUXP` hooks ======
+    static __getWinObj() => WinGet.PremName()
+    static __checkUXPFunc(checkFunc) => this.__checkPremRemoteFunc(checkFunc)
+
+    /** Premiere requires the CCX extension version to be determinable for UXP to be considered installed */
+    static __uxpExtraCheck() => !!getExtensionVersion()
+
+    /** don't attempt to talk to the UXP panel while a dialog/busy window is open */
+    static __preflight() {
+        dialogWin := this.__checkDialogueClass(), busyWins := this.__busyWindows()
+        if !dialogWin && busyWins {
+            notifyExt.showIfNotExist("premUXPpremBusy",, 'Premiere appears to be busy...`nAttempting to communicate with the UXP panel will be cancelled.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
+            return false
+        }
+        return true
+    }
 
     static minVer := "26.2"
     static KSA {
@@ -361,18 +375,6 @@ class Prem {
         catch
             return false
         return IsSet(stamp) && stamp != 0
-    }
-
-    static __checkRemoteUXP() {
-        if !WinExist(this.winTitle)
-            return
-        try {
-            sock := winsock("probe", (s,e,c) => this.__probeCB(s,e,c), "IPV4")
-            sock.Connect("localhost", this.portUXP)
-        } catch {
-            errorLog(TargetError("Couldn't probe localhost", -1))
-            return
-        }
     }
 
     /**
@@ -537,16 +539,6 @@ class Prem {
         timelineObj := ""
     }
 
-    static __probeCB(sock, event, err) {
-        if (event = "Connect") {
-            this.remoteActiveUXP := (err = 0)
-            sock.Close()
-        } else if (event = "Close") {
-            this.remoteActiveUXP := false
-            sock.Close()
-        }
-    }
-
     static __setUI() {
         switch  {
             case VerCompare(this.currentSetVer, this.spectrumUI_Version) >= 0: this.UI := "Spectrum"
@@ -656,11 +648,7 @@ class Prem {
 
     static __cepInstalled := null
     static __cepFuncMap   := false
-    static __uxpInstalled := null
-    static __uxpFuncMap   := false
-    static __uxpRegStamp  := ""
     static __cepOpen      := false
-    static __uxpOpen      := false
 
     /**
      * This function checks for the existence of [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/uxp). Can also check for the existence of a specific function within the `index.tsx` file, or desired UXP `ts` file
@@ -762,79 +750,6 @@ class Prem {
     }
 
     /**
-     * Fetches the UXP function registry from the plugin once per script run and caches it in memory
-     * @param {Boolean} [forceRefresh=false] ignore the cache and re-fetch
-     * @returns {Map | false}
-     */
-    static __getUXPRegistry(forceRefresh := false) {
-        try stamp := FileGetTime(this.indexFileUXP)
-        catch
-            stamp := this.__uxpRegStamp
-        if stamp != this.__uxpRegStamp
-            forceRefresh := true
-
-        if !forceRefresh && IsObject(this.__uxpFuncMap)
-            return this.__uxpFuncMap
-
-        resp := cmd.httpGet(Format("http://localhost:{1}/common/getRegistryJSON", this.portUXP))
-        if resp == null || resp = "" || InStr(resp, "Premiere Pro is not connected")
-            return false
-        if resp is String && SubStr(resp, 1, 1) = '"' && SubStr(resp, -1, 1) = '"'
-            resp := SubStr(resp, 2, StrLen(resp)-2)
-
-        if !IsObject(resp) {
-            try registry := JSON.parse(StrReplace(resp, "\"))
-            catch
-                return false
-        }
-        if !(registry is Map)
-            return false
-        this.__uxpRegStamp := stamp
-        return this.__uxpFuncMap := registry
-    }
-
-    /**
-     * @param {String} whichFunc `file/func`, eg `custom/moveToAssetsBin`
-     * @param {Boolean} [forceRefresh=false] ignore the cache and re-fetch function registry
-     * @returns {false | Object} `{path, fileName, funcName, params}`
-     */
-    static __getUXPFuncInfo(whichFunc, forceRefresh := false) {
-        whichFunc := StrReplace(whichFunc, "\", "/")
-        if !registry := this.__getUXPRegistry(forceRefresh)
-            return false
-        if !registry.Has(whichFunc) {
-            whichFunc := this.__warnUXPFuncCase(whichFunc, registry)
-            if !registry := this.__getUXPRegistry(forceRefresh)
-                return false
-        }
-
-        lastSlash := InStr(whichFunc, "/",, -1)
-        return {
-            path: whichFunc,
-            fileName: SubStr(whichFunc, 1, lastSlash-1),
-            funcName: SubStr(whichFunc, lastSlash+1),
-            params: registry[whichFunc]["params"]
-        }
-    }
-
-    /**
-     * if `whichFunc` only fails to match because of casing, warn the user with the correct path
-     * @returns {String} the correctly cased registry key, or `""` if there's no case-insensitive match either
-     */
-    static __warnUXPFuncCase(whichFunc, registry) {
-        for key in registry {
-            if key = whichFunc {    ;// `=` is case-insensitive on strings
-                msg := "UXP function path has incorrect casing.`nPassed: " whichFunc "`nExpected: " key
-                errorLog(ValueError(msg, -2, whichFunc))
-                notifyExt.showIfNotExist("premUXPFuncCase", "prem.__remoteUXP()", msg, 'C:\Windows\System32\imageres.dll|icon80',,, "theme=Dark dur=6 bdr=Red show=Fade@250 hide=Fade@250 maxW=800 POS=BC")
-                return key
-            }
-        }
-        errorLog(TargetError("UXP function does not exist in the plugin registry.", -1, whichFunc),,, true)
-        return ""
-    }
-
-    /**
      * uses the user's `KSA.prem.shuttlestop` hotkey to stop playback
      * @param {Boolean} [checkIsPlaying=false] whether the function will actively check if something is playing before issuing a command to stop playback. Defaults to `false`.
      * */
@@ -860,23 +775,6 @@ class Prem {
     }
 
     /**
-     * a helper function for `PremiereRemote` `__remote()` functions to sanitise their parameter string
-     * @param {Array} [params] an array of parameters to sanitise
-     * @returns {String} the completed parameter string
-     */
-    static __sanitiseParams(params) {
-        clean := []
-        for v in params {
-            if v != ""
-                clean.Push(StrReplace(StrReplace(v, "&", "%26"), A_Space, "%20"))
-        }
-        paramsString := ""
-        for i, v in clean
-            paramsString .= (i = 1 ? "" : "&") v
-        return paramsString
-    }
-
-    /**
      * Determines if a window exists that may indicate Premiere is busy. ie; "Render and Replace Progress", "Encoding", "Save Project", "Tracking...", etc
      * @returns {Boolean}
      */
@@ -890,75 +788,7 @@ class Prem {
     }
 
     /**
-     * check the parameters passed to a `__remoteCEP` method to ensure the user has passed them correctly
-     * @param {String} [whichFunc] the `whichFunc` parameter passed to either cep or uxp `__remoteCEP()`
-     * @param {Array} [params] an array of params passed to either cep or uxp `__remoteCEP()`
-     * @returns {Boolean}
-     */
-    static __checkRemoteParams(whichFunc, params) {
-        if !info := this.__getUXPFuncInfo(whichFunc)
-            return false
-        funcPath := info.path
-        defs := info.params
-
-        passed := []
-        for v in params {
-            if v = ""
-                continue
-            if !InStr(v, '=') {
-                MsgBox("Parameter not specified`nFunction: " funcPath,, "262160")
-                return false
-            }
-            splt := StrSplit(v, '=',, 2)
-            name := splt[1], value := splt[2]
-
-            def := false
-            for p in defs {
-                if p["name"] == name {
-                    def := p
-                    break
-                }
-            }
-            if !def {
-                MsgBox("Parameter not found for given function`n`nParam: " name "`nFunction: " funcPath)
-                return false
-            }
-
-            switch def["type"], 0 {
-                case "boolean":
-                    if value != "true" && value != "false" {
-                        MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be boolean (true/false)")
-                        return false
-                    }
-                case "number":
-                    if !IsNumber(value) {
-                        MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be a number")
-                        return false
-                    }
-            }
-            passed.Push(name)
-        }
-
-        for p in defs {
-            if !p["required"]
-                continue
-            found := false
-            for n in passed {
-                if n == p["name"] {
-                    found := true
-                    break
-                }
-            }
-            if !found {
-                MsgBox("Required parameter missing`n`nParam: " p["name"] "`nFunction: " funcPath)
-                return false
-            }
-        }
-        return true
-    }
-
-    /**
-     * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/uxp) uxp function. If the uxp function returns a `json` object, this function will attempt to pass that back as such.
+     * This function is syntatic sugar to activate a [PremiereRemote](https://github.com/sebinside/PremiereRemote/tree/uxp) uxp function. If the uxp function returns a `json` object, this function will attempt to pass that back as such. The actual logic lives in `AdobeRemoteUXP.__remoteUXPCore()`
      * ## Warning
      *
      * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
@@ -968,155 +798,7 @@ class Prem {
      * @param {Varadic/String} params any additional paramaters you need to pass to your function. do **not** add the `&` that goes between paramaters, this function will add that itself
      * @returns {String | Boolean | Object | null}
      */
-    static __remoteUXP(whichFunc, runAsync := false, params*) {
-        if !WinExist(this.winTitle)
-            return null
-        if !InStr(whichFunc, "/") {
-            errorLog(PropertyError('__remoteUXP() failed. Parameter #1 does not contain path to desired file', -2, whichFunc), whichFunc,, true)
-            return null
-        }
-        dialogWin := this.__checkDialogueClass(), busyWins := this.__busyWindows()
-        if !dialogWin && busyWins {
-            notifyExt.showIfNotExist("premUXPpremBusy",, 'Premiere appears to be busy...`nAttempting to communicate with the UXP panel will be cancelled.', 'iconi',,, 'dur=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
-            return null
-        }
-        chkDir := this.__checkPremRemoteDir()
-        chkFunc := this.__checkPremRemoteFunc(whichFunc)
-        if !chkDir {
-            errorLog(TargetError("PremiereRemote UXP is not installed.", -2, whichFunc),,, true)
-            return null
-        }
-        if !chkFunc {
-            errorLog(TargetError("PremiereRemote function does not exist or UXP panel is not open.", -2, whichFunc),,, true)
-            return null
-        }
-        if !winExt.ExistRegex("Core Functionality.ahk",,,, true) {
-            errorLog(Error("Core Functionality.ahk is not open but is required.", -2),,, true)
-            return null
-        }
-
-        checkPrem := WinGet.PremName()
-        checkType := (Type(checkPrem) != "Object")
-        if !checkPrem || checkType {
-            errorLog(Error("Failed to determine Premiere name", -1),, false)
-            return null
-        }
-        checkTitle := (checkPrem.winTitle = "" || !checkPrem.wintitle), checkCanSave := (checkPrem.titleCheck = null)
-        if checkTitle || checkCanSave {
-            errorLog(Error("Failed to determine Premiere name", -1),, false)
-            return null
-        }
-
-        if A_ScriptName != "Core Functionality.ahk" {
-            props := CLSID_Objs.loadProp("prem", ["remoteActiveUXP", "__uxpOpen"])
-            remoteUXPState := props["remoteActiveUXP"]
-            this.__uxpOpen := props["__uxpOpen"]
-            if remoteUXPState = "loading" {
-                errorLog(Error("A socket connection could not be established to the UXP plugin", -1),, false)
-                notifyExt.showIfNotExist("premSocketLoadingUXP",, "Socket connection to UXP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return null
-            }
-            if !remoteUXPState {
-                errorLog(Error("A socket connection could not be established to UXP plugin", -1),, false)
-                notifyExt.showIfNotExist('premSocketConnectionErrorUXP',, "A socket connection could not be established to UXP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return null
-            }
-        } else {
-            if this.remoteActiveUXP = "loading" {
-                errorLog(Error("A socket connection could not be established to the UXP plugin", -1),, false)
-                notifyExt.showIfNotExist("premSocketLoadingUXP",, "Socket connection to UXP plugin still being established. Please wait.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return null
-            }
-            if !this.remoteActiveUXP {
-                errorLog(Error("A socket connection could not be established to the UXP plugin", -1),, false)
-                notifyExt.showIfNotExist('premSocketConnectionErrorUXP',, "A socket connection could not be established to UXP plugin", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return null
-            }
-        }
-
-        dockerInstalled := docker.isInstalled(), dockerIsRunning := docker.isRunning(), premRemoteRunning := docker.isContainerRunning("premiereremote-uxp", "premiere-remote")
-        if !dockerInstalled || !dockerIsRunning || !premRemoteRunning {
-            errorLog(MethodError("Docker server for PremiereRemote UXP panel is not currently running.", -2))
-            notifyExt.showIfNotExist('premPanelDockerError',, "Docker server for PremiereRemote UXP panel is not currently running.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-            return null
-        }
-
-        if !this.__uxpOpen {
-            checkPanelCommand := Format("http://localhost:{2}/{1}", "custom/isPanelOpen", this.portUXP)
-            isPanelOpen := cmd.httpGet(checkPanelCommand, true)
-            if isPanelOpen == null || (isPanelOpen != '"uxp visible=true"') {
-                errorLog(MethodError("PremiereRemote UXP panel isn't open.", -2))
-                notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                return null
-            }
-            this.__uxpOpen := true
-            CLSID_Objs.writeProp("prem", "__uxpOpen", true)
-        }
-        ;// param check needs to happen later as it needs to retrieve the json object from the plugin
-        if !info := this.__getUXPFuncInfo(whichFunc) {
-            errorLog(TargetError("UXP function does not exist in the plugin registry.", -1, whichFunc),,, true)
-            return null
-        }
-        if !this.__checkRemoteParams(whichFunc, params) {
-            errorLog(TargetError("User passed incorrect Parameters to function.", -1, whichFunc),,, true)
-            return null
-        }
-
-        paramsString := this.__sanitiseParams(params)
-        sendcommand := paramsString != ""
-            ? Format('http://localhost:{3}/{1}?{2}', info.path, String(paramsString), this.portUXP)
-            : Format("http://localhost:{2}/{1}", info.path, this.portUXP)
-        getResp := cmd.httpGet(sendcommand, runAsync,, 0)
-
-        if getResp == null || InStr(getResp, "Premiere Pro is not connected") {
-            ;// will sometimes still fire after premiere is closed
-            if WinExist(this.winTitle) {
-                errorLog(Error("1. Unable to connect to localhost server. PremiereRemote UXP Extension may not be running.", -1))
-                notifyExt.showIfNotExist('premFailedResponseUXP',, "Unable to connect to localhost server. PremiereRemote UXP Extension may not be running.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-            }
-            else
-                errorLog(Error("1. remoteUXP was called but Premiere no longer appears to be open.", -1))
-            return null
-        }
-        if getResp ~= "null_version_\d+(?:\.\d+)*" {
-            split := StrSplit(getResp, "_")
-            throw MethodError("Unsupported minimum Premiere version for the desired function`n" whichFunc " - requires Premiere " split[-1], -2)
-        }
-        try parse := JSON.parse(getResp)
-        catch as e {
-            if !InStr(e.Message, "Malformed JSON - unrecognized character") {
-                if WinExist(this.winTitle)
-                    errorLog(Error("Unable to connect to localhost server. PremiereRemote Extension may not be running."))
-                else
-                    errorLog(Error("remoteFunc was called but Premiere no longer appears to be open.", -1))
-                return null
-            }
-        }
-        switch {
-            case IsSet(parse) && parse.Has("error"):
-                if Type(parse["error"]) = "String" {
-                    errorLog(MethodError(parse["error"],-1), whichFunc "_" paramsString)
-                    MsgBox("prem.__remoteUXP() failed.`n`nError: " parse["error"] "`nFunction:" whichFunc "`nPassed Params:" paramsString)
-                    return null
-                }
-                if parse.Has("instancePath") && parse.Has("message") {
-                    errorLog(MethodError("UXP function encountered an error",-1), "func: " parse["instancePath"] " || error message: " parse["message"])
-                    MsgBox("prem.__remoteUXP() failed.`n`nCheck logs for details")
-                    return null
-                }
-
-                e := JSON.stringify(parse)
-                errorLog(MethodError("UXP function encountered an error",-1), e)
-                MsgBox("prem.__remoteUXP() failed.`n`n" e)
-                return null
-            case !IsSet(parse) && getResp != "":
-                sanitiseResp := ((SubStr(getResp, 1, 1) = '"' && SubStr(getResp, -1, 1) = '"') ? SubStr(getResp, 2, StrLen(getResp)-2) : getResp)
-                try return json.parse(StrReplace(sanitiseResp, "\"))
-                catch {
-                    return (isBool(sanitiseResp) ? checkBool(sanitiseResp) : sanitiseResp)
-                }
-        }
-    }
+    static __remoteUXP(whichFunc, runAsync := false, params*) => this.__remoteUXPCore(whichFunc, runAsync, params*)
 
     /**
      * attempts to use `UXP` or `ShinsImgClass` to retrieve the currently set UI hex colour

@@ -342,6 +342,7 @@ if !DirExist(uxpInstallLoc)
     throw TargetError("Couldn't find the local UXP PremiereRemote client folder`n" uxpInstallLoc)
 metaFile := ccxLoc "ccx.version"   ;// last version I actually shipped
 if rebuildCCX {
+    cmd.run(,,, "pnpm run host:premiere", uxpInstallLoc)
     mani := JSON.parse(FileRead(uxpInstallLoc "\manifest.json"))
     last := FileExist(metaFile) ? Trim(FileRead(metaFile), " `t`r`n") : "4.0.0"
     base := (VerCompare(mani["version"], last) >= 0) ? mani["version"] : last

@@ -14,6 +14,10 @@
 try isCCx := A_Args[1]
 if !IsSet(isCCx)
     isCCx := getExtensionVersion()
+try isAE_CCx := A_Args[2]
+if !IsSet(isAE_CCx) || isAE_CCx = "unset"
+    isAE_CCx := getExtensionVersion("AERemote")
+
 keepWindow := false
 hide := true
 doHide := (hide = true) ? "Hide" : ""
@@ -21,6 +25,7 @@ try premIcon := ptf.Icons "\prprj.ico"
 
 InstalledDir := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp"
 __replaceCompose()
+cmd.run(,,, "pnpm run host:premiere", InstalledDir "\client", "Hide")
 
 if !Notify.Exist("uxpRebuild")
     uxpProg := Notify.Show("Rebuilding PremiereRemote UXP extension.", "...", premIcon ?? "",,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w300 Range0-100 Smooth tag=uxpRebuild')
@@ -49,16 +54,29 @@ if bundle.failed {
 }
 try uxpProg["prog"].value := 30
 
-if isCCx {
-    pluginDir    := "C:\Program Files\Common Files\Adobe\UXP\Plugins\External\de.sebinside.premiereremote_" Trim(isCCx)
-    dest         := pluginDir "\build"
-    src          := InstalledDir "\client\build"
-    manifestSrc  := InstalledDir "\client\manifest.json"
+if isCCx || isAE_CCx {
+    src         := InstalledDir "\client\build"
+    manifestSrc := InstalledDir "\client\manifest.json"
+    aeManifest  := InstalledDir "\client\manifest.ae.json"   ; generated, lives outside build\ so xcopy won't pick it up
+    baseDir     := "C:\Program Files\Common Files\Adobe\UXP\Plugins\External\"
 
-    c := Format(
-        'copy /y "{1}" "{2}\manifest.json" & xcopy "{3}\*" "{4}\" /s /e /y /i /r /h /k',
-        manifestSrc, pluginDir, src, dest
-    )
+    targets := []
+    if isCCx
+        targets.Push({dir: baseDir "de.sebinside.premiereremote_" Trim(isCCx), manifest: manifestSrc})
+    if isAE_CCx {
+        __makeAEManifest(manifestSrc, aeManifest)
+        targets.Push({dir: baseDir "de.sebinside.aeremote_" Trim(isAE_CCx), manifest: aeManifest})
+    }
+
+    c := ""
+    for t in targets {
+        dest := t.dir "\build"
+        c .= (c ? " & " : "") Format(
+            'copy /y "{1}" "{2}\manifest.json" & xcopy "{3}\*" "{4}\" /s /e /y /i /r /h /k',
+            t.manifest, t.dir, src, dest
+        )
+    }
+
     uxpProg["msg"].text := "Copying ``build\`` and ``manifest.json``..."
     buildCopy := __runStep(c,, true, 1)
     if buildCopy.failed {
@@ -66,8 +84,10 @@ if isCCx {
         ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
     }
     try uxpProg["prog"].value := 40
-    if WinExist(prem.winTitle)
+    if isCCx && WinExist(prem.winTitle)
         try prem.__remoteUXP('common/reloadPanel')
+    if isAE_CCx && WinExist(ae.winTitle)
+        try ae.__remoteUXP('common/reloadPanel')
     try uxpProg["prog"].value := 50
 }
 
@@ -117,4 +137,22 @@ __fail(title, step) {
     __errorNotif()
     errorLog(MethodError(title " failed (exit " step.ExitCode ")", -1), step.response,, true)
     __clearNotif()
+}
+
+/**
+ * Builds the After Effects manifest from the Premiere one.
+ * @param {String} srcPath the Premiere manifest.json
+ * @param {String} destPath where to write the AE manifest
+ */
+__makeAEManifest(srcPath, destPath) {
+    txt := FileRead(srcPath, "UTF-8")
+    mani := JSON.parse(txt)
+    mani["id"] := "de.sebinside.aeremote"
+    mani["name"] := "AERemote"
+    mani["host"]["minVersion"] := "27.0"
+    mani["host"]["app"] := "aftereffects"
+
+    if FileExist(destPath)
+        FileDelete(destPath)
+    FileAppend(JSON.stringify(mani), destPath, "UTF-8-RAW")
 }

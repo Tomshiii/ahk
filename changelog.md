@@ -1,9 +1,17 @@
 # <> Release 2.21.0.1 - Hotfix
 
 ## Functions
-- ✏️ Added `CONST {`
-- ✅ Fixed `prem.isEditTabActive()` failing with windows scale other than `100%`
+- ✏️ Added `CONST {`, `AdobeRemoteUXP {`
 - ✅ Fixed `vscode.__isInstalled()` returning false erroneously
+
+### 📝 `prem {`
+- ✅ Fixed `isEditTabActive()` failing with windows scale other than `100%`
+- 📋 `__remoteUXP()` now runs through `AdobeRemoteUXP.__remoteUXPCore()`
+
+### 📝 `ae {`
+- ✏️ Added `__remoteUXP()` which runs through `AdobeRemoteUXP.__remoteUXPCore()`
+- 📋 Laid groundwork for `UXP` support to transition once publicly available
+    - *Full installation processes have not currently been fleshed out*
 
 ### 📝 `PremiereRemote`
 - ✅ Fixed `custom/setZeroPoint()` throwing when already set

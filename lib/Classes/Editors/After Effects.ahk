@@ -1,10 +1,10 @@
 /************************************************************************
  * @description A library of useful After Effects functions to speed up common tasks
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
- * @aeVer 26.5
+ * @aeVer 27.0
  * @author tomshi
- * @date 2026/11/14
- * @version 1.6.3
+ * @date 2026/11/17
+ * @version 1.7.0
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -23,6 +23,8 @@
 #Include Classes\switchTo.ahk
 #Include Classes\clip.ahk
 #Include Classes\null.ahk
+#Include Classes\Apps\docker.ahk
+#Include Classes\Editors\AdobeRemoteUXP.ahk
 #Include Other\UIA\UIA.ahk
 #Include Other\_socket.ahk
 #Include Other\WinEvent.ahk
@@ -35,7 +37,7 @@
 
 ;Although I have some scripts for AE, they aren't as kept up to date as their Premiere cousins - most of my work is in premiere and the work that I do within AE is usually the same from project to project so there isn't as much room for expansion/experimentation. After Effects is also a lot harder to script for as it is significantly more sluggish and is more difficult to tell when you're within certain parts of the program making it harder for ahk to know when it's supposed to move on outside of just coding in multiple seconds worth of sleeps until AE chooses to react. As a result of all of this, some of these scripts may, at anytime, stop functioning the way I originally coded them to as AE decides to be ever so slightly more sluggish than previously and breaks everything - this has generally caused me to not only shy away from creating scripts for AE, but has also caused me to stop using some of the ones I create as they tend to break far too often which at the end of the day just wastes more of my time than is worth it
 
-class AE {
+class AE extends AdobeRemoteUXP {
 
     static __New() {
         if A_ScriptName = "Multi Download"
@@ -44,6 +46,7 @@ class AE {
         catch {
             this.UserSettings := UserPref(true)
         }
+        this.currentSetVer := SubStr(this.UserSettings.aeVer, 2)
 
         for name in AE.OwnProps() {
             ;// skip anything private (convention: starts with `__`), and __New itself
@@ -74,7 +77,10 @@ class AE {
         }
 
         regInst := this.__isRegInstalledVer()
-        if A_ScriptName = "Core Functionality.ahk" && regInst != false && this.__isNodeInstalled() != false && this.__isRemoteInstalled() != false {
+        node    := this.__isNodeInstalled()
+        cepInst := this.__isRemoteInstalled()
+        uxpInst := this.__isUXPInstalled()
+        if A_ScriptName = "Core Functionality.ahk" && regInst != false && node != false && cepInst != false {
             ;// check for aeremote and NPM before setting timer
             extensionsPath := A_AppData "\Adobe\CEP\extensions"
             remotePath     := extensionsPath "\AERemote"
@@ -84,6 +90,8 @@ class AE {
                 ; SetTimer(this.__checkRemote.Bind(this, this.portUXP, "uxp"), 2000)
             }
         }
+        if A_ScriptName = "Core Functionality.ahk" && regInst != false && node != false && uxpInst != false
+            SetTimer(this.__checkRemote.Bind(this, this.portUXP, "uxp"), 2000)
     }
 
     static __checkedInstall := false
@@ -104,6 +112,28 @@ class AE {
 
     static _scan := ""
     static _scanTitle := ""
+
+    ;// ====== `AdobeRemoteUXP` configuration ======
+    static __app        := "ae"
+    static __appName    := "After Effects"
+    static __remoteName := "AERemote"
+    static __uxpPrefix  := "ae/"
+    static __notConnStr := "After Effects is not connected"
+
+    ;// AERemote UXP variables
+    static portUXP         := 42401
+    static remoteActiveUXP := "loading"
+    static remoteDirUXP    := A_AppData "\Adobe\UXP\Plugins\External\PremiereRemote-uxp\client"
+    static indexFileUXP    := this.remoteDirUXP "\src\generated\registry.ts"
+
+    static __uxpInstalled  := null
+    static __uxpFuncMap    := false
+    static __uxpRegStamp   := ""
+    static __uxpOpen       := false
+
+    ;// ====== `AdobeRemoteUXP` hooks ======
+    static __getWinObj() => WinGet.AEName()
+    static __checkUXPFunc(checkFunc) => this.__checkAERemoteFunc(checkFunc, "uxp")
 
     /**
      * Checks class values to determine if timeline values need to be set. Will also check the `ae` object shared by `Core Functionality.ahk`
@@ -307,6 +337,7 @@ class AE {
         return ""
     }
 
+    ;// CEP + UXP socket probe. (UXP only needs `AdobeRemoteUXP.__checkRemoteUXP()` but this is kept as it also serves CEP)
     static __checkRemote(port := 42500, cepOrUXP := "cep") {
         if !WinExist(this.winTitle)
             return
@@ -319,6 +350,7 @@ class AE {
         }
     }
 
+    ;// overrides the (UXP only) `__probeCB()` in `AdobeRemoteUXP` as AE also needs to handle CEP
     static __probeCB(sock, event, err, cepOrUXP) {
         if (event = "Connect") {
             (cepOrUXP = "cep") ? this.remoteActiveCEP := (err = 0) : this.remoteActiveUXP := (err = 0)
@@ -342,6 +374,7 @@ class AE {
     static __isRegInstalledVer() => determineAdobeVer({baseName: "AfterFX.exe", beta: "AfterFX (Beta).exe"})
 
     static UserSettings := ""
+    static currentSetVer := ""
     static minVer := "22.6"
     static spectrumUI_Version := "25.0"
 
@@ -362,9 +395,6 @@ class AE {
             }
         }
     }
-    static currentSetVer {
-        get => SubStr(this.UserSettings.aeVer, 2)
-    }
     static currentYearVer {
         get =>  SubStr(this.UserSettings.aeVer, 2, 2)
     }
@@ -372,7 +402,24 @@ class AE {
     static __cepInstalled := null
     static __cepFuncMap   := false
     static __cepOpen      := false
-    ; static __uxpOpen      := false
+
+    /**
+     * This function is syntatic sugar to activate an After Effects UXP function through the PremiereRemote server. If the function returns a `json` object, this function will attempt to pass that back as such. The actual logic lives in `AdobeRemoteUXP.__remoteUXPCore()`
+     *
+     * ## Warning
+     * ##### *If you intend on sending a parameter that contains a SPACE you need to use `%20` instead. ie; instead of `Gaussian Blur`, use `Gaussian%20Blur`*. The function will attempt to rectify this for you automatically, but relying on such could result in issues.
+     * ##### Similarly; sending a parameter with `&` may cause issues. It is recommended to send `%26` instead.
+     * @param {String} whichFunc the function you wish to call, including the file name; eg. `custom/save`. The `ae/` prefix is optional and added for you.
+     * @param {Boolean} [runAsync=false] determines whether to tell `cmd.httpGet()` to run synchronously or asynchronously
+     * @param {Varadic/String} params any additional paramaters, as `name=value` strings. do **not** add the `&` between paramaters, this function will add that itself
+     * @returns {String | Boolean | Object | null}
+     * ```
+     * ae.__remoteUXP("custom/save")
+     * ae.__remoteUXP("custom/setPlayheadSeconds",, "seconds=5")
+     * ae.__remoteUXP("custom/applyEffectOnAllSelectedLayers",, "effectName=Gaussian%20Blur")
+     * ```
+     */
+    static __remoteUXP(whichFunc, runAsync := false, params*) => this.__remoteUXPCore(whichFunc, runAsync, params*)
 
     /**
      * This function is syntatic sugar to activate a [AERemote](https://github.com/Tomshiii/PremiereRemote/tree/AE) function
@@ -497,6 +544,13 @@ class AE {
                 if this.__cepInstalled != true
                     return false
                 return (this.__cepInstalled = true && this.__checkAERemoteFunc(checkFunc, cepOrUXP) ? true : false)
+            case "uxp":
+                this.__isUXPInstalled()
+                if this.__uxpInstalled != true
+                    return false
+                if checkFunc != ""
+                    return (this.__checkAERemoteFunc(checkFunc, "uxp") ? true : false)
+                return true
         }
     }
 
@@ -543,6 +597,43 @@ class AE {
                         }
                         return true
                 }
+            case "uxp":
+                this.__isUXPInstalled()
+                if this.__uxpInstalled != true {
+                    errorLog(TargetError("AERemote UXP is not installed.", -2),,, true)
+                    notifyExt.showIfNotExist('aeUXPNotInstalled',, "AERemote UXP is not installed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                    return false
+                }
+                try {
+                    open := cmd.httpGet(Format("http://localhost:{2}/{1}", "ae/custom/isPanelOpen", this.portUXP))
+                    if open != '"uxp visible=true"' && open != true {
+                        errorLog(MethodError("AERemote UXP panel isn't open.", -1))
+                        if alerts = true
+                            notifyExt.showIfNotExist('aeUXPNotOpen',, "AERemote UXP Panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                        return false
+                    }
+                } catch {
+                    errorLog(MethodError("AERemote UXP panel isn't open or communicating with the panel failed.", -1))
+                    if alerts = true
+                        notifyExt.showIfNotExist('aeUXPNotOpen',, "AERemote UXP Panel is not open or communicating with the panel failed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
+                    return false
+                }
+                if !this.__uxpFuncMap {
+                    if !this.__getUXPRegistry() {
+                        errorLog(MethodError("Could not retrieve the AERemote UXP function registry.", -1))
+                        return false
+                    }
+                }
+                switch Type(checkFunc), 0 {
+                    case "string": return !!this.__getUXPFuncInfo(checkFunc)
+                    case "array":
+                        for v in checkFunc {
+                            if !this.__getUXPFuncInfo(v)
+                                return false
+                        }
+                        return true
+                }
+                return false
         }
     }
 
@@ -568,99 +659,23 @@ class AE {
     }
 
     /**
-     * check the parameters passed to a `__remoteCEP` method to ensure the user has passed them correctly
-     * @param {String} [whichFunc] the `whichFunc` parameter passed to either cep ~or uxp~ `__remoteCEP()`
-     * @param {Array} [params] an array of params passed to either cep ~or uxp~ `__remoteCEP()`
-     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions ~or UXP functions. Must be either `cep` or `uxp`~
+     * check the parameters passed to a `__remoteCEP` method to ensure the user has passed them correctly. UXP parameters are handled by `AdobeRemoteUXP.__checkUXPParams()`
+     * @param {String} [whichFunc] the `whichFunc` parameter passed to `__remoteCEP()`
+     * @param {Array} [params] an array of params passed to `__remoteCEP()`
+     * @param {String} [cepOrUXP=cep] determine whether to check CEP functions or UXP functions. Must be either `cep` or `uxp`
      * @returns {Boolean}
      */
     static __checkRemoteParams(whichFunc, params, cepOrUXP := "cep") {
         switch cepOrUXP, 0 {
+            case "uxp": return this.__checkUXPParams(whichFunc, params)
             case "cep":
                 if !this.__setCEPfuncs()
                     return false
                 if !this.__cepFuncMap.Has(whichFunc)
                     return false
-                funcPath := whichFunc
-                defs := this.__cepFuncMap[whichFunc]["params"]
-            default:
-                return false
+                return this.__validateRemoteParams(whichFunc, this.__cepFuncMap[whichFunc]["params"], params, "`ncepOrUXP: cep")
         }
-
-        passed := []
-        for v in params {
-            if !InStr(v, '=') {
-                MsgBox("Parameter not specified`nFunction: " funcPath,, "262160")
-                return false
-            }
-            splt := StrSplit(v, '=',, 2)
-            name := splt[1], value := splt[2]
-
-            def := false
-            for p in defs {
-                if p["name"] == name {
-                    def := p
-                    break
-                }
-            }
-            if !def {
-                MsgBox("Parameter not found for given function`n`nParam: " name "`nFunction: " funcPath "`ncepOrUXP: " cepOrUXP)
-                return false
-            }
-
-            switch def["type"], 0 {
-                case "boolean":
-                    if value != "true" && value != "false" {
-                        MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be boolean (true/false)")
-                        return false
-                    }
-                case "number":
-                    if !IsNumber(value) {
-                        MsgBox("Incorrect parameter type`n`n" name "=" value "`nneeds to be a number")
-                        return false
-                    }
-            }
-            passed.Push(name)
-        }
-
-        for p in defs {
-            if !p["required"]
-                continue
-            found := false
-            for n in passed {
-                if n == p["name"] {
-                    found := true
-                    break
-                }
-            }
-            if !found {
-                MsgBox("Required parameter missing`n`nParam: " p["name"] "`nFunction: " funcPath "`ncepOrUXP: " cepOrUXP)
-                return false
-            }
-        }
-        return true
-    }
-
-    /**
-     * a helper function for `AERemote` `__remote()` functions to sanitise their parameter string
-     * @param {Array} [params] an array of parameters to sanitise
-     * @returns {String} the completed parameter string
-     */
-    static __sanitiseParams(params) {
-        paramsString := ""
-        if params.Length >= 1 {
-            for k, v in params {
-                if k = 1 {
-                    paramsString := StrReplace(v, "&", "%26")
-                    if params.Length == 1
-                        break
-                    continue
-                }
-                replaceStr := StrReplace(v, "&", "%26")
-                paramsString := paramsString "&" replaceStr
-            }
-        }
-        return StrReplace(paramsString, A_Space, "%20")
+        return false
     }
 
     /**

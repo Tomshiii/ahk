@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/11/16
- * @version 1.2.0
+ * @date 2026/11/17
+ * @version 1.2.1
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -314,9 +314,9 @@ class installGUI extends Gui {
                 return
             }
             loop {
-                if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe Adobe Premiere Pro (Beta).exe")
+                if !WinExist("ahk_exe Adobe Premiere Pro.exe") && !WinExist("ahk_exe Adobe Premiere Pro (Beta).exe") && !WinExist("ahk_exe AfterFX.exe") && !WinExist("ahk_exe AfterFX (Beta).exe")
                     break
-                userResponse := MsgBox("Installation of UXP plugin cannot continue while Premiere is open.`nPlease close Premiere to continue.", "Premiere is Open", "262161")
+                userResponse := MsgBox("Installation of UXP plugin cannot continue while Premiere/After Effects is open.`nPlease close Premiere to continue.", "Premiere is Open", "262161")
                 if userResponse = "Cancel"
                     return
                 continue

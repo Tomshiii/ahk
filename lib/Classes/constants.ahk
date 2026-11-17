@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of constant variables. Mostly ExitCodes
  * @author tomshi
- * @date 2026/11/16
- * @version 1.0.0
+ * @date 2026/11/17
+ * @version 1.0.1
  ***********************************************************************/
 
 class CONST {
@@ -19,6 +19,6 @@ class CONST {
         PREMIEREREMOTE_UNINSTALL_FAIL:54, PREMIEREREMOTE_DELETE_STALE_DIRS_FAIL:55, PREMIEREREMOTE_CCX_NOT_FOUND:56,
         PREMIEREREMOTE_VER_LOWER:57, PREMIEREREMOTE_INSTALL_CANCEL:58, PREMIEREREMOTE_INSTALL_PASS:59, PREMIEREREMOTE_NOT_INSTALLED:60, PREMIEREREMOTE_RESET_BUILD_FAIL:61,
         PREMIEREREMOTE_STAGING_NOT_FOUND:62, ADOBE_PROGRAM_OPEN: 63,
-        PREMIEREREMOTE_ROBOCOPY_FAIL:64, PREMIEREREMOTE_UPDATE_PASS:65,
+        PREMIEREREMOTE_ROBOCOPY_FAIL:64, PREMIEREREMOTE_UPDATE_PASS:65, PREMIEREREMOTE_MANIFEST_NOT_EXIST:66
     }
 }
