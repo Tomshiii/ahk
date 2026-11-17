@@ -7,6 +7,7 @@
 ### 📝 `prem {`
 - ✅ Fixed `isEditTabActive()` failing with windows scale other than `100%`
 - 📋 `__remoteUXP()` now runs through `AdobeRemoteUXP.__remoteUXPCore()`
+    - Fixed `UXP` `JSON` strings unable to contain `\`
 
 ### 📝 `ae {`
 - ✏️ Added `__remoteUXP()` which runs through `AdobeRemoteUXP.__remoteUXPCore()`
@@ -14,6 +15,7 @@
     - *Full installation processes have not currently been fleshed out*
 
 ### 📝 `PremiereRemote`
+- ✏️ Added `custom/attachMissingProxies()`
 - ✅ Fixed `custom/setZeroPoint()` throwing when already set
 
 ## Other Changes

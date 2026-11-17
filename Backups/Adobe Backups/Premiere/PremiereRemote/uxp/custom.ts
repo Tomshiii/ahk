@@ -2681,3 +2681,131 @@ export async function openSelectedProjItemInSourceMonitor(): Promise<boolean> {
     }
     return false;
 }
+
+/**
+ * Finds video project items without proxies and attaches matching files from
+ * a sibling `_proxy` folder. Proxy filenames use the source filename stem
+ * followed by `_proxy.mov`.
+ *
+ * Scanning and filesystem checks finish before any proxies are attached.
+ * `attachProxy` is not undoable (Premiere Pro UXP 25.6+).
+ */
+export async function attachMissingProxies(): Promise<string> {
+    if (!(await helpers.isPremVerAtLeast("25.6.0"))) {
+        const errorResult = {
+            checked: 0,
+            matched: 0,
+            attached: 0,
+            failed: [],
+            error: "Requires Premiere Pro 25.6 or newer.",
+        };
+        console.warn("attachMissingProxies requires Premiere Pro 25.6 or newer.");
+        return JSON.stringify(errorResult);
+    }
+
+    const project = await ppro.Project.getActiveProject();
+    if (!project) {
+        return JSON.stringify({
+            checked: 0,
+            matched: 0,
+            attached: 0,
+            failed: [],
+            error: "No active project.",
+        });
+    }
+
+    // Gather every project item, including items nested inside bins.
+    const rootItem = await project.getRootItem();
+    const projectItems: ProjectItem[] = await rootItem.getItems();
+    for (let i = 0; i < projectItems.length; i++) {
+        const folder = ppro.FolderItem.cast(projectItems[i]);
+        if (folder) projectItems.push(...await folder.getItems());
+    }
+
+    const clipItems: any[] = [];
+    for (const item of projectItems) {
+        const clipItem = ppro.ClipProjectItem.cast(item);
+        if (clipItem) clipItems.push(clipItem);
+    }
+
+    // Phase 1: determine all eligible items and confirm their proxy files exist.
+    const candidates = await Promise.all(clipItems.map(async (clipItem) => {
+        try {
+            const [contentType, alreadyHasProxy, canProxy] = await Promise.all([
+                clipItem.getContentType(),
+                clipItem.hasProxy(),
+                clipItem.canProxy(),
+            ]);
+
+            if (
+                contentType !== ppro.Constants.ContentType.MEDIA ||
+                alreadyHasProxy ||
+                !canProxy
+            ) return null;
+
+            const [videoChain, rawSourcePath] = await Promise.all([
+                clipItem.getComponentChain(ppro.Constants.MediaType.VIDEO),
+                clipItem.getMediaFilePath(),
+            ]);
+            if (!videoChain || !rawSourcePath) return null;
+
+            // Normalize file:// paths while preserving the native slash style.
+            const sourcePath = String(rawSourcePath)
+                .replace(/^file:\/\/\/?/i, "")
+                .replace(/^\/(?=[A-Za-z]:)/, "");
+            const separator = sourcePath.includes("\\") ? "\\" : "/";
+            const lastSeparator = Math.max(
+                sourcePath.lastIndexOf("\\"),
+                sourcePath.lastIndexOf("/")
+            );
+            if (lastSeparator < 0) return null;
+
+            const fileName = sourcePath.slice(lastSeparator + 1);
+            const extensionIndex = fileName.lastIndexOf(".");
+            if (extensionIndex <= 0) return null;
+
+            const sourceDirectory = sourcePath.slice(0, lastSeparator);
+            const proxyName = `${fileName.slice(0, extensionIndex)}_proxy.mov`;
+            const proxyPath = `${sourceDirectory}${separator}_proxy${separator}${proxyName}`;
+
+            if (!(await helpers.fileExists(proxyPath))) return null;
+            return { clipItem, sourcePath, proxyPath };
+        } catch (error) {
+            console.warn(`[attachMissingProxies] Could not inspect "${clipItem.name}":`, error);
+            return null;
+        }
+    }));
+
+    const matches = candidates.filter((candidate) => candidate !== null) as {
+        clipItem: any;
+        sourcePath: string;
+        proxyPath: string;
+    }[];
+
+    // Phase 2: attach all matches. One failure will not stop the remaining items.
+    const results = await Promise.all(matches.map(async ({ clipItem, sourcePath, proxyPath }) => {
+        try {
+            return {
+                sourcePath,
+                proxyPath,
+                success: await clipItem.attachProxy(proxyPath, false), // false = attach as proxy
+            };
+        } catch (error) {
+            console.warn(`[attachMissingProxies] Failed to attach "${proxyPath}" to "${sourcePath}":`, error);
+            return { sourcePath, proxyPath, success: false };
+        }
+    }));
+
+    const failed = results
+        .filter((result) => !result.success)
+        .map(({ sourcePath, proxyPath }) => ({ sourcePath, proxyPath }));
+    const summary = {
+        checked: clipItems.length,
+        matched: matches.length,
+        attached: results.length - failed.length,
+        failed,
+    };
+
+    console.log("[attachMissingProxies] Complete:", summary);
+    return JSON.stringify(summary);
+}

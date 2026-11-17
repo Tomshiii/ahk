@@ -8,7 +8,7 @@
  * Derived classes are expected to declare their own `portUXP`, `remoteDirUXP`, `indexFileUXP`, `winTitle` & `remoteActiveUXP`
  * @author tomshi
  * @date 2026/11/17
- * @version 1.0.0
+ * @version 1.0.1
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -19,6 +19,8 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\notifyExt.ahk
 #Include Classes\Apps\docker.ahk
+#Include Functions\isBool.ahk
+#Include Functions\checkBool.ahk
 #Include Other\_socket.ahk
 #Include Other\JSON.ahk
 ; }
@@ -439,9 +441,19 @@ class AdobeRemoteUXP {
                 MsgBox(this.__app ".__remoteUXP() failed.`n`n" e)
                 return null
             case !IsSet(parse) && getResp != "":
-                sanitiseResp := ((SubStr(getResp, 1, 1) = '"' && SubStr(getResp, -1, 1) = '"') ? SubStr(getResp, 2, StrLen(getResp)-2) : getResp)
-                try return json.parse(StrReplace(sanitiseResp, "\"))
+                try {
+                    envelope := JSON.parse('{"response":' getResp '}')
+                    decodedResp := envelope["response"]
+
+                    try return JSON.parse(decodedResp)
+                    catch
+                        return (isBool(decodedResp) ? checkBool(decodedResp) : decodedResp)
+                }
                 catch {
+                    sanitiseResp := ((SubStr(getResp, 1, 1) = '"' && SubStr(getResp, -1, 1) = '"')
+                        ? SubStr(getResp, 2, StrLen(getResp)-2)
+                        : getResp)
+
                     return (isBool(sanitiseResp) ? checkBool(sanitiseResp) : sanitiseResp)
                 }
         }
