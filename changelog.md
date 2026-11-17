@@ -5,6 +5,9 @@
 - ✅ Fixed `prem.isEditTabActive()` failing with windows scale other than `100%`
 - ✅ Fixed `vscode.__isInstalled()` returning false erroneously
 
+### 📝 `PremiereRemote`
+- ✅ Fixed `custom/setZeroPoint()` throwing when already set
+
 ## Other Changes
 - ✅ Fixed `resetBuild.ahk` always adding a `de.sebinside.premiereremote_3.0.0` folder
 - ✅ Fixed issues during installation;

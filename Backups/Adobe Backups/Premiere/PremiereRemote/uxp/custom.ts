@@ -255,12 +255,13 @@ export async function setZeroPoint(frames: number): Promise<void> {
     const frameRate = settings.getVideoFrameRate(); // synchronous method call
     const offset = ppro.TickTime.createWithFrameAndFrameRate(frames, frameRate);
 
+    const current = await sequence.getZeroPoint();
+    if (current.equals(offset)) return;
+
     await project.lockedAccess(() => {
         return project.executeTransaction((compoundAction) => {
-            compoundAction.addAction(
-                sequence.createSetZeroPointAction(offset)
-            );
-        });
+            compoundAction.addAction(sequence.createSetZeroPointAction(offset));
+        }, "Set Zero Point");
     });
 }
 
