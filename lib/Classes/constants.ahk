@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A collection of constant variables. Mostly ExitCodes
  * @author tomshi
- * @date 2026/11/17
- * @version 1.0.1
+ * @date 2026/11/18
+ * @version 1.0.2
  ***********************************************************************/
 
 class CONST {
@@ -13,7 +13,7 @@ class CONST {
 
         REPO_INSTALL_FAIL: 21,
 
-        NODEJS_INSTALL_FAIL:31,
+        NODEJS_INSTALL_FAIL:31, PNPM_INSTALL_FAILED:32,
 
         ADOBE_NOT_INSTALLED: 51, PREMIEREREMOTE_INSTALL_FAIL: 52, PREMIEREREMOTE_REPLACERESET_FAIL: 53,
         PREMIEREREMOTE_UNINSTALL_FAIL:54, PREMIEREREMOTE_DELETE_STALE_DIRS_FAIL:55, PREMIEREREMOTE_CCX_NOT_FOUND:56,

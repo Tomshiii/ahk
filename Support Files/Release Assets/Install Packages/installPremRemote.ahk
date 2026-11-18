@@ -49,7 +49,7 @@ if !DirExist(A_AppData "\Adobe") {
 ;// folders into `<installDir>\premiereRemote` and this script installs them from there
 extensionsPath := A_AppData "\Adobe\CEP\extensions"
 uxpPluginsPath := A_AppData "\Adobe\UXP\Plugins\External"
-uxpCCXDir      := "C:\Program Files\Common Files\Adobe\UXP\Plugins\External"
+uxpCCXDir      := EnvGet("CommonProgramFiles") "\Adobe\UXP\Plugins\External"
 stagingDir     := installDir "\premiereRemote"
 cepStaging     := stagingDir "\cep"
 uxpStaging     := stagingDir "\uxp\PremiereRemote-uxp"
@@ -117,20 +117,11 @@ try {
             throw OSError("robocopy failed (" code ") copying PremiereRemote-uxp")
         ExitApp(CONST.ErrorCode.PREMIEREREMOTE_ROBOCOPY_FAIL)
     }
-
-    ;// has its own version check, so it's not gated
-    if FileExist(updateUXP) {
-        updUXP := RunWait(updateUXP)
-        if updUXP != CONST.ErrorCode.GENERIC_PASS && updUXP != CONST.ErrorCode.PREMIEREREMOTE_INSTALL_PASS && updUXP != CONST.ErrorCode.PREMIEREREMOTE_VER_LOWER {
-            if !ec
-                throw MethodError("Failed to install Premiere UXP plugin.", -1)
-            ExitApp(CONST.ErrorCode.PREMIEREREMOTE_INSTALL_FAIL)
-        }
-    }
-    if !DirExist(uxpCCXDir) {
+    instPnpm := cmd.run(,,, "pnpm install", uxpDst "\client", "Hide")
+    if instPnpm.exitCode != 0 {
         if !ec
-            throw MethodError("Failed to install Premiere UXP plugin.", -1)
-       ExitApp(CONST.ErrorCode.PREMIEREREMOTE_INSTALL_FAIL)
+            throw MethodError("Failed to install node modules", -1)
+        ExitApp(CONST.ErrorCode.PNPM_INSTALL_FAILED)
     }
 
     ;// rebuild if files were copied (bit 1), stale files were removed (bit 2), or this is a fresh install
@@ -140,6 +131,22 @@ try {
         cmd.run(,,, 'npx pnpm run bundle', uxpDst "\client", "Hide")
         cmd.run(,,, 'docker compose down && docker compose up --build -d', uxpDst, "Hide")
     }
+
+    ;// install ccx packages
+    if FileExist(updateUXP) {
+        updUXP := RunWait(updateUXP)
+        if updUXP != CONST.ErrorCode.GENERIC_PASS && updUXP != CONST.ErrorCode.PREMIEREREMOTE_INSTALL_PASS && updUXP != CONST.ErrorCode.PREMIEREREMOTE_VER_LOWER {
+            if !ec
+                throw MethodError("Failed to install Premiere UXP plugin.", -1)
+            ExitApp(updUXP)
+        }
+    }
+    if !DirExist(uxpCCXDir) {
+        if !ec
+            throw MethodError("Failed to install Premiere UXP plugin.", -1)
+       ExitApp(CONST.ErrorCode.PREMIEREREMOTE_INSTALL_FAIL)
+    }
+
     ;// confirm Premiere will actually load the version we just staged
     if RegExMatch(FileRead(uxpDst "\client\manifest.json"), '"version"\s*:\s*"([^"]+)"', &m) {
         found := false

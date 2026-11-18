@@ -2,7 +2,7 @@
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
  * @date 2026/11/18
- * @version 1.2.2
+ * @version 1.2.3
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -480,6 +480,9 @@ class installGUI extends Gui {
 
                 ;// CONST.ErrorCode.NODEJS_INSTALL_FAIL
                 case 31: this.__addLogEntry("NodeJS is NOT installed. Installing PremiereRemote was aborted.")
+
+                ;// CONST.ErrorCode.PNPM_INSTALL_FAILED
+                case 32: this.__addLogEntry("pnpm failed to install node_modules. Installing PremiereRemote was aborted.")
 
                 ;// CONST.ErrorCode.ADOBE_NOT_INSTALLED
                 case 52: this.__addLogEntry("Installing PremiereRemote FAILED. Adobe programs not found")
