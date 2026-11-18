@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 27.0
  * @author tomshi
- * @date 2026/11/17
- * @version 2.7.1
+ * @date 2026/11/18
+ * @version 2.7.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -270,6 +270,7 @@ class Prem extends AdobeRemoteUXP {
     static timelineXControl := 0
     static timelineYControl := 0
     static focusColour      := 0x4096F3
+    static editTabCol       := 0xD0D0D0
 
     ;// rbuttonPrem
     static RClickIsActive      := false
@@ -874,6 +875,35 @@ class Prem extends AdobeRemoteUXP {
     }
 
     /**
+     * Core check: given a UIA `Edit` tab element, determine whether it is the active workspace tab.
+     * Has no dependency on the `determineUIA` COM object, so it is safe to call while that object is still being built.
+     * @param {UIA.IUIAutomationElement} editEl the `Edit` tab element (type 50020)
+     * @returns {Boolean | null} `null` if the check couldn't be performed
+     */
+    static __editElActive(editEl) {
+        switch {
+            case (VerCompare(this.currentSetVer, "v27.0") >= 0):
+                try return editEl.WalkTree("+1").Type = 50006
+                return null
+
+            default:
+                name := WinGet.PremName()
+                if !name || !isObjHasProp(name, "winTitle", false) {
+                    errorLog(UnsetError("Could not determine Premiere window title", -1))
+                    return null
+                }
+                if !this.setShinsIMG(name.wintitle)
+                    return null
+                try {
+                    loc := editEl.location
+                    coord.screenToClient(loc.x + (loc.w//2), loc.y + loc.h - 1, this._scan.hwnd,, &px, &py)
+                    return this._scan.PixelPosition(this.editTabCol, px, py, 3)
+                }
+                return null
+        }
+    }
+
+    /**
      * Uses `UIA` to check the active Premiere window to see whether the `Edit` tab is currently active.
      * @param {ComObj} [uiaObj=unset] paramater to pass in an already set prem UIA object. If not set `initialise()` will be called
      * @returns {Boolean | null} returns `null` if; Premiere does not exist, or attempting to find the `homeTab`/`Edit` element fails. Else returns `true`/`false`
@@ -885,11 +915,11 @@ class Prem extends AdobeRemoteUXP {
         }
         if !tab := premUIA_Values.getLivePanel("homeTab", uiaObj?)
             return null
-        try {
-            e := tab.FindElement({Type: 50020, Name: "Edit"})
-            return e.WalkTree("+1").Type = 50006
+        try editEl := tab.FindElement({Type: 50020, Name: "Edit"})
+        catch {
+            return null
         }
-        return null
+        return this.__editElActive(editEl)
     }
 
     /**
@@ -4203,17 +4233,17 @@ $!WheelDown::
                 switch this.theme, false {
                     ;// these colours may change in future versions
                     case "darkest":
-                        this.layerDivider := 0x303030
+                        this.layerDivider := 0x303030, this.editTabCol := 0xD0D0D0
                         this.transitionHandleInsideSquare := 0xB0B0B0
                         this.transitionHandleHalfSquare := 0x6A6A6A
                         this.playhead := 0x4096F3, this.focusColour := 0x4096F3
                     case "dark":
-                        this.layerDivider := 0x3F3F3F
+                        this.layerDivider := 0x3F3F3F, this.editTabCol := 0xD1D1D1
                         this.transitionHandleInsideSquare := 0xB2B2B2
                         this.transitionHandleHalfSquare := 0x707070
                         this.playhead := 0x54A3F6, this.focusColour := 0x54A3F6
                     case "light":
-                        this.layerDivider := 0xE6E6E6
+                        this.layerDivider := 0xE6E6E6, this.editTabCol := 0x464646
                         this.transitionHandleInsideSquare := 0x6D6D6D
                         this.transitionHandleHalfSquare := 0x000000
                         this.playhead := 0x147AF3, this.focusColour := 0x147AF3

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/11/14
- * @version 3.2.3
+ * @date 2026/11/18
+ * @version 3.2.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -319,13 +319,14 @@ class premUIA_Values {
 
     /** sets a class param with a map containing all open `pane` windows with their coords */
     static __setAllPanes() {
-        ;// bail if the Edit workspace isn't the active tab
         try {
             homeTab := this.AdobeEl.FindCachedElement({Type: 50033, Name: "PremiereUnifiedHeaderTab"})
             edit    := homeTab.FindElement({Type: 50020, Name: "Edit"})
-            active  := (edit.WalkTree("+1").Type = 50006)
+        } catch {
+            throw UnsetError("throw code:719")
         }
-        if !IsSet(active) || !active
+        active := prem.__editElActive(edit)
+        if active = null || !active
             throw UnsetError("throw code:719")
 
         el := this.AdobeEl.FindCachedElements({type: 50033}, 2)

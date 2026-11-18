@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/11/17
- * @version 1.2.1
+ * @date 2026/11/18
+ * @version 1.2.2
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -269,9 +269,9 @@ class installGUI extends Gui {
             this.__setProgress(90)
             this.__adjustVersion()
 
-            DirDelete(A_Temp "\tomshi", true)
+            try DirDelete(A_Temp "\tomshi", true)
             if DirExist(A_Appdata "\tomshi\lib_old")
-                DirDelete(A_Appdata "\tomshi\lib_old", true)
+                try DirDelete(A_Appdata "\tomshi\lib_old", true)
 
             ;//! finished
             this.__setProgress(100)
@@ -301,7 +301,7 @@ class installGUI extends Gui {
             }
             if DirExist(A_Appdata "\tomshi\lib_old") {
                 if DirExist(A_Appdata "\tomshi\lib")
-                    DirDelete(A_Appdata "\tomshi\lib", true)
+                    try DirDelete(A_Appdata "\tomshi\lib", true)
                 DirMove(A_Appdata "\tomshi\lib_old", A_Appdata "\tomshi\lib", 2)
             }
             try FileDelete(A_AppData "\tomshi\installing")
