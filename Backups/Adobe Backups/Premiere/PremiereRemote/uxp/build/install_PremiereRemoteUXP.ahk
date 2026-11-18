@@ -38,7 +38,7 @@ loop {
 }
 uxpDir := commonFiles "\Adobe\UXP\Plugins\External"
 upi    := ".\UnifiedPluginInstallerAgent.exe"
-c := Format('mkdir "{1}" 2>nul & {2} /install "{3}" || exit /b 101 & {2} /install "{4}" || exit /b 101'
+c := Format('mkdir "{1}" 2>nul & {2} /install "{3}" || exit /b 101 & timeout /t 2 /nobreak >nul & {2} /install "{4}" || exit /b 101'
           , uxpDir, upi, ccxPath, aeCCXPath)
 
 installEx := cmd.run(true,,, c, workDir, "Hide")
