@@ -5,3 +5,4 @@
 
 ## Other Changes
 - ✅ Fixed `installPremRemote.ahk` not running `pnpm install` causing errors during installation
+- ✅ Fixed `update_PremiereRemoteUXP.ahk` failing to run `install_PremiereRemoteUXP.ahk` causing errors during installation

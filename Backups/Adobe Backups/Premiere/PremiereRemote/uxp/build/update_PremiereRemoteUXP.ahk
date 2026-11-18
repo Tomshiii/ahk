@@ -20,7 +20,7 @@ if !FileExist(premCCX) || !FileExist(aeCCX)
 if !docker.isInstalled()
     ExitApp(CONST.ErrorCode.DOCKER_NOT_INSTALLED)
 
-installScript := Format('"{1}\install_PremiereRemoteUXP.ahk 1"', buildDir)
+installScript := Format('"{1}\install_PremiereRemoteUXP.ahk" 1', buildDir)
 premVer := getExtensionVersion()
 aeVer   := getExtensionVersion("AERemote")
 
