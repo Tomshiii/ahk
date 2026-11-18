@@ -1,8 +1,8 @@
 /************************************************************************
  * @description
  * @author tomshi
- * @date 2026/11/12
- * @version 1.1.24
+ * @date 2026/11/18
+ * @version 1.1.25
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -19,6 +19,8 @@
 ; }
 
 class CLSID_Objs {
+    static coreUnreachable := false
+
     ;// this shouldn't be `static __New()` -- otherwise apps like `multi-dl.ahk` will throw simply for having it included through other libs
     static checkCoreFunc() {
         if A_ScriptName = "Core Functionality.ahk"
@@ -84,6 +86,8 @@ class CLSID_Objs {
      * @param {Integer} [waitSec=2]
     */
     static waitCoreFuncs(waitSec := 2) {
+        if A_IsAdmin && this.coreUnreachable
+            return false
         deadline := A_TickCount + (waitSec * 1000)
         hEvt := 0
         while !(hEvt := DllCall("OpenEventW", "UInt", 0x00100000, "Int", false, "Str", "Global\CoreFunc_Ready", "Ptr")) {
@@ -104,9 +108,13 @@ class CLSID_Objs {
 
         ;// event is set, but tolerate a brief ROT lag
         while A_TickCount < deadline {
-            loading := this.load("Loading", true, 100)
+            try loading := this.load("Loading", true, 100)
+            catch
+                loading := false
             if loading
                 return true
+            if this.coreUnreachable
+                return false
             Sleep(16)
         }
         return false
@@ -135,6 +143,11 @@ class CLSID_Objs {
                         ;// MK_E_UNAVAILABLE: object isn't in the ROT yet (core script still loading)
                         if (e.Number & 0xFFFFFFFF) = 0x800401E3
                             return false
+                        throw e
+                    } catch as e {
+                        ;// plain Error: this is what elevated scripts get when they can't see Core's ROT entries
+                        if A_IsAdmin && InStr(e.Message, "0x800401E3")
+                            CLSID_Objs.coreUnreachable := true
                         throw e
                     } finally {
                         mtx.Release()

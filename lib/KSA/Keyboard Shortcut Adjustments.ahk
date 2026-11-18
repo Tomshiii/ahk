@@ -2,7 +2,7 @@
  * @description A class to generate variables based off the user's keyboard shortcuts
  * @author tomshi
  * @date 2026/11/12
- * @version 2.2.7
+ * @version 2.2.8
 ***********************************************************************/
 
 ;{ \\ #Includes
@@ -367,10 +367,14 @@ class KeyShortAdjust {
 if A_ScriptName != "Core Functionality.ahk" && winExt.ExistRegex("Core Functionality.ahk ahk_class AutoHotkey",,,, true) {
     try {
         if !CLSID_Objs.waitCoreFuncs(15)
-            throw
+            throw Error("Core Functionality.ahk didn't become ready in time.")
         KSA := CLSID_Objs.clone("KSA")
     } catch as e {
-        errorLog(e)
-        throw e
+        if A_IsAdmin
+            KSA := KeyShortAdjust()   ; elevated can't reach Core's ROT entries, so build a local copy
+        else {
+            errorLog(e)
+            throw e
+        }
     }
 }

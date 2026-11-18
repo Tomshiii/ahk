@@ -9,7 +9,7 @@
  * `{version: String, dir: String}` ;// `returnDir` = `true`
  * ```
  */
-getExtensionVersion(extName := "PremiereRemote", returnDir := false) {
+/* getExtensionVersion(extName := "PremiereRemote", returnDir := false) {
     roots := [
         EnvGet("CommonProgramFiles") "\Adobe\UXP\Plugins\External",  ; per-machine (UPI)
     ]
@@ -35,17 +35,23 @@ getExtensionVersion(extName := "PremiereRemote", returnDir := false) {
         }
     }
     return ""
-}
+} */
 
 /**
-Original version, required elevation or would stall for minutes
+ * Asks UPI which version of an extension is installed.
+ * @param extName name of the extension, e.g. "PremiereRemote" or "AERemote"
+ * @param prog    host app passed to `/list`; derived from `extName` when omitted
+ * @returns {String} first listed version, or `""` if not installed
+ */
+getExtensionVersion(extName := "PremiereRemote", prog := "", workDir := EnvGet("CommonProgramFiles") "\Adobe\Adobe Desktop Common\RemoteComponents\UPI\UnifiedPluginInstallerAgent") {
+    static progFor := Map("PremiereRemote", "Premiere Pro", "AERemote", "After Effects")
+    RegExEscape(str) => RegExReplace(str, "[\\.*?+\[\]{}|()^$]", "\$0")
 
-getExtensionVersion(workDir := A_ProgramFiles "\Common Files\Adobe\Adobe Desktop Common\RemoteComponents\UPI\UnifiedPluginInstallerAgent", extName := "PremiereRemote") {
-	RegExEscape(str) => RegExReplace(str, "[\\.*?+\[\]{}|()^$]", "\$0")
-    output := cmd.result('.\UnifiedPluginInstallerAgent.exe /list "Premiere Pro"',,, workDir)
+    if prog = ""
+        prog := progFor.Get(extName, "Premiere Pro")
 
-    pattern := "m)^\s*\w+\s+" . RegExEscape(extName) . "\s+(\S+)\s*$"
-    if RegExMatch(output, pattern, &m)
+    output := cmd.result('.\UnifiedPluginInstallerAgent.exe /list "' prog '"',,, workDir)
+    if RegExMatch(output, "m)^\s*\w+\s+" RegExEscape(extName) "\s+(\S+)\s*$", &m)
         return m[1]
     return ""
 }

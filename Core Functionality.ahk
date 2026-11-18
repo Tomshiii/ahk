@@ -1,13 +1,12 @@
 /************************************************************************
  * @description provides shared object access across multiple AutoHotkey scripts using Windows COM registration
  * @author tomshi
- * @date 2026/11/12
- * @version 1.0.26
+ * @date 2026/11/18
+ * @version 1.0.27
  ***********************************************************************/
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
-; #Warn VarUnset, StdOut
 coreReadyEvt := DllCall("CreateEventW", "Ptr", 0, "Int", true, "Int", false, "Str", "Global\CoreFunc_Ready", "Ptr")
 
 try installDir := FileRead(A_AppData "\tomshi\installDir")

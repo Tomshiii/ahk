@@ -4,6 +4,8 @@
 #Include Functions\getCCXVersion.ahk
 ; }
 
+;// using this is dangerous, it can leave hidden versions of plugins installed.
+
 full_command_line := DllCall("GetCommandLine", "str")
 if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
 {
