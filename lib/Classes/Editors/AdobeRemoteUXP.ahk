@@ -8,7 +8,7 @@
  * Derived classes are expected to declare their own `portUXP`, `remoteDirUXP`, `indexFileUXP`, `winTitle` & `remoteActiveUXP`
  * @author tomshi
  * @date 2026/11/17
- * @version 1.0.1
+ * @version 1.0.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -18,6 +18,7 @@
 #Include Classes\cmd.ahk
 #Include Classes\CLSID_Objs.ahk
 #Include Classes\notifyExt.ahk
+#Include Classes\winExt.ahk
 #Include Classes\Apps\docker.ahk
 #Include Functions\isBool.ahk
 #Include Functions\checkBool.ahk

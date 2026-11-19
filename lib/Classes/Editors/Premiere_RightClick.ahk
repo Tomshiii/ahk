@@ -3,7 +3,7 @@
  * @premVer 26.5.2
  * @author tomshi, taranVH
  * @date 2026/11/19
- * @version 2.5.10
+ * @version 2.5.11
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -466,6 +466,11 @@ class rbuttonPrem {
 			sleep 16
 		}
 
+		if prem.__isSaving() {
+			errorLog(TargetError("Premiere is currently saving. Aborting", -1))
+			this.__exit(this.checkedHotkey)
+		}
+
 		if allChecks = true {
 			;// checks the colour at the mouse cursor and then determines whether the track is blank
 			this.__setColours(origMouse)
@@ -515,9 +520,9 @@ class rbuttonPrem {
 				if !this.origSeq || this.origSeq == null {
 					useRemote := false
 					this.origSeq := false
-					/* errorLog(MethodError("PremiereRemote server is currently not running correctly, or the incorrect year version is set."), "Try setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``")
-					notifyExt.showIfNotExist("PremRemoteServer",, 'PremiereRemote server is currently not running correctly,`nor the incorrect year version is set.`nTry setting the correct version within ``settingsGUI()`` or restarting the server using ``resetNPM.ahk``', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=500')
-					this.__exit(this.checkedHotkey) */
+					if prem.__isSaving() {
+						this.__exit(this.checkedHotkey)
+					}
 					notifyExt.showIfNotExist("RClickpremRemoteFailed",, 'PremiereRemote failed to retrieve the currently active sequence.`nSequence will not be checked for any changes', 'C:\Windows\System32\imageres.dll|icon94',,, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250 MALI=Center maxw=400')
 				}
 			}

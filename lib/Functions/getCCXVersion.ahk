@@ -1,3 +1,8 @@
+; { \\ #Includes
+#Include '%A_Appdata%\tomshi\lib'
+#Include Classes\cmd.ahk
+; }
+
 /**
  * Attempts to retrieve the currently installed `ccx` extension
  * @param [extName="PremiereRemote"] name of the extension you wish to search for
