@@ -2,7 +2,7 @@
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
  * @date 2026/11/19
- * @version 2.3.8
+ * @version 2.3.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -629,8 +629,12 @@ class adobeAutoSave extends count {
 
     /** saves premiere */
     __savePrem() {
+        if !prem.__checkPremRemoteFunc(["shared/storeSequence/armSequenceGuard", "shared/storeSequence/disarmSequenceGuard"])
+            return
         this.__disarmSeqGuard()
         try this.premOrigSeq := prem.__remoteUXP("shared/storeSequence/armSequenceGuard",, "windowMs=20000")
+        if this.premOrigSeq = null
+            this.premOrigSeq := false
         ;// backing up project files
         this.__backupFiles()
 
@@ -674,9 +678,6 @@ class adobeAutoSave extends count {
             notifyExt.showIfNotExist("autosavepremBusier",, 'Premiere is potentially busy and the save attempt was aborted', 'iconi',,, 'dur=2 show=Fade@250 hide=Fade@250 maxW=400 bdr=0x75aedc')
             return
         }
-        if !prem.__checkPremRemoteFunc(["shared/storeSequence/armSequenceGuard", "shared/storeSequence/disarmSequenceGuard"])
-            return
-        try this.premOrigSeq := prem.__remoteUXP("shared/storeSequence/armSequenceGuard")
 
         ;// the idle check only matters if Premiere is the active window.
         ;// if it isn't, we save in the background straight away

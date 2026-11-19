@@ -16,7 +16,14 @@ F12::KeyHistory  ;debugging
 */
 ;reloadHotkey;
 #+r::reset.ext_reload() ;this reload script will attempt to reload all* active ahk scripts, not only this main script
-#!r::Reload()
+#!r::
+{
+	if WinExist("ahk_exe Adobe Premiere Pro.exe") || WinExist("ahk_exe Adobe Premiere Pro (Beta).exe")
+    	try cmd.httpGet(Format("http://localhost:{2}/{1}", "common/reloadPanel", prem.portUXP), true)
+	if WinExist("ahk_exe AfterFX.exe") || WinExist("ahk_exe AfterFX (Beta).exe")
+    	try cmd.httpGet(Format("http://localhost:{2}/{1}", "common/reloadPanel", ae.portUXP), true)
+	Reload()
+}
 ;hardresetHotkey;
 #+^r::reset.reset() ;this will hard rerun all active ahk scripts
 

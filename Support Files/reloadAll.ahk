@@ -19,6 +19,12 @@ Critical()
 Notify.DestroyAll()
 try incChecklist := A_Args[1]
 try doReset := A_Args[2]
+
+if WinExist("ahk_exe Adobe Premiere Pro.exe") || WinExist("ahk_exe Adobe Premiere Pro (Beta).exe")
+    try cmd.httpGet(Format("http://localhost:{2}/{1}", "common/reloadPanel", prem.portUXP), true)
+if WinExist("ahk_exe AfterFX.exe") || WinExist("ahk_exe AfterFX (Beta).exe")
+    try cmd.httpGet(Format("http://localhost:{2}/{1}", "common/reloadPanel", ae.portUXP), true)
+
 resetter := reset(false)
 list := resetter.__getList()
 listArr := []

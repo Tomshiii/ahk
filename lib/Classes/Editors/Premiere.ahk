@@ -5,7 +5,7 @@
  * @premVer 27.0
  * @author tomshi
  * @date 2026/11/19
- * @version 2.7.4
+ * @version 2.7.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1099,13 +1099,11 @@ class Prem extends AdobeRemoteUXP {
         origSeq := false
         if checkAmount != 0 {
             ;// failsafe lifetime: covers the whole save + grace period, so a leak self-heals
-            failsafe := (timeout.appear + timeout.close) * 1000 + checkSeqTime + 1000
+            failsafe := (timeout.appear*1000)+checkSeqTime
             origSeq := this.__remoteUXP("shared/storeSequence/armSequenceGuard",, "windowMs=" failsafe)
-            if !origSeq
+            if origSeq = null
                 origSeq := false
         }
-        if origSeq = null
-            origSeq := false
 
         ;// save
         saveTitle := "Save Project " this.exeTitle
@@ -1155,11 +1153,11 @@ class Prem extends AdobeRemoteUXP {
             try WinEvent.Stop("Close", saveTitle)
 
             if origSeq {
-                ;// keep the guard alive for `checkSeqTime` after the save, then drop it (no sleeping)
+
                 disarm(*) {
                     try this.__remoteUXP("shared/storeSequence/disarmSequenceGuard",, "token=" origSeq)
                 }
-                SetTimer(disarm, -Max(1, checkSeqTime)) ;// SetTimer(fn, 0) would delete the timer, hence Max
+                SetTimer(disarm, -Max(1, checkSeqTime))
             }
         }
         return true
