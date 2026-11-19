@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 27.0
  * @author tomshi
- * @date 2026/11/18
- * @version 2.7.2
+ * @date 2026/11/19
+ * @version 2.7.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -449,7 +449,7 @@ class Prem extends AdobeRemoteUXP {
 
         switch which {
             case "uia":
-                panes := premUIA_Values.__checkPanes(uiaObj)
+                panes := uiaObj.panesIntact
                 if panes == null
                     return
                 newState := panes
@@ -1095,7 +1095,14 @@ class Prem extends AdobeRemoteUXP {
         if !this.__checkPremRemoteFunc(["custom/save", "shared/storeSequence/armSequenceGuard", "shared/storeSequence/disarmSequenceGuard"])
             return false
 
-        origSeq := (checkAmount != 0) ? this.__remoteUXP("shared/storeSequence/armSequenceGuard") : false
+        origSeq := false
+        if checkAmount != 0 {
+            ;// failsafe lifetime: covers the whole save + grace period, so a leak self-heals
+            failsafe := (timeout.appear + timeout.close) * 1000 + checkSeqTime + 1000
+            origSeq := this.__remoteUXP("shared/storeSequence/armSequenceGuard",, "windowMs=" failsafe)
+            if !origSeq
+                origSeq := false
+        }
         if origSeq = null
             origSeq := false
 
@@ -1141,17 +1148,19 @@ class Prem extends AdobeRemoteUXP {
             if !state.hasClosed
                 return "timeout"
         } finally {
-            ;// runs on every return above, so only after the waits are finished
             SetTimer(unblock, 0)
             blocker.Off()
             try WinEvent.Stop("Exist", saveTitle)
             try WinEvent.Stop("Close", saveTitle)
-        }
 
-        ;// verify active sequence didn't change
-        if !checkAmount && !origSeq
-            return true
-        this.__remoteUXP("shared/storeSequence/disarmSequenceGuard",, "token=" origSeq)
+            if origSeq {
+                ;// keep the guard alive for `checkSeqTime` after the save, then drop it (no sleeping)
+                disarm(*) {
+                    try this.__remoteUXP("shared/storeSequence/disarmSequenceGuard",, "token=" origSeq)
+                }
+                SetTimer(disarm, -Max(1, checkSeqTime)) ;// SetTimer(fn, 0) would delete the timer, hence Max
+            }
+        }
         return true
     }
 

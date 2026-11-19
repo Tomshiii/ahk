@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to facilitate using UIA variables with Premiere Pro
  * @author tomshi
- * @date 2026/11/18
- * @version 3.2.4
+ * @date 2026/11/19
+ * @version 3.2.5
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -358,6 +358,33 @@ class premUIA_Values {
             notifyExt.showIfNotExist('UIApanelsFailed',, "Determining the following panels failed: " notSet "`nThey may not be visible.`nYou *may* still be able to generate live references once you show the panel.", this.determineIcon,,, "pos=BC dur=8 bdr=Maroon show=Fade@225 hide=Fade@250 maxW=400")
     }
 
+    static panesIntact := true
+    static __locHook := 0
+    static __paneTimer := ObjBindMethod(this, "__onPanesSettled")
+
+    /**
+     * Uses a WinEvent hook to track when panes change
+     * call at the end of setObjs(), after __setAllPanes()
+     */
+    static __watchPanes() {
+        this.__locHook := WinEvent.Hook(ObjBindMethod(this, "__onLoc"),
+            WinEvent.EVENT_OBJECT_CREATE, WinEvent.EVENT_OBJECT_LOCATIONCHANGE,, WinGetPID(prem.winTitle))
+    }
+
+    static __onLoc(hHook, event, hwnd, idObject, *) {
+        if (idObject << 32 >> 32) != 0 || !(this.allPanes.Has(hwnd) || event = WinEvent.EVENT_OBJECT_CREATE)
+            return
+        SetTimer(this.__paneTimer, -150)
+    }
+
+    static __onPanesSettled() {
+        if !this.allPanes.Count
+            return
+        result := this.__checkPanes(this)
+        if result != null
+            try CLSID_Objs.writeProp("determineUIA", "panesIntact", result)
+    }
+
     /**
      * Returns a live tools panel element. Uses the stored hwnd if there is one (and it's still valid),
      * otherwise searches the live Premiere window for the panel and stores its hwnd, so a panel opened
@@ -468,6 +495,8 @@ class premUIA_Values {
 
     /** clears the stored UIA elements/handles. Flags live on the shared object, see `__setShared()` */
     static wipe() {
+        this.__locHook := 0
+        try CLSID_Objs.load("determineUIA").panesIntact := false
         this.AdobeEl   := false
         this.UIA_Hwnd  := Map()
         this.allPanes  := Map()
@@ -593,6 +622,8 @@ class premUIA_Values {
             throw ValueError(e.Message,, e.Extra)
         }
 
+        this.__watchPanes()
+        try CLSID_Objs.load("determineUIA").panesIntact := true
         __DelNotify()
         notifyExt.deleteIfExist("determiningUIA",, 0)
         notifyExt.showIfNotExist("UIAretrieveComplete",, "Retrieving UIA Coordinates is now complete.", this.premIcon,,, 'dur=3 bdr=0x5B009F show=Fade@225 hide=Fade@250 maxW=400')

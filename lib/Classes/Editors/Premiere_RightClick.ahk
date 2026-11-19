@@ -2,8 +2,8 @@
  * @description move the Premiere Pro playhead to the cursor
  * @premVer 26.5.2
  * @author tomshi, taranVH
- * @date 2026/11/12
- * @version 2.5.9
+ * @date 2026/11/19
+ * @version 2.5.10
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -599,8 +599,10 @@ class rbuttonPrem {
 		}
 
 		;// checks original sequence is still active
-		if this.origSeq != false && this.origSeq != null
-			try prem.__remoteUXP("shared/storeSequence/disarmSequenceGuard")
+		if this.origSeq != false && this.origSeq != null {
+			try prem.__remoteUXP("shared/storeSequence/disarmSequenceGuard",, "token=" this.origSeq)
+			this.origSeq := false
+		}
 		switch {
 			case (allChecks && !this.leftClick && !this.xbuttonClick):
 				this.__exit(this.checkedHotkey)

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description a script to handle autosaving Premiere Pro & After Effects without requiring user interaction
  * @author tomshi
- * @date 2026/11/12
- * @version 2.3.7
+ * @date 2026/11/19
+ * @version 2.3.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -53,6 +53,7 @@ OnMessage(0x004A, changeInterval.Bind())  ; 0x004A is WM_COPYDATA
 OnExit(ExitFunc)
 ExitFunc(ExitReason, ExitCode) {
     block.Off()
+    try autoSave.__disarmSeqGuard()
     try autoSave.stop() ;// also tears down the save override InputHook
     try CLSID_Objs.writeProp("prem", "autoSaveSaving", false)
     checkstuck()
@@ -146,31 +147,27 @@ class adobeAutoSave extends count {
 
     /** This function is called every increment */
     Tick() {
+        if this.ticking
+            return
         this.ticking := true
         try {
             this.begin()
-
-            ;// if the above function got to the point that it was able to determine an active window and has been set
-            ;// attempt to reactivate it
             if this.origWindow != ""
                 this.__reactivateWindow()
-
-            ;// finish up
             if this.aeExist = true
                 this.__resetAETrans()
-
-            if this.premOrigSeq != false && this.premOrigSeq != null
-                try prem.__remoteUXP("shared/storeSequence/disarmSequenceGuard",, "token=" this.premOrigSeq)
-            this.__reset()
-            block.Off()
         } finally {
+            try this.__reset()            ; also disarms the sequence guard
+            try this.__stopSaveAsWatch()  ; also clears selfInitiatedSave
             this.__setSaveGuard(false)
+            block.Off()
             this.ticking := false
         }
     }
 
     /** stops the timer */
     Stop(doCheckStuck := true) {
+        this.__disarmSeqGuard()
         this.__setSaveGuard(false)
         this.active := false
         super.stop()
@@ -437,6 +434,14 @@ class adobeAutoSave extends count {
         try CLSID_Objs.writeProp("prem", "autoSaveSaving", on ? true : false)
     }
 
+    /** disarms this save's sequence guard (safe to call repeatedly) */
+    __disarmSeqGuard() {
+        token := this.premOrigSeq
+        this.premOrigSeq := false
+        if token
+            try prem.__remoteUXP("shared/storeSequence/disarmSequenceGuard",, "token=" token)
+    }
+
     /** shows the "Next Attempt" progress bar, animated by a timer rather than a blocking loop */
     __showNextAttempt(attempt) {
         this.__clearNextAttempt()
@@ -624,6 +629,8 @@ class adobeAutoSave extends count {
 
     /** saves premiere */
     __savePrem() {
+        this.__disarmSeqGuard()
+        try this.premOrigSeq := prem.__remoteUXP("shared/storeSequence/armSequenceGuard",, "windowMs=20000")
         ;// backing up project files
         this.__backupFiles()
 
@@ -919,12 +926,12 @@ class adobeAutoSave extends count {
 
     /** resets all internal variables */
     __reset() {
+        this.__disarmSeqGuard()
         this.count         := 0,     this.origWindow    := "",
         this.premExist     := false, this.aeExist       := false,
         this.userPlayback  := false, this.filesBackedUp := false
 
         this.premWindow    := unset
-        this.premOrigSeq   := false
         this.aeWindow      := unset
         this.idleAttempt   := false
 
