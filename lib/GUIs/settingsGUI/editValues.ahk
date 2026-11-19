@@ -48,6 +48,14 @@ class set_Edit_Val {
         textControl: "MICText",                         Bind: "Multi-Instance Close.ahk",
         objName: "--",                                  UpDownOpt: "Range1-999"
     }
+    delayPlayback := {
+        control: "delayPlaybackMS",                     EditPos: "xs Y+4",
+        scriptText: "``prem.delayPlayback()``",         textPos: "X+5 Y+-26",
+        otherText: " ``ms`` delay",                     otherTextPos: "Y+2",
+        iniInput: "delayPlaybackMS",                    colour: "c753288",
+        textControl: "delayPlaybackMS_txt",             Bind: "",
+        objName: "--",                                  UpDownOpt: "Range1-9999"
+    }
     toggleEnabledIgnore := {
         control: "toggleEnabledIgnore",                 EditPos: "xs Y+4",
         scriptText: "``prem.toggleEnabled()``",         textPos: "X+5 Y+-26",
@@ -57,7 +65,7 @@ class set_Edit_Val {
         objName: "--",                                  UpDownOpt: "Range1-999"
     }
 
-    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.MIC, this.toggleEnabledIgnore]
+    objs := [this.adTemp, this.adFS, this.autoSave, this.gameCk, this.MIC, this.delayPlayback, this.toggleEnabledIgnore]
     static control := []
     static EditPos := []
     static scriptText := []

@@ -5,7 +5,7 @@
  * @premVer 27.0
  * @author tomshi
  * @date 2026/11/19
- * @version 2.7.3
+ * @version 2.7.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -71,6 +71,7 @@ class Prem extends AdobeRemoteUXP {
         }
         this.currentSetVer := SubStr(this.UserSettings.premVer, 2)
         this.theme := this.UserSettings.premDefaultTheme
+        this.defaultDelay := this.UserSettings.delayPlaybackMS
 
         allow := Mip("__remoteUXP", true)
         for name in Prem.OwnProps() {
@@ -276,7 +277,7 @@ class Prem extends AdobeRemoteUXP {
     static RClickIsActive      := false
 
     ;// variables for `delayPlayback()` && `rippleTrim()`
-    static defaultDelay := 400
+    static defaultDelay := 850
     static lastTrimTick := 0
     static pendingSpace := 0
 

@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to create & interact with `settings.ini`
  * @author tomshi
- * @date 2026/10/06
- * @version 1.5.2
+ * @date 2026/11/19
+ * @version 1.5.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -77,7 +77,7 @@ class UserPref {
         "premCache", A_AppData "\Adobe\Common", "aeCache", A_AppData "\Adobe\Common",
         "premDefaultTheme", "Darkest", "premSwapSequencesLimit", 3,
         "alternate_MButton_Key", "~F18",
-        "toggleEnabled_ignore", "5",
+        "toggleEnabled_ignore", "5", "delayPlaybackMS", "850",
 
         ;// [Track]
         "adobe_temp", 0,
@@ -358,6 +358,7 @@ class UserPref {
         premDefaultTheme={}
         alternate MButton Key={}
         toggleEnabled ignore={}
+        delayPlaybackMS={}
 
         [Track]
         adobe temp={}
