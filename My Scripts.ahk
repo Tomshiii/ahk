@@ -9,7 +9,7 @@
  ***********************************************************************/
 
 ;\\CURRENT SCRIPT VERSION\\This is a "script" local version and doesn't relate to the Release Version
-;\\v2.35.17
+;\\v2.35.18
 
 #SingleInstance Force
 #Requires AutoHotkey v2.0
@@ -269,17 +269,31 @@ F18:: ;// needs to be here or thio's script won't work
 		errorLog(ValueError("Couldn't determine timeline focus", -1))
 		return
 	}
-	if timelineFocus = true {
-		prem.delayPlayback()
-		return
+
+	switch isDoubleClick() {
+		case false:
+			if timelineFocus = true {
+				prem.delayPlayback()
+				return
+			}
+			if premUIA_Values.__isPremPanelActive("sourceMonitor") == true {
+				prem.__remoteUXP('custom/sourceMonitorPlay',, "speed=1")
+				return
+			}
+			prem.__focusTimeline()
+			sleep 50
+			prem.delayPlayback()
+			return
+		case true:
+			isPlay := prem.isPlaying()
+			if !isPlay || isPlay = null {
+				SendInput(ksa.prem.speedUpPlayback)
+				return
+			}
+			delaySI(16, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement)
+			keys.allWait()
+			return
 	}
-	if premUIA_Values.__isPremPanelActive("sourceMonitor") == true {
-		prem.__remoteUXP('custom/sourceMonitorPlay',, "speed=1")
-		return
-	}
-	prem.__focusTimeline()
-	sleep 50
-	prem.delayPlayback()
 }
 ;=============================================================================================================================================
 ;

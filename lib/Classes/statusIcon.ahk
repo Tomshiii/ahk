@@ -2,8 +2,8 @@
  * @description a class designed to place a little icon on the screen and alternatively bind it to a window's position
  * @author tomshi
  * @ai_disclosure vibecoded with claude, I'm not super familiar with dll's
- * @date 2026/10/16
- * @version 1.1.2
+ * @date 2026/11/19
+ * @version 1.1.3
  ***********************************************************************/
 
 ; =====================================================================
@@ -43,6 +43,7 @@ class statusIcon {
     h := 0
 
     ; Callbacks kept so they can be unregistered later
+    keepOnTop := false
     keepOnTopFn := ""
     followFn := ""
     exitFn := ""
@@ -69,6 +70,7 @@ class statusIcon {
         this.posY := y
         this.size := size
         this.onClick := onClick          ; set before SetIcon so the window is created correctly
+        this.keepOnTop := keepOnTop
 
         DllCall("LoadLibrary", "Str", "gdiplus")
         si := Buffer(A_PtrSize = 8 ? 24 : 16, 0)
@@ -225,6 +227,10 @@ class statusIcon {
      */
     Follow(winTitle, dx := 0, dy := 0, activeOnly := true, interval := 50) {
         this.StopFollowing()
+        if this.keepOnTopFn
+            SetTimer(this.keepOnTopFn, 0)
+        if this.gui
+            WinSetAlwaysOnTop(0, this.gui)
         this.followWin := winTitle
         this.followDX := dx
         this.followDY := dy
@@ -250,6 +256,12 @@ class statusIcon {
         if this.followFn {
             SetTimer(this.followFn, 0)
             this.followFn := ""
+            ; restore the original always-on-top behaviour
+            if this.keepOnTop && this.gui {
+                WinSetAlwaysOnTop(1, this.gui)
+                if this.keepOnTopFn
+                    SetTimer(this.keepOnTopFn, 2000)
+            }
         }
     }
 
@@ -258,9 +270,7 @@ class statusIcon {
             return
         hwnd := WinExist(this.followWin)
         target := "ahk_id " hwnd
-        visible := hwnd
-            && WinGetMinMax(target) != -1
-            && (!this.followActiveOnly || WinActive(target))
+        visible :=  hwnd && WinGetMinMax(target) != -1 && (!this.followActiveOnly || this.IsTargetActive(hwnd))
         if visible {
             WinGetClientPos(&cx, &cy, , , target)
             nx := cx + this.followDX, ny := cy + this.followDY
@@ -268,6 +278,39 @@ class statusIcon {
                 this.Move(nx, ny)
         }
         this.SetVisible(!!visible)
+        if visible
+            this.PlaceAbove(hwnd)
+    }
+
+    /** Put the icon immediately above the target window in the Z-order. */
+    PlaceAbove(targetHwnd) {
+        icon := this.gui.Hwnd
+        ; GW_HWNDPREV = 3: the window directly above the target
+        prev := DllCall("GetWindow", "Ptr", targetHwnd, "UInt", 3, "Ptr")
+        if prev = icon
+            return                                   ; already directly above, nothing to do
+        if prev
+            after := prev
+        else                                         ; target is at the top of its band
+            after := (WinGetExStyle(targetHwnd) & 0x8) ? -1 : 0   ; HWND_TOPMOST : HWND_TOP
+        ; SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE
+        DllCall("SetWindowPos", "Ptr", icon, "Ptr", after
+            , "Int", 0, "Int", 0, "Int", 0, "Int", 0, "UInt", 0x13)
+    }
+
+    /** True if the foreground window is the target, or a dialog/popup owned by it. */
+    IsTargetActive(targetHwnd) {
+        fg := DllCall("GetForegroundWindow", "Ptr")
+        if !fg
+            return false
+        if fg = targetHwnd
+            return true
+        ; GA_ROOTOWNER = 3: walks up the owner chain (save dialogs, message boxes, etc.)
+        if DllCall("GetAncestor", "Ptr", fg, "UInt", 3, "Ptr") = DllCall("GetAncestor", "Ptr", targetHwnd, "UInt", 3, "Ptr")
+            return true
+        ; Fallback for dialogs that aren't formally owned: same process
+        try return WinGetPID("ahk_id " fg) = WinGetPID("ahk_id " targetHwnd)
+        return false
     }
 
     SetVisible(show) {
