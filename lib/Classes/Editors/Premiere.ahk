@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 27.0
  * @author tomshi
- * @date 2026/11/19
- * @version 2.7.5
+ * @date 2026/11/20
+ * @version 2.7.6
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -722,15 +722,14 @@ class Prem extends AdobeRemoteUXP {
                 notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open or communicating with the panel failed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
             return false
         }
-        if !this.__uxpFuncMap {
-            if !this.__getUXPRegistry() {
-                if WinExist(this.winTitle) && alerts = true {
-                    errorLog(MethodError("PremiereRemote UXP panel isn't open.", -2))
-                    notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
-                }
-                return false
+        if !this.__getUXPRegistry() {
+            if WinExist(this.winTitle) && alerts = true {
+                errorLog(MethodError("PremiereRemote UXP panel isn't open.", -2))
+                notifyExt.showIfNotExist('premPanelNotOpenUXP',, "PremiereRemote UXP panel is not open.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
             }
+            return false
         }
+
         switch Type(checkFunc), 0 {
             case "string": return !!this.__getUXPFuncInfo(checkFunc)
             case "array":

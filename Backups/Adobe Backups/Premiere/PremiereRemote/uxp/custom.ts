@@ -2809,3 +2809,136 @@ export async function attachMissingProxies(): Promise<string> {
     console.log("[attachMissingProxies] Complete:", summary);
     return JSON.stringify(summary);
 }
+
+/**
+ * Moves clips to other tracks (same time position) in ONE transaction, then selects the moved clips
+ * plus any in `keep` (clips that didn't need to move).
+ * Premiere has no "move to track" action that I know of, so each clip is cloned and its original removed.
+ * Each clone is immediately followed by its original's removal, so a later clone can reuse the space.
+ * VERIFY: createCloneTrackItemAction argument order/types against your API typings.
+ */
+async function moveClipsToTracks(
+    project: Project, sequence: Sequence, editor: any,
+    moves: { isVideo: boolean; item: any; start: TickTime; from: number; to: number }[],
+    keep: any[]
+): Promise<void> {
+    if (moves.length > 0) {
+        await project.lockedAccess(() =>
+            project.executeTransaction((ca: any) => {
+                for (const m of moves) {
+                    const delta = m.to - m.from;
+                    ca.addAction(editor.createCloneTrackItemAction(m.item, ppro.TickTime.TIME_ZERO, m.isVideo ? delta : 0, m.isVideo ? 0 : delta, false, false));
+                    ppro.TrackItemSelection.createEmptySelection((sel: any) => {
+                        sel.addItem(m.item);
+                        ca.addAction(editor.createRemoveItemsAction(sel, false, m.isVideo ? ppro.Constants.MediaType.VIDEO : ppro.Constants.MediaType.AUDIO));
+                    });
+                }
+            }, "Move clips to tracks")
+        );
+    }
+
+    // Moved clips are new items, so find them again by track + start time and reselect
+    const moved = await Promise.all(moves.map(async (m) =>
+        helpers.findItemAtStart(await (m.isVideo ? sequence.getVideoTrack(m.to) : sequence.getAudioTrack(m.to)), m.start)));
+    moved.forEach((item, i) => { if (!item) console.warn(`[spreadFlatten] could not find moved ${moves[i].isVideo ? "video" : "audio"} clip at track ${moves[i].to}, start ${moves[i].start.ticksNumber}`); });
+    const toSelect = [...keep, ...moved.filter(Boolean)];
+    await ppro.TrackItemSelection.createEmptySelection((sel: any) => {
+        for (const item of toSelect) sel.addItem(item);
+        sequence.setSelection(sel);
+    });
+}
+
+/**
+ * Gives every selected video and audio clip a track with nothing else on it.
+ * Clips already alone on their track stay put. Nothing is overwritten, as clips only land on empty tracks.
+ * If there aren't enough empty tracks, new ones are added past the end of the timeline.
+ */
+export async function spreadSelectedClips(): Promise<void> {
+    const project = await ppro.Project.getActiveProject();
+    const sequence = await project?.getActiveSequence();
+    if (!project || !sequence) return helpers.notify("No active project/sequence.");
+    const editor = await ppro.SequenceEditor.getEditor(sequence);
+
+    const moves: { isVideo: boolean; item: any; start: TickTime; from: number; to: number }[] = [];
+    const keep: any[] = [];
+    const used = { video: new Set<number>(), audio: new Set<number>() };
+
+    // Plan both kinds first (reads only), so moves can't affect which tracks we think are free
+    for (const isVideo of [true, false]) {
+        const getTrack = (i: number) => (isVideo ? sequence.getVideoTrack(i) : sequence.getAudioTrack(i));
+        const trackCount = await (isVideo ? sequence.getVideoTrackCount() : sequence.getAudioTrackCount());
+        const usedSet = isVideo ? used.video : used.audio;
+        const selected = await helpers.gatherSelectedVideoClips(sequence, trackCount, isVideo);
+        let extra = 0; // new tracks needed beyond the current end
+
+        for (const clip of selected) {
+            const onTrack = (await getTrack(clip.trackIndex)).getTrackItems(ppro.Constants.TrackItemType.CLIP, false);
+            if (onTrack.length === 1 && !usedSet.has(clip.trackIndex)) {
+                usedSet.add(clip.trackIndex); // already alone
+                keep.push(clip.item);
+                continue;
+            }
+            const free = await helpers.findFirstFreeTrack(getTrack, trackCount, clip.start, clip.end, 0, usedSet);
+            // No free track: target the next index past the end, which Premiere creates on demand
+            const to = free.needsNewTrack ? trackCount + extra++ : free.trackIndex;
+            usedSet.add(to);
+            moves.push({ isVideo, item: clip.item, start: clip.start, from: clip.trackIndex, to });
+        }
+    }
+    if (moves.length === 0 && keep.length === 0) return helpers.notify("No clips are selected.");
+
+    await moveClipsToTracks(project, sequence, editor, moves, keep);
+}
+
+/**
+ * Packs the SELECTED clips down onto the lowest tracks possible (video and audio separately).
+ * Works any time, no need to have run spread first. Spread leaves the clips selected, so just run this after syncing.
+ * The lowest track holding a selected clip is the floor, so nothing is pushed below where the group started.
+ * Plans every move in memory first (a clip can take space another clip is vacating), then applies them all at once.
+ */
+export async function flattenSelectedClips(): Promise<void> {
+    const project = await ppro.Project.getActiveProject();
+    const sequence = await project?.getActiveSequence();
+    if (!project || !sequence) return helpers.notify("No active project/sequence.");
+    const editor = await ppro.SequenceEditor.getEditor(sequence);
+
+    const moves: { isVideo: boolean; item: any; start: TickTime; from: number; to: number }[] = [];
+    const keep: any[] = [];
+
+    for (const isVideo of [true, false]) {
+        const getTrack = (i: number) => (isVideo ? sequence.getVideoTrack(i) : sequence.getAudioTrack(i));
+        const trackCount = await (isVideo ? sequence.getVideoTrackCount() : sequence.getAudioTrackCount());
+        const selected = await helpers.gatherSelectedVideoClips(sequence, trackCount, isVideo);
+        if (selected.length === 0) continue;
+        const floor = Math.min(...selected.map((c) => c.trackIndex));
+
+        // Read every clip from the floor upward (including unselected ones) into an in-memory map
+        const occupied: { item: any; start: TickTime; end: TickTime; selected: boolean; trackIndex: number }[][] = [];
+        for (let t = floor; t < trackCount; t++) {
+            const items = (await getTrack(t)).getTrackItems(ppro.Constants.TrackItemType.CLIP, false) ?? [];
+            occupied[t] = await Promise.all(items.map(async (item: any) => ({
+                item, trackIndex: t, selected: await item.getIsSelected(),
+                start: await item.getStartTime(), end: await item.getEndTime(),
+            })));
+        }
+
+        // Selected clips, earliest first
+        const clips = occupied.flat().filter((c) => c.selected);
+        clips.sort((a, b) => a.start.ticksNumber - b.start.ticksNumber);
+
+        for (const clip of clips) {
+            // Lowest track below the clip's own that has nothing overlapping it
+            let to = -1;
+            for (let t = floor; t < clip.trackIndex && to < 0; t++) {
+                if (!occupied[t].some((o) => o.start.ticksNumber < clip.end.ticksNumber && o.end.ticksNumber > clip.start.ticksNumber)) to = t;
+            }
+            if (to < 0) { keep.push(clip.item); continue; }
+            occupied[clip.trackIndex] = occupied[clip.trackIndex].filter((o) => o !== clip);
+            occupied[to].push({ ...clip, trackIndex: to });
+            moves.push({ isVideo, item: clip.item, start: clip.start, from: clip.trackIndex, to });
+        }
+    }
+    if (moves.length === 0 && keep.length === 0) return helpers.notify("No clips are selected.");
+
+    await moveClipsToTracks(project, sequence, editor, moves, keep);
+}

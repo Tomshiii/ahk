@@ -7,8 +7,8 @@
  *
  * Derived classes are expected to declare their own `portUXP`, `remoteDirUXP`, `indexFileUXP`, `winTitle` & `remoteActiveUXP`
  * @author tomshi
- * @date 2026/11/17
- * @version 1.0.2
+ * @date 2026/11/20
+ * @version 1.0.3
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -152,7 +152,8 @@ class AdobeRemoteUXP {
         if !(registry is Map)
             return false
         this.__uxpRegStamp := stamp
-        return this.__uxpFuncMap := registry
+        this.__uxpFuncMap := registry
+        return this.__uxpFuncMap
     }
 
     /**

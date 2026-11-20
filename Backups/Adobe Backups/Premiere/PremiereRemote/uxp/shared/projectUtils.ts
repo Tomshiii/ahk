@@ -121,9 +121,9 @@ export async function gatherSelectedEntries(
  * gathers every selected clip across all video tracks (tracks and clips are
  * resolved in parallel; ordering is by track index, then clip order on the track)
  */
-export async function gatherSelectedVideoClips(sequence: Sequence, trackCount: number): Promise<SelectedVideoClip[]> {
+export async function gatherSelectedVideoClips(sequence: Sequence, trackCount: number, isVideo: boolean = true): Promise<SelectedVideoClip[]> {
     const tracks = await Promise.all(
-        Array.from({ length: trackCount }, (_, t) => sequence.getVideoTrack(t))
+        Array.from({ length: trackCount }, (_, t) => isVideo ? sequence.getVideoTrack(t) : sequence.getAudioTrack(t))
     );
 
     const perTrack = await Promise.all(tracks.map(async (track, trackIndex) => {

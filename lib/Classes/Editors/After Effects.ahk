@@ -3,8 +3,8 @@
  * Functions are not guaranteed to work correctly on previous versions of AE. Please see the version number below to know which version of AE I am currently using for testing.
  * @aeVer 27.0
  * @author tomshi
- * @date 2026/11/17
- * @version 1.7.1
+ * @date 2026/11/20
+ * @version 1.7.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -619,11 +619,9 @@ class AE extends AdobeRemoteUXP {
                         notifyExt.showIfNotExist('aeUXPNotOpen',, "AERemote UXP Panel is not open or communicating with the panel failed.", 'C:\Windows\System32\imageres.dll|icon233',,, "theme=Dark DUR=3 show=Fade@250 hide=Fade@250 maxW=400 bdr=Red")
                     return false
                 }
-                if !this.__uxpFuncMap {
-                    if !this.__getUXPRegistry() {
-                        errorLog(MethodError("Could not retrieve the AERemote UXP function registry.", -1))
-                        return false
-                    }
+                if !this.__getUXPRegistry() {
+                    errorLog(MethodError("Could not retrieve the AERemote UXP function registry.", -1))
+                    return false
                 }
                 switch Type(checkFunc), 0 {
                     case "string": return !!this.__getUXPFuncInfo(checkFunc)
