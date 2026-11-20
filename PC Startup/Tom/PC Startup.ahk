@@ -86,3 +86,5 @@ dockerAhk := "ahk_exe Docker Desktop.exe"
 runApp(dockerFile, dockerAhk, false)
 if WinWait(dockerAhk,, 5)
     WinMinimize(dockerAhk)
+
+Run(ptf.SupportFiles "\Mouse Stuff\runMousePy.ahk")

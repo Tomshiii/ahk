@@ -274,6 +274,11 @@
         "context": "/PremiereData/shortcuts/context.global",
         "withinPrem": "(Application >) Shuttle Left"
     },
+    "slowDownIncrement": {
+        "command": "cmd.transport.shuttle.slow.left",
+        "context": "/PremiereData/shortcuts/context.global",
+        "withinPrem": "(Application >) Shuttle Slow Left"
+    },
     "playStop": {
         "command": "cmd.transport.toggleplay",
         "context": "/PremiereData/shortcuts/context.global",

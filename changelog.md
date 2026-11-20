@@ -1,8 +1,10 @@
 # <> Release 2.21.x - 
 
 ## Functions
+- ✏️ Added `ksa.prem.slowDownIncrement`
 - ✅ Fixed `statusIcon {` rendering over context menus while `keepOnTop` is set `true`
 - ✅ Fixed `rbuttonPrem().movePlayhead()` throwing an error if `armSequenceGuard` fires directly as a save attempt begins
+- ✅ Fixed `discord.button()` sometimes not doing anything on first use
 - 📋 `premUIA_Values {` now tracks panel changes using `WinEvent` hooks instead of constant polling
 - 📋 Increased `defaultDelay` for `prem.delayPlayback()` from `400` => `850`
     - Can now be adjusted in `settingsGUI()`

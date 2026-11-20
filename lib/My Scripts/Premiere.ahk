@@ -499,12 +499,19 @@ F19::
 F14 & F19::prem.dragSourceMon("audio")
 
 ;// playback speed change hotkeys
-F14 & F21::SendInput(KSA.prem.slowDownPlayback) ;alternate way to slow down playback on the timeline with mouse buttons
-F14 & F23::
-{
-	delaySI(16, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement, ksa.prem.speedUpIncrement) ;alternate way to speed up playback on the timeline with mouse buttons
+__speedPlayback(which) {
+	if !prem.isPlaying()
+		SendInput(KSA.prem.%which%Playback) ;alternate way to slow down playback on the timeline with mouse buttons
+	else
+		delaySI(16, ksa.prem.%which%Increment, ksa.prem.%which%Increment, ksa.prem.%which%Increment, ksa.prem.%which%Increment, ksa.prem.%which%Increment) ;alternate way to speed up playback on the timeline with mouse buttons
 	keys.allWait()
 }
+ralt & f15::
+F14 & F21::__speedPlayback("slowDown")
+
+ralt & f14::
+F14 & F23::__speedPlayback("speedUp")
+
 ;// next/previous edit point hotkeys
 <+F21::prem.wheelEditPoint(KSA.prem.effectControls, ksa.prem.previousKeyframe, 2, true) ;goes to the next keyframe point towards the left
 <+F23::prem.wheelEditPoint(KSA.prem.effectControls, ksa.prem.nextKeyframe, 2, true) ;goes to the next keyframe towards the right
@@ -819,6 +826,8 @@ __f14InitialChecks(Key, &kwait) {
 	}
 	return true
 }
+
+F14 & RButton::
 F14 & MButton::
 {
 	if !__f14InitialChecks("MButton", &kwait)
