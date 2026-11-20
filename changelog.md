@@ -1,4 +1,5 @@
-# <> Release 2.21.x - 
+# <> Release 2.21.0.3 - Hotfix
+This update is a non-critical hotfix for release `2.21.0`<sup>[[changelog]](<https://github.com/Tomshiii/ahk/releases/tag/v2.21.0>)</sup>. If you encounter issues with Premiere sequences being stuck locked to the active sequence, it is recommended you install this update.
 
 ## Functions
 - ✏️ Added `ksa.prem.slowDownIncrement`

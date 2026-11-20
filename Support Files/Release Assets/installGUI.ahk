@@ -1,8 +1,8 @@
 /************************************************************************
  * @description This script is the file that gets turned into the release.exe that is sent out as a release
  * @author tomshi
- * @date 2026/11/18
- * @version 1.2.3
+ * @date 2026/11/20
+ * @version 1.2.4
  ***********************************************************************/
 #Requires AutoHotkey v2
 ;// anything labelled as "yes.value" gets replaced during `generateUpdate.ahk`
@@ -309,8 +309,12 @@ class installGUI extends Gui {
 
         /** this function handles the entire install sequence of the installer */
         __Install(*) {
+            if !A_Is64bitOS {
+                MsgBox("The current system isn't an x64 system. These scripts require a 64bit version of windows.", "64bit Required", "4112")
+                return
+            }
             if !this.dockerInstalled() {
-                MsgBox("Docker Desktop wasn't found. The PremiereRemote UXP plugin can't be installed without it.`n`nPlease install docker and try again.", "Docker required", "0 16 262144")
+                MsgBox("Docker Desktop wasn't found. The PremiereRemote UXP plugin can't be installed without it.`n`nPlease install docker and try again.", "Docker required", "4112")
                 return
             }
             loop {
