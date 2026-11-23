@@ -10,14 +10,14 @@ PIDS = (0x026E, 0x026F)   # wired, 2.4GHz dongle
 #          "mouse:left|right|middle|back|forward|wheelup|wheeldown", "dpi+", "dpi-"
 MAPPING = {
     "btn0":     "f14",
-    "btn1":     "forward",
-    "btn2":     "back",
+    "btn1":     "f19",
+    "btn2":     "f20",
     "btn3":     "f21",
     "btn4":     "ralt+f14",
     "btn5":     "ralt+f15",
     "btn6":     "f23",
-    "forward":  "f19",
-    "back":     "f20",
+    "forward":  "forward",
+    "back":     "back",
     "windesk":  "f18",
     "dpi_up":   "ralt+f23",
     "dpi_down": "ralt+f24",

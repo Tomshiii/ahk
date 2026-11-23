@@ -7,7 +7,7 @@
 ; }
 
 ;explorerbackHotkey;
-F21::
+F20::
 {
     if !actClass := WinGetClass("A")
         return
@@ -48,7 +48,7 @@ F21::
             expl.uiaElement.FindElement({AutomationId:"FileExplorerSearchBox"}).Invoke()
     }
 }
-F23::explorer.cancelSearch()
+F19::explorer.cancelSearch()
 
 
 

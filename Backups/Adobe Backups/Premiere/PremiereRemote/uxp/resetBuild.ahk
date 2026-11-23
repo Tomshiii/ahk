@@ -30,13 +30,21 @@ cmd.run(,,, "pnpm run host:premiere", InstalledDir "\client", "Hide")
 if !Notify.Exist("uxpRebuild")
     uxpProg := Notify.Show("Rebuilding PremiereRemote UXP extension.", "...", premIcon ?? "",,, 'theme=Dark dur=0 show=Fade@250 bdr=0x75aedc ts=12 tfo=norm hide=Fade@250 maxW=400 prog=h15 w300 Range0-100 Smooth tag=uxpRebuild')
 
+uxpProg["msg"].text := "Updating dependencies..."
+updateDepend := __runStep('npm run build', InstalledDir "\client")
+if updateDepend.failed {
+    __fail("Updating dependencies", updateDepend)
+    ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
+}
+try uxpProg["prog"].value := 10
+
 uxpProg["msg"].text := "Generating ``generate-api.js``..."
 genAPI := __runStep('node scripts/generate-api.js', InstalledDir "\client")
 if genAPI.failed {
     __fail("Generating ``generate-api.js``", genAPI)
     ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
 }
-try uxpProg["prog"].value := 10
+try uxpProg["prog"].value := 20
 
 uxpProg["msg"].text := "Copying ``static\``..."
 staticCopy := __runStep('xcopy /s /e /y static\. build\', InstalledDir "\client")
@@ -44,7 +52,7 @@ if staticCopy.failed {
     __fail("Copying PremiereRemote ``static\``", staticCopy)
     ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
 }
-try uxpProg["prog"].value := 20
+try uxpProg["prog"].value := 30
 
 uxpProg["msg"].text := "Running ``pnpm run bundle``..."
 bundle := __runStep('pnpm run bundle', InstalledDir "\client")
@@ -52,7 +60,7 @@ if bundle.failed {
     __fail("Bundle", bundle)
     ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
 }
-try uxpProg["prog"].value := 30
+try uxpProg["prog"].value := 40
 
 if isCCx || isAE_CCx {
     src         := InstalledDir "\client\build"
@@ -83,12 +91,12 @@ if isCCx || isAE_CCx {
         __fail("Copying PremiereRemote ``build\``", buildCopy)
         ExitApp(CONST.ErrorCode.PREMIEREREMOTE_RESET_BUILD_FAIL)
     }
-    try uxpProg["prog"].value := 40
+    try uxpProg["prog"].value := 50
     if isCCx && WinExist(prem.winTitle)
         try prem.__remoteUXP('common/reloadPanel')
     if isAE_CCx && WinExist(ae.winTitle)
         try ae.__remoteUXP('common/reloadPanel')
-    try uxpProg["prog"].value := 50
+    try uxpProg["prog"].value := 55
 }
 
 uxpProg["msg"].text := "Rebuilding docker compose..."
