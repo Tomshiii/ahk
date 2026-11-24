@@ -8,7 +8,7 @@
  *
  * This script will trim whitespace, tabs, newlines & carriage return
  * @param {any} varRead If this variable is populated, it will read from that string instead of filereading a new variable.
- * @param {string} [script="My Scripts.ahk"] is the name of the script you wish to read (if in the root dir, otherwise the remaining filepath to it)
+ * @param {string} [script] is the filepath of the script you wish to read
  * @param {string} [searchTag="@version"] is what you want the function to search for
  * @param {string} [endField="*"] is what you want "InStr" to search for to be the end of your string
  * @param {boolean} [returnObj=false] determines whether to return just the version as a string or an object containing both the version number and the FileRead of the script
@@ -23,11 +23,11 @@
  * ver.script ;// the entire contents of the script
  * ```
  */
-getLocalVer(varRead?, script := ptf.rootDir "\My Scripts.ahk", searchTag := "@version", endField := "*", returnObj := false) {
-    if IsSet(varRead)
+getLocalVer(varRead?, script?, searchTag := "@version", endField := "*", returnObj := false) {
+    if !IsSet(script)
+        throw UnsetError
+    if !IsSet(varRead)
         read := varRead
-    else
-        read := FileRead(script)
     getVerPos := InStr(read, searchTag)
     if !getVerPos ;if the lib doesn't have a @version tag, we'll pass back a blank script and do something else later
         return((returnObj = false) ? false : {version: "", script: read})

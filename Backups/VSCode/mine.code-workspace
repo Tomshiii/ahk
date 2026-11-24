@@ -13,16 +13,16 @@
 			"path": "../../../textreplace"
 		},
 		{
-			"name": "ahk_work",
-			"path": "../../../ahk_work"
-		},
-		{
 			"name": "ThioJoe-AHK-Scripts",
 			"path": "../../../ThioJoe-AHK-Scripts"
 		},
 		{
 			"name": "PremiereRemote",
 			"path": "../../../PremiereRemote"
+		},
+		{
+			"name": "tomshi-hotkeys",
+			"path": "../../../tomshi-hotkeys"
 		}
 	],
 	"settings": {

@@ -3,7 +3,7 @@
 ; target := A_AppData "\tomshi\"
 ; MsgBox(Format('New-Item -ItemType Junction -Path "$env:APPDATA\tomshi" -Target "{1}"', path))
 __createSym(origPath) {
-    SplitPath(origPath,, &targetDir)
+    SplitPath(origPath, &targetDir)
     try DirCreate(A_AppData "\tomshi\" targetDir)
     Run('powershell.exe -c "' Format('New-Item -ItemType Junction -Path "$env:APPDATA\tomshi\' targetDir '" -Target "{1}"', origPath) '"')
 }

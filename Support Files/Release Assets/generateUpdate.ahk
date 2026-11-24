@@ -9,7 +9,6 @@
 #Include Classes\winGet.ahk
 #Include Classes\cmd.ahk
 #Include Classes\notifyExt.ahk
-#Include Functions\getLocalVer.ahk
 #Include Functions\delaySI.ahk
 #Include Functions\getLocalVer.ahk
 #Include Functions\formatPreReleaseTag.ahk
@@ -218,44 +217,6 @@ if changeInstallVer {
 ;// check for pre release tags
 pre   := InStr(yes.value, "pre",, 1, 1), beta  := InStr(yes.value, "beta",, 1, 1), alpha := InStr(yes.value, "alpha",, 1, 1)
 
-
-getVer()
-{
-    ;// replace the old version number in My Scripts.ahk
-    releaseString := FileRead(ptf.rootDir "\My Scripts.ahk")
-    lastVer := getLocalVer(releaseString)
-    newFile := StrReplace(releaseString, lastVer, yes.value, 1,, 1)
-
-    ;// update ahk_ver
-    ahkVer := getLocalVer(newFile,, "@ahk_ver")
-    if VerCompare(A_AhkVersion, ahkVer) > 0
-        newFile := StrReplace(newFile, ahkVer, A_AhkVersion, 1,, 1)
-
-    ;// update date
-    date := getLocalVer(newFile,, "@date")
-    newFile := StrReplace(newFile, date, A_YYYY "/" A_MM "/" A_DD, 1,, 1)
-
-    FileAppend(newFile, A_WorkingDir "\My Scripts.ahk")
-    FileMove(A_WorkingDir "\My Scripts.ahk", ptf.rootDir "\My Scripts.ahk", 1)
-
-    ;replace old ver in other files
-    search(file)
-    {
-        ReadFile := FileRead(ptf.rootDir "\" file ".ahk")
-        startPos := InStr(ReadFile, ";\\CURRENT RELEASE VERSION", 1, 1, 1)
-        verStart := InStr(ReadFile, "v2.", 1, startPos, 1)
-        end := InStr(ReadFile, "`r",, verStart, 1)
-        wholeString := SubStr(ReadFile, startPos, end - startPos)
-        currentVer := SubStr(ReadFile, verStart, end - verStart)
-        newValue := StrReplace(wholeString, currentVer, yes.value, 1,, 1)
-        ReplacedFile := StrReplace(ReadFile, wholeString, newValue, 1,, 1)
-        FileAppend(ReplacedFile, A_WorkingDir "\" file ".ahk")
-        FileMove(A_WorkingDir "\" file ".ahk", ptf.rootDir "\" file ".ahk", 1)
-    }
-    search("QMK Keyboard")
-    search("Resolve_Example")
-}
-getVer()
 
 ;// dealing with the changelog
 /**
@@ -567,9 +528,10 @@ if WinExist(verNum ".x")
 
 ;// backing up repo/wiki
 ;// these need to be hardcoded dirs, dirdelete/dircopy don't work with relative paths
-ahkBackup     := "N:\Backup\Github\ahk"
-ahkWiki       := "E:\Github\ahk_wiki"
-ahkWikiBackup := "N:\Backup\Github\ahk_wiki"
+ahkBackup        := "N:\Backup\Github\ahk"
+ahkWiki          := "E:\Github\ahk_wiki"
+ahkWikiBackup    := "N:\Backup\Github\ahk_wiki"
+ahkHotkeysBackup := "N:\Backup\Github\tomshi-hotkeys"
 
 ;// backup ahk folder
 backupFolder(src, dst, label) {
@@ -580,7 +542,9 @@ backupFolder(src, dst, label) {
     DirCopy(src, dst, 2)
     notifyExt.deleteIfExist('generateBackup' label,, 0)
 }
-if backupAHK
+if backupAHK {
     backupFolder(ptf.rootDir, ahkBackup, "ahk")
+    backupFolder(ptf.rootDir, ahkHotkeysBackup, "hotkeys")
+}
 if backupWiki
     backupFolder(ahkWiki, ahkWikiBackup, "wiki")

@@ -142,7 +142,7 @@ activeScripts()
                 return
             }
         if script.text = "QMK Keyboard.ahk" || script.text = "Resolve_Example.ahk" || script.text = "My Scripts.ahk"
-            Run(ptf.rootDir "\" script.text)
+            Run(ptf.rootDir "\..\tomshi-hotkeys\" script.text)
         else if script.text = "textreplace.ahk"
             {
                 if ptf.rootDir = "E:\Github\ahk" && A_UserName = "Tom" && A_ComputerName = "TOM" && DirExist(ptf.SongQueue) ;I'm really just trying to make sure the stars don't align and this line fires for someone other than me
