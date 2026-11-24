@@ -16,7 +16,10 @@
 activeScripts()
 {
     detect()
-    MyRelease := getLocalVer()
+    ; MyRelease := getLocalVer()
+    if !FileExist(A_AppData "\tomshi\version")
+        Exit()
+    MyRelease := FileRead(A_AppData "\tomshi\version")
     if WinExist("Active Scripts " MyRelease) {
         WinActivate("Active Scripts " MyRelease)
         return

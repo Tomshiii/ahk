@@ -108,11 +108,6 @@ class Startup {
     }
 
     /**
-     * This function retrieves the release version the user is currently running
-     */
-    __getMainRelease() => getLocalVer()
-
-    /**
      * determines whether to download the ahk exe or .zip folder
      * @param {Number} version the latest version of my ahk scripts
      * @returns On success returns a string containing either `exe` or `zip`. Else returns `false`
@@ -813,18 +808,18 @@ class Startup {
          * ```
          */
         getString(url, name) {
-            string := getHTML(url)
-            if string = null {
+            stringg := getHTML(url)
+            if stringg = null {
                 ; tool.Tray({title: "libUpdateCheck() encountered an issue", text: "lib may have incorrect url:`n" url})
                 notifyExt.showIfNotExist("libupdateError", 'Error: libUpdateCheck() encountered an issue', "The requested lib may have incorrect url.`nLib: " name "`nURL: " url, 'iconx', 'soundx',, 'POS=BR BC=C72424 show=Fade@250 hide=Fade@250')
                 errorLog(Error(A_ThisFunc " encountered an issue with the specified url", -1), url)
                 return {version: 0}
             }
-            if string = 0
+            if stringg = 0
                 return {version: 0}
-            if InStr(string, "﻿") ;removes zero width no-break space
-                string := StrReplace(string, "﻿", "")
-            return getLocalVer(string,,,, true)
+            if InStr(stringg, "﻿") ;removes zero width no-break space
+                stringg := StrReplace(stringg, "﻿", "")
+            return getLocalVer(stringg,,,, true)
         }
         ;// begin loop
         loop allLibs.name.Length {

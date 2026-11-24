@@ -4,29 +4,29 @@
 #Include Classes\ptf.ahk
 ; }
 
-try isWork := A_Args[1]
+/* try isWork := A_Args[1]
 if !IsSet(isWork)
-    isWork := 0
+    isWork := 0 */
 
 dir := ptf.SupportFiles "\Mouse Stuff\"
 
-; the MX Vertical script retries by itself, so start it first
-cmd.run(, false,, Format('py -3.13 {1} {2}', "Logi_MX_Vert.py", ""), dir, "Hide")
+hide := true
+hide := (hide=true) ? "Hide" : ""
 
-if isWork
-    ExitApp()
+; the MX Vertical script retries by itself, so start it first
+; cmd.run(, false,, Format('py -3.13 {1} {2}', "Logi_MX_Vert.py", ""), dir, hide)
 
 ; wait for the E9 Pro to report in (0 = wait forever, or pass minutes to give up)
 batt := waitForE9Pro(0)
 if !batt
     ExitApp()
 
-cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro.py", ""), dir, "Hide")
-cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "rate 2000"), dir, "Hide")
-cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "lights off"), dir, "Hide")
-cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "dpi 800"), dir, "Hide")
-cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "power"), dir, "Hide")
-cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "sensor"), dir, "Hide")
+cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro.py", ""), dir, hide)
+cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "rate 2000"), dir, hide)
+cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "lights off"), dir, hide)
+cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "dpi 1000"), dir, hide)
+cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "power"), dir, hide)
+cmd.run(, true,, Format('py -3.13 {1} {2}', "E9Pro_set.py", "sensor"), dir, hide)
 Notify.Show(, "Battery: " batt "%", 'C:\Windows\System32\mmcndmgr.dll|icon51', (batt > 20 ? 'ding' : 'notify') ,, (batt > 20 ? 'bdr=Green' : "bdr=Red") A_Space 'show=Fade@250 hide=Fade@250 maxW=400')
 if batt <= 20 {
     MsgBox("E9Pro mouse battery is low. Consider charging soon.`n`nBattery level: " batt "%")
