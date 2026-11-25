@@ -4,6 +4,7 @@
 #Include Classes\CLSID_Objs.ahk
 #Include Functions\checkBool.ahk
 #Include Other\FileGetExtendedProp.ahk
+#Include Other\Array.ahk
 ; }
 
 /**
@@ -29,7 +30,23 @@ determineAdobeVer(exeNames) {
     regInstalledVer := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\" whichExe,, 0)
     if (regInstalledVer != false && regInstalledVer != "0") && SubStr(regInstalledVer, 1, 1) = '"' && SubStr(regInstalledVer, -1, 1) = '"'
         regInstalledVer := SubStr(regInstalledVer, 2, StrLen(regInstalledVer)-2)
-    if regInstalledVer = false || !FileExist(regInstalledVer)
+    if !regInstalledVer && InStr(exeNames.baseName, "Photoshop") {
+        versArr := []
+        loop reg, "\\" A_ComputerName "\HKEY_CURRENT_USER\Software\Adobe\Photoshop", "K" {
+            if A_LoopRegName != "AppStates"
+                versArr.Push(A_LoopRegName)
+        }
+        if !versArr.Length
+            return false
+        versArr.Sort()
+        if !settPath := RegRead("\\" A_ComputerName "\HKEY_CURRENT_USER\Software\Adobe\Photoshop\" versArr[versArr.Length], "SettingsFilePath", 0)
+            return false
+        SplitPath(settPath,, &outDir)
+        SplitPath(outDir,, &progDir)
+        SplitPath(progDir, &yearStr)
+        regInstalledVer := EnvGet("ProgramFiles") "\Adobe\" yearStr "\Photoshop.exe"
+    }
+    if !regInstalledVer || !FileExist(regInstalledVer)
         return false
     if InStr(exeNames.baseName, "Photoshop") {
         SplitPath(regInstalledVer,, &currDir)
