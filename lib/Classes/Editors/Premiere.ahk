@@ -4,8 +4,8 @@
  * Functions are not guaranteed to work correctly on previous versions of Premiere. I make an effort to backport as much as I can, but as I only use one version of premiere I am unlikely to catch little niche issues. Please see the version number below to know which version of Premiere I am currently using for testing.
  * @premVer 27.0
  * @author tomshi
- * @date 2026/11/25
- * @version 2.7.7
+ * @date 2026/11/26
+ * @version 2.7.8
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -1581,7 +1581,7 @@ class Prem extends AdobeRemoteUXP {
                 this.__remoteUXP('custom/resetSelection')
                 sleep 100
                 SendInput(direction)
-                if IsSet(effCtrl) {
+                if IsSet(effCtrl) && scroll != false && scroll != null {
                     try {
                         if scroll.percent != 0 {
                             origPer := scroll.percent
@@ -1651,7 +1651,7 @@ class Prem extends AdobeRemoteUXP {
         coord.s()
         if !scrollBar := this.__getEffContScrollBar(effCont)
             return false
-        if scrollBar.uiaObj.value = value
+        if scrollBar = null || scrollBar.uiaObj.value = value
             return true
 
         getCoords := obj.MousePos()
@@ -1667,6 +1667,10 @@ class Prem extends AdobeRemoteUXP {
         return true
     }
 
+    /**
+     * Uses UIA to retrieve the Effect Controls window scroll bar UIA object
+     * @returns {null | false | object}
+     */
     static __getEffContScrollBar(effCont, &scrollBar?) {
         coord.s()
         try scrollBar := effCont.FindElement({Type:50014, Name:"UI_ScrollBar"})
@@ -1675,7 +1679,8 @@ class Prem extends AdobeRemoteUXP {
             notifyExt.showIfNotExist("premEffContScrollbarFind",, 'Failed to find the Effect Controls scrollbar',,,, 'theme=Dark dur=4 bdr=Red show=Fade@250 hide=Fade@250 maxW=400')
             return false
         }
-
+        if !scrollBar.Children.length ;// no vertical scroll bar
+            return null
         trackTop    := scrollBar.location.y
         trackHeight := scrollBar.location.h
         thumb       := scrollBar.Children[1]

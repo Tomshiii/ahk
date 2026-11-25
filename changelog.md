@@ -1,8 +1,12 @@
 # <> Release 2.21.x - 
 
 ## Functions
-- ✏️ Added `prem.isOperating()`
 - ✅ Fixed `determineAdobeVer()` sometimes failing to return proper values for `Photoshop`
+- ✅ Fixed `getLocalVer()` using incorrect logic to set a variable
+
+### 📝 `prem {`
+- ✏️ Added `isOperating()`
+- ✅ Fixed `__setEffContScrollbar()` causing functions to throw if no vertical scroll bar was present
 
 ### 📝 `PremiereRemote`
 - ✏️ Added `custom/filterSelectionByDisabled()`

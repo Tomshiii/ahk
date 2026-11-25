@@ -24,10 +24,9 @@
  * ```
  */
 getLocalVer(varRead?, script?, searchTag := "@version", endField := "*", returnObj := false) {
-    if !isSet(varRead) && !IsSet(script)
-        varRead := FileRead(A_AppData "\tomshi\version")
-    if !IsSet(varRead)
-        read := varRead
+    read := (!isSet(varRead) && !IsSet(script)) ? FileRead(A_AppData "\tomshi\version")
+              : (!IsSet(read) && IsSet(script)) ? FileRead(script)
+              : varRead
     getVerPos := InStr(read, searchTag)
     if !getVerPos ;if the lib doesn't have a @version tag, we'll pass back a blank script and do something else later
         return((returnObj = false) ? false : {version: "", script: read})
