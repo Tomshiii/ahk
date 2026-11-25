@@ -2,8 +2,8 @@
  * @description my version of the `HotkeylessAHK` file
  * @link https://github.com/sebinside/HotkeylessAHK
  * @author sebinside, tomshi
- * @date 2026/11/11
- * @version 1.1.27
+ * @date 2026/11/25
+ * @version 1.1.28
  ***********************************************************************/
 
 #Requires AutoHotkey v2.0
@@ -60,12 +60,16 @@ Class CustomFunctions {
     setAllEnableDisabled(enabled := "true")                  => (prem.__remoteUXP('custom/setAllEnabledDisabled',, "enabled=" enabled))
     effectSlot(save := true, slot := 1, saveToFile := false) => (prem.effectSlot(save, slot, saveToFile))
     matchLayers()                                            => (prem.__remoteUXP("custom/matchSelectedClipsToLowestTrack"))
+    filterSelectionByDisabled(removeDisabled := "true")      => (prem.__remoteUXP('custom/filterSelectionByDisabled',, "removeDisabled=" removeDisabled))
+    spreadSelectedClips()                                    => (prem.__remoteUXP('custom/spreadSelectedClips'))
+    flattenSelectedClips()                                   => (prem.__remoteUXP('custom/flattenSelectedClips'))
 
     addMatchedAdjustmentLayer(adjustmentLayerPath := "_Assets/01_Other/Adjustment Layer", makeSelection := true)     => (OtherFuncs.addAdjustLayer(adjustmentLayerPath, makeSelection))
     renderAndReplace(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?) => (OtherFuncs.rndrRplcOrg(changeLabel, labelHotkey, dropPreset, dropSource, dropFormat, path, timeout, handles?, inceff?))
     organiseProj(ignore := "")                               => (OtherFuncs.orgProj(ignore))
     setupProject()                                           => OtherFuncs.setupProject()
     setupMusicTracks(audioType := "Standard")                => OtherFuncs.setupMusicTracks(audioType)
+    attachMissingProxies()                                  => (OtherFuncs.attachMissingProxies())
 
     reclone_syncDir(which)                                   => (Run(ptf.rootDir "\Streamdeck AHK\rclone\syncDir.ahk " which))
     closeExplorer()                                          => (ProcessClose("explorer.exe"))
@@ -258,5 +262,14 @@ class OtherFuncs {
         trackLocks := timelineObj.FindElements({Type:50000, Name:"Toggle Track Lock"},,, audIndex.children[audIndex.audIndex])
         trackLocks[index-1].Invoke()
         trackLocks[index+3].Invoke()
+    }
+
+    /** determine if any operations are occurring, then attach any missing proxies */
+    static attachMissingProxies() {
+        op := prem.isOperating()
+        if op = null || op = true
+            return
+        prem.__remoteUXP('custom/attachMissingProxies', true)
+        return
     }
 }

@@ -587,6 +587,38 @@ export async function setAllEnabledDisabled(enabled: boolean): Promise<void> {
 }
 
 /**
+ * removes clips from the current selection based on their disabled state
+ * @param {boolean} [removeDisabled] true (default) deselects disabled clips, keeping only enabled ones. false deselects enabled clips, keeping only disabled ones
+ * @returns {boolean} true if the selection was updated (or already matched), false if there was nothing to act on
+ */
+export async function filterSelectionByDisabled(removeDisabled: boolean = true): Promise<boolean> {
+    const [sequence, items] = await Promise.all([
+        common.getActiveSequence(),
+        common.getSelectedTrackItems(),
+    ]);
+    if (!sequence) return false;
+    if (!items || items.length === 0) return false;
+
+    const states = await Promise.all(items.map((item) => item.isDisabled()));
+    const kept = items.filter((_, i) => states[i] !== removeDisabled);
+
+    // nothing to remove, leave the selection untouched
+    if (kept.length === items.length) return true;
+
+    await sequence.clearSelection();
+    if (kept.length === 0) return true;
+
+    let ok = false;
+    await ppro.TrackItemSelection.createEmptySelection((newSelection) => {
+        for (const item of kept) {
+            newSelection.addItem(item, true);
+        }
+        ok = sequence.setSelection(newSelection);
+    });
+    return ok;
+}
+
+/**
  * setup premiere bin structure, optionally seeding "_Assets/01_Other" with standard assets
  * (adjustment layers, mattes, blank audio, etc.) copied out of a template project.
  *

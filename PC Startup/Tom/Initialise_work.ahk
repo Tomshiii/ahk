@@ -35,7 +35,7 @@ if !CLSID_Objs.waitCoreFuncs(15) {
 }
 
 ;// set verson file
-getVer := getLocalVer(, winGet.PathU(ptf.rootDir "\..\tomshi-hotkeys\My Scripts.ahk"))
+getVer := FileRead(ptf.SupportFiles "\ver_backup")
 verFile := A_AppData "\tomshi\version"
 if !FileExist(verFile) {
     FileAppend(getVer, verFile)

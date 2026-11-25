@@ -42,6 +42,8 @@ backupWiki           := opts["backupWiki"]
 ;// keeps the `yes.value` usage working throughout the rest of the script
 ;// if we're not bumping the version, the release just reuses the current one
 yes := {Value: opts["version"]}
+FileDelete(ptf.SupportFiles "\ver_backup")
+FileAppend(yes.value, ptf.SupportFiles "\ver_backup")
 
 /**
  * Shows the build options GUI.

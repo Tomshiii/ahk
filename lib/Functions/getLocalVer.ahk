@@ -24,8 +24,8 @@
  * ```
  */
 getLocalVer(varRead?, script?, searchTag := "@version", endField := "*", returnObj := false) {
-    if !IsSet(script)
-        throw UnsetError
+    if !isSet(varRead) && !IsSet(script)
+        varRead := FileRead(A_AppData "\tomshi\version")
     if !IsSet(varRead)
         read := varRead
     getVerPos := InStr(read, searchTag)
