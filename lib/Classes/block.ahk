@@ -1,8 +1,8 @@
 /************************************************************************
  * @description A class to contain often used blockinput functions for easier coding.
  * @author tomshi
- * @date 2026/09/08
- * @version 1.4.3
+ * @date 2026/11/26
+ * @version 1.4.4
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -84,7 +84,7 @@ class block {
 class block_ext {
     blocker := {}
     modifiers := "{LCtrl}{RCtrl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}"
-    defaultAdditional := "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}"
+    defaultAdditional := "{Tab}{F4}{Enter}{sc01C}{NumpadEnter}{sc11C}{vk0D}{Escape}{F12}{F11}"
 
     /**
      * @param [blockMouse=true] Determine whether to also block mouse input. Defaults to `true`
@@ -106,5 +106,9 @@ class block_ext {
         try this.blocker.Stop()
         BlockInput("Default"), BlockInput("MouseMoveOff"), BlockInput("Off")
         this.blocker := {}
+    }
+
+    __Delete() {
+        this.Off()
     }
 }

@@ -11,5 +11,10 @@
 ### 📝 `PremiereRemote`
 - ✏️ Added `custom/filterSelectionByDisabled()`
 
+### 📝 `slack {`
+- ✏️ Added `exitThread()`
+- ✅ Fixed `button()` sometimes doing nothing on first use
+- ✅ Fixed inputs getting stuck blocked if slack is closed then reopened
+
 ## Other Changes
 - ❌ Removed `My Scripts.ahk`/`QMK.ahk` hotkey assignments and moved them into a [separate repo](<https://github.com/Tomshiii/tomshi-hotkeys>)

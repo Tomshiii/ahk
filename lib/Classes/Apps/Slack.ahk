@@ -1,8 +1,8 @@
 /************************************************************************
  * @description Speed up interactions with slack.
  * @author tomshi
- * @date 2026/11/10
- * @version 1.3.1
+ * @date 2026/11/26
+ * @version 1.3.2
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -56,6 +56,37 @@ class Slack {
     }
 
     /**
+     * Closes the current thread if the user is within one, or cancels the current action (ie. editing a message), else does nothing.
+     * @returns {Boolean}
+     */
+    static exitThread(sendHotkey := false) {
+        if !currentTitle := WinGet.Title()
+            return false
+        try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle,, false)
+        if !IsSet(slackEl) || !IsObject(slackEl) || !slackEl {
+            errorLog(UnsetError("Failed to set UIA element", -1),, true)
+            return false
+        }
+        try CloseArr := slackEl.FindElements([{Type: 50000, Name: "Close"}, {Type: 50000, Name: "Cancel"}])
+        catch {
+            return false
+        }
+        if !CloseArr.Length
+            return false
+        for el in CloseArr {
+            if el.ClassName = "WinCaptionButton"
+                continue
+            if InStr(el.ClassName, "c-button-unstyled c-icon_button") || InStr(el.ClassName, "c-button c-button--outline") {
+                try el.Invoke()
+                return true
+            }
+        }
+        return false
+    }
+
+    static __warm := false
+
+    /**
      * A function designed to quickly access many features that often require a little fiddling to reach.
      * @param {String} button the desired button name you wish to click. Supported buttons are; `reaction`, `reply`, `edit`, `delete`
      * @param {Boolean} [replyInThread=false] determine whether `reply` will also enable the `Also send to...` checkbox when replying in a thread. Defaults to `false`
@@ -70,7 +101,6 @@ class Slack {
         blocker := block_ext()
         blocker.On()
 
-
         try slackEl := UIA.ElementFromHandle(currentTitle A_Space this.exeTitle,, false)
         if !IsSet(slackEl) || !IsObject(slackEl) || !slackEl {
             blocker.Off()
@@ -78,28 +108,31 @@ class Slack {
             return
         }
 
-        msgEl := this.__uiaMsgUnderCursor(origMousePos)
-        if !msgEl {
-            errorLog(UnsetError("Failed to set message bar", -1),, true)
-            blocker.Off()
-            return
-        }
-
         switch button {
             case "reaction":
-                bar := this.__getCurrentBar(msgEl, {Type: 50000, Name:"Add reaction…"})
-                if !bar {
-                    blocker.Off()
-                    return
-                }
-                bar.button.Invoke()
+                cond := {Type: 50000, Name: "Add reaction…"}
+            case "reply":
+                cond := {Type: 50000, Name: "i)^(Reply (in|to) thread|View thread)", matchmode: "RegEx"}
+            case "delete", "edit":
+                ;// these live in the "More actions" menu of the hovered message's bar
+                cond := {Type: 50000, Name: "More actions"}
+            default:
+                blocker.Off()
+                return
+        }
+
+        bar := this.__getBar(slackEl, origMousePos, cond, this.__warm ? 150 : 1500)
+        if !bar {
+            blocker.Off()
+            errorLog(UnsetError("Failed to find message bar", -1),, true)
+            return
+        }
+        this.__warm := true
+
+        switch button {
+            case "reaction": bar.button.Invoke()
 
             case "reply":
-                bar := this.__getCurrentBar(msgEl, {Type: 50000, Name: "i)^(Reply (in|to) thread|View thread)", matchmode: "RegEx"})
-                if !bar {
-                    blocker.Off()
-                    return
-                }
                 bar.button.Invoke()
                 if replyInThread != true {
                     blocker.Off()
@@ -110,18 +143,12 @@ class Slack {
                     findBox := thread.WaitElement({Type: 50007, Name: "i)(Also send (as|to))", matchmode: "RegEx"}, 2000)
                     findBox.WaitElement({Type: 50002, AutomationId: "p-thread_footer__broadcast_checkbox", Name: "i)(Also send (as|to))", matchmode: "RegEx"}, 2000).Toggle()
                 } catch as e {
-                    errorLog(e)
                     blocker.Off()
+                    errorLog(e)
                     return
                 }
 
             case "delete", "edit":
-                ;// these live in the "More actions" menu of the hovered message's bar
-                bar := this.__getCurrentBar(msgEl, {Type: 50000, Name: "More actions"})
-                if !bar {
-                    blocker.Off()
-                    return
-                }
                 bar.button.Expand()
                 item := (button = "delete") ? "Delete message… delete" : "Edit message E"
                 try slackEl.WaitElement({Type: 50011, Name: item}, 2000).Invoke()
@@ -130,43 +157,31 @@ class Slack {
     }
 
     /**
-     * Finds the hover action bar inside a message element and a button within it
-     * @param {UIA.IUIAutomationElement} msgEl the message element
+     * Finds the hover action bar closest to the cursor and a button within it.
+     * Slack only renders the bar for the hovered message, so no walk up the tree is needed.
+     * @param {UIA.IUIAutomationElement} slackEl the root Slack element
+     * @param {Object} mousePos an object containing the x/y values of the mouse
      * @param {Object} btnCondition UIA condition for the button inside the bar
+     * @param {Integer} retryMs how long to keep retrying before giving up
      * @returns {Object | false} `{msgActions, button}` or `false`
      */
-    static __getCurrentBar(msgEl, btnCondition) {
-        try {
-            msgActions := msgEl.FindElement({ClassName: "c-message-actions--hover-actions", mm: 2}, 4)
-            btn := msgActions.FindElement(btnCondition, 2)
-        } catch
-            return false
-        return {msgActions: msgActions, button: btn}
-    }
-
-    /**
-     * Walks up from the element under the cursor to the first ancestor that contains a `Message actions` bar.
-     * Slack only renders that bar for the hovered message, so this is the message under the cursor.
-     */
-    static __uiaMsgUnderCursor(mousePos) {
-        coord.s()
-        try el := UIA.ElementFromPoint(mousePos.x, mousePos.y,, false)
-        catch
-            return false
-
-        depth := 0
-        while IsObject(el) && depth++ < 40 {
+    static __getBar(slackEl, mousePos, btnCondition, retryMs) {
+        start := A_TickCount
+        loop {
             try {
-                el.FindElement({ClassName: "c-message-actions--hover-actions", mm: 2}, 4)  ; throws TargetError if absent
-                return el
-            } catch TargetError {
-                ; not in this one, go up
-            } catch
+                best := false, bestDist := 1e9
+                for g in slackEl.FindElements({ClassName: "c-message-actions--hover-actions", mm: 2}) {
+                    loc := g.Location
+                    dist := Abs((loc.y + loc.h // 2) - mousePos.y)
+                    if dist < bestDist
+                        best := g, bestDist := dist
+                }
+                if best
+                    return {msgActions: best, button: best.FindElement(btnCondition, 2)}
+            }
+            if A_TickCount - start >= retryMs
                 return false
-            try el := el.Parent
-            catch
-                return false
+            Sleep(75)
         }
-        return false
     }
 }
