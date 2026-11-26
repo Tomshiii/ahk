@@ -2,8 +2,8 @@
  * @description move the Premiere Pro playhead to the cursor
  * @premVer 26.5.2
  * @author tomshi, taranVH
- * @date 2026/11/19
- * @version 2.5.11
+ * @date 2026/11/26
+ * @version 2.5.12
  ***********************************************************************/
 ; { \\ #Includes
 #Include "%A_Appdata%\tomshi\lib"
@@ -134,10 +134,7 @@ class rbuttonPrem {
 	__checkUnderCursor(colour) {
 		if (
 			colour != prem.timelineColArr[1] && colour != prem.timelineColArr[2] &&
-			colour != prem.timelineColArr[3] && colour != prem.timelineColArr[4] &&
-			colour != prem.timelineColArr[8] && colour != prem.timelineColArr[9] &&
-			colour != prem.timelineColArr[11] && colour != prem.timelineColArr[12] &&
-			colour != prem.timelineColArr[13] && colour != prem.timelineColArr[14]
+			colour != prem.timelineColArr[3] && colour != prem.timelineColArr[4]
 		) {
 			SendInput(this.sendHotkey)
 			return false

@@ -5,7 +5,7 @@
  * @premVer 27.0
  * @author tomshi
  * @date 2026/11/26
- * @version 2.7.8
+ * @version 2.7.9
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -642,10 +642,7 @@ class Prem extends AdobeRemoteUXP {
         colour1 := this.__getPixel(cursorObj.x, cursorObj.y)
         colour2 := this.__getPixel(cursorObj.x + 1, cursorObj.y)
         colour := (colour1 = this.playhead || colour2 = this.playhead) ? (colour1 = this.playhead ? colour2 : colour1) : colour1
-        checkTimelineCols := (colour != this.timelineColArr[1] && colour != this.timelineColArr[2] &&
-			colour != this.timelineColArr[3] && colour != this.timelineColArr[4] &&
-			colour != this.timelineColArr[8]
-        )
+        checkTimelineCols := (colour != this.timelineColArr[1] && colour != this.timelineColArr[2] && colour != this.timelineColArr[3] && colour != this.timelineColArr[4])
         return (!checkTimelineCols ? false : true)
     }
 

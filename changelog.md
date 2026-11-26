@@ -3,10 +3,12 @@
 ## Functions
 - ✅ Fixed `determineAdobeVer()` sometimes failing to return proper values for `Photoshop`
 - ✅ Fixed `getLocalVer()` using incorrect logic to set a variable
+- ✅ Fixed `rbuttonPrem().movePlayhead()` checking `timelineColArr` indexes that don't exist
 
 ### 📝 `prem {`
 - ✏️ Added `isOperating()`
 - ✅ Fixed `__setEffContScrollbar()` causing functions to throw if no vertical scroll bar was present
+- ✅ Fixed `isClipUnderCursor()` checking `timelineColArr` indexes that don't exist
 
 ### 📝 `PremiereRemote`
 - ✏️ Added `custom/filterSelectionByDisabled()`
