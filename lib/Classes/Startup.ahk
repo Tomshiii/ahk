@@ -2,8 +2,8 @@
  * @description A collection of functions that run on `My Scripts.ahk` Startup
  * @file Startup.ahk
  * @author tomshi
- * @date 2026/11/13
- * @version 1.9.20
+ * @date 2026/11/27
+ * @version 1.9.21
  ***********************************************************************/
 
 ; { \\ #Includes
@@ -599,7 +599,7 @@ class Startup {
         __addAndIncrement("Settings (GUI)", (*) => settingsGUI())
         startupTray(startingVal)
         startingVal++
-        __addAndIncrement("Reload UIA", (*) => premUIA_Values.forceReset())
+        __addAndIncrement("Reload UIA", (*) => (premUIA_Values.forceReset(), prem.getTimeline(, true)))
         __addAndIncrement("") ;adds a divider bar
 
         submenuRemote := Menu()

@@ -19,7 +19,7 @@ if !IsSet(UserSettings)
 SetWorkingDir(ptf.rootDir)
 
 Run(ptf.rootDir "\..\tomshi-hotkeys\My Scripts.ahk")
-Run(ptf.rootDir "\QMK Keyboard.ahk")
+Run(ptf.rootDir "\..\tomshi-hotkeys\QMK Keyboard.ahk")
 Run(ptf.TimerScripts "\Alt_menu_acceleration_DISABLER.ahk")
 ; Run(ptf.TimerScripts "\autodismiss error.ahk") ;// adobe added a toggle
 ;Run(A_WorkingDir "\Premiere_RightClick.ahk" ;#include(d) in main script now)

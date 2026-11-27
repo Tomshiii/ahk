@@ -512,7 +512,9 @@ class Prem extends AdobeRemoteUXP {
         tryFunc(which, isCCX?) {
             try this.stopPlayback()
             switch which {
-                case "uia": try premUIA_Values.forceReset()
+                case "uia":
+                    try premUIA_Values.forceReset()
+                    try this.getTimeline(, true)
                 case "uxp":
                     if !docker.isInstalled() {
                         errorLog(MethodError("Docker is not currently installed.", -1))
@@ -2225,14 +2227,15 @@ class Prem extends AdobeRemoteUXP {
     /**
      * ### Note: This function will evaluate the premiere timeline coordinates based off the `screen` coordmode. This cannot be changed.
      * A function to retrieve the coordinates of the Premiere timeline. These coordinates are then stored within the `Prem {` class.
-     * @param {Boolean} tools whether you wish to have tooltips appear informing the user about timeline values. Defaults to true. Sends tooltips on `WhichToolTip` 11/12/13
+     * @param {Boolean} [tools=true] whether you wish to have a Notify GUI appear informing the user about timeline values. Defaults to `true`
+     * @param {Boolean} [override=false] determines whether the script will update `Core Functionality.ahk` values, or if it will simply pull from them if they exist already. Defaults to `false`
      * @returns {Boolean} `true/false`
      */
-    static getTimeline(tools := true) {
+    static getTimeline(tools := true, override := false) {
         coord.s()
         Critical("On")
         ;// this block is called if the function originates from a script that isn't `Core Functionality.ahk`
-        if A_ScriptName != "Core Functionality.ahk" {
+        if A_ScriptName != "Core Functionality.ahk" && override = false {
             try {
                 vars := ["timelineRawX", "timelineRawY", "timelineXValue", "timelineYValue", "timelineXControl", "timelineYControl", "timelineVals"]
                 premObj_vals := CLSID_Objs.loadProp("prem", vars)
